@@ -4,6 +4,7 @@
 .obsidian/workspace-mobile.json
 .obsidian/plugins/
 
-# Outillage local
+# Outillage local (les skills de .claude/skills/ sont versionnés)
 .kilo/
-.claude/
+.claude/settings.local.json
+.claude/settings.json
