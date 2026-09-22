@@ -68,4 +68,5 @@ Imposer les **standards** : registry unique, conventions de versioning, [[112-ci
 - [[91-langfuse-observabilite|Langfuse]] — prompts versionnés
 - [[114-reproductibilite-variance|Reproductibilité & variance]] — la reproductibilité en détail
 - [[115-plateformes-agents-gouvernance|Plateformes d'agents — Architecture & gouvernance]] — registre et cycle de vie des agents
+- [[105-devsecops-ia-agentique|DevSecOps pour l'IA agentique]] — AI-BOM et chaîne d'approvisionnement des modèles
 - [[00-moc-ai-engineering|MOC AI Engineering]]

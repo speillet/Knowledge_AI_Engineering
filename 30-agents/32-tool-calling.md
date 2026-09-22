@@ -59,4 +59,5 @@ Sur la **[[63-guided-generation|guided generation]]** : les arguments sont contr
 - [[33-mcp|MCP]] — standardiser l'accès aux outils
 - [[34-harness-plugins|Harness]] — qui exécute réellement
 - [[101-securite-llm-guardrails|Sécurité LLM]] — valider avant d'exécuter
+- [[103-defenses-agents|Sécurité des agents — Architecture défensive]] — valider les appels d'outils
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -2,9 +2,9 @@
 
 Un vault [Obsidian](https://obsidian.md) de **fiches de révision (flashcards) en français** qui couvre les compétences clés de l'**AI Engineering**. Le parcours va de l'utilisation des modèles jusqu'à leur mise en production et leur sécurisation.
 
-Chaque fiche traite **un concept** en une dizaine de cartes question/réponse. Les fiches sont reliées entre elles par des liens, pour qu'on puisse passer d'un sujet à ses voisins, et elles se révisent en **répétition espacée**.
+Chaque fiche traite **un concept** en 5 à 22 cartes question/réponse, une dizaine en moyenne. Les fiches sont reliées entre elles par des liens, pour qu'on puisse passer d'un sujet à ses voisins, et elles se révisent en **répétition espacée**.
 
-**État au 22 septembre 2026** : 59 fiches et 609 cartes, réparties en 12 sections.
+**État au 22 septembre 2026** : 64 fiches et 678 cartes, réparties en 12 sections.
 
 ---
 
@@ -14,6 +14,7 @@ Chaque fiche traite **un concept** en une dizaine de cartes question/réponse. L
 Knowledge_AI_Engineering/
 ├── README.md
 ├── .obsidian/                   # configuration Obsidian
+├── .claude/skills/              # skills Claude Code versionnés (grilling, grill-me)
 ├── 00-moc-ai-engineering.md     # carte racine : parcours de lecture + sommaire
 ├── 10-prompt-engineering/
 ├── 20-rag/
@@ -32,6 +33,7 @@ Knowledge_AI_Engineering/
 - Chaque **section** est un dossier numéroté par dizaine (`20-rag`, `30-agents`…).
 - Chaque **fiche** porte un numéro qui reprend celui de sa section : `21-rag-fondamentaux.md` et `22-rag-avance.md` sont dans `20-rag/`.
 - Exception : la section conteneurs garde sa propre numérotation, de `00-index.md` à `13-apptainer-inference-hpc.md`.
+- Une section compte **au plus 9 fiches** (de `x1` à `x9`). Quand elle est pleine, la fiche va dans la section la plus proche de son sujet et le MOC la signale à côté de sa fiche d'origine. C'est le cas de `115-plateformes-agents-gouvernance.md` (section 110), la suite senior de `38-plateformes-agents.md`, car la section 30 est pleine.
 - Le point d'entrée est le **MOC** (Map of Content), [00-moc-ai-engineering.md](00-moc-ai-engineering.md).
 
 ---
@@ -99,10 +101,10 @@ Les conventions à respecter :
 
 ## Ajouter une fiche
 
-1. Choisir la section et le prochain numéro libre, puis nommer le fichier en kebab-case, par exemple `25-rag-multimodal.md`.
+1. Choisir la section et le prochain numéro libre, puis nommer le fichier en kebab-case, par exemple `25-rag-multimodal.md`. Si la section est pleine, appliquer la règle décrite dans [Structure du repo](#structure-du-repo).
 2. **Le nom de fichier doit être unique dans tout le vault**, car Obsidian résout les liens `[[...]]` par nom de fichier, pas par chemin.
 3. Rédiger les cartes au format ci-dessus.
-4. Ajouter la fiche dans le sommaire du MOC, dans la section qui lui correspond.
+4. Ajouter la fiche dans le sommaire du MOC, dans la section qui lui correspond, et dans la liste [Concepts couverts](#concepts-couverts) de ce README. Mettre à jour le nombre de fiches et de cartes en haut du README (voir [Maintenance](#maintenance)).
 5. Ajouter des liens dans les deux sens : la nouvelle fiche cite ses voisines, et les voisines la citent dans leur section `Connexions`.
 6. Vérifier qu'aucun lien ne pointe vers une fiche absente. Dans la vue graphe, désactiver le filtre **Existing files only** : les fiches citées mais inexistantes apparaissent alors comme des nœuds fantômes.
 
@@ -115,14 +117,16 @@ La stack décrite par le vault, du haut vers le bas :
 ```text
 App / Agent
     ↓
-Gateway (Ingress → LiteLLM : auth, routing, budgets)
+Plateforme d'agents (runtime, sandbox, gateway d'outils MCP, identité, politiques)
     ↓
-Serveur d'inférence (vLLM/Triton/SGLang, KV cache, batching)
+Gateway LLM (Ingress → LiteLLM : auth, routing, budgets)
+    ↓
+Serveur d'inférence (vLLM/SGLang/TensorRT-LLM, KV cache, batching, quantization)
     ↓
 Conteneur + GPU (Docker/K8s/Apptainer)
 ```
 
-Deux sujets traversent toute la stack : l'**observabilité** (traces, coûts, evals) et la **sécurité** (injection, permissions, guardrails).
+Trois sujets traversent toute la stack : l'**observabilité** (traces, métriques, evals), la **sécurité** (injection, moindre privilège, sandbox, DevSecOps) et les **coûts** (FinOps).
 
 ### 10 — Prompt engineering
 
@@ -144,7 +148,7 @@ Deux sujets traversent toute la stack : l'**observabilité** (traces, coûts, ev
 - [Context engineering](30-agents/35-context-engineering.md) : le contexte comme budget, context rot, compaction, mémoire court et long terme, sous-agents, prompt caching, contexte chargé au besoin (just-in-time).
 - [Orchestration multi-agents](30-agents/36-orchestration-agents.md) : orchestrator-workers, supervisor, handoffs, evaluator-optimizer, état partagé, coût du multi-agent, protocole A2A.
 - [Frameworks d'agents](30-agents/37-frameworks-agents.md) : LangChain, LangGraph, CrewAI, Google ADK, OpenAI Agents SDK, Claude Agent SDK, LlamaIndex, framework ou code maison.
-- [Plateformes d'agents — Fondamentaux](30-agents/38-plateformes-agents.md) : différence avec un framework, briques, niveaux d'abstraction (API, runtime, harness managé), offres cloud et des fournisseurs de modèles, open source, runtime et double texting, sandbox, gateway d'outils, registre, identité, mémoire, observabilité, evals, protocoles (MCP, A2A), build ou buy.
+- [Plateformes d'agents — Fondamentaux](30-agents/38-plateformes-agents.md) : différence avec un framework, briques, niveaux d'abstraction (API, runtime, harness managé), offres cloud et des fournisseurs de modèles, open source, runtime et double texting, sandbox, gateway d'outils, registre, identité, mémoire, observabilité, evals, protocoles (MCP, A2A), build ou buy. La suite, niveau senior, est la fiche 115 de la section 110.
 - [Mémoire des agents](30-agents/39-memoire-agents.md) : mémoire de travail, sémantique, épisodique et procédurale, thread ou long terme, écriture pendant ou après la conversation, consolidation, score de rappel, réflexion, faits qui changent, stockage, Letta, outils, risques, évaluation.
 
 ### 40 — Automatisation & frameworks d'agents
@@ -205,7 +209,14 @@ Automatiser des processus, soit avec des outils de workflow, soit avec des agent
 
 ### 100 — Sécurité & guardrails
 
+De la sécurité des LLM à celle des agents : les menaces et les incidents réels, l'architecture défensive, la chaîne d'approvisionnement des outils et des skills, le DevSecOps, et le cas des agents de code.
+
 - [Sécurité LLM & guardrails](100-securite-guardrails/101-securite-llm-guardrails.md) : OWASP Top 10 LLM, prompt injection directe et indirecte, « lethal trifecta », exfiltration, excessive agency, guardrails (Llama Guard, NeMo Guardrails), red teaming.
+- [Sécurité des agents — Menaces & incidents](100-securite-guardrails/102-menaces-agents.md) : nouveau modèle de menace, entrées non fiables, détournement d'agent, limites des défenses par détection, incidents (MCP GitHub, EchoLeak, Supabase, Replit), empoisonnement de la mémoire, injection invisible, risques multi-agents, denial of wallet, exécution de code, attaquants équipés d'agents.
+- [Sécurité des agents — Architecture défensive](100-securite-guardrails/103-defenses-agents.md) : supposer la compromission, Agents Rule of Two, six design patterns, Dual LLM et CaMeL, moindre privilège, réseau sortant, secrets, validation des appels d'outils, approbation humaine fiable, rôle des guardrails, mémoire, échanges entre agents, défense en profondeur.
+- [Sécurité de MCP, des outils & des skills](100-securite-guardrails/104-securite-mcp-skills.md) : surface d'attaque, tool poisoning, rug pull, tool shadowing, postmark-mcp, ClawHub et ToxicSkills, règles d'autorisation de la spec, scopes minimaux, SSRF et URL piégées, serveurs locaux, évaluation avant autorisation, gateway MCP.
+- [DevSecOps pour l'IA agentique](100-securite-guardrails/105-devsecops-ia-agentique.md) : threat modeling (MAESTRO, ATLAS), référentiels (OWASP, NIST, ISO 42001), AI-BOM, supply chain des modèles, contrôles en CI, tests adversariaux (promptfoo, garak, PyRIT), red teaming, security eval gate, prompts comme du code, environnements, journalisation, détection, réponse à incident, vulnérabilités, responsabilités.
+- [Sécurité des agents de code](100-securite-guardrails/106-securite-agents-code.md) : cible de choix, modes sans permission, isolation du poste, s1ngularity, Amazon Q, fichiers d'instructions piégés, PromptPwnd, agents en CI/CD, slopsquatting, qualité du code généré, revue des PR d'agents, secrets, politique d'entreprise.
 
 ### 110 — MLOps & CI/CD
 
@@ -226,3 +237,10 @@ Automatiser des processus, soit avec des outils de workflow, soit avec des agent
 ## Maintenance
 
 L'écosystème LLM change vite : noms de produits, versions et outils recommandés peuvent devenir obsolètes en quelques mois. Quand une réponse ne correspond plus à la réalité, on corrige la carte plutôt que d'en ajouter une nouvelle, pour que l'historique de révision de la carte soit conservé.
+
+Pour recompter les fiches et les cartes après un ajout :
+
+```bash
+grep -rl --include='*.md' '#flashcards' [0-9]*/ | wc -l      # fiches
+find [0-9]*/ -name '*.md' -exec awk '$0=="?"' {} + | wc -l  # cartes
+```

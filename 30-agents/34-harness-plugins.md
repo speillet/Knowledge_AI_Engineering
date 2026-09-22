@@ -72,4 +72,5 @@ Le **fichier mémoire** est chargé **à chaque session** (conventions du projet
 - [[35-context-engineering|Context engineering]] — ce que le harness met dans le contexte
 - [[101-securite-llm-guardrails|Sécurité LLM]] — permissions et sandbox
 - [[38-plateformes-agents|Plateformes d'agents]] — harness à l'échelle d'une organisation
+- [[106-securite-agents-code|Sécurité des agents de code]] — modes de permission et isolation des agents de code
 - [[00-moc-ai-engineering|MOC AI Engineering]]

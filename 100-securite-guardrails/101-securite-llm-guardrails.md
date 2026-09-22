@@ -87,4 +87,9 @@ Qu'est-ce que le red teaming LLM ?
 - [[91-langfuse-observabilite|Langfuse]] — monitorer les abus
 - [[39-memoire-agents|Mémoire des agents]] — empoisonnement de la mémoire persistante
 - [[115-plateformes-agents-gouvernance|Plateformes d'agents — Architecture & gouvernance]] — identité, politiques d'accès et Top 10 OWASP agentique
+- [[102-menaces-agents|Sécurité des agents — Menaces & incidents]] — les attaques et incidents réels
+- [[103-defenses-agents|Sécurité des agents — Architecture défensive]] — Rule of Two, design patterns, défense en profondeur
+- [[104-securite-mcp-skills|Sécurité de MCP & des skills]] — tool poisoning, rug pull, skills malveillants
+- [[105-devsecops-ia-agentique|DevSecOps pour l'IA agentique]] — threat modeling, tests adversariaux, réponse à incident
+- [[106-securite-agents-code|Sécurité des agents de code]] — agents sur les postes de dev et dans la CI
 - [[00-moc-ai-engineering|MOC AI Engineering]]

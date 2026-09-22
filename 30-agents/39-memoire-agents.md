@@ -116,4 +116,5 @@ Mesurer aussi la **latence** et le **coût** ajoutés par l'écriture et la rech
 - [[34-harness-plugins|Harness & plugins]] — fichiers mémoire
 - [[101-securite-llm-guardrails|Sécurité LLM]] — empoisonnement de la mémoire
 - [[38-plateformes-agents|Plateformes d'agents]] — la mémoire managée des plateformes
+- [[103-defenses-agents|Sécurité des agents — Architecture défensive]] — protéger la mémoire contre l'empoisonnement
 - [[00-moc-ai-engineering|MOC AI Engineering]]

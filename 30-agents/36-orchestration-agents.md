@@ -53,7 +53,7 @@ Par des **messages** (résumés renvoyés à l'orchestrateur), un **état partag
 
 Qu'est-ce que le protocole A2A ?
 ?
-**Agent2Agent** (initié par Google) : un standard pour que des agents **de fournisseurs différents** se découvrent (**Agent Card**) et se délèguent des tâches — là où [[33-mcp|MCP]] relie un agent à ses **outils**.
+**Agent2Agent** (initié par Google) : un standard pour que des agents **de fournisseurs différents** se découvrent (**Agent Card**) et se délèguent des tâches — là où [[33-mcp|MCP]] relie un agent à ses **outils**. Version **1.0** en mars 2026 (Agent Cards signées), hébergé depuis août 2026 par l'**Agentic AI Foundation**, comme MCP.
 
 ---
 
@@ -72,4 +72,5 @@ L'**isolation du contexte** : chaque sous-agent explore dans son propre contexte
 - [[45-langgraph-production|LangGraph en production]] — subagents, handoffs, router en pratique
 - [[46-crewai-crews|CrewAI]] — process séquentiel ou hiérarchique
 - [[115-plateformes-agents-gouvernance|Plateformes d'agents — Architecture & gouvernance]] — gouverner une flotte d'agents
+- [[103-defenses-agents|Sécurité des agents — Architecture défensive]] — sécuriser les échanges entre agents
 - [[00-moc-ai-engineering|MOC AI Engineering]]

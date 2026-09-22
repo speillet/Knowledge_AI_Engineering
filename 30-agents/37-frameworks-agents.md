@@ -27,7 +27,7 @@ Un framework **multi-agents par rôles** : on définit des agents (rôle, object
 
 Qu'est-ce que Google ADK ?
 ?
-L'**Agent Development Kit** de Google : framework open source (Python, Java…) pour construire des agents et des hiérarchies d'agents, optimisé pour Gemini et Vertex AI mais multi-modèles, avec support de **[[33-mcp|MCP]]** et du protocole **A2A**.
+L'**Agent Development Kit** de Google : framework open source (Python, Java…) pour construire des agents et des hiérarchies d'agents, optimisé pour Gemini et la Gemini Enterprise Agent Platform (ex-Vertex AI) mais multi-modèles, avec support de **[[33-mcp|MCP]]** et du protocole **A2A**.
 
 ---
 

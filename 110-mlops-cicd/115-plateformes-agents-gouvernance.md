@@ -230,4 +230,6 @@ Le choix fréquent est **hybride** : services managés **modulaires** pour le ru
 - [[122-finops-llm|FinOps LLM]] — attribution et budgets
 - [[45-langgraph-production|LangGraph — Production]] — exécution durable et interruptions
 - [[111-mlops-llmops-fondamentaux|MLOps & LLMOps]] — registre, lineage, environnements
+- [[103-defenses-agents|Sécurité des agents — Architecture défensive]] — les contrôles de sécurité en détail
+- [[105-devsecops-ia-agentique|DevSecOps pour l'IA agentique]] — détection et réponse aux incidents
 - [[00-moc-ai-engineering|MOC AI Engineering]]

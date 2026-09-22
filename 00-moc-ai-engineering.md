@@ -76,6 +76,11 @@ Progression recommandée : **utiliser les modèles → construire des architectu
 
 ## 100 — Sécurité & guardrails
 - [[101-securite-llm-guardrails|Sécurité LLM & guardrails]]
+- [[102-menaces-agents|Sécurité des agents — Menaces & incidents]]
+- [[103-defenses-agents|Sécurité des agents — Architecture défensive]]
+- [[104-securite-mcp-skills|Sécurité de MCP & des skills]]
+- [[105-devsecops-ia-agentique|DevSecOps pour l'IA agentique]]
+- [[106-securite-agents-code|Sécurité des agents de code]]
 
 ## 110 — MLOps & CI/CD
 - [[111-mlops-llmops-fondamentaux|MLOps & LLMOps — Fondamentaux]]
@@ -93,10 +98,12 @@ Progression recommandée : **utiliser les modèles → construire des architectu
 ```text
 App / Agent
     ↓
-Gateway (Ingress → LiteLLM : auth, routing, budgets)
+Plateforme d'agents (runtime, sandbox, gateway d'outils MCP, identité, politiques)
     ↓
-Serveur d'inférence (vLLM/Triton/TGI, KV cache, batching)
+Gateway LLM (Ingress → LiteLLM : auth, routing, budgets)
+    ↓
+Serveur d'inférence (vLLM/SGLang/TensorRT-LLM, KV cache, batching, quantization)
     ↓
 Conteneur + GPU (Docker/K8s/Apptainer)
 ```
-Observabilité transverse : Langfuse (traces, coûts, evals).
+Transverses : **observabilité** (traces, métriques, evals), **sécurité** (injection, moindre privilège, sandbox, DevSecOps) et **coûts** (FinOps).

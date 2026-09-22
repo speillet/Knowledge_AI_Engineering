@@ -184,4 +184,5 @@ En pratique, souvent **hybride** : acheter le runtime et les sandboxes, garder l
 - [[101-securite-llm-guardrails|Sécurité LLM]] — identité et permissions
 - [[81-litellm-api-layer|LiteLLM]] — la gateway LLM
 - [[83-gateway-ingress|Ingress]] — l'entrée réseau
+- [[104-securite-mcp-skills|Sécurité de MCP & des skills]] — pourquoi une gateway et un registre d'outils
 - [[00-moc-ai-engineering|MOC AI Engineering]]
