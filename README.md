@@ -1,6 +1,6 @@
 # Knowledge Vault — AI Engineering
 
-Un vault [Obsidian](https://obsidian.md) de **fiches de révision (flashcards) en français** qui couvre ce qu'il faut maîtriser pour devenir **Senior / Lead AI Engineer**. Le parcours va de l'utilisation des modèles jusqu'à leur mise en production et leur sécurisation.
+Un vault [Obsidian](https://obsidian.md) de **fiches de révision (flashcards) en français** qui couvre les compétences clés de l'**AI Engineering**. Le parcours va de l'utilisation des modèles jusqu'à leur mise en production et leur sécurisation.
 
 Chaque fiche traite **un concept** en une dizaine de cartes question/réponse. Les fiches sont reliées entre elles par des liens, pour qu'on puisse passer d'un sujet à ses voisins, et elles se révisent en **répétition espacée**.
 

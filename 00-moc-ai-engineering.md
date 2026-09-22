@@ -1,7 +1,7 @@
 # AI Engineering — MOC
 Tags: #moc #ai-engineering
 
-Carte racine du vault : les connaissances pour devenir **Senior / Lead AI Engineer**.
+Carte racine du vault : les connaissances clés de l'**AI Engineering**, de l'usage des modèles à leur industrialisation.
 Chaque domaine a ses notes de flashcards reliées entre elles via `## Connexions`.
 
 ## Parcours de lecture
