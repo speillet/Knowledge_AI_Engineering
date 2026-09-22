@@ -74,4 +74,5 @@ Le **catastrophic forgetting** et la régression sur les capacités générales 
 - [[62-optimisations-inference|Optimisations]] — quantization (QLoRA)
 - [[92-chainforge-evals-prompts|Evals]] — mesurer avant/après
 - [[113-monitoring-drift-feedback|Monitoring & drift]] — quand ré-entraîner
+- [[68-quantization|Quantization]] — NF4 et les formats de serving
 - [[00-moc-ai-engineering|MOC AI Engineering]]

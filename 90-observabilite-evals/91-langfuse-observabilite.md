@@ -57,4 +57,5 @@ Par **SDK (decorators), intégrations natives** (LangChain, [[81-litellm-api-lay
 - [[38-plateformes-agents|Plateformes d'agents]] — brique observabilité
 - [[113-monitoring-drift-feedback|Monitoring & drift]] — la boucle de feedback prod
 - [[122-finops-llm|FinOps LLM]] — le cost tracking
+- [[93-monitoring-inference|Monitoring de l'inférence]] — métriques serveur, GPU et usage
 - [[00-moc-ai-engineering|MOC AI Engineering]]

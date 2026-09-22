@@ -73,4 +73,5 @@ Distribuer les poids comme **artefacts OCI** dans un registry, puis les monter c
 - [[02-docker-images-registries|Registries & images]] — stockage & distribution
 - [[08-linux-primitives-docker-fondamentaux|Volumes & bind mounts]] — monter les poids
 - [[111-mlops-llmops-fondamentaux|MLOps]] — le model registry approfondi
+- [[68-quantization|Quantization]] — réduire la taille des poids
 - [[00-moc-ai-engineering|MOC AI Engineering]]

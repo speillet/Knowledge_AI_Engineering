@@ -66,4 +66,5 @@ Des **seuils sur les scores, refus et latences par segment**, reliés aux [[64-m
 - [[112-cicd-modeles|CI/CD des modèles]] — redéployer après correction
 - [[51-fine-tuning-adaptation|Fine-tuning]] — la réponse au drift comportemental
 - [[22-rag-avance|RAG avancé]] — fraîcheur de l'index
+- [[93-monitoring-inference|Monitoring de l'inférence]] — validations et signaux de qualité en production
 - [[00-moc-ai-engineering|MOC AI Engineering]]

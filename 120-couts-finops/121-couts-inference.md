@@ -41,7 +41,7 @@ Un traitement **différé** (fenêtre de plusieurs heures) à **~-50 %** : idéa
 Quels leviers techniques réduisent le coût ?
 ?
 - [[82-routing-llm|Routing]] vers un modèle moins cher
-- [[62-optimisations-inference|Quantization]]
+- [[68-quantization|Quantization]]
 - **Caching** de réponses ([[81-litellm-api-layer|gateway]])
 - Prompts plus courts, `max_tokens` limité
 
@@ -71,4 +71,6 @@ Un GPU **alloué facture pareil, utilisé ou non** : consolidation, MIG/time-sli
 - [[62-optimisations-inference|Optimisations d'inférence]] — les leviers techniques
 - [[35-context-engineering|Context engineering]] — le coût du contexte
 - [[82-routing-llm|Routing LLM]] — payer le juste modèle
+- [[123-caching-agressif|Caching agressif]] — maximiser le taux de hit
+- [[68-quantization|Quantization]] — moins de GPU par réplica
 - [[00-moc-ai-engineering|MOC AI Engineering]]

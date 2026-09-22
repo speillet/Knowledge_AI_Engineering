@@ -73,4 +73,6 @@ Ne pas tout charger d'avance : donner à l'agent des **références légères** 
 - [[61-kv-cache-attention|KV cache]] — le coût mémoire du contexte
 - [[36-orchestration-agents|Orchestration multi-agents]] — isoler les contextes
 - [[34-harness-plugins|Harness]] — qui assemble le contexte
+- [[39-memoire-agents|Mémoire des agents]] — la mémoire long terme en détail
+- [[123-caching-agressif|Caching agressif]] — concevoir le contexte pour le cache
 - [[00-moc-ai-engineering|MOC AI Engineering]]

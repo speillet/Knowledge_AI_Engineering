@@ -103,4 +103,5 @@ Comment déployer et déboguer un graphe LangGraph ?
 - [[35-context-engineering|Context engineering]] — mémoire court et long terme
 - [[41-automatisation-code-nocode|Automatisation]] — durable execution (Temporal)
 - [[91-langfuse-observabilite|Langfuse]] — tracer les exécutions
+- [[39-memoire-agents|Mémoire des agents]] — types de mémoire, écriture et rappel
 - [[00-moc-ai-engineering|MOC AI Engineering]]

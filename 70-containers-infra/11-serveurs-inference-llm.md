@@ -75,4 +75,8 @@ Quels critères pour choisir un serveur ?
 - [[10-images-modeles-poids|Images & poids]] — chargement des poids
 - [[13-apptainer-inference-hpc|Apptainer & HPC]] — serving en cluster HPC
 - [[00-index|Index Conteneurs]]
+- [[66-prefix-caching-radix-attention|Prefix caching & RadixAttention]] — RadixAttention de SGLang
+- [[67-speculative-decoding|Speculative decoding]] — activer et régler dans vLLM ou SGLang
+- [[68-quantization|Quantization]] — servir des modèles FP8, AWQ, GPTQ ou GGUF
+- [[93-monitoring-inference|Monitoring de l'inférence]] — exploiter `/metrics` et `/health`
 - [[00-moc-ai-engineering|MOC AI Engineering]]

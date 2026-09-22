@@ -84,4 +84,5 @@ Quelles alternatives à LiteLLM ?
 - [[64-metriques-slo-inference|Métriques & SLO]] — rate limits et timeouts
 - [[11-serveurs-inference-llm|Serveurs d'inférence]] — les backends auto-hébergés
 - [[122-finops-llm|FinOps LLM]] — budgets et attribution des coûts
+- [[93-monitoring-inference|Monitoring de l'inférence]] — les métriques d'usage collectées à la gateway
 - [[00-moc-ai-engineering|MOC AI Engineering]]

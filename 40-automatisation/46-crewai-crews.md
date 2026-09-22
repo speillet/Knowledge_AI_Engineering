@@ -110,4 +110,5 @@ Le comportement repose sur des **prompts de rôle** : moins de contrôle fin que
 - [[37-frameworks-agents|Frameworks d'agents]] — comparer avec LangGraph et ADK
 - [[81-litellm-api-layer|LiteLLM]] — la couche d'accès aux modèles
 - [[101-securite-llm-guardrails|Sécurité LLM]] — guardrails et outils
+- [[39-memoire-agents|Mémoire des agents]] — les concepts derrière la mémoire unifiée
 - [[00-moc-ai-engineering|MOC AI Engineering]]

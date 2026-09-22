@@ -67,4 +67,6 @@ Renvoyer une **réponse déjà générée** pour une question **sémantiquement 
 - [[92-chainforge-evals-prompts|Evals]] — mesurer la qualité par modèle
 - [[64-metriques-slo-inference|Métriques & SLO]] — la contrainte de latence
 - [[121-couts-inference|Coûts d'inférence]] — le levier de coût n°1
+- [[66-prefix-caching-radix-attention|Prefix caching & RadixAttention]] — routage par affinité de préfixe
+- [[123-caching-agressif|Caching agressif]] — tous les niveaux de cache
 - [[00-moc-ai-engineering|MOC AI Engineering]]

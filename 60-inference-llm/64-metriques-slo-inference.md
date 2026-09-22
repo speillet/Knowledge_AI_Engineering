@@ -81,4 +81,7 @@ Par des **benchmarks de charge** réalistes (distribution des longueurs de promp
 - [[83-gateway-ingress|Ingress & API gateway]] — rate limiting et timeouts
 - [[91-langfuse-observabilite|Langfuse]] — du système à l'application
 - [[121-couts-inference|Coûts d'inférence]] — goodput ↔ coût par token
+- [[67-speculative-decoding|Speculative decoding]] — réduire le TPOT
+- [[68-quantization|Quantization]] — plus de débit et de concurrence par GPU
+- [[93-monitoring-inference|Monitoring de l'inférence]] — les métriques concrètes (vLLM, GPU, usage)
 - [[00-moc-ai-engineering|MOC AI Engineering]]

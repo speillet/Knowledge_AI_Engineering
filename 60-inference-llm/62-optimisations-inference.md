@@ -22,7 +22,7 @@ Un batching **au niveau de l'itération** : les requêtes **entrent et sortent d
 
 Qu'est-ce que la quantization ?
 ?
-Réduire la **précision des poids** (et parfois des activations) : FP16 → **FP8, INT8, INT4**. Moins de VRAM et de bande passante, donc plus rapide, au prix d'une **légère perte de qualité**.
+Réduire la **précision des poids** (et parfois des activations) : FP16 → **FP8, INT8, INT4**. Moins de VRAM et de bande passante, donc plus rapide, au prix d'une **légère perte de qualité** ([[68-quantization|quantization]]).
 
 ---
 
@@ -36,7 +36,7 @@ Le weight-only accélère surtout le **decode**, limité par la mémoire.
 
 Qu'est-ce que le speculative decoding ?
 ?
-Un **petit modèle « brouillon »** (ou des têtes dédiées, ex. EAGLE) propose plusieurs tokens, que le grand modèle **vérifie en une seule passe**. La sortie est **identique** à celle du grand modèle, mais plus rapide.
+Un **petit modèle « brouillon »** (ou des têtes dédiées, ex. EAGLE) propose plusieurs tokens, que le grand modèle **vérifie en une seule passe**. La sortie suit **la même distribution** que le grand modèle seul (identique en greedy), mais plus vite ([[67-speculative-decoding|speculative decoding]]).
 
 ---
 
@@ -74,4 +74,6 @@ Exécuter prefill et decode sur des **pools de GPU séparés**, avec transfert d
 - [[63-guided-generation|Guided generation]] — contraindre la sortie
 - [[65-probabilites-sampling|Probabilités & sampling]] — speculative decoding : même distribution de sortie
 - [[114-reproductibilite-variance|Reproductibilité & variance]] — le batching comme source de non-déterminisme
+- [[67-speculative-decoding|Speculative decoding]] — la technique en détail
+- [[68-quantization|Quantization]] — formats et méthodes en détail
 - [[00-moc-ai-engineering|MOC AI Engineering]]

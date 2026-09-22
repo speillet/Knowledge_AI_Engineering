@@ -64,4 +64,5 @@ Parce que le **GPU est une ressource rare et coûteuse** : son allocation et son
 - [[64-metriques-slo-inference|Métriques & SLO]] — les signaux d'autoscaling
 - [[122-finops-llm|FinOps LLM]] — le coût du GPU idle
 - [[00-index|Index Conteneurs]]
+- [[93-monitoring-inference|Monitoring de l'inférence]] — métriques GPU (DCGM) et signaux d'autoscaling
 - [[00-moc-ai-engineering|MOC AI Engineering]]

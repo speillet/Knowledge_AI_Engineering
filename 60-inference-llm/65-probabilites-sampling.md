@@ -104,4 +104,5 @@ Le speculative decoding modifie-t-il la distribution des sorties ?
 - [[11-prompt-engineering-avance|Prompt engineering]] — self-consistency : plusieurs échantillons, vote majoritaire
 - [[114-reproductibilite-variance|Reproductibilité & variance]] — pourquoi les sorties varient même à température 0
 - [[92-chainforge-evals-prompts|Evals]] — mesurer l'effet des réglages
+- [[67-speculative-decoding|Speculative decoding]] — la règle d'acceptation qui préserve la distribution
 - [[00-moc-ai-engineering|MOC AI Engineering]]

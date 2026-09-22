@@ -25,6 +25,8 @@ Progression recommandée : **utiliser les modèles → construire des architectu
 ## 20 — RAG
 - [[21-rag-fondamentaux|RAG — Fondamentaux]]
 - [[22-rag-avance|RAG — Avancé]]
+- [[23-knowledge-graphs-ontologies|Knowledge graphs & ontologies (GraphRAG, context graph)]]
+- [[24-cognee|Cognee (mémoire en knowledge graph)]]
 
 ## 30 — Agents
 - [[31-agents-fondamentaux|Fondamentaux des agents]]
@@ -35,6 +37,7 @@ Progression recommandée : **utiliser les modèles → construire des architectu
 - [[36-orchestration-agents|Orchestration multi-agents]]
 - [[37-frameworks-agents|Frameworks d'agents (LangChain, LangGraph, CrewAI, ADK)]]
 - [[38-plateformes-agents|Plateformes d'agents]]
+- [[39-memoire-agents|Mémoire des agents]]
 
 ## 40 — Automatisation & frameworks d'agents
 - [[41-automatisation-code-nocode|Automatisation code & no-code (n8n…)]]
@@ -54,6 +57,9 @@ Progression recommandée : **utiliser les modèles → construire des architectu
 - [[63-guided-generation|Guided generation (sorties structurées)]]
 - [[64-metriques-slo-inference|Métriques d'inférence & SLO]]
 - [[65-probabilites-sampling|Probabilités & sampling (température, top-p, logprobs)]]
+- [[66-prefix-caching-radix-attention|Prefix caching & RadixAttention]]
+- [[67-speculative-decoding|Speculative decoding]]
+- [[68-quantization|Quantization (FP8, INT4, AWQ, GPTQ, GGUF)]]
 
 ## 70 — Conteneurs & Infra
 - [[00-index|Index Conteneurs]] — OCI, Docker, Kubernetes, GPU, Apptainer/HPC
@@ -66,6 +72,7 @@ Progression recommandée : **utiliser les modèles → construire des architectu
 ## 90 — Observabilité & Evals
 - [[91-langfuse-observabilite|Langfuse & observabilité LLM]]
 - [[92-chainforge-evals-prompts|ChainForge & évaluation de prompts]]
+- [[93-monitoring-inference|Monitoring de l'inférence & de l'usage]]
 
 ## 100 — Sécurité & guardrails
 - [[101-securite-llm-guardrails|Sécurité LLM & guardrails]]
@@ -79,6 +86,7 @@ Progression recommandée : **utiliser les modèles → construire des architectu
 ## 120 — Coûts & FinOps
 - [[121-couts-inference|Coûts d'inférence]]
 - [[122-finops-llm|FinOps LLM]]
+- [[123-caching-agressif|Caching agressif]]
 
 ## La stack en une chaîne
 ```text

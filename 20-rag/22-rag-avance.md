@@ -71,4 +71,5 @@ Effet **« lost in the middle »** : l'information au milieu du contexte est moi
 - [[101-securite-llm-guardrails|Sécurité LLM]] — injection via documents, ACL
 - [[31-agents-fondamentaux|Agents]] — l'agentic RAG
 - [[32-tool-calling|Tool calling]] — l'agentic RAG appelle des outils
+- [[23-knowledge-graphs-ontologies|Knowledge graphs & ontologies]] — GraphRAG en détail
 - [[00-moc-ai-engineering|MOC AI Engineering]]

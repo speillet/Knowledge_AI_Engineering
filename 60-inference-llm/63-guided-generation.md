@@ -75,4 +75,5 @@ Les **arguments d'un [[32-tool-calling|appel d'outil]]** sont générés sous co
 - [[62-optimisations-inference|Optimisations d'inférence]] — impact sur le décodage
 - [[11-serveurs-inference-llm|Serveurs d'inférence]] — XGrammar intégré à vLLM
 - [[65-probabilites-sampling|Probabilités & sampling]] — la distribution que le masque modifie
+- [[23-knowledge-graphs-ontologies|Knowledge graphs & ontologies]] — extraire entités et relations sous schéma
 - [[00-moc-ai-engineering|MOC AI Engineering]]

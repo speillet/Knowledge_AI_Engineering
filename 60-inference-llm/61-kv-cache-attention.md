@@ -61,4 +61,6 @@ Plus le contexte est long, plus le cache est gros : le **contexte long coûte de
 - [[11-serveurs-inference-llm|Serveurs d'inférence]] — vLLM & PagedAttention
 - [[09-gpu-conteneurs|GPU en conteneur]] — la VRAM sous-jacente
 - [[35-context-engineering|Context engineering]] — maîtriser la taille du contexte
+- [[66-prefix-caching-radix-attention|Prefix caching & RadixAttention]] — la réutilisation du cache en détail
+- [[68-quantization|Quantization]] — quantizer les poids et le cache
 - [[00-moc-ai-engineering|MOC AI Engineering]]

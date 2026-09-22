@@ -85,4 +85,5 @@ Qu'est-ce que le red teaming LLM ?
 - [[81-litellm-api-layer|LiteLLM]] — clés, budgets et rate limits contre la consommation non bornée
 - [[38-plateformes-agents|Plateformes d'agents]] — les guardrails comme brique
 - [[91-langfuse-observabilite|Langfuse]] — monitorer les abus
+- [[39-memoire-agents|Mémoire des agents]] — empoisonnement de la mémoire persistante
 - [[00-moc-ai-engineering|MOC AI Engineering]]
