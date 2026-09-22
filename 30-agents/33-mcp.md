@@ -65,4 +65,5 @@ Donnez des exemples de serveurs MCP courants.
 - [[34-harness-plugins|Harness & plugins]] — le host qui intègre MCP
 - [[38-plateformes-agents|Plateformes d'agents]] — registre de serveurs MCP
 - [[37-frameworks-agents|Frameworks d'agents]] — ADK & A2A côté interop
+- [[115-plateformes-agents-gouvernance|Plateformes d'agents — Architecture & gouvernance]] — autorisation d'entreprise et gateway d'outils
 - [[00-moc-ai-engineering|MOC AI Engineering]]

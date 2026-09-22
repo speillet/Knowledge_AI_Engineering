@@ -104,4 +104,5 @@ Comment déployer et déboguer un graphe LangGraph ?
 - [[41-automatisation-code-nocode|Automatisation]] — durable execution (Temporal)
 - [[91-langfuse-observabilite|Langfuse]] — tracer les exécutions
 - [[39-memoire-agents|Mémoire des agents]] — types de mémoire, écriture et rappel
+- [[38-plateformes-agents|Plateformes d'agents]] — runtimes managés, double texting
 - [[00-moc-ai-engineering|MOC AI Engineering]]

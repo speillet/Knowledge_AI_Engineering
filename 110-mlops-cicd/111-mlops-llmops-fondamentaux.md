@@ -67,4 +67,5 @@ Imposer les **standards** : registry unique, conventions de versioning, [[112-ci
 - [[51-fine-tuning-adaptation|Fine-tuning]] — les adapters comme artefacts
 - [[91-langfuse-observabilite|Langfuse]] — prompts versionnés
 - [[114-reproductibilite-variance|Reproductibilité & variance]] — la reproductibilité en détail
+- [[115-plateformes-agents-gouvernance|Plateformes d'agents — Architecture & gouvernance]] — registre et cycle de vie des agents
 - [[00-moc-ai-engineering|MOC AI Engineering]]

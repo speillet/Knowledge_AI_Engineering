@@ -71,4 +71,5 @@ L'**isolation du contexte** : chaque sous-agent explore dans son propre contexte
 - [[41-automatisation-code-nocode|Automatisation]] — quand un workflow suffit
 - [[45-langgraph-production|LangGraph en production]] — subagents, handoffs, router en pratique
 - [[46-crewai-crews|CrewAI]] — process séquentiel ou hiérarchique
+- [[115-plateformes-agents-gouvernance|Plateformes d'agents — Architecture & gouvernance]] — gouverner une flotte d'agents
 - [[00-moc-ai-engineering|MOC AI Engineering]]

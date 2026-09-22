@@ -67,4 +67,5 @@ Des **seuils sur les scores, refus et latences par segment**, reliés aux [[64-m
 - [[51-fine-tuning-adaptation|Fine-tuning]] — la réponse au drift comportemental
 - [[22-rag-avance|RAG avancé]] — fraîcheur de l'index
 - [[93-monitoring-inference|Monitoring de l'inférence]] — validations et signaux de qualité en production
+- [[115-plateformes-agents-gouvernance|Plateformes d'agents — Architecture & gouvernance]] — SLO et métriques d'un agent
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -86,4 +86,5 @@ Qu'est-ce que le red teaming LLM ?
 - [[38-plateformes-agents|Plateformes d'agents]] — les guardrails comme brique
 - [[91-langfuse-observabilite|Langfuse]] — monitorer les abus
 - [[39-memoire-agents|Mémoire des agents]] — empoisonnement de la mémoire persistante
+- [[115-plateformes-agents-gouvernance|Plateformes d'agents — Architecture & gouvernance]] — identité, politiques d'accès et Top 10 OWASP agentique
 - [[00-moc-ai-engineering|MOC AI Engineering]]

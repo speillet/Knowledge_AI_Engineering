@@ -76,4 +76,5 @@ PR → tests + evals → build image → push registry
 - [[12-kubernetes-gpu-inference|Kubernetes GPU]] — la cible de déploiement
 - [[114-reproductibilite-variance|Reproductibilité & variance]] — tester des sorties variables
 - [[93-monitoring-inference|Monitoring de l'inférence]] — les contrôles avant d'envoyer du trafic
+- [[115-plateformes-agents-gouvernance|Plateformes d'agents — Architecture & gouvernance]] — evals et boucle d'optimisation des agents
 - [[00-moc-ai-engineering|MOC AI Engineering]]

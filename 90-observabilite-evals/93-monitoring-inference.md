@@ -168,4 +168,6 @@ Ils contiennent souvent des **données personnelles ou confidentielles** :
 - [[12-kubernetes-gpu-inference|Kubernetes GPU & inférence]] — autoscaling sur ces signaux
 - [[68-quantization|Quantization]] — valider un modèle quantizé
 - [[67-speculative-decoding|Speculative decoding]] — suivre le taux d'acceptation
+- [[115-plateformes-agents-gouvernance|Plateformes d'agents — Architecture & gouvernance]] — audit et traces des agents
+- [[38-plateformes-agents|Plateformes d'agents]] — l'observabilité fournie par la plateforme
 - [[00-moc-ai-engineering|MOC AI Engineering]]

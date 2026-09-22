@@ -36,7 +36,7 @@ Progression recommandée : **utiliser les modèles → construire des architectu
 - [[35-context-engineering|Context engineering]]
 - [[36-orchestration-agents|Orchestration multi-agents]]
 - [[37-frameworks-agents|Frameworks d'agents (LangChain, LangGraph, CrewAI, ADK)]]
-- [[38-plateformes-agents|Plateformes d'agents]]
+- [[38-plateformes-agents|Plateformes d'agents — Fondamentaux]] (suite senior : [[115-plateformes-agents-gouvernance|architecture & gouvernance]])
 - [[39-memoire-agents|Mémoire des agents]]
 
 ## 40 — Automatisation & frameworks d'agents
@@ -82,6 +82,7 @@ Progression recommandée : **utiliser les modèles → construire des architectu
 - [[112-cicd-modeles|CI/CD des modèles]]
 - [[113-monitoring-drift-feedback|Monitoring, drift & boucle de feedback]]
 - [[114-reproductibilite-variance|Reproductibilité & variance (déterminisme, stats d'evals)]]
+- [[115-plateformes-agents-gouvernance|Plateformes d'agents — Architecture & gouvernance]]
 
 ## 120 — Coûts & FinOps
 - [[121-couts-inference|Coûts d'inférence]]

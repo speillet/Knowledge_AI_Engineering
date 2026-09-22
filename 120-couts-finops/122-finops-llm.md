@@ -63,4 +63,5 @@ Suivre les **unit economics par produit**, imposer les **standards d'attribution
 - [[38-plateformes-agents|Plateformes d'agents]] — la gouvernance à l'échelle
 - [[123-caching-agressif|Caching agressif]] — les caches en pratique
 - [[93-monitoring-inference|Monitoring de l'inférence]] — les métriques d'usage par équipe
+- [[115-plateformes-agents-gouvernance|Plateformes d'agents — Architecture & gouvernance]] — le coût d'une flotte d'agents
 - [[00-moc-ai-engineering|MOC AI Engineering]]

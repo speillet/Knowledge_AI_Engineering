@@ -4,7 +4,7 @@ Un vault [Obsidian](https://obsidian.md) de **fiches de révision (flashcards) e
 
 Chaque fiche traite **un concept** en une dizaine de cartes question/réponse. Les fiches sont reliées entre elles par des liens, pour qu'on puisse passer d'un sujet à ses voisins, et elles se révisent en **répétition espacée**.
 
-**État au 22 septembre 2026** : 58 fiches et 580 cartes, réparties en 12 sections.
+**État au 22 septembre 2026** : 59 fiches et 609 cartes, réparties en 12 sections.
 
 ---
 
@@ -144,7 +144,7 @@ Deux sujets traversent toute la stack : l'**observabilité** (traces, coûts, ev
 - [Context engineering](30-agents/35-context-engineering.md) : le contexte comme budget, context rot, compaction, mémoire court et long terme, sous-agents, prompt caching, contexte chargé au besoin (just-in-time).
 - [Orchestration multi-agents](30-agents/36-orchestration-agents.md) : orchestrator-workers, supervisor, handoffs, evaluator-optimizer, état partagé, coût du multi-agent, protocole A2A.
 - [Frameworks d'agents](30-agents/37-frameworks-agents.md) : LangChain, LangGraph, CrewAI, Google ADK, OpenAI Agents SDK, Claude Agent SDK, LlamaIndex, framework ou code maison.
-- [Plateformes d'agents](30-agents/38-plateformes-agents.md) : différence avec un framework, runtime managé, registre MCP, identité des agents, offres cloud et open source, build ou buy.
+- [Plateformes d'agents — Fondamentaux](30-agents/38-plateformes-agents.md) : différence avec un framework, briques, niveaux d'abstraction (API, runtime, harness managé), offres cloud et des fournisseurs de modèles, open source, runtime et double texting, sandbox, gateway d'outils, registre, identité, mémoire, observabilité, evals, protocoles (MCP, A2A), build ou buy.
 - [Mémoire des agents](30-agents/39-memoire-agents.md) : mémoire de travail, sémantique, épisodique et procédurale, thread ou long terme, écriture pendant ou après la conversation, consolidation, score de rappel, réflexion, faits qui changent, stockage, Letta, outils, risques, évaluation.
 
 ### 40 — Automatisation & frameworks d'agents
@@ -213,6 +213,7 @@ Automatiser des processus, soit avec des outils de workflow, soit avec des agent
 - [CI/CD des modèles](110-mlops-cicd/112-cicd-modeles.md) : eval gates, artefact déployé, blue/green et canary, shadow deployment, rollback, GitOps, tests d'une app LLM, prompts en CI, pipeline complet.
 - [Monitoring, drift & boucle de feedback](110-mlops-cicd/113-monitoring-drift-feedback.md) : data drift et concept drift, drift d'une app LLM et d'un RAG, qualité en production, boucle de feedback, quand ré-entraîner, mises à jour des modèles API, alertes.
 - [Reproductibilité & variance](110-mlops-cicd/114-reproductibilite-variance.md) : non-déterminisme à température 0, invariance au batch, seed, appel rejouable, tests sur des sorties variables, erreur standard et intervalles de confiance, comparaison appariée, pass@k et pass^k, variance du LLM-as-judge, fine-tuning reproductible.
+- [Plateformes d'agents — Architecture & gouvernance](110-mlops-cicd/115-plateformes-agents-gouvernance.md) : plateforme interne (paved road), plan de contrôle et plan d'exécution, architecture de référence, séparation cerveau, mains et session, exécution durable, isolation multi-tenant, identité déléguée ou autonome, standards d'identité, moteur de politiques, human-in-the-loop, registre et cycle de vie, Top 10 OWASP agentique, rayon d'impact et kill switch, audit, SLO, evals continues, coûts, AI Act, lock-in, critères de choix.
 
 ### 120 — Coûts & FinOps
 
