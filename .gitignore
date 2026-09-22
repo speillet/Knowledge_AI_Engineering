@@ -1,0 +1,9 @@
+# Obsidian : état d'interface propre à chaque machine et plugins tiers
+# (le README explique comment installer Spaced Repetition)
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/plugins/
+
+# Outillage local
+.kilo/
+.claude/
