@@ -74,4 +74,5 @@ PR → tests + evals → build image → push registry
 - [[64-metriques-slo-inference|Métriques & SLO]] — le juge du canary
 - [[83-gateway-ingress|Ingress & gateway]] — le découpage du trafic
 - [[12-kubernetes-gpu-inference|Kubernetes GPU]] — la cible de déploiement
+- [[114-reproductibilite-variance|Reproductibilité & variance]] — tester des sorties variables
 - [[00-moc-ai-engineering|MOC AI Engineering]]

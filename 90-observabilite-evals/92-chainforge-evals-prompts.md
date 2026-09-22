@@ -50,4 +50,5 @@ Sans mesure, impossible de **choisir un modèle, [[82-routing-llm|router]] ou va
 - [[63-guided-generation|Guided generation]] — sorties structurées plus faciles à évaluer
 - [[21-rag-fondamentaux|RAG]] — évaluer le pipeline de retrieval
 - [[112-cicd-modeles|CI/CD des modèles]] — les evals comme gates
+- [[114-reproductibilite-variance|Reproductibilité & variance]] — intervalles de confiance, pass@k
 - [[00-moc-ai-engineering|MOC AI Engineering]]

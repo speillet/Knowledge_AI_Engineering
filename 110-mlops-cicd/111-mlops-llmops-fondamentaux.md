@@ -66,4 +66,5 @@ Imposer les **standards** : registry unique, conventions de versioning, [[112-ci
 - [[10-images-modeles-poids|Images & poids]] — model registry vs container registry
 - [[51-fine-tuning-adaptation|Fine-tuning]] — les adapters comme artefacts
 - [[91-langfuse-observabilite|Langfuse]] — prompts versionnés
+- [[114-reproductibilite-variance|Reproductibilité & variance]] — la reproductibilité en détail
 - [[00-moc-ai-engineering|MOC AI Engineering]]

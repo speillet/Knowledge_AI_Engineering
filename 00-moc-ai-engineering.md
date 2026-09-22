@@ -53,6 +53,7 @@ Progression recommandée : **utiliser les modèles → construire des architectu
 - [[62-optimisations-inference|Optimisations d'inférence]]
 - [[63-guided-generation|Guided generation (sorties structurées)]]
 - [[64-metriques-slo-inference|Métriques d'inférence & SLO]]
+- [[65-probabilites-sampling|Probabilités & sampling (température, top-p, logprobs)]]
 
 ## 70 — Conteneurs & Infra
 - [[00-index|Index Conteneurs]] — OCI, Docker, Kubernetes, GPU, Apptainer/HPC
@@ -73,6 +74,7 @@ Progression recommandée : **utiliser les modèles → construire des architectu
 - [[111-mlops-llmops-fondamentaux|MLOps & LLMOps — Fondamentaux]]
 - [[112-cicd-modeles|CI/CD des modèles]]
 - [[113-monitoring-drift-feedback|Monitoring, drift & boucle de feedback]]
+- [[114-reproductibilite-variance|Reproductibilité & variance (déterminisme, stats d'evals)]]
 
 ## 120 — Coûts & FinOps
 - [[121-couts-inference|Coûts d'inférence]]

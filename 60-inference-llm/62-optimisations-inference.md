@@ -72,4 +72,6 @@ Exécuter prefill et decode sur des **pools de GPU séparés**, avec transfert d
 - [[51-fine-tuning-adaptation|Fine-tuning]] — quantization et QLoRA
 - [[12-kubernetes-gpu-inference|Kubernetes GPU]] — multi-GPU en cluster
 - [[63-guided-generation|Guided generation]] — contraindre la sortie
+- [[65-probabilites-sampling|Probabilités & sampling]] — speculative decoding : même distribution de sortie
+- [[114-reproductibilite-variance|Reproductibilité & variance]] — le batching comme source de non-déterminisme
 - [[00-moc-ai-engineering|MOC AI Engineering]]

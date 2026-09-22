@@ -67,4 +67,5 @@ Prompt **fourre-tout**, exemples **contradictoires** avec les instructions, cont
 - [[63-guided-generation|Guided generation]] — garantir plutôt que demander
 - [[91-langfuse-observabilite|Langfuse]] — prompts versionnés
 - [[21-rag-fondamentaux|RAG]] — quand le prompt ne suffit plus
+- [[65-probabilites-sampling|Probabilités & sampling]] — température, top-p et self-consistency
 - [[00-moc-ai-engineering|MOC AI Engineering]]
