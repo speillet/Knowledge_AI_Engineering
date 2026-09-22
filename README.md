@@ -11,29 +11,28 @@ Chaque fiche traite **un concept** en une dizaine de cartes question/réponse. L
 ## Structure du repo
 
 ```text
-Knowledge/
+Knowledge_AI_Engineering/
 ├── README.md
-├── .obsidian/                       # configuration Obsidian
-└── AI Engineering/
-    ├── 00-moc-ai-engineering.md     # carte racine : parcours de lecture + sommaire
-    ├── 10-prompt-engineering/
-    ├── 20-rag/
-    ├── 30-agents/
-    ├── 40-automatisation/           # workflows + LangChain, LangGraph, CrewAI
-    ├── 50-fine-tuning/
-    ├── 60-inference-llm/
-    ├── 70-containers-infra/         # contient son propre index : 00-index.md
-    ├── 80-api-layer-routing/
-    ├── 90-observabilite-evals/
-    ├── 100-securite-guardrails/
-    ├── 110-mlops-cicd/
-    └── 120-couts-finops/
+├── .obsidian/                   # configuration Obsidian
+├── 00-moc-ai-engineering.md     # carte racine : parcours de lecture + sommaire
+├── 10-prompt-engineering/
+├── 20-rag/
+├── 30-agents/
+├── 40-automatisation/           # workflows + LangChain, LangGraph, CrewAI
+├── 50-fine-tuning/
+├── 60-inference-llm/
+├── 70-containers-infra/         # contient son propre index : 00-index.md
+├── 80-api-layer-routing/
+├── 90-observabilite-evals/
+├── 100-securite-guardrails/
+├── 110-mlops-cicd/
+└── 120-couts-finops/
 ```
 
 - Chaque **section** est un dossier numéroté par dizaine (`20-rag`, `30-agents`…).
 - Chaque **fiche** porte un numéro qui reprend celui de sa section : `21-rag-fondamentaux.md` et `22-rag-avance.md` sont dans `20-rag/`.
 - Exception : la section conteneurs garde sa propre numérotation, de `00-index.md` à `13-apptainer-inference-hpc.md`.
-- Le point d'entrée est le **MOC** (Map of Content), [00-moc-ai-engineering.md](AI%20Engineering/00-moc-ai-engineering.md).
+- Le point d'entrée est le **MOC** (Map of Content), [00-moc-ai-engineering.md](00-moc-ai-engineering.md).
 
 ---
 
@@ -42,8 +41,8 @@ Knowledge/
 ### 1. Ouvrir le vault
 
 1. Installer [Obsidian](https://obsidian.md).
-2. Choisir **Open folder as vault** et sélectionner le dossier `Knowledge`.
-3. Ouvrir [00-moc-ai-engineering.md](AI%20Engineering/00-moc-ai-engineering.md).
+2. Choisir **Open folder as vault** et sélectionner le dossier du dépôt (`Knowledge_AI_Engineering` après un `git clone`).
+3. Ouvrir [00-moc-ai-engineering.md](00-moc-ai-engineering.md).
 
 ### 2. Lire et naviguer
 
@@ -127,89 +126,89 @@ Deux sujets traversent toute la stack : l'**observabilité** (traces, coûts, ev
 
 ### 10 — Prompt engineering
 
-- [Prompt engineering avancé](AI%20Engineering/10-prompt-engineering/11-prompt-engineering-avance.md) : system prompt et user prompt, few-shot, chain-of-thought, self-consistency, délimiteurs, meta-prompting, prompts versionnés comme du code, anti-patterns.
+- [Prompt engineering avancé](10-prompt-engineering/11-prompt-engineering-avance.md) : system prompt et user prompt, few-shot, chain-of-thought, self-consistency, délimiteurs, meta-prompting, prompts versionnés comme du code, anti-patterns.
 
 ### 20 — RAG
 
-- [RAG — Fondamentaux](AI%20Engineering/20-rag/21-rag-fondamentaux.md) : RAG ou fine-tuning, pipeline d'ingestion et de requête, stratégies de chunking, embeddings, bases vectorielles (HNSW, pgvector, Qdrant), top-k, grounding et citations, recall@k.
-- [RAG — Avancé](AI%20Engineering/20-rag/22-rag-avance.md) : recherche hybride (BM25, RRF), reranking, query rewriting, HyDE, filtrage par métadonnées et ACL, GraphRAG, agentic RAG, triade d'évaluation (RAGAS), « lost in the middle ».
+- [RAG — Fondamentaux](20-rag/21-rag-fondamentaux.md) : RAG ou fine-tuning, pipeline d'ingestion et de requête, stratégies de chunking, embeddings, bases vectorielles (HNSW, pgvector, Qdrant), top-k, grounding et citations, recall@k.
+- [RAG — Avancé](20-rag/22-rag-avance.md) : recherche hybride (BM25, RRF), reranking, query rewriting, HyDE, filtrage par métadonnées et ACL, GraphRAG, agentic RAG, triade d'évaluation (RAGAS), « lost in the middle ».
 
 ### 30 — Agents
 
-- [Fondamentaux des agents](AI%20Engineering/30-agents/31-agents-fondamentaux.md) : workflow ou agent, pattern ReAct, composants d'un agent, human-in-the-loop, risques, conditions d'arrêt.
-- [Tool calling](AI%20Engineering/30-agents/32-tool-calling.md) : déclaration par JSON Schema, boucle d'appel, parallel tool calls, gestion des erreurs, rédaction des descriptions d'outils.
-- [MCP — Model Context Protocol](AI%20Engineering/30-agents/33-mcp.md) : problème M×N, host, client et serveur, tools, resources et prompts, transports stdio et HTTP, risques.
-- [Harness & plugins](AI%20Engineering/30-agents/34-harness-plugins.md) : rôle du harness, plugins, skills, hooks, permissions, sandbox, fichiers mémoire.
-- [Context engineering](AI%20Engineering/30-agents/35-context-engineering.md) : le contexte comme budget, context rot, compaction, mémoire court et long terme, sous-agents, prompt caching, contexte chargé au besoin (just-in-time).
-- [Orchestration multi-agents](AI%20Engineering/30-agents/36-orchestration-agents.md) : orchestrator-workers, supervisor, handoffs, evaluator-optimizer, état partagé, coût du multi-agent, protocole A2A.
-- [Frameworks d'agents](AI%20Engineering/30-agents/37-frameworks-agents.md) : LangChain, LangGraph, CrewAI, Google ADK, OpenAI Agents SDK, Claude Agent SDK, LlamaIndex, framework ou code maison.
-- [Plateformes d'agents](AI%20Engineering/30-agents/38-plateformes-agents.md) : différence avec un framework, runtime managé, registre MCP, identité des agents, offres cloud et open source, build ou buy.
+- [Fondamentaux des agents](30-agents/31-agents-fondamentaux.md) : workflow ou agent, pattern ReAct, composants d'un agent, human-in-the-loop, risques, conditions d'arrêt.
+- [Tool calling](30-agents/32-tool-calling.md) : déclaration par JSON Schema, boucle d'appel, parallel tool calls, gestion des erreurs, rédaction des descriptions d'outils.
+- [MCP — Model Context Protocol](30-agents/33-mcp.md) : problème M×N, host, client et serveur, tools, resources et prompts, transports stdio et HTTP, risques.
+- [Harness & plugins](30-agents/34-harness-plugins.md) : rôle du harness, plugins, skills, hooks, permissions, sandbox, fichiers mémoire.
+- [Context engineering](30-agents/35-context-engineering.md) : le contexte comme budget, context rot, compaction, mémoire court et long terme, sous-agents, prompt caching, contexte chargé au besoin (just-in-time).
+- [Orchestration multi-agents](30-agents/36-orchestration-agents.md) : orchestrator-workers, supervisor, handoffs, evaluator-optimizer, état partagé, coût du multi-agent, protocole A2A.
+- [Frameworks d'agents](30-agents/37-frameworks-agents.md) : LangChain, LangGraph, CrewAI, Google ADK, OpenAI Agents SDK, Claude Agent SDK, LlamaIndex, framework ou code maison.
+- [Plateformes d'agents](30-agents/38-plateformes-agents.md) : différence avec un framework, runtime managé, registre MCP, identité des agents, offres cloud et open source, build ou buy.
 
 ### 40 — Automatisation & frameworks d'agents
 
 Automatiser des processus, soit avec des outils de workflow, soit avec des agents écrits en code. Chaque framework a deux fiches : ses bases, puis son usage avancé ou en production.
 
-- [Automatisation code & no-code](AI%20Engineering/40-automatisation/41-automatisation-code-nocode.md) : n8n, triggers, Zapier et Make, Airflow, Prefect et Temporal, durable execution, limites du no-code.
-- [LangChain — Fondamentaux](AI%20Engineering/40-automatisation/42-langchain-fondamentaux.md) : paquets de la v1, `init_chat_model`, messages, outils `@tool` et `bind_tools`, sorties structurées, Runnables et LCEL, briques RAG, LangSmith.
-- [LangChain — Agents & middleware](AI%20Engineering/40-automatisation/43-langchain-agents.md) : `create_agent`, mémoire par checkpointer et `thread_id`, `response_format`, hooks de middleware, middlewares fournis (human-in-the-loop, résumé, fallback, limites), runtime context, Deep Agents.
-- [LangGraph — Fondamentaux](AI%20Engineering/40-automatisation/44-langgraph-fondamentaux.md) : `StateGraph`, state et reducers, `MessagesState`, nodes et edges conditionnelles, boucle ReAct en graphe, super-steps, `Send` (map-reduce), `Command`, Functional API.
-- [LangGraph — Production](AI%20Engineering/40-automatisation/45-langgraph-production.md) : checkpointers, threads, `interrupt` et `Command(resume=...)`, time travel, Store long terme, durable execution, streaming, subgraphs, patterns multi-agents, déploiement.
-- [CrewAI — Crews](AI%20Engineering/40-automatisation/46-crewai-crews.md) : agents (role, goal, backstory), tâches, process séquentiel ou hiérarchique, délégation, sorties structurées, guardrails de tâche, LLM et outils, mémoire unifiée, structure d'un projet.
-- [CrewAI — Flows](AI%20Engineering/40-automatisation/47-crewai-flows.md) : `@start`, `@listen`, `@router`, état structuré, `@persist`, `@human_feedback`, mémoire, CLI, crew ou flow, Flows ou LangGraph.
+- [Automatisation code & no-code](40-automatisation/41-automatisation-code-nocode.md) : n8n, triggers, Zapier et Make, Airflow, Prefect et Temporal, durable execution, limites du no-code.
+- [LangChain — Fondamentaux](40-automatisation/42-langchain-fondamentaux.md) : paquets de la v1, `init_chat_model`, messages, outils `@tool` et `bind_tools`, sorties structurées, Runnables et LCEL, briques RAG, LangSmith.
+- [LangChain — Agents & middleware](40-automatisation/43-langchain-agents.md) : `create_agent`, mémoire par checkpointer et `thread_id`, `response_format`, hooks de middleware, middlewares fournis (human-in-the-loop, résumé, fallback, limites), runtime context, Deep Agents.
+- [LangGraph — Fondamentaux](40-automatisation/44-langgraph-fondamentaux.md) : `StateGraph`, state et reducers, `MessagesState`, nodes et edges conditionnelles, boucle ReAct en graphe, super-steps, `Send` (map-reduce), `Command`, Functional API.
+- [LangGraph — Production](40-automatisation/45-langgraph-production.md) : checkpointers, threads, `interrupt` et `Command(resume=...)`, time travel, Store long terme, durable execution, streaming, subgraphs, patterns multi-agents, déploiement.
+- [CrewAI — Crews](40-automatisation/46-crewai-crews.md) : agents (role, goal, backstory), tâches, process séquentiel ou hiérarchique, délégation, sorties structurées, guardrails de tâche, LLM et outils, mémoire unifiée, structure d'un projet.
+- [CrewAI — Flows](40-automatisation/47-crewai-flows.md) : `@start`, `@listen`, `@router`, état structuré, `@persist`, `@human_feedback`, mémoire, CLI, crew ou flow, Flows ou LangGraph.
 
 ### 50 — Fine-tuning
 
-- [Fine-tuning & adaptation](AI%20Engineering/50-fine-tuning/51-fine-tuning-adaptation.md) : quand fine-tuner, SFT, full fine-tuning ou PEFT, LoRA, QLoRA, RLHF, DPO, distillation, multi-LoRA, catastrophic forgetting.
+- [Fine-tuning & adaptation](50-fine-tuning/51-fine-tuning-adaptation.md) : quand fine-tuner, SFT, full fine-tuning ou PEFT, LoRA, QLoRA, RLHF, DPO, distillation, multi-LoRA, catastrophic forgetting.
 
 ### 60 — Inférence LLM
 
-- [KV cache & attention](AI%20Engineering/60-inference-llm/61-kv-cache-attention.md) : taille du cache, PagedAttention, prefix caching, quantization du cache, coût des contextes longs.
-- [Optimisations d'inférence](AI%20Engineering/60-inference-llm/62-optimisations-inference.md) : prefill et decode, continuous batching, quantization (AWQ, GPTQ, FP8), speculative decoding, FlashAttention, parallélisme tensor et pipeline, chunked prefill, désagrégation prefill/decode.
-- [Guided generation](AI%20Engineering/60-inference-llm/63-guided-generation.md) : masquage des logits, JSON Schema, regex et grammaires, XGrammar et Outlines, structured outputs des API, validation métier.
-- [Métriques d'inférence & SLO](AI%20Engineering/60-inference-llm/64-metriques-slo-inference.md) : TTFT, TPOT, throughput, goodput, percentiles, définition d'un SLO, signaux d'autoscaling, benchmarks.
+- [KV cache & attention](60-inference-llm/61-kv-cache-attention.md) : taille du cache, PagedAttention, prefix caching, quantization du cache, coût des contextes longs.
+- [Optimisations d'inférence](60-inference-llm/62-optimisations-inference.md) : prefill et decode, continuous batching, quantization (AWQ, GPTQ, FP8), speculative decoding, FlashAttention, parallélisme tensor et pipeline, chunked prefill, désagrégation prefill/decode.
+- [Guided generation](60-inference-llm/63-guided-generation.md) : masquage des logits, JSON Schema, regex et grammaires, XGrammar et Outlines, structured outputs des API, validation métier.
+- [Métriques d'inférence & SLO](60-inference-llm/64-metriques-slo-inference.md) : TTFT, TPOT, throughput, goodput, percentiles, définition d'un SLO, signaux d'autoscaling, benchmarks.
 
 ### 70 — Conteneurs & infra
 
-- [Index Conteneurs](AI%20Engineering/70-containers-infra/00-index.md) : sommaire des 13 fiches de la section, chaînes à retenir, et une carte sur l'intérêt des conteneurs pour servir des modèles.
-- [OCI](AI%20Engineering/70-containers-infra/01-oci.md) : rôle de l'Open Container Initiative, spécifications image, runtime et distribution.
-- [Docker, images & registries](AI%20Engineering/70-containers-infra/02-docker-images-registries.md) : rôle de Docker et différence avec OCI, image ou conteneur, compatibilité « Docker/OCI », registries et workflow push/pull.
-- [containerd & runc](AI%20Engineering/70-containers-infra/03-containerd-runc.md) : rôle de containerd, rôle de runc, relation entre les deux.
-- [Kubernetes, kubelet & CRI](AI%20Engineering/70-containers-infra/04-kubernetes-kubelet-cri.md) : Pod, Deployment, Service, control plane, kubelet, CRI (containerd, CRI-O), scheduler, requests et limits, probes.
-- [Docker & Kubernetes](AI%20Engineering/70-containers-infra/05-docker-kubernetes.md) : dockershim et sa suppression, architecture actuelle, images Docker exécutées sans Docker Engine.
-- [Apptainer & Singularity](AI%20Engineering/70-containers-infra/06-apptainer-singularity.md) : usage en HPC, filiation Singularity → Apptainer, format SIF, import d'images Docker, `--nv`.
-- [Synthèse conteneurs](AI%20Engineering/70-containers-infra/07-synthese-containers.md) : cartes de révision transverses (OCI, CRI et SIF, chaînes Kubernetes et image, accès GPU, serveurs d'inférence, stockage des poids).
-- [Primitives Linux & fondamentaux Docker](AI%20Engineering/70-containers-infra/08-linux-primitives-docker-fondamentaux.md) : namespaces et cgroups, conteneur ou VM, layers, ordre du Dockerfile et cache, volumes et bind mounts, port mapping.
-- [GPU en conteneur](AI%20Engineering/70-containers-infra/09-gpu-conteneurs.md) : NVIDIA Container Toolkit, driver et CUDA, images CUDA, GPU Operator, Apptainer `--nv`, ROCm.
-- [Images & poids de modèles](AI%20Engineering/70-containers-infra/10-images-modeles-poids.md) : poids dans l'image ou séparés, cold start, safetensors ou pickle, GGUF, modèles distribués comme artefacts OCI.
-- [Serveurs d'inférence LLM](AI%20Engineering/70-containers-infra/11-serveurs-inference-llm.md) : vLLM, API compatible OpenAI, multi-LoRA, SGLang, TensorRT-LLM et Triton, TGI, llama.cpp et Ollama.
-- [Kubernetes GPU & inférence](AI%20Engineering/70-containers-infra/12-kubernetes-gpu-inference.md) : device plugin, ressource `nvidia.com/gpu`, MIG, time-slicing, KServe, autoscaling (HPA, KEDA).
-- [Apptainer & inférence HPC](AI%20Engineering/70-containers-infra/13-apptainer-inference-hpc.md) : Apptainer ou Docker en HPC, modèle de sécurité, intégration Slurm, `--nv`, poids montés depuis le système de fichiers partagé, images SIF.
+- [Index Conteneurs](70-containers-infra/00-index.md) : sommaire des 13 fiches de la section, chaînes à retenir, et une carte sur l'intérêt des conteneurs pour servir des modèles.
+- [OCI](70-containers-infra/01-oci.md) : rôle de l'Open Container Initiative, spécifications image, runtime et distribution.
+- [Docker, images & registries](70-containers-infra/02-docker-images-registries.md) : rôle de Docker et différence avec OCI, image ou conteneur, compatibilité « Docker/OCI », registries et workflow push/pull.
+- [containerd & runc](70-containers-infra/03-containerd-runc.md) : rôle de containerd, rôle de runc, relation entre les deux.
+- [Kubernetes, kubelet & CRI](70-containers-infra/04-kubernetes-kubelet-cri.md) : Pod, Deployment, Service, control plane, kubelet, CRI (containerd, CRI-O), scheduler, requests et limits, probes.
+- [Docker & Kubernetes](70-containers-infra/05-docker-kubernetes.md) : dockershim et sa suppression, architecture actuelle, images Docker exécutées sans Docker Engine.
+- [Apptainer & Singularity](70-containers-infra/06-apptainer-singularity.md) : usage en HPC, filiation Singularity → Apptainer, format SIF, import d'images Docker, `--nv`.
+- [Synthèse conteneurs](70-containers-infra/07-synthese-containers.md) : cartes de révision transverses (OCI, CRI et SIF, chaînes Kubernetes et image, accès GPU, serveurs d'inférence, stockage des poids).
+- [Primitives Linux & fondamentaux Docker](70-containers-infra/08-linux-primitives-docker-fondamentaux.md) : namespaces et cgroups, conteneur ou VM, layers, ordre du Dockerfile et cache, volumes et bind mounts, port mapping.
+- [GPU en conteneur](70-containers-infra/09-gpu-conteneurs.md) : NVIDIA Container Toolkit, driver et CUDA, images CUDA, GPU Operator, Apptainer `--nv`, ROCm.
+- [Images & poids de modèles](70-containers-infra/10-images-modeles-poids.md) : poids dans l'image ou séparés, cold start, safetensors ou pickle, GGUF, modèles distribués comme artefacts OCI.
+- [Serveurs d'inférence LLM](70-containers-infra/11-serveurs-inference-llm.md) : vLLM, API compatible OpenAI, multi-LoRA, SGLang, TensorRT-LLM et Triton, TGI, llama.cpp et Ollama.
+- [Kubernetes GPU & inférence](70-containers-infra/12-kubernetes-gpu-inference.md) : device plugin, ressource `nvidia.com/gpu`, MIG, time-slicing, KServe, autoscaling (HPA, KEDA).
+- [Apptainer & inférence HPC](70-containers-infra/13-apptainer-inference-hpc.md) : Apptainer ou Docker en HPC, modèle de sécurité, intégration Slurm, `--nv`, poids montés depuis le système de fichiers partagé, images SIF.
 
 ### 80 — API layer & routing
 
-- [LiteLLM (API layer)](AI%20Engineering/80-api-layer-routing/81-litellm-api-layer.md) : SDK ou proxy, virtual keys, budgets, rate limits, fallbacks, load balancing, callbacks d'observabilité.
-- [Routing LLM](AI%20Engineering/80-api-layer-routing/82-routing-llm.md) : routage statique, par règles ou sémantique, RouteLLM, cascade, routage selon la charge, cache sémantique.
-- [Ingress & API gateway](AI%20Engineering/80-api-layer-routing/83-gateway-ingress.md) : Ingress controller, TLS, Gateway API, rate limiting, streaming SSE.
+- [LiteLLM (API layer)](80-api-layer-routing/81-litellm-api-layer.md) : SDK ou proxy, virtual keys, budgets, rate limits, fallbacks, load balancing, callbacks d'observabilité.
+- [Routing LLM](80-api-layer-routing/82-routing-llm.md) : routage statique, par règles ou sémantique, RouteLLM, cascade, routage selon la charge, cache sémantique.
+- [Ingress & API gateway](80-api-layer-routing/83-gateway-ingress.md) : Ingress controller, TLS, Gateway API, rate limiting, streaming SSE.
 
 ### 90 — Observabilité & evals
 
-- [Langfuse & observabilité LLM](AI%20Engineering/90-observabilite-evals/91-langfuse-observabilite.md) : traces, spans et generations, sessions, prompt management, scores, LLM-as-judge, datasets.
-- [ChainForge & évaluation de prompts](AI%20Engineering/90-observabilite-evals/92-chainforge-evals-prompts.md) : comparer prompts et modèles, golden dataset, evals automatiques, tests de régression.
+- [Langfuse & observabilité LLM](90-observabilite-evals/91-langfuse-observabilite.md) : traces, spans et generations, sessions, prompt management, scores, LLM-as-judge, datasets.
+- [ChainForge & évaluation de prompts](90-observabilite-evals/92-chainforge-evals-prompts.md) : comparer prompts et modèles, golden dataset, evals automatiques, tests de régression.
 
 ### 100 — Sécurité & guardrails
 
-- [Sécurité LLM & guardrails](AI%20Engineering/100-securite-guardrails/101-securite-llm-guardrails.md) : OWASP Top 10 LLM, prompt injection directe et indirecte, « lethal trifecta », exfiltration, excessive agency, guardrails (Llama Guard, NeMo Guardrails), red teaming.
+- [Sécurité LLM & guardrails](100-securite-guardrails/101-securite-llm-guardrails.md) : OWASP Top 10 LLM, prompt injection directe et indirecte, « lethal trifecta », exfiltration, excessive agency, guardrails (Llama Guard, NeMo Guardrails), red teaming.
 
 ### 110 — MLOps & CI/CD
 
-- [MLOps & LLMOps — Fondamentaux](AI%20Engineering/110-mlops-cicd/111-mlops-llmops-fondamentaux.md) : DevOps ou MLOps, spécificités du LLMOps, ce qu'il faut versionner, model registry, lineage, reproductibilité, environnements dev/staging/prod, rôle du Lead.
-- [CI/CD des modèles](AI%20Engineering/110-mlops-cicd/112-cicd-modeles.md) : eval gates, artefact déployé, blue/green et canary, shadow deployment, rollback, GitOps, tests d'une app LLM, prompts en CI, pipeline complet.
-- [Monitoring, drift & boucle de feedback](AI%20Engineering/110-mlops-cicd/113-monitoring-drift-feedback.md) : data drift et concept drift, drift d'une app LLM et d'un RAG, qualité en production, boucle de feedback, quand ré-entraîner, mises à jour des modèles API, alertes.
+- [MLOps & LLMOps — Fondamentaux](110-mlops-cicd/111-mlops-llmops-fondamentaux.md) : DevOps ou MLOps, spécificités du LLMOps, ce qu'il faut versionner, model registry, lineage, reproductibilité, environnements dev/staging/prod, rôle du Lead.
+- [CI/CD des modèles](110-mlops-cicd/112-cicd-modeles.md) : eval gates, artefact déployé, blue/green et canary, shadow deployment, rollback, GitOps, tests d'une app LLM, prompts en CI, pipeline complet.
+- [Monitoring, drift & boucle de feedback](110-mlops-cicd/113-monitoring-drift-feedback.md) : data drift et concept drift, drift d'une app LLM et d'un RAG, qualité en production, boucle de feedback, quand ré-entraîner, mises à jour des modèles API, alertes.
 
 ### 120 — Coûts & FinOps
 
-- [Coûts d'inférence](AI%20Engineering/120-couts-finops/121-couts-inference.md) : structure du coût d'un appel, prix input et output, prompt caching, coût du self-hosting, break-even API ou self-host, batch API, leviers techniques, contexte long, unit economics, GPU idle.
-- [FinOps LLM](AI%20Engineering/120-couts-finops/122-finops-llm.md) : visibilité des coûts, attribution aux équipes, budgets et garde-fous, routage comme premier levier, caches, pratiques GPU, arbitrage coût-qualité-latence, rôle du Lead.
+- [Coûts d'inférence](120-couts-finops/121-couts-inference.md) : structure du coût d'un appel, prix input et output, prompt caching, coût du self-hosting, break-even API ou self-host, batch API, leviers techniques, contexte long, unit economics, GPU idle.
+- [FinOps LLM](120-couts-finops/122-finops-llm.md) : visibilité des coûts, attribution aux équipes, budgets et garde-fous, routage comme premier levier, caches, pratiques GPU, arbitrage coût-qualité-latence, rôle du Lead.
 
 ---
 
