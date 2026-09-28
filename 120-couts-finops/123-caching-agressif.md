@@ -1,5 +1,6 @@
 # Caching agressif — Flashcards
 Tags: #flashcards #ai-engineering #finops #caching #couts #llm
+Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 
 Qu'est-ce que le caching agressif pour une application LLM ?
 ?
@@ -19,6 +20,19 @@ Comment fonctionne le prompt caching chez Anthropic ?
 - **TTL de 5 minutes** par défaut, rafraîchi à chaque lecture ; **1 heure** en option
 - Écriture : **1,25×** le prix d'entrée (TTL 5 min) ou **2×** (1 h) ; lecture : **≈ 0,1×**
 - Rentable **dès la 2e requête** avec le TTL de 5 minutes
+
+```python
+messages = [
+  {"role": "system", "content": [
+      {"type": "text", "text": SYSTEM_PROMPT},          # stable
+      {"type": "text", "text": DOC_REFERENCE,
+       "cache_control": {"type": "ephemeral"}},         # ← point de cache ici
+  ]},
+  *historique,                                          # append-only
+  {"role": "user", "content": question},                # variable, à la fin
+]
+```
+Le point de cache se place **à la fin de la partie partagée**. Dans la réponse, `usage.cache_read_input_tokens` dit ce qui a réellement été réutilisé.
 
 D'autres fournisseurs cachent automatiquement les longs préfixes (ex. OpenAI).
 
@@ -94,6 +108,44 @@ Comment piloter le caching ?
 - Suivre le **taux de hit** (tokens lus en cache / tokens d'entrée) et le **coût par tâche**
 - **Alerter** sur une chute du taux de hit : c'est typiquement une régression silencieuse après un changement du prompt
 - Un **test d'intégration** : une 2e requête identique doit montrer des tokens lus en cache
+
+---
+
+## Mises en situation
+
+Mise en situation : le coût de ton agent a doublé du jour au lendemain, sans hausse du trafic, et aucune erreur n'apparaît. Quelle est ta première hypothèse ?
+?
+1. **Le cache de préfixe est cassé** : regarder les tokens lus en cache dans les champs `usage`, souvent tombés à zéro
+2. **Chercher la cause en tête de prompt** : horodatage ajouté, outil réordonné, JSON non trié, modèle changé
+3. **Vérifier l'historique** : un résumé ou une suppression de messages passés invalide tout ce qui suit
+4. **Corriger** : préfixe stable, contexte **append-only**, sérialisation déterministe
+5. **Prévenir** : alerte sur la chute du taux de hit et test d'intégration qui vérifie qu'une deuxième requête lit bien le cache
+
+**Piège** : chercher une fuite de trafic alors que la régression est silencieuse et sans erreur.
+
+---
+
+Mise en situation : tu lances 20 requêtes en parallèle qui partagent le même long préfixe, et tu constates que rien n'est lu en cache. Pourquoi ?
+?
+1. **Cause** : une entrée de cache ne devient lisible qu'une fois la première réponse commencée. Les 20 requêtes simultanées paient toutes l'écriture
+2. **Parade** : **pré-chauffer** le cache avec une première requête, puis lancer les autres
+3. **Choisir le TTL** : 5 minutes suffit si les requêtes s'enchaînent, une heure si l'écart dépasse quelques minutes
+4. **Mesurer le gain réel** : écriture facturée plus cher que la lecture, donc le calcul doit être fait
+5. **Vérifier l'isolation** : la clé de cache doit inclure le client, pour éviter toute fuite ([[66-prefix-caching-radix-attention|canal auxiliaire]])
+
+**Piège** : conclure que le prompt caching « ne fonctionne pas » à partir d'un test lancé en parallèle.
+
+---
+
+Mise en situation : un cache de réponses te fait économiser 30 %, mais le support signale des réponses obsolètes après une mise à jour de la documentation. Comment corriges-tu ?
+?
+1. **Revoir la clé de cache** : modèle, version du prompt, paramètres, client, et surtout **version de l'index RAG**
+2. **Invalider** à chaque changement de prompt ou de corpus, plutôt que d'attendre l'expiration
+3. **Régler le TTL** selon la fraîcheur attendue des données
+4. **Exclure du cache** les réponses personnalisées ou volontairement variées
+5. **Surveiller** : taux de hit, mais aussi signalements de réponses inadaptées servies depuis le cache
+
+**Piège** : une clé fondée sur le seul texte de la question, qui ignore tout le reste du contexte.
 
 ---
 

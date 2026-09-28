@@ -1,5 +1,6 @@
 # Sécurité des agents — Menaces & incidents — Flashcards
 Tags: #flashcards #ai-engineering #securite #agents #menaces #llm
+Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 
 En quoi un agent change-t-il le modèle de menace par rapport à un chatbot ?
 ?
@@ -7,13 +8,27 @@ Un chatbot compromis produit au pire **du mauvais texte**. Un agent compromis **
 
 ---
 
-Quelles sont les sources d'entrée non fiables d'un agent ?
+Quelles sont les sources d'entrée non fiables les plus évidentes d'un agent ?
 ?
-Tout ce qui ne vient pas du développeur :
+Tout ce qui ne vient pas du développeur, à commencer par :
 - **Contenus lus** : pages web, documents et index [[22-rag-avance|RAG]], e-mails, tickets, issues et pull requests
-- **Outils** : résultats, messages d'erreur, et même les **descriptions d'outils** des serveurs MCP ([[104-securite-mcp-skills|MCP & skills]])
+- **Résultats d'outils** et messages d'erreur
+- **Messages de l'utilisateur** lui-même (injection directe)
+
+---
+
+Quelles sources d'entrée non fiables viennent de l'intérieur du système ?
+?
+- **Descriptions d'outils** des serveurs MCP ([[104-securite-mcp-skills|MCP & skills]])
 - **Mémoire** écrite lors de sessions précédentes
-- **Autres agents** (messages A2A, sorties de sous-agents)
+- **Autres agents** : messages A2A, sorties de sous-agents
+
+On les oublie parce qu'elles semblent faire partie du système, alors qu'un tiers a pu les écrire.
+
+---
+
+Où des instructions non fiables peuvent-elles se cacher dans des fichiers ?
+?
 - **Fichiers du dépôt** : README, AGENTS.md, fichiers de règles ([[106-securite-agents-code|agents de code]])
 - **Images et PDF** : texte caché, blanc sur blanc, métadonnées
 
@@ -125,6 +140,43 @@ Les attaquants utilisent-ils eux-mêmes des agents ?
 
 ---
 
+## Mises en situation
+
+Mise en situation : une alerte montre que ton agent d'assistance a appelé une URL vers un domaine inconnu, avec un long paramètre encodé en base64. Comment mènes-tu l'analyse ?
+?
+1. **Contenir** : bloquer le domaine au proxy de sortie, suspendre l'agent si besoin ([[115-plateformes-agents-gouvernance|kill switch]])
+2. **Décoder le paramètre** pour savoir quelles données sont sorties
+3. **Remonter la trace** de la session : quelles entrées l'agent a lues juste avant (page web, e-mail, document, résultat d'outil), pour trouver l'**injection indirecte**
+4. **Mesurer l'étendue** : autres sessions qui ont lu la même source, autres agents exposés
+5. **Corriger la cause** : liste blanche de domaines, pas d'appel d'URL construite par le modèle, et un test de régression avec cette injection ([[105-devsecops-ia-agentique|DevSecOps]])
+
+**Piège** : chercher d'abord un bug dans le code. Avec un agent, la cause est souvent une **donnée lue**.
+
+---
+
+Mise en situation : la facture LLM de ton agent de recherche a été multipliée par 10 en une nuit, sans hausse du nombre d'utilisateurs. Quelles hypothèses vérifies-tu ?
+?
+1. **Traces des sessions les plus coûteuses** : nombre d'étapes, appels d'outils, taille du contexte
+2. **Boucle** : un outil en erreur que l'agent rappelle sans fin, ou des sous-agents qui s'appellent en cascade
+3. **Abus** : un utilisateur ou une injection qui fait traiter des documents énormes ou lance des tâches en masse (**denial of wallet**)
+4. **Changement récent** : nouveau prompt, outil ou modèle qui a cassé le cache ([[123-caching-agressif|caching]])
+5. **Garde-fous** à poser : budgets par run et par utilisateur, nombre maximal d'étapes, alertes sur le coût ([[122-finops-llm|FinOps]])
+
+**Piège** : relever le budget global sans avoir trouvé la cause.
+
+---
+
+Mise en situation : depuis une semaine, plusieurs utilisateurs rapportent que ton assistant leur recommande un concurrent, alors que rien n'a été déployé. Quelle piste explores-tu ?
+?
+1. **Soupçonner une donnée persistante** : sans déploiement, un comportement qui dure et touche plusieurs utilisateurs vient souvent de la **mémoire partagée** ou de l'**index RAG**
+2. **Trouver la source** : dans les traces, quels souvenirs ou documents ont été récupérés pour ces réponses, quand et depuis où ils ont été écrits
+3. **Purger** les entrées empoisonnées et vérifier les autres écritures de la même origine
+4. **Corriger** : politique d'écriture (pas de contenu externe brut, pas d'instructions), provenance, cloisonnement par utilisateur ([[103-defenses-agents|défenses]], [[39-memoire-agents|mémoire]])
+
+**Piège** : chercher la cause dans le modèle ou le prompt, qui n'ont pas changé.
+
+---
+
 ## Connexions
 - [[101-securite-llm-guardrails|Sécurité LLM & guardrails]] — injection, lethal trifecta, excessive agency
 - [[103-defenses-agents|Architecture défensive]] — les parades à ces menaces
@@ -133,4 +185,5 @@ Les attaquants utilisent-ils eux-mêmes des agents ?
 - [[115-plateformes-agents-gouvernance|Plateformes d'agents — Architecture & gouvernance]] — Top 10 OWASP agentique, kill switch
 - [[39-memoire-agents|Mémoire des agents]] — empoisonnement de la mémoire
 - [[36-orchestration-agents|Orchestration multi-agents]] — risques entre agents
+- [[161-modeles-vision-langage|Modèles vision-langage]] — injection par l'image
 - [[00-moc-ai-engineering|MOC AI Engineering]]

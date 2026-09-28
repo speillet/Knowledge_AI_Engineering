@@ -1,5 +1,6 @@
 # CrewAI — Crews — Flashcards
 Tags: #flashcards #ai-engineering #agents #crewai #llm
+Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 
 Qu'est-ce que CrewAI ?
 ?
@@ -101,6 +102,32 @@ La CLI (`crewai create`, `crewai install`, `crewai run`) génère un projet. Les
 Quelles sont les limites des crews ?
 ?
 Le comportement repose sur des **prompts de rôle** : moins de contrôle fin que [[44-langgraph-fondamentaux|LangGraph]], exécution **moins prévisible** en mode hiérarchique, et **coût en tokens** élevé. D'où l'usage de **Flows** pour encadrer les crews en production.
+
+---
+
+## Mises en situation
+
+Mise en situation : ta crew de veille produit de bons résultats en démonstration, mais en production elle invente parfois des sources et coûte trois fois le budget prévu. Que corriges-tu ?
+?
+1. **Contraindre les sorties** : `output_pydantic` sur les tâches, avec les champs source et date obligatoires
+2. **Guardrails de tâche** : une fonction qui vérifie que chaque source est une URL atteignable, sinon l'agent recommence
+3. **Réduire l'autonomie** : désactiver la délégation, limiter `max_iter`, préciser `expected_output`
+4. **Encadrer par un Flow** : étapes déterministes autour de la partie ouverte ([[47-crewai-flows|Flows]])
+5. **Mesurer** : coût par exécution et taux de sources valides, avant et après ([[122-finops-llm|FinOps]])
+
+**Piège** : enrichir les backstories pour « demander plus de rigueur », sans aucune vérification automatique.
+
+---
+
+Mise en situation : un collègue propose de passer ta crew en mode hiérarchique pour améliorer la qualité. Quelles questions poses-tu ?
+?
+1. **Quel problème résout-on ?** Le mode hiérarchique ajoute un agent manager qui répartit et valide, donc **plus d'appels** et moins de prévisibilité
+2. **Le séquentiel est-il vraiment insuffisant ?** Souvent, un `context` bien défini entre tâches suffit
+3. **Quel modèle pour le manager ?** Un `manager_llm` faible dégrade tout le reste
+4. **Comment mesurer ?** Même jeu de tâches, comparaison qualité, coût et latence ([[96-evals-rag-agents|evals d'agents]])
+5. **Comment déboguer ?** En hiérarchique, retrouver l'origine d'une erreur est nettement plus difficile
+
+**Piège** : adopter le mode hiérarchique parce qu'il « ressemble à une vraie équipe », sans mesure.
 
 ---
 

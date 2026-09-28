@@ -97,6 +97,32 @@ Le speculative decoding modifie-t-il la distribution des sorties ?
 
 ---
 
+## Mises en situation
+
+Mise en situation : ton extraction de champs à partir de contrats donne des résultats différents à chaque exécution sur le même document. Quels réglages changes-tu ?
+?
+1. **Température basse** (0 à 0,3) : l'extraction n'a pas besoin de créativité
+2. **Ne régler qu'un paramètre** : la température **ou** le top-p, pas les deux
+3. **Contraindre la sortie** par un schéma, pour supprimer la variabilité de forme ([[63-guided-generation|guided generation]])
+4. **Accepter une variabilité résiduelle** : même à température 0, les calculs GPU ne sont pas reproductibles au bit près ([[114-reproductibilite-variance|reproductibilité]])
+5. **Tester sur des propriétés** (bon montant extrait) plutôt que sur une chaîne exacte
+
+**Piège** : croire que `temperature=0` garantit des sorties identiques d'un jour à l'autre.
+
+---
+
+Mise en situation : ton classifieur doit envoyer les cas incertains à un humain. Comment mesures-tu la confiance du modèle ?
+?
+1. **Logprobs** : demander les probabilités des tokens de la réponse et comparer les classes candidates
+2. **Seuil d'escalade** : au-dessous d'une probabilité donnée, la demande part vers un humain ([[144-ux-ia-human-in-the-loop|human-in-the-loop]])
+3. **Calibrer le seuil** sur un jeu annoté : mesurer l'exactitude réelle par tranche de confiance
+4. **Se méfier de la confiance verbalisée** (« je suis sûr à 90 % »), peu fiable
+5. **Surveiller** la dérive du taux d'escalade en production ([[93-monitoring-inference|monitoring]])
+
+**Piège** : utiliser la perplexité comme score de qualité d'une réponse, ce qu'elle ne mesure pas.
+
+---
+
 ## Connexions
 - [[61-kv-cache-attention|KV cache & attention]] — la génération token par token
 - [[62-optimisations-inference|Optimisations d'inférence]] — speculative decoding
@@ -105,4 +131,6 @@ Le speculative decoding modifie-t-il la distribution des sorties ?
 - [[114-reproductibilite-variance|Reproductibilité & variance]] — pourquoi les sorties varient même à température 0
 - [[92-chainforge-evals-prompts|Evals]] — mesurer l'effet des réglages
 - [[67-speculative-decoding|Speculative decoding]] — la règle d'acceptation qui préserve la distribution
+- [[131-transformer-architecture|Architecture Transformer]] — d'où viennent les logits
+- [[143-hallucinations-grounding|Hallucinations]] — calibration et détection
 - [[00-moc-ai-engineering|MOC AI Engineering]]

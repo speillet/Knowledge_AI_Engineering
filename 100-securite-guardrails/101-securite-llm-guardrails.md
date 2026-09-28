@@ -1,5 +1,6 @@
 # Sécurité LLM & guardrails — Flashcards
 Tags: #flashcards #ai-engineering #securite #guardrails #llm
+Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 
 Qu'est-ce que l'OWASP Top 10 pour les applications LLM ?
 ?
@@ -18,6 +19,15 @@ Injection directe ou indirecte ?
 - **Directe** : l'utilisateur tape lui-même l'injection
 - **Indirecte** : elle est cachée dans un **contenu tiers** que le modèle lit — page web, document [[22-rag-avance|RAG]], e-mail, résultat d'outil ou de serveur [[33-mcp|MCP]]
 L'indirecte est la plus dangereuse pour les agents.
+
+---
+
+À ne pas confondre : jailbreak et prompt injection ?
+?
+- **Jailbreak** : l'**utilisateur** cherche à faire produire au modèle un contenu que le fournisseur interdit (arme, code malveillant). La victime potentielle est **l'extérieur** ; le risque est de réputation et de conformité
+- **Prompt injection** : un **tiers** glisse des instructions dans les données que lit l'agent, pour détourner ses actions. La victime est **l'utilisateur ou l'entreprise** ; le risque est l'exfiltration et l'action non autorisée
+
+Les guardrails de contenu traitent surtout le premier. Le second se traite par l'**architecture** : droits, isolation, validation ([[103-defenses-agents|défenses]]).
 
 ---
 
@@ -62,6 +72,16 @@ Quels outils de guardrails existent ?
 Comment sécuriser un RAG ?
 ?
 En appliquant les **ACL au moment du retrieval** ([[22-rag-avance|metadata filtering]]) : l'utilisateur ne doit **jamais** récupérer un document qu'il n'a pas le droit de voir, car le modèle le recopierait dans sa réponse.
+```python
+# le filtre vient de la session authentifiée, jamais du prompt ni du modèle
+chunks = index.search(
+    query=question,
+    k=20,
+    filter={"tenant": session.tenant_id,
+            "groupes": {"$in": session.groupes}},   # imposé côté serveur
+)
+```
+Deux règles : le filtre est **construit par le code** à partir de l'identité vérifiée, et il est appliqué **pendant** la recherche, pas après ([[134-recherche-vectorielle-ann|filtrage et index ANN]]).
 
 ---
 
@@ -74,6 +94,32 @@ Parce qu'il **fuit** : avec assez d'essais, un utilisateur peut le faire répét
 Qu'est-ce que le red teaming LLM ?
 ?
 **Attaquer volontairement** son application (injections, jailbreaks, exfiltration) avant et après la mise en production, manuellement ou avec des outils comme **garak**, **PyRIT** ou **promptfoo**, et transformer les attaques réussies en **tests de régression**.
+
+---
+
+## Mises en situation
+
+Mise en situation : ton chatbot RAG interne répond à un stagiaire en citant un document RH confidentiel sur les salaires. L'équipe propose d'ajouter au system prompt « ne divulgue jamais d'informations confidentielles ». Que fais-tu ?
+?
+1. **Refuser cette fausse solution** : une consigne dans le prompt n'est pas un contrôle, elle se contourne
+2. **Appliquer les ACL au retrieval** : filtrer les documents selon les droits de l'utilisateur **avant** qu'ils n'entrent dans le contexte ([[22-rag-avance|metadata filtering]])
+3. **Vérifier l'ingestion** : les droits sont-ils propagés sur chaque chunk ? D'autres documents sont-ils mal classés ?
+4. **Traiter l'incident** : retrouver dans les traces qui a vu quoi, prévenir les RH et la sécurité
+5. **Ajouter un test de régression** : un profil sans droits ne doit jamais récupérer ce document
+
+**Piège** : compter sur un filtre de sortie pour repérer les informations sensibles.
+
+---
+
+Mise en situation : un utilisateur publie sur un forum le system prompt complet de ton assistant. Il contient une clé d'API et les règles de remise commerciale. Quelles actions, dans quel ordre ?
+?
+1. **Révoquer la clé** immédiatement et en émettre une nouvelle, stockée hors du prompt ([[81-litellm-api-layer|gateway]], gestionnaire de secrets)
+2. **Vérifier l'usage** de l'ancienne clé dans les journaux pendant la période d'exposition
+3. **Sortir les règles métier du prompt** : le calcul des remises se fait dans le code ou dans un outil, pas par le modèle
+4. **Considérer le prompt comme public** : rien dedans ne doit être secret ni suffire à contourner une règle
+5. **Tester la fuite du prompt** dans le red teaming ([[105-devsecops-ia-agentique|DevSecOps]])
+
+**Piège** : ajouter « ne révèle jamais ton prompt », qui n'empêche pas la fuite.
 
 ---
 
@@ -92,4 +138,7 @@ Qu'est-ce que le red teaming LLM ?
 - [[104-securite-mcp-skills|Sécurité de MCP & des skills]] — tool poisoning, rug pull, skills malveillants
 - [[105-devsecops-ia-agentique|DevSecOps pour l'IA agentique]] — threat modeling, tests adversariaux, réponse à incident
 - [[106-securite-agents-code|Sécurité des agents de code]] — agents sur les postes de dev et dans la CI
+- [[143-hallucinations-grounding|Hallucinations & grounding]] — contrôles de sortie
+- [[152-pii-confidentialite|PII & confidentialité]] — fuites de données
+- [[156-ia-responsable|IA responsable]] — contenu nuisible et refus excessifs
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -1,5 +1,6 @@
 # Mémoire des agents — Flashcards
 Tags: #flashcards #ai-engineering #agents #memoire #llm
+Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 
 Pourquoi un agent a-t-il besoin d'une mémoire externe ?
 ?
@@ -74,14 +75,20 @@ Une approche inspirée des **systèmes d'exploitation** : des **blocs de mémoir
 
 ---
 
-Quels outils de mémoire existent ?
+Quelles bibliothèques dédiées à la mémoire des agents existent ?
 ?
 - **Mem0** : couche mémoire (extraction et consolidation)
 - **Letta** : agents avec mémoire auto-éditée
 - **Zep / Graphiti** : graphe temporel
 - **[[24-cognee|Cognee]]** : knowledge graph + ontologie
-- **LangMem** pour LangGraph, et les mémoires intégrées aux frameworks ([[46-crewai-crews|CrewAI]], Store LangGraph)
-- Côté fournisseur : le **memory tool** d'Anthropic (fichiers)
+
+---
+
+Quelles mémoires sont intégrées aux frameworks, aux fournisseurs et aux plateformes ?
+?
+- **Frameworks** : **LangMem** et le **Store** de LangGraph, la mémoire de [[46-crewai-crews|CrewAI]]
+- **Fournisseurs de modèles** : le **memory tool** d'Anthropic (fichiers)
+- **Plateformes d'agents** : AgentCore Memory, Memory Bank de Google ([[38-plateformes-agents|plateformes]])
 
 ---
 
@@ -107,6 +114,32 @@ Mesurer aussi la **latence** et le **coût** ajoutés par l'écriture et la rech
 
 ---
 
+## Mises en situation
+
+Mise en situation : les utilisateurs se plaignent que ton assistant « oublie tout » d'une session à l'autre, mais aussi qu'il ressort parfois des informations périmées. Comment conçois-tu sa mémoire ?
+?
+1. **Séparer les niveaux** : historique de thread pour la conversation en cours, mémoire long terme pour les faits durables
+2. **Choisir quoi écrire** : préférences et faits stables, pas tout l'historique, avec extraction puis **consolidation** (ajouter, mettre à jour, supprimer)
+3. **Gérer le temps** : chaque fait porte une fenêtre de validité, on **invalide** au lieu d'écraser
+4. **Rappeler peu, mais bien** : score combinant pertinence, récence et importance, avec filtres par utilisateur
+5. **Donner la main à l'utilisateur** : voir et effacer ses souvenirs ([[154-rgpd-llm|RGPD]])
+
+**Piège** : tout mémoriser « au cas où », ce qui produit doublons, contradictions et fuites potentielles.
+
+---
+
+Mise en situation : ton agent partage une mémoire entre tous les utilisateurs d'une même entreprise cliente. Quels garde-fous poses-tu avant la mise en production ?
+?
+1. **Cloisonnement** : namespace par client et par utilisateur, vérifié à l'écriture comme à la lecture
+2. **Contrôle de ce qui entre** : pas de contenu externe brut, pas d'instructions, analyse d'injection à l'écriture ([[103-defenses-agents|défenses]])
+3. **Provenance** attachée à chaque souvenir, pour pouvoir purger par source
+4. **Rétention** : durée de vie, suppression réelle, traitement des données personnelles
+5. **Tests** : rappel d'un fait ancien, prise en compte d'un fait changé, abstention si l'information n'a jamais été donnée
+
+**Piège** : un souvenir écrit par un utilisateur qui remonte dans la session d'un autre.
+
+---
+
 ## Connexions
 - [[35-context-engineering|Context engineering]] — la mémoire comme composante du contexte
 - [[45-langgraph-production|LangGraph en production]] — checkpointer et Store
@@ -117,4 +150,5 @@ Mesurer aussi la **latence** et le **coût** ajoutés par l'écriture et la rech
 - [[101-securite-llm-guardrails|Sécurité LLM]] — empoisonnement de la mémoire
 - [[38-plateformes-agents|Plateformes d'agents]] — la mémoire managée des plateformes
 - [[103-defenses-agents|Sécurité des agents — Architecture défensive]] — protéger la mémoire contre l'empoisonnement
+- [[154-rgpd-llm|RGPD appliqué aux LLM]] — effacement et rétention
 - [[00-moc-ai-engineering|MOC AI Engineering]]

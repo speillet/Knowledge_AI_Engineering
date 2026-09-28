@@ -1,0 +1,128 @@
+# Architecture Transformer — Flashcards
+Tags: #flashcards #ai-engineering #fondamentaux #transformer #llm
+
+Qu'est-ce qu'un LLM, mécaniquement ?
+?
+Un réseau **Transformer decoder-only** entraîné à **prédire le token suivant**. À chaque pas, il produit une **distribution de probabilités** sur le vocabulaire ; la génération consiste à **échantillonner** un token, l'ajouter à l'entrée et recommencer ([[65-probabilites-sampling|sampling]]).
+
+---
+
+Quel est le chemin d'un token dans le modèle ?
+?
+1. **Tokenisation** → identifiant ([[132-tokenisation|tokenizer]]).
+2. **Embedding** : l'id devient un vecteur de dimension d (ex. 4 096).
+3. **N blocs Transformer** empilés (attention + MLP), qui enrichissent ce vecteur avec le contexte.
+4. **Normalisation finale** puis **projection** vers le vocabulaire → **logits**.
+5. **Softmax** → probabilités du token suivant.
+
+---
+
+Que fait le mécanisme d'attention ?
+?
+Chaque token calcule une **query (Q)**, une **key (K)** et une **value (V)**. Le score entre deux tokens est **Q·K / √d** ; après softmax, ces scores pondèrent les **V**. Chaque token **agrège ainsi l'information des tokens pertinents** du contexte :
+```text
+Attention(Q, K, V) = softmax(Q·Kᵀ / √d_k) · V
+```
+
+---
+
+Qu'est-ce que l'attention causale ?
+?
+Un **masque** qui empêche chaque token de voir les **tokens futurs** : le token i n'attend qu'aux positions ≤ i. C'est ce qui permet d'entraîner la prédiction du token suivant **sur toutes les positions en parallèle**, et de réutiliser les K/V passés à l'inférence ([[61-kv-cache-attention|KV cache]]).
+
+---
+
+Pourquoi plusieurs têtes d'attention (multi-head) ?
+?
+Chaque tête a ses propres projections Q/K/V et peut se spécialiser dans **un type de relation** (syntaxe, coréférence, position proche…). Les sorties des têtes sont **concaténées** puis reprojetées.
+
+---
+
+Qu'est-ce que GQA et MQA, et pourquoi comptent-ils en production ?
+?
+- **MQA** (Multi-Query Attention) : toutes les têtes de query **partagent une seule paire K/V**.
+- **GQA** (Grouped-Query Attention) : les têtes sont groupées, **un K/V par groupe**.
+
+Ils divisent la **taille du KV cache** (donc la mémoire par requête) avec une perte de qualité faible → plus de requêtes en parallèle. La plupart des modèles récents utilisent GQA ; d'autres compressent le cache autrement (MLA chez DeepSeek).
+
+---
+
+Quel est le rôle du bloc MLP (feed-forward) ?
+?
+Après l'attention (qui **mélange l'information entre tokens**), le MLP **transforme chaque token indépendamment**. Il contient **la majorité des paramètres** et on considère qu'il stocke une grande part des **connaissances factuelles**. C'est lui qu'on remplace par des experts dans un [[136-mixture-of-experts|MoE]].
+
+---
+
+À quoi servent les connexions résiduelles et la normalisation ?
+?
+- **Résiduelles** : chaque bloc **ajoute** sa sortie à son entrée (x + f(x)) — le gradient traverse des dizaines de couches sans s'éteindre.
+- **Normalisation** (RMSNorm, en **pre-norm** avant chaque sous-bloc) : stabilise l'entraînement.
+
+---
+
+Comment le modèle connaît-il la position des tokens ?
+?
+L'attention seule est **insensible à l'ordre**. On injecte la position, aujourd'hui surtout par **RoPE** (Rotary Position Embedding) : Q et K sont **tournés d'un angle dépendant de la position**, si bien que le score dépend de la **distance relative**. RoPE est au cœur des techniques d'[[137-long-contexte|extension de contexte]].
+
+---
+
+Pourquoi l'attention coûte-t-elle cher sur les contextes longs ?
+?
+Le calcul des scores est **quadratique** en longueur de séquence (n² paires) pendant le **prefill**, et le **KV cache** grandit **linéairement** avec le contexte. FlashAttention réduit le coût **mémoire** et les accès HBM, pas la complexité ([[62-optimisations-inference|optimisations]]).
+
+---
+
+Comment estimer la mémoire nécessaire pour les poids ?
+?
+**Nombre de paramètres × octets par paramètre** : un modèle de 70 B en BF16 (2 octets) ≈ **140 Go** ; en INT4 ≈ **35 Go** ([[68-quantization|quantization]]). Il faut ajouter le **KV cache** et les activations, souvent plusieurs dizaines de Go de plus en serving.
+
+---
+
+Quelle différence entre decoder-only, encoder-only et encoder-decoder ?
+?
+- **Decoder-only** (GPT, Llama, Claude) : attention causale, **génération** — le standard des LLM.
+- **Encoder-only** (BERT) : attention **bidirectionnelle**, pas de génération — utilisé pour la **classification**, les **embeddings** et les **rerankers**.
+- **Encoder-decoder** (T5) : un encodeur lit l'entrée, un décodeur génère — traduction, résumé.
+
+---
+
+Pourquoi un modèle de base ne suit-il pas les instructions ?
+?
+Le pré-entraînement lui apprend à **continuer du texte**, pas à **répondre** : face à une question, il peut la prolonger par d'autres questions. Le suivi d'instructions vient du **post-training** (SFT, puis alignement par préférences) — voir [[52-post-training-alignement|post-training]].
+
+---
+
+## Mises en situation
+
+Mise en situation : on te demande combien de GPU prévoir pour servir un modèle 70B avec 16 000 tokens de contexte et 50 utilisateurs simultanés. Comment raisonnes-tu à voix haute ?
+?
+1. **Les poids d'abord** : 70 milliards de paramètres × 2 octets en BF16 ≈ **140 Go**, donc deux GPU de 80 Go ne laissent presque rien
+2. **Le KV cache ensuite** : proportionnel au contexte, au nombre de couches et de têtes KV, et au **nombre de requêtes simultanées** ([[61-kv-cache-attention|KV cache]])
+3. **Réduire** : quantization FP8 ou INT4 des poids, cache en FP8, GQA déjà présent dans la plupart des modèles récents
+4. **Vérifier par la mesure** : un benchmark de charge, pas seulement un calcul ([[64-metriques-slo-inference|SLO]])
+5. **Annoncer une fourchette** et les hypothèses qui la sous-tendent
+
+**Piège** : ne dimensionner que sur la taille des poids, en oubliant le cache, qui décide de la concurrence.
+
+---
+
+Mise en situation : en entretien, on te demande pourquoi un modèle de base répond mal aux questions alors qu'il a « lu tout internet ». Que réponds-tu ?
+?
+1. **Objectif d'entraînement** : il apprend à **continuer du texte**, pas à répondre. Il peut prolonger une question par d'autres questions
+2. **Ce qui crée l'assistant** : le post-training, d'abord supervisé, puis par préférences ([[52-post-training-alignement|post-training]])
+3. **Conséquence pratique** : un modèle « base » sur Hugging Face ne s'utilise pas comme un modèle « instruct »
+4. **Chat template** : les modèles instruits attendent un format précis, sans lequel la qualité chute ([[132-tokenisation|chat template]])
+5. **Nuance** : le pré-entraînement détermine les connaissances et les capacités, le post-training le comportement
+
+**Piège** : conclure qu'un modèle est mauvais alors qu'on utilise une variante de base ou un mauvais gabarit de conversation.
+
+---
+
+## Connexions
+- [[132-tokenisation|Tokenisation]] — l'entrée du modèle
+- [[135-pretraining-scaling-laws|Pré-entraînement & scaling laws]] — comment on l'entraîne
+- [[136-mixture-of-experts|Mixture of Experts]] — remplacer le MLP par des experts
+- [[137-long-contexte|Long contexte]] — RoPE et ses extensions
+- [[61-kv-cache-attention|KV cache & attention]] — l'attention à l'inférence
+- [[65-probabilites-sampling|Probabilités & sampling]] — des logits au token
+- [[00-moc-ai-engineering|MOC AI Engineering]]

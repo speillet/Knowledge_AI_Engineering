@@ -4,6 +4,24 @@ Tags: #flashcards #ai-engineering #finops #couts #inference #llm
 Comment se structure le coût d'un appel LLM API ?
 ?
 **Prix par million de tokens**, différencié **input / output** (l'output est plus cher), avec surcoûts éventuels (raisonnement, contexte long).
+```text
+coût = (tokens_in × prix_in + tokens_out × prix_out) / 1 000 000
+
+Exemple (prix illustratifs : 3 €/M en entrée, 15 €/M en sortie)
+  3 000 tokens d'entrée + 500 de sortie
+  = (3 000 × 3 + 500 × 15) / 1e6 = 0,009 + 0,0075 ≈ 0,017 €/requête
+  × 1 million de requêtes par mois ≈ 17 000 €
+```
+Deux enseignements : l'**entrée domine** dès qu'on envoie du contexte, et un calcul au dos d'une enveloppe suffit à cadrer un projet ([[141-system-design-llm|system design]]).
+
+---
+
+À ne pas confondre : prix par token et coût par tâche réussie ?
+?
+- **Prix par token** : ce qu'affiche le fournisseur. Facile à comparer, mais trompeur
+- **Coût par tâche réussie** : ce que vous payez réellement, en incluant les **tokens réels** (tokenizer, verbosité, raisonnement), les **reprises**, les **escalades** et la **vérification humaine**
+
+Un modèle 30 % moins cher par token qui échoue deux fois plus souvent coûte **plus cher** ([[146-choix-modeles|choix de modèle]]).
 
 ---
 
@@ -65,6 +83,32 @@ Un GPU **alloué facture pareil, utilisé ou non** : consolidation, MIG/time-sli
 
 ---
 
+## Mises en situation
+
+Mise en situation : ta direction demande s'il faut passer de l'API à des modèles auto-hébergés pour économiser. Comment calcules-tu ?
+?
+1. **Mesurer le volume réel** : tokens d'entrée et de sortie par mois, profil horaire, pics
+2. **Coût API** : prix par million de tokens, en tenant compte des tokens lus en cache et des traitements différés
+3. **Coût self-host** : coût GPU horaire amorti ÷ débit réel obtenu sur ta charge, plus l'exploitation (astreinte, mises à jour)
+4. **Comparer au bon endroit** : le self-host gagne à **fort volume constant** et forte utilisation, l'API à volume faible ou irrégulier
+5. **Ne pas oublier la qualité** : un modèle auto-hébergé moins bon peut coûter plus cher en reprises ([[146-choix-modeles|choix de modèle]])
+
+**Piège** : comparer un prix GPU horaire à un prix par token sans mesurer le débit réel.
+
+---
+
+Mise en situation : le coût de ton assistant est dominé par les tokens d'entrée, à cause d'un long contexte envoyé à chaque tour. Quels leviers, dans quel ordre ?
+?
+1. **Prompt caching** : un préfixe stable rend la majeure partie de l'entrée bien moins chère ([[123-caching-agressif|caching]])
+2. **Trier le contexte** : moins de documents récupérés, compaction de l'historique ([[35-context-engineering|context engineering]])
+3. **Router** les requêtes simples vers un modèle moins cher ([[82-routing-llm|routing]])
+4. **Limiter la sortie** : `max_tokens` adapté, réponses concises, puisque l'output coûte plus cher
+5. **Traitement différé** pour tout ce qui n'est pas interactif (evals, enrichissement)
+
+**Piège** : commencer par changer de modèle, alors que le contexte envoyé est le vrai poste de coût.
+
+---
+
 ## Connexions
 - [[122-finops-llm|FinOps LLM]] — la gouvernance de ces coûts
 - [[64-metriques-slo-inference|Métriques & SLO]] — goodput ↔ coût par token
@@ -73,4 +117,7 @@ Un GPU **alloué facture pareil, utilisé ou non** : consolidation, MIG/time-sli
 - [[82-routing-llm|Routing LLM]] — payer le juste modèle
 - [[123-caching-agressif|Caching agressif]] — maximiser le taux de hit
 - [[68-quantization|Quantization]] — moins de GPU par réplica
+- [[132-tokenisation|Tokenisation]] — coût selon la langue
+- [[146-choix-modeles|Choix de modèle]] — coût par tâche réussie
+- [[164-llm-local-edge|LLM locaux]] — on-prem et break-even
 - [[00-moc-ai-engineering|MOC AI Engineering]]

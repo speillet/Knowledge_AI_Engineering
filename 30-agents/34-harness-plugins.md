@@ -43,7 +43,22 @@ Un **dossier d'instructions et de ressources** (ex. `SKILL.md` + scripts) que l'
 
 Qu'est-ce qu'un hook ?
 ?
-Un **script exécuté par le harness** à un moment précis du cycle (avant/après un appel d'outil, fin de tour…) : **déterministe**, il peut bloquer une action, formater du code ou journaliser, sans dépendre du bon vouloir du modèle.
+Un **script exécuté par le harness** à un moment précis du cycle (avant ou après un appel d'outil, fin de tour…) : **déterministe**, il peut bloquer une action, formater du code ou journaliser, sans dépendre du bon vouloir du modèle.
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      { "matcher": "Bash",
+        "hooks": [{ "type": "command", "command": "./scripts/verifie-commande.sh" }] }
+    ],
+    "PostToolUse": [
+      { "matcher": "Edit|Write",
+        "hooks": [{ "type": "command", "command": "ruff format" }] }
+    ]
+  }
+}
+```
+Un code de sortie non nul **bloque** l'action : c'est la différence entre une consigne et un contrôle ([[106-securite-agents-code|agents de code]]).
 
 ---
 
@@ -62,6 +77,42 @@ Pour **limiter le rayon d'impact** d'une erreur ou d'une [[101-securite-llm-guar
 Quelle différence entre fichier mémoire (ex. `CLAUDE.md`) et skill ?
 ?
 Le **fichier mémoire** est chargé **à chaque session** (conventions du projet) ; la **skill** n'est chargée **que quand elle est utile** — on y met les procédures longues et spécialisées.
+
+---
+
+À ne pas confondre : harness, framework et plateforme d'agents ?
+?
+- **Harness** : le **programme qui exécute** la boucle chez vous (Claude Code, Cursor, ou le vôtre). Il tient les outils, le contexte et les permissions
+- **Framework** : la **bibliothèque** avec laquelle vous écrivez cette boucle (LangGraph, CrewAI) ([[37-frameworks-agents|frameworks]])
+- **Plateforme** : le **service managé** qui l'héberge et la gouverne en production ([[38-plateformes-agents|plateformes]])
+
+Un harness peut être écrit sans framework, et déployé sans plateforme. Les trois répondent à des questions différentes : **qui exécute**, **avec quoi on l'écrit**, **où ça tourne**.
+
+---
+
+## Mises en situation
+
+Mise en situation : deux équipes utilisent le même modèle pour le même agent de code, mais l'une obtient de bien meilleurs résultats. Où cherches-tu la différence ?
+?
+1. **Dans le harness, pas dans le modèle** : à modèle égal, ce sont les outils, le contexte et la boucle qui font la différence
+2. **Outils** : qualité de la recherche dans le code, de l'édition, de l'exécution des tests ; descriptions et retours d'erreur
+3. **Contexte** : fichier de conventions du projet, skills disponibles, compaction bien réglée ([[35-context-engineering|context engineering]])
+4. **Boucle** : conditions d'arrêt, vérification automatique (tests, lint) après chaque modification
+5. **Comparer** en faisant tourner les deux configurations sur les mêmes tâches ([[96-evals-rag-agents|evals d'agents]])
+
+**Piège** : conclure trop vite que « l'autre équipe a un meilleur modèle ».
+
+---
+
+Mise en situation : tu veux garantir qu'aucun agent de ton équipe ne puisse lancer `terraform apply` sans relecture, quelle que soit la consigne donnée au modèle. Comment t'y prends-tu ?
+?
+1. **Ne pas compter sur le prompt** : une consigne se contourne, un contrôle non
+2. **Hook** exécuté par le harness avant chaque appel d'outil : il inspecte la commande et **bloque** celles qui correspondent à un motif interdit
+3. **Permissions** : liste blanche de commandes, mode approbation pour tout le reste
+4. **Paramétrage géré centralement**, non modifiable par l'utilisateur ([[106-securite-agents-code|agents de code]])
+5. **Journaliser** chaque blocage, pour ajuster les règles et détecter les contournements
+
+**Piège** : mettre la règle dans le fichier de conventions du projet, que le modèle peut ignorer.
 
 ---
 

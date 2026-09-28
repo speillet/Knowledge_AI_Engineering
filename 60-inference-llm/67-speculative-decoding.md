@@ -1,5 +1,6 @@
 # Speculative decoding — Flashcards
 Tags: #flashcards #ai-engineering #inference #speculative-decoding #llm
+Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 
 Quel est le principe du speculative decoding ?
 ?
@@ -120,6 +121,44 @@ Comment valider un déploiement avec speculative decoding ?
 1. **Exactitude** : en greedy, les sorties doivent être **identiques** à celles de la cible seule sur un jeu de prompts (aux écarts numériques près) ; en sampling, les evals ne doivent pas bouger
 2. **Gain** : benchmark de charge à **plusieurs niveaux de concurrence**. Le TPOT doit baisser à faible charge, et le débit ne doit pas s'effondrer au pic
 3. **Réglage** : ajuster k, ou désactiver la technique au-delà d'une certaine taille de batch, selon ces mesures ([[93-monitoring-inference|monitoring de l'inférence]])
+
+---
+
+## Mises en situation
+
+Mise en situation : tu actives le speculative decoding sur ton assistant. En test à un utilisateur, la génération est deux fois plus rapide ; en production aux heures de pointe, le débit total baisse. Pourquoi ?
+?
+1. **À faible charge** : le GPU attend la mémoire, la vérification des tokens proposés est presque gratuite
+2. **À forte charge** : le GPU est déjà saturé en calcul, et la vérification **consomme ce calcul**, donc le débit baisse
+3. **Mesurer** : TPOT et débit à plusieurs niveaux de concurrence, pas seulement à vide
+4. **Régler** : réduire k, ou désactiver la technique au-delà d'une certaine taille de batch
+5. **Décider selon le SLO** : privilégier la latence aux heures creuses, le débit aux heures de pointe
+
+**Piège** : valider un gain sur un benchmark à un seul utilisateur.
+
+---
+
+Mise en situation : ton taux d'acceptation plafonne à 45 % avec un petit modèle de brouillon, et le gain est décevant. Quelles options ?
+?
+1. **Vérifier le type de trafic** : du texte créatif à température élevée accepte peu, du code ou du JSON beaucoup plus
+2. **Changer de brouillon** : têtes EAGLE ou MTP entraînées sur le modèle cible acceptent bien mieux qu'un petit modèle générique
+3. **Prompt lookup** : si la sortie recopie l'entrée (RAG cité, édition de code), les n-grammes coûtent zéro VRAM
+4. **Ajuster k** : regarder l'acceptation **par position**, et réduire k si elle s'effondre après deux tokens
+5. **Segmenter** : activer la technique seulement sur les routes où elle paie
+
+**Piège** : augmenter k pour « proposer plus », ce qui gaspille du travail de brouillon quand l'acceptation est faible.
+
+---
+
+Mise en situation : un responsable qualité s'inquiète que le speculative decoding change les réponses du modèle. Comment le rassures-tu, preuve à l'appui ?
+?
+1. **Expliquer la garantie** : la règle d'acceptation préserve **exactement la distribution** de la cible ([[65-probabilites-sampling|probabilités & sampling]])
+2. **Le démontrer** : en greedy, comparer les sorties avec et sans, sur un jeu de prompts. Elles doivent être identiques
+3. **Nuancer honnêtement** : de petits écarts numériques restent possibles, comme pour toute inférence ([[114-reproductibilite-variance|reproductibilité]])
+4. **En sampling** : comparer les evals plutôt que les chaînes de caractères
+5. **Surveiller** en production : taux d'acceptation et qualité, par type de trafic
+
+**Piège** : promettre des sorties « strictement identiques » alors que le non-déterminisme GPU existe de toute façon.
 
 ---
 

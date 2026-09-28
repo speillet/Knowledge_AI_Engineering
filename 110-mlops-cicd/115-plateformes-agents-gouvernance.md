@@ -1,5 +1,6 @@
 # Plateformes d'agents — Architecture & gouvernance — Flashcards
 Tags: #flashcards #ai-engineering #agents #platform #gouvernance #llm
+Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 
 Pourquoi construire une plateforme d'agents interne plutôt que laisser chaque équipe se débrouiller ?
 ?
@@ -36,14 +37,16 @@ Chaque flèche est un **point de contrôle** : c'est là qu'on authentifie, filt
 
 ---
 
-Pourquoi séparer le cerveau, les mains et la session d'un agent ?
+Dans l'architecture de Claude Managed Agents, que sont le cerveau, les mains et la session ?
 ?
-C'est l'architecture de **Claude Managed Agents** :
 - **Cerveau** : le modèle et son harness, **sans état**
 - **Mains** : sandboxes et outils, **provisionnés seulement quand un outil en a besoin**
 - **Session** : un **journal d'événements en ajout seul**, stocké hors de la fenêtre de contexte
 
-Ce qu'on y gagne :
+---
+
+Que gagne-t-on à séparer le cerveau, les mains et la session d'un agent ?
+?
 - **Reprise** : un harness qui plante est relancé et reconstruit l'état depuis le journal ; une sandbox qui plante devient une simple erreur d'outil
 - **Sécurité** : les jetons ne sont **jamais accessibles depuis la sandbox** où tourne le code généré
 - **Latence** : plus de conteneur démarré à chaque session. Anthropic mesure un TTFT p50 réduit d'environ **60 %** et un p95 de plus de **90 %**
@@ -94,6 +97,18 @@ Pourquoi un moteur de politiques déterministe en plus des instructions du promp
 Un prompt **n'est pas une barrière** : une injection peut le contourner. Les politiques sont évaluées **hors du modèle**, par la gateway, **avant chaque appel d'outil** : quel outil, quels paramètres, sous quelles conditions (montant maximal, rôle de l'utilisateur, horaires), avec ou sans approbation humaine. On part d'un **refus par défaut** et **chaque décision est journalisée**.
 
 Langages : **Cedar** (AgentCore Policy, disponible depuis mars 2026) ou **OPA/Rego**. Complète les guardrails de contenu ([[101-securite-llm-guardrails|sécurité LLM]]).
+```text
+// Cedar : remboursement autorisé sous 100 €, sinon approbation
+permit (
+  principal in Group::"agents-support",
+  action == Action::"rembourser",
+  resource is Commande
+) when { context.montant <= 100 && resource.owner == context.utilisateur };
+
+forbid (principal, action == Action::"rembourser", resource)
+unless { context.approbation_humaine == true } when { context.montant > 100 };
+```
+Le refus par défaut et la journalisation de chaque décision sont ce qui rend la politique **auditable**.
 
 ---
 
@@ -118,21 +133,41 @@ On inventorie aussi les **agents fantômes**, créés hors du circuit, et on **�
 
 ---
 
-Quelles sont les menaces du Top 10 OWASP pour les applications agentiques ?
+Top 10 OWASP agentique : que sont le détournement de l'objectif et les agents hors de contrôle ?
 ?
-Publié en décembre 2025 :
-1. **Détournement de l'objectif** de l'agent
-2. **Mauvais usage des outils**
-3. **Abus d'identité et de privilèges**
-4. **Chaîne d'approvisionnement** : outils, serveurs MCP, plugins
-5. **Exécution de code inattendue**
-6. **Empoisonnement du contexte et de la mémoire**
-7. **Communication inter-agents non sécurisée**
-8. **Défaillances en cascade**
-9. **Confiance humain-agent abusée**
-10. **Agents hors de contrôle** (rogue agents)
+Deux des dix risques du Top 10 OWASP des applications agentiques (décembre 2025) :
+- **Détournement de l'objectif** (ASI01) : une injection fait poursuivre à l'agent les buts de l'attaquant. Parade : Rule of Two, outils étroits, politiques appliquées hors du modèle ([[103-defenses-agents|architecture défensive]])
+- **Agents hors de contrôle** (ASI10) : un agent compromis ou qui dérive continue d'agir sans qu'on s'en aperçoive. Parade : surveillance du comportement, recertification, **kill switch**
 
-Voir [[101-securite-llm-guardrails|sécurité LLM]].
+---
+
+Top 10 OWASP agentique : que sont le mauvais usage des outils et l'exécution de code inattendue ?
+?
+- **Mauvais usage des outils** (ASI02) : l'agent utilise un outil légitime de façon dangereuse (suppression, envoi en masse). Parade : validation des arguments, quotas, approbation des actions à risque
+- **Exécution de code inattendue** (ASI05) : l'agent génère et lance du code ou des commandes dangereuses. Parade : sandbox isolée, sans secrets, au réseau filtré
+
+---
+
+Top 10 OWASP agentique : que sont l'abus d'identité et la communication inter-agents non sécurisée ?
+?
+- **Abus d'identité et de privilèges** (ASI03) : l'agent utilise des jetons ou des droits hérités au-delà de son besoin. Parade : droits de l'utilisateur, jetons courts et limités, échange de jetons
+- **Communication inter-agents non sécurisée** (ASI07) : messages entre agents usurpés, modifiés ou rejoués. Parade : authentification mutuelle, Agent Cards signées, sorties des autres agents traitées comme non fiables
+
+---
+
+Top 10 OWASP agentique : que sont la chaîne d'approvisionnement et l'empoisonnement du contexte ?
+?
+- **Chaîne d'approvisionnement** (ASI04) : outils, serveurs MCP, plugins ou skills malveillants ou compromis. Parade : registre interne, versions épinglées, analyse avant autorisation ([[104-securite-mcp-skills|MCP & skills]])
+- **Empoisonnement du contexte et de la mémoire** (ASI06) : données récupérées ou mémorisées falsifiées, qui orientent les décisions suivantes. Parade : provenance, politique d'écriture, cloisonnement, purge
+
+---
+
+Top 10 OWASP agentique : que sont les défaillances en cascade et la confiance humain-agent abusée ?
+?
+- **Défaillances en cascade** (ASI08) : une erreur ou une donnée fausse se propage et s'amplifie d'un agent ou d'un système à l'autre. Parade : coupe-circuits, validation entre les étapes, rayon d'impact limité
+- **Confiance humain-agent abusée** (ASI09) : l'agent pousse l'humain à approuver une action dangereuse, par persuasion ou description trompeuse. Parade : afficher les paramètres réels, approbations rares et ciblées
+
+Voir [[102-menaces-agents|menaces & incidents]].
 
 ---
 
@@ -219,6 +254,44 @@ Le choix fréquent est **hybride** : services managés **modulaires** pour le ru
 
 ---
 
+## Mises en situation
+
+Mise en situation : ta direction veut « 50 agents en production d'ici un an ». Tu en as trois aujourd'hui, chacun construit à sa façon. Que proposes-tu ?
+?
+1. **Poser un chemin balisé** avant de multiplier : runtime, identité, gateway d'outils, traces et evals fournis par défaut
+2. **Registre et cycle de vie** : propriétaire, objectif, droits, niveau de risque, recertification
+3. **Contrôles par défaut** : moindre privilège, politiques hors du modèle, approbation des actions à risque
+4. **Mesurer la valeur agent par agent** : coût par tâche réussie, taux d'escalade, gain réel
+5. **Rappeler le risque** : plus de 40 % des projets agentiques sont annulés, faute de valeur claire ou de contrôle des risques
+
+**Piège** : viser un nombre d'agents plutôt que des processus effectivement automatisés.
+
+---
+
+Mise en situation : un agent interne a supprimé des données dans un outil métier hier soir. Le directeur demande ce qui s'est passé et qui est responsable. Que dois-tu pouvoir produire ?
+?
+1. **La trace complète** : quel utilisateur, quel agent, quelles entrées, quelles actions, avec quelle version
+2. **L'identité utilisée** : agent délégué avec les droits de l'utilisateur, ou identité propre de l'agent
+3. **Les décisions de politique** : qu'est-ce qui a été autorisé, par quelle règle, avec ou sans approbation
+4. **La fiche de l'agent** : propriétaire responsable, périmètre déclaré, niveau de risque
+5. **Les mesures immédiates** : kill switch, révocation des jetons, correction des actions ([[105-devsecops-ia-agentique|réponse à incident]])
+
+**Piège** : découvrir que les actions de l'agent sont journalisées sous un compte de service commun, sans lien avec l'utilisateur.
+
+---
+
+Mise en situation : le fournisseur de ta plateforme d'agents annonce l'arrêt d'un service dans six mois. Comment évalues-tu l'impact ?
+?
+1. **Inventorier** ce qui en dépend : agents, outils, mémoires, traces, jeux d'evals
+2. **Séparer** ce qui est portable (logique d'agent en code, outils MCP, traces OpenTelemetry) de ce qui est propriétaire
+3. **Vérifier l'export** des données : mémoire, journaux de session, datasets
+4. **Chiffrer le coût de sortie** : réécriture, migration, revalidation par les evals
+5. **En tirer une règle** : évaluer ce coût **avant** de choisir une plateforme, pas au moment de l'annonce
+
+**Piège** : avoir construit la logique métier dans un builder visuel dont rien ne s'exporte.
+
+---
+
 ## Connexions
 - [[38-plateformes-agents|Plateformes d'agents — Fondamentaux]] — les briques et les offres
 - [[36-orchestration-agents|Orchestration multi-agents]] — A2A et coût du multi-agent
@@ -232,4 +305,5 @@ Le choix fréquent est **hybride** : services managés **modulaires** pour le ru
 - [[111-mlops-llmops-fondamentaux|MLOps & LLMOps]] — registre, lineage, environnements
 - [[103-defenses-agents|Sécurité des agents — Architecture défensive]] — les contrôles de sécurité en détail
 - [[105-devsecops-ia-agentique|DevSecOps pour l'IA agentique]] — détection et réponse aux incidents
+- [[155-ai-act|AI Act]] — classification des risques et calendrier
 - [[00-moc-ai-engineering|MOC AI Engineering]]

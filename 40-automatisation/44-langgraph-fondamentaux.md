@@ -1,5 +1,6 @@
 # LangGraph — Fondamentaux — Flashcards
 Tags: #flashcards #ai-engineering #agents #langgraph #llm
+Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 
 Qu'est-ce que LangGraph ?
 ?
@@ -102,6 +103,32 @@ Avec la **`recursion_limit`** (nombre maximal de super-steps, passé dans la con
 Existe-t-il une alternative au graphe explicite ?
 ?
 **Oui** : la **Functional API** (décorateurs `@entrypoint` et `@task`) écrit le flux en **Python classique** (if, boucles) tout en profitant de la persistance et des interruptions de LangGraph.
+
+---
+
+## Mises en situation
+
+Mise en situation : ton graphe doit résumer un nombre variable de documents (parfois 3, parfois 200) puis produire une synthèse. Comment le construis-tu ?
+?
+1. **Map-reduce dynamique** : une edge conditionnelle renvoie une liste de `Send`, un par document, car le nombre n'est connu qu'à l'exécution
+2. **Reducer d'accumulation** sur la clé qui collecte les résumés, sinon chaque branche écrase la précédente
+3. **Limiter le parallélisme** pour ne pas saturer les quotas du fournisseur ([[81-litellm-api-layer|gateway]])
+4. **Gérer les échecs partiels** : un document qui échoue ne doit pas faire tomber toute la synthèse
+5. **Surveiller le coût** : 200 documents, c'est 200 appels ([[122-finops-llm|FinOps]])
+
+**Piège** : oublier le reducer et ne retrouver qu'un seul résumé sur 200 dans l'état final.
+
+---
+
+Mise en situation : ton équipe hésite entre le graphe explicite et la Functional API pour un processus avec deux branches et une boucle. Comment choisis-tu ?
+?
+1. **Graphe explicite** : le flux est visible, inspectable dans Studio, et se prête aux branches nombreuses et aux subgraphs
+2. **Functional API** : le flux s'écrit en Python classique (if, boucles), plus naturel quand la logique est surtout séquentielle
+3. **Point commun** : les deux profitent de la persistance, des interruptions et de la reprise
+4. **Critère pratique** : qui va maintenir ? Une équipe non familière des graphes lira plus vite du Python
+5. **Garde-fou commun** : `recursion_limit` et conditions de sortie explicites, pour éviter les boucles infinies
+
+**Piège** : modéliser en graphe un enchaînement purement linéaire, ce qui ajoute de la cérémonie sans bénéfice.
 
 ---
 

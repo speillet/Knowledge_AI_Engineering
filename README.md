@@ -2,9 +2,9 @@
 
 Un vault [Obsidian](https://obsidian.md) de **fiches de révision (flashcards) en français** qui couvre les compétences clés de l'**AI Engineering**. Le parcours va de l'utilisation des modèles jusqu'à leur mise en production et leur sécurisation.
 
-Chaque fiche traite **un concept** en 5 à 22 cartes question/réponse, une dizaine en moyenne. Les fiches sont reliées entre elles par des liens, pour qu'on puisse passer d'un sujet à ses voisins, et elles se révisent en **répétition espacée**.
+Chaque fiche traite **un concept** en 5 à 28 cartes question/réponse, une quinzaine en moyenne, et se termine par des **mises en situation** : des cas concrets à diagnostiquer, concevoir ou arbitrer. Les fiches sont reliées entre elles par des liens, pour qu'on puisse passer d'un sujet à ses voisins, et elles se révisent en **répétition espacée**.
 
-**État au 22 septembre 2026** : 64 fiches et 678 cartes, réparties en 12 sections.
+**État au 25 septembre 2026** : 96 fiches et 1 308 cartes, réparties en 16 sections, dont 207 mises en situation et 26 cartes « à ne pas confondre ».
 
 ---
 
@@ -27,7 +27,11 @@ Knowledge_AI_Engineering/
 ├── 90-observabilite-evals/
 ├── 100-securite-guardrails/
 ├── 110-mlops-cicd/
-└── 120-couts-finops/
+├── 120-couts-finops/
+├── 130-fondamentaux-llm/         # Transformer, tokenisation, embeddings, MoE, raisonnement
+├── 140-system-design-produit/    # system design, fiabilité, UX, choix de modèle, leadership
+├── 150-donnees-conformite/       # curation, PII, flywheel, RGPD, AI Act, IA responsable
+└── 160-multimodal-edge/          # VLM, parsing de documents, voix, LLM locaux
 ```
 
 - Chaque **section** est un dossier numéroté par dizaine (`20-rag`, `30-agents`…).
@@ -48,7 +52,7 @@ Knowledge_AI_Engineering/
 
 ### 2. Lire et naviguer
 
-- **Suivre le parcours de lecture** du MOC, qui va dans cet ordre : prompt engineering, RAG, agents, automatisation et frameworks d'agents, fine-tuning, inférence, conteneurs, API layer, observabilité, sécurité, MLOps & CI/CD, coûts & FinOps.
+- **Suivre le parcours de lecture** du MOC, qui va dans cet ordre : fondamentaux LLM (prérequis), prompt engineering, RAG, agents, automatisation et frameworks d'agents, fine-tuning, inférence, conteneurs, API layer, observabilité, sécurité, MLOps & CI/CD, coûts & FinOps, données & conformité, multimodal & edge, puis system design & produit, qui assemble le tout.
 - **Rebondir entre les concepts** : chaque fiche se termine par une section `Connexions` qui explique pourquoi les fiches liées sont liées. Des liens apparaissent aussi dans les réponses elles-mêmes.
 - **Voir l'ensemble** : la **vue graphe** d'Obsidian montre comment les concepts s'articulent, et le panneau **Backlinks** liste les fiches qui citent la fiche ouverte.
 
@@ -87,6 +91,18 @@ Le modèle exécute-t-il lui-même les outils ?
 
 ---
 
+## Mises en situation
+
+Mise en situation : ton agent dispose de 40 outils et se trompe souvent d'outil. Comment améliores-tu la situation ?
+?
+1. **Réduire le choix** : n'exposer que les outils utiles à la tâche en cours.
+2. **Soigner les descriptions** : nom explicite, cas d'usage, ce que l'outil ne fait pas.
+3. …
+
+**Piège** : ajouter un outil supplémentaire pour corriger les erreurs des précédents.
+
+---
+
 ## Connexions
 - [[31-agents-fondamentaux|Agents]] — la boucle qui consomme les outils
 - [[00-moc-ai-engineering|MOC AI Engineering]]
@@ -97,7 +113,12 @@ Les conventions à respecter :
 - **Pas de frontmatter YAML.** Les tags sont écrits en texte sur la ligne 2.
 - **Une carte** = la question, puis une ligne contenant seulement `?`, puis la réponse. Les cartes sont séparées par `---`.
 - **Des réponses courtes**, avec les termes clés en gras, et un bloc de code quand c'est utile.
+- **Une section `## Mises en situation`** avant les connexions : 2 cartes (3 pour les fiches avancées) dont la question commence par `Mise en situation :`, tient en un seul paragraphe et décrit un cas concret. La réponse déroule une **démarche en 3 à 6 étapes** et peut finir par un **piège** à éviter.
 - **Une section `## Connexions`** à la fin, dont le dernier lien renvoie toujours au MOC.
+- **Des cartes courtes** : au-delà de 5 éléments, une liste se découpe en sous-cartes thématiques dont la question donne un indice.
+- **Des cartes « À ne pas confondre : X et Y ? »** pour les notions que l'on mélange (OCI et CRI, tag et digest, routing et fallback, rappel et précision, few-shot et fine-tuning…).
+- **Des repères chiffrés** et des **exemples exécutables** (commandes, configurations, extraits de code) plutôt que des formulations abstraites.
+- **Une ligne `Vérifié le : …`** juste après les tags, sur les fiches qui citent des produits, des versions ou des textes réglementaires. Elle dit quand le contenu a été confronté à la réalité.
 
 ## Ajouter une fiche
 
@@ -166,6 +187,9 @@ Automatiser des processus, soit avec des outils de workflow, soit avec des agent
 ### 50 — Fine-tuning
 
 - [Fine-tuning & adaptation](50-fine-tuning/51-fine-tuning-adaptation.md) : quand fine-tuner, SFT, full fine-tuning ou PEFT, LoRA, QLoRA, RLHF, DPO, distillation, multi-LoRA, catastrophic forgetting.
+- [Post-training & alignement](50-fine-tuning/52-post-training-alignement.md) : étapes du RLHF, pénalité KL, reward hacking, DPO et variantes, GRPO, RLVR, RLAIF et Constitutional AI, jeux de préférences, taxe d'alignement, quand faire soi-même du DPO ou du RL.
+- [Données synthétiques & distillation](50-fine-tuning/53-donnees-synthetiques-distillation.md) : génération variée, filtrage, model collapse, distillation sur les sorties ou sur les logits, distillation du raisonnement, contraintes juridiques, projet de distillation, jeux d'eval synthétiques.
+- [Entraînement distribué](50-fine-tuning/54-entrainement-distribue.md) : mémoire d'entraînement, DDP, ZeRO et FSDP, tensor et pipeline parallelism, parallélisme 3D, gradient checkpointing, accumulation de gradients, précision mixte BF16, réseau, pannes et checkpoints.
 
 ### 60 — Inférence LLM
 
@@ -206,6 +230,10 @@ Automatiser des processus, soit avec des outils de workflow, soit avec des agent
 - [Langfuse & observabilité LLM](90-observabilite-evals/91-langfuse-observabilite.md) : traces, spans et generations, sessions, prompt management, scores, LLM-as-judge, datasets.
 - [ChainForge & évaluation de prompts](90-observabilite-evals/92-chainforge-evals-prompts.md) : comparer prompts et modèles, golden dataset, evals automatiques, tests de régression.
 - [Monitoring de l'inférence & de l'usage](90-observabilite-evals/93-monitoring-inference.md) : couches à monitorer, métriques vLLM et GPU (DCGM), usage par équipe, finish_reason, validations de chaque réponse, signaux de qualité sans vérité terrain, erreurs et disponibilité, traces OpenTelemetry GenAI, dashboard, alertes, contrôles avant mise en production, détection de régression, journalisation des prompts.
+- [Évaluation des systèmes LLM — Méthodologie](90-observabilite-evals/94-evals-methodologie.md) : benchmark ou eval applicative, analyse d'erreurs, golden dataset, taille des jeux, familles d'évaluateurs, critères binaires, avec ou sans référence, offline et online, eval-driven development, saturation, anti-patterns.
+- [LLM-as-a-judge](90-observabilite-evals/95-llm-as-judge.md) : formats pointwise et pairwise, biais (position, verbosité, auto-préférence), prompt de juge, validation contre des humains (TPR, TNR, kappa), correction du taux mesuré, choix du modèle juge, juges spécialisés, limites.
+- [Évaluation des RAG & des agents](90-observabilite-evals/96-evals-rag-agents.md) : retrieval et génération, recall@k, MRR, nDCG, triade RAG, faithfulness, jeux synthétiques, résultat final ou trajectoire, environnements d'eval (τ-bench, SWE-bench), pass^k, tool calling, multi-tours, efficacité.
+- [Evals online & A/B testing](90-observabilite-evals/97-evals-online-ab-testing.md) : signaux explicites et implicites, A/B test, guardrail metrics, shadow testing, canary ou A/B, peeking, effet de nouveauté, métriques produit, boucle online-offline, confidentialité.
 
 ### 100 — Sécurité & guardrails
 
@@ -232,6 +260,47 @@ De la sécurité des LLM à celle des agents : les menaces et les incidents rée
 - [FinOps LLM](120-couts-finops/122-finops-llm.md) : visibilité des coûts, attribution aux équipes, budgets et garde-fous, routage comme premier levier, caches, pratiques GPU, arbitrage coût-qualité-latence, rôle du Lead.
 - [Caching agressif](120-couts-finops/123-caching-agressif.md) : prompt caching (TTL, prix d'écriture et de lecture), structure de prompt stable, ce qui casse le cache, contexte append-only, requêtes parallèles et pré-chauffage, caches de réponses, d'embeddings et d'outils, invalidation, sécurité, pilotage.
 
+### 130 — Fondamentaux LLM
+
+Ce qu'il faut comprendre du modèle lui-même pour raisonner sur la qualité, le coût et le serving. À lire en prérequis.
+
+- [Architecture Transformer](130-fondamentaux-llm/131-transformer-architecture.md) : chemin d'un token, attention, attention causale, multi-head, GQA et MQA, bloc MLP, résiduelles et normalisation, RoPE, coût quadratique, mémoire des poids, decoder-only ou encoder, modèle de base ou assistant.
+- [Tokenisation](130-fondamentaux-llm/132-tokenisation.md) : BPE, byte-level, taille de vocabulaire, surcoût du français, limites au niveau des caractères, tokens spéciaux, chat templates, frontières de tokens, comptage, sécurité.
+- [Embeddings & représentations](130-fondamentaux-llm/133-embeddings-representations.md) : apprentissage contrastif, similarités, bi-encoder ou cross-encoder, ColBERT, Matryoshka, préfixes, choix (MTEB), fine-tuning d'embeddings, changement de modèle, SPLADE, limites.
+- [Recherche vectorielle & index ANN](130-fondamentaux-llm/134-recherche-vectorielle-ann.md) : brute force ou ANN, HNSW et ses paramètres, IVF, Product Quantization, quantization scalaire et binaire, DiskANN, filtrage, recall de l'index, pgvector ou base dédiée, exploitation, dimensionnement.
+- [Pré-entraînement & scaling laws](130-fondamentaux-llm/135-pretraining-scaling-laws.md) : étapes de fabrication, données, scaling laws, Chinchilla, sur-entraînement pour l'inférence, 6ND, MFU, contamination, knowledge cutoff, capacités émergentes, mur des données.
+- [Mixture of Experts](130-fondamentaux-llm/136-mixture-of-experts.md) : paramètres totaux et actifs, routeur, load balancing, expert partagé, spécialisation réelle, coût mémoire, expert parallelism, MoE ou dense.
+- [Long contexte](130-fondamentaux-llm/137-long-contexte.md) : extension de RoPE, lost in the middle, needle in a haystack et RULER, context rot, long contexte ou RAG, coût, techniques de serving, limite de sortie, test sur sa tâche.
+- [Modèles de raisonnement](130-fondamentaux-llm/138-modeles-raisonnement.md) : test-time compute, RLVR, budget de réflexion, facturation, quand ne pas les utiliser, prompting, fidélité de la chaîne de pensée, interleaved thinking, best-of-n.
+
+### 140 — System design & produit
+
+La partie qui assemble tout le reste : concevoir, fiabiliser et piloter une application LLM, niveau senior.
+
+- [System design LLM — Méthode](140-system-design-produit/141-system-design-llm.md) : démarche, cadrage, échelle de complexité, triangle qualité-latence-coût, estimation de charge, composants, latence perçue, synchrone ou asynchrone, multi-tenant, modes de défaillance, présentation des arbitrages.
+- [Fiabilité & résilience](140-system-design-produit/142-fiabilite-resilience-llm.md) : timeouts, retries, fallbacks, circuit breaker, sorties mal formées, dégradation gracieuse, rate limits, tâches longues, épinglage de version, SLO, chaos testing.
+- [Hallucinations, grounding & abstention](140-system-design-produit/143-hallucinations-grounding.md) : types d'hallucinations, leviers, citations vérifiées, abstention, arbitrage avec la couverture, détection, calibration, slopsquatting, communication de l'incertitude.
+- [UX de l'IA & human-in-the-loop](140-system-design-produit/144-ux-ia-human-in-the-loop.md) : copilote ou autopilote, validation humaine efficace, streaming, visibilité des agents, feedback, attentes, chat ou interface dédiée, automation bias, erreurs et refus.
+- [Cas de system design](140-system-design-produit/145-cas-system-design.md) : support client, recherche documentaire, assistant de code, extraction à grande échelle, agent qui agit, chatbot grand public, assistant vocal, trame de réponse, erreurs d'entretien.
+- [Choisir un modèle](140-system-design-produit/146-choix-modeles.md) : critères, limites des leaderboards, benchmarks, fermé ou open weights, licences, coût par tâche, architecture multi-modèles, lock-in, migration, veille.
+- [Leadership technique](140-system-design-produit/147-leadership-technique-ia.md) : ce qui fait un senior, choix des cas d'usage, ROI, échec des POC, RFC et ADR, build ou buy, go / no-go, standards d'équipe, communication avec les décideurs, veille.
+
+### 150 — Données & conformité
+
+- [Données : curation & annotation](150-donnees-conformite/151-donnees-curation-annotation.md) : dimensions de qualité, déduplication, guide d'annotation, accord inter-annotateurs, qui annote, active learning, séparation dev et test, données de production, préparation d'un fine-tuning.
+- [PII & confidentialité](150-donnees-conformite/152-pii-confidentialite.md) : où passent les données, détection, masquage, pseudonymisation et anonymisation, pseudonymiser avant l'appel, engagements des fournisseurs, logs, mémorisation, fuites entre utilisateurs, secrets, privacy by design.
+- [Data flywheel & versioning](150-donnees-conformite/153-data-flywheel-versioning.md) : boucle d'amélioration, étapes, versioning des données, outils (DVC, lakeFS, Iceberg), lineage d'une eval, versioning d'un index, signaux implicites, pièges, priorisation.
+- [RGPD appliqué aux LLM](150-donnees-conformite/154-rgpd-llm.md) : champ d'application, principes, base légale de la réutilisation, responsable et sous-traitant, transferts hors UE, droit à l'effacement, AIPD, décisions automatisées, données dans le modèle, mesures concrètes.
+- [AI Act](150-donnees-conformite/155-ai-act.md) : approche par les risques, pratiques interdites, haut risque et obligations, fournisseur ou déployeur, transparence, modèles à usage général, calendrier, sanctions, plan d'action.
+- [IA responsable](150-donnees-conformite/156-ia-responsable.md) : sources de biais, tests contrefactuels, métriques d'équité, model cards et system cards, datasheets, sycophancy, sécurité ou utilité, supervision humaine effective, référentiels (NIST AI RMF, ISO 42001).
+
+### 160 — Multimodal & edge
+
+- [Modèles vision-langage](160-multimodal-edge/161-modeles-vision-langage.md) : encodeur visuel et projecteur, coût en tokens, CLIP, faiblesses, injection visuelle, computer use, VLM ou OCR, évaluation, autres modalités.
+- [Parsing de documents](160-multimodal-edge/162-document-parsing.md) : PDF natif ou scanné, analyse de layout, outils (Docling, Unstructured, services cloud, VLM), tableaux, figures, ColPali, chunking structurel, évaluation, exploitation.
+- [Voix & agents temps réel](160-multimodal-edge/163-voix-temps-reel.md) : cascade ou speech-to-speech, budget de latence, réduction de latence, détection de fin de tour, barge-in, texte pour la voix, STT, évaluation, risques.
+- [LLM locaux, on-prem & edge](160-multimodal-edge/164-llm-local-edge.md) : motivations, bande passante mémoire, llama.cpp et GGUF, outils locaux, Ollama ou vLLM, Apple Silicon, small language models, hybride local et cloud, flotte d'appareils, rentabilité du on-prem.
+
 ---
 
 ## Maintenance
@@ -241,6 +310,7 @@ L'écosystème LLM change vite : noms de produits, versions et outils recommand�
 Pour recompter les fiches et les cartes après un ajout :
 
 ```bash
-grep -rl --include='*.md' '#flashcards' [0-9]*/ | wc -l      # fiches
-find [0-9]*/ -name '*.md' -exec awk '$0=="?"' {} + | wc -l  # cartes
+grep -rl --include='*.md' '#flashcards' [0-9]*/ | wc -l          # fiches
+find [0-9]*/ -name '*.md' -exec awk '$0=="?"' {} + | wc -l      # cartes
+grep -rh --include='*.md' -c 'Mise en situation :' [0-9]*/ | paste -sd+ | bc  # mises en situation
 ```

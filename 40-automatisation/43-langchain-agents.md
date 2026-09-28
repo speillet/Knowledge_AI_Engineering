@@ -1,5 +1,6 @@
 # LangChain — Agents & middleware — Flashcards
 Tags: #flashcards #ai-engineering #agents #langchain #llm
+Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 
 Qu'est-ce que `create_agent` ?
 ?
@@ -105,6 +106,32 @@ Une surcouche « **batteries included** » bâtie sur les agents LangChain : **p
 Quand descendre de `create_agent` vers LangGraph ?
 ?
 Quand le flux doit être **explicite** : étapes déterministes mêlées à des étapes agentiques, branches et boucles sur mesure, plusieurs agents coordonnés — c'est le domaine de [[44-langgraph-fondamentaux|LangGraph]].
+
+---
+
+## Mises en situation
+
+Mise en situation : ton agent LangChain doit demander une validation avant tout envoi d'e-mail, plafonner ses appels au modèle et résumer l'historique quand il s'allonge. Comment l'implémentes-tu ?
+?
+1. **Ne pas réécrire la boucle** : ces besoins sont des **middlewares**, insérés dans l'agent existant
+2. **HumanInTheLoopMiddleware** pour interrompre avant `send_email`, avec reprise par `Command(resume=...)`
+3. **ModelCallLimitMiddleware** et **ToolCallLimitMiddleware** pour plafonner coût et boucles
+4. **SummarizationMiddleware** pour la compaction près de la limite ([[35-context-engineering|context engineering]])
+5. **Checkpointer** obligatoire : sans persistance, une interruption perd l'état de l'agent
+
+**Piège** : mettre « demande toujours confirmation » dans le system prompt et croire que c'est un contrôle.
+
+---
+
+Mise en situation : tes outils ont besoin de l'identifiant du client et de son niveau d'abonnement, mais tu ne veux pas que le modèle puisse les modifier. Comment fais-tu ?
+?
+1. **Ne pas les mettre dans les messages** : tout ce que le modèle voit, il peut le reformuler ou l'inventer
+2. **`context_schema`** : passer ces données via `context=...` à l'invocation
+3. **Les lire dans le runtime**, côté outils et middlewares, au moment de l'exécution
+4. **Vérifier les droits côté outil** à partir de ce contexte, jamais à partir d'un argument fourni par le modèle ([[103-defenses-agents|défenses]])
+5. **Tracer** l'identité réelle utilisée pour chaque appel ([[93-monitoring-inference|traces]])
+
+**Piège** : passer le `tenant_id` en paramètre d'outil. Une injection suffirait alors à changer de client.
 
 ---
 

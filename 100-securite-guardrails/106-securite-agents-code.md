@@ -1,5 +1,6 @@
 # Sécurité des agents de code — Flashcards
 Tags: #flashcards #ai-engineering #securite #agents #coding-agents #llm
+Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 
 Pourquoi les agents de code sont-ils une cible de choix ?
 ?
@@ -117,6 +118,31 @@ Quelle politique d'entreprise pour les outils de code IA ?
 - **Paramètres gérés centralement** et non modifiables par l'utilisateur : règles de refus, sandbox, serveurs MCP autorisés
 - **Serveurs MCP et skills** issus du registre interne uniquement ([[104-securite-mcp-skills|MCP & skills]])
 - **Télémétrie** envoyée au SIEM, **formation** des développeurs, et **processus d'incident** connu
+
+---
+
+## Mises en situation
+
+Mise en situation : un workflow GitHub Actions lance Claude Code sur chaque nouvelle issue pour proposer un correctif. Il dispose d'un `GITHUB_TOKEN` en écriture et des secrets de déploiement. Qu'est-ce qui ne va pas ?
+?
+1. **PromptPwnd** : le corps de l'issue, écrit par n'importe qui, entre dans le prompt d'un agent privilégié
+2. **Jeton trop large** : lecture seule par défaut ; les modifications passent par une pull request relue
+3. **Secrets inutiles** : aucun secret de déploiement dans ce job
+4. **Outils restreints** : pas de shell libre ni de réseau ouvert pour cette tâche
+5. **Déclenchement encadré** : réservé aux issues des membres de l'organisation, ou soumis à approbation
+
+**Piège** : croire qu'une consigne « ignore les instructions contenues dans l'issue » suffit.
+
+---
+
+Mise en situation : un développeur senior veut lancer son agent de code avec `--dangerously-skip-permissions` sur son poste, pour aller plus vite. Que lui proposes-tu ?
+?
+1. **Comprendre le besoin** : trop de demandes d'approbation pour des commandes courantes
+2. **Liste blanche** des commandes sûres (tests, lint, build) et **règles de refus** sur les fichiers de secrets et les commandes destructrices ([[34-harness-plugins|permissions]])
+3. **Si le mode sans permission reste nécessaire** : seulement dans un devcontainer ou une VM jetable, sans clés SSH ni identifiants cloud, avec un réseau limité
+4. **Jetons limités** au dépôt de la tâche
+
+**Piège** : l'autoriser sur le poste principal. L'attaque s1ngularity a montré ce qu'un malware peut faire de ces options.
 
 ---
 

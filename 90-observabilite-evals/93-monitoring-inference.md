@@ -1,5 +1,6 @@
 # Monitoring de l'inférence & de l'usage — Flashcards
 Tags: #flashcards #ai-engineering #observability #monitoring #inference #llm
+Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 
 Quelles couches faut-il monitorer pour un service d'inférence ?
 ?
@@ -22,16 +23,33 @@ Au format Prometheus, sur `/metrics` :
 - **Volume** : `vllm:prompt_tokens_total`, `vllm:generation_tokens_total`, `vllm:request_success_total` (label `finished_reason`)
 
 Les noms évoluent d'une version à l'autre : vérifier sur `/metrics`. Voir [[64-metriques-slo-inference|métriques & SLO]].
+```promql
+# TTFT p95 sur 5 minutes
+histogram_quantile(0.95,
+  sum(rate(vllm:time_to_first_token_seconds_bucket[5m])) by (le))
+
+# requêtes en attente et occupation du cache
+sum(vllm:num_requests_waiting)
+avg(vllm:kv_cache_usage_perc)
+
+# part de réponses tronquées
+sum(rate(vllm:request_success_total{finished_reason="length"}[15m]))
+  / sum(rate(vllm:request_success_total[15m]))
+```
 
 ---
 
-Quelles métriques GPU surveiller, et pourquoi l'utilisation GPU est-elle trompeuse ?
+Quelles métriques GPU surveiller pour un service d'inférence ?
 ?
 Avec le **DCGM exporter** de NVIDIA :
 - `DCGM_FI_PROF_SM_ACTIVE` et `DCGM_FI_PROF_DRAM_ACTIVE` : charge réelle du calcul et de la **bande passante mémoire** (le goulot du decode)
 - `DCGM_FI_DEV_POWER_USAGE`, `DCGM_FI_DEV_GPU_TEMP` : puissance, température, throttling
 - `DCGM_FI_DEV_XID_ERRORS` : erreurs matérielles ou driver
 
+---
+
+Pourquoi l'utilisation GPU et la VRAM utilisée sont-elles des métriques trompeuses ?
+?
 `DCGM_FI_DEV_GPU_UTIL` dit seulement qu'un kernel tourne : il reste proche de 100 % même quand le GPU est sous-exploité. La **VRAM utilisée** (`DCGM_FI_DEV_FB_USED`) est aussi peu parlante, car vLLM **préalloue** la mémoire (`--gpu-memory-utilization`) : c'est le **taux d'occupation du KV cache** qu'il faut suivre.
 
 ---
@@ -75,12 +93,17 @@ Chaque échec est **compté comme une métrique** (taux d'échec de validation) 
 
 ---
 
-Quels signaux de qualité suivre sans vérité terrain ?
+Quels signaux automatiques révèlent une baisse de qualité sans vérité terrain ?
 ?
 - **Taux de refus** et de réponses vides
 - **Boucles et répétitions** (n-grammes répétés)
 - **Dérive de la longueur** des réponses
 - **Confiance** : logprob moyenne ou entropie en baisse ([[65-probabilites-sampling|logprobs]])
+
+---
+
+Quels signaux humains ou jugés suivre pour la qualité, sans vérité terrain ?
+?
 - **Feedback utilisateur** (pouce, reformulations, régénérations)
 - **LLM-as-judge** sur un échantillon, segmenté par tâche et par langue
 
@@ -157,6 +180,44 @@ Ils contiennent souvent des **données personnelles ou confidentielles** :
 
 ---
 
+## Mises en situation
+
+Mise en situation : on te signale « l'assistant est lent ce matin ». Tu n'as que cette phrase. Dans quel ordre regardes-tu ?
+?
+1. **Confirmer et quantifier** : TTFT et TPOT en p95, sur la bonne route et la bonne période
+2. **Saturation** : file d'attente, occupation du KV cache, préemptions. C'est la cause la plus fréquente
+3. **Usage** : un client qui envoie des prompts beaucoup plus longs, ou un pic de trafic
+4. **Infrastructure** : erreurs XID, throttling thermique, un réplica tombé, un nœud dégradé
+5. **Changement récent** : déploiement, nouveau prompt, nouveau modèle, cache de préfixes cassé
+
+**Piège** : regarder l'utilisation GPU, qui sera à 100 % dans tous les cas.
+
+---
+
+Mise en situation : ton service ne renvoie aucune erreur, mais le support reçoit des plaintes sur des réponses tronquées. Quelle métrique aurait dû t'alerter ?
+?
+1. **La répartition des `finish_reason`** : une hausse de `length` signale des réponses coupées par `max_tokens`
+2. **Vérifier la cause** : limite trop basse, prompts plus longs, ou modèle qui boucle
+3. **Croiser** avec le taux d'échec de validation, notamment le JSON invalide dû à la troncature
+4. **Corriger** : ajuster `max_tokens`, demander des réponses plus concises, découper la tâche
+5. **Alerter** sur ce taux, pas seulement sur les codes d'erreur HTTP
+
+**Piège** : considérer qu'une réponse renvoyée avec un code 200 est une réponse réussie.
+
+---
+
+Mise en situation : le responsable conformité demande si vous journalisez les conversations des utilisateurs. Que réponds-tu, et que vérifies-tu ?
+?
+1. **Distinguer** métriques (sans contenu) et traces (avec contenu), et dire ce qui est réellement conservé
+2. **Par défaut** : métriques sans contenu, contenu seulement sur échantillon ou opt-in
+3. **Masquer** les données personnelles avant stockage, et restreindre l'accès aux traces ([[152-pii-confidentialite|PII]])
+4. **Rétention** définie et appliquée, y compris dans les sauvegardes ([[154-rgpd-llm|RGPD]])
+5. **Vérifier les labels Prometheus** : jamais de contenu utilisateur, sous peine d'explosion de cardinalité et d'exposition
+
+**Piège** : découvrir que des prompts complets sont partis dans les logs applicatifs, hors du dispositif de traces.
+
+---
+
 ## Connexions
 - [[64-metriques-slo-inference|Métriques d'inférence & SLO]] — TTFT, TPOT, goodput, percentiles
 - [[91-langfuse-observabilite|Langfuse & observabilité LLM]] — les traces applicatives
@@ -171,4 +232,5 @@ Ils contiennent souvent des **données personnelles ou confidentielles** :
 - [[115-plateformes-agents-gouvernance|Plateformes d'agents — Architecture & gouvernance]] — audit et traces des agents
 - [[38-plateformes-agents|Plateformes d'agents]] — l'observabilité fournie par la plateforme
 - [[105-devsecops-ia-agentique|DevSecOps pour l'IA agentique]] — journaux de sécurité et détection
+- [[97-evals-online-ab-testing|Evals online & A/B testing]] — qualité en production
 - [[00-moc-ai-engineering|MOC AI Engineering]]

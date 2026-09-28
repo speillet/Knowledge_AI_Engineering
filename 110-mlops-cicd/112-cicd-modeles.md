@@ -68,6 +68,32 @@ PR → tests + evals → build image → push registry
 
 ---
 
+## Mises en situation
+
+Mise en situation : une modification d'une ligne du system prompt part en production sans revue, et la qualité chute pendant deux jours avant qu'on s'en aperçoive. Que mets-tu en place ?
+?
+1. **Traiter le prompt comme du code** : versionné dans Git, relu en pull request
+2. **Eval gate** : rejeu du golden dataset à chaque modification, blocage si régression ([[94-evals-methodologie|evals]])
+3. **Traçabilité** : la version du prompt apparaît dans les traces, pour savoir ce qui tournait ([[91-langfuse-observabilite|traces]])
+4. **Déploiement progressif** : canary avec comparaison des métriques avant promotion
+5. **Rollback rapide** : revenir à la version précédente sans redéployer toute l'application
+
+**Piège** : modifier les prompts dans une interface de production, sans historique ni revue.
+
+---
+
+Mise en situation : tu dois déployer une nouvelle version de modèle sur un service critique, sans fenêtre de maintenance. Quelle stratégie choisis-tu ?
+?
+1. **Valider offline** : evals de non-régression et tests de contrat sur les sorties structurées
+2. **Shadow** d'abord si le budget le permet : trafic réel dupliqué, sans réponse montrée à l'utilisateur
+3. **Canary** ensuite : petit pourcentage, surveillance des SLO, des erreurs et des scores de qualité
+4. **Critères de promotion et de rollback définis à l'avance**, pas décidés dans l'urgence
+5. **Artefact complet versionné** : image, référence du modèle, prompts et configuration
+
+**Piège** : un blue/green instantané sur un modèle dont la latence et le format de sortie n'ont pas été vérifiés en conditions réelles.
+
+---
+
 ## Connexions
 - [[111-mlops-llmops-fondamentaux|MLOps fondamentaux]] — versioning & registry
 - [[92-chainforge-evals-prompts|Evals]] — le contenu des gates
@@ -78,4 +104,6 @@ PR → tests + evals → build image → push registry
 - [[93-monitoring-inference|Monitoring de l'inférence]] — les contrôles avant d'envoyer du trafic
 - [[115-plateformes-agents-gouvernance|Plateformes d'agents — Architecture & gouvernance]] — evals et boucle d'optimisation des agents
 - [[105-devsecops-ia-agentique|DevSecOps pour l'IA agentique]] — contrôles de sécurité et security eval gate
+- [[94-evals-methodologie|Méthodologie d'évaluation]] — construire les gates
+- [[97-evals-online-ab-testing|Evals online & A/B testing]] — canary vs A/B
 - [[00-moc-ai-engineering|MOC AI Engineering]]

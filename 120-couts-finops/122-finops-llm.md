@@ -22,6 +22,30 @@ Comment attribuer les coûts aux équipes ?
 Comment encadrer les dépenses ?
 ?
 **Budgets et quotas par clé/équipe** dans la gateway, **alertes** avant dépassement, **kill switch** en cas d'emballement.
+```yaml
+# exemple de garde-fous par clé virtuelle (gateway LLM)
+key: equipe-support
+max_budget: 500          # € par mois
+budget_duration: 30d
+rpm_limit: 600           # requêtes par minute
+tpm_limit: 400000        # tokens par minute
+models: [chat-petit, chat-fort]
+```
+Les deux limites comptent : **requêtes** contre les rafales, **tokens** contre une seule requête à 200 000 tokens ([[81-litellm-api-layer|LiteLLM]]).
+
+---
+
+Quels gains attendre des principaux leviers FinOps ?
+?
+```text
+Routage vers un modèle plus petit   −30 à −70 % selon la part de cas simples
+Prompt caching (préfixe stable)     tokens d'entrée lus ≈ 10 % du prix plein
+Traitement différé (batch API)      ≈ −50 %
+Cache de réponses exactes           gain = taux de hit (0 à 90 % selon l'usage)
+Contexte mieux trié                 proportionnel aux tokens supprimés
+Quantization (self-host)            moins de GPU par réplica
+```
+Ordre d'attaque recommandé : **routage**, puis **caching**, puis **contexte**. Les trois se cumulent ([[121-couts-inference|coûts d'inférence]]).
 
 ---
 
@@ -33,7 +57,13 @@ Le **[[82-routing-llm|routing]]** : envoyer chaque requête au **modèle le moin
 
 Quels caches actionner côté FinOps ?
 ?
-**Cache de réponses** (requêtes identiques), **prompt caching** (préfixes), cache d'**embeddings** RAG.
+Quatre niveaux, du plus rentable au plus spécifique :
+- **Prompt caching** des préfixes : effet massif sur les agents, dont l'entrée domine le coût
+- **Cache de réponses** pour les requêtes identiques : gain égal au taux de hit
+- **Cache d'embeddings** : on ne ré-embedde jamais deux fois le même chunk
+- **Cache des résultats d'outils et de retrieval**, avec un TTL adapté à leur fraîcheur
+
+Chacun a son risque : réponses périmées, fuite entre clients si la clé oublie le tenant ([[123-caching-agressif|caching agressif]]).
 
 ---
 
@@ -55,6 +85,32 @@ Suivre les **unit economics par produit**, imposer les **standards d'attribution
 
 ---
 
+## Mises en situation
+
+Mise en situation : la facture IA de l'entreprise a triplé en un trimestre et la direction financière demande des explications que personne ne peut donner. Par où commences-tu ?
+?
+1. **Visibilité d'abord** : sans attribution, aucune décision n'est possible. Tout passe par la gateway, avec des clés par équipe et par projet
+2. **Attribuer** : coût par équipe, application et fonctionnalité, puis showback avant chargeback
+3. **Identifier les gros postes** : quelles routes, quels modèles, quels utilisateurs concentrent la dépense
+4. **Poser des garde-fous** : budgets, quotas, alertes avant dépassement, coupure d'urgence
+5. **Optimiser ensuite** : routage, caching, contexte, dans cet ordre ([[123-caching-agressif|caching]])
+
+**Piège** : imposer des quotas avant d'avoir la visibilité, ce qui bloque des usages utiles sans traiter la cause.
+
+---
+
+Mise en situation : une équipe veut passer au modèle le plus puissant pour toutes ses requêtes, au motif que « la qualité prime ». Comment cadres-tu la discussion ?
+?
+1. **Sortir de l'opposition** : le sujet est un triangle coût, qualité, latence, pas un choix binaire
+2. **Demander des mesures** : sur quels segments le modèle le plus puissant est-il réellement meilleur ? ([[94-evals-methodologie|evals]])
+3. **Chiffrer** : coût par requête et par tâche réussie pour chaque option
+4. **Proposer une cascade** : petit modèle avec vérification, escalade sur les cas difficiles ([[82-routing-llm|routing]])
+5. **Relier à la valeur** : unit economics de la fonctionnalité, pas seulement sa facture
+
+**Piège** : trancher sur des impressions, faute d'evals par segment.
+
+---
+
 ## Connexions
 - [[121-couts-inference|Coûts d'inférence]] — la mécanique des coûts
 - [[81-litellm-api-layer|LiteLLM]] — budgets, quotas, attribution
@@ -64,4 +120,5 @@ Suivre les **unit economics par produit**, imposer les **standards d'attribution
 - [[123-caching-agressif|Caching agressif]] — les caches en pratique
 - [[93-monitoring-inference|Monitoring de l'inférence]] — les métriques d'usage par équipe
 - [[115-plateformes-agents-gouvernance|Plateformes d'agents — Architecture & gouvernance]] — le coût d'une flotte d'agents
+- [[147-leadership-technique-ia|Leadership technique]] — ROI des fonctionnalités IA
 - [[00-moc-ai-engineering|MOC AI Engineering]]

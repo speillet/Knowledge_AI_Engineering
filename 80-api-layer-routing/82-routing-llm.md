@@ -34,6 +34,13 @@ Un **classifieur entraîné sur des données de préférence** qui prédit si le
 Qu'est-ce qu'une cascade ?
 ?
 Envoyer d'abord la requête au **modèle bon marché**, **vérifier** la réponse (validation de format, score de confiance, juge) et **escalader** vers un modèle plus puissant seulement en cas d'échec.
+```text
+80 % des requêtes : petit modèle           → 1 × le coût
+20 % escaladées   : petit + grand modèle   → 1 × + 12 × = 13 ×
+
+coût moyen ≈ 0,8 × 1 + 0,2 × 13 ≈ 3,4   contre 12 en tout-grand-modèle
+```
+Le calcul ne tient que si la **vérification est fiable et bon marché** : sinon on paie deux fois pour un résultat incertain.
 
 ---
 
@@ -61,6 +68,44 @@ Renvoyer une **réponse déjà générée** pour une question **sémantiquement 
 
 ---
 
+À ne pas confondre : les quatre décisions autour du modèle ?
+?
+```text
+Routage   → AVANT l'appel, choisir le bon modèle          (optimisation)
+Cascade   → APRÈS un échec de qualité, escalader          (optimisation)
+Fallback  → APRÈS une erreur technique, basculer          (fiabilité)
+Retry     → APRÈS une erreur transitoire, réessayer       (fiabilité)
+```
+Les deux premiers visent le **coût et la qualité**, les deux derniers la **disponibilité**. Ils vivent souvent dans le même composant, la [[81-litellm-api-layer|gateway]], mais répondent à des questions différentes ([[142-fiabilite-resilience-llm|fiabilité]]).
+
+---
+
+## Mises en situation
+
+Mise en situation : ta direction demande de diviser par deux le coût de l'assistant, sans dégrader la qualité perçue. Comment procèdes-tu ?
+?
+1. **Segmenter le trafic** : quelles requêtes sont simples, lesquelles sont difficiles, dans quelles proportions
+2. **Mesurer par segment** : qualité du petit modèle contre le gros, sur chaque segment ([[94-evals-methodologie|evals]])
+3. **Commencer par du routage statique ou par règles**, prévisible et auditable, avant tout routeur appris
+4. **Cascade** sur les segments incertains : petit modèle, vérification, escalade si échec
+5. **Vérifier ensuite** : coût par requête, qualité par segment, taux d'escalade, feedback utilisateur
+
+**Piège** : router sur la seule longueur du prompt, qui ne dit rien de la difficulté réelle.
+
+---
+
+Mise en situation : un collègue propose un cache sémantique pour les questions « proches » des précédentes, sur un assistant bancaire. Quelles réserves poses-tu ?
+?
+1. **Le risque principal** : deux questions proches en apparence peuvent appeler des réponses opposées (« puis-je clôturer mon compte ? » selon le type de compte)
+2. **Le seuil de similarité** devient un paramètre critique, à calibrer sur des cas réels
+3. **Cloisonner** : jamais de cache partagé entre utilisateurs quand la réponse dépend de leurs données
+4. **Limiter le périmètre** : réserver le cache aux questions **génériques**, factuelles et sans personnalisation
+5. **Mesurer** : taux de hit, mais surtout taux de réponses inadaptées servies depuis le cache ([[123-caching-agressif|caching]])
+
+**Piège** : mesurer le succès du cache à son taux de hit, sans contrôler la justesse des réponses servies.
+
+---
+
 ## Connexions
 - [[81-litellm-api-layer|LiteLLM]] — où le routage est implémenté
 - [[91-langfuse-observabilite|Langfuse]] — décider grâce aux données observées
@@ -69,4 +114,6 @@ Renvoyer une **réponse déjà générée** pour une question **sémantiquement 
 - [[121-couts-inference|Coûts d'inférence]] — le levier de coût n°1
 - [[66-prefix-caching-radix-attention|Prefix caching & RadixAttention]] — routage par affinité de préfixe
 - [[123-caching-agressif|Caching agressif]] — tous les niveaux de cache
+- [[146-choix-modeles|Choix de modèle]] — critères et benchmarks
+- [[138-modeles-raisonnement|Modèles de raisonnement]] — router par difficulté
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -1,5 +1,6 @@
 # Prefix caching & RadixAttention — Flashcards
 Tags: #flashcards #ai-engineering #inference #kv-cache #caching #llm
+Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 
 Qu'est-ce que le prefix caching côté serveur ?
 ?
@@ -75,6 +76,44 @@ Comment mesurer l'efficacité du prefix cache ?
 - Côté API : part des tokens d'entrée **lus depuis le cache**
 
 Une chute brutale du taux de hit signale souvent un préfixe devenu instable ([[123-caching-agressif|caching agressif]]).
+
+---
+
+## Mises en situation
+
+Mise en situation : ton assistant multi-tours affichait 70 % de hits sur le prefix cache. Après une mise à jour, le taux tombe à 5 % et le TTFT double. Que cherches-tu ?
+?
+1. **Un changement en tête de prompt** : horodatage, identifiant de session, ordre des outils devenu variable
+2. **Vérifier la règle** : le prefix caching exige une correspondance **exacte depuis le premier token**
+3. **Regarder le déploiement** : nouveaux réplicas aux caches froids, ou routage redevenu round-robin
+4. **Corriger** : contenu stable en tête, variable en fin, et **routage par affinité de préfixe** ([[82-routing-llm|routing]])
+5. **Surveiller** le taux de hit comme métrique de premier plan ([[123-caching-agressif|caching]])
+
+**Piège** : une seule variable dynamique insérée au début du system prompt suffit à annuler tout le cache.
+
+---
+
+Mise en situation : tu passes de 1 à 4 réplicas vLLM derrière un load balancer classique, et le TTFT se dégrade alors que tu as plus de GPU. Pourquoi ?
+?
+1. **Cause** : chaque réplica a **son propre cache**. Un round-robin disperse les requêtes et fait chuter les hits
+2. **Mesurer** : taux de hit par réplica, avant et après le passage à l'échelle
+3. **Corriger** : routeur **cache-aware** (SGLang router, llm-d, Dynamo, vLLM production stack) qui envoie la requête là où son préfixe est chaud
+4. **Équilibrer** : l'affinité ne doit pas créer de point chaud. Le routeur arbitre entre hit et charge
+5. **Compléter** : offloading du KV cache, voire cache partagé entre instances (LMCache)
+
+**Piège** : conclure que le passage à l'échelle « ne sert à rien » sans regarder le cache.
+
+---
+
+Mise en situation : ton service multi-clients partage un même modèle, et un client s'inquiète que ses prompts puissent fuiter via le cache. Que réponds-tu ?
+?
+1. **Le risque est réel** : le prefix caching crée un **canal auxiliaire temporel**. Un TTFT plus court révèle qu'un préfixe est déjà en cache
+2. **Ce qui fuit** : pas le contenu directement, mais la possibilité de **deviner un prompt** morceau par morceau en mesurant les temps de réponse
+3. **Parade principale** : isoler le cache par client (`cache_salt` dans vLLM), comme les fournisseurs d'API le font par organisation
+4. **Coût** : moins de partage, donc moins de hits. C'est un arbitrage sécurité contre performance
+5. **Vérifier** aussi l'isolation de la mémoire, des index et des journaux ([[115-plateformes-agents-gouvernance|isolation multi-tenant]])
+
+**Piège** : partager le cache entre clients pour « améliorer les performances globales ».
 
 ---
 

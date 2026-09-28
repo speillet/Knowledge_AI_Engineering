@@ -1,0 +1,110 @@
+# Parsing de documents (PDF, OCR, layout) — Flashcards
+Tags: #flashcards #ai-engineering #multimodal #document-parsing #rag
+Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+
+Pourquoi le parsing de documents est-il souvent le goulot d'un RAG d'entreprise ?
+?
+Parce que les documents réels sont des **PDF scannés, tableaux, slides, formulaires, colonnes multiples, en-têtes et pieds de page**. Un mauvais parsing (tableau aplati, colonnes mélangées, texte manquant) produit des chunks **inexploitables** : aucun modèle ni reranker ne rattrape une information **perdue à l'ingestion** ([[21-rag-fondamentaux|RAG]]).
+
+---
+
+Quelle différence entre un PDF natif et un PDF scanné ?
+?
+- **Natif** (généré numériquement) : contient une **couche texte** extractible directement (pypdf, pdfplumber, PyMuPDF), mais **sans structure** fiable (ordre de lecture, tableaux).
+- **Scanné** : une **image** de page → nécessite de l'**OCR**.
+
+Beaucoup de PDF sont **mixtes** ; il faut détecter page par page.
+
+---
+
+Qu'est-ce que l'analyse de layout ?
+?
+Détecter les **zones** d'une page — titres, paragraphes, tableaux, figures, légendes, en-têtes, notes — et l'**ordre de lecture**. Elle permet de reconstruire la **structure** (hiérarchie des sections) et de traiter chaque zone avec le bon outil (OCR, extraction de tableau, description de figure).
+
+---
+
+Quels outils de parsing connaître ?
+?
+- **Bibliothèques classiques** : PyMuPDF, pdfplumber, Tesseract (OCR).
+- **Pipelines open source** avec layout et tableaux : **Docling**, **Unstructured**, **Marker**, MinerU.
+- **Services cloud** : AWS Textract, Azure Document Intelligence, Google Document AI.
+- **VLM** utilisés directement comme parseurs (page → markdown) et modèles OCR dédiés basés sur VLM.
+
+Choix selon la qualité **mesurée sur ses documents**, le coût, la confidentialité.
+
+---
+
+Comment traiter les tableaux ?
+?
+Les extraire en **structure** (markdown, HTML ou JSON), pas en texte aplati. Pour le RAG : garder le tableau **entier** dans un chunk avec son **titre et ses en-têtes de colonnes** ; pour un grand tableau, répéter les en-têtes dans chaque morceau. On peut aussi générer un **résumé textuel** du tableau pour l'embedding et fournir le tableau complet au LLM.
+
+---
+
+Comment traiter les images et graphiques d'un document ?
+?
+Les faire **décrire par un VLM** (description + données lisibles du graphique) et indexer cette description, en gardant un **lien vers l'image** pour pouvoir la fournir au modèle au moment de la réponse. Alternative : **retrieval multimodal** direct sur les images de pages ([[161-modeles-vision-langage|VLM]]).
+
+---
+
+Qu'est-ce que le retrieval sur images de pages (type ColPali) ?
+?
+On **n'extrait pas le texte** : chaque page est encodée **comme image** par un VLM en embeddings multi-vecteurs (late interaction), et la requête texte est comparée directement à ces pages. Robuste aux mises en page complexes et aux graphiques, au prix d'un **stockage** plus lourd et d'une réponse générée par un **VLM**.
+
+---
+
+Comment chunker en respectant la structure ?
+?
+Découper **selon la hiérarchie** (sections, sous-sections) plutôt qu'à taille fixe, **ne jamais couper** un tableau ou une liste au milieu, et ajouter à chaque chunk son **contexte** : titre du document, chemin des titres (« Contrat > Article 5 > Résiliation »), date, source. Ce contexte améliore beaucoup le retrieval ([[22-rag-avance|RAG avancé]]).
+
+---
+
+Comment évaluer une chaîne de parsing ?
+?
+- Sur un **échantillon représentatif** de documents (y compris les pires : scans, tableaux complexes).
+- Métriques : **taux d'erreur de caractères** (OCR), exactitude des **cellules** de tableau, ordre de lecture, **champs** extraits corrects.
+- Et surtout l'effet **en aval** : recall du retrieval et qualité des réponses du RAG.
+
+---
+
+Quels pièges d'exploitation dans une chaîne d'ingestion ?
+?
+- **Coût et durée** : un VLM ou un service cloud sur des millions de pages coûte cher → traitement **batch**, cache par hash de fichier.
+- **Échecs silencieux** : pages vides, encodages cassés → contrôles de qualité automatiques (longueur, ratio de caractères valides).
+- **Mises à jour** : ré-ingestion incrémentale et suppression des anciennes versions.
+- **Confidentialité** des documents envoyés à un service externe ([[152-pii-confidentialite|PII]]).
+
+---
+
+## Mises en situation
+
+Mise en situation : ton RAG répond mal sur les documents contenant des tableaux, alors que le retrieval semble correct. Où cherches-tu ?
+?
+1. **Regarder les chunks eux-mêmes** : un tableau aplati en texte perd les correspondances entre lignes et colonnes
+2. **Extraire en structure** (markdown, HTML ou JSON) plutôt qu'en texte brut
+3. **Garder le tableau entier** dans un chunk, avec son titre et ses en-têtes, et répéter les en-têtes si on doit le découper
+4. **Enrichir l'index** : un résumé textuel du tableau pour l'embedding, le tableau complet fourni au modèle
+5. **Mesurer en aval** : recall et exactitude des réponses sur les questions qui portent sur des tableaux
+
+**Piège** : chercher la cause dans le modèle de génération alors que l'information a été perdue à l'ingestion.
+
+---
+
+Mise en situation : tu dois ingérer 500 000 PDF, dont beaucoup de scans, avec un budget limité. Comment conçois-tu la chaîne ?
+?
+1. **Trier par type** : PDF natifs traités par extraction directe, scans envoyés à l'OCR, cas complexes à un VLM
+2. **Traiter en batch** et **cacher par empreinte de fichier**, pour ne jamais retraiter deux fois le même document
+3. **Contrôles qualité automatiques** : pages vides, ratio de caractères valides, longueur anormale, pour détecter les échecs silencieux
+4. **Évaluer la chaîne** sur un échantillon représentatif, en incluant les pires documents
+5. **Vérifier la confidentialité** avant d'envoyer des documents à un service externe ([[152-pii-confidentialite|PII]])
+
+**Piège** : envoyer les 500 000 documents au parseur le plus coûteux, alors que la majorité se traite avec une simple extraction.
+
+---
+
+## Connexions
+- [[21-rag-fondamentaux|RAG — Fondamentaux]] — l'ingestion en amont du retrieval
+- [[22-rag-avance|RAG avancé]] — chunking contextuel
+- [[161-modeles-vision-langage|Modèles vision-langage]] — VLM comme parseurs
+- [[133-embeddings-representations|Embeddings]] — late interaction
+- [[145-cas-system-design|Cas de system design]] — recherche documentaire et extraction
+- [[00-moc-ai-engineering|MOC AI Engineering]]

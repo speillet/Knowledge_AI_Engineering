@@ -104,6 +104,32 @@ Démarrer avec une **ontologie restreinte** aux besoins réels, et comparer à u
 
 ---
 
+## Mises en situation
+
+Mise en situation : ton graphe extrait par LLM contient « Société Générale », « Societe Generale » et « SG » comme trois entités distinctes, et les requêtes multi-hop échouent. Comment corriges-tu ?
+?
+1. **Cause** : extraction sans ontologie ni résolution d'entités, donc un graphe **fragmenté**
+2. **Ontologie restreinte** : types d'entités et de relations autorisés, extraction en sortie structurée ([[63-guided-generation|guided generation]])
+3. **Résolution d'entités** : normalisation, similarité d'embeddings, règles métier (même SIREN), LLM en arbitre sur les cas douteux
+4. **Fusionner l'existant** plutôt que tout ré-extraire, si le corpus est coûteux à retraiter
+5. **Mesurer** : requêtes de test connues, et surveiller le nombre d'entités par concept
+
+**Piège** : une résolution trop agressive qui fusionne une filiale et sa maison mère.
+
+---
+
+Mise en situation : un chef de projet veut exposer Text2Cypher aux utilisateurs métier, pour qu'ils interrogent le graphe en langage naturel. Quelles conditions poses-tu ?
+?
+1. **Utilisateur de base en lecture seule** : aucune requête ne doit pouvoir modifier ou supprimer le graphe
+2. **Validation de la requête générée** avant exécution, avec labels et relations vérifiés contre le schéma
+3. **Timeouts et limites** de résultats, contre les requêtes qui balayent tout le graphe
+4. **Requêtes paramétrées** pour les questions fréquentes, le LLM ne remplissant que les paramètres
+5. **Afficher la requête et le chemin** parcouru, pour que l'utilisateur juge la réponse ([[102-menaces-agents|menaces]])
+
+**Piège** : donner au générateur un compte d'administration « le temps des tests ».
+
+---
+
 ## Connexions
 - [[21-rag-fondamentaux|RAG — Fondamentaux]] — la recherche vectorielle de base
 - [[22-rag-avance|RAG avancé]] — recherche hybride et agentic RAG

@@ -3,9 +3,11 @@ Tags: #moc #ai-engineering
 
 Carte racine du vault : les connaissances clés de l'**AI Engineering**, de l'usage des modèles à leur industrialisation.
 Chaque domaine a ses notes de flashcards reliées entre elles via `## Connexions`.
+Chaque fiche se termine par des **mises en situation** : pour ne réviser qu'elles, chercher `Mise en situation :` dans le vault.
 
 ## Parcours de lecture
-Progression recommandée : **utiliser les modèles → construire des architectures → adapter → servir & déployer → industrialiser → gouverner.**
+Progression recommandée : **comprendre les modèles → les utiliser → construire des architectures → adapter → servir & déployer → industrialiser → gouverner → concevoir des systèmes.**
+0. [[131-transformer-architecture|Fondamentaux LLM]] — comprendre ce qu'on utilise (prérequis)
 1. [[11-prompt-engineering-avance|Prompt engineering]] — parler aux modèles
 2. [[21-rag-fondamentaux|RAG]] — les augmenter avec des connaissances
 3. [[31-agents-fondamentaux|Agents]] — leur donner des mains
@@ -18,6 +20,9 @@ Progression recommandée : **utiliser les modèles → construire des architectu
 10. [[101-securite-llm-guardrails|Sécurité]] — tout protéger
 11. [[111-mlops-llmops-fondamentaux|MLOps & CI/CD]] — livrer en continu
 12. [[121-couts-inference|Coûts & FinOps]] — maîtriser l'économie
+13. [[151-donnees-curation-annotation|Données & conformité]] — données, RGPD, AI Act
+14. [[161-modeles-vision-langage|Multimodal & edge]] — images, documents, voix, local
+15. [[141-system-design-llm|System design & produit]] — tout assembler (niveau senior)
 
 ## 10 — Prompt engineering
 - [[11-prompt-engineering-avance|Prompt engineering avancé]]
@@ -50,6 +55,9 @@ Progression recommandée : **utiliser les modèles → construire des architectu
 
 ## 50 — Fine-tuning
 - [[51-fine-tuning-adaptation|Fine-tuning & adaptation de modèles]]
+- [[52-post-training-alignement|Post-training & alignement (RLHF, DPO, GRPO, RLVR)]]
+- [[53-donnees-synthetiques-distillation|Données synthétiques & distillation]]
+- [[54-entrainement-distribue|Entraînement distribué (DDP, FSDP/ZeRO, parallélismes)]]
 
 ## 60 — Inférence LLM
 - [[61-kv-cache-attention|KV cache & attention]]
@@ -73,6 +81,10 @@ Progression recommandée : **utiliser les modèles → construire des architectu
 - [[91-langfuse-observabilite|Langfuse & observabilité LLM]]
 - [[92-chainforge-evals-prompts|ChainForge & évaluation de prompts]]
 - [[93-monitoring-inference|Monitoring de l'inférence & de l'usage]]
+- [[94-evals-methodologie|Évaluation des systèmes LLM — Méthodologie]]
+- [[95-llm-as-judge|LLM-as-a-judge (biais, validation, correction)]]
+- [[96-evals-rag-agents|Évaluation des RAG & des agents]]
+- [[97-evals-online-ab-testing|Evals online & A/B testing]]
 
 ## 100 — Sécurité & guardrails
 - [[101-securite-llm-guardrails|Sécurité LLM & guardrails]]
@@ -94,6 +106,39 @@ Progression recommandée : **utiliser les modèles → construire des architectu
 - [[122-finops-llm|FinOps LLM]]
 - [[123-caching-agressif|Caching agressif]]
 
+## 130 — Fondamentaux LLM
+- [[131-transformer-architecture|Architecture Transformer]]
+- [[132-tokenisation|Tokenisation]]
+- [[133-embeddings-representations|Embeddings & représentations]]
+- [[134-recherche-vectorielle-ann|Recherche vectorielle & index ANN]]
+- [[135-pretraining-scaling-laws|Pré-entraînement & scaling laws]]
+- [[136-mixture-of-experts|Mixture of Experts (MoE)]]
+- [[137-long-contexte|Long contexte]]
+- [[138-modeles-raisonnement|Modèles de raisonnement & test-time compute]]
+
+## 140 — System design & produit
+- [[141-system-design-llm|System design d'applications LLM — Méthode]]
+- [[142-fiabilite-resilience-llm|Fiabilité & résilience]]
+- [[143-hallucinations-grounding|Hallucinations, grounding & abstention]]
+- [[144-ux-ia-human-in-the-loop|UX de l'IA & human-in-the-loop]]
+- [[145-cas-system-design|Cas de system design]]
+- [[146-choix-modeles|Choisir un modèle]]
+- [[147-leadership-technique-ia|Leadership technique en AI Engineering]]
+
+## 150 — Données & conformité
+- [[151-donnees-curation-annotation|Données : curation & annotation]]
+- [[152-pii-confidentialite|PII & confidentialité]]
+- [[153-data-flywheel-versioning|Data flywheel & versioning des données]]
+- [[154-rgpd-llm|RGPD appliqué aux LLM]]
+- [[155-ai-act|AI Act]]
+- [[156-ia-responsable|IA responsable : biais, équité & transparence]]
+
+## 160 — Multimodal & edge
+- [[161-modeles-vision-langage|Modèles vision-langage (VLM)]]
+- [[162-document-parsing|Parsing de documents (PDF, OCR, layout)]]
+- [[163-voix-temps-reel|Voix & agents temps réel]]
+- [[164-llm-local-edge|LLM locaux, on-prem & edge]]
+
 ## La stack en une chaîne
 ```text
 App / Agent
@@ -106,4 +151,4 @@ Serveur d'inférence (vLLM/SGLang/TensorRT-LLM, KV cache, batching, quantization
     ↓
 Conteneur + GPU (Docker/K8s/Apptainer)
 ```
-Transverses : **observabilité** (traces, métriques, evals), **sécurité** (injection, moindre privilège, sandbox, DevSecOps) et **coûts** (FinOps).
+Transverses : **observabilité** (traces, métriques, evals), **sécurité** (injection, moindre privilège, sandbox, DevSecOps), **coûts** (FinOps) et **données & conformité** (PII, RGPD, AI Act).

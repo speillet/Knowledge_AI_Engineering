@@ -13,11 +13,16 @@ Du **manque d'invariance au batch** : les kernels (matmul, normalisation, attent
 
 ---
 
-Qu'est-ce qui peut changer la sortie d'un même modèle, à prompt identique ?
+Quels réglages du modèle peuvent changer sa sortie, à prompt identique ?
 ?
 - Paramètres de sampling et **seed**
 - **Version exacte** du modèle, du tokenizer et du chat template
 - **Quantization** (FP16, FP8, INT4…)
+
+---
+
+Quels facteurs d'infrastructure et d'application peuvent changer la sortie d'un même modèle, à prompt identique ?
+?
 - **Moteur d'inférence** et sa version, type de **GPU**, degré de **tensor parallelism**
 - **Charge du serveur** (taille des batchs)
 - Côté application : prompt système, outils, **documents récupérés** par le RAG
@@ -102,6 +107,32 @@ Faut-il viser le déterminisme partout ?
 
 ---
 
+## Mises en situation
+
+Mise en situation : un client exige par contrat que « le même document donne toujours la même extraction ». Que t'engages-tu à faire, et sur quoi refuses-tu de t'engager ?
+?
+1. **Expliquer honnêtement** : même à température 0, les calculs GPU ne garantissent pas une sortie identique au bit près
+2. **S'engager sur des propriétés** : mêmes champs extraits, mêmes valeurs métier, format valide
+3. **Rendre l'appel rejouable** : journaliser modèle daté, prompt rendu, paramètres, documents et réponse
+4. **Réduire la variance** : température basse, sortie contrainte, éventuellement un mode déterministe du moteur, au prix de performances
+5. **Cacher les résultats** : pour un même document déjà traité, renvoyer la sortie enregistrée plutôt que régénérer
+
+**Piège** : promettre le déterminisme parce que `temperature=0` figure dans la configuration.
+
+---
+
+Mise en situation : ton équipe teste un agent de correction de bugs. Il réussit 4 fois sur 5 en démonstration, et le produit veut annoncer « 80 % de réussite ». Que précises-tu ?
+?
+1. **Cinq essais ne mesurent rien** : l'intervalle de confiance est énorme sur si peu de cas
+2. **Distinguer pass@k et pass^k** : réussir au moins une fois sur k essais n'est pas réussir à chaque fois
+3. **Choisir la métrique selon l'usage** : si un humain peut relancer et vérifier, pass@k a du sens ; sinon c'est pass^k qui compte
+4. **Dimensionner le jeu de test** pour l'écart qu'on veut détecter ([[94-evals-methodologie|méthodologie]])
+5. **Rapporter une fourchette**, pas un chiffre isolé
+
+**Piège** : communiquer un taux issu d'une poignée d'essais réussis pendant une démonstration.
+
+---
+
 ## Connexions
 - [[65-probabilites-sampling|Probabilités & sampling]] — la source de la variabilité
 - [[111-mlops-llmops-fondamentaux|MLOps fondamentaux]] — versioning et lineage
@@ -111,4 +142,6 @@ Faut-il viser le déterminisme partout ?
 - [[91-langfuse-observabilite|Langfuse]] — les traces pour rejouer un appel
 - [[62-optimisations-inference|Optimisations d'inférence]] — continuous batching et quantization
 - [[51-fine-tuning-adaptation|Fine-tuning]] — des entraînements reproductibles
+- [[94-evals-methodologie|Méthodologie d'évaluation]] — taille des jeux
+- [[95-llm-as-judge|LLM-as-a-judge]] — corriger un juge imparfait
 - [[00-moc-ai-engineering|MOC AI Engineering]]

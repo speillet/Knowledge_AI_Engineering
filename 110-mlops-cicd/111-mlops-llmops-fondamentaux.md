@@ -19,13 +19,18 @@ On entraîne rarement from scratch : le cycle est centré sur **prompts, RAG, fi
 
 ---
 
-Que faut-il versionner dans un système LLM ?
+Quels artefacts de code et de configuration faut-il versionner dans un système LLM ?
 ?
 - Le **code**
 - Les **prompts**
+- La **config de génération** (température, max_tokens)
+
+---
+
+Quels artefacts de modèle et de données faut-il versionner dans un système LLM ?
+?
 - Les **poids/adapters** ([[51-fine-tuning-adaptation|LoRA]])
 - Les **golden datasets** d'éval
-- La **config de génération** (température, max_tokens)
 - Les **index RAG**
 
 ---
@@ -39,6 +44,23 @@ Un service qui **stocke et versionne les modèles** avec métadonnées, stages (
 Qu'est-ce que le lineage d'un modèle ?
 ?
 La **traçabilité complète** : quelles données, quel code et quels hyperparamètres ont produit cette version du modèle.
+```yaml
+# manifeste d'un artefact déployé : les 4 versions à tracer ensemble
+image:        registry.interne/assistant@sha256:9f2c…
+modele:       claude-sonnet-4-5-20250929     # identifiant daté, pas un alias
+prompts:      prompts/support@v14
+index_rag:    support-fr-2026-09-20 (embedding: e5-large@v2)
+```
+Sans ce manifeste, une régression en production devient une enquête sans pièces à conviction ([[114-reproductibilite-variance|reproductibilité]]).
+
+---
+
+À ne pas confondre : versionner et épingler ?
+?
+- **Versionner** : conserver l'**historique** des artefacts (code, prompts, poids, datasets) pour pouvoir revenir en arrière et comparer
+- **Épingler** : déclarer dans le déploiement une **version exacte** (digest, identifiant daté) au lieu d'un alias mouvant comme `latest`
+
+On peut très bien versionner ses prompts **et** appeler un modèle via un alias qui change sous vos pieds : le versionnage seul ne protège pas ([[142-fiabilite-resilience-llm|épingler le modèle]]).
 
 ---
 
@@ -60,6 +82,32 @@ Imposer les **standards** : registry unique, conventions de versioning, [[112-ci
 
 ---
 
+## Mises en situation
+
+Mise en situation : une application LLM en production donne des réponses différentes d'il y a deux mois, et personne ne sait ce qui a changé. Que manque-t-il, et comment le corriges-tu ?
+?
+1. **Constater** : sans versionnage complet, on ne peut ni expliquer ni revenir en arrière
+2. **Versionner les quatre briques** : code, prompts et configuration de génération, modèle ou adapter, index RAG
+3. **Épingler** la version exacte du modèle, y compris côté API, qui évolue sans commit chez toi ([[113-monitoring-drift-feedback|mises à jour du provider]])
+4. **Tracer** la version utilisée dans chaque requête ([[91-langfuse-observabilite|traces]])
+5. **Relier** version et qualité par des evals rejouées à chaque changement ([[112-cicd-modeles|CI/CD]])
+
+**Piège** : versionner le code seul et considérer le prompt comme de la configuration secondaire.
+
+---
+
+Mise en situation : trois équipes déploient chacune leurs modèles, avec leurs conventions, et personne ne sait qui est responsable de quoi en production. Que mets-tu en place comme lead ?
+?
+1. **Un registre unique** pour les modèles et adapters, avec métadonnées, étapes et lineage
+2. **Des conventions de versionnage** communes, appliquées par la CI plutôt que par la discipline
+3. **Un propriétaire nommé** par modèle en production, responsable de sa qualité et de son retrait
+4. **Des environnements alignés** : mêmes pipelines en dev, préproduction et production, données près du réel
+5. **Des gates d'évaluation** obligatoires avant chaque promotion
+
+**Piège** : imposer un outil avant d'avoir posé les responsabilités et les conventions.
+
+---
+
 ## Connexions
 - [[112-cicd-modeles|CI/CD des modèles]] — le pipeline qui applique ces standards
 - [[113-monitoring-drift-feedback|Monitoring & drift]] — la boucle post-déploiement
@@ -69,4 +117,6 @@ Imposer les **standards** : registry unique, conventions de versioning, [[112-ci
 - [[114-reproductibilite-variance|Reproductibilité & variance]] — la reproductibilité en détail
 - [[115-plateformes-agents-gouvernance|Plateformes d'agents — Architecture & gouvernance]] — registre et cycle de vie des agents
 - [[105-devsecops-ia-agentique|DevSecOps pour l'IA agentique]] — AI-BOM et chaîne d'approvisionnement des modèles
+- [[153-data-flywheel-versioning|Data flywheel & versioning]] — versionner et boucler sur les données
+- [[147-leadership-technique-ia|Leadership technique]] — rôle du senior
 - [[00-moc-ai-engineering|MOC AI Engineering]]

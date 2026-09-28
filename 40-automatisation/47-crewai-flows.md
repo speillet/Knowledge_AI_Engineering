@@ -1,5 +1,6 @@
 # CrewAI — Flows — Flashcards
 Tags: #flashcards #ai-engineering #agents #crewai #workflow #llm
+Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 
 Qu'est-ce qu'un Flow CrewAI ?
 ?
@@ -98,6 +99,32 @@ Crew ou Flow : quand utiliser quoi ?
 Flows CrewAI ou LangGraph ?
 ?
 Les deux orchestrent des étapes avec état. **Flows** : méthodes Python décorées, très lisibles, intégrées aux crews. **[[45-langgraph-production|LangGraph]]** : graphe explicite plus bas niveau, avec un écosystème plus riche de checkpointers, time travel et outils de déploiement.
+
+---
+
+## Mises en situation
+
+Mise en situation : tu dois automatiser le traitement des réclamations : classer, enquêter, proposer un geste commercial, puis faire valider au-delà de 100 €. Comment structures-tu le Flow ?
+?
+1. **`@start`** : réception et classification de la réclamation, avec un **état Pydantic** typé
+2. **`@router`** : aiguiller selon la catégorie, les cas simples passant par du code sans LLM
+3. **Crew** pour la seule partie ouverte : l'enquête, qui croise historique client et incidents
+4. **`@human_feedback`** au-delà du seuil, avec routage selon la décision (approuvé, à corriger)
+5. **`@persist`** pour reprendre après une coupure ou une attente longue
+
+**Piège** : confier tout le processus à une crew autonome, alors que trois étapes sur quatre sont déterministes.
+
+---
+
+Mise en situation : ton Flow tourne depuis un mois, mais après chaque redéploiement les dossiers en cours repartent de zéro. Que vérifies-tu ?
+?
+1. **`@persist`** : sans lui, l'état ne survit pas au processus
+2. **Identifiant d'état** : reprendre avec le même `id` de dossier, et non en créer un nouveau
+3. **Stockage** : le SQLite par défaut convient-il à la production, ou faut-il un stockage partagé entre réplicas ?
+4. **Idempotence** : les étapes déjà exécutées (e-mail, geste commercial) ne doivent pas être rejouées
+5. **Observabilité** : savoir à tout moment combien de dossiers sont en attente et à quelle étape ([[93-monitoring-inference|monitoring]])
+
+**Piège** : tester la reprise uniquement en local, là où le fichier d'état existe toujours.
 
 ---
 

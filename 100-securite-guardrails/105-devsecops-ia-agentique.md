@@ -1,5 +1,6 @@
 # DevSecOps pour l'IA agentique — Flashcards
 Tags: #flashcards #ai-engineering #securite #devsecops #agents #llm
+Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 
 Qu'est-ce que le DevSecOps appliqué à l'IA agentique ?
 ?
@@ -21,13 +22,24 @@ Comment faire le threat modeling d'un agent ?
 
 ---
 
-Quels référentiels de sécurité IA faut-il connaître ?
+Quels référentiels décrivent les attaques contre l'IA et les agents ?
 ?
 - **OWASP** : Top 10 LLM (2025), Top 10 des applications agentiques (décembre 2025), AI Exchange
 - **MITRE ATLAS** : tactiques et techniques d'attaque contre l'IA, sur le modèle d'ATT&CK
-- **NIST** : AI RMF et son profil IA générative (AI 600-1) ; **AI Agent Standards Initiative** du CAISI (février 2026), qui prépare des overlays SP 800-53 dédiés aux agents
-- **ISO/IEC 42001** : système de management de l'IA
-- **CSA MAESTRO**, **Google SAIF**
+
+---
+
+Que propose le NIST pour la sécurité de l'IA et des agents ?
+?
+- **AI RMF** : le cadre de gestion des risques de l'IA, avec son **profil IA générative** (AI 600-1)
+- **AI Agent Standards Initiative** du CAISI (février 2026) : interopérabilité et sécurité des agents. Elle prépare des **overlays SP 800-53** dédiés aux agents : moindre privilège des outils, confinement des actions, journalisation
+
+---
+
+Quels cadres de management et de conformité s'appliquent à l'IA agentique ?
+?
+- **ISO/IEC 42001** : système de management de l'IA, certifiable
+- **CSA MAESTRO** (threat modeling agentique) et **Google SAIF** (cadre de sécurité de l'IA)
 - **AI Act** européen ([[115-plateformes-agents-gouvernance|gouvernance]])
 
 ---
@@ -50,15 +62,32 @@ Comment sécuriser la chaîne d'approvisionnement des modèles ?
 
 ---
 
-Quels contrôles de sécurité mettre dans la CI d'un agent ?
+Quels contrôles de sécurité classiques restent indispensables dans la CI d'un agent ?
 ?
-- **Classiques** : SAST, analyse des dépendances (SCA) et lockfiles, détection de secrets, scan des images et de l'IaC
-- **Spécifiques à l'IA** :
-  - scan des **configurations MCP et des skills** (ex. mcp-scan)
-  - lint des prompts et configurations : **pas de secrets**, listes blanches d'outils respectées
-  - **suite de tests adversariaux** utilisée comme gate
-  - génération de l'**AI-BOM** et **signature** des artefacts
+Les mêmes que pour toute application :
+- **SAST** sur le code de l'agent
+- **Analyse des dépendances** (SCA) et lockfiles
+- **Détection de secrets**
+- **Scan des images et de l'IaC**
 
+---
+
+Quels contrôles de sécurité propres à l'IA ajouter dans la CI d'un agent ?
+?
+- Scan des **configurations MCP et des skills** (ex. mcp-scan)
+- Lint des prompts et configurations : **pas de secrets**, listes blanches d'outils respectées
+- **Suite de tests adversariaux** utilisée comme gate
+- Génération de l'**AI-BOM** et **signature** des artefacts
+```yaml
+jobs:
+  securite-ia:
+    steps:
+      - run: mcp-scan scan .mcp.json                  # outils et skills
+      - run: python -m lint_prompts prompts/          # secrets, outils autorisés
+      - run: promptfoo redteam run --config redteam.yaml
+      - run: python -m ai_bom generate > aibom.json
+      - run: python -m check_asr --max-injection 0.05 --max-exfiltration 0
+```
 Voir [[112-cicd-modeles|CI/CD des modèles]].
 
 ---
@@ -172,6 +201,45 @@ Des **security champions** dans les équipes, et la formation des développeurs 
 
 ---
 
+## Mises en situation
+
+Mise en situation : tu dois mettre en place la CI/CD d'un nouvel agent qui lit le CRM et envoie des e-mails aux clients. Que mets-tu dans le pipeline ?
+?
+1. **Contrôles classiques** : SAST, SCA, détection de secrets, scan d'image et d'IaC
+2. **Contrôles IA** : scan des configurations MCP et des skills, lint des prompts (pas de secrets, outils autorisés), génération de l'AI-BOM
+3. **Evals qualité** et **tests adversariaux** : injections dans les e-mails et les fiches CRM, tentatives d'exfiltration, envoi à des destinataires non autorisés
+4. **Security eval gate** : tolérance zéro pour l'exfiltration et l'envoi non autorisé, seuil d'ASR pour le reste
+5. **Déploiement progressif** : canary surveillé, rollback prêt ([[112-cicd-modeles|CI/CD]])
+
+**Piège** : ne lancer les tests adversariaux qu'au premier déploiement, et pas à chaque changement de modèle, de prompt ou d'outil.
+
+---
+
+Mise en situation : une alerte signale l'utilisation d'un honeytoken, une fausse clé d'API placée dans la base documentaire de ton agent RH. Déroule ta réponse à incident.
+?
+1. **Contenir** : désactiver l'agent ou ses outils sortants, révoquer ses jetons ([[115-plateformes-agents-gouvernance|kill switch]])
+2. **Tracer** : quelle session a lu le document piégé, quelle entrée a déclenché la fuite, par quel canal la clé est sortie
+3. **Évaluer** : quelles vraies données ont pu sortir par le même chemin ; faire tourner les secrets concernés
+4. **Nettoyer** : retirer le contenu malveillant de l'index ou de la mémoire
+5. **Notifier** selon les obligations, surtout pour des données personnelles
+6. **Post-mortem** : fermer le canal (réseau sortant, rendu des URL) et ajouter un test de régression
+
+**Piège** : supprimer le document piégé avant d'avoir sauvegardé les traces.
+
+---
+
+Mise en situation : ton fournisseur annonce que le modèle utilisé par tes agents passe à une nouvelle version le mois prochain. Que prévois-tu côté sécurité ?
+?
+1. **Inventaire** : l'AI-BOM indique quels agents utilisent ce modèle
+2. **Rejouer** la suite adversariale et les evals sur la nouvelle version : la robustesse aux injections peut changer d'une version à l'autre
+3. **Comparer** l'ASR par catégorie avec la version actuelle, sur les mêmes cas ([[114-reproductibilite-variance|comparaison appariée]])
+4. **Bloquer** si le security eval gate n'est pas atteint : renforcer les contrôles d'architecture ou rester sur l'ancienne version tant qu'elle est disponible
+5. **Déployer progressivement** en surveillant les refus de politique et les anomalies
+
+**Piège** : utiliser un alias de modèle qui bascule tout seul vers la nouvelle version.
+
+---
+
 ## Connexions
 - [[102-menaces-agents|Menaces & incidents]] — ce que le threat model doit couvrir
 - [[103-defenses-agents|Architecture défensive]] — les contrôles à vérifier
@@ -183,4 +251,5 @@ Des **security champions** dans les équipes, et la formation des développeurs 
 - [[93-monitoring-inference|Monitoring de l'inférence]] — journaux et alertes
 - [[10-images-modeles-poids|Images & poids de modèles]] — safetensors ou pickle
 - [[101-securite-llm-guardrails|Sécurité LLM & guardrails]] — OWASP LLM et red teaming
+- [[155-ai-act|AI Act]] — obligations réglementaires
 - [[00-moc-ai-engineering|MOC AI Engineering]]

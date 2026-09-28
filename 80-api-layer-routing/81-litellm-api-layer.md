@@ -1,5 +1,6 @@
 # LiteLLM (API layer) — Flashcards
 Tags: #flashcards #ai-engineering #api-layer #litellm #llm
+Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 
 Qu'est-ce qu'une API layer (LLM gateway) ?
 ?
@@ -77,6 +78,32 @@ Quelles alternatives à LiteLLM ?
 
 ---
 
+## Mises en situation
+
+Mise en situation : cinq équipes appellent directement les API de trois fournisseurs, avec des clés partagées par copier-coller. La facture mensuelle n'est attribuable à personne. Par quoi commences-tu ?
+?
+1. **Mettre une gateway devant** : toutes les applications passent par le proxy, au format de l'API OpenAI
+2. **Virtual keys** par équipe et par projet : les vraies clés des fournisseurs redeviennent secrètes
+3. **Budgets et rate limits** par clé, avec alertes avant dépassement ([[122-finops-llm|FinOps]])
+4. **Callbacks d'observabilité** : traces, coûts et latences centralisés sans instrumenter chaque application ([[91-langfuse-observabilite|Langfuse]])
+5. **Migrer progressivement** : commencer par une équipe volontaire, puis fermer l'accès direct
+
+**Piège** : faire de la gateway un point de défaillance unique sans réplicas ni supervision.
+
+---
+
+Mise en situation : ton fournisseur principal connaît une panne de 40 minutes en pleine journée. Comment ton architecture aurait-elle dû réagir ?
+?
+1. **Fallback configuré** vers un autre fournisseur ou un modèle auto-hébergé pour les routes critiques
+2. **Retries** avec backoff sur les erreurs transitoires, et **cooldown** du déploiement en erreur
+3. **Dégradation acceptable** : modèle moins bon mais disponible, ou réponse d'attente explicite ([[142-fiabilite-resilience-llm|fiabilité]])
+4. **Vérifier la compatibilité** : le modèle de secours doit avoir été testé sur les mêmes evals
+5. **Mesurer** : taux d'erreurs et bascules, pour savoir a posteriori ce qui s'est passé
+
+**Piège** : déclarer un fallback jamais testé, qui échoue au moment où on en a besoin.
+
+---
+
 ## Connexions
 - [[83-gateway-ingress|Ingress & API gateway]] — l'entrée réseau devant LiteLLM
 - [[82-routing-llm|Routing LLM]] — choisir le bon modèle par requête
@@ -85,4 +112,5 @@ Quelles alternatives à LiteLLM ?
 - [[11-serveurs-inference-llm|Serveurs d'inférence]] — les backends auto-hébergés
 - [[122-finops-llm|FinOps LLM]] — budgets et attribution des coûts
 - [[93-monitoring-inference|Monitoring de l'inférence]] — les métriques d'usage collectées à la gateway
+- [[142-fiabilite-resilience-llm|Fiabilité & résilience]] — retries, fallbacks, circuit breakers
 - [[00-moc-ai-engineering|MOC AI Engineering]]

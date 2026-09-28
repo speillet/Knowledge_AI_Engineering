@@ -1,5 +1,6 @@
 # Frameworks d'agents — Flashcards
 Tags: #flashcards #ai-engineering #agents #frameworks #llm
+Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 
 À quoi sert un framework d'agents ?
 ?
@@ -13,15 +14,15 @@ Une bibliothèque de **composants LLM** (modèles, prompts, retrievers, outils) 
 
 ---
 
-Qu'est-ce que LangGraph ?
+Que propose LangGraph dans l'écosystème LangChain ?
 ?
-Un framework (écosystème LangChain) qui modélise l'agent comme un **graphe d'états** : nœuds (étapes), arêtes conditionnelles, **cycles**, **checkpoints** persistés. Il permet la reprise après erreur, le **human-in-the-loop** et le « time travel » dans l'exécution. Détails : [[44-langgraph-fondamentaux|fondamentaux]] et [[45-langgraph-production|production]].
+Un framework qui modélise l'agent comme un **graphe d'états** : nœuds (étapes), arêtes conditionnelles, **cycles**, **checkpoints** persistés. Il permet la reprise après erreur, le **human-in-the-loop** et le « time travel » dans l'exécution. Détails : [[44-langgraph-fondamentaux|fondamentaux]] et [[45-langgraph-production|production]].
 
 ---
 
-Qu'est-ce que CrewAI ?
+Qu'apporte CrewAI par rapport aux autres frameworks d'agents ?
 ?
-Un framework **multi-agents par rôles** : on définit des agents (rôle, objectif, backstory) et des **tâches**, qu'une « crew » exécute en séquence ou de façon hiérarchique. Très rapide à prototyper ; les **Flows** encadrent les crews en production. Détails : [[46-crewai-crews|crews]] et [[47-crewai-flows|flows]].
+Une approche **multi-agents par rôles** : on définit des agents (rôle, objectif, backstory) et des **tâches**, qu'une « crew » exécute en séquence ou de façon hiérarchique. Très rapide à prototyper ; les **Flows** encadrent les crews en production. Détails : [[46-crewai-crews|crews]] et [[47-crewai-flows|flows]].
 
 ---
 
@@ -60,6 +61,45 @@ Quels critères pour choisir un framework ?
 Quel piège classique avec les frameworks ?
 ?
 Les **abstractions opaques** : on ne voit plus le prompt réellement envoyé au modèle. Il faut toujours pouvoir **inspecter les appels bruts** (traces [[91-langfuse-observabilite|Langfuse]]).
+
+---
+
+À ne pas confondre : LangChain, LangGraph et LangSmith ?
+?
+```text
+LangChain   → les composants : modèles, outils, retrievers, et create_agent
+LangGraph   → le moteur d'orchestration et le runtime (graphe d'états,
+              checkpoints, interruptions) sur lequel s'appuie create_agent
+LangSmith   → la plateforme : traces, evals, datasets, et le déploiement
+              (LangSmith Deployment, ex-LangGraph Platform)
+```
+Autrement dit : **avec quoi** on écrit, **quoi** exécute le flux, **où** on l'observe et le déploie. Les trois sont indépendants : on peut utiliser LangGraph sans LangChain, ou tracer une application maison dans LangSmith.
+
+---
+
+## Mises en situation
+
+Mise en situation : tu démarres un assistant interne qui appelle trois outils et doit reprendre après une coupure. Framework ou code maison ?
+?
+1. **Cadrer le besoin réel** : la boucle d'appel tient en quelques dizaines de lignes ; ce qui coûte cher, c'est la **persistance** et la reprise
+2. **Ce qui pousse vers un framework** : checkpoints, human-in-the-loop, multi-agents, streaming, reprise après crash ([[44-langgraph-fondamentaux|LangGraph]])
+3. **Ce qui pousse vers le code maison** : peu d'étapes, besoin de contrôle total, équipe qui ne connaît aucun framework
+4. **Compromis fréquent** : boucle maison sur l'API brute, plus une bibliothèque pour la persistance
+5. **Condition non négociable** : pouvoir **inspecter les appels bruts** envoyés au modèle ([[91-langfuse-observabilite|traces]])
+
+**Piège** : choisir un framework pour ses démos, puis se battre contre ses abstractions dès le premier cas particulier.
+
+---
+
+Mise en situation : ton équipe hésite entre CrewAI et LangGraph pour un processus d'analyse de documents en cinq étapes, avec validation humaine à l'étape 3. Comment tranches-tu ?
+?
+1. **Regarder la nature du flux** : cinq étapes connues, avec une interruption au milieu, c'est un **graphe explicite** plus qu'une équipe d'agents autonomes
+2. **LangGraph** : état explicite, interruption et reprise, time travel, adapté au human-in-the-loop ([[45-langgraph-production|production]])
+3. **CrewAI** : plus rapide à prototyper par rôles, avec ses **Flows** pour encadrer l'exécution ([[47-crewai-flows|flows]])
+4. **Décider sur des critères** : contrôle du flux, persistance, observabilité, langage et compétences de l'équipe
+5. **Prototyper** la même étape critique dans les deux, plutôt que de trancher sur la documentation
+
+**Piège** : comparer les frameworks sur le temps du premier prototype, alors que le coût réel est en production.
 
 ---
 

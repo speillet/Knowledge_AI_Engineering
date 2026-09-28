@@ -1,5 +1,6 @@
 # Quantization — Flashcards
 Tags: #flashcards #ai-engineering #inference #quantization #llm
+Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 
 Qu'est-ce que la quantization (quantification) d'un LLM ?
 ?
@@ -204,6 +205,44 @@ vllm serve org/modele --quantization fp8 \
 
 ---
 
+## Mises en situation
+
+Mise en situation : tu dois servir un modèle 70B sur des GPU A100 de 80 Go, avec un budget de deux GPU. Quelle quantization choisis-tu ?
+?
+1. **Calculer** : 140 Go en BF16, donc impossible sur deux A100 avec de la place pour le KV cache
+2. **Écarter FP8** : les A100 (Ampere) n'ont pas de tensor cores FP8. Le gain serait limité à la mémoire
+3. **Retenir INT4 weight-only** (AWQ ou GPTQ, noyaux Marlin) : environ 40 Go de poids, beaucoup de place pour le cache
+4. **Vérifier le profil de charge** : le weight-only aide surtout à petit batch. À très forte charge, l'INT8 W8A8 peut être préférable
+5. **Valider** : evals appariées contre BF16 et benchmark de charge avant bascule
+
+**Piège** : choisir un checkpoint FP8 tout fait sans vérifier que le matériel le supporte nativement.
+
+---
+
+Mise en situation : après le passage en INT4, tes evals globales perdent seulement 1 %, mais le support signale des réponses fausses en allemand et sur les longs documents. Que fais-tu ?
+?
+1. **Ne pas se fier à la moyenne** : les pertes se concentrent sur des segments précis
+2. **Évaluer par segment** : langue, longueur de contexte, type de tâche, appels d'outils
+3. **Mesurer finement** : divergence KL et accord du top-1 contre le modèle BF16 sur ces cas
+4. **Corriger** : granularité plus fine, calibration représentative (allemand, documents longs), ou passage en FP8
+5. **Router** : garder le modèle non quantizé pour les segments sensibles, le temps de corriger ([[82-routing-llm|routing]])
+
+**Piège** : calibrer sur un corpus anglais générique pour un service multilingue.
+
+---
+
+Mise en situation : ton fournisseur publie le même modèle en BF16, FP8 et GGUF Q4_K_M. Trois équipes te demandent lequel prendre : production GPU, poste de développeur, démonstration hors ligne. Que réponds-tu ?
+?
+1. **Production GPU récent** : **FP8**, quasi sans perte, natif sur Hopper et Blackwell, moitié moins de VRAM
+2. **Poste de développeur** : **GGUF Q4_K_M** avec llama.cpp ou Ollama, qui tourne sur CPU ou Mac
+3. **Démonstration hors ligne** : GGUF aussi, en privilégiant Q5_K_M ou Q8_0 si la machine le permet
+4. **Rappeler** que ces variantes ne donnent pas les mêmes sorties : les evals doivent être refaites par variante
+5. **Tracer** la variante servie dans les métriques et les traces ([[93-monitoring-inference|monitoring]])
+
+**Piège** : valider la qualité sur le poste du développeur en GGUF, puis déployer une autre variante en production.
+
+---
+
 ## Connexions
 - [[62-optimisations-inference|Optimisations d'inférence]] — prefill, decode et bande passante mémoire
 - [[61-kv-cache-attention|KV cache & attention]] — quantizer le cache
@@ -215,4 +254,5 @@ vllm serve org/modele --quantization fp8 \
 - [[114-reproductibilite-variance|Reproductibilité & variance]] — comparer avant et après quantization
 - [[67-speculative-decoding|Speculative decoding]] — l'autre levier pour accélérer le decode
 - [[93-monitoring-inference|Monitoring de l'inférence]] — suivre le modèle quantizé en production
+- [[164-llm-local-edge|LLM locaux & edge]] — GGUF et petits appareils
 - [[00-moc-ai-engineering|MOC AI Engineering]]

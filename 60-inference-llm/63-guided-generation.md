@@ -68,6 +68,32 @@ Les **arguments d'un [[32-tool-calling|appel d'outil]]** sont générés sous co
 
 ---
 
+## Mises en situation
+
+Mise en situation : depuis que tu contrains la sortie par un JSON Schema, le JSON est toujours valide mais les réponses sont devenues moins bonnes. Que corriges-tu ?
+?
+1. **Comprendre** : la contrainte force le modèle à produire la conclusion **immédiatement**, sans place pour raisonner
+2. **Ordonner les champs** : un champ `raisonnement` **avant** le champ `reponse`, puisque le modèle génère dans l'ordre
+3. **Ou séparer en deux temps** : réponse libre d'abord, extraction structurée ensuite
+4. **Simplifier le schéma** : moins de champs obligatoires, énumérations claires, pas d'imbrication inutile
+5. **Mesurer** : exactitude métier avant et après, pas seulement le taux de JSON valide ([[94-evals-methodologie|evals]])
+
+**Piège** : conclure que « la génération contrainte dégrade le modèle », alors que c'est l'ordre des champs qui est en cause.
+
+---
+
+Mise en situation : ton extraction de factures renvoie toujours un JSON conforme, mais la comptabilité relève des montants faux. Comment sécurises-tu la chaîne ?
+?
+1. **Rappeler la limite** : la contrainte garantit la **forme**, jamais le **fond**
+2. **Validation métier** : montants cohérents avec les lignes, TVA recalculée, dates plausibles, fournisseur connu
+3. **Champ d'abstention** : permettre « non trouvé » plutôt que d'obliger le modèle à inventer une valeur
+4. **Confiance** : logprobs ou double extraction pour repérer les cas douteux et les envoyer à un humain ([[144-ux-ia-human-in-the-loop|human-in-the-loop]])
+5. **Mesurer en production** : taux d'échec de validation par champ ([[93-monitoring-inference|validations]])
+
+**Piège** : traiter un JSON valide comme une donnée vérifiée, et l'écrire directement en comptabilité.
+
+---
+
 ## Connexions
 - [[11-prompt-engineering-avance|Prompt engineering]] — garantir plutôt que demander
 - [[32-tool-calling|Tool calling]] — arguments contraints par le schéma

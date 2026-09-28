@@ -1,5 +1,6 @@
 # LangGraph — Production (persistance, HITL, multi-agents) — Flashcards
 Tags: #flashcards #ai-engineering #agents #langgraph #llm
+Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 
 Qu'est-ce qu'un checkpointer ?
 ?
@@ -93,6 +94,44 @@ Comment déployer et déboguer un graphe LangGraph ?
 - **LangSmith Deployment** (ex-LangGraph Platform) : un **Agent Server** qui expose le graphe en API, avec persistance, files de tâches et streaming gérés
 - **Studio** : IDE visuel pour exécuter pas à pas et inspecter l'état
 - **Auto-hébergé** : le graphe dans son propre service (FastAPI, conteneur) avec un `PostgresSaver`
+
+---
+
+## Mises en situation
+
+Mise en situation : ton agent de traitement de commandes s'arrête pour une validation humaine qui arrive parfois deux jours plus tard. Il tourne aujourd'hui avec `InMemorySaver`. Que changes-tu ?
+?
+1. **Checkpointer persistant** : `PostgresSaver` en production, sinon un redémarrage perd tous les dossiers en attente
+2. **Thread par dossier** : `thread_id` stable, pour reprendre exactement au point d'arrêt
+3. **Reprise** par `Command(resume=...)` avec la décision, depuis un autre processus que celui qui a interrompu
+4. **Délais et relances** : un dossier en attente depuis trop longtemps doit alerter ou expirer
+5. **Effets de bord isolés** : les écritures et envois ne doivent pas être rejoués après une reprise
+
+**Piège** : garder les interruptions en mémoire et perdre les validations en cours au premier déploiement.
+
+---
+
+Mise en situation : un agent a produit une réponse aberrante hier à 14 h, et l'utilisateur veut comprendre pourquoi. Comment enquêtes-tu ?
+?
+1. **Retrouver le thread** à partir de l'identifiant de conversation, puis son historique de checkpoints
+2. **Time travel** : rejouer depuis le checkpoint qui précède l'erreur pour voir l'état exact d'alors
+3. **Isoler l'étape fautive** : outil qui a renvoyé une donnée fausse, routage inattendu, contexte tronqué
+4. **Tester une correction** en modifiant l'état à ce point (`update_state`) et en rejouant
+5. **Fixer le cas** en test de non-régression, puis corriger le code ou le prompt ([[112-cicd-modeles|CI/CD]])
+
+**Piège** : rejouer la requête aujourd'hui, avec un autre contexte et une autre version du modèle, et conclure que le problème n'existe pas.
+
+---
+
+Mise en situation : ton système à quatre agents devient impossible à déboguer, chaque agent ayant ses propres outils et son état. Comment le restructures-tu ?
+?
+1. **Un subgraph par agent** : chacun devient un module compilé, testable seul
+2. **Choisir un pattern explicite** : router en entrée, handoffs entre pairs, ou sous-agents appelés comme outils ([[36-orchestration-agents|orchestration]])
+3. **État partagé minimal** : ce qui circule entre agents est structuré et limité, le reste reste local
+4. **Streaming des mises à jour** par nœud, pour voir qui fait quoi en direct
+5. **Se demander si quatre agents sont nécessaires** : souvent deux suffisent, avec du code entre eux
+
+**Piège** : un état global où chaque agent écrit ce qu'il veut, et que plus personne ne comprend.
 
 ---
 

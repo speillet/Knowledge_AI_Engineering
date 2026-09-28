@@ -1,5 +1,6 @@
 # Plateformes d'agents — Flashcards
 Tags: #flashcards #ai-engineering #agents #platform #llm
+Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 
 Quelle différence entre un framework et une plateforme d'agents ?
 ?
@@ -7,17 +8,22 @@ Le **[[37-frameworks-agents|framework]]** sert à **écrire** l'agent (biblioth�
 
 ---
 
-Quelles briques fournit une plateforme d'agents ?
+Quelles briques d'exécution fournit une plateforme d'agents ?
 ?
 - **Runtime** : exécute les sessions d'agent, isolées et longues
 - **Sandbox** : exécute le code et le navigateur de l'agent sans risque
 - **Mémoire** : court terme (session) et long terme
 - **Gateway d'outils** : expose les API comme outils [[33-mcp|MCP]]
+
+---
+
+Quelles briques de gouvernance fournit une plateforme d'agents ?
+?
 - **Registre** : catalogue des agents, outils et skills
 - **Identité et politiques d'accès** : qui l'agent représente, ce qu'il a le droit de faire
 - **Observabilité, evals, coûts**
 
-En 2026, AWS, Google et Microsoft proposent tous ces briques, souvent **utilisables séparément**.
+En 2026, AWS, Google et Microsoft proposent toutes ces briques, souvent **utilisables séparément**.
 
 ---
 
@@ -65,9 +71,15 @@ Un agent ne ressemble pas à une requête HTTP courte :
 
 ---
 
-Qu'est-ce que le double texting et comment le gère-t-on ?
+Qu'est-ce que le double texting ?
 ?
-L'utilisateur envoie un **nouveau message pendant que l'agent travaille** encore sur le précédent. Le runtime doit choisir une stratégie (vocabulaire de LangSmith Deployment) :
+L'utilisateur envoie un **nouveau message pendant que l'agent travaille** encore sur le précédent. Le runtime doit décider quoi faire du run en cours : le finir, l'interrompre ou l'annuler.
+
+---
+
+Quelles stratégies un runtime propose-t-il face au double texting ?
+?
+Quatre stratégies (vocabulaire de LangSmith Deployment) :
 - **Enqueue** : finir le run en cours, puis traiter le nouveau message
 - **Reject** : refuser le nouveau message
 - **Interrupt** : arrêter le run en conservant son état, puis continuer avec le nouveau message
@@ -135,13 +147,15 @@ Quel rôle joue l'observabilité dans une plateforme ?
 
 ---
 
-Comment évalue-t-on un agent sur une plateforme ?
+À quels moments évalue-t-on un agent sur une plateforme ?
 ?
-À deux moments :
 - **Avant déploiement** : datasets de tâches et **simulation** (utilisateurs synthétiques, outils virtualisés)
 - **En continu** : **scoring d'un échantillon de traces** de production par des évaluateurs (souvent LLM-as-judge)
 
-Ce qu'on mesure :
+---
+
+Que mesure-t-on quand on évalue un agent ?
+?
 - **Réussite de la tâche**
 - **Trajectoire** : les bons outils, dans le bon ordre, avec des arguments corrects
 - **Coût et nombre d'étapes**
@@ -168,6 +182,32 @@ Build ou buy ?
 - **Build** (framework + Kubernetes + briques open source) : contrôle et portabilité, mais tout le run est à votre charge
 
 En pratique, souvent **hybride** : acheter le runtime et les sandboxes, garder la **logique d'agent en code** et s'appuyer sur des **standards ouverts**. Critères détaillés : [[115-plateformes-agents-gouvernance|architecture & gouvernance]].
+
+---
+
+## Mises en situation
+
+Mise en situation : ton prototype d'agent tourne dans un conteneur avec une API FastAPI. Il doit maintenant servir 200 utilisateurs, avec des tâches de 20 minutes. Qu'est-ce qui casse en premier ?
+?
+1. **Les requêtes longues** : une API HTTP classique ne tient pas des tâches de 20 minutes. Il faut de l'**exécution asynchrone** et un suivi de tâche
+2. **L'état** : sans checkpoints, un redéploiement perd tout le travail en cours ([[45-langgraph-production|checkpoints]])
+3. **L'isolation** : les sessions partagent le même processus, donc le code généré par l'une peut affecter les autres
+4. **Les messages concurrents** : un utilisateur qui réécrit pendant le travail (double texting)
+5. **La décision** : runtime managé, ou construire runtime, sandbox et reprise soi-même ([[115-plateformes-agents-gouvernance|architecture & gouvernance]])
+
+**Piège** : mettre un simple autoscaling devant, alors que le problème est le modèle d'exécution.
+
+---
+
+Mise en situation : ta direction veut « une plateforme d'agents » en trois mois, et ton entreprise est déjà sur Microsoft 365. Par quoi commences-tu ?
+?
+1. **Suivre les données et l'identité** : avec Entra et Microsoft 365, la voie courte passe par Foundry pour construire et Agent 365 pour gouverner
+2. **Commencer par un cas d'usage** mesurable, pas par la plateforme complète
+3. **Poser les briques transverses** dès le premier agent : identité, registre, gateway d'outils, traces
+4. **Garder la logique d'agent en code** versionné, pour rester portable ([[115-plateformes-agents-gouvernance|lock-in]])
+5. **Prévoir la gouvernance** : propriétaire par agent, revue avant mise en production, budgets
+
+**Piège** : lancer six agents en parallèle sans socle commun, et devoir tout reprendre au premier audit.
 
 ---
 

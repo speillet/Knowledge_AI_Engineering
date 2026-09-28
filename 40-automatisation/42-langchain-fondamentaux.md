@@ -1,5 +1,6 @@
 # LangChain — Fondamentaux — Flashcards
 Tags: #flashcards #ai-engineering #agents #langchain #llm
+Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 
 Qu'est-ce que LangChain aujourd'hui ?
 ?
@@ -90,6 +91,32 @@ La plateforme de l'éditeur pour **tracer, déboguer et évaluer** les applicati
 Quelle critique revient souvent sur LangChain ?
 ?
 Des **abstractions épaisses** qui masquent le prompt réellement envoyé et des **API qui ont beaucoup changé** entre versions. La v1 a répondu en **simplifiant** (un seul `create_agent`, anciennes chains déplacées dans `langchain-classic`).
+
+---
+
+## Mises en situation
+
+Mise en situation : ta direction veut pouvoir changer de fournisseur de modèle en cas de hausse de prix, sans réécrire l'application. Comment structures-tu le code ?
+?
+1. **Abstraire l'accès au modèle** : `init_chat_model("fournisseur:modèle")`, le nom venant de la configuration et non du code
+2. **S'en tenir aux interfaces communes** : messages standard, `@tool`, `with_structured_output`, pour éviter les particularités d'un fournisseur
+3. **Passer par une gateway** pour les clés, les budgets et les bascules ([[81-litellm-api-layer|LiteLLM]])
+4. **Tester la bascule** : rejouer les evals sur le modèle de secours, car les prompts ne se transposent pas toujours ([[114-reproductibilite-variance|comparaison appariée]])
+5. **Surveiller** : qualité, latence et coût par modèle, pour décider avec des chiffres ([[82-routing-llm|routing]])
+
+**Piège** : croire qu'un changement de modèle est neutre. Le code est portable, le comportement ne l'est pas.
+
+---
+
+Mise en situation : ton extraction de données renvoie parfois du JSON invalide, et tu enchaînes les `try/except` pour rattraper les cas. Que changes-tu ?
+?
+1. **Arrêter de demander un format** : le **contraindre** avec `with_structured_output` et un modèle Pydantic ([[63-guided-generation|guided generation]])
+2. **Valider le contenu**, pas seulement la syntaxe : bornes, énumérations, cohérence entre champs
+3. **Prévoir l'échec** : un champ « non trouvé » explicite plutôt qu'une valeur inventée
+4. **Tester** sur des documents réels, y compris malformés
+5. **Mesurer** le taux de sorties valides comme métrique de production ([[93-monitoring-inference|validations]])
+
+**Piège** : réparer le JSON avec des expressions régulières, ce qui masque les vraies erreurs d'extraction.
 
 ---
 

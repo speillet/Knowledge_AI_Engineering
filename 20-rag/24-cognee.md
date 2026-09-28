@@ -1,5 +1,6 @@
 # Cognee — Flashcards
 Tags: #flashcards #ai-engineering #rag #knowledge-graph #memoire #cognee #llm
+Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 
 Qu'est-ce que Cognee ?
 ?
@@ -75,6 +76,32 @@ Quelles limites garder en tête ?
 - L'extraction par LLM a un **coût** et produit du **bruit** : la qualité dépend du modèle et de l'ontologie
 - Une stack à opérer : base graphe, index vectoriel, cache de session
 - Une API **jeune** qui évolue vite : la 1.0 a renommé les opérations, à revérifier avant chaque mise à jour
+
+---
+
+## Mises en situation
+
+Mise en situation : ton assistant interne doit se souvenir des décisions prises dans les réunions et répondre à des questions qui les relient entre elles. Tu envisages Cognee. Comment procèdes-tu ?
+?
+1. **Vérifier le besoin** : des questions **relationnelles** (qui a décidé quoi, quel précédent) justifient un graphe ; sinon un RAG vectoriel suffit ([[21-rag-fondamentaux|RAG]])
+2. **Ontologie restreinte** en OWL : réunion, décision, personne, projet, en mode `annotate` pour ne pas perdre ce qui sort du schéma
+3. **Mémoire de session** pendant la réunion (chemin rapide), puis transfert vers la mémoire permanente par `improve`
+4. **Brancher l'agent** par le serveur MCP ou le SDK ([[33-mcp|MCP]])
+5. **Cadrer les coûts** : l'extraction par LLM sur tout l'historique se chiffre vite. Commencer par un périmètre réduit et mesurer
+
+**Piège** : ingérer tout l'historique de l'entreprise avant d'avoir validé la qualité des réponses sur un corpus témoin.
+
+---
+
+Mise en situation : un utilisateur demande la suppression de toutes ses données, qui ont été ingérées dans la mémoire de l'agent. Que vérifies-tu ?
+?
+1. **Effacement réel** : `forget` sur les éléments et datasets concernés, et non un simple masquage
+2. **Propagation** : le graphe, l'index vectoriel, le cache de session et les sauvegardes doivent tous être traités ([[154-rgpd-llm|RGPD]])
+3. **Dérivés** : les résumés, enrichissements et souvenirs consolidés qui contiennent encore ces données
+4. **Traçabilité** : conserver la preuve de la suppression, sans conserver les données
+5. **Prévenir** : cloisonner par utilisateur dès l'ingestion et attacher la provenance à chaque élément
+
+**Piège** : oublier les structures dérivées produites par `improve`, qui survivent à la suppression de la source.
 
 ---
 
