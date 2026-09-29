@@ -16,8 +16,10 @@ Knowledge_AI_Engineering/
 ├── .obsidian/                   # configuration Obsidian
 ├── .claude/skills/              # skills Claude Code versionnés (grilling, grill-me)
 ├── scripts/lint_flashcards.py   # vérification des conventions + statistiques
+├── scripts/export_anki.py       # export en paquet Anki (.apkg) pour AnkiDroid
+├── scripts/requirements.txt     # dépendances de l'export Anki
 ├── .githooks/pre-commit         # lance le lint avant chaque commit
-├── .github/workflows/           # lance le lint en CI
+├── .github/workflows/           # lint en CI, et export Anki publié en release
 ├── 00-moc-ai-engineering.md     # carte racine : parcours de lecture + sommaire
 ├── 10-prompt-engineering/
 ├── 20-rag/
@@ -69,6 +71,33 @@ Les fiches suivent la syntaxe du plugin communautaire **Spaced Repetition**. Il 
 4. Lancer une révision avec l'icône du plugin dans la barre latérale, ou depuis la palette de commandes. La palette permet aussi de ne réviser que la note ouverte.
 
 > Le plugin enregistre la planification des révisions **dans les fiches elles-mêmes**, sous forme de commentaires `<!--SR:...-->` placés après chaque carte. Si le vault est versionné avec git, ces commentaires apparaîtront dans les diffs.
+
+### 4. Réviser sur Android avec Anki
+
+À chaque push sur `main`, la CI génère un paquet Anki de toutes les fiches et le publie à une adresse fixe :
+
+**https://github.com/speillet/Knowledge_AI_Engineering/releases/download/anki/ai-engineering.apkg**
+
+1. Installer **AnkiDroid**, gratuit, depuis le Play Store ou F-Droid.
+2. Ouvrir l'adresse ci-dessus sur le téléphone, puis ouvrir le fichier téléchargé avec AnkiDroid : il s'importe dans le paquet **AI Engineering**, rangé par section puis par fiche.
+3. **Mettre à jour** : retélécharger le fichier et le réimporter. Chaque carte est identifiée par sa fiche et sa question : les cartes existantes sont mises à jour et gardent leur progression.
+   - Reformuler une question crée une **nouvelle carte**, et l'ancienne reste dans Anki.
+   - Une carte supprimée du vault n'est pas supprimée d'Anki : la retirer à la main, par exemple en cherchant son texte.
+4. **Réviser un seul type de carte** avec un paquet filtré (menu **Créer un paquet filtré**) :
+   - `tag:type::situation` : les mises en situation ;
+   - `tag:type::confusion` : les cartes « à ne pas confondre » ;
+   - `tag:type::calcul` : les ordres de grandeur ;
+   - `tag:section::20-rag` : une seule section.
+5. Pour retrouver la même progression sur ordinateur, synchroniser AnkiDroid avec un compte **AnkiWeb**.
+
+> La progression Anki et celle du plugin Obsidian sont **indépendantes** : une carte révisée sur le téléphone ne l'est pas dans Obsidian, et inversement.
+
+Pour générer le paquet en local :
+
+```bash
+pip install -r scripts/requirements.txt
+python3 scripts/export_anki.py      # écrit dist/ai-engineering.apkg
+```
 
 ### Sans Obsidian
 
@@ -329,6 +358,8 @@ python3 scripts/lint_flashcards.py --stale-months 6 # fiches à revérifier (dé
 
 - **Erreurs** (bloquent le commit et la CI) : lien mort, nom de fichier en double, tags absents de la ligne 2, bloc avec deux lignes `?`, réponse vide, section `Mises en situation` ou `Connexions` manquante, dernier lien qui n'est pas le MOC, fiche absente du MOC, date `Vérifié le` illisible.
 - **Avertissements** : réponse trop longue (110 mots hors code, 140 pour une mise en situation), liste de plus de 5 éléments (6 étapes pour une mise en situation), « Quelle différence… » au lieu de « À ne pas confondre », question en double, fiche citée par moins de 2 autres, fiche absente du README, `Vérifié le` trop ancien.
+
+Le paquet Anki se régénère seul à chaque push (voir [Réviser sur Android avec Anki](#4-réviser-sur-android-avec-anki)). Changer `MODEL_ID` dans `scripts/export_anki.py` casserait la mise à jour des cartes déjà importées : ne pas y toucher.
 
 Pour activer le hook pre-commit, une fois par clone : `git config core.hooksPath .githooks`.
 
