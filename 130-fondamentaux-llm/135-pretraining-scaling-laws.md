@@ -69,6 +69,15 @@ Le stock de **texte humain de qualité** disponible sur le web est fini et en vo
 
 ---
 
+À ne pas confondre : pré-entraînement et post-training ?
+?
+- **Pré-entraînement** : prédire le token suivant sur des **milliers de milliards de tokens** de texte brut. Il apporte les **connaissances** et les capacités générales, et coûte l'essentiel du calcul
+- **Post-training** : SFT puis préférences ou RL (RLHF, DPO, RLVR) sur des jeux **beaucoup plus petits**. Il apporte le **comportement** : suivre les instructions, le format, le refus, le raisonnement ([[52-post-training-alignement|post-training]])
+
+Conséquence pratique : un fine-tuning d'entreprise est du post-training. Il change la **forme** des réponses bien plus facilement qu'il n'ajoute des **connaissances** ([[51-fine-tuning-adaptation|fine-tuning]]).
+
+---
+
 ## Mises en situation
 
 Mise en situation : un modèle affiche 92 % sur un benchmark public de raisonnement, mais s'effondre sur tes cas métier. Quelles explications envisages-tu ?

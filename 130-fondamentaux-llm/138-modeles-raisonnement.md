@@ -68,6 +68,15 @@ Générer **n réponses** puis choisir la meilleure grâce à un **vérificateur
 
 ---
 
+À ne pas confondre : modèle de raisonnement et chain-of-thought par prompt ?
+?
+- **Chain-of-thought par prompt** : on **demande** à un modèle classique d'écrire ses étapes. Le gain dépend de la formulation et reste limité ([[11-prompt-engineering-avance|prompt engineering]])
+- **Modèle de raisonnement** : le modèle a été **entraîné par RL** à produire une longue réflexion, à se vérifier et à revenir en arrière. La réflexion est **native**, souvent réglable par un budget, et parfois masquée
+
+Conséquence : avec un modèle de raisonnement, on décrit **l'objectif et les critères** plutôt que les étapes, et on paie les tokens de réflexion.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton équipe passe tout le trafic sur un modèle de raisonnement « puisqu'il est meilleur ». Le coût triple et les utilisateurs trouvent l'assistant lent. Que proposes-tu ?

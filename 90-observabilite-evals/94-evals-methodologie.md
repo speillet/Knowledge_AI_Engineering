@@ -7,7 +7,7 @@ Parce qu'un système LLM est **non déterministe et sans spécification formelle
 
 ---
 
-Quelle est la différence entre un benchmark public et une eval applicative ?
+À ne pas confondre : benchmark public et eval applicative ?
 ?
 Un **benchmark public** (MMLU, GPQA, SWE-bench…) mesure une **capacité générale** du modèle. Une **eval applicative** mesure **ta tâche, sur tes données, avec tes critères**. Seule la seconde prédit la qualité en production ; les benchmarks servent au **pré-tri** des modèles ([[146-choix-modeles|choix de modèle]]).
 
@@ -53,14 +53,14 @@ Les échelles de 1 à 10 sont **mal calibrées** (quelle différence entre 6 et 
 
 ---
 
-Quelle différence entre eval de référence (reference-based) et eval sans référence (reference-free) ?
+À ne pas confondre : eval avec référence (reference-based) et eval sans référence (reference-free) ?
 ?
 - **Avec référence** : on compare à une **réponse attendue** (exact match, similarité, juge qui compare). Fiable mais exige des réponses de référence.
 - **Sans référence** : on vérifie des **propriétés** de la sortie (format, ton, fidélité au contexte, absence de PII). Applicable **en production**, où il n'y a pas de vérité terrain.
 
 ---
 
-Quelle différence entre évaluation offline et online ?
+À ne pas confondre : évaluation offline et évaluation online ?
 ?
 - **Offline** : sur un **jeu figé** avant déploiement — détecte les régressions, sert de [[112-cicd-modeles|gate CI]].
 - **Online** : sur le **trafic réel** — évaluateurs sans référence sur un échantillon, feedback utilisateur, [[97-evals-online-ab-testing|A/B tests]].
@@ -144,4 +144,5 @@ Mise en situation : ton eval principale affiche 99 % depuis trois mois, alors qu
 - [[114-reproductibilite-variance|Reproductibilité & variance]] — statistiques des evals
 - [[112-cicd-modeles|CI/CD des modèles]] — les evals comme gates
 - [[151-donnees-curation-annotation|Données & annotation]] — produire des labels fiables
+- [[12-optimisation-automatique-prompts|Optimisation automatique de prompts]] — la métrique comme moteur d'optimisation
 - [[00-moc-ai-engineering|MOC AI Engineering]]

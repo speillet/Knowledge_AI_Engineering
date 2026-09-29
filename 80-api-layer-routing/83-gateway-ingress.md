@@ -32,7 +32,7 @@ Apports : **délégation par équipe** sans annotations propriétaires, découpa
 
 ---
 
-Quelle différence entre Ingress et API gateway ?
+À ne pas confondre : Ingress et API gateway ?
 ?
 L'**Ingress** fait du routage L7 ; une **API gateway** ajoute auth, rate limiting, quotas, transformation de requêtes.
 

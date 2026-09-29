@@ -102,6 +102,17 @@ Séparément : le **retrieval** (**recall@k**, MRR : a-t-on récupéré le bon p
 
 ---
 
+Quand ne pas faire de RAG ?
+?
+- **Corpus petit et stable** (quelques centaines de milliers de tokens) : tout mettre en contexte avec **prompt caching** est plus simple et souvent plus fiable ([[137-long-contexte|long contexte]])
+- **Besoin de style, de format ou de comportement** : c'est un problème de prompt ou de fine-tuning, pas de connaissances
+- **Données structurées et agrégations** (« combien de commandes en mars ? ») : une requête SQL via un outil répond juste, le retrieval de chunks non ([[26-text-to-sql|text-to-SQL]])
+- **Connaissances générales** que le modèle possède déjà
+
+**Piège** : ajouter un RAG par réflexe, puis passer des semaines sur le chunking d'un corpus qui tenait dans le contexte.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton RAG sur la documentation interne répond « je ne trouve pas » sur des questions dont tu sais que la réponse existe. Comment diagnostiques-tu ?
@@ -137,4 +148,6 @@ Mise en situation : le métier te demande un RAG sur 200 000 documents, dont des
 - [[133-embeddings-representations|Embeddings & représentations]] — modèles d'embedding en détail
 - [[162-document-parsing|Parsing de documents]] — la qualité de l'ingestion
 - [[96-evals-rag-agents|Evals de RAG]] — recall@k, faithfulness
+- [[25-chunking-contextual-retrieval|Chunking avancé & contextual retrieval]] — rendre chaque chunk trouvable
+- [[26-text-to-sql|Text-to-SQL]] — les questions chiffrées que le RAG ne sait pas traiter
 - [[00-moc-ai-engineering|MOC AI Engineering]]

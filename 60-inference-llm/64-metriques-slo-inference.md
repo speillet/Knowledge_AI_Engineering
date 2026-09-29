@@ -87,6 +87,16 @@ Par des **benchmarks de charge** réalistes (distribution des longueurs de promp
 
 ---
 
+Calcul : combien de requêtes simultanées faut-il servir pour 10 requêtes/s qui durent 8 secondes ?
+?
+**Loi de Little** : concurrence = débit × durée.
+```text
+L = λ × W = 10 req/s × 8 s = 80 requêtes en vol en moyenne
+```
+Avec 8 000 tokens de contexte par requête sur un 8B, c'est **≈ 80 Go de KV cache** : plus d'un H100 ([[61-kv-cache-attention|calcul du KV cache]]). Réduire la **durée** (moins de tokens de sortie, decode plus rapide) réduit la concurrence nécessaire autant qu'ajouter des GPU.
+
+---
+
 ## Mises en situation
 
 Mise en situation : le produit demande « une réponse en moins de 2 secondes » pour un assistant qui streame des réponses de 400 tokens. Comment traduis-tu ce besoin en SLO ?
@@ -135,4 +145,6 @@ Mise en situation : ton autoscaling se déclenche trop tard, et des requêtes at
 - [[67-speculative-decoding|Speculative decoding]] — réduire le TPOT
 - [[68-quantization|Quantization]] — plus de débit et de concurrence par GPU
 - [[93-monitoring-inference|Monitoring de l'inférence]] — les métriques concrètes (vLLM, GPU, usage)
+- [[69-roofline-prefill-decode|Roofline & désagrégation]] — l'interférence prefill/decode derrière les pics de TPOT
+- [[163-voix-temps-reel|Voix & agents temps réel]] — le TTFT dans un budget de latence conversationnel
 - [[00-moc-ai-engineering|MOC AI Engineering]]

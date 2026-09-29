@@ -77,6 +77,15 @@ Quand l'**utilisation** des GPU est **élevée et régulière**, que le modèle 
 
 ---
 
+À ne pas confondre : capacité mémoire et bande passante mémoire ?
+?
+- **Capacité** (Go) : décide **si le modèle tient**. Poids + KV cache doivent entrer en VRAM ou en RAM unifiée
+- **Bande passante** (Go/s) : décide **à quelle vitesse il génère**. Chaque token relit tous les poids actifs
+
+Un Mac avec 128 Go de RAM unifiée charge un 70B en 4 bits, mais le génère plus lentement qu'un GPU de 24 Go ne génère un 8B. Pour comparer deux machines, regarder les **deux** chiffres ([[68-quantization|quantization]]).
+
+---
+
 ## Mises en situation
 
 Mise en situation : une équipe a mis Ollama en production pour 50 utilisateurs et se plaint que « les modèles locaux sont lents ». Que diagnostiques-tu ?

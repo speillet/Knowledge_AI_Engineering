@@ -33,7 +33,7 @@ Retenir l'ordre de grandeur : une image applicative se compte en **centaines de 
 
 ---
 
-Quelle est la différence entre une image et un conteneur ?
+À ne pas confondre : image et conteneur ?
 ?
 Une **image** est un package/template contenant l'application et son environnement.
 

@@ -74,7 +74,7 @@ Pour **limiter le rayon d'impact** d'une erreur ou d'une [[101-securite-llm-guar
 
 ---
 
-Quelle différence entre fichier mémoire (ex. `CLAUDE.md`) et skill ?
+À ne pas confondre : fichier mémoire (ex. `CLAUDE.md`) et skill ?
 ?
 Le **fichier mémoire** est chargé **à chaque session** (conventions du projet) ; la **skill** n'est chargée **que quand elle est utile** — on y met les procédures longues et spécialisées.
 

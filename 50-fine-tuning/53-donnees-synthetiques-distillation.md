@@ -36,7 +36,7 @@ Entraîner un **modèle élève** (petit) à reproduire le comportement d'un **m
 
 ---
 
-Quelle différence entre distillation « sur les sorties » et « sur les logits » ?
+À ne pas confondre : distillation « sur les sorties » et « sur les logits » ?
 ?
 - **Sur les sorties** (sequence-level) : l'élève est fine-tuné (SFT) sur les **textes générés** par l'enseignant — possible même avec un modèle fermé via API.
 - **Sur les logits** (soft labels) : l'élève apprend à reproduire la **distribution de probabilités** complète de l'enseignant (loss KL) — plus riche en information, mais exige l'accès aux logits et un **tokenizer compatible**.

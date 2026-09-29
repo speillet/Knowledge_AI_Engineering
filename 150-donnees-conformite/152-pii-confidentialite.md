@@ -17,7 +17,7 @@ Aucune méthode n'est parfaite : combiner et **mesurer le rappel** sur ses donn�
 
 ---
 
-Quelle différence entre masquage, pseudonymisation et anonymisation ?
+À ne pas confondre : masquage, pseudonymisation et anonymisation ?
 ?
 - **Masquage / suppression** : remplacer par `[EMAIL]` — l'information est perdue.
 - **Pseudonymisation** : remplacer par un **jeton réversible** (`PERSON_1`) avec une table de correspondance protégée — **reste une donnée personnelle** au sens du RGPD.

@@ -75,6 +75,15 @@ Ils structurent l'inventaire des systèmes, l'évaluation des risques et les rô
 
 ---
 
+À ne pas confondre : safety et security ?
+?
+- **Safety** : éviter que le système **cause du tort** en fonctionnement normal : contenu dangereux, biais, conseils erronés, sycophancy
+- **Security** : empêcher qu'un **attaquant** détourne le système : prompt injection, exfiltration, abus d'outils ([[101-securite-llm-guardrails|sécurité]])
+
+En français, les deux se traduisent souvent par « sécurité », d'où la confusion. Les équipes, les tests et les métriques diffèrent : évaluations de contenu et red teaming comportemental d'un côté, modèle de menace et tests d'intrusion de l'autre.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton outil de tri de candidatures est soupçonné de défavoriser certains profils. Comment le vérifies-tu ?

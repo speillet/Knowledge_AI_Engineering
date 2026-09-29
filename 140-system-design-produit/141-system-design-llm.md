@@ -127,6 +127,15 @@ Pour chaque choix, dire **ce qu'on gagne, ce qu'on perd, et ce qui ferait change
 
 ---
 
+À ne pas confondre : latence réelle et latence perçue ?
+?
+- **Latence réelle** : le temps de calcul jusqu'à la réponse complète, réduit côté serving (modèle plus petit, cache, moins de tokens de sortie)
+- **Latence perçue** : le temps pendant lequel l'utilisateur **attend sans rien voir**, réduit côté interface (**streaming**, premier token rapide, étapes affichées, travail en arrière-plan)
+
+Un agent de 40 secondes qui montre ses étapes peut paraître plus rapide qu'une réponse de 8 secondes sur écran blanc. Le **TTFT** pilote la perception, la durée totale pilote le coût ([[64-metriques-slo-inference|métriques]]).
+
+---
+
 ## Mises en situation
 
 Mise en situation : on te demande en entretien de concevoir un assistant interne pour 5 000 employés, sur la documentation de l'entreprise. Comment démarres-tu les dix premières minutes ?

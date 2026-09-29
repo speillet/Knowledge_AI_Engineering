@@ -27,7 +27,7 @@ La perte n'est calculée que sur la **réponse de l'assistant**, pas sur la cons
 
 ---
 
-Quelle différence entre full fine-tuning et PEFT ?
+À ne pas confondre : full fine-tuning et PEFT ?
 ?
 Le **full FT** met à jour tous les poids (coûteux en GPU et stockage) ; le **PEFT** (Parameter-Efficient FT) n'entraîne qu'une **petite fraction de paramètres**.
 

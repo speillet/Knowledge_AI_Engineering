@@ -8,7 +8,7 @@ Un Transformer dont le **bloc MLP** est remplacé par **plusieurs MLP (« expert
 
 ---
 
-Quelle différence entre paramètres totaux et paramètres actifs ?
+À ne pas confondre : paramètres totaux et paramètres actifs ?
 ?
 - **Totaux** : tous les experts — ils déterminent la **mémoire** nécessaire.
 - **Actifs** : ceux utilisés **par token** — ils déterminent le **calcul** (FLOPs) et donc en partie la vitesse.

@@ -88,6 +88,17 @@ Sur un **échantillon du trafic** pour suivre la qualité sans vérité terrain,
 
 ---
 
+Quand ne pas utiliser un LLM-as-a-judge ?
+?
+- **Critère vérifiable par du code** : JSON valide, champ attendu, tests unitaires qui passent, regex, correspondance exacte. Une **assertion déterministe** est gratuite, instantanée et sans variance
+- **Exactitude factuelle sans référence** : le juge ne vérifie pas ce qu'il ignore
+- **Domaine expert** (médical, juridique) tant que le juge n'est pas **calibré sur des annotations d'experts**
+- **Décision unitaire à fort enjeu** (bloquer un utilisateur, valider un paiement) : le juge sert à mesurer des taux, pas à trancher seul un cas
+
+Règle : **code d'abord**, juge pour ce que le code ne sait pas mesurer ([[94-evals-methodologie|méthodologie]]).
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton juge LLM annonce 95 % d'accord avec les annotations humaines, et l'équipe veut s'en servir comme gate de déploiement. Qu'en penses-tu ?

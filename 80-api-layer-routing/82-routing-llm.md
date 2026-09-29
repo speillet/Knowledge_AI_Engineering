@@ -44,7 +44,7 @@ Le calcul ne tient que si la **vérification est fiable et bon marché** : sinon
 
 ---
 
-Quelle différence entre routing et fallback ?
+À ne pas confondre : routing et fallback ?
 ?
 Le **routing** choisit le modèle **avant** l'appel (optimisation) ; le **fallback** bascule vers un autre modèle **après une erreur** (panne, rate limit, timeout) — c'est de la **fiabilité**, gérée par l'[[81-litellm-api-layer|API layer]].
 

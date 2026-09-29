@@ -7,7 +7,7 @@ Un **LLM doté d'outils et d'une boucle d'exécution** (percevoir → raisonner 
 
 ---
 
-Quelle est la différence entre un workflow et un agent ?
+À ne pas confondre : workflow et agent ?
 ?
 Un **workflow** suit des étapes prédéfinies par le développeur ; un **agent** décide dynamiquement de ses actions — distinction popularisée par Anthropic (« Building effective agents »).
 
@@ -105,4 +105,5 @@ Mise en situation : ton agent d'analyse tourne parfois 40 étapes, coûte cher e
 - [[41-automatisation-code-nocode|Automatisation]] — workflow vs agent
 - [[96-evals-rag-agents|Evals d'agents]] — trajectoire, état final, pass^k
 - [[141-system-design-llm|System design LLM]] — workflow ou agent
+- [[165-computer-use-agents-navigateur|Computer use & agents navigateur]] — quand l'outil est une interface graphique
 - [[00-moc-ai-engineering|MOC AI Engineering]]

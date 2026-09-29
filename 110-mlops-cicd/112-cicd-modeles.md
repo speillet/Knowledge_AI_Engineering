@@ -19,7 +19,7 @@ L'**image conteneur** + la **référence versionnée du modèle/adapter** + les 
 
 ---
 
-Quelle différence entre blue/green et canary pour un modèle ?
+À ne pas confondre : blue/green et canary pour un modèle ?
 ?
 - **Blue/green** : bascule totale, rollback instantané
 - **Canary** : % de trafic progressif, comparaison des **[[64-metriques-slo-inference|métriques/SLO]]** et scores avant promotion

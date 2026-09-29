@@ -33,7 +33,7 @@ Envoyer le trafic réel **aussi** à la nouvelle version **sans montrer sa répo
 
 ---
 
-Quelle différence entre canary et A/B test ?
+À ne pas confondre : canary et A/B test ?
 ?
 - **Canary** : exposer la nouvelle version à **un petit % du trafic** pour détecter **les pannes** (erreurs, latence) avant d'élargir — objectif **sécurité du déploiement**.
 - **A/B test** : mesurer **statistiquement** laquelle des versions est **meilleure** — objectif **décision produit**.
@@ -72,6 +72,16 @@ C'est la [[153-data-flywheel-versioning|data flywheel]] appliquée aux evals.
 Quelles précautions de confidentialité pour les evals online ?
 ?
 Les traces contiennent des **données personnelles** : **consentement** ou base légale, **minimisation** et [[152-pii-confidentialite|masquage des PII]] avant relecture humaine, **durée de rétention** limitée, accès restreint aux annotateurs ([[154-rgpd-llm|RGPD]]).
+
+---
+
+Calcul : combien d'utilisateurs par bras pour détecter +2 points sur un taux de succès de 70 % ?
+?
+Règle de Lehr (risque α 5 %, puissance 80 %) :
+```text
+n ≈ 16 × p(1 − p) / δ²  =  16 × 0,7 × 0,3 / 0,02²  ≈ 8 400 par bras
+```
+Diviser l'effet cherché par 2 **multiplie par 4** l'échantillon : détecter +1 point demande ≈ 34 000 par bras. Si le trafic ne le permet pas, viser un effet plus gros, une métrique moins bruitée, ou s'appuyer sur les evals offline ([[114-reproductibilite-variance|variance]]).
 
 ---
 

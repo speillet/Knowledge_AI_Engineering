@@ -8,7 +8,7 @@ Parce que les documents réels sont des **PDF scannés, tableaux, slides, formul
 
 ---
 
-Quelle différence entre un PDF natif et un PDF scanné ?
+À ne pas confondre : PDF natif et PDF scanné ?
 ?
 - **Natif** (généré numériquement) : contient une **couche texte** extractible directement (pypdf, pdfplumber, PyMuPDF), mais **sans structure** fiable (ordre de lecture, tableaux).
 - **Scanné** : une **image** de page → nécessite de l'**OCR**.
@@ -107,4 +107,5 @@ Mise en situation : tu dois ingérer 500 000 PDF, dont beaucoup de scans, avec u
 - [[161-modeles-vision-langage|Modèles vision-langage]] — VLM comme parseurs
 - [[133-embeddings-representations|Embeddings]] — late interaction
 - [[145-cas-system-design|Cas de system design]] — recherche documentaire et extraction
+- [[25-chunking-contextual-retrieval|Chunking avancé]] — du document structuré aux chunks contextualisés
 - [[00-moc-ai-engineering|MOC AI Engineering]]

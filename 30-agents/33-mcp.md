@@ -48,9 +48,12 @@ Depuis la spec **2026-07-28**, le protocole est **sans état** (plus de session 
 
 ---
 
-Quelle différence entre MCP et le tool calling ?
+À ne pas confondre : serveur MCP et API REST ?
 ?
-Le **[[32-tool-calling|tool calling]]** est le mécanisme du modèle pour émettre un appel ; **MCP** standardise la **découverte et l'accès** aux outils côté application.
+- **API REST** : un contrat pensé pour des **développeurs**, qui lisent la doc et écrivent le code d'appel
+- **Serveur MCP** : un contrat pensé pour un **modèle**, qui **découvre** à l'exécution outils, ressources et prompts, décrits en langage naturel avec leur JSON Schema
+
+Un serveur MCP **enveloppe** souvent une API REST : il choisit quelles opérations exposer, les renomme et les décrit pour le modèle. Exposer tels quels 200 endpoints REST donne un mauvais serveur MCP. Le lien avec le modèle reste le **[[32-tool-calling|tool calling]]**.
 
 ---
 

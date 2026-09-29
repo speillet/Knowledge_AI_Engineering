@@ -83,6 +83,15 @@ Quelles mesures techniques prévoir pour une application LLM conforme ?
 
 ---
 
+À ne pas confondre : RGPD et AI Act ?
+?
+- **RGPD** : protège les **personnes** dont on traite les **données personnelles**. Il s'applique dès qu'une PII passe dans le système, quel que soit le niveau de risque de l'IA
+- **AI Act** : encadre les **systèmes d'IA** selon leur **niveau de risque** (usages interdits, haut risque, transparence, GPAI), même sans donnée personnelle ([[155-ai-act|AI Act]])
+
+Les deux se cumulent : un chatbot RH traitant des CV relève du **haut risque** de l'AI Act **et** du RGPD. L'AIPD du RGPD et l'analyse de risques de l'AI Act gagnent à être menées ensemble.
+
+---
+
 ## Mises en situation
 
 Mise en situation : un client exerce son droit à l'effacement. Tes données sont dans l'index RAG, la mémoire de l'agent, les traces, les caches et un modèle fine-tuné. Que réponds-tu ?

@@ -10,7 +10,7 @@ L'enjeu est réel : Gartner prévoit que **plus de 40 % des projets agentiques s
 
 ---
 
-Quelle différence entre plan de contrôle et plan d'exécution d'une plateforme d'agents ?
+À ne pas confondre : plan de contrôle et plan d'exécution d'une plateforme d'agents ?
 ?
 - **Plan de contrôle** : ce qui **décide** : registre des agents, identités, politiques d'accès, versions et configurations, budgets, approbations
 - **Plan d'exécution** : ce qui **fait tourner** : runtime, sandboxes, gateways LLM et outils, mémoire, émission des traces
@@ -74,12 +74,19 @@ Comment isoler les clients et les équipes sur une plateforme partagée ?
 
 ---
 
-Agent délégué ou agent autonome : comment gérer son identité ?
+Comment un agent délégué obtient-il ses droits sans compte de service ?
 ?
-- **Délégué** : il agit **pour un utilisateur**. Par **échange de jetons** OAuth (RFC 8693), il obtient un jeton limité aux **droits de l'utilisateur** et qui porte aussi l'identité de l'agent : l'audit sait qui a demandé et qui a agi
-- **Autonome** : il agit **en son nom propre**, avec sa propre identité et ses propres droits (ex. les « autopilots » de Microsoft, qui ont un compte d'utilisateur Entra), et un **humain propriétaire** responsable
+Par **échange de jetons** OAuth (RFC 8693) : le jeton de l'utilisateur est échangé contre un jeton **limité à ses droits**, qui porte **aussi l'identité de l'agent**. L'audit sait alors **qui a demandé** et **qui a agi**.
 
-Dans les deux cas : jetons **courts et limités**, stockés dans un **coffre**, injectés par la plateforme, **jamais dans le contexte ni dans la sandbox**.
+Un agent **autonome** a au contraire son propre compte (ex. les « autopilots » de Microsoft, avec un compte d'utilisateur Entra) et un humain propriétaire ([[38-plateformes-agents|délégué ou autonome]]).
+
+---
+
+Où vivent les jetons d'un agent ?
+?
+Dans un **coffre** géré par la plateforme, qui les **injecte au moment de l'appel d'outil**, **jamais dans le contexte du modèle ni dans la sandbox** : une injection de prompt ne peut pas exfiltrer ce que le modèle ne voit pas.
+
+Les jetons sont **courts** (minutes) et **limités** au périmètre de la tâche, et révoqués au retrait de l'agent.
 
 ---
 
@@ -97,6 +104,11 @@ Pourquoi un moteur de politiques déterministe en plus des instructions du promp
 Un prompt **n'est pas une barrière** : une injection peut le contourner. Les politiques sont évaluées **hors du modèle**, par la gateway, **avant chaque appel d'outil** : quel outil, quels paramètres, sous quelles conditions (montant maximal, rôle de l'utilisateur, horaires), avec ou sans approbation humaine. On part d'un **refus par défaut** et **chaque décision est journalisée**.
 
 Langages : **Cedar** (AgentCore Policy, disponible depuis mars 2026) ou **OPA/Rego**. Complète les guardrails de contenu ([[101-securite-llm-guardrails|sécurité LLM]]).
+
+---
+
+À quoi ressemble une politique Cedar pour un agent de support ?
+?
 ```text
 // Cedar : remboursement autorisé sous 100 €, sinon approbation
 permit (
@@ -108,7 +120,7 @@ permit (
 forbid (principal, action == Action::"rembourser", resource)
 unless { context.approbation_humaine == true } when { context.montant > 100 };
 ```
-Le refus par défaut et la journalisation de chaque décision sont ce qui rend la politique **auditable**.
+Le `permit` ouvre un cas précis, le `forbid` l'emporte toujours sur un `permit`. Le refus par défaut et la journalisation de chaque décision sont ce qui rend la politique **auditable**.
 
 ---
 
@@ -221,11 +233,20 @@ La métrique qui décide : le **coût par tâche réussie**, comparé au coût d
 
 ---
 
-Que change l'AI Act européen pour une plateforme d'agents ?
+Quelles échéances de l'AI Act concernent une plateforme d'agents ?
 ?
 - **Depuis le 2 août 2026** : obligations de **transparence**. Informer l'utilisateur qu'il échange avec une IA, marquer les contenus générés (délai jusqu'au 2 décembre 2026 pour le marquage des systèmes déjà sur le marché)
 - **Systèmes à haut risque** (recrutement, crédit, etc.) : reportés au **2 décembre 2027** par le Digital Omnibus, entré en vigueur le 27 juillet 2026
-- **À préparer** : inventaire et **classification du risque** de chaque agent, supervision humaine, journaux, documentation. Le registre de la plateforme sert de base
+
+Voir [[155-ai-act|AI Act]].
+
+---
+
+Que préparer pour l'AI Act sur une plateforme d'agents ?
+?
+- **Inventaire** et **classification du risque** de chaque agent : le registre de la plateforme sert de base
+- **Supervision humaine** effective sur les actions à risque
+- **Journaux** et **documentation** technique
 
 Cadre de management utile : **ISO/IEC 42001**.
 
@@ -250,7 +271,11 @@ Quels critères pour choisir sa plateforme d'agents ?
 - **Maturité de l'équipe** et volume
 - **Coût de sortie**
 
-Le choix fréquent est **hybride** : services managés **modulaires** pour le runtime et les sandboxes, plan de contrôle (registre, politiques, observabilité) aligné sur des standards ouverts.
+---
+
+Quelle architecture de plateforme d'agents est la plus fréquente ?
+?
+Une architecture **hybride** : services managés **modulaires** pour le runtime et les sandboxes, plan de contrôle (registre, politiques, observabilité) aligné sur des **standards ouverts** (MCP, A2A, OpenTelemetry). On profite du managé là où il fait gagner du temps, sans y enfermer ce qui coûte cher à migrer.
 
 ---
 

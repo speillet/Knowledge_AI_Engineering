@@ -1,7 +1,7 @@
 # Monitoring, drift & boucle de feedback — Flashcards
 Tags: #flashcards #ai-engineering #mlops #monitoring #drift #llm
 
-Quelle différence entre data drift et concept drift ?
+À ne pas confondre : data drift et concept drift ?
 ?
 - **Data drift** : la distribution des **entrées** change (nouveaux sujets, jargon)
 - **Concept drift** : la **relation entrée → sortie attendue** change (le « bon » comportement évolue)

@@ -131,4 +131,5 @@ Mise en situation : plusieurs équipes veulent déployer leurs modèles sur le m
 - [[122-finops-llm|FinOps LLM]] — le coût du GPU idle
 - [[00-index|Index Conteneurs]]
 - [[93-monitoring-inference|Monitoring de l'inférence]] — métriques GPU (DCGM) et signaux d'autoscaling
+- [[69-roofline-prefill-decode|Désagrégation prefill/decode]] — deux pools à autoscaler séparément
 - [[00-moc-ai-engineering|MOC AI Engineering]]

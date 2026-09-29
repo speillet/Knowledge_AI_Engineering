@@ -109,4 +109,5 @@ Mise en situation : le coût de ton service d'analyse de photos explose, bien au
 - [[133-embeddings-representations|Embeddings]] — embeddings multimodaux
 - [[102-menaces-agents|Menaces des agents]] — injection par l'image
 - [[131-transformer-architecture|Architecture Transformer]] — tokens visuels dans la séquence
+- [[165-computer-use-agents-navigateur|Computer use & agents navigateur]] — les agents qui utilisent les interfaces
 - [[00-moc-ai-engineering|MOC AI Engineering]]

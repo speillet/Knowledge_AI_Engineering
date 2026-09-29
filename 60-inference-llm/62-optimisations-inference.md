@@ -127,4 +127,5 @@ Mise en situation : on te propose de passer de 2 GPU à 4 GPU en tensor parallel
 - [[68-quantization|Quantization]] — formats et méthodes en détail
 - [[136-mixture-of-experts|Mixture of Experts]] — expert parallelism
 - [[54-entrainement-distribue|Entraînement distribué]] — les mêmes parallélismes à l'entraînement
+- [[69-roofline-prefill-decode|Roofline & désagrégation]] — pourquoi chaque phase a son goulot
 - [[00-moc-ai-engineering|MOC AI Engineering]]

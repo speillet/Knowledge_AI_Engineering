@@ -86,6 +86,15 @@ Ordre de grandeur : **N × (d × octets par dimension + M × 2 × 4 octets)**. E
 
 ---
 
+À ne pas confondre : le rappel d'un index ANN et le rappel du retrieval ?
+?
+- **Rappel de l'index ANN** : la part des **vrais plus proches voisins** (au sens de la recherche exacte) que l'index retrouve. Il mesure **l'approximation** de l'index
+- **Rappel du retrieval** (recall@k d'un RAG) : la part des **documents pertinents** pour la question qui sont remontés. Il mesure la **qualité de bout en bout** : chunking, modèle d'embedding, requête et index
+
+Un index à 99 % de rappel ANN peut donner un mauvais RAG si l'**embedding** ne rapproche pas les bons passages. On règle `ef_search` avec le premier, on juge le système avec le second ([[96-evals-rag-agents|evals RAG]]).
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton RAG multi-tenant renvoie parfois zéro résultat pour un client, alors que ses documents existent bien dans l'index. Quelle cause suspectes-tu ?

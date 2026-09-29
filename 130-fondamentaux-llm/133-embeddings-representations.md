@@ -23,7 +23,7 @@ Il faut utiliser **la mesure pour laquelle le modèle a été entraîné**.
 
 ---
 
-Quelle différence entre bi-encoder et cross-encoder ?
+À ne pas confondre : bi-encoder et cross-encoder ?
 ?
 - **Bi-encoder** : encode requête et document **séparément** → les documents sont indexés à l'avance, la recherche est rapide. C'est le modèle d'embedding.
 - **Cross-encoder** : lit **requête et document ensemble** → bien plus précis mais un passage par paire, donc réservé au **reranking** de quelques dizaines de candidats ([[22-rag-avance|reranking]]).

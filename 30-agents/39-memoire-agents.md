@@ -114,6 +114,17 @@ Mesurer aussi la **latence** et le **coût** ajoutés par l'écriture et la rech
 
 ---
 
+Quand ne pas donner de mémoire long terme à un agent ?
+?
+- **Tâches ponctuelles** sans continuité (extraction, classification, one-shot)
+- **Un profil structuré suffit** : préférences et faits stables vivent mieux dans une table ou un CRM, lus par un outil
+- **Données sensibles** : chaque souvenir est une donnée personnelle à justifier, sécuriser et savoir **effacer** ([[154-rgpd-llm|RGPD]])
+- **Pas de moyen de l'évaluer ni de la purger** : une mémoire fausse ou empoisonnée persiste et contamine les sessions suivantes ([[102-menaces-agents|menaces]])
+
+La mémoire long terme se justifie par un **gain mesuré**, pas par principe.
+
+---
+
 ## Mises en situation
 
 Mise en situation : les utilisateurs se plaignent que ton assistant « oublie tout » d'une session à l'autre, mais aussi qu'il ressort parfois des informations périmées. Comment conçois-tu sa mémoire ?

@@ -66,7 +66,7 @@ Comment comparer rigoureusement deux variantes (prompt, modèle) ?
 
 ---
 
-Quelle différence entre pass@k et pass^k ?
+À ne pas confondre : pass@k et pass^k ?
 ?
 - **pass@k** : probabilité qu'**au moins une** des k tentatives réussisse → le **potentiel** (utile quand on peut vérifier puis relancer, ex. du code avec des tests)
 - **pass^k** : probabilité que **les k tentatives** réussissent → la **fiabilité** vécue par l'utilisateur qui repose la même question

@@ -2,7 +2,7 @@
 Tags: #flashcards #ai-engineering #agents #platform #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 
-Quelle différence entre un framework et une plateforme d'agents ?
+À ne pas confondre : framework et plateforme d'agents ?
 ?
 Le **[[37-frameworks-agents|framework]]** sert à **écrire** l'agent (bibliothèque) ; la **plateforme** sert à l'**exécuter et le gouverner en production** : runtime managé, sandbox, mémoire, accès aux outils, identité, politiques d'accès, observabilité, evals. La suite senior de cette fiche : [[115-plateformes-agents-gouvernance|architecture & gouvernance]].
 
@@ -90,11 +90,19 @@ Quatre stratégies (vocabulaire de LangSmith Deployment) :
 Pourquoi une sandbox d'exécution ?
 ?
 Le code, les commandes et la navigation web générés par le modèle sont du **code non fiable**, potentiellement influencé par une injection de prompt. La sandbox les exécute dans un environnement **isolé et jetable** :
-- **Isolation forte** : microVM (Firecracker), gVisor ou Kata, plutôt qu'un conteneur classique qui partage le noyau de l'hôte
+- **Isolation forte** : microVM (Firecracker), gVisor ou Kata, plutôt qu'un conteneur classique qui partage le noyau de l'hôte ([[03-containerd-runc|runtime]])
 - **Réseau sortant filtré**, système de fichiers éphémère, limites CPU et mémoire
 - **Aucun secret** accessible depuis la sandbox
 
-Exemples : AgentCore Code Interpreter, E2B, Daytona, Modal, Cloudflare Sandboxes, Agent Sandbox pour Kubernetes (avec un pool de sandboxes préchauffées). Voir aussi [[34-harness-plugins|harness]].
+---
+
+Quels services de sandbox pour agents connaître ?
+?
+- **Managés chez un cloud** : AgentCore Code Interpreter (AWS), Cloudflare Sandboxes
+- **Spécialisés** : E2B, Daytona, Modal
+- **Sur son cluster** : Agent Sandbox pour Kubernetes, avec un **pool de sandboxes préchauffées** pour masquer le temps de démarrage
+
+Critères de choix : technologie d'isolation, **temps de démarrage**, persistance possible entre deux appels, filtrage réseau. Voir aussi [[34-harness-plugins|harness]].
 
 ---
 
@@ -123,11 +131,18 @@ Exemples : AgentCore Registry, Agent Registry de Google, registre d'Agent 365, r
 
 Pourquoi l'identité est-elle un sujet clé pour les agents ?
 ?
-Un agent **agit dans des systèmes réels** : il faut savoir **qui il est** et **au nom de qui** il agit. Deux cas :
-- **Agent délégué** : il agit **au nom d'un utilisateur** et hérite de **ses droits** (OAuth, accès délégué), jamais d'un compte de service surpuissant
-- **Agent autonome** : il a **sa propre identité** et ses propres droits, avec un humain responsable
+Un agent **agit dans des systèmes réels** : il faut savoir **qui il est** et **au nom de qui** il agit, pour lui donner les bons droits et pour que l'audit sache qui a fait quoi.
 
 Les plateformes donnent une identité à chaque agent (Entra Agent ID, AgentCore Identity, Agent Identity) et gardent les jetons **hors du code et du contexte de l'agent**. C'est le principe du **moindre privilège** ([[101-securite-llm-guardrails|sécurité LLM]]).
+
+---
+
+À ne pas confondre : agent délégué et agent autonome ?
+?
+- **Agent délégué** : il agit **au nom d'un utilisateur** et hérite de **ses droits** (OAuth, accès délégué), jamais d'un compte de service surpuissant
+- **Agent autonome** : il agit **en son nom propre**, avec sa propre identité et ses propres droits, et un **humain propriétaire** responsable
+
+Le mécanisme des jetons est détaillé dans la fiche senior ([[115-plateformes-agents-gouvernance|gouvernance]]).
 
 ---
 

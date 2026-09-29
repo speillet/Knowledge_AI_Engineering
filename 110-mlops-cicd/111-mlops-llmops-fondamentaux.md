@@ -1,5 +1,6 @@
 # MLOps & LLMOps — Fondamentaux — Flashcards
 Tags: #flashcards #ai-engineering #mlops #llmops #llm
+Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 
 Qu'est-ce que le MLOps ?
 ?
@@ -7,7 +8,7 @@ L'application des pratiques **DevOps au cycle de vie ML** : données → entraî
 
 ---
 
-Quelle différence fondamentale entre DevOps et MLOps ?
+À ne pas confondre : DevOps et MLOps ?
 ?
 DevOps versionne du **code** ; MLOps versionne **code + données + modèle + configuration** — le comportement d'un système ML vient des données, pas seulement du code.
 

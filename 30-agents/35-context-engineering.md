@@ -7,7 +7,7 @@ L'art de **choisir, à chaque appel, l'ensemble minimal de tokens le plus utile*
 
 ---
 
-Quelle différence avec le prompt engineering ?
+À ne pas confondre : context engineering et prompt engineering ?
 ?
 Le **[[11-prompt-engineering-avance|prompt engineering]]** optimise la **formulation** d'une instruction ; le **context engineering** gère **tout ce qui entre dans le contexte**, sur la durée d'une session ou d'un agent.
 

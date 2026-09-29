@@ -69,6 +69,15 @@ Quel lien entre tokenisation et sécurité ?
 
 ---
 
+À ne pas confondre : token et mot ?
+?
+- **Mot** : l'unité du lecteur humain
+- **Token** : l'unité du modèle, fixée par son tokenizer. Un mot courant fait souvent **1 token**, un mot rare, un nombre ou un nom propre **plusieurs**
+
+Repères : en anglais **≈ 0,75 mot par token**, en français plutôt **1,5 à 2 tokens par mot** selon le tokenizer. Les limites de contexte, les prix et les débits s'expriment en **tokens** : estimer « en mots » sous-estime la facture en français. Deux modèles n'ont pas le même tokenizer, donc pas le même compte pour un même texte.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton estimation de coût, calculée en anglais, est dépassée de 40 % en production sur un service francophone. Que s'est-il passé ?

@@ -51,12 +51,19 @@ La leçon : vérifier l'**éditeur officiel**, **épingler** les versions et **c
 
 ---
 
-Que révèlent l'affaire ClawHub et l'étude ToxicSkills (2026) ?
+Que s'est-il passé sur ClawHub début 2026 ?
 ?
-- **ClawHub**, la place de marché de skills de l'agent open source OpenClaw : à partir de fin janvier 2026, des **centaines de skills malveillants** y diffusent un voleur d'identifiants (1 184 confirmés par le CERT d'Antiy). Il suffisait d'un compte GitHub d'une semaine pour publier
-- **ToxicSkills** (Snyk, février 2026) : sur **3 984 skills** analysés, **37 %** ont au moins une faille, **76 charges malveillantes** sont confirmées, et **91 %** des skills malveillants combinent code malveillant et prompt injection
+**ClawHub**, la place de marché de skills de l'agent open source OpenClaw : à partir de fin janvier 2026, des **centaines de skills malveillants** y diffusent un **voleur d'identifiants** (1 184 confirmés par le CERT d'Antiy). Il suffisait d'un compte GitHub d'une semaine pour publier.
 
-La leçon : un skill, c'est **du code et des instructions**. On le traite comme une dépendance.
+La leçon : une place de marché **sans revue** est un canal de diffusion de malware, comme npm ou PyPI.
+
+---
+
+Que révèle l'étude ToxicSkills (Snyk, février 2026) ?
+?
+Sur **3 984 skills** analysés : **37 %** ont au moins une faille, **76 charges malveillantes** sont confirmées, et **91 %** des skills malveillants **combinent code malveillant et prompt injection**.
+
+La leçon : un skill, c'est **du code et des instructions**. On le traite comme une dépendance, et on l'analyse sous les deux angles.
 
 ---
 

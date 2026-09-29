@@ -57,7 +57,7 @@ Beaucoup d'entreprises utilisent **les deux** derrière une [[81-litellm-api-lay
 
 ---
 
-Qu'est-ce que « open weights » par rapport à « open source » ?
+À ne pas confondre : open weights et open source ?
 ?
 **Open weights** = les **poids** sont téléchargeables, mais pas forcément les **données** ni le **code d'entraînement**, et la licence peut **restreindre** l'usage (seuil d'utilisateurs, usages interdits, obligations d'attribution). Un modèle **open source** au sens strict (OSI) publie de quoi le **reproduire** et autorise tout usage. Toujours **lire la licence**.
 
@@ -133,4 +133,5 @@ Mise en situation : la direction impose que les données ne sortent pas de l'ent
 - [[135-pretraining-scaling-laws|Pré-entraînement]] — contamination et cutoff
 - [[164-llm-local-edge|LLM locaux & edge]] — les options open weights
 - [[155-ai-act|AI Act]] — obligations des modèles à usage général
+- [[13-prompts-production|Prompts en production]] — un prompt ne se transfère pas d'un modèle à l'autre
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -186,4 +186,5 @@ Mise en situation : depuis une semaine, plusieurs utilisateurs rapportent que to
 - [[39-memoire-agents|Mémoire des agents]] — empoisonnement de la mémoire
 - [[36-orchestration-agents|Orchestration multi-agents]] — risques entre agents
 - [[161-modeles-vision-langage|Modèles vision-langage]] — injection par l'image
+- [[165-computer-use-agents-navigateur|Agents navigateur]] — l'injection par le contenu des pages web
 - [[00-moc-ai-engineering|MOC AI Engineering]]

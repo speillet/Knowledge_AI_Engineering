@@ -7,7 +7,7 @@ Parce que les choix d'interface **compensent les limites du modèle** (erreurs, 
 
 ---
 
-Quelle différence entre IA qui assiste (copilote) et IA qui agit (autopilote) ?
+À ne pas confondre : IA qui assiste (copilote) et IA qui agit (autopilote) ?
 ?
 - **Copilote** : l'IA **propose**, l'humain **décide** (suggestion de code, brouillon d'e-mail) — tolère des erreurs, puisque l'humain filtre.
 - **Autopilote** : l'IA **exécute** seule — exige une fiabilité bien plus élevée et des **garde-fous**.
@@ -107,4 +107,5 @@ Mise en situation : ton assistant met 12 secondes à répondre et les utilisateu
 - [[143-hallucinations-grounding|Hallucinations & grounding]] — montrer l'incertitude
 - [[64-metriques-slo-inference|Métriques & SLO]] — TTFT et latence perçue
 - [[83-gateway-ingress|Gateway]] — streaming SSE
+- [[163-voix-temps-reel|Voix & agents temps réel]] — l'UX quand l'interface est la voix
 - [[00-moc-ai-engineering|MOC AI Engineering]]

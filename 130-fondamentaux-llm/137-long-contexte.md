@@ -54,7 +54,7 @@ Quelles techniques réduisent le coût du long contexte côté serving ?
 
 ---
 
-Comment la limite de sortie diffère-t-elle de la limite d'entrée ?
+À ne pas confondre : limite d'entrée (fenêtre de contexte) et limite de sortie ?
 ?
 La **sortie maximale** (max output tokens) est en général **bien plus petite** que la fenêtre (quelques milliers à quelques dizaines de milliers de tokens), et la génération est **séquentielle** donc lente. Produire un long document demande de **découper** la génération (plan puis sections).
 

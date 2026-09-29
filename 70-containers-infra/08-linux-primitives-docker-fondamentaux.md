@@ -55,7 +55,7 @@ Parce que chaque instruction crée un **layer mis en cache** : placer ce qui cha
 
 ---
 
-Quelle est la différence entre un volume et un bind mount ?
+À ne pas confondre : volume et bind mount ?
 ?
 Les deux **persistent des données hors du cycle de vie du conteneur** ; un **volume** est géré par le runtime (emplacement, sauvegarde, pilotes), un **bind mount** monte un chemin précis de l'hôte.
 
@@ -117,5 +117,6 @@ Mise en situation : un responsable sécurité demande d'exécuter le code géné
 - [[09-gpu-conteneurs|GPU en conteneur]] — cgroup devices pour le GPU
 - [[10-images-modeles-poids|Images & poids]] — volumes pour monter les poids
 - [[02-docker-images-registries|Docker & images]] — layers & Dockerfile
+- [[07-synthese-containers|Synthèse conteneurs]] — les définitions en une phrase
 - [[00-index|Index Conteneurs]]
 - [[00-moc-ai-engineering|MOC AI Engineering]]

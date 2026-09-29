@@ -78,7 +78,7 @@ Comment estimer la mémoire nécessaire pour les poids ?
 
 ---
 
-Quelle différence entre decoder-only, encoder-only et encoder-decoder ?
+À ne pas confondre : decoder-only, encoder-only et encoder-decoder ?
 ?
 - **Decoder-only** (GPT, Llama, Claude) : attention causale, **génération** — le standard des LLM.
 - **Encoder-only** (BERT) : attention **bidirectionnelle**, pas de génération — utilisé pour la **classification**, les **embeddings** et les **rerankers**.

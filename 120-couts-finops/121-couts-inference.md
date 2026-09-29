@@ -83,6 +83,19 @@ Un GPU **alloué facture pareil, utilisé ou non** : consolidation, MIG/time-sli
 
 ---
 
+Calcul : combien coûte une tâche d'agent de 20 tours, avec et sans prompt caching ?
+?
+Hypothèses : 5 000 tokens au départ, +2 000 par tour (résultats d'outils), 300 tokens de sortie par tour, 3 €/M en entrée, 15 €/M en sortie.
+```text
+entrée cumulée = 20 × 5 000 + 2 000 × (0 + 1 + … + 19) = 480 000 tokens
+sans cache : 480 k × 3 €/M + 6 k × 15 €/M     ≈ 1,53 €
+avec cache : ~43 k nouveaux tokens au plein tarif
+             + ~437 k relus à 10 % du prix     ≈ 0,35 €
+```
+Le coût croît comme le **carré** du nombre de tours : 40 tours coûtent environ 3,5 fois plus que 20. D'où la **compaction** et le cache ([[123-caching-agressif|caching]]). Le surcoût d'écriture en cache est négligé ici.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ta direction demande s'il faut passer de l'API à des modèles auto-hébergés pour économiser. Comment calcules-tu ?

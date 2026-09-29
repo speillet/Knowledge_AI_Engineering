@@ -134,4 +134,5 @@ Mise en situation : après un changement de modèle d'embedding, la qualité du 
 - [[23-knowledge-graphs-ontologies|Knowledge graphs & ontologies]] — GraphRAG en détail
 - [[134-recherche-vectorielle-ann|Recherche vectorielle & index ANN]] — HNSW, IVF, PQ, filtrage
 - [[96-evals-rag-agents|Evals de RAG]] — mesurer chaque étage
+- [[25-chunking-contextual-retrieval|Chunking avancé & contextual retrieval]] — agir sur ce qu'on indexe
 - [[00-moc-ai-engineering|MOC AI Engineering]]

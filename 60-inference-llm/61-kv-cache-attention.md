@@ -74,6 +74,20 @@ Plus le contexte est long, plus le cache est gros : le **contexte long coûte de
 
 ---
 
+Calcul : combien de requêtes de 8 000 tokens tiennent sur un H100 80 Go qui sert un modèle 8B en BF16 ?
+?
+```text
+VRAM utilisable (gpu_memory_utilization 0,9)   ≈ 72 Go
+poids 8B en BF16                              ≈ 16 Go
+activations, graphes CUDA                      ≈  3 Go
+reste pour le KV cache                         ≈ 53 Go
+KV par token (Llama 3.1 8B)                    ≈ 128 Ko → 8 000 tokens ≈ 1 Go
+→ environ 50 requêtes simultanées à contexte plein
+```
+Au-delà, les requêtes **attendent en file** ou sont **préemptées** (recalcul ou swap), et la latence p99 explose. En FP8, le KV cache double la concurrence ([[64-metriques-slo-inference|concurrence]]).
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton service vLLM tient 60 requêtes simultanées avec des prompts de 2 000 tokens, mais plus que 8 quand tu passes à 32 000 tokens de contexte. Pourquoi, et que fais-tu ?

@@ -117,4 +117,6 @@ Mise en situation : ton classifieur de tickets a 92 % d'exactitude mais l'équip
 - [[65-probabilites-sampling|Probabilités & sampling]] — température, top-p et self-consistency
 - [[138-modeles-raisonnement|Modèles de raisonnement]] — quand le chain-of-thought est natif
 - [[143-hallucinations-grounding|Hallucinations & grounding]] — abstention et citations
+- [[12-optimisation-automatique-prompts|Optimisation automatique de prompts]] — laisser une métrique choisir la formulation
+- [[13-prompts-production|Prompts en production]] — structure, versioning et portabilité
 - [[00-moc-ai-engineering|MOC AI Engineering]]

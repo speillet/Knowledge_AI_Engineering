@@ -7,7 +7,7 @@ Une sortie **plausible mais fausse ou non étayée** : fait inventé, citation i
 
 ---
 
-Quelle différence entre hallucination intrinsèque et extrinsèque ?
+À ne pas confondre : hallucination intrinsèque et extrinsèque ?
 ?
 - **Intrinsèque** : la sortie **contredit** la source fournie (résumé qui inverse un chiffre).
 - **Extrinsèque** : la sortie **ajoute** une information **absente** de la source, vraie ou fausse — invérifiable à partir du contexte.

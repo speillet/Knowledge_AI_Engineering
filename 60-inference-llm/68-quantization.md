@@ -255,4 +255,5 @@ Mise en situation : ton fournisseur publie le même modèle en BF16, FP8 et GGUF
 - [[67-speculative-decoding|Speculative decoding]] — l'autre levier pour accélérer le decode
 - [[93-monitoring-inference|Monitoring de l'inférence]] — suivre le modèle quantizé en production
 - [[164-llm-local-edge|LLM locaux & edge]] — GGUF et petits appareils
+- [[69-roofline-prefill-decode|Roofline]] — pourquoi la quantization accélère surtout le decode
 - [[00-moc-ai-engineering|MOC AI Engineering]]

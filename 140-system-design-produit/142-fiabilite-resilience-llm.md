@@ -95,6 +95,24 @@ Par du **chaos testing** : injecter des 429, des timeouts, des flux coupés, des
 
 ---
 
+À ne pas confondre : retry, fallback et circuit breaker ?
+?
+- **Retry** : **rejouer la même requête** sur le même fournisseur, pour une erreur transitoire
+- **Fallback** : envoyer la requête **ailleurs** (autre modèle, autre fournisseur, réponse dégradée) quand le premier choix échoue
+- **Circuit breaker** : **arrêter d'appeler** un fournisseur défaillant pendant un temps, pour ne pas empiler les timeouts
+
+Ils s'enchaînent : quelques retries, puis fallback, et le disjoncteur évite de payer ces retries quand la panne est franche ([[82-routing-llm|routing]]).
+
+---
+
+Que se passe-t-il si chaque couche d'un système réessaie trois fois ?
+?
+Les retries se **multiplient** : front, orchestrateur et client LLM à 3 tentatives chacun donnent jusqu'à **3³ = 27 appels** au fournisseur pour une requête utilisateur. Pendant une panne partielle, c'est une **tempête de retries** qui empêche le service de récupérer, et qui coûte en tokens.
+
+Parades : réessayer à **une seule couche**, **budget de retries** global (ex. 10 % du trafic), **jitter** pour désynchroniser les clients, et **circuit breaker** ([[82-routing-llm|fallbacks]]).
+
+---
+
 ## Mises en situation
 
 Mise en situation : pendant un pic, ton application renvoie massivement des 429 et tes retries aggravent la situation. Que corriges-tu dans l'ordre ?

@@ -1,5 +1,6 @@
 # Knowledge graphs & ontologies — Flashcards
 Tags: #flashcards #ai-engineering #rag #knowledge-graph #ontologie #llm
+Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 
 Qu'est-ce qu'un knowledge graph ?
 ?
@@ -137,4 +138,5 @@ Mise en situation : un chef de projet veut exposer Text2Cypher aux utilisateurs 
 - [[39-memoire-agents|Mémoire des agents]] — graphes temporels pour se souvenir
 - [[63-guided-generation|Guided generation]] — extraire sous schéma
 - [[101-securite-llm-guardrails|Sécurité LLM]] — injection dans les requêtes générées
+- [[26-text-to-sql|Text-to-SQL]] — le même problème que Text2Cypher, sur une base relationnelle
 - [[00-moc-ai-engineering|MOC AI Engineering]]

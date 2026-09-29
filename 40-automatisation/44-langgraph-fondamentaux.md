@@ -8,7 +8,7 @@ Un framework **bas niveau d'orchestration et un runtime** pour des agents **long
 
 ---
 
-Quelle différence entre LangGraph et LangChain ?
+À ne pas confondre : LangGraph et LangChain ?
 ?
 **LangChain** fournit des composants et un agent haut niveau (`create_agent`) ; **LangGraph** est le **moteur d'orchestration** en dessous. On commence souvent avec [[43-langchain-agents|create_agent]] et on passe à LangGraph pour contrôler le flux.
 

@@ -52,7 +52,7 @@ Il **filtre** les nodes capables d'accueillir le Pod (ressources demandées, nod
 
 ---
 
-Quelle différence entre requests et limits ?
+À ne pas confondre : requests et limits ?
 ?
 - **Requests** : ressources **réservées**, utilisées par le scheduler pour placer le Pod
 - **Limits** : **plafond** d'usage ; dépassement mémoire → **OOMKilled**, dépassement CPU → ralenti (throttling)
@@ -123,4 +123,5 @@ Mise en situation : une équipe demande pourquoi ses Pods GPU restent en attente
 - [[01-oci|OCI]] — à ne pas confondre avec CRI
 - [[03-containerd-runc|containerd & runc]] — le runtime derrière CRI
 - [[05-docker-kubernetes|Docker & Kubernetes]] — l'histoire de dockershim
+- [[07-synthese-containers|Synthèse conteneurs]] — de `kubectl apply` au processus
 - [[00-moc-ai-engineering|MOC AI Engineering]]

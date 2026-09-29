@@ -40,7 +40,7 @@ Système de **gestion des risques**, **gouvernance des données** (qualité, bia
 
 ---
 
-Quelle différence entre fournisseur et déployeur ?
+À ne pas confondre : fournisseur et déployeur ?
 ?
 - **Fournisseur** : celui qui **développe** le système (ou le fait développer) et le met sur le marché sous son nom — porte l'essentiel des obligations.
 - **Déployeur** : celui qui **utilise** le système dans son activité — obligations d'**usage conforme**, de **supervision humaine**, d'information des personnes, parfois d'**analyse d'impact sur les droits fondamentaux**.
