@@ -1,0 +1,3 @@
+# Dépendances de scripts/export_anki.py (le lint n'en a aucune)
+genanki==0.13.1
+markdown-it-py==4.2.0

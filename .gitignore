@@ -8,3 +8,9 @@
 .kilo/
 .claude/settings.local.json
 .claude/settings.json
+
+# Paquet Anki généré (publié par la CI en release « anki »)
+dist/
+
+# Cache Python
+__pycache__/
