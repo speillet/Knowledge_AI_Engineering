@@ -121,4 +121,5 @@ Mise en situation : deux équipes se partagent un GPU pour leurs services d'inf�
 - [[08-linux-primitives-docker-fondamentaux|Primitives Linux]] — cgroup devices
 - [[10-images-modeles-poids|Images & poids]] — images CUDA volumineuses
 - [[13-apptainer-inference-hpc|Apptainer & HPC]] — `--nv` en HPC
+- [[03-containerd-runc|containerd & runc]] — où le toolkit s'insère dans la chaîne
 - [[00-moc-ai-engineering|MOC AI Engineering]]

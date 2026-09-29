@@ -1,5 +1,6 @@
 # Apptainer & inférence HPC — Flashcards
 Tags: #flashcards #conteneurs #apptainer #hpc #llm #inference
+Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 
 Pourquoi préfère-t-on Apptainer à Docker en environnement HPC ?
 ?
@@ -62,6 +63,48 @@ Avec `apptainer pull` et le préfixe `docker://` (voir [[06-apptainer-singularit
 ```bash
 apptainer pull vllm.sif docker://vllm/vllm-openai:latest
 ```
+
+---
+
+Comment construire une image Apptainer à partir d'un fichier de définition ?
+?
+Un fichier `.def` part d'une image existante et la complète :
+```text
+Bootstrap: docker
+From: vllm/vllm-openai:v0.10.1
+
+%environment
+    export HF_HUB_OFFLINE=1
+
+%runscript
+    exec vllm serve "$@"
+```
+```bash
+apptainer build vllm.sif vllm.def      # souvent possible sans root (--fakeroot)
+apptainer run --nv --bind /data/models:/models vllm.sif /models/llama-70b
+```
+Le fichier `.def` se **versionne** dans Git, et le SIF produit est un artefact immuable.
+
+---
+
+Comment servir un modèle sur plusieurs nœuds avec Slurm et Apptainer ?
+?
+- **Tensor parallelism dans le nœud** (NVLink), **pipeline parallelism entre nœuds**, car le réseau inter-nœuds est plus lent ([[54-entrainement-distribue|parallélismes]])
+- Une allocation Slurm de N nœuds, où `srun` démarre un conteneur par nœud et un **cluster Ray** qui relie les workers de vLLM
+- Le conteneur doit voir le réseau rapide : **InfiniBand** et bibliothèques associées, que `--nv` ne fournit pas, pour que **NCCL** ne retombe pas sur Ethernet
+
+Vérifier le débit NCCL avant d'accuser le modèle d'être lent.
+
+---
+
+Comment exposer un serveur d'inférence lancé dans un job Slurm ?
+?
+Le serveur écoute sur un **nœud de calcul** dont le nom change à chaque job :
+- Le job **publie son adresse** (fichier partagé, service de découverte) ou un **reverse proxy** sur un nœud d'accès route vers lui
+- Pour un usage personnel : **tunnel SSH** via le nœud de login
+- Le **walltime** limite la durée : prévoir une resoumission automatique et un **health check** côté client
+
+Ces contournements montrent la limite du HPC pour un service permanent ([[12-kubernetes-gpu-inference|Kubernetes GPU]]).
 
 ---
 

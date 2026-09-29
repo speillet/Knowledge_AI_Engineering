@@ -1,5 +1,6 @@
 # Docker & Kubernetes — Flashcards
 Tags: #flashcards #docker #kubernetes
+Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 
 Historiquement, comment Kubernetes communiquait-il avec Docker Engine ?
 ?
@@ -39,6 +40,33 @@ C'est la confusion la plus fréquente sur le sujet : elle porte sur le **runtime
 Docker Engine est-il nécessaire pour exécuter dans Kubernetes une image construite avec Docker ?
 ?
 **Non.** Une image compatible [[01-oci|OCI]] peut être exécutée via [[03-containerd-runc|containerd]] et un runtime OCI.
+
+---
+
+Qu'est-ce que cri-dockerd ?
+?
+Un **adaptateur externe**, maintenu par Mirantis, qui reprend le rôle de dockershim **hors de Kubernetes** : il traduit la CRI en appels à Docker Engine. Il permet de garder Docker Engine sur les nodes après Kubernetes 1.24, par exemple pour un outil qui dépend du socket Docker. C'est une **solution de transition**, pas une architecture cible.
+
+---
+
+Que vérifier avant de retirer Docker Engine des nodes d'un cluster ?
+?
+Tout ce qui dépend **du démon Docker** plutôt que de Kubernetes :
+- **Montages de `/var/run/docker.sock`** : agents de monitoring, collecteurs de logs, jobs de CI qui construisent des images
+- **Outils qui lisent les logs** au format `json-file` de Docker, alors que la CRI écrit dans son propre format
+- **Scripts d'exploitation** qui appellent `docker ps` sur les nodes, à remplacer par `crictl`
+
+Les **images**, elles, ne changent pas ([[03-containerd-runc|outils containerd]]).
+
+---
+
+Comment construire des images dans un cluster sans Docker Engine ?
+?
+Avec un constructeur qui **n'a pas besoin du démon Docker** ni du socket du node :
+- **BuildKit** en mode **rootless**, en Pod ou en service partagé
+- **Buildah**, sans démon, courant dans l'écosystème Red Hat
+
+Tous produisent des **images OCI** standard, poussées dans le registry comme avant ([[02-docker-images-registries|registries]]). On évite ainsi de monter `docker.sock`, qui donne en pratique un accès root au node.
 
 ---
 

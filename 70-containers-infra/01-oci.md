@@ -90,5 +90,6 @@ Mise en situation : un audit demande de prouver que vos conteneurs de production
 - [[02-docker-images-registries|Docker, images & registries]] — implémentation concrète des standards
 - [[03-containerd-runc|containerd & runc]] — runc applique l'OCI Runtime Spec
 - [[08-linux-primitives-docker-fondamentaux|Primitives Linux]] — ce que le runtime configure (namespaces, cgroups)
+- [[07-synthese-containers|Synthèse conteneurs]] — les chaînes à savoir reconstruire
 - [[00-index|Index Conteneurs]]
 - [[00-moc-ai-engineering|MOC AI Engineering]]

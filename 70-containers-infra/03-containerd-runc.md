@@ -1,5 +1,6 @@
 # containerd & runc — Flashcards
 Tags: #flashcards #conteneurs #containerd #runc
+Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 
 Qu'est-ce que containerd ?
 ?
@@ -36,6 +37,62 @@ Quelle phrase permet de retenir la différence entre containerd et runc ?
 **containerd gère ; runc exécute.**
 
 Corollaire utile : on remplace **runc** pour changer d'isolation (gVisor, Kata Containers via une RuntimeClass), et on garde containerd. C'est ainsi qu'on durcit l'exécution du code généré par un agent ([[103-defenses-agents|isolation]]).
+
+---
+
+À ne pas confondre : containerd et CRI-O ?
+?
+Deux **runtimes de haut niveau** qui implémentent la [[04-kubernetes-kubelet-cri|CRI]] et délèguent l'exécution à un runtime OCI (runc ou crun) :
+- **containerd** : généraliste, utilisé par Docker **et** par Kubernetes, défaut de la plupart des distributions managées (EKS, GKE, AKS)
+- **CRI-O** : conçu **uniquement pour Kubernetes**, sans fonctions superflues, défaut d'**OpenShift**
+
+Pour une image et un Pod, le résultat est le même : c'est la standardisation [[01-oci|OCI]] qui le garantit.
+
+---
+
+Qu'est-ce que crun ?
+?
+Un **runtime OCI bas niveau écrit en C**, alternative à runc (écrit en Go) : même rôle, même `config.json`, mais **démarrage plus rapide** et empreinte mémoire plus faible. Il est le défaut de **Podman** sur Fedora et RHEL. Il illustre l'intérêt de la spec OCI : on remplace le runtime sans changer ni les images ni containerd.
+
+---
+
+Comment déclarer un runtime alternatif avec une RuntimeClass ?
+?
+La RuntimeClass associe un **nom** à un **handler** configuré dans containerd ; le Pod le choisit par `runtimeClassName`.
+```yaml
+apiVersion: node.k8s.io/v1
+kind: RuntimeClass
+metadata:
+  name: gvisor
+handler: runsc            # runtime déclaré dans la config de containerd
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: code-agent
+spec:
+  runtimeClassName: gvisor
+  containers:
+    - name: sandbox
+      image: registry.example.com/agent-sandbox:1.4
+```
+Seuls les Pods qui le demandent paient le surcoût de l'isolation renforcée ([[106-securite-agents-code|agents de code]]).
+
+---
+
+Quels outils en ligne de commande parlent à containerd ?
+?
+- **`ctr`** : client **bas niveau** livré avec containerd, pour le débogage. Attention aux **namespaces** containerd (`-n k8s.io` pour voir les conteneurs de Kubernetes)
+- **`nerdctl`** : client **compatible avec la syntaxe Docker** (`nerdctl run`, `nerdctl build`), sans Docker Engine
+- **`crictl`** : parle à containerd **via la CRI**, et montre donc ce que voit le **kubelet** (Pods, conteneurs, logs)
+
+Sur un node Kubernetes, `crictl` est le réflexe de diagnostic.
+
+---
+
+Où le GPU entre-t-il dans la chaîne containerd → runc ?
+?
+Juste **avant runc** : le NVIDIA Container Toolkit **modifie la spécification OCI** du conteneur (par un hook ou par **CDI**, Container Device Interface) pour y ajouter les devices `/dev/nvidia*` et les bibliothèques du driver. runc crée ensuite le conteneur comme d'habitude, sans rien savoir du GPU ([[09-gpu-conteneurs|GPU & conteneurs]]).
 
 ---
 
