@@ -2,9 +2,9 @@
 
 Un vault [Obsidian](https://obsidian.md) de **fiches de révision (flashcards) en français** qui couvre les compétences clés de l'**AI Engineering**. Le parcours va de l'utilisation des modèles jusqu'à leur mise en production et leur sécurisation.
 
-Chaque fiche traite **un concept** en 5 à 28 cartes question/réponse, une quinzaine en moyenne, et se termine par des **mises en situation** : des cas concrets à diagnostiquer, concevoir ou arbitrer. Les fiches sont reliées entre elles par des liens, pour qu'on puisse passer d'un sujet à ses voisins, et elles se révisent en **répétition espacée**.
+Chaque fiche traite **un concept** en 10 à 32 cartes question/réponse, une quinzaine en moyenne, et se termine par des **mises en situation** : des cas concrets à diagnostiquer, concevoir ou arbitrer. Les fiches sont reliées entre elles par des liens, pour qu'on puisse passer d'un sujet à ses voisins, et elles se révisent en **répétition espacée**.
 
-**État au 25 septembre 2026** : 96 fiches et 1 308 cartes, réparties en 16 sections, dont 207 mises en situation et 26 cartes « à ne pas confondre ».
+**État au 29 septembre 2026** : 102 fiches et 1 420 cartes, réparties en 16 sections, dont 219 mises en situation et 78 cartes « à ne pas confondre ».
 
 ---
 
@@ -15,6 +15,9 @@ Knowledge_AI_Engineering/
 ├── README.md
 ├── .obsidian/                   # configuration Obsidian
 ├── .claude/skills/              # skills Claude Code versionnés (grilling, grill-me)
+├── scripts/lint_flashcards.py   # vérification des conventions + statistiques
+├── .githooks/pre-commit         # lance le lint avant chaque commit
+├── .github/workflows/           # lance le lint en CI
 ├── 00-moc-ai-engineering.md     # carte racine : parcours de lecture + sommaire
 ├── 10-prompt-engineering/
 ├── 20-rag/
@@ -37,7 +40,7 @@ Knowledge_AI_Engineering/
 - Chaque **section** est un dossier numéroté par dizaine (`20-rag`, `30-agents`…).
 - Chaque **fiche** porte un numéro qui reprend celui de sa section : `21-rag-fondamentaux.md` et `22-rag-avance.md` sont dans `20-rag/`.
 - Exception : la section conteneurs garde sa propre numérotation, de `00-index.md` à `13-apptainer-inference-hpc.md`.
-- Une section compte **au plus 9 fiches** (de `x1` à `x9`). Quand elle est pleine, la fiche va dans la section la plus proche de son sujet et le MOC la signale à côté de sa fiche d'origine. C'est le cas de `115-plateformes-agents-gouvernance.md` (section 110), la suite senior de `38-plateformes-agents.md`, car la section 30 est pleine.
+- Une section compte **au plus 9 fiches** (de `x1` à `x9`). Quand elle est pleine, la fiche va dans la section la plus proche de son sujet et le MOC la signale à côté de sa fiche d'origine. C'est le cas de `115-plateformes-agents-gouvernance.md` (section 110), la suite senior de `38-plateformes-agents.md`, car la section 30 est pleine. De même, `165-computer-use-agents-navigateur.md` rejoint la section 160 (multimodal), à côté des modèles vision-langage.
 - Le point d'entrée est le **MOC** (Map of Content), [00-moc-ai-engineering.md](00-moc-ai-engineering.md).
 
 ---
@@ -116,18 +119,20 @@ Les conventions à respecter :
 - **Une section `## Mises en situation`** avant les connexions : 2 cartes (3 pour les fiches avancées) dont la question commence par `Mise en situation :`, tient en un seul paragraphe et décrit un cas concret. La réponse déroule une **démarche en 3 à 6 étapes** et peut finir par un **piège** à éviter.
 - **Une section `## Connexions`** à la fin, dont le dernier lien renvoie toujours au MOC.
 - **Des cartes courtes** : au-delà de 5 éléments, une liste se découpe en sous-cartes thématiques dont la question donne un indice.
-- **Des cartes « À ne pas confondre : X et Y ? »** pour les notions que l'on mélange (OCI et CRI, tag et digest, routing et fallback, rappel et précision, few-shot et fine-tuning…).
+- **Des cartes « À ne pas confondre : X et Y ? »** pour les notions que l'on mélange (OCI et CRI, tag et digest, routing et fallback, rappel et précision, few-shot et fine-tuning…). On n'écrit pas « Quelle différence entre X et Y ? » : le format unique permet de toutes les retrouver par une recherche.
+- **Des cartes de raisonnement** plutôt que des définitions seules : « Quand ne pas… ? », « Que se passe-t-il si… ? », et des cartes **« Calcul : … »** qui font poser un ordre de grandeur (VRAM, débit, coût, taille d'échantillon).
+- **Une idée par carte** : si une réponse enchaîne deux sujets (un mécanisme puis une liste de produits, deux incidents), on la découpe. Une carte atomique se note honnêtement en révision.
 - **Des repères chiffrés** et des **exemples exécutables** (commandes, configurations, extraits de code) plutôt que des formulations abstraites.
 - **Une ligne `Vérifié le : …`** juste après les tags, sur les fiches qui citent des produits, des versions ou des textes réglementaires. Elle dit quand le contenu a été confronté à la réalité.
 
 ## Ajouter une fiche
 
-1. Choisir la section et le prochain numéro libre, puis nommer le fichier en kebab-case, par exemple `25-rag-multimodal.md`. Si la section est pleine, appliquer la règle décrite dans [Structure du repo](#structure-du-repo).
+1. Choisir la section et le prochain numéro libre, puis nommer le fichier en kebab-case, par exemple `27-rag-multimodal.md`. Si la section est pleine, appliquer la règle décrite dans [Structure du repo](#structure-du-repo).
 2. **Le nom de fichier doit être unique dans tout le vault**, car Obsidian résout les liens `[[...]]` par nom de fichier, pas par chemin.
 3. Rédiger les cartes au format ci-dessus.
-4. Ajouter la fiche dans le sommaire du MOC, dans la section qui lui correspond, et dans la liste [Concepts couverts](#concepts-couverts) de ce README. Mettre à jour le nombre de fiches et de cartes en haut du README (voir [Maintenance](#maintenance)).
+4. Ajouter la fiche dans le sommaire du MOC, dans la section qui lui correspond, et dans la liste [Concepts couverts](#concepts-couverts) de ce README. Mettre à jour les chiffres en haut du README avec `python3 scripts/lint_flashcards.py --update-readme`.
 5. Ajouter des liens dans les deux sens : la nouvelle fiche cite ses voisines, et les voisines la citent dans leur section `Connexions`.
-6. Vérifier qu'aucun lien ne pointe vers une fiche absente. Dans la vue graphe, désactiver le filtre **Existing files only** : les fiches citées mais inexistantes apparaissent alors comme des nœuds fantômes.
+6. Lancer `python3 scripts/lint_flashcards.py` : il signale les liens morts, les fiches absentes du MOC ou du README, les fiches peu reliées et les écarts de format (voir [Maintenance](#maintenance)).
 
 ---
 
@@ -152,6 +157,8 @@ Trois sujets traversent toute la stack : l'**observabilité** (traces, métrique
 ### 10 — Prompt engineering
 
 - [Prompt engineering avancé](10-prompt-engineering/11-prompt-engineering-avance.md) : system prompt et user prompt, few-shot, chain-of-thought, self-consistency, délimiteurs, meta-prompting, prompts versionnés comme du code, anti-patterns.
+- [Optimisation automatique de prompts](10-prompt-engineering/12-optimisation-automatique-prompts.md) : meta-prompting ou optimisation guidée par une métrique, DSPy (signatures, modules, optimiseurs BootstrapFewShot, MIPROv2, GEPA), APE, OPRO, TextGrad, quand l'utiliser ou non, sur-apprentissage, transfert entre modèles, optimisation de prompts ou fine-tuning.
+- [Prompts en production](10-prompt-engineering/13-prompts-production.md) : briques d'un prompt, placement des longs documents, consignes motivées, limites des rôles, prompter un modèle de raisonnement, templates et données utilisateur, registre et versioning, prompt dans le code ou dans un registre, portabilité entre modèles, langue, contrôle de la longueur.
 
 ### 20 — RAG
 
@@ -159,6 +166,8 @@ Trois sujets traversent toute la stack : l'**observabilité** (traces, métrique
 - [RAG — Avancé](20-rag/22-rag-avance.md) : recherche hybride (BM25, RRF), reranking, query rewriting, HyDE, filtrage par métadonnées et ACL, GraphRAG, agentic RAG, triade d'évaluation (RAGAS), « lost in the middle ».
 - [Knowledge graphs & ontologies](20-rag/23-knowledge-graphs-ontologies.md) : triplets, RDF ou property graph (Cypher, GQL), ontologie et taxonomie, extraction par LLM sous schéma, résolution d'entités, graphe ou vecteurs, GraphRAG local et global, Text2Cypher, context graph, coûts.
 - [Cognee](20-rag/24-cognee.md) : mémoire d'agent en knowledge graph, opérations remember, recall, improve et forget, mémoire permanente ou de session, stratégies de recherche, ontologie OWL, intégrations (plugin, MCP), limites.
+- [Chunking avancé & contextual retrieval](20-rag/25-chunking-contextual-retrieval.md) : chunks sans contexte, contextual retrieval (gain, coût, prompt caching), late chunking, taille des chunks, small-to-big, chunking sémantique et par propositions, fil d'Ariane et métadonnées, comparaison de stratégies au recall@k.
+- [Text-to-SQL & données structurées](20-rag/26-text-to-sql.md) : text-to-SQL ou RAG, contenu du prompt, schema linking, couche sémantique, sécurisation de l'exécution, boucle de correction, exact match ou execution accuracy, benchmarks (Spider, BIRD, Spider 2.0), questions ambiguës.
 
 ### 30 — Agents
 
@@ -201,15 +210,16 @@ Automatiser des processus, soit avec des outils de workflow, soit avec des agent
 - [Prefix caching & RadixAttention](60-inference-llm/66-prefix-caching-radix-attention.md) : prefix caching de vLLM, arbre radix de SGLang, éviction, ordonnancement et routage cache-aware, offloading du KV cache (LMCache), limites, canal auxiliaire temporel, métriques.
 - [Speculative decoding](60-inference-llm/67-speculative-decoding.md) : brouillon et vérification en une passe, pourquoi c'est presque gratuit, règle d'acceptation sans perte, gain selon le taux d'acceptation, choix de k, types de brouillons (petit modèle, n-grammes, EAGLE, Medusa, MTP), vérification en arbre, quand ça aide ou nuit, configuration vLLM, coûts, métriques d'acceptation, validation d'un déploiement.
 - [Quantization](60-inference-llm/68-quantization.md) : intérêt en mémoire et en vitesse, formats (FP8, INT8, INT4, NVFP4, MXFP4), weight-only ou W8A8, granularité des échelles, outliers d'activation (SmoothQuant, rotations), PTQ ou QAT, GPTQ, AWQ, GGUF, NF4, choix de la méthode selon le matériel, calibration, mesure de la perte, divergence KL et flips, validation avant déploiement, suivi en production, outils (llm-compressor, Model Optimizer, vLLM).
+- [Roofline, prefill/decode & désagrégation](60-inference-llm/69-roofline-prefill-decode.md) : intensité arithmétique, modèle roofline, memory-bound ou compute-bound, calculs de débit de decode et de durée de prefill, batch en decode, limites de l'utilisation GPU, interférence prefill/decode, chunked prefill ou désagrégation, déploiement désagrégé (Dynamo, llm-d), quand désagréger.
 
 ### 70 — Conteneurs & infra
 
 - [Index Conteneurs](70-containers-infra/00-index.md) : sommaire des 13 fiches de la section, chaînes à retenir, et une carte sur l'intérêt des conteneurs pour servir des modèles.
 - [OCI](70-containers-infra/01-oci.md) : rôle de l'Open Container Initiative, spécifications image, runtime et distribution.
 - [Docker, images & registries](70-containers-infra/02-docker-images-registries.md) : rôle de Docker et différence avec OCI, image ou conteneur, compatibilité « Docker/OCI », registries et workflow push/pull.
-- [containerd & runc](70-containers-infra/03-containerd-runc.md) : rôle de containerd, rôle de runc, relation entre les deux.
+- [containerd & runc](70-containers-infra/03-containerd-runc.md) : rôle de containerd, rôle de runc, relation entre les deux, containerd ou CRI-O, crun, RuntimeClass, outils `ctr`, `nerdctl` et `crictl`, place du GPU dans la chaîne.
 - [Kubernetes, kubelet & CRI](70-containers-infra/04-kubernetes-kubelet-cri.md) : Pod, Deployment, Service, control plane, kubelet, CRI (containerd, CRI-O), scheduler, requests et limits, probes.
-- [Docker & Kubernetes](70-containers-infra/05-docker-kubernetes.md) : dockershim et sa suppression, architecture actuelle, images Docker exécutées sans Docker Engine.
+- [Docker & Kubernetes](70-containers-infra/05-docker-kubernetes.md) : dockershim et sa suppression, architecture actuelle, images Docker exécutées sans Docker Engine, cri-dockerd, vérifications avant de retirer Docker Engine, construction d'images sans démon (BuildKit rootless, Buildah).
 - [Apptainer & Singularity](70-containers-infra/06-apptainer-singularity.md) : usage en HPC, filiation Singularity → Apptainer, format SIF, import d'images Docker, `--nv`.
 - [Synthèse conteneurs](70-containers-infra/07-synthese-containers.md) : cartes de révision transverses (OCI, CRI et SIF, chaînes Kubernetes et image, accès GPU, serveurs d'inférence, stockage des poids).
 - [Primitives Linux & fondamentaux Docker](70-containers-infra/08-linux-primitives-docker-fondamentaux.md) : namespaces et cgroups, conteneur ou VM, layers, ordre du Dockerfile et cache, volumes et bind mounts, port mapping.
@@ -217,7 +227,7 @@ Automatiser des processus, soit avec des outils de workflow, soit avec des agent
 - [Images & poids de modèles](70-containers-infra/10-images-modeles-poids.md) : poids dans l'image ou séparés, cold start, safetensors ou pickle, GGUF, modèles distribués comme artefacts OCI.
 - [Serveurs d'inférence LLM](70-containers-infra/11-serveurs-inference-llm.md) : vLLM, API compatible OpenAI, multi-LoRA, SGLang, TensorRT-LLM et Triton, TGI, llama.cpp et Ollama.
 - [Kubernetes GPU & inférence](70-containers-infra/12-kubernetes-gpu-inference.md) : device plugin, ressource `nvidia.com/gpu`, MIG, time-slicing, KServe, autoscaling (HPA, KEDA).
-- [Apptainer & inférence HPC](70-containers-infra/13-apptainer-inference-hpc.md) : Apptainer ou Docker en HPC, modèle de sécurité, intégration Slurm, `--nv`, poids montés depuis le système de fichiers partagé, images SIF.
+- [Apptainer & inférence HPC](70-containers-infra/13-apptainer-inference-hpc.md) : Apptainer ou Docker en HPC, modèle de sécurité, intégration Slurm, `--nv`, poids montés depuis le système de fichiers partagé, images SIF, fichier de définition, service multi-nœuds (Ray, InfiniBand, NCCL), exposition d'un serveur lancé dans un job.
 
 ### 80 — API layer & routing
 
@@ -300,6 +310,7 @@ La partie qui assemble tout le reste : concevoir, fiabiliser et piloter une appl
 - [Parsing de documents](160-multimodal-edge/162-document-parsing.md) : PDF natif ou scanné, analyse de layout, outils (Docling, Unstructured, services cloud, VLM), tableaux, figures, ColPali, chunking structurel, évaluation, exploitation.
 - [Voix & agents temps réel](160-multimodal-edge/163-voix-temps-reel.md) : cascade ou speech-to-speech, budget de latence, réduction de latence, détection de fin de tour, barge-in, texte pour la voix, STT, évaluation, risques.
 - [LLM locaux, on-prem & edge](160-multimodal-edge/164-llm-local-edge.md) : motivations, bande passante mémoire, llama.cpp et GGUF, outils locaux, Ollama ou vLLM, Apple Silicon, small language models, hybride local et cloud, flotte d'appareils, rentabilité du on-prem.
+- [Computer use & agents navigateur](160-multimodal-edge/165-computer-use-agents-navigateur.md) : image ou structure (DOM, arbre d'accessibilité), grounding visuel, benchmarks (OSWorld, WebArena), coût et latence, injection par le contenu web, isolation, quand ne pas l'utiliser, computer use ou RPA, outils. Placée en section 160, la section 30 étant pleine.
 
 ---
 
@@ -307,10 +318,18 @@ La partie qui assemble tout le reste : concevoir, fiabiliser et piloter une appl
 
 L'écosystème LLM change vite : noms de produits, versions et outils recommandés peuvent devenir obsolètes en quelques mois. Quand une réponse ne correspond plus à la réalité, on corrige la carte plutôt que d'en ajouter une nouvelle, pour que l'historique de révision de la carte soit conservé.
 
-Pour recompter les fiches et les cartes après un ajout :
+Le script `scripts/lint_flashcards.py` vérifie les conventions et calcule les statistiques :
 
 ```bash
-grep -rl --include='*.md' '#flashcards' [0-9]*/ | wc -l          # fiches
-find [0-9]*/ -name '*.md' -exec awk '$0=="?"' {} + | wc -l      # cartes
-grep -rh --include='*.md' -c 'Mise en situation :' [0-9]*/ | paste -sd+ | bc  # mises en situation
+python3 scripts/lint_flashcards.py                  # erreurs et avertissements
+python3 scripts/lint_flashcards.py --stats          # statistiques par fiche
+python3 scripts/lint_flashcards.py --update-readme  # met à jour la ligne « État au … »
+python3 scripts/lint_flashcards.py --stale-months 6 # fiches à revérifier (défaut : 6 mois)
 ```
+
+- **Erreurs** (bloquent le commit et la CI) : lien mort, nom de fichier en double, tags absents de la ligne 2, bloc avec deux lignes `?`, réponse vide, section `Mises en situation` ou `Connexions` manquante, dernier lien qui n'est pas le MOC, fiche absente du MOC, date `Vérifié le` illisible.
+- **Avertissements** : réponse trop longue (110 mots hors code, 140 pour une mise en situation), liste de plus de 5 éléments (6 étapes pour une mise en situation), « Quelle différence… » au lieu de « À ne pas confondre », question en double, fiche citée par moins de 2 autres, fiche absente du README, `Vérifié le` trop ancien.
+
+Pour activer le hook pre-commit, une fois par clone : `git config core.hooksPath .githooks`.
+
+Les fiches qui citent des produits, des versions ou des textes réglementaires portent une ligne `Vérifié le`. Le lint les signale au bout de 6 mois : on les relit, on corrige ce qui a changé, puis on met la date à jour.
