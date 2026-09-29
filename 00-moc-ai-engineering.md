@@ -26,12 +26,16 @@ Progression recommandée : **comprendre les modèles → les utiliser → constr
 
 ## 10 — Prompt engineering
 - [[11-prompt-engineering-avance|Prompt engineering avancé]]
+- [[12-optimisation-automatique-prompts|Optimisation automatique de prompts (DSPy)]]
+- [[13-prompts-production|Prompts en production (structure, versioning, portabilité)]]
 
 ## 20 — RAG
 - [[21-rag-fondamentaux|RAG — Fondamentaux]]
 - [[22-rag-avance|RAG — Avancé]]
 - [[23-knowledge-graphs-ontologies|Knowledge graphs & ontologies (GraphRAG, context graph)]]
 - [[24-cognee|Cognee (mémoire en knowledge graph)]]
+- [[25-chunking-contextual-retrieval|Chunking avancé & contextual retrieval]]
+- [[26-text-to-sql|Text-to-SQL & données structurées]]
 
 ## 30 — Agents
 - [[31-agents-fondamentaux|Fondamentaux des agents]]
@@ -43,6 +47,7 @@ Progression recommandée : **comprendre les modèles → les utiliser → constr
 - [[37-frameworks-agents|Frameworks d'agents (LangChain, LangGraph, CrewAI, ADK)]]
 - [[38-plateformes-agents|Plateformes d'agents — Fondamentaux]] (suite senior : [[115-plateformes-agents-gouvernance|architecture & gouvernance]])
 - [[39-memoire-agents|Mémoire des agents]]
+- Agents d'interface : [[165-computer-use-agents-navigateur|computer use & agents navigateur]] (section 160, la section 30 étant pleine)
 
 ## 40 — Automatisation & frameworks d'agents
 - [[41-automatisation-code-nocode|Automatisation code & no-code (n8n…)]]
@@ -68,6 +73,7 @@ Progression recommandée : **comprendre les modèles → les utiliser → constr
 - [[66-prefix-caching-radix-attention|Prefix caching & RadixAttention]]
 - [[67-speculative-decoding|Speculative decoding]]
 - [[68-quantization|Quantization (FP8, INT4, AWQ, GPTQ, GGUF)]]
+- [[69-roofline-prefill-decode|Roofline, prefill/decode & désagrégation]]
 
 ## 70 — Conteneurs & Infra
 - [[00-index|Index Conteneurs]] — OCI, Docker, Kubernetes, GPU, Apptainer/HPC
@@ -138,6 +144,7 @@ Progression recommandée : **comprendre les modèles → les utiliser → constr
 - [[162-document-parsing|Parsing de documents (PDF, OCR, layout)]]
 - [[163-voix-temps-reel|Voix & agents temps réel]]
 - [[164-llm-local-edge|LLM locaux, on-prem & edge]]
+- [[165-computer-use-agents-navigateur|Computer use & agents navigateur]]
 
 ## La stack en une chaîne
 ```text
