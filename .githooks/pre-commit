@@ -1,0 +1,4 @@
+#!/bin/sh
+# Bloque le commit si une fiche casse la révision ou la navigation.
+# Activation (une fois par clone) : git config core.hooksPath .githooks
+exec python3 scripts/lint_flashcards.py --quiet
