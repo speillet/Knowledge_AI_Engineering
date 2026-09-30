@@ -4,7 +4,13 @@ Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou 
 
 Qu'est-ce que Langfuse ?
 ?
-Une plateforme **open source d'observabilité LLM** (self-hostable) : traces, coûts, prompt management et évaluation.
+Une plateforme **open source d'observabilité LLM**, auto-hébergeable ou en SaaS, qui couvre :
+- **Traces** des appels LLM, outils et étapes d'agent
+- **Coûts et latences** par trace, utilisateur ou fonctionnalité
+- **Prompt management** versionné
+- **Évaluations** : scores automatiques, annotations humaines, datasets
+
+Alternatives : LangSmith, Arize Phoenix, Braintrust, ou des traces OpenTelemetry dans un outil d'observabilité existant ([[93-monitoring-inference|monitoring]]).
 
 ---
 
@@ -38,7 +44,9 @@ Attention : un identifiant utilisateur est une **donnée personnelle**. On préf
 
 Qu'est-ce que le prompt management de Langfuse ?
 ?
-Des **prompts versionnés et déployés hors du code** : rollback, A/B et itération sans redéploiement applicatif.
+Des **prompts versionnés, stockés hors du code** et récupérés par l'application à l'exécution, avec des **étiquettes** (`production`, `staging`).
+
+Intérêts : itérer et faire un rollback **sans redéployer**, comparer deux versions en A/B, et relier chaque trace à la version du prompt utilisée. Contrepartie : un prompt peut changer sans commit, d'où la nécessité d'une eval avant de déplacer l'étiquette ([[13-prompts-production|prompts en production]]).
 
 ---
 

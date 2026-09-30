@@ -10,13 +10,23 @@ Tags: #flashcards #ai-engineering #mlops #monitoring #drift #llm
 
 Comment le drift se manifeste-t-il sur une app LLM ?
 ?
-Par une **dégradation silencieuse** : requêtes hors distribution, réponses de moins en moins pertinentes — **invisible sans evals continues**.
+Par une **dégradation silencieuse** : aucune erreur technique, mais des réponses de moins en moins pertinentes. Causes typiques :
+- **Nouvelles questions** hors du périmètre prévu
+- **Documents sources** qui changent
+- **Modèle du fournisseur** mis à jour derrière un alias
+
+Invisible sans **evals continues** sur des échantillons de production.
 
 ---
 
 Comment monitorer la qualité en production ?
 ?
-**Scores sur échantillons** (LLM-as-judge), **feedback utilisateur**, taux de refus et d'erreurs d'outils — collectés dans les [[91-langfuse-observabilite|traces]].
+- **Scores sur échantillons** par un juge calibré ([[95-llm-as-judge|LLM-as-a-judge]])
+- **Feedback utilisateur** explicite et implicite (reformulations, abandons)
+- **Taux de refus** et d'**erreurs d'outils**
+- **Validations automatiques** : format, citations présentes
+
+Tout est rattaché aux [[91-langfuse-observabilite|traces]], et **segmenté** (par sujet, langue, client) : une moyenne stable peut cacher un segment qui s'effondre.
 
 ---
 
@@ -32,7 +42,13 @@ Les données de production **nourrissent** l'amélioration continue.
 
 Quand ré-entraîner ou re-fine-tuner ?
 ?
-**Sur signal**, pas sur calendrier : chute des scores, drift détecté, nouveaux cas d'usage ([[51-fine-tuning-adaptation|fine-tuning]]).
+**Sur signal**, pas sur calendrier :
+- Chute des scores sur un segment
+- Drift des entrées détecté
+- Nouveaux cas d'usage ou nouvelles catégories
+- Nouveau modèle de base plus performant
+
+Avant de ré-entraîner, vérifier que le problème ne se règle pas plus simplement : prompt, retrieval ou fraîcheur de l'index ([[51-fine-tuning-adaptation|fine-tuning]]).
 
 ---
 
@@ -50,13 +66,17 @@ Le provider **met à jour ou déprécie** les modèles : le comportement change 
 
 Quel rôle pour l'humain dans la boucle de production ?
 ?
-**Annotation d'échantillons, review des cas limites** : l'humain reste la source de vérité qui calibre les juges automatiques.
+**Annoter des échantillons** et **revoir les cas limites** : l'humain reste la source de vérité. Ses annotations servent à la fois à mesurer la qualité, à **calibrer les juges automatiques** et à enrichir le golden dataset.
+
+Pour tenir dans le temps : un volume fixe et régulier (par exemple 50 traces par semaine), choisi par échantillonnage plutôt qu'au hasard des signalements ([[151-donnees-curation-annotation|annotation]]).
 
 ---
 
 Comment alerter sur la qualité ?
 ?
-Des **seuils sur les scores, refus et latences par segment**, reliés aux [[64-metriques-slo-inference|SLO]] — la qualité se surveille comme la disponibilité.
+Comme sur la disponibilité : des **seuils** sur les scores de qualité, les taux de refus et d'erreurs, les latences, **par segment**, reliés aux [[64-metriques-slo-inference|SLO]].
+
+Précautions : alerter sur une **tendance** (moyenne glissante sur plusieurs heures) plutôt que sur un point isolé, car les scores d'échantillons sont bruités, et joindre à l'alerte des **exemples de traces** pour diagnostiquer vite.
 
 ---
 

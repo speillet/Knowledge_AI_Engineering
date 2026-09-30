@@ -3,19 +3,35 @@ Tags: #flashcards #ai-engineering #mlops #cicd #llm
 
 Qu'apporte le CI/CD d'une app LLM en plus du CI/CD classique ?
 ?
-Des **eval gates** : la qualité du modèle/prompt est testée automatiquement **comme du code**, en plus des tests logiciels habituels.
+Des **eval gates** : la qualité du modèle ou du prompt est testée automatiquement **comme du code**, en plus des tests logiciels habituels.
+
+La différence de fond : les tests classiques sont **déterministes** (réussi ou échoué), les evals sont **statistiques** (un score sur un jeu de cas, avec de la variance). Il faut donc des seuils, des marges et assez d'exemples pour qu'un écart soit significatif ([[114-reproductibilite-variance|variance]]).
 
 ---
 
 Qu'est-ce qu'un eval gate ?
 ?
-Un **seuil d'évaluation bloquant** (golden dataset, LLM-as-judge) : si les scores régressent, le merge ou le déploiement est **refusé** ([[92-chainforge-evals-prompts|evals]]).
+Un **seuil d'évaluation bloquant** dans la CI : si les scores régressent, le merge ou le déploiement est **refusé** ([[92-chainforge-evals-prompts|evals]]).
+```yaml
+eval_gate:
+  dataset: golden-support@v14       # 400 cas
+  criteres:
+    exactitude:      { min: 0.90, regression_max: 0.02 }
+    format_valide:   { min: 0.99 }
+    cout_par_requete: { max_hausse: 0.15 }
+```
+On bloque sur la **régression** par rapport à la version en production, pas seulement sur un seuil absolu.
 
 ---
 
 Que contient l'artefact déployé d'une app LLM ?
 ?
-L'**image conteneur** + la **référence versionnée du modèle/adapter** + les **prompts/config** — trois versions distinctes à tracer ensemble.
+Trois versions distinctes, à tracer **ensemble** :
+- L'**image conteneur** de l'application
+- La **référence du modèle** (identifiant daté chez un fournisseur, ou poids et adapter dans un registry)
+- Les **prompts et la config** de génération
+
+Un manifeste de release qui les regroupe permet de redéployer ou d'annuler l'ensemble d'un coup.
 
 ---
 
@@ -28,19 +44,25 @@ L'**image conteneur** + la **référence versionnée du modèle/adapter** + les 
 
 Qu'est-ce que le shadow deployment ?
 ?
-Le nouveau modèle reçoit une **copie du trafic réel sans répondre aux utilisateurs** : comparaison en conditions réelles, **sans risque**.
+Le nouveau modèle reçoit une **copie du trafic réel**, mais ses réponses ne sont **pas montrées** aux utilisateurs : on compare en conditions réelles, sans risque.
+
+Limites : il **double le coût** d'inférence pendant la période, il ne mesure pas la réaction des utilisateurs, et les actions à effets de bord (outils d'écriture) doivent être désactivées dans la copie ([[97-evals-online-ab-testing|shadow testing]]).
 
 ---
 
 Comment fonctionne le rollback d'un modèle ?
 ?
-Revenir à la **version précédente du registry/adapter** : exige un versioning strict et des schémas de sortie compatibles.
+On revient à la **version précédente** du modèle, de l'adapter ou du prompt, par exemple en redéplaçant une étiquette dans le registry.
+
+Conditions : un versioning strict, l'ancienne version **encore disponible** (un modèle d'API peut avoir été retiré), et des **schémas de sortie compatibles**, sinon les systèmes en aval cassent. Un rollback se **teste** avant d'en avoir besoin.
 
 ---
 
 Qu'est-ce que le GitOps appliqué aux modèles ?
 ?
-L'**état désiré** (version du modèle, config, prompts) est déclaré **dans Git** ; un opérateur (ArgoCD) réconcilie le cluster en continu.
+L'**état désiré** (version du modèle, config du serveur d'inférence, prompts) est déclaré **dans Git** ; un opérateur comme **Argo CD** ou **Flux** réconcilie le cluster en continu avec cet état.
+
+Avantages : chaque changement passe par une **pull request** revue, l'historique Git sert d'audit, et le rollback est un `git revert` ([[12-kubernetes-gpu-inference|Kubernetes GPU]]).
 
 ---
 
@@ -55,7 +77,9 @@ Quels types de tests pour une app LLM en CI ?
 
 Pourquoi les prompts passent-ils par la CI ?
 ?
-Un prompt modifié **change le comportement en production** : chaque modification déclenche les **tests de régression** ([[92-chainforge-evals-prompts|golden datasets]]).
+Un prompt modifié **change le comportement en production** autant qu'un changement de code, et souvent de façon moins prévisible : une consigne ajoutée pour un cas peut en dégrader dix autres.
+
+Chaque modification déclenche donc les **tests de régression** sur le golden dataset ([[92-chainforge-evals-prompts|golden datasets]]), et le diff du prompt est relu comme du code.
 
 ---
 

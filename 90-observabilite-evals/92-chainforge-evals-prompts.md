@@ -3,7 +3,9 @@ Tags: #flashcards #ai-engineering #evals #prompts #llm
 
 Qu'est-ce que ChainForge ?
 ?
-Un **environnement visuel open source** pour **comparer systématiquement prompts et modèles** côte à côte (nodes de prompts, d'inputs et d'évaluation).
+Un **environnement visuel open source** pour **comparer systématiquement prompts et modèles** côte à côte : on relie des nœuds d'entrées, de prompts, de modèles et d'évaluateurs, et on visualise les résultats en grille.
+
+Utile en **phase d'exploration** : choisir un modèle, tester des variantes de prompt sur quelques dizaines de cas. Pour les evals en CI et en production, on passe à des outils scriptables ([[94-evals-methodologie|méthodologie]]).
 
 ---
 
@@ -33,7 +35,9 @@ La règle : la taille dépend de **l'écart qu'on veut détecter**. Sur 100 exem
 
 Qu'est-ce que le LLM-as-judge ?
 ?
-Utiliser un **LLM pour noter les réponses** d'un autre (pertinence, style, exactitude) — scalable mais à calibrer contre du jugement humain.
+Utiliser un **LLM pour noter les réponses** d'un autre (pertinence, style, exactitude par rapport à une référence) : c'est ce qui permet d'évaluer des milliers de réponses en texte libre.
+
+Il a des **biais** (position, longueur, auto-préférence) et doit être **validé contre des annotations humaines** avant qu'on se fie à ses scores. Détails dans [[95-llm-as-judge|LLM-as-a-judge]].
 
 ---
 
@@ -53,13 +57,17 @@ Règle : **le plus simple qui marche**. On ne sort le juge LLM que pour ce que l
 
 Qu'est-ce qu'un test de régression de prompts ?
 ?
-Rejouer le **golden dataset à chaque modification** de prompt/modèle (souvent en [[112-cicd-modeles|CI]]) pour détecter les dégradations.
+Rejouer le **golden dataset à chaque modification** de prompt ou de modèle, souvent en [[112-cicd-modeles|CI]], et comparer les scores à la version en production.
+
+On regarde les scores globaux **et** les cas qui **basculent** de réussi à échoué : un score stable peut masquer dix régressions compensées par dix améliorations.
 
 ---
 
 Pourquoi les evals sont-elles un prérequis au déploiement ?
 ?
-Sans mesure, impossible de **choisir un modèle, [[82-routing-llm|router]] ou valider un changement de prompt** : on pilote à l'aveugle.
+Sans mesure, impossible de **choisir un modèle**, de **[[82-routing-llm|router]]**, de valider un changement de prompt ou de savoir si une optimisation de coût a dégradé la qualité : on pilote à l'aveugle, sur des impressions tirées de quelques exemples.
+
+Un jeu d'eval de quelques centaines de cas représentatifs est le premier livrable d'un projet LLM, avant le prompt définitif.
 
 ---
 

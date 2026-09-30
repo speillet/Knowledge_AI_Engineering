@@ -22,17 +22,21 @@ On entraîne rarement from scratch : le cycle est centré sur **prompts, RAG, fi
 
 Quels artefacts de code et de configuration faut-il versionner dans un système LLM ?
 ?
-- Le **code**
-- Les **prompts**
-- La **config de génération** (température, max_tokens)
+- Le **code** applicatif et les pipelines
+- Les **prompts**, y compris les descriptions d'outils
+- La **config de génération** : modèle et version exacte, température, `max_tokens`, schéma de sortie
+
+Changer l'un d'eux change le comportement : chaque réponse en production doit pouvoir être reliée à la **combinaison exacte** qui l'a produite ([[13-prompts-production|prompts en production]]).
 
 ---
 
 Quels artefacts de modèle et de données faut-il versionner dans un système LLM ?
 ?
-- Les **poids/adapters** ([[51-fine-tuning-adaptation|LoRA]])
-- Les **golden datasets** d'éval
-- Les **index RAG**
+- Les **poids ou adapters** fine-tunés ([[51-fine-tuning-adaptation|LoRA]]), avec les données et la recette qui les ont produits
+- Les **golden datasets** d'éval, pour que deux scores soient comparables
+- Les **index RAG** : documents sources, chunking et modèle d'embedding ([[153-data-flywheel-versioning|versioning]])
+
+Un score d'eval sans la version du jeu de test ne veut rien dire.
 
 ---
 
@@ -73,13 +77,24 @@ Pourquoi la reproductibilité est-elle difficile avec les LLM ?
 
 Comment gérer dev/staging/prod pour une app LLM ?
 ?
-Mêmes pipelines partout, modèles et datasets **épinglés**, et **evals de non-régression** obligatoires avant chaque promotion d'environnement.
+- **Mêmes pipelines** de déploiement partout, seules les valeurs changent
+- Modèles, prompts et datasets **épinglés** par environnement
+- **Evals de non-régression** obligatoires avant chaque promotion ([[112-cicd-modeles|eval gate]])
+- **Staging alimenté par des cas réels**, anonymisés, plutôt que par des exemples inventés
+
+Piège fréquent : un alias de modèle (`latest`) en production, qui change sans que personne n'ait rien déployé.
 
 ---
 
 Quel est le rôle du Lead sur le volet MLOps ?
 ?
-Imposer les **standards** : registry unique, conventions de versioning, [[112-cicd-modeles|gates d'éval]] et **ownership** clair de chaque modèle en production.
+Imposer les **standards** plutôt que tout faire lui-même :
+- **Registry unique** et conventions de versioning
+- **Gates d'éval** obligatoires ([[112-cicd-modeles|CI/CD]])
+- **Ownership** : chaque modèle, prompt et index en production a un responsable nommé
+- **Runbooks** : que faire si la qualité chute ou si un fournisseur tombe
+
+Le but : qu'un changement risqué ne puisse pas partir en production **par accident**.
 
 ---
 

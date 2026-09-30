@@ -27,7 +27,9 @@ Un modèle 30 % moins cher par token qui échoue deux fois plus souvent coûte *
 
 Pourquoi les tokens d'output coûtent-ils plus cher que l'input ?
 ?
-Parce que le **decode est séquentiel** (un passage par token généré) alors que le **prefill est parallèle** ([[62-optimisations-inference|optimisations]]).
+Parce que le **decode est séquentiel** (un passage du modèle par token généré), alors que le **prefill traite tout le prompt en parallèle** ([[69-roofline-prefill-decode|prefill et decode]]). Un token de sortie mobilise donc bien plus de temps GPU.
+
+Repère : la sortie coûte souvent **3 à 5 fois** plus cher que l'entrée. Limiter la verbosité (`max_tokens`, format concis) est l'un des leviers les plus directs.
 
 ---
 
@@ -52,16 +54,21 @@ API ou self-host : où est le break-even ?
 
 Qu'est-ce qu'une batch API ?
 ?
-Un traitement **différé** (fenêtre de plusieurs heures) à **~-50 %** : idéal pour le non-interactif (evals massives, ingestion, enrichissement).
+Un traitement **différé**, avec des résultats garantis sous **24 heures**, facturé environ **50 % moins cher** et avec des quotas séparés du trafic en ligne.
+
+Idéal pour tout ce qui n'est pas interactif : evals massives, ingestion, enrichissement de catalogue, classification d'un historique ([[148-pipelines-batch-llm|pipelines batch]]).
 
 ---
 
 Quels leviers techniques réduisent le coût ?
 ?
-- [[82-routing-llm|Routing]] vers un modèle moins cher
-- [[68-quantization|Quantization]]
-- **Caching** de réponses ([[81-litellm-api-layer|gateway]])
-- Prompts plus courts, `max_tokens` limité
+- **[[82-routing-llm|Routing]]** vers un modèle moins cher pour les requêtes simples
+- **Prompt caching** du préfixe stable ([[123-caching-agressif|caching]])
+- **Prompts plus courts** et contexte trié, `max_tokens` limité
+- **Batch API** pour le non-interactif
+- En auto-hébergé : **[[68-quantization|quantization]]** et GPU bien remplis
+
+Toujours mesurer l'effet sur la qualité : une économie qui fait chuter le taux de réussite augmente le **coût par tâche réussie**.
 
 ---
 
@@ -79,7 +86,9 @@ Le **coût par requête / utilisateur / feature rapporté à la valeur produite*
 
 Pourquoi un GPU inutilisé coûte-t-il autant qu'un GPU actif ?
 ?
-Un GPU **alloué facture pareil, utilisé ou non** : consolidation, MIG/time-slicing, autoscaling et scale-to-zero ([[12-kubernetes-gpu-inference|K8s GPU]]).
+Un GPU **alloué est facturé pareil, utilisé ou non** : à 20 % d'utilisation, chaque token coûte en réalité cinq fois plus cher qu'à pleine charge.
+
+Leviers : **consolider** les modèles, partager le GPU (**MIG**, time-slicing), **autoscaling** sur la charge réelle et **scale-to-zero** pour les modèles peu utilisés, au prix d'un démarrage à froid ([[12-kubernetes-gpu-inference|K8s GPU]]).
 
 ---
 

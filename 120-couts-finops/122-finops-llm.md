@@ -3,7 +3,13 @@ Tags: #flashcards #ai-engineering #finops #gouvernance #llm
 
 Qu'est-ce que le FinOps appliqué aux LLM ?
 ?
-La discipline de **gestion des dépenses IA** (tokens + GPU) en quatre temps : **visibilité → attribution → optimisation → gouvernance**.
+La discipline de **gestion des dépenses IA** (tokens d'API et GPU), en quatre temps :
+1. **Visibilité** : savoir ce qui coûte, au jour près
+2. **Attribution** : à quelle équipe, quel produit, quelle fonctionnalité
+3. **Optimisation** : caching, routing, batch, modèles plus petits
+4. **Gouvernance** : budgets, alertes, arbitrages
+
+La spécificité des LLM : un coût **variable** qui dépend du comportement des utilisateurs et des agents, pas d'une capacité réservée.
 
 ---
 
@@ -15,7 +21,11 @@ La **visibilité** : tracer le coût **par requête, équipe et feature** via la
 
 Comment attribuer les coûts aux équipes ?
 ?
-**Virtual keys et tags** par équipe/produit → **showback** (information) puis **chargeback** (refacturation interne).
+- **Virtual keys** par équipe ou produit dans la gateway, et **tags** par fonctionnalité ([[81-litellm-api-layer|LiteLLM]])
+- **Showback** d'abord : chaque équipe voit sa consommation
+- **Chargeback** ensuite : refacturation interne, une fois les chiffres fiables
+
+Sans attribution, personne n'est responsable d'un coût qui double, et les optimisations restent des vœux pieux.
 
 ---
 
@@ -69,13 +79,22 @@ Chacun a son risque : réponses périmées, fuite entre clients si la clé oubli
 
 Quelles pratiques FinOps côté GPU ?
 ?
-**Droit-dimensionnement** (MIG), objectif d'utilisation, **spot/préemptible** pour le non-critique, **scale-to-zero**, réservations pour la charge de base ([[12-kubernetes-gpu-inference|K8s GPU]]).
+- **Droit-dimensionnement** : le plus petit GPU ou la plus petite tranche **MIG** qui tient la charge
+- **Objectif d'utilisation** suivi, par exemple au-dessus de 60 %
+- **Spot ou préemptible** pour le non-critique (batch, evals), avec reprise sur interruption
+- **Scale-to-zero** des modèles peu appelés
+- **Réservations** pour la charge de base stable ([[12-kubernetes-gpu-inference|K8s GPU]])
 
 ---
 
 Comment arbitrer coût, qualité et latence ?
 ?
-C'est un **triangle** : les [[92-chainforge-evals-prompts|evals]] et les [[64-metriques-slo-inference|métriques/SLO]] rendent l'arbitrage **objectif** au lieu d'intuitif.
+C'est un **triangle** : on ne maximise pas les trois. Les [[92-chainforge-evals-prompts|evals]] et les [[64-metriques-slo-inference|SLO]] rendent l'arbitrage **objectif** :
+1. Fixer un **plancher de qualité** et un **plafond de latence**
+2. Parmi les options qui les respectent, choisir la **moins chère**
+3. Réévaluer à chaque nouveau modèle, car les prix baissent vite
+
+Sans plancher de qualité explicite, l'optimisation des coûts dégrade le produit sans que personne ne le décide.
 
 ---
 
