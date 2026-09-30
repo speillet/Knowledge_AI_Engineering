@@ -231,6 +231,7 @@ Automatiser des processus, soit avec des outils de workflow, soit avec des agent
 - [Post-training & alignement](50-fine-tuning/52-post-training-alignement.md) : étapes du RLHF, pénalité KL, reward hacking, DPO et variantes, GRPO, RLVR, RLAIF et Constitutional AI, jeux de préférences, taxe d'alignement, quand faire soi-même du DPO ou du RL.
 - [Données synthétiques & distillation](50-fine-tuning/53-donnees-synthetiques-distillation.md) : génération variée, filtrage, model collapse, distillation sur les sorties ou sur les logits, distillation du raisonnement, contraintes juridiques, projet de distillation, jeux d'eval synthétiques.
 - [Entraînement distribué](50-fine-tuning/54-entrainement-distribue.md) : mémoire d'entraînement, DDP, ZeRO et FSDP, tensor et pipeline parallelism, parallélisme 3D, gradient checkpointing, accumulation de gradients, précision mixte BF16, réseau, pannes et checkpoints.
+- [RL agentique & environnements d'entraînement](50-fine-tuning/55-rl-agentique.md) : RL sur trajectoires multi-tours, RLVR ou RL agentique, environnements d'entraînement, récompense de résultat ou de processus, reward hacking des agents, SFT sur trajectoires, GRPO, curriculum de tâches, outils (verl, OpenRLHF, TRL), quand une équipe produit doit s'y lancer.
 
 ### 60 — Inférence LLM
 

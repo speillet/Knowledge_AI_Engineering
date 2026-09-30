@@ -107,4 +107,5 @@ Mise en situation : pour gagner du temps, un collègue propose de générer 50 0
 - [[94-evals-methodologie|Méthodologie d'évaluation]] — jeux synthétiques
 - [[82-routing-llm|Routing LLM]] — servir l'élève et l'enseignant ensemble
 - [[135-pretraining-scaling-laws|Pré-entraînement]] — le mur des données
+- [[55-rl-agentique|RL agentique]] — SFT sur trajectoires réussies
 - [[00-moc-ai-engineering|MOC AI Engineering]]

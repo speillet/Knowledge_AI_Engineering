@@ -115,4 +115,5 @@ Mise en situation : ton modèle entraîné à corriger du code obtient d'excelle
 - [[95-llm-as-judge|LLM-as-a-judge]] — juges et reward models
 - [[156-ia-responsable|IA responsable]] — sécurité et biais du comportement
 - [[135-pretraining-scaling-laws|Pré-entraînement]] — l'étape précédente
+- [[55-rl-agentique|RL agentique]] — le RL sur des trajectoires d'outils
 - [[00-moc-ai-engineering|MOC AI Engineering]]

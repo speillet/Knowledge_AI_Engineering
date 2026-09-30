@@ -137,4 +137,5 @@ Mise en situation : tu veux que l'agent de code mette à jour chaque semaine les
 - [[48-patterns-workflows-agentiques|Patterns de workflows]] — plan-and-execute appliqué au code
 - [[96-evals-rag-agents|Évaluation des agents]] — environnements et pass^k
 - [[147-leadership-technique-ia|Leadership technique]] — standards d'équipe pour les outils IA
+- [[55-rl-agentique|RL agentique]] — comment les modèles apprennent à coder en agent
 - [[00-moc-ai-engineering|MOC AI Engineering]]

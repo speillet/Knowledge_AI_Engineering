@@ -67,6 +67,7 @@ Progression recommandée : **comprendre les modèles → les utiliser → constr
 - [[52-post-training-alignement|Post-training & alignement (RLHF, DPO, GRPO, RLVR)]]
 - [[53-donnees-synthetiques-distillation|Données synthétiques & distillation]]
 - [[54-entrainement-distribue|Entraînement distribué (DDP, FSDP/ZeRO, parallélismes)]]
+- [[55-rl-agentique|RL agentique & environnements d'entraînement]]
 
 ## 60 — Inférence LLM
 - [[61-kv-cache-attention|KV cache & attention]]
