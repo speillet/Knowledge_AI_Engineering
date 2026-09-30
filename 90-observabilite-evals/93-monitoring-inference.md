@@ -242,4 +242,8 @@ Mise en situation : le responsable conformité demande si vous journalisez les c
 - [[38-plateformes-agents|Plateformes d'agents]] — l'observabilité fournie par la plateforme
 - [[105-devsecops-ia-agentique|DevSecOps pour l'IA agentique]] — journaux de sécurité et détection
 - [[97-evals-online-ab-testing|Evals online & A/B testing]] — qualité en production
+- [[142-fiabilite-resilience-llm|Fiabilité & résilience]] — timeouts, retries, fallbacks et dégradation
+- [[61-kv-cache-attention|KV cache]] — la mémoire qui limite la concurrence
+- [[85-carte-protocoles-agentiques|Carte des protocoles]] — quel protocole à quelle frontière de l'agent
+- [[95-llm-as-judge|LLM-as-a-judge]] — noter automatiquement, et valider le juge
 - [[00-moc-ai-engineering|MOC AI Engineering]]

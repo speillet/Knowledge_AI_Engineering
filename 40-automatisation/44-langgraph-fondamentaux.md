@@ -139,4 +139,11 @@ Mise en situation : ton équipe hésite entre le graphe explicite et la Function
 - [[36-orchestration-agents|Orchestration multi-agents]] — les patterns à implémenter
 - [[41-automatisation-code-nocode|Automatisation]] — workflow déterministe vs agent
 - [[48-patterns-workflows-agentiques|Patterns de workflows]] — les patterns à implémenter en graphe
+- [[37-frameworks-agents|Frameworks d'agents]] — panorama des frameworks
+- [[42-langchain-fondamentaux|LangChain]] — les briques de base du framework
+- [[47-crewai-flows|CrewAI — Flows]] — workflows pilotés par événements
+- [[115-plateformes-agents-gouvernance|Plateformes d'agents — gouvernance]] — identité, politiques, audit et coûts d'une flotte d'agents
+- [[34-harness-plugins|Harness & plugins]] — le programme qui exécute l'agent
+- [[38-plateformes-agents|Plateformes d'agents]] — runtime, sandbox, gateway d'outils et identité
+- [[39-memoire-agents|Mémoire des agents]] — ce que l'agent retient d'une session à l'autre
 - [[00-moc-ai-engineering|MOC AI Engineering]]

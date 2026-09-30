@@ -125,4 +125,10 @@ Mise en situation : un appel d'outil échoue en production avec un timeout, et t
 - [[34-harness-plugins|Harness]] — qui exécute réellement
 - [[101-securite-llm-guardrails|Sécurité LLM]] — valider avant d'exécuter
 - [[103-defenses-agents|Sécurité des agents — Architecture défensive]] — valider les appels d'outils
+- [[165-computer-use-agents-navigateur|Computer use & agents navigateur]] — agents qui utilisent des interfaces
+- [[22-rag-avance|RAG — Avancé]] — recherche hybride, reranking et filtres
+- [[26-text-to-sql|Text-to-SQL]] — répondre aux questions chiffrées sur des tables
+- [[37-frameworks-agents|Frameworks d'agents]] — panorama des frameworks
+- [[41-automatisation-code-nocode|Automatisation code & no-code]] — workflows et outils no-code
+- [[42-langchain-fondamentaux|LangChain]] — les briques de base du framework
 - [[00-moc-ai-engineering|MOC AI Engineering]]

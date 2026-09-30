@@ -123,4 +123,11 @@ Mise en situation : ton entreprise a 15 variantes fine-tunées d'un même modèl
 - [[93-monitoring-inference|Monitoring de l'inférence]] — exploiter `/metrics` et `/health`
 - [[164-llm-local-edge|LLM locaux & edge]] — Ollama, llama.cpp, MLX
 - [[132-tokenisation|Tokenisation]] — chat templates
+- [[04-kubernetes-kubelet-cri|Kubernetes, kubelet & CRI]] — l'orchestration et son interface avec le runtime
+- [[114-reproductibilite-variance|Reproductibilité & variance]] — non-déterminisme et statistiques d'evals
+- [[148-pipelines-batch-llm|Pipelines batch]] — traiter des millions d'items à moindre coût
+- [[65-probabilites-sampling|Probabilités & sampling]] — température, top-p et logprobs
+- [[69-roofline-prefill-decode|Roofline & désagrégation]] — ce qui limite chaque phase de l'inférence
+- [[83-gateway-ingress|Ingress & API gateway]] — l'entrée réseau de la stack
+- [[85-carte-protocoles-agentiques|Carte des protocoles]] — quel protocole à quelle frontière de l'agent
 - [[00-moc-ai-engineering|MOC AI Engineering]]

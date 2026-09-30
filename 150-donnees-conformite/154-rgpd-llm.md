@@ -124,4 +124,5 @@ Mise en situation : le métier veut automatiser le tri des candidatures, avec re
 - [[156-ia-responsable|IA responsable]] — équité et transparence
 - [[39-memoire-agents|Mémoire des agents]] — oubli et suppression
 - [[134-recherche-vectorielle-ann|Recherche vectorielle]] — suppression dans l'index
+- [[163-voix-temps-reel|Voix & temps réel]] — agents vocaux et budget de latence
 - [[00-moc-ai-engineering|MOC AI Engineering]]

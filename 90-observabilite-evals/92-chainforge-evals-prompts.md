@@ -107,4 +107,8 @@ Mise en situation : une modification de prompt améliore visiblement les répons
 - [[114-reproductibilite-variance|Reproductibilité & variance]] — intervalles de confiance, pass@k
 - [[94-evals-methodologie|Méthodologie d'évaluation]] — le cadre complet
 - [[95-llm-as-judge|LLM-as-a-judge]] — biais et calibration
+- [[113-monitoring-drift-feedback|Monitoring & drift]] — qualité en production et boucle de feedback
+- [[12-optimisation-automatique-prompts|Optimisation automatique de prompts]] — laisser une métrique choisir la formulation
+- [[51-fine-tuning-adaptation|Fine-tuning]] — adapter un modèle, LoRA et QLoRA
+- [[65-probabilites-sampling|Probabilités & sampling]] — température, top-p et logprobs
 - [[00-moc-ai-engineering|MOC AI Engineering]]

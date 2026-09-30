@@ -131,4 +131,5 @@ Mise en situation : un directeur te demande pourquoi l'assistant « se trompe en
 - [[111-mlops-llmops-fondamentaux|MLOps & LLMOps]] — rôle du Lead
 - [[115-plateformes-agents-gouvernance|Plateformes d'agents — Gouvernance]] — paved road
 - [[155-ai-act|AI Act]] — cadrage réglementaire
+- [[49-agents-de-code|Agents de code]] — utiliser et intégrer les agents de code
 - [[00-moc-ai-engineering|MOC AI Engineering]]

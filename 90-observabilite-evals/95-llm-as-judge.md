@@ -131,4 +131,12 @@ Mise en situation : tu dois comparer deux versions de ton assistant sur 300 cas,
 - [[114-reproductibilite-variance|Reproductibilité & variance]] — variance du juge
 - [[91-langfuse-observabilite|Langfuse]] — scores LLM-as-judge en production
 - [[52-post-training-alignement|Post-training]] — reward models et RLAIF
+- [[12-optimisation-automatique-prompts|Optimisation automatique de prompts]] — laisser une métrique choisir la formulation
+- [[151-donnees-curation-annotation|Curation & annotation]] — données de qualité et jeux séparés
+- [[48-patterns-workflows-agentiques|Patterns de workflows]] — chaining, routing, evaluator-optimizer
+- [[92-chainforge-evals-prompts|ChainForge & evals]] — comparer prompts et modèles
+- [[115-plateformes-agents-gouvernance|Plateformes d'agents — gouvernance]] — identité, politiques, audit et coûts d'une flotte d'agents
+- [[38-plateformes-agents|Plateformes d'agents]] — runtime, sandbox, gateway d'outils et identité
+- [[68-quantization|Quantization]] — réduire la précision pour gagner mémoire et vitesse
+- [[93-monitoring-inference|Monitoring de l'inférence]] — métriques, validations et signaux de production
 - [[00-moc-ai-engineering|MOC AI Engineering]]

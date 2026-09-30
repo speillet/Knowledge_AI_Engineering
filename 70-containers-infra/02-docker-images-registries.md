@@ -116,5 +116,7 @@ Mise en situation : une équipe pousse ses images sur Docker Hub avec le tag `la
 - [[03-containerd-runc|containerd & runc]] — ce qui exécute les images
 - [[08-linux-primitives-docker-fondamentaux|Primitives & fondamentaux]] — layers, volumes, Dockerfile
 - [[10-images-modeles-poids|Images & poids de modèles]] — cas des gros modèles LLM
+- [[05-docker-kubernetes|Docker & Kubernetes]] — pourquoi Kubernetes n'a plus besoin de Docker Engine
+- [[06-apptainer-singularity|Apptainer & Singularity]] — les conteneurs du monde HPC
 - [[00-index|Index Conteneurs]]
 - [[00-moc-ai-engineering|MOC AI Engineering]]

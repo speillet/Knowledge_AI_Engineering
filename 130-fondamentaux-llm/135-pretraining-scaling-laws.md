@@ -111,4 +111,6 @@ Mise en situation : ta direction demande combien coûterait le pré-entraînemen
 - [[54-entrainement-distribue|Entraînement distribué]] — comment on parallélise
 - [[136-mixture-of-experts|Mixture of Experts]] — plus de paramètres sans plus de calcul
 - [[146-choix-modeles|Choix de modèle]] — lire les benchmarks
+- [[55-rl-agentique|RL agentique]] — entraîner un modèle sur des tâches d'agent
+- [[69-roofline-prefill-decode|Roofline & désagrégation]] — ce qui limite chaque phase de l'inférence
 - [[00-moc-ai-engineering|MOC AI Engineering]]

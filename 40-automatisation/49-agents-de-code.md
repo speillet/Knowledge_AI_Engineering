@@ -138,4 +138,11 @@ Mise en situation : tu veux que l'agent de code mette à jour chaque semaine les
 - [[96-evals-rag-agents|Évaluation des agents]] — environnements et pass^k
 - [[147-leadership-technique-ia|Leadership technique]] — standards d'équipe pour les outils IA
 - [[55-rl-agentique|RL agentique]] — comment les modèles apprennent à coder en agent
+- [[03-containerd-runc|containerd & runc]] — le runtime qui exécute réellement les conteneurs
+- [[102-menaces-agents|Menaces sur les agents]] — attaques et incidents réels
+- [[103-defenses-agents|Défenses des agents]] — isolation, politiques et moindre privilège
+- [[143-hallucinations-grounding|Hallucinations & grounding]] — citations, abstention et vérification
+- [[145-cas-system-design|Cas de system design]] — des architectures types commentées
+- [[38-plateformes-agents|Plateformes d'agents]] — runtime, sandbox, gateway d'outils et identité
+- [[94-evals-methodologie|Évaluation — méthodologie]] — construire un jeu d'eval et des métriques fiables
 - [[00-moc-ai-engineering|MOC AI Engineering]]

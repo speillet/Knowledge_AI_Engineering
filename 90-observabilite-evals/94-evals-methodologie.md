@@ -146,4 +146,9 @@ Mise en situation : ton eval principale affiche 99 % depuis trois mois, alors qu
 - [[151-donnees-curation-annotation|Données & annotation]] — produire des labels fiables
 - [[12-optimisation-automatique-prompts|Optimisation automatique de prompts]] — la métrique comme moteur d'optimisation
 - [[98-debogage-agents|Débogage des agents]] — l'analyse d'erreurs avant les métriques
+- [[147-leadership-technique-ia|Leadership technique]] — standards d'équipe et décisions
+- [[148-pipelines-batch-llm|Pipelines batch]] — traiter des millions d'items à moindre coût
+- [[156-ia-responsable|IA responsable]] — biais, équité et transparence
+- [[49-agents-de-code|Agents de code]] — utiliser et intégrer les agents de code
+- [[53-donnees-synthetiques-distillation|Données synthétiques & distillation]] — générer des données et transférer vers un petit modèle
 - [[00-moc-ai-engineering|MOC AI Engineering]]

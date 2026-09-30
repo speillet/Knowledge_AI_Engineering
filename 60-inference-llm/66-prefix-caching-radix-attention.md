@@ -124,4 +124,7 @@ Mise en situation : ton service multi-clients partage un même modèle, et un cl
 - [[82-routing-llm|Routing LLM]] — affinité de préfixe entre réplicas
 - [[64-metriques-slo-inference|Métriques & SLO]] — TTFT et débit
 - [[123-caching-agressif|Caching agressif]] — concevoir les prompts pour le cache
+- [[137-long-contexte|Long contexte]] — limites et coût des longues fenêtres
+- [[51-fine-tuning-adaptation|Fine-tuning]] — adapter un modèle, LoRA et QLoRA
+- [[69-roofline-prefill-decode|Roofline & désagrégation]] — ce qui limite chaque phase de l'inférence
 - [[00-moc-ai-engineering|MOC AI Engineering]]

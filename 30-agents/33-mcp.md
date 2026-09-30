@@ -119,4 +119,12 @@ Mise en situation : ton serveur MCP interne, écrit avant la spec 2026-07-28, ga
 - [[115-plateformes-agents-gouvernance|Plateformes d'agents — Architecture & gouvernance]] — autorisation d'entreprise et gateway d'outils
 - [[104-securite-mcp-skills|Sécurité de MCP & des skills]] — les attaques propres à MCP et les règles de la spec
 - [[85-carte-protocoles-agentiques|Carte des protocoles]] — MCP parmi A2A, AG-UI et les autres
+- [[103-defenses-agents|Défenses des agents]] — isolation, politiques et moindre privilège
+- [[165-computer-use-agents-navigateur|Computer use & agents navigateur]] — agents qui utilisent des interfaces
+- [[24-cognee|Cognee]] — une mémoire d'agent en knowledge graph
+- [[84-streaming-integration-applicative|Streaming & intégration]] — SSE, annulation et tâches longues
+- [[102-menaces-agents|Menaces sur les agents]] — attaques et incidents réels
+- [[105-devsecops-ia-agentique|DevSecOps IA]] — contrôles de sécurité dans le cycle de livraison
+- [[106-securite-agents-code|Sécurité des agents de code]] — risques propres aux agents de code
+- [[81-litellm-api-layer|LiteLLM]] — la gateway entre applications et modèles
 - [[00-moc-ai-engineering|MOC AI Engineering]]

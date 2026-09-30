@@ -131,4 +131,7 @@ Mise en situation : en entretien, on te demande pourquoi un modèle de base rép
 - [[137-long-contexte|Long contexte]] — RoPE et ses extensions
 - [[61-kv-cache-attention|KV cache & attention]] — l'attention à l'inférence
 - [[65-probabilites-sampling|Probabilités & sampling]] — des logits au token
+- [[133-embeddings-representations|Embeddings]] — représenter le sens par des vecteurs
+- [[161-modeles-vision-langage|Modèles vision-langage]] — images et écrans en entrée
+- [[22-rag-avance|RAG — Avancé]] — recherche hybride, reranking et filtres
 - [[00-moc-ai-engineering|MOC AI Engineering]]

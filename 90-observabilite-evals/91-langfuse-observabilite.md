@@ -135,4 +135,9 @@ Mise en situation : ton équipe veut passer des impressions (« ça marche plut�
 - [[95-llm-as-judge|LLM-as-a-judge]] — biais et validation du juge
 - [[13-prompts-production|Prompts en production]] — registre, étiquettes et retour arrière
 - [[98-debogage-agents|Débogage des agents]] — lire les traces avec méthode
+- [[101-securite-llm-guardrails|Sécurité LLM]] — injection, exfiltration et guardrails
+- [[11-prompt-engineering-avance|Prompt engineering avancé]] — les techniques de base du prompt
+- [[114-reproductibilite-variance|Reproductibilité & variance]] — non-déterminisme et statistiques d'evals
+- [[41-automatisation-code-nocode|Automatisation code & no-code]] — workflows et outils no-code
+- [[45-langgraph-production|LangGraph — Production]] — persistance, reprise et supervision humaine
 - [[00-moc-ai-engineering|MOC AI Engineering]]

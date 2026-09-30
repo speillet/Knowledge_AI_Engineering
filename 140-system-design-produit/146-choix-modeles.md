@@ -134,4 +134,9 @@ Mise en situation : la direction impose que les données ne sortent pas de l'ent
 - [[164-llm-local-edge|LLM locaux & edge]] — les options open weights
 - [[155-ai-act|AI Act]] — obligations des modèles à usage général
 - [[13-prompts-production|Prompts en production]] — un prompt ne se transfère pas d'un modèle à l'autre
+- [[12-optimisation-automatique-prompts|Optimisation automatique de prompts]] — laisser une métrique choisir la formulation
+- [[141-system-design-llm|System design LLM]] — la méthode de conception
+- [[49-agents-de-code|Agents de code]] — utiliser et intégrer les agents de code
+- [[63-guided-generation|Guided generation]] — garantir des sorties structurées valides
+- [[64-metriques-slo-inference|Métriques & SLO]] — TTFT, TPOT, débit et percentiles
 - [[00-moc-ai-engineering|MOC AI Engineering]]

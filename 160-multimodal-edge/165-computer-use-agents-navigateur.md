@@ -128,4 +128,7 @@ Mise en situation : pendant un test, ton agent navigateur, chargé de comparer d
 - [[102-menaces-agents|Menaces sur les agents]] — injection par le contenu web
 - [[103-defenses-agents|Défenses des agents]] — isolation et confirmations
 - [[38-plateformes-agents|Plateformes d'agents]] — navigateurs et sandboxes managés
+- [[101-securite-llm-guardrails|Sécurité LLM]] — injection, exfiltration et guardrails
+- [[114-reproductibilite-variance|Reproductibilité & variance]] — non-déterminisme et statistiques d'evals
+- [[27-agents-recherche-deep-research|Agents de recherche]] — la recherche en plusieurs étapes, avec citations
 - [[00-moc-ai-engineering|MOC AI Engineering]]

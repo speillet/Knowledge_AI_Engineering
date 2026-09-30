@@ -125,4 +125,5 @@ Mise en situation : ton modèle entraîné à corriger du code obtient d'excelle
 - [[156-ia-responsable|IA responsable]] — sécurité et biais du comportement
 - [[135-pretraining-scaling-laws|Pré-entraînement]] — l'étape précédente
 - [[55-rl-agentique|RL agentique]] — le RL sur des trajectoires d'outils
+- [[65-probabilites-sampling|Probabilités & sampling]] — température, top-p et logprobs
 - [[00-moc-ai-engineering|MOC AI Engineering]]

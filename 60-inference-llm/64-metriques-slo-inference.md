@@ -147,4 +147,13 @@ Mise en situation : ton autoscaling se déclenche trop tard, et des requêtes at
 - [[93-monitoring-inference|Monitoring de l'inférence]] — les métriques concrètes (vLLM, GPU, usage)
 - [[69-roofline-prefill-decode|Roofline & désagrégation]] — l'interférence prefill/decode derrière les pics de TPOT
 - [[163-voix-temps-reel|Voix & agents temps réel]] — le TTFT dans un budget de latence conversationnel
+- [[112-cicd-modeles|CI/CD des modèles]] — eval gates, canary et rollback
+- [[138-modeles-raisonnement|Modèles de raisonnement]] — test-time compute et budget de réflexion
+- [[142-fiabilite-resilience-llm|Fiabilité & résilience]] — timeouts, retries, fallbacks et dégradation
+- [[66-prefix-caching-radix-attention|Prefix caching]] — réutiliser le calcul des préfixes communs
+- [[81-litellm-api-layer|LiteLLM]] — la gateway entre applications et modèles
+- [[82-routing-llm|Routing LLM]] — choisir le modèle par requête, fallbacks et cache sémantique
+- [[84-streaming-integration-applicative|Streaming & intégration]] — SSE, annulation et tâches longues
+- [[137-long-contexte|Long contexte]] — limites et coût des longues fenêtres
+- [[146-choix-modeles|Choix de modèles]] — critères, benchmarks et migration
 - [[00-moc-ai-engineering|MOC AI Engineering]]

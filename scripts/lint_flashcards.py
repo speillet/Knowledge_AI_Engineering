@@ -159,6 +159,14 @@ def lint(stale_months):
     for q, where in questions.items():
         if len(where) > 1:
             warnings.append(f"question en double ({', '.join(where)}) : {q[:60]}")
+    texts = {p.stem: p.read_text() for p in files}
+    for stem, text in texts.items():
+        if stem in INDEXES or "\n## Connexions" not in text:
+            continue
+        for target in set(LINK_RE.findall(text.split("\n## Connexions")[1])):
+            target = target.strip()
+            if target in texts and target not in INDEXES and f"[[{stem}" not in texts[target]:
+                warnings.append(f"{stem} cite {target} dans ses Connexions, sans lien en retour")
     for p in files:
         if inbound[p.stem] < 2:
             warnings.append(f"{p.relative_to(ROOT)} peu reliée : {inbound[p.stem]} fiche(s) pointent vers elle")

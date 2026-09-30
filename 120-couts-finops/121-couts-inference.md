@@ -143,4 +143,6 @@ Mise en situation : le coût de ton assistant est dominé par les tokens d'entr�
 - [[146-choix-modeles|Choix de modèle]] — coût par tâche réussie
 - [[164-llm-local-edge|LLM locaux]] — on-prem et break-even
 - [[148-pipelines-batch-llm|Pipelines batch]] — mettre la batch API en œuvre à grande échelle
+- [[136-mixture-of-experts|Mixture of Experts]] — paramètres totaux et actifs
+- [[138-modeles-raisonnement|Modèles de raisonnement]] — test-time compute et budget de réflexion
 - [[00-moc-ai-engineering|MOC AI Engineering]]

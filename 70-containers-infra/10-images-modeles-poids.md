@@ -133,4 +133,5 @@ Mise en situation : un collègue télécharge un modèle depuis un dépôt publi
 - [[111-mlops-llmops-fondamentaux|MLOps]] — le model registry approfondi
 - [[68-quantization|Quantization]] — réduire la taille des poids
 - [[105-devsecops-ia-agentique|DevSecOps pour l'IA agentique]] — signature des modèles et AI-BOM
+- [[164-llm-local-edge|LLM locaux & edge]] — faire tourner un modèle en local
 - [[00-moc-ai-engineering|MOC AI Engineering]]

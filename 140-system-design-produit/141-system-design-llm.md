@@ -183,4 +183,8 @@ Mise en situation : ton directeur technique te demande pourquoi tu as choisi le 
 - [[81-litellm-api-layer|LiteLLM]] et [[82-routing-llm|routing]] — la gateway
 - [[121-couts-inference|Coûts d'inférence]] — chiffrer le design
 - [[84-streaming-integration-applicative|Streaming & intégration]] — synchrone, streaming ou asynchrone
+- [[101-securite-llm-guardrails|Sécurité LLM]] — injection, exfiltration et guardrails
+- [[147-leadership-technique-ia|Leadership technique]] — standards d'équipe et décisions
+- [[148-pipelines-batch-llm|Pipelines batch]] — traiter des millions d'items à moindre coût
+- [[22-rag-avance|RAG — Avancé]] — recherche hybride, reranking et filtres
 - [[00-moc-ai-engineering|MOC AI Engineering]]

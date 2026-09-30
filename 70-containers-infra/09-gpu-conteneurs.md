@@ -122,4 +122,7 @@ Mise en situation : deux équipes se partagent un GPU pour leurs services d'inf�
 - [[10-images-modeles-poids|Images & poids]] — images CUDA volumineuses
 - [[13-apptainer-inference-hpc|Apptainer & HPC]] — `--nv` en HPC
 - [[03-containerd-runc|containerd & runc]] — où le toolkit s'insère dans la chaîne
+- [[04-kubernetes-kubelet-cri|Kubernetes, kubelet & CRI]] — l'orchestration et son interface avec le runtime
+- [[06-apptainer-singularity|Apptainer & Singularity]] — les conteneurs du monde HPC
+- [[54-entrainement-distribue|Entraînement distribué]] — mémoire et parallélismes d'entraînement
 - [[00-moc-ai-engineering|MOC AI Engineering]]

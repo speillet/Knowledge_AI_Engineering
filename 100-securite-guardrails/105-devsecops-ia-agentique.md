@@ -261,4 +261,5 @@ Mise en situation : ton fournisseur annonce que le modèle utilisé par tes agen
 - [[10-images-modeles-poids|Images & poids de modèles]] — safetensors ou pickle
 - [[101-securite-llm-guardrails|Sécurité LLM & guardrails]] — OWASP LLM et red teaming
 - [[155-ai-act|AI Act]] — obligations réglementaires
+- [[33-mcp|MCP]] — le protocole standard entre agents et outils
 - [[00-moc-ai-engineering|MOC AI Engineering]]

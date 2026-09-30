@@ -133,4 +133,7 @@ Mise en situation : un agent d'analyse met 3 à 8 minutes à produire un rapport
 - [[115-plateformes-agents-gouvernance|Plateformes d'agents]] — exécution durable des tâches longues
 - [[163-voix-temps-reel|Voix & temps réel]] — quand il faut du bidirectionnel
 - [[85-carte-protocoles-agentiques|Carte des protocoles]] — où se place AG-UI
+- [[141-system-design-llm|System design LLM]] — la méthode de conception
+- [[61-kv-cache-attention|KV cache]] — la mémoire qui limite la concurrence
+- [[33-mcp|MCP]] — le protocole standard entre agents et outils
 - [[00-moc-ai-engineering|MOC AI Engineering]]

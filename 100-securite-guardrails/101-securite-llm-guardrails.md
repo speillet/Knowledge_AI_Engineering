@@ -142,4 +142,13 @@ Mise en situation : un utilisateur publie sur un forum le system prompt complet 
 - [[143-hallucinations-grounding|Hallucinations & grounding]] — contrôles de sortie
 - [[152-pii-confidentialite|PII & confidentialité]] — fuites de données
 - [[156-ia-responsable|IA responsable]] — contenu nuisible et refus excessifs
+- [[13-prompts-production|Prompts en production]] — structure, versioning et portabilité des prompts
+- [[23-knowledge-graphs-ontologies|Knowledge graphs]] — GraphRAG et données reliées
+- [[26-text-to-sql|Text-to-SQL]] — répondre aux questions chiffrées sur des tables
+- [[46-crewai-crews|CrewAI — Crews]] — équipes d'agents à rôles
+- [[141-system-design-llm|System design LLM]] — la méthode de conception
+- [[145-cas-system-design|Cas de system design]] — des architectures types commentées
+- [[161-modeles-vision-langage|Modèles vision-langage]] — images et écrans en entrée
+- [[164-llm-local-edge|LLM locaux & edge]] — faire tourner un modèle en local
+- [[165-computer-use-agents-navigateur|Computer use & agents navigateur]] — agents qui utilisent des interfaces
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -163,4 +163,6 @@ Mise en situation : un développeur senior veut lancer son agent de code avec `-
 - [[105-devsecops-ia-agentique|DevSecOps pour l'IA agentique]] — contrôles en CI
 - [[112-cicd-modeles|CI/CD des modèles]] — le pipeline
 - [[49-agents-de-code|Agents de code : usage]] — les bonnes pratiques côté productivité
+- [[101-securite-llm-guardrails|Sécurité LLM]] — injection, exfiltration et guardrails
+- [[33-mcp|MCP]] — le protocole standard entre agents et outils
 - [[00-moc-ai-engineering|MOC AI Engineering]]

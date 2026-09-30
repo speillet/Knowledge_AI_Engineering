@@ -119,4 +119,8 @@ Mise en situation : ton agent d'analyse tourne parfois 40 étapes, coûte cher e
 - [[141-system-design-llm|System design LLM]] — workflow ou agent
 - [[165-computer-use-agents-navigateur|Computer use & agents navigateur]] — quand l'outil est une interface graphique
 - [[48-patterns-workflows-agentiques|Patterns de workflows]] — composer avant de rendre autonome
+- [[22-rag-avance|RAG — Avancé]] — recherche hybride, reranking et filtres
+- [[37-frameworks-agents|Frameworks d'agents]] — panorama des frameworks
+- [[44-langgraph-fondamentaux|LangGraph]] — graphes d'états pour agents et workflows
+- [[47-crewai-flows|CrewAI — Flows]] — workflows pilotés par événements
 - [[00-moc-ai-engineering|MOC AI Engineering]]

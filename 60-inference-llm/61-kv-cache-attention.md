@@ -134,4 +134,10 @@ Mise en situation : ton équipe veut activer la quantization FP8 du KV cache pou
 - [[68-quantization|Quantization]] — quantizer les poids et le cache
 - [[131-transformer-architecture|Architecture Transformer]] — attention, GQA, RoPE
 - [[137-long-contexte|Long contexte]] — coût des contextes longs
+- [[65-probabilites-sampling|Probabilités & sampling]] — température, top-p et logprobs
+- [[69-roofline-prefill-decode|Roofline & désagrégation]] — ce qui limite chaque phase de l'inférence
+- [[12-kubernetes-gpu-inference|Kubernetes GPU & inférence]] — servir des modèles sur un cluster GPU
+- [[164-llm-local-edge|LLM locaux & edge]] — faire tourner un modèle en local
+- [[67-speculative-decoding|Speculative decoding]] — générer plusieurs tokens par passage
+- [[84-streaming-integration-applicative|Streaming & intégration]] — SSE, annulation et tâches longues
 - [[00-moc-ai-engineering|MOC AI Engineering]]

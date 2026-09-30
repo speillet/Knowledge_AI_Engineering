@@ -108,4 +108,5 @@ Mise en situation : un score d'eval obtenu il y a trois mois est impossible à r
 - [[111-mlops-llmops-fondamentaux|MLOps & LLMOps]] — lineage et versioning
 - [[114-reproductibilite-variance|Reproductibilité]] — rejouer une eval
 - [[148-pipelines-batch-llm|Pipelines batch]] — lignage des sorties générées
+- [[98-debogage-agents|Débogage des agents]] — trouver la cause d'un échec dans une trace
 - [[00-moc-ai-engineering|MOC AI Engineering]]

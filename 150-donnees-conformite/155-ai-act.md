@@ -132,4 +132,6 @@ Mise en situation : une équipe veut utiliser la détection d'émotions sur les 
 - [[105-devsecops-ia-agentique|DevSecOps IA]] — NIST, ISO 42001
 - [[144-ux-ia-human-in-the-loop|UX de l'IA]] — informer l'utilisateur
 - [[147-leadership-technique-ia|Leadership technique]] — cadrage réglementaire des projets
+- [[146-choix-modeles|Choix de modèles]] — critères, benchmarks et migration
+- [[103-defenses-agents|Défenses des agents]] — isolation, politiques et moindre privilège
 - [[00-moc-ai-engineering|MOC AI Engineering]]

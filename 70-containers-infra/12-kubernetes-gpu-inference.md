@@ -132,4 +132,9 @@ Mise en situation : plusieurs équipes veulent déployer leurs modèles sur le m
 - [[00-index|Index Conteneurs]]
 - [[93-monitoring-inference|Monitoring de l'inférence]] — métriques GPU (DCGM) et signaux d'autoscaling
 - [[69-roofline-prefill-decode|Désagrégation prefill/decode]] — deux pools à autoscaler séparément
+- [[112-cicd-modeles|CI/CD des modèles]] — eval gates, canary et rollback
+- [[13-apptainer-inference-hpc|Apptainer & inférence HPC]] — servir un modèle sur un cluster Slurm
+- [[136-mixture-of-experts|Mixture of Experts]] — paramètres totaux et actifs
+- [[61-kv-cache-attention|KV cache]] — la mémoire qui limite la concurrence
+- [[62-optimisations-inference|Optimisations d'inférence]] — les leviers de latence et de débit
 - [[00-moc-ai-engineering|MOC AI Engineering]]

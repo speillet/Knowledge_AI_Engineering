@@ -130,4 +130,7 @@ Mise en situation : tu dois déployer une nouvelle version de modèle sur un ser
 - [[105-devsecops-ia-agentique|DevSecOps pour l'IA agentique]] — contrôles de sécurité et security eval gate
 - [[94-evals-methodologie|Méthodologie d'évaluation]] — construire les gates
 - [[97-evals-online-ab-testing|Evals online & A/B testing]] — canary vs A/B
+- [[106-securite-agents-code|Sécurité des agents de code]] — risques propres aux agents de code
+- [[113-monitoring-drift-feedback|Monitoring & drift]] — qualité en production et boucle de feedback
+- [[13-prompts-production|Prompts en production]] — structure, versioning et portabilité des prompts
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -171,4 +171,5 @@ Mise en situation : ton agent partage une mémoire entre tous les utilisateurs d
 - [[38-plateformes-agents|Plateformes d'agents]] — la mémoire managée des plateformes
 - [[103-defenses-agents|Sécurité des agents — Architecture défensive]] — protéger la mémoire contre l'empoisonnement
 - [[154-rgpd-llm|RGPD appliqué aux LLM]] — effacement et rétention
+- [[44-langgraph-fondamentaux|LangGraph]] — graphes d'états pour agents et workflows
 - [[00-moc-ai-engineering|MOC AI Engineering]]

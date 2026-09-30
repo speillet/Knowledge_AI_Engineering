@@ -133,4 +133,10 @@ Mise en situation : tu dois évaluer un agent qui modifie des tickets et envoie 
 - [[114-reproductibilite-variance|Reproductibilité & variance]] — pass@k, pass^k
 - [[98-debogage-agents|Débogage des agents]] — comprendre pourquoi une tâche échoue
 - [[27-agents-recherche-deep-research|Agents de recherche]] — évaluer couverture et citations
+- [[133-embeddings-representations|Embeddings]] — représenter le sens par des vecteurs
+- [[143-hallucinations-grounding|Hallucinations & grounding]] — citations, abstention et vérification
+- [[25-chunking-contextual-retrieval|Chunking avancé]] — rendre chaque chunk trouvable
+- [[26-text-to-sql|Text-to-SQL]] — répondre aux questions chiffrées sur des tables
+- [[49-agents-de-code|Agents de code]] — utiliser et intégrer les agents de code
+- [[55-rl-agentique|RL agentique]] — entraîner un modèle sur des tâches d'agent
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -170,4 +170,6 @@ Mise en situation : un responsable qualité s'inquiète que le speculative decod
 - [[114-reproductibilite-variance|Reproductibilité & variance]] — les écarts numériques
 - [[68-quantization|Quantization]] — l'autre levier pour accélérer le decode
 - [[93-monitoring-inference|Monitoring de l'inférence]] — suivre l'acceptation en production
+- [[61-kv-cache-attention|KV cache]] — la mémoire qui limite la concurrence
+- [[69-roofline-prefill-decode|Roofline & désagrégation]] — ce qui limite chaque phase de l'inférence
 - [[00-moc-ai-engineering|MOC AI Engineering]]

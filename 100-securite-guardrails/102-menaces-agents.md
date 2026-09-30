@@ -187,4 +187,8 @@ Mise en situation : depuis une semaine, plusieurs utilisateurs rapportent que to
 - [[36-orchestration-agents|Orchestration multi-agents]] — risques entre agents
 - [[161-modeles-vision-langage|Modèles vision-langage]] — injection par l'image
 - [[165-computer-use-agents-navigateur|Agents navigateur]] — l'injection par le contenu des pages web
+- [[27-agents-recherche-deep-research|Agents de recherche]] — la recherche en plusieurs étapes, avec citations
+- [[33-mcp|MCP]] — le protocole standard entre agents et outils
+- [[49-agents-de-code|Agents de code]] — utiliser et intégrer les agents de code
+- [[85-carte-protocoles-agentiques|Carte des protocoles]] — quel protocole à quelle frontière de l'agent
 - [[00-moc-ai-engineering|MOC AI Engineering]]

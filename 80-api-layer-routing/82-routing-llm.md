@@ -116,4 +116,8 @@ Mise en situation : un collègue propose un cache sémantique pour les questions
 - [[123-caching-agressif|Caching agressif]] — tous les niveaux de cache
 - [[146-choix-modeles|Choix de modèle]] — critères et benchmarks
 - [[138-modeles-raisonnement|Modèles de raisonnement]] — router par difficulté
+- [[122-finops-llm|FinOps LLM]] — attribuer et piloter les dépenses IA
+- [[141-system-design-llm|System design LLM]] — la méthode de conception
+- [[48-patterns-workflows-agentiques|Patterns de workflows]] — chaining, routing, evaluator-optimizer
+- [[53-donnees-synthetiques-distillation|Données synthétiques & distillation]] — générer des données et transférer vers un petit modèle
 - [[00-moc-ai-engineering|MOC AI Engineering]]

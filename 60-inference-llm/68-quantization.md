@@ -266,4 +266,9 @@ Mise en situation : ton fournisseur publie le même modèle en BF16, FP8 et GGUF
 - [[93-monitoring-inference|Monitoring de l'inférence]] — suivre le modèle quantizé en production
 - [[164-llm-local-edge|LLM locaux & edge]] — GGUF et petits appareils
 - [[69-roofline-prefill-decode|Roofline]] — pourquoi la quantization accélère surtout le decode
+- [[134-recherche-vectorielle-ann|Recherche vectorielle]] — index ANN, HNSW et quantization des vecteurs
+- [[136-mixture-of-experts|Mixture of Experts]] — paramètres totaux et actifs
+- [[95-llm-as-judge|LLM-as-a-judge]] — noter automatiquement, et valider le juge
+- [[133-embeddings-representations|Embeddings]] — représenter le sens par des vecteurs
+- [[137-long-contexte|Long contexte]] — limites et coût des longues fenêtres
 - [[00-moc-ai-engineering|MOC AI Engineering]]

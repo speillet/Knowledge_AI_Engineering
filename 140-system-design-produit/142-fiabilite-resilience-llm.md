@@ -147,4 +147,5 @@ Mise en situation : ton équipe veut « tester la résilience » avant une mise 
 - [[64-metriques-slo-inference|Métriques & SLO]] — définir les objectifs
 - [[93-monitoring-inference|Monitoring de l'inférence]] — détecter les défaillances
 - [[84-streaming-integration-applicative|Streaming & intégration]] — idempotence et tâches longues
+- [[145-cas-system-design|Cas de system design]] — des architectures types commentées
 - [[00-moc-ai-engineering|MOC AI Engineering]]

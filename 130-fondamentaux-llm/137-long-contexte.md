@@ -98,4 +98,8 @@ Mise en situation : ton assistant d'analyse de contrats devient lent et cher dè
 - [[66-prefix-caching-radix-attention|Prefix caching]] — réutiliser les préfixes longs
 - [[21-rag-fondamentaux|RAG]] — l'alternative au long contexte
 - [[131-transformer-architecture|Architecture Transformer]] — RoPE et attention
+- [[13-prompts-production|Prompts en production]] — structure, versioning et portabilité des prompts
+- [[36-orchestration-agents|Orchestration multi-agents]] — sous-agents, handoffs et A2A
+- [[64-metriques-slo-inference|Métriques & SLO]] — TTFT, TPOT, débit et percentiles
+- [[68-quantization|Quantization]] — réduire la précision pour gagner mémoire et vitesse
 - [[00-moc-ai-engineering|MOC AI Engineering]]

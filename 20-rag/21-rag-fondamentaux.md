@@ -150,4 +150,11 @@ Mise en situation : le métier te demande un RAG sur 200 000 documents, dont des
 - [[96-evals-rag-agents|Evals de RAG]] — recall@k, faithfulness
 - [[25-chunking-contextual-retrieval|Chunking avancé & contextual retrieval]] — rendre chaque chunk trouvable
 - [[26-text-to-sql|Text-to-SQL]] — les questions chiffrées que le RAG ne sait pas traiter
+- [[123-caching-agressif|Caching]] — prompt caching et caches de réponses
+- [[134-recherche-vectorielle-ann|Recherche vectorielle]] — index ANN, HNSW et quantization des vecteurs
+- [[141-system-design-llm|System design LLM]] — la méthode de conception
+- [[143-hallucinations-grounding|Hallucinations & grounding]] — citations, abstention et vérification
+- [[23-knowledge-graphs-ontologies|Knowledge graphs]] — GraphRAG et données reliées
+- [[27-agents-recherche-deep-research|Agents de recherche]] — la recherche en plusieurs étapes, avec citations
+- [[42-langchain-fondamentaux|LangChain]] — les briques de base du framework
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -127,5 +127,6 @@ Mise en situation : un incident mentionne « containerd ne répond plus » et l'
 - [[04-kubernetes-kubelet-cri|Kubernetes & CRI]] — containerd est appelé via CRI
 - [[08-linux-primitives-docker-fondamentaux|Primitives Linux]] — runc configure namespaces & cgroups
 - [[02-docker-images-registries|Docker & images]] — containerd gère les images
+- [[49-agents-de-code|Agents de code]] — utiliser et intégrer les agents de code
 - [[00-index|Index Conteneurs]]
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -118,5 +118,6 @@ Mise en situation : un responsable sécurité demande d'exécuter le code géné
 - [[10-images-modeles-poids|Images & poids]] — volumes pour monter les poids
 - [[02-docker-images-registries|Docker & images]] — layers & Dockerfile
 - [[07-synthese-containers|Synthèse conteneurs]] — les définitions en une phrase
+- [[01-oci|OCI]] — les standards d'image, de runtime et de distribution
 - [[00-index|Index Conteneurs]]
 - [[00-moc-ai-engineering|MOC AI Engineering]]

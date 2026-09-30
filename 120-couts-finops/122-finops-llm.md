@@ -140,4 +140,6 @@ Mise en situation : une équipe veut passer au modèle le plus puissant pour tou
 - [[93-monitoring-inference|Monitoring de l'inférence]] — les métriques d'usage par équipe
 - [[115-plateformes-agents-gouvernance|Plateformes d'agents — Architecture & gouvernance]] — le coût d'une flotte d'agents
 - [[147-leadership-technique-ia|Leadership technique]] — ROI des fonctionnalités IA
+- [[145-cas-system-design|Cas de system design]] — des architectures types commentées
+- [[148-pipelines-batch-llm|Pipelines batch]] — traiter des millions d'items à moindre coût
 - [[00-moc-ai-engineering|MOC AI Engineering]]

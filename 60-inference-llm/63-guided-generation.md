@@ -111,4 +111,8 @@ Mise en situation : ton extraction de factures renvoie toujours un JSON conforme
 - [[11-serveurs-inference-llm|Serveurs d'inférence]] — XGrammar intégré à vLLM
 - [[65-probabilites-sampling|Probabilités & sampling]] — la distribution que le masque modifie
 - [[23-knowledge-graphs-ontologies|Knowledge graphs & ontologies]] — extraire entités et relations sous schéma
+- [[132-tokenisation|Tokenisation]] — ce qu'est un token et ce qu'il coûte
+- [[142-fiabilite-resilience-llm|Fiabilité & résilience]] — timeouts, retries, fallbacks et dégradation
+- [[148-pipelines-batch-llm|Pipelines batch]] — traiter des millions d'items à moindre coût
+- [[146-choix-modeles|Choix de modèles]] — critères, benchmarks et migration
 - [[00-moc-ai-engineering|MOC AI Engineering]]

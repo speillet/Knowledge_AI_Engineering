@@ -115,4 +115,8 @@ Mise en situation : le métier exige que ton assistant réponde toujours, jamais
 - [[65-probabilites-sampling|Probabilités & sampling]] — logprobs et calibration
 - [[101-securite-llm-guardrails|Guardrails]] — contrôles de sortie
 - [[144-ux-ia-human-in-the-loop|UX de l'IA]] — montrer l'incertitude
+- [[11-prompt-engineering-avance|Prompt engineering avancé]] — les techniques de base du prompt
+- [[26-text-to-sql|Text-to-SQL]] — répondre aux questions chiffrées sur des tables
+- [[27-agents-recherche-deep-research|Agents de recherche]] — la recherche en plusieurs étapes, avec citations
+- [[49-agents-de-code|Agents de code]] — utiliser et intégrer les agents de code
 - [[00-moc-ai-engineering|MOC AI Engineering]]

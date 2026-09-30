@@ -128,4 +128,6 @@ Mise en situation : on te propose de passer de 2 GPU à 4 GPU en tensor parallel
 - [[136-mixture-of-experts|Mixture of Experts]] — expert parallelism
 - [[54-entrainement-distribue|Entraînement distribué]] — les mêmes parallélismes à l'entraînement
 - [[69-roofline-prefill-decode|Roofline & désagrégation]] — pourquoi chaque phase a son goulot
+- [[121-couts-inference|Coûts d'inférence]] — structure du coût et unit economics
+- [[148-pipelines-batch-llm|Pipelines batch]] — traiter des millions d'items à moindre coût
 - [[00-moc-ai-engineering|MOC AI Engineering]]

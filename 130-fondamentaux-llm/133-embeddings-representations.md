@@ -116,4 +116,8 @@ Mise en situation : ton corpus de 20 millions de chunks coûte cher en stockage 
 - [[131-transformer-architecture|Architecture Transformer]] — encodeurs et décodeurs
 - [[96-evals-rag-agents|Evals de RAG]] — mesurer le rappel
 - [[123-caching-agressif|Caching agressif]] — cache d'embeddings
+- [[161-modeles-vision-langage|Modèles vision-langage]] — images et écrans en entrée
+- [[162-document-parsing|Parsing de documents]] — transformer PDF et scans en texte structuré
+- [[25-chunking-contextual-retrieval|Chunking avancé]] — rendre chaque chunk trouvable
+- [[68-quantization|Quantization]] — réduire la précision pour gagner mémoire et vitesse
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -144,4 +144,14 @@ Mise en situation : ton équipe teste un agent de correction de bugs. Il réussi
 - [[51-fine-tuning-adaptation|Fine-tuning]] — des entraînements reproductibles
 - [[94-evals-methodologie|Méthodologie d'évaluation]] — taille des jeux
 - [[95-llm-as-judge|LLM-as-a-judge]] — corriger un juge imparfait
+- [[11-serveurs-inference-llm|Serveurs d'inférence]] — vLLM, SGLang, TensorRT-LLM et leur réglage
+- [[153-data-flywheel-versioning|Data flywheel & versioning]] — boucler sur les échecs, versionner les données
+- [[54-entrainement-distribue|Entraînement distribué]] — mémoire et parallélismes d'entraînement
+- [[67-speculative-decoding|Speculative decoding]] — générer plusieurs tokens par passage
+- [[68-quantization|Quantization]] — réduire la précision pour gagner mémoire et vitesse
+- [[96-evals-rag-agents|Évaluation des RAG & des agents]] — retrieval, trajectoires et pass^k
+- [[97-evals-online-ab-testing|Evals online & A/B testing]] — mesurer en production
+- [[98-debogage-agents|Débogage des agents]] — trouver la cause d'un échec dans une trace
+- [[165-computer-use-agents-navigateur|Computer use & agents navigateur]] — agents qui utilisent des interfaces
+- [[55-rl-agentique|RL agentique]] — entraîner un modèle sur des tâches d'agent
 - [[00-moc-ai-engineering|MOC AI Engineering]]

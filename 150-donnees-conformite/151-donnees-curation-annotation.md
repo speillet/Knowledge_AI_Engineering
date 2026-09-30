@@ -113,4 +113,5 @@ Mise en situation : tu disposes de 40 heures d'expert métier pour annoter. Comm
 - [[153-data-flywheel-versioning|Data flywheel & versioning]] — faire vivre les données
 - [[51-fine-tuning-adaptation|Fine-tuning]] — l'usage d'entraînement
 - [[95-llm-as-judge|LLM-as-a-judge]] — labels automatiques à valider
+- [[156-ia-responsable|IA responsable]] — biais, équité et transparence
 - [[00-moc-ai-engineering|MOC AI Engineering]]

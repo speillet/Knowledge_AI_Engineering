@@ -147,4 +147,5 @@ Mise en situation : un générateur de descriptions produit a 20 % de rejets par
 - [[82-routing-llm|Routing LLM]] — le routing côté modèles
 - [[95-llm-as-judge|LLM-as-a-judge]] — l'évaluateur de la boucle
 - [[98-debogage-agents|Débogage des agents]] — savoir quelle étape échoue
+- [[49-agents-de-code|Agents de code]] — utiliser et intégrer les agents de code
 - [[00-moc-ai-engineering|MOC AI Engineering]]

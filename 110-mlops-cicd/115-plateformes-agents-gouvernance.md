@@ -332,4 +332,9 @@ Mise en situation : le fournisseur de ta plateforme d'agents annonce l'arrêt d'
 - [[105-devsecops-ia-agentique|DevSecOps pour l'IA agentique]] — détection et réponse aux incidents
 - [[155-ai-act|AI Act]] — classification des risques et calendrier
 - [[85-carte-protocoles-agentiques|Carte des protocoles]] — les standards ouverts d'une plateforme
+- [[147-leadership-technique-ia|Leadership technique]] — standards d'équipe et décisions
+- [[35-context-engineering|Context engineering]] — ce que l'agent a sous les yeux à chaque tour
+- [[44-langgraph-fondamentaux|LangGraph]] — graphes d'états pour agents et workflows
+- [[84-streaming-integration-applicative|Streaming & intégration]] — SSE, annulation et tâches longues
+- [[95-llm-as-judge|LLM-as-a-judge]] — noter automatiquement, et valider le juge
 - [[00-moc-ai-engineering|MOC AI Engineering]]

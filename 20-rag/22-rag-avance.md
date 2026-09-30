@@ -148,4 +148,10 @@ Mise en situation : après un changement de modèle d'embedding, la qualité du 
 - [[96-evals-rag-agents|Evals de RAG]] — mesurer chaque étage
 - [[25-chunking-contextual-retrieval|Chunking avancé & contextual retrieval]] — agir sur ce qu'on indexe
 - [[27-agents-recherche-deep-research|Agents de recherche]] — quand une recherche ne suffit plus
+- [[113-monitoring-drift-feedback|Monitoring & drift]] — qualité en production et boucle de feedback
+- [[145-cas-system-design|Cas de system design]] — des architectures types commentées
+- [[24-cognee|Cognee]] — une mémoire d'agent en knowledge graph
+- [[131-transformer-architecture|Architecture Transformer]] — le fonctionnement interne du modèle
+- [[141-system-design-llm|System design LLM]] — la méthode de conception
+- [[69-roofline-prefill-decode|Roofline & désagrégation]] — ce qui limite chaque phase de l'inférence
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -240,4 +240,11 @@ Mise en situation : ta direction veut « une plateforme d'agents » en trois moi
 - [[81-litellm-api-layer|LiteLLM]] — la gateway LLM
 - [[83-gateway-ingress|Ingress]] — l'entrée réseau
 - [[104-securite-mcp-skills|Sécurité de MCP & des skills]] — pourquoi une gateway et un registre d'outils
+- [[103-defenses-agents|Défenses des agents]] — isolation, politiques et moindre privilège
+- [[122-finops-llm|FinOps LLM]] — attribuer et piloter les dépenses IA
+- [[165-computer-use-agents-navigateur|Computer use & agents navigateur]] — agents qui utilisent des interfaces
+- [[44-langgraph-fondamentaux|LangGraph]] — graphes d'états pour agents et workflows
+- [[49-agents-de-code|Agents de code]] — utiliser et intégrer les agents de code
+- [[85-carte-protocoles-agentiques|Carte des protocoles]] — quel protocole à quelle frontière de l'agent
+- [[95-llm-as-judge|LLM-as-a-judge]] — noter automatiquement, et valider le juge
 - [[00-moc-ai-engineering|MOC AI Engineering]]

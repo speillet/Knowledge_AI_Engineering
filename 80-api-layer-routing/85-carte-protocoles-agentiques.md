@@ -147,4 +147,8 @@ Mise en situation : trois équipes ont chacune construit des agents avec des fra
 - [[93-monitoring-inference|Monitoring]] — conventions OpenTelemetry GenAI
 - [[104-securite-mcp-skills|Sécurité de MCP & des skills]] — chaque protocole est une frontière de confiance
 - [[115-plateformes-agents-gouvernance|Plateformes d'agents — gouvernance]] — standards ouverts contre verrouillage
+- [[11-serveurs-inference-llm|Serveurs d'inférence]] — vLLM, SGLang, TensorRT-LLM et leur réglage
+- [[123-caching-agressif|Caching]] — prompt caching et caches de réponses
+- [[103-defenses-agents|Défenses des agents]] — isolation, politiques et moindre privilège
+- [[37-frameworks-agents|Frameworks d'agents]] — panorama des frameworks
 - [[00-moc-ai-engineering|MOC AI Engineering]]

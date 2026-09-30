@@ -116,4 +116,6 @@ Mise en situation : tu veux transformer les échecs de production en améliorati
 - [[115-plateformes-agents-gouvernance|Plateformes d'agents — Architecture & gouvernance]] — SLO et métriques d'un agent
 - [[153-data-flywheel-versioning|Data flywheel]] — boucler sur les échecs
 - [[97-evals-online-ab-testing|Evals online]] — signaux de production
+- [[111-mlops-llmops-fondamentaux|MLOps & LLMOps]] — cycle de vie et versioning des systèmes LLM
+- [[114-reproductibilite-variance|Reproductibilité & variance]] — non-déterminisme et statistiques d'evals
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -125,4 +125,11 @@ Mise en situation : tu veux garantir qu'aucun agent de ton équipe ne puisse lan
 - [[38-plateformes-agents|Plateformes d'agents]] — harness à l'échelle d'une organisation
 - [[106-securite-agents-code|Sécurité des agents de code]] — modes de permission et isolation des agents de code
 - [[49-agents-de-code|Agents de code]] — l'usage quotidien d'un harness de code
+- [[103-defenses-agents|Défenses des agents]] — isolation, politiques et moindre privilège
+- [[104-securite-mcp-skills|Sécurité de MCP & des skills]] — outils et skills comme chaîne d'approvisionnement
+- [[24-cognee|Cognee]] — une mémoire d'agent en knowledge graph
+- [[36-orchestration-agents|Orchestration multi-agents]] — sous-agents, handoffs et A2A
+- [[39-memoire-agents|Mémoire des agents]] — ce que l'agent retient d'une session à l'autre
+- [[43-langchain-agents|LangChain — Agents]] — agents et middleware LangChain
+- [[44-langgraph-fondamentaux|LangGraph]] — graphes d'états pour agents et workflows
 - [[00-moc-ai-engineering|MOC AI Engineering]]

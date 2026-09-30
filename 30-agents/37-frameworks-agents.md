@@ -110,4 +110,5 @@ Mise en situation : ton équipe hésite entre CrewAI et LangGraph pour un proces
 - [[38-plateformes-agents|Plateformes d'agents]] — où les déployer
 - [[42-langchain-fondamentaux|LangChain]], [[44-langgraph-fondamentaux|LangGraph]], [[46-crewai-crews|CrewAI]] — les fiches détaillées
 - [[32-tool-calling|Tool calling]] — la boucle d'appel sur l'API brute, souvent suffisante sans framework
+- [[85-carte-protocoles-agentiques|Carte des protocoles]] — quel protocole à quelle frontière de l'agent
 - [[00-moc-ai-engineering|MOC AI Engineering]]

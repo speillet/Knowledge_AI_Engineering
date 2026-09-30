@@ -124,4 +124,5 @@ Mise en situation : une équipe demande pourquoi ses Pods GPU restent en attente
 - [[03-containerd-runc|containerd & runc]] — le runtime derrière CRI
 - [[05-docker-kubernetes|Docker & Kubernetes]] — l'histoire de dockershim
 - [[07-synthese-containers|Synthèse conteneurs]] — de `kubectl apply` au processus
+- [[11-serveurs-inference-llm|Serveurs d'inférence]] — vLLM, SGLang, TensorRT-LLM et leur réglage
 - [[00-moc-ai-engineering|MOC AI Engineering]]

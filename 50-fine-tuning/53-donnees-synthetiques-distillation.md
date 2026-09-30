@@ -108,4 +108,6 @@ Mise en situation : pour gagner du temps, un collègue propose de générer 50 0
 - [[82-routing-llm|Routing LLM]] — servir l'élève et l'enseignant ensemble
 - [[135-pretraining-scaling-laws|Pré-entraînement]] — le mur des données
 - [[55-rl-agentique|RL agentique]] — SFT sur trajectoires réussies
+- [[12-optimisation-automatique-prompts|Optimisation automatique de prompts]] — laisser une métrique choisir la formulation
+- [[164-llm-local-edge|LLM locaux & edge]] — faire tourner un modèle en local
 - [[00-moc-ai-engineering|MOC AI Engineering]]

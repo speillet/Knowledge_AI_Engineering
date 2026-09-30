@@ -138,4 +138,11 @@ Mise en situation : ton agent doit analyser 300 pages de documentation technique
 - [[39-memoire-agents|Mémoire des agents]] — la mémoire long terme en détail
 - [[123-caching-agressif|Caching agressif]] — concevoir le contexte pour le cache
 - [[137-long-contexte|Long contexte]] — lost in the middle, longueur effective
+- [[121-couts-inference|Coûts d'inférence]] — structure du coût et unit economics
+- [[13-prompts-production|Prompts en production]] — structure, versioning et portabilité des prompts
+- [[132-tokenisation|Tokenisation]] — ce qu'est un token et ce qu'il coûte
+- [[43-langchain-agents|LangChain — Agents]] — agents et middleware LangChain
+- [[45-langgraph-production|LangGraph — Production]] — persistance, reprise et supervision humaine
+- [[49-agents-de-code|Agents de code]] — utiliser et intégrer les agents de code
+- [[115-plateformes-agents-gouvernance|Plateformes d'agents — gouvernance]] — identité, politiques, audit et coûts d'une flotte d'agents
 - [[00-moc-ai-engineering|MOC AI Engineering]]

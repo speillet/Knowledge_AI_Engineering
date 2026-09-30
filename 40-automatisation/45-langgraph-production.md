@@ -144,4 +144,6 @@ Mise en situation : ton système à quatre agents devient impossible à débogue
 - [[91-langfuse-observabilite|Langfuse]] — tracer les exécutions
 - [[39-memoire-agents|Mémoire des agents]] — types de mémoire, écriture et rappel
 - [[38-plateformes-agents|Plateformes d'agents]] — runtimes managés, double texting
+- [[115-plateformes-agents-gouvernance|Plateformes d'agents — gouvernance]] — identité, politiques, audit et coûts d'une flotte d'agents
+- [[142-fiabilite-resilience-llm|Fiabilité & résilience]] — timeouts, retries, fallbacks et dégradation
 - [[00-moc-ai-engineering|MOC AI Engineering]]

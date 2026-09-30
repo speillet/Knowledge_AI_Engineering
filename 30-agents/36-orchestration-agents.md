@@ -131,4 +131,12 @@ Mise en situation : un partenaire veut que ton agent de réservation dialogue av
 - [[27-agents-recherche-deep-research|Agents de recherche]] — le cas d'école de l'orchestrateur et des sous-agents
 - [[98-debogage-agents|Débogage des agents]] — les échecs de coordination (MAST)
 - [[85-carte-protocoles-agentiques|Carte des protocoles]] — A2A face à MCP et AG-UI
+- [[102-menaces-agents|Menaces sur les agents]] — attaques et incidents réels
+- [[145-cas-system-design|Cas de system design]] — des architectures types commentées
+- [[44-langgraph-fondamentaux|LangGraph]] — graphes d'états pour agents et workflows
+- [[47-crewai-flows|CrewAI — Flows]] — workflows pilotés par événements
+- [[49-agents-de-code|Agents de code]] — utiliser et intégrer les agents de code
+- [[137-long-contexte|Long contexte]] — limites et coût des longues fenêtres
+- [[34-harness-plugins|Harness & plugins]] — le programme qui exécute l'agent
+- [[43-langchain-agents|LangChain — Agents]] — agents et middleware LangChain
 - [[00-moc-ai-engineering|MOC AI Engineering]]

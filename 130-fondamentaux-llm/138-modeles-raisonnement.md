@@ -111,4 +111,5 @@ Mise en situation : un auditeur veut utiliser la chaîne de pensée affichée pa
 - [[64-metriques-slo-inference|Métriques & SLO]] — latence des réponses longues
 - [[135-pretraining-scaling-laws|Pré-entraînement & scaling laws]] — du calcul d'entraînement au calcul d'inférence
 - [[55-rl-agentique|RL agentique]] — du raisonnement à l'usage d'outils
+- [[13-prompts-production|Prompts en production]] — structure, versioning et portabilité des prompts
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -138,4 +138,9 @@ Mise en situation : ton modèle fine-tuné est excellent sur l'extraction visée
 - [[52-post-training-alignement|Post-training & alignement]] — RLHF, DPO, GRPO en détail
 - [[53-donnees-synthetiques-distillation|Données synthétiques & distillation]] — générer et distiller
 - [[54-entrainement-distribue|Entraînement distribué]] — FSDP, ZeRO, parallélismes
+- [[111-mlops-llmops-fondamentaux|MLOps & LLMOps]] — cycle de vie et versioning des systèmes LLM
+- [[114-reproductibilite-variance|Reproductibilité & variance]] — non-déterminisme et statistiques d'evals
+- [[151-donnees-curation-annotation|Curation & annotation]] — données de qualité et jeux séparés
+- [[55-rl-agentique|RL agentique]] — entraîner un modèle sur des tâches d'agent
+- [[66-prefix-caching-radix-attention|Prefix caching]] — réutiliser le calcul des préfixes communs
 - [[00-moc-ai-engineering|MOC AI Engineering]]

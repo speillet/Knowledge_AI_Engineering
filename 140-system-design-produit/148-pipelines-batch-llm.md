@@ -159,4 +159,7 @@ Mise en situation : ton pipeline de classification tourne depuis trois jours. Tu
 - [[94-evals-methodologie|Évaluation — méthodologie]] — pilote et échantillonnage
 - [[63-guided-generation|Guided generation]] — sorties valides à grande échelle
 - [[162-document-parsing|Parsing de documents]] — la première étape des pipelines documentaires
+- [[11-serveurs-inference-llm|Serveurs d'inférence]] — vLLM, SGLang, TensorRT-LLM et leur réglage
+- [[122-finops-llm|FinOps LLM]] — attribuer et piloter les dépenses IA
+- [[141-system-design-llm|System design LLM]] — la méthode de conception
 - [[00-moc-ai-engineering|MOC AI Engineering]]

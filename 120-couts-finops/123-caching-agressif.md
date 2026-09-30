@@ -164,4 +164,10 @@ Mise en situation : un cache de réponses te fait économiser 30 %, mais le supp
 - [[35-context-engineering|Context engineering]] — le préfixe stable
 - [[82-routing-llm|Routing LLM]] — cache sémantique et affinité de préfixe
 - [[81-litellm-api-layer|LiteLLM]] — cache de réponses dans la gateway
+- [[133-embeddings-representations|Embeddings]] — représenter le sens par des vecteurs
+- [[152-pii-confidentialite|PII & confidentialité]] — protéger les données personnelles
+- [[25-chunking-contextual-retrieval|Chunking avancé]] — rendre chaque chunk trouvable
+- [[61-kv-cache-attention|KV cache]] — la mémoire qui limite la concurrence
+- [[21-rag-fondamentaux|RAG — Fondamentaux]] — le pipeline de retrieval de base
+- [[85-carte-protocoles-agentiques|Carte des protocoles]] — quel protocole à quelle frontière de l'agent
 - [[00-moc-ai-engineering|MOC AI Engineering]]

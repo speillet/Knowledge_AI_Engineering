@@ -119,4 +119,6 @@ Mise en situation : un client industriel veut un assistant qui fonctionne sans I
 - [[146-choix-modeles|Choix de modèle]] — open weights vs API
 - [[121-couts-inference|Coûts d'inférence]] — break-even
 - [[53-donnees-synthetiques-distillation|Distillation]] — petits modèles spécialisés
+- [[101-securite-llm-guardrails|Sécurité LLM]] — injection, exfiltration et guardrails
+- [[61-kv-cache-attention|KV cache]] — la mémoire qui limite la concurrence
 - [[00-moc-ai-engineering|MOC AI Engineering]]

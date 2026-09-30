@@ -118,4 +118,12 @@ Mise en situation : ton fournisseur principal connaît une panne de 40 minutes e
 - [[93-monitoring-inference|Monitoring de l'inférence]] — les métriques d'usage collectées à la gateway
 - [[142-fiabilite-resilience-llm|Fiabilité & résilience]] — retries, fallbacks, circuit breakers
 - [[84-streaming-integration-applicative|Streaming & intégration]] — relayer et annuler les flux
+- [[101-securite-llm-guardrails|Sécurité LLM]] — injection, exfiltration et guardrails
+- [[123-caching-agressif|Caching]] — prompt caching et caches de réponses
+- [[141-system-design-llm|System design LLM]] — la méthode de conception
+- [[33-mcp|MCP]] — le protocole standard entre agents et outils
+- [[38-plateformes-agents|Plateformes d'agents]] — runtime, sandbox, gateway d'outils et identité
+- [[41-automatisation-code-nocode|Automatisation code & no-code]] — workflows et outils no-code
+- [[46-crewai-crews|CrewAI — Crews]] — équipes d'agents à rôles
+- [[85-carte-protocoles-agentiques|Carte des protocoles]] — quel protocole à quelle frontière de l'agent
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -100,4 +100,5 @@ Mise en situation : ton agent vocal est régulièrement interrompu par les utili
 - [[145-cas-system-design|Cas de system design]] — l'assistant vocal
 - [[144-ux-ia-human-in-the-loop|UX de l'IA]] — interruption et contrôle
 - [[154-rgpd-llm|RGPD]] — données vocales
+- [[84-streaming-integration-applicative|Streaming & intégration]] — SSE, annulation et tâches longues
 - [[00-moc-ai-engineering|MOC AI Engineering]]

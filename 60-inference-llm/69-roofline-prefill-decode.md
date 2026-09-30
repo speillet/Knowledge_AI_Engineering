@@ -150,4 +150,6 @@ Mise en situation : sur ton RAG, les réponses « bégaient » : le texte s'arr�
 - [[66-prefix-caching-radix-attention|Prefix caching]] — le routage devant un déploiement désagrégé
 - [[135-pretraining-scaling-laws|Pré-entraînement]] — MFU et loi 6ND
 - [[12-kubernetes-gpu-inference|Kubernetes GPU & inférence]] — llm-d et l'autoscaling par pool
+- [[11-serveurs-inference-llm|Serveurs d'inférence]] — vLLM, SGLang, TensorRT-LLM et leur réglage
+- [[22-rag-avance|RAG — Avancé]] — recherche hybride, reranking et filtres
 - [[00-moc-ai-engineering|MOC AI Engineering]]

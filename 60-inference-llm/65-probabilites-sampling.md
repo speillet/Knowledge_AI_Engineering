@@ -142,4 +142,6 @@ Mise en situation : ton classifieur doit envoyer les cas incertains à un humain
 - [[67-speculative-decoding|Speculative decoding]] — la règle d'acceptation qui préserve la distribution
 - [[131-transformer-architecture|Architecture Transformer]] — d'où viennent les logits
 - [[143-hallucinations-grounding|Hallucinations]] — calibration et détection
+- [[11-serveurs-inference-llm|Serveurs d'inférence]] — vLLM, SGLang, TensorRT-LLM et leur réglage
+- [[52-post-training-alignement|Post-training & alignement]] — RLHF, DPO, GRPO et RLVR
 - [[00-moc-ai-engineering|MOC AI Engineering]]

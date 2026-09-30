@@ -143,4 +143,6 @@ Mise en situation : on te demande de concevoir une extraction de données sur 20
 - [[163-voix-temps-reel|Voix temps réel]] — le cas vocal
 - [[122-finops-llm|FinOps LLM]] — maîtriser le coût à l'échelle
 - [[148-pipelines-batch-llm|Pipelines batch]] — le cas 4 en détail
+- [[101-securite-llm-guardrails|Sécurité LLM]] — injection, exfiltration et guardrails
+- [[49-agents-de-code|Agents de code]] — utiliser et intégrer les agents de code
 - [[00-moc-ai-engineering|MOC AI Engineering]]

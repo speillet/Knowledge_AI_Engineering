@@ -125,4 +125,7 @@ Mise en situation : un client unique sature ton service d'inférence en lançant
 - [[12-kubernetes-gpu-inference|Kubernetes GPU]] — les Pods derrière l'Ingress
 - [[81-litellm-api-layer|LiteLLM]] — la gateway applicative derrière l'Ingress
 - [[84-streaming-integration-applicative|Streaming & intégration]] — tampons et timeouts sur les flux SSE
+- [[11-serveurs-inference-llm|Serveurs d'inférence]] — vLLM, SGLang, TensorRT-LLM et leur réglage
+- [[112-cicd-modeles|CI/CD des modèles]] — eval gates, canary et rollback
+- [[144-ux-ia-human-in-the-loop|UX & human-in-the-loop]] — ce que voit et valide l'utilisateur
 - [[00-moc-ai-engineering|MOC AI Engineering]]

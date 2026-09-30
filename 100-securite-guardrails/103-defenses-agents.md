@@ -229,4 +229,12 @@ Mise en situation : ton agent de code tourne dans un conteneur avec les identifi
 - [[38-plateformes-agents|Plateformes d'agents]] — sandbox et gateway d'outils
 - [[34-harness-plugins|Harness & plugins]] — permissions et sandbox du harness
 - [[32-tool-calling|Tool calling]] — valider avant d'exécuter
+- [[106-securite-agents-code|Sécurité des agents de code]] — risques propres aux agents de code
+- [[144-ux-ia-human-in-the-loop|UX & human-in-the-loop]] — ce que voit et valide l'utilisateur
+- [[152-pii-confidentialite|PII & confidentialité]] — protéger les données personnelles
+- [[155-ai-act|AI Act]] — obligations selon le niveau de risque
+- [[165-computer-use-agents-navigateur|Computer use & agents navigateur]] — agents qui utilisent des interfaces
+- [[49-agents-de-code|Agents de code]] — utiliser et intégrer les agents de code
+- [[85-carte-protocoles-agentiques|Carte des protocoles]] — quel protocole à quelle frontière de l'agent
+- [[33-mcp|MCP]] — le protocole standard entre agents et outils
 - [[00-moc-ai-engineering|MOC AI Engineering]]

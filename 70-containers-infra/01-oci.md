@@ -91,5 +91,6 @@ Mise en situation : un audit demande de prouver que vos conteneurs de production
 - [[03-containerd-runc|containerd & runc]] — runc applique l'OCI Runtime Spec
 - [[08-linux-primitives-docker-fondamentaux|Primitives Linux]] — ce que le runtime configure (namespaces, cgroups)
 - [[07-synthese-containers|Synthèse conteneurs]] — les chaînes à savoir reconstruire
+- [[04-kubernetes-kubelet-cri|Kubernetes, kubelet & CRI]] — l'orchestration et son interface avec le runtime
 - [[00-index|Index Conteneurs]]
 - [[00-moc-ai-engineering|MOC AI Engineering]]
