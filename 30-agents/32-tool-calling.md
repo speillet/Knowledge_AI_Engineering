@@ -9,7 +9,9 @@ Le mécanisme par lequel un LLM **émet un appel structuré** (nom d'outil + arg
 
 Le modèle exécute-t-il lui-même les outils ?
 ?
-**Non.** Le modèle ne fait que **générer l'intention d'appel** ; c'est l'application (le harnais) qui exécute et renvoie le résultat.
+**Non.** Le modèle ne fait que **générer l'intention d'appel** (nom et arguments) ; c'est l'application, le harnais, qui exécute et renvoie le résultat.
+
+Conséquence essentielle : c'est **dans l'application** qu'on contrôle ce qui s'exécute vraiment. Validation des arguments, permissions, approbation humaine et journalisation se placent entre l'intention du modèle et l'exécution ([[34-harness-plugins|harness]]).
 
 ---
 
@@ -62,19 +64,31 @@ Autrement dit : MCP **fournit** le catalogue, le tool calling **s'en sert**. On 
 
 Que faire quand un outil échoue ?
 ?
-**Renvoyer l'erreur au modèle** comme résultat : il peut corriger ses arguments, réessayer ou changer d'approche.
+**Renvoyer l'erreur au modèle** comme résultat d'outil, plutôt que de lever une exception : il peut corriger ses arguments, réessayer ou changer d'approche. Le message doit être **actionnable** :
+```text
+Erreur : commande_id "12345" invalide. Format attendu : CMD-000000
+(6 chiffres). Utilise d'abord rechercher_commandes(email) si tu ne
+connais pas l'identifiant.
+```
+Une trace brute (stack trace de 80 lignes) consomme du contexte et n'aide pas le modèle. Limiter aussi le nombre de tentatives par outil.
 
 ---
 
 Pourquoi la description des outils est-elle critique ?
 ?
-C'est du **prompt engineering** : le modèle choisit ses outils d'après leurs descriptions — noms clairs, paramètres documentés, cas d'usage explicites.
+C'est du **prompt engineering** : le modèle choisit l'outil et remplit les arguments d'après le **nom**, la **description** et le **schéma**, rien d'autre.
+- Mauvais : `search(q)` — « Recherche. »
+- Bon : `rechercher_commandes(email_client)` — « Liste les commandes d'un client, les plus récentes d'abord. À utiliser avant tout remboursement. Ne donne pas le statut de livraison : utiliser suivi_colis. »
+
+Dire **quand l'utiliser**, **quand ne pas l'utiliser** et à quoi ressemble le résultat réduit les erreurs de choix d'outil.
 
 ---
 
 Sur quoi repose la fiabilité syntaxique des arguments ?
 ?
-Sur la **[[63-guided-generation|guided generation]]** : les arguments sont contraints par le JSON Schema de l'outil.
+Sur la **[[63-guided-generation|guided generation]]** : en mode strict, les arguments sont **contraints** par le JSON Schema de l'outil pendant la génération, donc toujours valides syntaxiquement.
+
+La validité **sémantique** reste à vérifier par l'application : un identifiant bien formé peut ne pas exister, un montant peut dépasser la limite, une date peut être dans le passé. Valider côté serveur, et renvoyer une erreur explicite au modèle.
 
 ---
 

@@ -37,13 +37,21 @@ Stratégie habituelle : **récupérer large** pour le rappel, puis **reranker** 
 
 Qu'est-ce que le query rewriting ?
 ?
-**Reformuler ou décomposer la question** avant le retrieval : multi-query (variantes), step-back (question plus générale), décomposition en sous-questions.
+**Reformuler ou décomposer la question** avant le retrieval, car la question de l'utilisateur est rarement la meilleure requête :
+- **Multi-query** : plusieurs variantes, résultats fusionnés
+- **Step-back** : une question plus générale, pour remonter le contexte utile
+- **Décomposition** : sous-questions pour une question à plusieurs sauts
+- **Contextualisation** : réécrire « et pour l'an dernier ? » en question autonome, à partir de l'historique de conversation
+
+Coût : un appel LLM de plus avant la recherche.
 
 ---
 
 Qu'est-ce que HyDE ?
 ?
-**Hypothetical Document Embeddings** : générer une **réponse hypothétique** puis chercher les documents similaires à cette réponse plutôt qu'à la question.
+**Hypothetical Document Embeddings** : le LLM rédige une **réponse hypothétique** à la question, et on cherche les documents proches de cette réponse plutôt que de la question. Une réponse ressemble davantage aux passages recherchés qu'une question courte.
+
+Limites : un appel LLM en plus, et une réponse hypothétique **fausse** peut orienter la recherche vers de mauvais passages. Utile surtout quand questions et documents emploient des vocabulaires différents.
 
 ---
 
@@ -77,7 +85,11 @@ Quelle est la triade d'évaluation RAG ?
 
 Quels problèmes de production spécifiques au RAG ?
 ?
-**Fraîcheur de l'index** (ré-ingestion), propagation des **ACL**, coût des embeddings à l'échelle, dérive du chunking entre versions.
+- **Fraîcheur de l'index** : ré-ingestion incrémentale des documents modifiés ou supprimés
+- **Propagation des droits d'accès** : un utilisateur ne doit jamais recevoir un passage qu'il n'a pas le droit de lire
+- **Coût des embeddings** à l'échelle, et ré-indexation complète si l'on change de modèle ([[133-embeddings-representations|embeddings]])
+- **Dérive du chunking** entre versions du pipeline
+- **Qualité du parsing** des documents sources ([[162-document-parsing|parsing]])
 
 ---
 

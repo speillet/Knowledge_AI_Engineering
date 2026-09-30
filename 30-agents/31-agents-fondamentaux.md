@@ -29,10 +29,13 @@ En pratique, avec le [[32-tool-calling|tool calling]] natif, ce cycle n'a plus b
 
 De quoi est composé un agent minimal ?
 ?
-- Un **modèle**
-- Des **[[32-tool-calling|outils]]**
-- Une **boucle** de contrôle
-- Un **[[35-context-engineering|contexte]]** (instructions, historique, mémoire)
+- Un **modèle** qui décide
+- Des **[[32-tool-calling|outils]]** qui agissent
+- Une **boucle** de contrôle : tant que le modèle demande un outil, on l'exécute et on lui renvoie le résultat
+- Un **[[35-context-engineering|contexte]]** : instructions, historique, mémoire
+- Un **critère d'arrêt** : réponse finale, budget d'étapes, ou demande d'aide
+
+La boucle tient en vingt lignes de code. La difficulté est ailleurs : la qualité des outils, le tri du contexte et les conditions d'arrêt.
 
 ---
 
@@ -44,13 +47,22 @@ Quand la tâche est **prévisible** : un workflow fixe est plus fiable, moins ch
 
 Qu'est-ce que le human-in-the-loop ?
 ?
-Des **points de validation humaine** insérés dans la boucle de l'agent (actions sensibles, irréversibles ou coûteuses).
+Des **points de validation humaine** insérés dans la boucle de l'agent, là où une erreur coûterait cher. Trois formes :
+- **Approbation avant action** : paiement, envoi d'e-mail, suppression. L'agent s'arrête et attend
+- **Demande de précision** : l'agent pose une question plutôt que de deviner
+- **Revue après coup** : un humain vérifie un échantillon des actions réversibles
+
+Trop d'approbations produit de la **fatigue** et des validations à l'aveugle : on les réserve aux actions à risque ([[144-ux-ia-human-in-the-loop|UX du human-in-the-loop]]).
 
 ---
 
 Quels sont les principaux risques d'un agent ?
 ?
-**Boucles infinies, dérive d'objectif, actions destructives, coût** — d'où limites d'itérations, garde-fous et permissions.
+- **Boucles infinies** : même action répétée sans progrès. Parade : budget d'étapes et détection de répétition
+- **Dérive d'objectif** : l'agent poursuit un autre but, parfois après une injection. Parade : outils étroits, politiques hors du modèle ([[103-defenses-agents|défenses]])
+- **Actions destructives** : suppression, envoi, paiement. Parade : permissions minimales et approbation humaine
+- **Coût incontrôlé** : l'historique grossit à chaque tour. Parade : plafonds par tâche ([[121-couts-inference|coûts]])
+- **Échec silencieux** : l'agent déclare avoir fini sans vérifier. Parade : vérification explicite du résultat
 
 ---
 

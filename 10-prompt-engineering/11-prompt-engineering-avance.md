@@ -24,13 +24,17 @@ Règle pratique : commencer en few-shot, passer au fine-tuning quand les exemple
 
 Qu'est-ce que le chain-of-thought ?
 ?
-Demander un **raisonnement étape par étape** avant la réponse : améliore les tâches complexes — les modèles de raisonnement récents l'internalisent.
+Demander un **raisonnement étape par étape** avant la réponse finale. Il améliore nettement les tâches à plusieurs étapes (calcul, logique, analyse), au prix de **plus de tokens de sortie**, donc de coût et de latence.
+
+Pratique : faire raisonner dans une balise dédiée (`<reflexion>`), puis extraire la réponse d'une balise `<reponse>`. Avec un modèle de raisonnement, c'est **natif** et inutile à demander ([[138-modeles-raisonnement|modèles de raisonnement]]).
 
 ---
 
 Qu'est-ce que la self-consistency ?
 ?
-Générer **plusieurs raisonnements indépendants** et retenir la réponse **majoritaire** : fiabilité accrue au prix du coût.
+Générer **plusieurs raisonnements indépendants** (température > 0, souvent 5 à 10) et retenir la réponse **majoritaire**. Les erreurs de raisonnement sont variées, les bonnes réponses convergent : le vote les fait ressortir.
+
+Limites : coût multiplié par le nombre d'échantillons, et ne marche que pour des réponses **comparables** (classe, nombre, choix), pas pour un texte libre ([[65-probabilites-sampling|sampling]]).
 
 ---
 
@@ -60,19 +64,29 @@ Instructions positives ou négatives ?
 
 Quand décomposer une tâche en plusieurs appels ?
 ?
-Quand un **méga-prompt** cumule des objectifs : des étapes séparées (extraire → transformer → vérifier) sont plus fiables et testables unitairement.
+Quand un **méga-prompt** cumule des objectifs. Signes : chaque correction casse autre chose, les consignes se contredisent, on ne sait pas quelle partie échoue.
+
+Des étapes séparées (extraire → transformer → vérifier) sont plus fiables, **testables unitairement**, et chaque étape peut utiliser le modèle adapté. Le coût : plus d'appels et de latence ([[48-patterns-workflows-agentiques|prompt chaining]]).
 
 ---
 
 Qu'est-ce que le meta-prompting ?
 ?
-Utiliser un **LLM pour générer ou améliorer des prompts** (critique, variantes), validés ensuite par [[92-chainforge-evals-prompts|evals]].
+Utiliser un **LLM pour générer ou améliorer des prompts** : critique d'un prompt existant, proposition de variantes, rédaction d'un premier jet à partir d'une description de la tâche.
+
+Utile pour démarrer ou pour repérer des ambiguïtés, mais une variante n'est retenue que si elle **mesure mieux** sur le jeu d'eval ([[92-chainforge-evals-prompts|evals]]). Pour aller plus loin, l'optimisation automatique rend cette boucle systématique ([[12-optimisation-automatique-prompts|DSPy]]).
 
 ---
 
 Pourquoi traiter les prompts comme du code ?
 ?
-Parce qu'ils **déterminent le comportement en production** : versioning, tests de régression (golden datasets), review et rollback ([[91-langfuse-observabilite|prompt management]]).
+Parce qu'ils **déterminent le comportement en production** autant que le code, et qu'un changement d'un mot peut dégrader une catégorie de cas. Donc :
+- **Versioning** et historique des changements
+- **Tests de régression** sur un golden dataset avant chaque déploiement
+- **Revue** par un pair
+- **Rollback** rapide
+
+Voir [[13-prompts-production|prompts en production]] et [[91-langfuse-observabilite|prompt management]].
 
 ---
 
