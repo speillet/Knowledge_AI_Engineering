@@ -4,7 +4,7 @@ Un vault [Obsidian](https://obsidian.md) de **fiches de révision (flashcards) e
 
 Chaque fiche traite **un concept** en 10 à 32 cartes question/réponse, une quinzaine en moyenne, et se termine par des **mises en situation** : des cas concrets à diagnostiquer, concevoir ou arbitrer. Les fiches sont reliées entre elles par des liens, pour qu'on puisse passer d'un sujet à ses voisins, et elles se révisent en **répétition espacée**.
 
-**État au 29 septembre 2026** : 102 fiches et 1 420 cartes, réparties en 16 sections, dont 219 mises en situation et 78 cartes « à ne pas confondre ».
+**État au 30 septembre 2026** : 108 fiches et 1 494 cartes, réparties en 16 sections, dont 231 mises en situation et 84 cartes « à ne pas confondre ».
 
 ---
 
