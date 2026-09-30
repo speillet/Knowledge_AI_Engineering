@@ -18,9 +18,15 @@ Certains modèles sont entraînés **nativement multimodaux** dès le pré-entra
 
 ---
 
-Combien de tokens coûte une image ?
+Calcul : combien coûte l'analyse de 10 000 captures d'écran de 1 000 × 1 000 pixels ?
 ?
-Cela dépend de la **résolution** et du modèle : de **quelques dizaines** à **plusieurs milliers** de tokens par image. Les images haute résolution sont souvent **découpées en tuiles**, chacune encodée séparément. Pour maîtriser le coût : **redimensionner** avant l'envoi, choisir le niveau de détail, recadrer sur la zone utile ([[121-couts-inference|coûts]]).
+Cela dépend du modèle : de **quelques dizaines** à **plusieurs milliers** de tokens par image, les grandes images étant **découpées en tuiles**. Repère chez Anthropic : **largeur × hauteur / 750**.
+```text
+1 000 × 1 000 / 750      ≈ 1 330 tokens par image
+× 10 000 images          ≈ 13 M tokens ≈ 40 € à 3 €/M
+réduites à 500 × 500     ≈ 330 tokens → coût divisé par 4
+```
+Pour maîtriser le coût : **redimensionner**, recadrer sur la zone utile, choisir le niveau de détail ([[121-couts-inference|coûts]]).
 
 ---
 

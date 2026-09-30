@@ -34,7 +34,10 @@ Apports : **délégation par équipe** sans annotations propriétaires, découpa
 
 À ne pas confondre : Ingress et API gateway ?
 ?
-L'**Ingress** fait du routage L7 ; une **API gateway** ajoute auth, rate limiting, quotas, transformation de requêtes.
+- **Ingress** : du **routage HTTP** (L7) vers les Services du cluster, par hôte et par chemin, avec terminaison TLS
+- **API gateway** : ajoute la **logique d'API** : authentification, rate limiting, quotas, transformation de requêtes, analytics
+
+Pour une stack LLM, on ajoute souvent une **gateway LLM** (LiteLLM) derrière, qui connaît les modèles, les tokens et les budgets ([[81-litellm-api-layer|LiteLLM]]).
 
 ---
 

@@ -3,7 +3,9 @@ Tags: #flashcards #ai-engineering #inference #kv-cache #llm
 
 Qu'est-ce que le KV cache ?
 ?
-Le **stockage en VRAM des clés (K) et valeurs (V) d'attention** déjà calculées pour les tokens précédents.
+Le **stockage en VRAM des clés (K) et valeurs (V) d'attention** déjà calculées pour les tokens précédents. À chaque nouveau token, le modèle n'a qu'à calculer K et V **pour ce token** et à relire le reste.
+
+Sans lui, chaque token généré recalculerait l'attention sur toute la séquence : le coût de génération deviendrait **quadratique**. Le prix à payer : une mémoire qui grandit avec le contexte et le nombre de requêtes.
 
 ---
 
@@ -52,19 +54,27 @@ La technique de [[11-serveurs-inference-llm|vLLM]] qui gère le KV cache en **bl
 
 Qu'est-ce que le prefix caching ?
 ?
-La **réutilisation du KV cache d'un préfixe partagé** (ex. system prompt commun) entre plusieurs requêtes, évitant de le recalculer.
+La **réutilisation du KV cache d'un préfixe partagé** entre plusieurs requêtes : system prompt commun, documents identiques, historique d'une conversation. Le prefill de ce préfixe n'est calculé **qu'une fois**, d'où un TTFT et un coût bien plus faibles pour les requêtes suivantes.
+
+Condition : le préfixe doit être **identique au token près**, donc placé en tête et stable ([[66-prefix-caching-radix-attention|prefix caching & RadixAttention]]).
 
 ---
 
 Peut-on quantizer le KV cache ?
 ?
-**Oui** (ex. FP8) : on réduit la VRAM occupée par le cache au prix d'une légère perte de précision.
+**Oui**, typiquement en **FP8** : le cache occupe **deux fois moins** de VRAM, donc on sert environ deux fois plus de requêtes ou des contextes deux fois plus longs.
+```bash
+vllm serve mon-modele --kv-cache-dtype fp8
+```
+Contrepartie : une légère perte de précision, à mesurer sur ses evals, surtout pour les contextes longs ([[68-quantization|quantization]]).
 
 ---
 
 Quel lien entre KV cache et continuous batching ?
 ?
-Le batching dynamique doit **allouer/libérer le KV cache par requête** ; une gestion efficace (PagedAttention) maximise le nombre de requêtes servies.
+Le continuous batching fait **entrer et sortir** les requêtes du batch à chaque étape. Il faut donc **allouer et libérer** le KV cache de chaque requête en continu, sans fragmenter la mémoire.
+
+C'est ce que permet **PagedAttention** : le cache est découpé en **blocs** de taille fixe, comme la mémoire virtuelle d'un système d'exploitation, ce qui maximise le nombre de requêtes servies ([[62-optimisations-inference|continuous batching]]).
 
 ---
 

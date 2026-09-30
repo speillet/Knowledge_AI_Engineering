@@ -35,9 +35,10 @@ Retenir l'ordre de grandeur : une image applicative se compte en **centaines de 
 
 À ne pas confondre : image et conteneur ?
 ?
-Une **image** est un package/template contenant l'application et son environnement.
+- **Image** : un **modèle immuable**, en couches, qui contient l'application et son environnement. Elle se stocke et se partage dans un registry
+- **Conteneur** : une **instance en cours d'exécution** d'une image, avec son propre état modifiable, ses processus et son réseau
 
-Un **conteneur** est une instance exécutée à partir de cette image.
+Une image donne autant de conteneurs qu'on veut, comme une classe donne des objets. Ce qu'un conteneur écrit disparaît avec lui, sauf dans un **volume**.
 
 ---
 

@@ -3,7 +3,9 @@ Tags: #flashcards #ai-engineering #fine-tuning #llm
 
 Qu'est-ce que le fine-tuning ?
 ?
-**Poursuivre l'entraînement d'un modèle pré-entraîné** sur des données spécifiques pour adapter son comportement, son style ou son domaine.
+**Poursuivre l'entraînement d'un modèle pré-entraîné** sur des données spécifiques, pour adapter son **comportement**, son **format** ou son **domaine**. En pratique, pour une équipe produit : du **SFT** sur quelques centaines à quelques milliers d'exemples, le plus souvent avec **LoRA**.
+
+Il sert à changer **comment** le modèle répond, bien plus qu'à lui apprendre des faits nouveaux, qui relèvent plutôt du [[21-rag-fondamentaux|RAG]].
 
 ---
 
@@ -79,13 +81,23 @@ Par la **distillation** : entraîner un **petit modèle sur les sorties d'un gra
 
 Comment servir plusieurs fine-tunings à moindre coût ?
 ?
-Par le **multi-LoRA** : le serveur ([[11-serveurs-inference-llm|vLLM]]) charge **plusieurs adapters** au-dessus d'un même modèle de base partagé.
+Par le **multi-LoRA** : le serveur charge **un seul modèle de base** et, par-dessus, **plusieurs adapters** légers (quelques dizaines à centaines de Mo chacun), choisis **requête par requête** ([[11-serveurs-inference-llm|vLLM]]).
+```bash
+vllm serve meta-llama/Llama-3.1-8B-Instruct --enable-lora \
+  --lora-modules support=./lora-support juridique=./lora-juridique
+```
+Cent clients avec chacun leur fine-tuning tiennent ainsi sur quelques GPU, au lieu de cent modèles complets.
 
 ---
 
 Quel est le principal risque du fine-tuning ?
 ?
-Le **catastrophic forgetting** et la régression sur les capacités générales → [[92-chainforge-evals-prompts|evals]] avant/après obligatoires.
+Le **catastrophic forgetting** : en s'adaptant à la tâche, le modèle **perd des capacités générales** (raisonnement, suivi d'instructions, refus appropriés, autres langues).
+
+Parades :
+- **LoRA** plutôt que full fine-tuning, et un taux d'apprentissage modéré
+- **Mélanger** des données générales aux données de la tâche
+- **Evals avant/après** sur la tâche **et** sur les capacités générales ([[92-chainforge-evals-prompts|evals]])
 
 ---
 

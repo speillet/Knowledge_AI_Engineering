@@ -80,9 +80,16 @@ Quels sujets d'exploitation une base vectorielle pose-t-elle ?
 
 ---
 
-Comment dimensionner la mémoire d'un index HNSW ?
+Calcul : quelle mémoire pour un index HNSW de 10 millions de vecteurs ?
 ?
-Ordre de grandeur : **N × (d × octets par dimension + M × 2 × 4 octets)**. Exemple : 10 M vecteurs de 768 dimensions en float32 ≈ **31 Go** de vecteurs, plus quelques Go de graphe. La quantization int8 divise la part vecteurs par **4**.
+Ordre de grandeur : **N × (d × octets par dimension + M × 2 × 4 octets)**.
+```text
+vecteurs : 10 M × 768 dim × 4 octets (float32) ≈ 31 Go
+graphe   : 10 M × 16 voisins × 2 × 4 octets    ≈ 1,3 Go
+int8     : part vecteurs ÷ 4                   ≈ 8 Go
+binaire  : part vecteurs ÷ 32                  ≈ 1 Go (+ reranking)
+```
+HNSW veut tout en **RAM** : au-delà, on quantize, ou on passe à un index sur disque comme DiskANN.
 
 ---
 

@@ -74,7 +74,11 @@ L'[[83-gateway-ingress|Ingress]] gère le réseau ; LiteLLM gère la **logique p
 
 Quelles alternatives à LiteLLM ?
 ?
-**Portkey**, **Kong AI Gateway**, **Envoy AI Gateway** (auto-hébergés ou managés), ou un service SaaS comme **OpenRouter** pour l'accès multi-fournisseurs.
+- **Gateways auto-hébergées** : Portkey, Kong AI Gateway, Envoy AI Gateway, agentgateway (qui gère aussi MCP et A2A)
+- **Services managés des clouds** : gateways IA intégrées aux offres AWS, Azure et Google
+- **Agrégateurs SaaS** : OpenRouter, pour l'accès multi-fournisseurs sans infrastructure
+
+Critères : fournisseurs couverts, budgets et virtual keys, observabilité, latence ajoutée, et possibilité d'auto-héberger si les données ne doivent pas sortir.
 
 ---
 

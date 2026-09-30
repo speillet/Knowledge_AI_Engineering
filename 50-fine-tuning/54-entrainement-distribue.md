@@ -10,9 +10,16 @@ Que faut-il stocker en mémoire GPU pendant l'entraînement ?
 
 ---
 
-Combien de mémoire pour un fine-tuning complet avec Adam ?
+Calcul : combien de mémoire pour un fine-tuning complet d'un modèle 7B avec Adam ?
 ?
-En précision mixte, environ **16 octets par paramètre** avant activations (2 poids BF16 + 2 gradients + 12 pour la copie FP32 et les deux moments). Un modèle de **7 B** demande donc ~**112 Go** → plusieurs GPU, alors qu'il tient sur un seul GPU pour l'inférence. D'où l'intérêt de [[51-fine-tuning-adaptation|LoRA / QLoRA]].
+En précision mixte, environ **16 octets par paramètre** avant activations :
+```text
+poids BF16                         2 octets
+gradients BF16                     2 octets
+copie FP32 + deux moments d'Adam  12 octets
+total ≈ 16 octets × 7e9          ≈ 112 Go (+ activations)
+```
+Plusieurs GPU sont donc nécessaires, alors que le même modèle tient sur un seul GPU pour l'inférence (≈ 14 Go). D'où l'intérêt de [[51-fine-tuning-adaptation|LoRA / QLoRA]] ou du sharding ZeRO/FSDP.
 
 ---
 

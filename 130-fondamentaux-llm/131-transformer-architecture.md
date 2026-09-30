@@ -72,9 +72,15 @@ Le calcul des scores est **quadratique** en longueur de séquence (n² paires) p
 
 ---
 
-Comment estimer la mémoire nécessaire pour les poids ?
+Calcul : quelle mémoire pour les poids d'un modèle 70B ?
 ?
-**Nombre de paramètres × octets par paramètre** : un modèle de 70 B en BF16 (2 octets) ≈ **140 Go** ; en INT4 ≈ **35 Go** ([[68-quantization|quantization]]). Il faut ajouter le **KV cache** et les activations, souvent plusieurs dizaines de Go de plus en serving.
+**Nombre de paramètres × octets par paramètre** :
+```text
+70B en BF16 (2 octets)   ≈ 140 Go → deux H100 80 Go au minimum
+70B en FP8  (1 octet)    ≈  70 Go
+70B en INT4 (~0,5 octet) ≈  35-40 Go
+```
+Il faut ajouter le **KV cache** et les activations, souvent plusieurs dizaines de Go de plus en serving ([[68-quantization|quantization]], [[61-kv-cache-attention|KV cache]]).
 
 ---
 

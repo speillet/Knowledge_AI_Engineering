@@ -1,9 +1,16 @@
 # Images & poids de modèles — Flashcards
 Tags: #flashcards #conteneurs #modeles #stockage #infra
 
-Combien pèsent les poids d'un LLM ?
+Calcul : combien de temps pour charger les poids d'un 70B au démarrage d'un pod ?
 ?
-Environ **nombre de paramètres × octets par paramètre** : un modèle de 8B en BF16 (2 octets) ≈ **16 Go**, un 70B ≈ **140 Go** (≈ 35-40 Go en INT4).
+Les poids pèsent **paramètres × octets par paramètre** : ≈ **140 Go** pour un 70B en BF16 ([[131-transformer-architecture|mémoire des poids]]).
+```text
+140 Go × 8 = 1 120 Gbit
+réseau à  1 Gbit/s  → ≈ 19 min
+réseau à 10 Gbit/s  → ≈  2 min
+cache local NVMe    → quelques dizaines de secondes
+```
+D'où les poids **hors de l'image**, sur un volume partagé ou mis en cache sur le nœud, pour éviter un démarrage à froid de plusieurs minutes à chaque mise à l'échelle.
 
 ---
 
