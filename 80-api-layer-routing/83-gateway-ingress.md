@@ -121,4 +121,5 @@ Mise en situation : un client unique sature ton service d'inférence en lançant
 - [[64-metriques-slo-inference|Métriques & SLO]] — rate limiting et timeouts pilotés par le SLO
 - [[12-kubernetes-gpu-inference|Kubernetes GPU]] — les Pods derrière l'Ingress
 - [[81-litellm-api-layer|LiteLLM]] — la gateway applicative derrière l'Ingress
+- [[84-streaming-integration-applicative|Streaming & intégration]] — tampons et timeouts sur les flux SSE
 - [[00-moc-ai-engineering|MOC AI Engineering]]

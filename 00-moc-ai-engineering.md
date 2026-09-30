@@ -86,6 +86,7 @@ Progression recommandée : **comprendre les modèles → les utiliser → constr
 - [[81-litellm-api-layer|LiteLLM (API layer)]]
 - [[82-routing-llm|Routing LLM]]
 - [[83-gateway-ingress|Ingress & API gateway]]
+- [[84-streaming-integration-applicative|Streaming & intégration applicative (SSE, annulation, tâches longues)]]
 
 ## 90 — Observabilité & Evals
 - [[91-langfuse-observabilite|Langfuse & observabilité LLM]]

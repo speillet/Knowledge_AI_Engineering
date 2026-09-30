@@ -113,4 +113,5 @@ Mise en situation : ton fournisseur principal connaît une panne de 40 minutes e
 - [[122-finops-llm|FinOps LLM]] — budgets et attribution des coûts
 - [[93-monitoring-inference|Monitoring de l'inférence]] — les métriques d'usage collectées à la gateway
 - [[142-fiabilite-resilience-llm|Fiabilité & résilience]] — retries, fallbacks, circuit breakers
+- [[84-streaming-integration-applicative|Streaming & intégration]] — relayer et annuler les flux
 - [[00-moc-ai-engineering|MOC AI Engineering]]

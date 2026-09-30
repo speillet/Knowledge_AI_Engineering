@@ -146,4 +146,5 @@ Mise en situation : ton équipe veut « tester la résilience » avant une mise 
 - [[45-langgraph-production|LangGraph production]] — durable execution
 - [[64-metriques-slo-inference|Métriques & SLO]] — définir les objectifs
 - [[93-monitoring-inference|Monitoring de l'inférence]] — détecter les défaillances
+- [[84-streaming-integration-applicative|Streaming & intégration]] — idempotence et tâches longues
 - [[00-moc-ai-engineering|MOC AI Engineering]]

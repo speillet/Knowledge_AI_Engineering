@@ -266,6 +266,7 @@ Automatiser des processus, soit avec des outils de workflow, soit avec des agent
 - [LiteLLM (API layer)](80-api-layer-routing/81-litellm-api-layer.md) : SDK ou proxy, virtual keys, budgets, rate limits, fallbacks, load balancing, callbacks d'observabilité.
 - [Routing LLM](80-api-layer-routing/82-routing-llm.md) : routage statique, par règles ou sémantique, RouteLLM, cascade, routage selon la charge, cache sémantique.
 - [Ingress & API gateway](80-api-layer-routing/83-gateway-ingress.md) : Ingress controller, TLS, Gateway API, rate limiting, streaming SSE.
+- [Streaming & intégration applicative](80-api-layer-routing/84-streaming-integration-applicative.md) : intérêt du streaming, SSE ou WebSocket, tampons des proxys, annulation côté serveur, JSON en streaming, événements d'un agent (AG-UI), tâches longues asynchrones, reprise d'un flux, clé d'idempotence, calcul des connexions ouvertes.
 
 ### 90 — Observabilité & evals
 

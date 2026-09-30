@@ -182,4 +182,5 @@ Mise en situation : ton directeur technique te demande pourquoi tu as choisi le 
 - [[21-rag-fondamentaux|RAG]] — le composant de connaissances
 - [[81-litellm-api-layer|LiteLLM]] et [[82-routing-llm|routing]] — la gateway
 - [[121-couts-inference|Coûts d'inférence]] — chiffrer le design
+- [[84-streaming-integration-applicative|Streaming & intégration]] — synchrone, streaming ou asynchrone
 - [[00-moc-ai-engineering|MOC AI Engineering]]
