@@ -124,4 +124,5 @@ Mise en situation : tu veux garantir qu'aucun agent de ton équipe ne puisse lan
 - [[101-securite-llm-guardrails|Sécurité LLM]] — permissions et sandbox
 - [[38-plateformes-agents|Plateformes d'agents]] — harness à l'échelle d'une organisation
 - [[106-securite-agents-code|Sécurité des agents de code]] — modes de permission et isolation des agents de code
+- [[49-agents-de-code|Agents de code]] — l'usage quotidien d'un harness de code
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -126,4 +126,5 @@ Mise en situation : ton équipe veut passer des impressions (« ça marche plut�
 - [[94-evals-methodologie|Méthodologie d'évaluation]] — golden dataset, analyse d'erreurs
 - [[95-llm-as-judge|LLM-as-a-judge]] — biais et validation du juge
 - [[13-prompts-production|Prompts en production]] — registre, étiquettes et retour arrière
+- [[98-debogage-agents|Débogage des agents]] — lire les traces avec méthode
 - [[00-moc-ai-engineering|MOC AI Engineering]]

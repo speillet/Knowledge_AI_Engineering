@@ -153,4 +153,5 @@ Mise en situation : un développeur senior veut lancer son agent de code avec `-
 - [[104-securite-mcp-skills|Sécurité de MCP & des skills]] — serveurs et skills sur les postes
 - [[105-devsecops-ia-agentique|DevSecOps pour l'IA agentique]] — contrôles en CI
 - [[112-cicd-modeles|CI/CD des modèles]] — le pipeline
+- [[49-agents-de-code|Agents de code : usage]] — les bonnes pratiques côté productivité
 - [[00-moc-ai-engineering|MOC AI Engineering]]

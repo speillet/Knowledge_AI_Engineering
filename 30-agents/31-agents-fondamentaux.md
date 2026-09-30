@@ -106,4 +106,5 @@ Mise en situation : ton agent d'analyse tourne parfois 40 étapes, coûte cher e
 - [[96-evals-rag-agents|Evals d'agents]] — trajectoire, état final, pass^k
 - [[141-system-design-llm|System design LLM]] — workflow ou agent
 - [[165-computer-use-agents-navigateur|Computer use & agents navigateur]] — quand l'outil est une interface graphique
+- [[48-patterns-workflows-agentiques|Patterns de workflows]] — composer avant de rendre autonome
 - [[00-moc-ai-engineering|MOC AI Engineering]]

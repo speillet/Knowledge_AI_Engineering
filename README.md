@@ -197,6 +197,7 @@ Trois sujets traversent toute la stack : l'**observabilité** (traces, métrique
 - [Cognee](20-rag/24-cognee.md) : mémoire d'agent en knowledge graph, opérations remember, recall, improve et forget, mémoire permanente ou de session, stratégies de recherche, ontologie OWL, intégrations (plugin, MCP), limites.
 - [Chunking avancé & contextual retrieval](20-rag/25-chunking-contextual-retrieval.md) : chunks sans contexte, contextual retrieval (gain, coût, prompt caching), late chunking, taille des chunks, small-to-big, chunking sémantique et par propositions, fil d'Ariane et métadonnées, comparaison de stratégies au recall@k.
 - [Text-to-SQL & données structurées](20-rag/26-text-to-sql.md) : text-to-SQL ou RAG, contenu du prompt, schema linking, couche sémantique, sécurisation de l'exécution, boucle de correction, exact match ou execution accuracy, benchmarks (Spider, BIRD, Spider 2.0), questions ambiguës.
+- [Agents de recherche (deep research)](20-rag/27-agents-recherche-deep-research.md) : RAG ou agent de recherche, boucle de recherche, sous-agents parallèles, outils de recherche, citations fiables, risques (sources, injection, biais), évaluation (couverture, BrowseComp), calcul du coût d'un rapport, quand ne pas l'utiliser.
 
 ### 30 — Agents
 
@@ -221,6 +222,8 @@ Automatiser des processus, soit avec des outils de workflow, soit avec des agent
 - [LangGraph — Production](40-automatisation/45-langgraph-production.md) : checkpointers, threads, `interrupt` et `Command(resume=...)`, time travel, Store long terme, durable execution, streaming, subgraphs, patterns multi-agents, déploiement.
 - [CrewAI — Crews](40-automatisation/46-crewai-crews.md) : agents (role, goal, backstory), tâches, process séquentiel ou hiérarchique, délégation, sorties structurées, guardrails de tâche, LLM et outils, mémoire unifiée, structure d'un projet.
 - [CrewAI — Flows](40-automatisation/47-crewai-flows.md) : `@start`, `@listen`, `@router`, état structuré, `@persist`, `@human_feedback`, mémoire, CLI, crew ou flow, Flows ou LangGraph.
+- [Patterns de workflows agentiques](40-automatisation/48-patterns-workflows-agentiques.md) : prompt chaining, routing, parallélisation (sectioning, voting), evaluator-optimizer, plan-and-execute ou ReAct, Reflexion, calcul de fiabilité d'une chaîne, workflow ou agent, implémentation sans framework.
+- [Agents de code : usage & intégration](40-automatisation/49-agents-de-code.md) : ACI (SWE-agent), boucle pilotée par les tests, `CLAUDE.md` et `AGENTS.md`, mode plan, worktrees et sous-agents, gestion du contexte, mode headless, SWE-bench et ses limites, tâches à déléguer, mesure de l'apport.
 
 ### 50 — Fine-tuning
 
@@ -273,6 +276,7 @@ Automatiser des processus, soit avec des outils de workflow, soit avec des agent
 - [LLM-as-a-judge](90-observabilite-evals/95-llm-as-judge.md) : formats pointwise et pairwise, biais (position, verbosité, auto-préférence), prompt de juge, validation contre des humains (TPR, TNR, kappa), correction du taux mesuré, choix du modèle juge, juges spécialisés, limites.
 - [Évaluation des RAG & des agents](90-observabilite-evals/96-evals-rag-agents.md) : retrieval et génération, recall@k, MRR, nDCG, triade RAG, faithfulness, jeux synthétiques, résultat final ou trajectoire, environnements d'eval (τ-bench, SWE-bench), pass^k, tool calling, multi-tours, efficacité.
 - [Evals online & A/B testing](90-observabilite-evals/97-evals-online-ab-testing.md) : signaux explicites et implicites, A/B test, guardrail metrics, shadow testing, canary ou A/B, peeking, effet de nouveauté, métriques produit, boucle online-offline, confidentialité.
+- [Débogage & analyse d'échecs des agents](90-observabilite-evals/98-debogage-agents.md) : error analysis (open et axial coding), symptôme ou cause, catégories d'échec, taxonomie MAST, détection des boucles, reproduction par rejeu, de l'échec au cas de non-régression, signaux de production, quand ne pas accuser le modèle.
 
 ### 100 — Sécurité & guardrails
 

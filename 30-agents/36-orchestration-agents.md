@@ -127,4 +127,7 @@ Mise en situation : un partenaire veut que ton agent de réservation dialogue av
 - [[46-crewai-crews|CrewAI]] — process séquentiel ou hiérarchique
 - [[115-plateformes-agents-gouvernance|Plateformes d'agents — Architecture & gouvernance]] — gouverner une flotte d'agents
 - [[103-defenses-agents|Sécurité des agents — Architecture défensive]] — sécuriser les échanges entre agents
+- [[48-patterns-workflows-agentiques|Patterns de workflows]] — chaining, routing, evaluator-optimizer
+- [[27-agents-recherche-deep-research|Agents de recherche]] — le cas d'école de l'orchestrateur et des sous-agents
+- [[98-debogage-agents|Débogage des agents]] — les échecs de coordination (MAST)
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -112,4 +112,5 @@ Mise en situation : ton processus d'onboarding client dure trois jours, avec deu
 - [[47-crewai-flows|CrewAI Flows]] — workflows événementiels qui orchestrent des crews
 - [[81-litellm-api-layer|LiteLLM]] — point d'accès aux modèles
 - [[91-langfuse-observabilite|Langfuse]] — les traces restent centralisées
+- [[48-patterns-workflows-agentiques|Patterns de workflows]] — les patterns derrière les workflows
 - [[00-moc-ai-engineering|MOC AI Engineering]]

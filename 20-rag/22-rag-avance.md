@@ -135,4 +135,5 @@ Mise en situation : après un changement de modèle d'embedding, la qualité du 
 - [[134-recherche-vectorielle-ann|Recherche vectorielle & index ANN]] — HNSW, IVF, PQ, filtrage
 - [[96-evals-rag-agents|Evals de RAG]] — mesurer chaque étage
 - [[25-chunking-contextual-retrieval|Chunking avancé & contextual retrieval]] — agir sur ce qu'on indexe
+- [[27-agents-recherche-deep-research|Agents de recherche]] — quand une recherche ne suffit plus
 - [[00-moc-ai-engineering|MOC AI Engineering]]

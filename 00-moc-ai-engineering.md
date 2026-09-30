@@ -36,6 +36,7 @@ Progression recommandée : **comprendre les modèles → les utiliser → constr
 - [[24-cognee|Cognee (mémoire en knowledge graph)]]
 - [[25-chunking-contextual-retrieval|Chunking avancé & contextual retrieval]]
 - [[26-text-to-sql|Text-to-SQL & données structurées]]
+- [[27-agents-recherche-deep-research|Agents de recherche (deep research)]]
 
 ## 30 — Agents
 - [[31-agents-fondamentaux|Fondamentaux des agents]]
@@ -48,6 +49,7 @@ Progression recommandée : **comprendre les modèles → les utiliser → constr
 - [[38-plateformes-agents|Plateformes d'agents — Fondamentaux]] (suite senior : [[115-plateformes-agents-gouvernance|architecture & gouvernance]])
 - [[39-memoire-agents|Mémoire des agents]]
 - Agents d'interface : [[165-computer-use-agents-navigateur|computer use & agents navigateur]] (section 160, la section 30 étant pleine)
+- Suites de la section 40 : [[48-patterns-workflows-agentiques|patterns de workflows agentiques]], [[49-agents-de-code|agents de code]] ; en section 20 : [[27-agents-recherche-deep-research|agents de recherche]] ; en section 90 : [[98-debogage-agents|débogage des agents]]
 
 ## 40 — Automatisation & frameworks d'agents
 - [[41-automatisation-code-nocode|Automatisation code & no-code (n8n…)]]
@@ -57,6 +59,8 @@ Progression recommandée : **comprendre les modèles → les utiliser → constr
 - [[45-langgraph-production|LangGraph — Production (persistance, HITL, multi-agents)]]
 - [[46-crewai-crews|CrewAI — Crews]]
 - [[47-crewai-flows|CrewAI — Flows]]
+- [[48-patterns-workflows-agentiques|Patterns de workflows agentiques (chaining, routing, evaluator-optimizer, plan-and-execute)]]
+- [[49-agents-de-code|Agents de code : usage & intégration]]
 
 ## 50 — Fine-tuning
 - [[51-fine-tuning-adaptation|Fine-tuning & adaptation de modèles]]
@@ -91,6 +95,7 @@ Progression recommandée : **comprendre les modèles → les utiliser → constr
 - [[95-llm-as-judge|LLM-as-a-judge (biais, validation, correction)]]
 - [[96-evals-rag-agents|Évaluation des RAG & des agents]]
 - [[97-evals-online-ab-testing|Evals online & A/B testing]]
+- [[98-debogage-agents|Débogage & analyse d'échecs des agents]]
 
 ## 100 — Sécurité & guardrails
 - [[101-securite-llm-guardrails|Sécurité LLM & guardrails]]

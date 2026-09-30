@@ -131,4 +131,6 @@ Mise en situation : tu dois évaluer un agent qui modifie des tickets et envoie 
 - [[31-agents-fondamentaux|Agents]] et [[32-tool-calling|tool calling]] — ce qu'on évalue
 - [[134-recherche-vectorielle-ann|Recherche vectorielle]] — rappel de l'index ANN
 - [[114-reproductibilite-variance|Reproductibilité & variance]] — pass@k, pass^k
+- [[98-debogage-agents|Débogage des agents]] — comprendre pourquoi une tâche échoue
+- [[27-agents-recherche-deep-research|Agents de recherche]] — évaluer couverture et citations
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -138,4 +138,5 @@ Mise en situation : ton équipe hésite entre le graphe explicite et la Function
 - [[31-agents-fondamentaux|Agents]] — le pattern ReAct
 - [[36-orchestration-agents|Orchestration multi-agents]] — les patterns à implémenter
 - [[41-automatisation-code-nocode|Automatisation]] — workflow déterministe vs agent
+- [[48-patterns-workflows-agentiques|Patterns de workflows]] — les patterns à implémenter en graphe
 - [[00-moc-ai-engineering|MOC AI Engineering]]

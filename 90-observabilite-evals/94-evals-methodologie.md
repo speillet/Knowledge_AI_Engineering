@@ -145,4 +145,5 @@ Mise en situation : ton eval principale affiche 99 % depuis trois mois, alors qu
 - [[112-cicd-modeles|CI/CD des modèles]] — les evals comme gates
 - [[151-donnees-curation-annotation|Données & annotation]] — produire des labels fiables
 - [[12-optimisation-automatique-prompts|Optimisation automatique de prompts]] — la métrique comme moteur d'optimisation
+- [[98-debogage-agents|Débogage des agents]] — l'analyse d'erreurs avant les métriques
 - [[00-moc-ai-engineering|MOC AI Engineering]]
