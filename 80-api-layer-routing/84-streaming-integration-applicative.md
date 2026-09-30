@@ -132,4 +132,5 @@ Mise en situation : un agent d'analyse met 3 à 8 minutes à produire un rapport
 - [[142-fiabilite-resilience-llm|Fiabilité & résilience]] — idempotence et retries
 - [[115-plateformes-agents-gouvernance|Plateformes d'agents]] — exécution durable des tâches longues
 - [[163-voix-temps-reel|Voix & temps réel]] — quand il faut du bidirectionnel
+- [[85-carte-protocoles-agentiques|Carte des protocoles]] — où se place AG-UI
 - [[00-moc-ai-engineering|MOC AI Engineering]]

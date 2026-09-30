@@ -118,4 +118,5 @@ Mise en situation : ton serveur MCP interne, écrit avant la spec 2026-07-28, ga
 - [[37-frameworks-agents|Frameworks d'agents]] — ADK & A2A côté interop
 - [[115-plateformes-agents-gouvernance|Plateformes d'agents — Architecture & gouvernance]] — autorisation d'entreprise et gateway d'outils
 - [[104-securite-mcp-skills|Sécurité de MCP & des skills]] — les attaques propres à MCP et les règles de la spec
+- [[85-carte-protocoles-agentiques|Carte des protocoles]] — MCP parmi A2A, AG-UI et les autres
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -130,4 +130,5 @@ Mise en situation : un partenaire veut que ton agent de réservation dialogue av
 - [[48-patterns-workflows-agentiques|Patterns de workflows]] — chaining, routing, evaluator-optimizer
 - [[27-agents-recherche-deep-research|Agents de recherche]] — le cas d'école de l'orchestrateur et des sous-agents
 - [[98-debogage-agents|Débogage des agents]] — les échecs de coordination (MAST)
+- [[85-carte-protocoles-agentiques|Carte des protocoles]] — A2A face à MCP et AG-UI
 - [[00-moc-ai-engineering|MOC AI Engineering]]

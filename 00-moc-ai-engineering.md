@@ -88,6 +88,7 @@ Progression recommandée : **comprendre les modèles → les utiliser → constr
 - [[82-routing-llm|Routing LLM]]
 - [[83-gateway-ingress|Ingress & API gateway]]
 - [[84-streaming-integration-applicative|Streaming & intégration applicative (SSE, annulation, tâches longues)]]
+- [[85-carte-protocoles-agentiques|Carte des protocoles agentiques (MCP, A2A, AG-UI, OpenTelemetry, AGENTS.md)]]
 
 ## 90 — Observabilité & Evals
 - [[91-langfuse-observabilite|Langfuse & observabilité LLM]]

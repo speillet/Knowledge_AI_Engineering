@@ -165,4 +165,5 @@ Mise en situation : la gateway MCP t'alerte. La description de l'outil `search_d
 - [[38-plateformes-agents|Plateformes d'agents]] — gateway d'outils et registre
 - [[115-plateformes-agents-gouvernance|Plateformes d'agents — Architecture & gouvernance]] — registre et cycle de vie
 - [[34-harness-plugins|Harness & plugins]] — skills et plugins
+- [[85-carte-protocoles-agentiques|Carte des protocoles]] — chaque protocole est une frontière de confiance
 - [[00-moc-ai-engineering|MOC AI Engineering]]

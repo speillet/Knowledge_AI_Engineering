@@ -331,4 +331,5 @@ Mise en situation : le fournisseur de ta plateforme d'agents annonce l'arrêt d'
 - [[103-defenses-agents|Sécurité des agents — Architecture défensive]] — les contrôles de sécurité en détail
 - [[105-devsecops-ia-agentique|DevSecOps pour l'IA agentique]] — détection et réponse aux incidents
 - [[155-ai-act|AI Act]] — classification des risques et calendrier
+- [[85-carte-protocoles-agentiques|Carte des protocoles]] — les standards ouverts d'une plateforme
 - [[00-moc-ai-engineering|MOC AI Engineering]]
