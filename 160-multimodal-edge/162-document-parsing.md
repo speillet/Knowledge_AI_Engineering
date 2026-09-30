@@ -108,4 +108,5 @@ Mise en situation : tu dois ingérer 500 000 PDF, dont beaucoup de scans, avec u
 - [[133-embeddings-representations|Embeddings]] — late interaction
 - [[145-cas-system-design|Cas de system design]] — recherche documentaire et extraction
 - [[25-chunking-contextual-retrieval|Chunking avancé]] — du document structuré aux chunks contextualisés
+- [[148-pipelines-batch-llm|Pipelines batch]] — traiter des millions de documents
 - [[00-moc-ai-engineering|MOC AI Engineering]]

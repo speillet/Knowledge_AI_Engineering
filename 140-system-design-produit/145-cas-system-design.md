@@ -142,4 +142,5 @@ Mise en situation : on te demande de concevoir une extraction de données sur 20
 - [[162-document-parsing|Parsing de documents]] — ingestion des corpus réels
 - [[163-voix-temps-reel|Voix temps réel]] — le cas vocal
 - [[122-finops-llm|FinOps LLM]] — maîtriser le coût à l'échelle
+- [[148-pipelines-batch-llm|Pipelines batch]] — le cas 4 en détail
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -138,6 +138,7 @@ Progression recommandée : **comprendre les modèles → les utiliser → constr
 - [[145-cas-system-design|Cas de system design]]
 - [[146-choix-modeles|Choisir un modèle]]
 - [[147-leadership-technique-ia|Leadership technique en AI Engineering]]
+- [[148-pipelines-batch-llm|Pipelines batch à grande échelle]]
 
 ## 150 — Données & conformité
 - [[151-donnees-curation-annotation|Données : curation & annotation]]

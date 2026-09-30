@@ -107,4 +107,5 @@ Mise en situation : un score d'eval obtenu il y a trois mois est impossible à r
 - [[151-donnees-curation-annotation|Curation & annotation]] — labelliser les échecs
 - [[111-mlops-llmops-fondamentaux|MLOps & LLMOps]] — lineage et versioning
 - [[114-reproductibilite-variance|Reproductibilité]] — rejouer une eval
+- [[148-pipelines-batch-llm|Pipelines batch]] — lignage des sorties générées
 - [[00-moc-ai-engineering|MOC AI Engineering]]
