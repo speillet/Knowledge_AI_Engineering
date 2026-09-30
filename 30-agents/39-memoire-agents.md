@@ -125,6 +125,15 @@ La mémoire long terme se justifie par un **gain mesuré**, pas par principe.
 
 ---
 
+À ne pas confondre : mémoire d'agent et RAG ?
+?
+- **RAG** : recherche dans un **corpus existant** (documentation, base de connaissances), le même pour tous les utilisateurs, alimenté par un pipeline d'ingestion
+- **Mémoire d'agent** : des informations **écrites par l'agent lui-même** au fil des interactions (préférences, faits, décisions), souvent **propres à un utilisateur**, qui évoluent et se contredisent
+
+Techniquement, la mémoire utilise souvent un retrieval ; la difficulté propre est **quoi écrire, quand mettre à jour et quoi oublier** ([[21-rag-fondamentaux|RAG]]).
+
+---
+
 ## Mises en situation
 
 Mise en situation : les utilisateurs se plaignent que ton assistant « oublie tout » d'une session à l'autre, mais aussi qu'il ressort parfois des informations périmées. Comment conçois-tu sa mémoire ?

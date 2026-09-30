@@ -111,6 +111,14 @@ Comment piloter le caching ?
 
 ---
 
+À ne pas confondre : prompt caching, cache de réponses et cache sémantique ?
+?
+- **Prompt caching** : réutilise le **calcul du préfixe** chez le fournisseur ou le serveur. La réponse est toujours **générée**, donc toujours juste
+- **Cache de réponses exact** : renvoie une réponse déjà produite pour une requête **identique**, sans appel au modèle
+- **Cache sémantique** : renvoie une réponse déjà produite pour une requête **proche** en embedding. Le plus économique, mais le seul qui peut **se tromper** de question ([[82-routing-llm|cache sémantique]])
+
+---
+
 ## Mises en situation
 
 Mise en situation : le coût de ton agent a doublé du jour au lendemain, sans hausse du trafic, et aucune erreur n'apparaît. Quelle est ta première hypothèse ?

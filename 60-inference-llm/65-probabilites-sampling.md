@@ -97,6 +97,15 @@ Le speculative decoding modifie-t-il la distribution des sorties ?
 
 ---
 
+À ne pas confondre : température et top-p ?
+?
+- **Température** : **déforme** toute la distribution. Basse, elle concentre la probabilité sur les tokens les plus probables ; haute, elle l'aplatit
+- **Top-p** : **coupe** la queue de distribution, en ne gardant que les tokens dont la probabilité cumulée atteint p (par exemple 0,9)
+
+Le premier règle l'audace, le second élimine les tokens improbables. Les fournisseurs conseillent souvent de n'en régler **qu'un seul**.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton extraction de champs à partir de contrats donne des résultats différents à chaque exécution sur le même document. Quels réglages changes-tu ?

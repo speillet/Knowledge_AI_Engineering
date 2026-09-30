@@ -68,6 +68,15 @@ Les **arguments d'un [[32-tool-calling|appel d'outil]]** sont générés sous co
 
 ---
 
+À ne pas confondre : mode JSON et structured outputs ?
+?
+- **Mode JSON** : garantit une sortie en **JSON valide**, mais pas sa **forme** : champs manquants, noms inventés, types faux restent possibles
+- **Structured outputs** (schéma strict) : la génération est **contrainte par un JSON Schema** précis, champs obligatoires et types compris
+
+Pour un traitement automatique, préférer toujours le schéma strict ; la validation **métier** reste à faire dans tous les cas.
+
+---
+
 ## Mises en situation
 
 Mise en situation : depuis que tu contrains la sortie par un JSON Schema, le JSON est toujours valide mais les réponses sont devenues moins bonnes. Que corriges-tu ?

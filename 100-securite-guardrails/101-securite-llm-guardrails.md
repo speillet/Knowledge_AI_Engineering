@@ -14,11 +14,12 @@ Un texte qui **détourne les instructions du modèle** (« ignore les consignes 
 
 ---
 
-Injection directe ou indirecte ?
+À ne pas confondre : injection directe et injection indirecte ?
 ?
-- **Directe** : l'utilisateur tape lui-même l'injection
-- **Indirecte** : elle est cachée dans un **contenu tiers** que le modèle lit — page web, document [[22-rag-avance|RAG]], e-mail, résultat d'outil ou de serveur [[33-mcp|MCP]]
-L'indirecte est la plus dangereuse pour les agents.
+- **Directe** : l'utilisateur tape lui-même l'injection dans sa requête. Il n'attaque que sa propre session, avec ses propres droits
+- **Indirecte** : elle est cachée dans un **contenu tiers** que le modèle lit : page web, document [[22-rag-avance|RAG]], e-mail, résultat d'outil ou de serveur [[33-mcp|MCP]]
+
+L'indirecte est la plus dangereuse pour les agents : l'attaquant n'a pas besoin d'accès au système, et l'agent agit avec les **droits de la victime**.
 
 ---
 

@@ -180,6 +180,15 @@ Ils contiennent souvent des **données personnelles ou confidentielles** :
 
 ---
 
+À ne pas confondre : monitoring et observabilité ?
+?
+- **Monitoring** : surveiller des **indicateurs connus à l'avance** (latence, taux d'erreur, coût) et alerter sur des seuils. Il répond à « est-ce que ça va ? »
+- **Observabilité** : pouvoir **expliquer un comportement imprévu** à partir des traces, logs et métriques détaillés. Elle répond à « pourquoi ça ne va pas ? »
+
+Pour un système LLM, le monitoring détecte une chute de qualité ; ce sont les **traces complètes** qui permettent d'en trouver la cause ([[98-debogage-agents|débogage]]).
+
+---
+
 ## Mises en situation
 
 Mise en situation : on te signale « l'assistant est lent ce matin ». Tu n'as que cette phrase. Dans quel ordre regardes-tu ?

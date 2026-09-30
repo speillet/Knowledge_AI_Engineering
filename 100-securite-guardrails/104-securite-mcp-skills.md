@@ -130,6 +130,16 @@ Les en-têtes `Mcp-Method` et `Mcp-Name` de la spec 2026-07-28 permettent d'appl
 
 ---
 
+À ne pas confondre : tool poisoning, rug pull et tool shadowing ?
+?
+- **Tool poisoning** : la description d'un outil contient des **instructions cachées** dès l'installation
+- **Rug pull** : un serveur d'abord sain **change** ses descriptions ou son code après avoir été approuvé
+- **Tool shadowing** : un serveur malveillant écrit des descriptions qui **modifient l'usage des outils d'un autre serveur** de confiance
+
+Parades communes : versions épinglées, détection des changements de description, analyse avant approbation et serveurs cloisonnés.
+
+---
+
 ## Mises en situation
 
 Mise en situation : une équipe veut brancher sur son agent de production un serveur MCP Jira trouvé sur GitHub, maintenu par un inconnu, parce qu'il a plus de fonctionnalités que le serveur officiel. Que réponds-tu ?

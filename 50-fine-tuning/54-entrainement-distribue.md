@@ -91,6 +91,15 @@ Quels problèmes d'exploitation pose un entraînement sur beaucoup de GPU ?
 
 ---
 
+À ne pas confondre : data parallelism et model parallelism ?
+?
+- **Data parallelism** (DDP, FSDP) : chaque GPU traite **des données différentes** avec une copie (ou un fragment) du modèle, et les gradients sont moyennés
+- **Model parallelism** : le **modèle lui-même** est découpé entre GPU, par couches (**pipeline**) ou à l'intérieur des couches (**tensor**)
+
+Le premier accélère l'entraînement d'un modèle qui tient déjà en mémoire ; le second devient nécessaire quand il **ne tient plus**. Les grands entraînements combinent les deux.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton modèle de 7 milliards de paramètres tourne sans problème en inférence sur un GPU de 80 Go, mais le fine-tuning complet échoue en mémoire. Explique et propose une solution.

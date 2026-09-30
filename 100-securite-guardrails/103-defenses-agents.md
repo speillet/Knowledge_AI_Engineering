@@ -174,6 +174,15 @@ Les couches 6 à 8 sont détaillées dans [[105-devsecops-ia-agentique|DevSecOps
 
 ---
 
+À ne pas confondre : guardrail de contenu et politique d'autorisation ?
+?
+- **Guardrail de contenu** : un classifieur ou un LLM qui juge si un texte est dangereux ou injecté. **Probabiliste** : il laisse passer une partie des attaques
+- **Politique d'autorisation** : une règle **déterministe** évaluée hors du modèle, avant chaque action (quel outil, quels paramètres, quelle approbation). Elle bloque à coup sûr ce qu'elle interdit
+
+Les guardrails réduisent le volume d'attaques ; seules les politiques et l'architecture **garantissent** qu'une action interdite n'aura pas lieu ([[115-plateformes-agents-gouvernance|moteur de politiques]]).
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton équipe veut un agent qui lit les e-mails des clients et déclenche lui-même les remboursements dans l'ERP. Comment le concevoir ?

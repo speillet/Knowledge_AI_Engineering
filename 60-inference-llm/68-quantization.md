@@ -205,6 +205,16 @@ vllm serve org/modele --quantization fp8 \
 
 ---
 
+À ne pas confondre : quantization des poids, des activations et du KV cache ?
+?
+- **Poids** (W4A16, W8) : réduit la **mémoire du modèle** et accélère le **decode** memory-bound
+- **Activations** (W8A8, FP8) : permet les calculs en basse précision sur les unités dédiées, et accélère aussi le **prefill** compute-bound
+- **KV cache** (FP8) : réduit la mémoire **par requête**, donc augmente la **concurrence** et la longueur de contexte servable ([[61-kv-cache-attention|KV cache]])
+
+Trois réglages indépendants, à valider séparément ([[69-roofline-prefill-decode|roofline]]).
+
+---
+
 ## Mises en situation
 
 Mise en situation : tu dois servir un modèle 70B sur des GPU A100 de 80 Go, avec un budget de deux GPU. Quelle quantization choisis-tu ?

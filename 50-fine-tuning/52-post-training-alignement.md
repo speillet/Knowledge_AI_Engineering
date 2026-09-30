@@ -82,6 +82,15 @@ Outils : TRL, OpenRLHF, verl, Unsloth, ou les API de fine-tuning par préférenc
 
 ---
 
+À ne pas confondre : reward model et vérificateur ?
+?
+- **Reward model** : un modèle **appris** sur des préférences humaines, qui estime une note. Il généralise à des tâches subjectives, mais peut être **exploité** (reward hacking)
+- **Vérificateur** : un contrôle **programmatique** (résultat mathématique, tests unitaires, schéma). Fiable et difficile à tromper, mais limité aux tâches **vérifiables**
+
+Le RLHF repose sur le premier, le RLVR sur le second ([[55-rl-agentique|RL agentique]]).
+
+---
+
 ## Mises en situation
 
 Mise en situation : tu as collecté 20 000 pouces haut/bas sur ton assistant. Comment les exploites-tu pour améliorer un petit modèle open source ?

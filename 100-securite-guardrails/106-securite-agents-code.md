@@ -121,6 +121,15 @@ Quelle politique d'entreprise pour les outils de code IA ?
 
 ---
 
+À ne pas confondre : typosquatting et slopsquatting ?
+?
+- **Typosquatting** : l'attaquant publie un paquet au nom **proche** d'un paquet populaire (`reqeusts`) et attend une **faute de frappe humaine**
+- **Slopsquatting** : l'attaquant publie un paquet au nom **inventé par un LLM**, que les agents de code recommandent de façon récurrente
+
+Le second vise les **hallucinations** des modèles plutôt que les humains. Parade commune : vérifier l'existence et la réputation d'un paquet avant de l'installer, et bloquer les paquets trop récents.
+
+---
+
 ## Mises en situation
 
 Mise en situation : un workflow GitHub Actions lance Claude Code sur chaque nouvelle issue pour proposer un correctif. Il dispose d'un `GITHUB_TOKEN` en écriture et des secrets de déploiement. Qu'est-ce qui ne va pas ?

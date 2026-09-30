@@ -201,6 +201,15 @@ Des **security champions** dans les équipes, et la formation des développeurs 
 
 ---
 
+À ne pas confondre : SBOM et AI-BOM ?
+?
+- **SBOM** : l'inventaire des **composants logiciels** d'une application (bibliothèques, versions, licences), pour savoir qui est touché par une vulnérabilité
+- **AI-BOM** : étend l'inventaire aux **composants IA** : modèles et leurs versions, jeux de données, prompts, serveurs MCP, skills, agents et leurs outils
+
+L'AI-BOM répond à la question « quels agents utilisent ce serveur MCP compromis ? » que le SBOM ne couvre pas.
+
+---
+
 ## Mises en situation
 
 Mise en situation : tu dois mettre en place la CI/CD d'un nouvel agent qui lit le CRM et envoie des e-mails aux clients. Que mets-tu dans le pipeline ?
