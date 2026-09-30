@@ -24,6 +24,17 @@ Progression recommandée : **comprendre les modèles → les utiliser → constr
 14. [[161-modeles-vision-langage|Multimodal & edge]] — images, documents, voix, local
 15. [[141-system-design-llm|System design & produit]] — tout assembler (niveau senior)
 
+### Parcours AI Engineer agentique
+Pour se concentrer sur les agents, à travers les sections :
+1. [[31-agents-fondamentaux|Agents]] puis [[48-patterns-workflows-agentiques|patterns de workflows]] — workflow ou agent
+2. [[32-tool-calling|Tool calling]], [[33-mcp|MCP]] et [[85-carte-protocoles-agentiques|carte des protocoles]] — relier l'agent au monde
+3. [[35-context-engineering|Context engineering]] et [[39-memoire-agents|mémoire]] — ce que l'agent sait à chaque tour
+4. [[36-orchestration-agents|Multi-agents]], [[27-agents-recherche-deep-research|agents de recherche]] et [[49-agents-de-code|agents de code]] — les grands cas d'usage
+5. [[96-evals-rag-agents|Évaluer]] puis [[98-debogage-agents|déboguer]] un agent
+6. [[102-menaces-agents|Menaces]] et [[103-defenses-agents|défenses]] — sécuriser
+7. [[84-streaming-integration-applicative|Intégration applicative]] et [[38-plateformes-agents|plateformes]] — mettre en production
+8. [[115-plateformes-agents-gouvernance|Gouvernance]] et [[55-rl-agentique|RL agentique]] — niveau senior
+
 ## 10 — Prompt engineering
 - [[11-prompt-engineering-avance|Prompt engineering avancé]]
 - [[12-optimisation-automatique-prompts|Optimisation automatique de prompts (DSPy)]]
