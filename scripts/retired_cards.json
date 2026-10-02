@@ -1,1 +1,42 @@
-[]
+[
+  {
+    "id": "7a7b4b5e6330535d6435",
+    "question": "Qu'est-ce que le LLM-as-judge ?",
+    "raison": "doublon de 95-llm-as-judge"
+  },
+  {
+    "id": "6c7c5d51286e41557528",
+    "question": "Qu'est-ce qu'un golden dataset ?",
+    "raison": "doublon de 94-evals-methodologie"
+  },
+  {
+    "id": "71536079417d5f583732",
+    "question": "Quelle est la triade d'évaluation RAG ?",
+    "raison": "doublon de 96-evals-rag-agents"
+  },
+  {
+    "id": "677263766d67727d6a65",
+    "question": "Qu'est-ce que le speculative decoding ?",
+    "raison": "doublon de 67-speculative-decoding"
+  },
+  {
+    "id": "415567412c67584e7621",
+    "question": "À ne pas confondre : LangGraph et LangChain ?",
+    "raison": "doublon de 37-frameworks-agents"
+  },
+  {
+    "id": "666443416c324f6f4b3a",
+    "question": "Apptainer peut-il récupérer une image Docker ?",
+    "raison": "doublon de 13-apptainer-inference-hpc"
+  },
+  {
+    "id": "6d477d606d29413d6764",
+    "question": "Mémoire court terme vs long terme ?",
+    "raison": "doublon de 39-memoire-agents"
+  },
+  {
+    "id": "4f4f3e637d4351542e2c",
+    "question": "Qu'est-ce que le format GGUF ?",
+    "raison": "doublon de 164-llm-local-edge, remplacée par la comparaison safetensors et GGUF"
+  }
+]

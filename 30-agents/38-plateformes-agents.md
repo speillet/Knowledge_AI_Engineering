@@ -3,7 +3,7 @@ Tags: #flashcards #ai-engineering #agents #platform #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 <!-- summary: différence avec un framework, briques, niveaux d'abstraction (API, runtime, harness managé), offres cloud et des fournisseurs de modèles, open source, runtime et double texting, sandbox et services de sandbox, gateway d'outils, registre, identité, agent délégué ou autonome, mémoire, observabilité, evals, protocoles (MCP, A2A), build ou buy. La suite, niveau senior, est la fiche 115 de la section 110. -->
 
-À ne pas confondre : framework et plateforme d'agents ?
+Qu'est-ce qu'une plateforme d'agents, par rapport à un framework ?
 ?
 <!--anki:66657538313d7a42737a-->
 Le **[[37-frameworks-agents|framework]]** sert à **écrire** l'agent (bibliothèque) ; la **plateforme** sert à l'**exécuter et le gouverner en production** : runtime managé, sandbox, mémoire, accès aux outils, identité, politiques d'accès, observabilité, evals. La suite senior de cette fiche : [[115-plateformes-agents-gouvernance|architecture & gouvernance]].
@@ -51,7 +51,7 @@ Donnez des exemples de plateformes d'agents cloud.
 
 ---
 
-Que proposent les fournisseurs de modèles ?
+Au-delà de leurs SDK, quelles offres d'agents proposent OpenAI et Anthropic ?
 ?
 <!--anki:4824477c257e78733d3a-->
 - **OpenAI** : **Agents SDK** pour le code, **Frontier** (février 2026) pour gérer des agents en entreprise, y compris ceux d'autres éditeurs, et les **Workspace Agents** de ChatGPT pour les non-développeurs. Le builder visuel **Agent Builder** ferme le **30 novembre 2026**
@@ -213,7 +213,7 @@ MCP, A2A et AGENTS.md sont hébergés par l'**Agentic AI Foundation** (Linux Fou
 
 ---
 
-Build ou buy ?
+Build ou buy pour une plateforme d'agents ?
 ?
 <!--anki:68367e4b62543e7d4623-->
 - **Buy** (plateforme cloud ou harness managé) : mise en production rapide, sécurité et scaling gérés, mais **lock-in** et produits qui changent vite

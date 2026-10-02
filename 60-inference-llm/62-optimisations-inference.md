@@ -1,6 +1,6 @@
 # Optimisations d'inférence — Flashcards
 Tags: #flashcards #ai-engineering #inference #optimisation #llm
-<!-- summary: prefill et decode, continuous batching, quantization (AWQ, GPTQ, FP8), speculative decoding, FlashAttention, parallélisme tensor et pipeline, chunked prefill, désagrégation prefill/decode. -->
+<!-- summary: prefill et decode, continuous batching, quantization (AWQ, GPTQ, FP8), FlashAttention, parallélisme tensor et pipeline, chunked prefill, désagrégation prefill/decode. -->
 
 Quelles sont les deux phases de l'inférence d'un LLM ?
 ?
@@ -61,13 +61,6 @@ Quelles méthodes de quantization courantes ?
 - **Weight-only** (poids seuls) : **AWQ, GPTQ** (INT4), GGUF pour llama.cpp
 - **Poids + activations** : **FP8** (H100 et plus récents), W8A8 INT8
 Le weight-only accélère surtout le **decode**, limité par la mémoire.
-
----
-
-Qu'est-ce que le speculative decoding ?
-?
-<!--anki:677263766d67727d6a65-->
-Un **petit modèle « brouillon »** (ou des têtes dédiées, ex. EAGLE) propose plusieurs tokens, que le grand modèle **vérifie en une seule passe**. La sortie suit **la même distribution** que le grand modèle seul (identique en greedy), mais plus vite ([[67-speculative-decoding|speculative decoding]]).
 
 ---
 

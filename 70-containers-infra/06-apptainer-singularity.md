@@ -1,6 +1,6 @@
 # Apptainer & Singularity — Flashcards
 Tags: #flashcards #conteneurs #apptainer #singularity #hpc
-<!-- summary: usage en HPC, filiation Singularity → Apptainer, format SIF, import d'images Docker, `--nv`. -->
+<!-- summary: usage en HPC, filiation Singularity → Apptainer, format SIF et conversion des images Docker, `--nv`. -->
 
 Dans quel environnement Apptainer est-il particulièrement utilisé ?
 ?
@@ -35,19 +35,6 @@ Une image SIF est-elle simplement une image OCI ?
 <!--anki:6e52296f4e61242e4541-->
 - **Docker** : un **démon qui tourne en root**. Appartenir au groupe `docker` équivaut, de fait, à un accès root sur la machine
 - **Apptainer** : **pas de démon**, le conteneur s'exécute **avec votre identité** et vos droits. C'est précisément pourquoi les clusters partagés l'autorisent ([[13-apptainer-inference-hpc|HPC]])
-
----
-
-Apptainer peut-il récupérer une image Docker ?
-?
-<!--anki:666443416c324f6f4b3a-->
-**Oui.**
-
-Exemple :
-
-```bash
-apptainer pull pytorch.sif docker://pytorch/pytorch:latest
-```
 
 ---
 

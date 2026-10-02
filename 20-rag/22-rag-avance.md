@@ -1,6 +1,6 @@
 # RAG — Avancé — Flashcards
 Tags: #flashcards #ai-engineering #rag #retrieval #llm
-<!-- summary: recherche hybride (BM25, RRF), reranking, query rewriting, HyDE et ses limites, filtrage par métadonnées et ACL, GraphRAG, agentic RAG, triade d'évaluation (RAGAS), « lost in the middle », problèmes de production (fraîcheur, droits, ré-indexation). -->
+<!-- summary: recherche hybride (BM25, RRF), reranking, query rewriting, HyDE et ses limites, filtrage par métadonnées et ACL, GraphRAG, agentic RAG, « lost in the middle », problèmes de production (fraîcheur, droits, ré-indexation). -->
 
 Qu'est-ce que la recherche hybride ?
 ?
@@ -79,17 +79,6 @@ Qu'est-ce que l'agentic RAG ?
 ?
 <!--anki:625d426536733d593a29-->
 L'**agent décide quand et quoi chercher** : il itère (recherche → lecture → nouvelle requête) au lieu d'un retrieval unique en amont.
-
----
-
-Quelle est la triade d'évaluation RAG ?
-?
-<!--anki:71536079417d5f583732-->
-- **Faithfulness** : la réponse est fidèle au contexte fourni
-- **Answer relevance** : elle répond à la question
-- **Context relevance** : les chunks récupérés sont pertinents
-
-(frameworks type **RAGAS**)
 
 ---
 

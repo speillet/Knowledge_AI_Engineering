@@ -1,6 +1,6 @@
 # Images & poids de modèles — Flashcards
 Tags: #flashcards #conteneurs #modeles #stockage #infra
-<!-- summary: calcul du temps de chargement des poids d'un 70B, poids dans l'image ou séparés, cold start, safetensors ou pickle, GGUF, modèles distribués comme artefacts OCI. -->
+<!-- summary: calcul du temps de chargement des poids d'un 70B, poids dans l'image ou séparés, cold start, safetensors ou pickle, safetensors ou GGUF, modèles distribués comme artefacts OCI. -->
 
 Calcul : combien de temps pour charger les poids d'un 70B au démarrage d'un pod ?
 ?
@@ -81,10 +81,13 @@ Parce qu'il ne contient **que des tenseurs** : pas de code exécuté au chargeme
 
 ---
 
-Qu'est-ce que le format GGUF ?
+À ne pas confondre : safetensors et GGUF ?
 ?
-<!--anki:4f4f3e637d4351542e2c-->
-Le format **fichier unique** de llama.cpp (et Ollama) : poids **quantizés** + métadonnées (tokenizer, architecture). Adapté à l'inférence **locale ou sur CPU**.
+<!--anki:3636316535383632616663663462353961326137313766323332643535323562-->
+- **safetensors** : le format standard des checkpoints Hugging Face, en BF16 ou déjà quantizés (FP8, AWQ, GPTQ), que chargent **vLLM, SGLang et Transformers** pour le serving GPU
+- **GGUF** : le format **fichier unique** de llama.cpp et Ollama, qui embarque poids **quantizés** (Q4_K_M, Q8_0…), tokenizer et métadonnées, pour l'inférence **locale ou sur CPU**
+
+Un même modèle est souvent publié dans les deux formats ([[164-llm-local-edge|LLM locaux]], [[68-quantization|quantization]]).
 
 ---
 

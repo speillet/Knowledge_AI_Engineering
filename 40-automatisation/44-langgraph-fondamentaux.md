@@ -10,13 +10,6 @@ Un framework **bas niveau d'orchestration et un runtime** pour des agents **long
 
 ---
 
-À ne pas confondre : LangGraph et LangChain ?
-?
-<!--anki:415567412c67584e7621-->
-**LangChain** fournit des composants et un agent haut niveau (`create_agent`) ; **LangGraph** est le **moteur d'orchestration** en dessous. On commence souvent avec [[43-langchain-agents|create_agent]] et on passe à LangGraph pour contrôler le flux.
-
----
-
 Quels sont les trois éléments d'un graphe LangGraph ?
 ?
 <!--anki:2571304a364929733c-->

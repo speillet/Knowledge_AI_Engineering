@@ -1,6 +1,6 @@
 # ChainForge & évaluation de prompts — Flashcards
 Tags: #flashcards #ai-engineering #evals #prompts #llm
-<!-- summary: comparer prompts et modèles, golden dataset, evals automatiques, tests de régression et cas qui basculent, evals comme prérequis au déploiement. -->
+<!-- summary: comparer prompts et modèles, evals automatiques, tests de régression et cas qui basculent, evals comme prérequis au déploiement. -->
 
 Qu'est-ce que ChainForge ?
 ?
@@ -18,13 +18,6 @@ Le prompt engineering « au feeling » : il permet de **tester un prompt sur N v
 
 ---
 
-Qu'est-ce qu'un golden dataset ?
-?
-<!--anki:6c7c5d51286e41557528-->
-Un **jeu d'exemples avec réponses ou critères attendus**, qui sert de référence pour comparer prompts et modèles. Il est **versionné**, **stratifié** par type de requête, et **enrichi à chaque bug** trouvé en production ([[94-evals-methodologie|construction]]).
-
----
-
 Quels ordres de grandeur pour un jeu d'évaluation ?
 ?
 <!--anki:4346514f6f3c29256635-->
@@ -35,15 +28,6 @@ Quels ordres de grandeur pour un jeu d'évaluation ?
 1 000 et plus       décision de mise en production, comparaison fine
 ```
 La règle : la taille dépend de **l'écart qu'on veut détecter**. Sur 100 exemples, un gain de 3 points ne prouve rien ([[114-reproductibilite-variance|intervalles de confiance]]).
-
----
-
-Qu'est-ce que le LLM-as-judge ?
-?
-<!--anki:7a7b4b5e6330535d6435-->
-Utiliser un **LLM pour noter les réponses** d'un autre (pertinence, style, exactitude par rapport à une référence) : c'est ce qui permet d'évaluer des milliers de réponses en texte libre.
-
-Il a des **biais** (position, longueur, auto-préférence) et doit être **validé contre des annotations humaines** avant qu'on se fie à ses scores. Détails dans [[95-llm-as-judge|LLM-as-a-judge]].
 
 ---
 

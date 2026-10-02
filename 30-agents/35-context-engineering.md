@@ -1,6 +1,6 @@
 # Context engineering — Flashcards
 Tags: #flashcards #ai-engineering #agents #context-engineering #llm
-<!-- summary: le contexte comme budget, context rot, compaction, mémoire court et long terme, sous-agents, prompt caching, contexte chargé au besoin (just-in-time). -->
+<!-- summary: le contexte comme budget, context rot, compaction, sous-agents, prompt caching, contexte chargé au besoin (just-in-time). -->
 
 Qu'est-ce que le context engineering ?
 ?
@@ -70,14 +70,6 @@ Deux effets de bord à connaître : la compaction **casse le cache de préfixe**
 - **Mémoire** : on **écrit hors du contexte** les faits durables, et on les relit à la demande. Seule solution qui survit à la session
 
 Les trois se combinent : mémoire pour ce qui doit durer, compaction pour tenir la session, troncature en dernier recours.
-
----
-
-Mémoire court terme vs long terme ?
-?
-<!--anki:6d477d606d29413d6764-->
-- **Court terme** : le contexte de la session en cours
-- **Long terme** : des faits **écrits hors du contexte** (fichiers, base) et relus à la demande — ex. un fichier de notes que l'agent met à jour
 
 ---
 
