@@ -125,6 +125,11 @@ Mise en situation : un client industriel veut un assistant qui fonctionne sans I
 
 ---
 
+## Sources
+
+- [llama.cpp — formats, quantification et inférence locale](https://github.com/ggml-org/llama.cpp)
+- [vLLM — quantification et matériels compatibles](https://docs.vllm.ai/en/latest/features/quantization/)
+
 ## Connexions
 - [[68-quantization|Quantization]] — faire tenir le modèle
 - [[11-serveurs-inference-llm|Serveurs d'inférence LLM]] — vLLM, llama.cpp, Ollama

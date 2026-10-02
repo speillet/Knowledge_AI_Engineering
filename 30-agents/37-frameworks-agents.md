@@ -116,6 +116,12 @@ Mise en situation : ton équipe hésite entre CrewAI et LangGraph pour un proces
 
 ---
 
+## Sources
+
+- [LangChain — documentation Python](https://docs.langchain.com/oss/python/langchain/overview)
+- [Google ADK — documentation du framework](https://adk.dev/)
+- [CrewAI — Crews, documentation v1.15.23](https://docs.crewai.com/v1.15.23/en/concepts/crews)
+
 ## Connexions
 - [[31-agents-fondamentaux|Agents]] — ce que les frameworks implémentent
 - [[33-mcp|MCP]] — l'accès standardisé aux outils

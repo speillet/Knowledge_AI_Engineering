@@ -122,6 +122,11 @@ Mise en situation : ton serveur MCP interne, écrit avant la spec 2026-07-28, ga
 
 ---
 
+## Sources
+
+- [MCP — spécification 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28)
+- [MCP — bonnes pratiques de sécurité, édition 2026-07-28](https://modelcontextprotocol.io/docs/2026-07-28/tutorials/security/security_best_practices)
+
 ## Connexions
 - [[32-tool-calling|Tool calling]] — le mécanisme sous-jacent
 - [[34-harness-plugins|Harness & plugins]] — le host qui intègre MCP

@@ -247,6 +247,11 @@ Mise en situation : le responsable conformité demande si vous journalisez les c
 
 ---
 
+## Sources
+
+- [vLLM — métriques de production](https://docs.vllm.ai/en/latest/usage/metrics/)
+- [OpenTelemetry — conventions sémantiques GenAI](https://github.com/open-telemetry/semantic-conventions-genai)
+
 ## Connexions
 - [[64-metriques-slo-inference|Métriques d'inférence & SLO]] — TTFT, TPOT, goodput, percentiles
 - [[91-langfuse-observabilite|Langfuse & observabilité LLM]] — les traces applicatives

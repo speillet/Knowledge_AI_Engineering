@@ -132,6 +132,11 @@ Mise en situation : pendant un test, ton agent navigateur, chargé de comparer d
 
 ---
 
+## Sources
+
+- [OSWorld — benchmark des agents sur ordinateur](https://osworld-v1.xlang.ai/)
+- [Anthropic — sécurité et permissions de Claude Code](https://code.claude.com/docs/en/security)
+
 ## Connexions
 - [[161-modeles-vision-langage|Modèles vision-langage]] — la perception des écrans
 - [[31-agents-fondamentaux|Agents]] — la boucle observation, décision, action

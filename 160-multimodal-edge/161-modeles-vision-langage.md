@@ -121,6 +121,10 @@ Mise en situation : le coût de ton service d'analyse de photos explose, bien au
 
 ---
 
+## Sources
+
+- [Radford et al. — CLIP (2021)](https://arxiv.org/abs/2103.00020)
+
 ## Connexions
 - [[162-document-parsing|Parsing de documents]] — l'usage le plus courant en entreprise
 - [[163-voix-temps-reel|Voix temps réel]] — l'autre grande modalité

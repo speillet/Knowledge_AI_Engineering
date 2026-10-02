@@ -131,6 +131,11 @@ Mise en situation : ton service multi-clients partage un même modèle, et un cl
 
 ---
 
+## Sources
+
+- [vLLM — Automatic Prefix Caching](https://docs.vllm.ai/en/latest/features/automatic_prefix_caching/)
+- [SGLang — documentation du serveur et de ses optimisations](https://docs.sglang.io/)
+
 ## Connexions
 - [[61-kv-cache-attention|KV cache & attention]] — PagedAttention et prefix caching
 - [[62-optimisations-inference|Optimisations d'inférence]] — prefill et decode

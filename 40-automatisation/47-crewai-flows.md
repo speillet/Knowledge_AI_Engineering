@@ -141,6 +141,10 @@ Mise en situation : ton Flow tourne depuis un mois, mais après chaque redéploi
 
 ---
 
+## Sources
+
+- [CrewAI — Flows, documentation v1.15.23](https://docs.crewai.com/v1.15.23/en/concepts/flows)
+
 ## Connexions
 - [[46-crewai-crews|CrewAI — Crews]] — les équipes d'agents orchestrées par le Flow
 - [[41-automatisation-code-nocode|Automatisation]] — workflow vs agent

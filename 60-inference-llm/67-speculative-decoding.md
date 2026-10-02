@@ -180,6 +180,10 @@ Mise en situation : un responsable qualité s'inquiète que le speculative decod
 
 ---
 
+## Sources
+
+- [vLLM — Speculative Decoding](https://docs.vllm.ai/en/latest/features/speculative_decoding/)
+
 ## Connexions
 - [[62-optimisations-inference|Optimisations d'inférence]] — prefill, decode et bande passante mémoire
 - [[65-probabilites-sampling|Probabilités & sampling]] — pourquoi la distribution est préservée

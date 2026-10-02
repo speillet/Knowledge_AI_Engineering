@@ -116,6 +116,11 @@ Mise en situation : ton processus d'onboarding client dure trois jours, avec deu
 
 ---
 
+## Sources
+
+- [n8n — documentation des workflows](https://docs.n8n.io/)
+- [Temporal — exécution durable](https://docs.temporal.io/)
+
 ## Connexions
 - [[31-agents-fondamentaux|Agents]] — workflow vs agent
 - [[36-orchestration-agents|Orchestration multi-agents]] — quand le workflow ne suffit plus

@@ -279,6 +279,11 @@ Mise en situation : ton fournisseur publie le même modèle en BF16, FP8 et GGUF
 
 ---
 
+## Sources
+
+- [vLLM — quantification et matériels compatibles](https://docs.vllm.ai/en/latest/features/quantization/)
+- [llama.cpp — formats, quantification et inférence locale](https://github.com/ggml-org/llama.cpp)
+
 ## Connexions
 - [[62-optimisations-inference|Optimisations d'inférence]] — prefill, decode et bande passante mémoire
 - [[61-kv-cache-attention|KV cache & attention]] — quantizer le cache

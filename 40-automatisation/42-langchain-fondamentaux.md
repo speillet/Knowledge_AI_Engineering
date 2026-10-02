@@ -133,6 +133,10 @@ Mise en situation : ton extraction de données renvoie parfois du JSON invalide,
 
 ---
 
+## Sources
+
+- [LangChain — documentation Python](https://docs.langchain.com/oss/python/langchain/overview)
+
 ## Connexions
 - [[43-langchain-agents|LangChain — Agents & middleware]] — `create_agent`
 - [[44-langgraph-fondamentaux|LangGraph]] — le runtime sous les agents LangChain

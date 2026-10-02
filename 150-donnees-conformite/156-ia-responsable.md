@@ -123,6 +123,10 @@ Mise en situation : pour éviter tout risque, la direction demande de brider for
 
 ---
 
+## Sources
+
+- [NIST — AI Risk Management Framework](https://www.nist.gov/itl/ai-risk-management-framework)
+
 ## Connexions
 - [[155-ai-act|AI Act]] — les obligations légales
 - [[154-rgpd-llm|RGPD]] — décisions automatisées

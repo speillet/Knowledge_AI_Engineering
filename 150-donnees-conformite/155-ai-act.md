@@ -139,6 +139,11 @@ Mise en situation : une équipe veut utiliser la détection d'émotions sur les 
 
 ---
 
+## Sources
+
+- [Union européenne — règlement (UE) 2024/1689, AI Act](https://eur-lex.europa.eu/eli/reg/2024/1689/oj/fra)
+- [Commission européenne — cadre réglementaire et calendrier AI Act](https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai)
+
 ## Connexions
 - [[154-rgpd-llm|RGPD appliqué aux LLM]] — le cadre de protection des données
 - [[156-ia-responsable|IA responsable]] — biais, transparence, documentation

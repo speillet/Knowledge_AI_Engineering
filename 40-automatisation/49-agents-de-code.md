@@ -142,6 +142,11 @@ Mise en situation : tu veux que l'agent de code mette à jour chaque semaine les
 
 ---
 
+## Sources
+
+- [SWE-agent — documentation du projet](https://swe-agent.com/latest/)
+- [Anthropic — sécurité et permissions de Claude Code](https://code.claude.com/docs/en/security)
+
 ## Connexions
 - [[34-harness-plugins|Harness & plugins]] — l'outil qui exécute la boucle
 - [[106-securite-agents-code|Sécurité des agents de code]] — les risques et leurs parades

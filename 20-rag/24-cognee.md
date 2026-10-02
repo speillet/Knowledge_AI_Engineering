@@ -116,6 +116,10 @@ Mise en situation : un utilisateur demande la suppression de toutes ses données
 
 ---
 
+## Sources
+
+- [Cognee — documentation du projet](https://docs.cognee.ai/)
+
 ## Connexions
 - [[23-knowledge-graphs-ontologies|Knowledge graphs & ontologies]] — les concepts sous-jacents
 - [[39-memoire-agents|Mémoire des agents]] — le problème que Cognee résout

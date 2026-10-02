@@ -173,6 +173,11 @@ Mise en situation : un cache de réponses te fait économiser 30 %, mais le supp
 
 ---
 
+## Sources
+
+- [Anthropic — fonctionnement et limites du prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching)
+- [vLLM — Automatic Prefix Caching](https://docs.vllm.ai/en/latest/features/automatic_prefix_caching/)
+
 ## Connexions
 - [[121-couts-inference|Coûts d'inférence]] — ce que le cache fait économiser
 - [[122-finops-llm|FinOps LLM]] — les caches comme levier FinOps

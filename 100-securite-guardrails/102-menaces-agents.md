@@ -196,6 +196,11 @@ Mise en situation : depuis une semaine, plusieurs utilisateurs rapportent que to
 
 ---
 
+## Sources
+
+- [OWASP — Top 10 des risques des applications LLM](https://genai.owasp.org/llm-top-10/)
+- [MITRE ATLAS — techniques d’attaque contre les systèmes IA](https://atlas.mitre.org/)
+
 ## Connexions
 - [[101-securite-llm-guardrails|Sécurité LLM & guardrails]] — injection, lethal trifecta, excessive agency
 - [[103-defenses-agents|Architecture défensive]] — les parades à ces menaces

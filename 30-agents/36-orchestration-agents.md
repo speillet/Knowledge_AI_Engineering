@@ -131,6 +131,11 @@ Mise en situation : un partenaire veut que ton agent de réservation dialogue av
 
 ---
 
+## Sources
+
+- [Anthropic — architecture du système de recherche multi-agents](https://www.anthropic.com/engineering/multi-agent-research-system)
+- [A2A — spécification du protocole](https://a2a-protocol.org/latest/specification/)
+
 ## Connexions
 - [[31-agents-fondamentaux|Agents]] — l'agent unique avant le multi-agent
 - [[35-context-engineering|Context engineering]] — isoler les contextes

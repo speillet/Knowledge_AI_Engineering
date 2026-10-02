@@ -272,6 +272,11 @@ Mise en situation : ton fournisseur annonce que le modèle utilisé par tes agen
 
 ---
 
+## Sources
+
+- [NIST — AI Risk Management Framework](https://www.nist.gov/itl/ai-risk-management-framework)
+- [MITRE ATLAS — techniques d’attaque contre les systèmes IA](https://atlas.mitre.org/)
+
 ## Connexions
 - [[102-menaces-agents|Menaces & incidents]] — ce que le threat model doit couvrir
 - [[103-defenses-agents|Architecture défensive]] — les contrôles à vérifier

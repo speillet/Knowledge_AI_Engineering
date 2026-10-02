@@ -183,6 +183,10 @@ Mise en situation : la gateway MCP t'alerte. La description de l'outil `search_d
 
 ---
 
+## Sources
+
+- [MCP — bonnes pratiques de sécurité, édition 2026-07-28](https://modelcontextprotocol.io/docs/2026-07-28/tutorials/security/security_best_practices)
+
 ## Connexions
 - [[33-mcp|MCP]] — le protocole et ses primitives
 - [[102-menaces-agents|Menaces & incidents]] — injection indirecte et supply chain

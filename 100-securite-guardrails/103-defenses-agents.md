@@ -242,6 +242,11 @@ Mise en situation : ton agent de code tourne dans un conteneur avec les identifi
 
 ---
 
+## Sources
+
+- [OWASP — Top 10 des risques des applications LLM](https://genai.owasp.org/llm-top-10/)
+- [MCP — bonnes pratiques de sécurité, édition 2026-07-28](https://modelcontextprotocol.io/docs/2026-07-28/tutorials/security/security_best_practices)
+
 ## Connexions
 - [[102-menaces-agents|Menaces & incidents]] — ce contre quoi on se défend
 - [[101-securite-llm-guardrails|Sécurité LLM & guardrails]] — lethal trifecta, guardrails

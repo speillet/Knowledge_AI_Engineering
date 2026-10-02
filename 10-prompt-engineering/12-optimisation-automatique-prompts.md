@@ -150,6 +150,10 @@ Mise en situation : ton équipe veut migrer vers un modèle deux fois moins cher
 
 ---
 
+## Sources
+
+- [DSPy — code et documentation des optimiseurs](https://github.com/stanfordnlp/dspy)
+
 ## Connexions
 - [[11-prompt-engineering-avance|Prompt engineering avancé]] — les techniques manuelles que l'optimiseur automatise
 - [[13-prompts-production|Prompts en production]] — versionner et maintenir le résultat

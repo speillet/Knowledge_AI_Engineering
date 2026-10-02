@@ -149,6 +149,10 @@ Mise en situation : tes outils ont besoin de l'identifiant du client et de son n
 
 ---
 
+## Sources
+
+- [LangChain — agents et middleware](https://docs.langchain.com/oss/python/langchain/agents)
+
 ## Connexions
 - [[42-langchain-fondamentaux|LangChain — Fondamentaux]] — modèles, outils, messages
 - [[44-langgraph-fondamentaux|LangGraph — Fondamentaux]] — le runtime sous-jacent

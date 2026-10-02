@@ -131,6 +131,10 @@ Mise en situation : ton assistant text-to-SQL a 85 % d'execution accuracy en tes
 
 ---
 
+## Sources
+
+- [Spider 2.0 — benchmark des auteurs](https://spider2-sql.github.io/)
+
 ## Connexions
 - [[21-rag-fondamentaux|RAG — Fondamentaux]] — le texte, quand le SQL ne convient pas
 - [[23-knowledge-graphs-ontologies|Knowledge graphs]] — Text2Cypher, le même problème sur un graphe

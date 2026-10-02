@@ -139,6 +139,11 @@ Mise en situation : un utilisateur publie sur un forum le system prompt complet 
 
 ---
 
+## Sources
+
+- [OWASP — Top 10 des risques des applications LLM](https://genai.owasp.org/llm-top-10/)
+- [MCP — bonnes pratiques de sécurité, édition 2026-07-28](https://modelcontextprotocol.io/docs/2026-07-28/tutorials/security/security_best_practices)
+
 ## Connexions
 - [[22-rag-avance|RAG avancé]] — injection via documents, ACL
 - [[32-tool-calling|Tool calling]] — valider avant d'exécuter

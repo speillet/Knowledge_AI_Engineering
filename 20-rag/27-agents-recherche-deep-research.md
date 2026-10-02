@@ -145,6 +145,10 @@ Mise en situation : ton agent de recherche produit de bons rapports, mais coûte
 
 ---
 
+## Sources
+
+- [Anthropic — architecture du système de recherche multi-agents](https://www.anthropic.com/engineering/multi-agent-research-system)
+
 ## Connexions
 - [[21-rag-fondamentaux|RAG — Fondamentaux]] — la recherche en un coup
 - [[22-rag-avance|RAG — Avancé]] — agentic RAG et reranking

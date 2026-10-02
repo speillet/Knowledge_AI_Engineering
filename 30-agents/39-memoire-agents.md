@@ -178,6 +178,11 @@ Mise en situation : ton agent partage une mémoire entre tous les utilisateurs d
 
 ---
 
+## Sources
+
+- [Letta — agents avec état et mémoire](https://docs.letta.com/v1-sdk/concepts/stateful-agents)
+- [LangGraph — persistance et threads](https://docs.langchain.com/oss/python/langgraph/persistence)
+
 ## Connexions
 - [[35-context-engineering|Context engineering]] — la mémoire comme composante du contexte
 - [[45-langgraph-production|LangGraph en production]] — checkpointer et Store

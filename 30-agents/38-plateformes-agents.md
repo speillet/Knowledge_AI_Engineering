@@ -250,6 +250,11 @@ Mise en situation : ta direction veut « une plateforme d'agents » en trois moi
 
 ---
 
+## Sources
+
+- [AWS — composants de Bedrock AgentCore](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/what-is-bedrock-agentcore.html)
+- [LangGraph — concepts et architecture](https://docs.langchain.com/oss/python/langgraph/overview)
+
 ## Connexions
 - [[37-frameworks-agents|Frameworks d'agents]] — le code qu'on y déploie
 - [[115-plateformes-agents-gouvernance|Plateformes d'agents — Architecture & gouvernance]] — la suite, niveau senior

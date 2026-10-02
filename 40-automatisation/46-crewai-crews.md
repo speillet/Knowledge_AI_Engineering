@@ -146,6 +146,10 @@ Mise en situation : un collègue propose de passer ta crew en mode hiérarchique
 
 ---
 
+## Sources
+
+- [CrewAI — Crews, documentation v1.15.23](https://docs.crewai.com/v1.15.23/en/concepts/crews)
+
 ## Connexions
 - [[47-crewai-flows|CrewAI — Flows]] — orchestrer les crews en production
 - [[36-orchestration-agents|Orchestration multi-agents]] — sequential, hierarchical, délégation

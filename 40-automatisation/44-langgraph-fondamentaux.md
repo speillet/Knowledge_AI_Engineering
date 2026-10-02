@@ -146,6 +146,10 @@ Mise en situation : ton équipe hésite entre le graphe explicite et la Function
 
 ---
 
+## Sources
+
+- [LangGraph — concepts et architecture](https://docs.langchain.com/oss/python/langgraph/overview)
+
 ## Connexions
 - [[45-langgraph-production|LangGraph — Production]] — persistance, HITL, multi-agents
 - [[43-langchain-agents|LangChain — Agents]] — l'agent haut niveau bâti sur LangGraph

@@ -113,6 +113,10 @@ Mise en situation : tu dois ingérer 500 000 PDF, dont beaucoup de scans, avec u
 
 ---
 
+## Sources
+
+- [Docling — parsing et conversion de documents](https://docling-project.github.io/docling/)
+
 ## Connexions
 - [[21-rag-fondamentaux|RAG — Fondamentaux]] — l'ingestion en amont du retrieval
 - [[22-rag-avance|RAG avancé]] — chunking contextuel

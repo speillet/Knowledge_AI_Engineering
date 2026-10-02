@@ -152,6 +152,13 @@ Mise en situation : trois équipes ont chacune construit des agents avec des fra
 
 ---
 
+## Sources
+
+- [MCP — spécification 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28)
+- [A2A — spécification du protocole](https://a2a-protocol.org/latest/specification/)
+- [AG-UI — protocole d’interaction agent-interface](https://docs.ag-ui.com/introduction)
+- [OpenTelemetry — conventions sémantiques GenAI](https://github.com/open-telemetry/semantic-conventions-genai)
+
 ## Connexions
 - [[33-mcp|MCP]] — le protocole agent ↔ outils
 - [[36-orchestration-agents|Orchestration multi-agents]] — A2A et délégation

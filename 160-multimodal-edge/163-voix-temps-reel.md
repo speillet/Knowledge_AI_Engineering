@@ -105,6 +105,10 @@ Mise en situation : ton agent vocal est régulièrement interrompu par les utili
 
 ---
 
+## Sources
+
+- [LiveKit — architecture des agents vocaux](https://docs.livekit.io/agents/)
+
 ## Connexions
 - [[161-modeles-vision-langage|Modèles vision-langage]] — les autres modalités
 - [[64-metriques-slo-inference|Métriques & SLO]] — TTFT et latence

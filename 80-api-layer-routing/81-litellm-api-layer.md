@@ -120,6 +120,10 @@ Mise en situation : ton fournisseur principal connaît une panne de 40 minutes e
 
 ---
 
+## Sources
+
+- [LiteLLM — proxy et gateway](https://docs.litellm.ai/docs/simple_proxy)
+
 ## Connexions
 - [[83-gateway-ingress|Ingress & API gateway]] — l'entrée réseau devant LiteLLM
 - [[82-routing-llm|Routing LLM]] — choisir le bon modèle par requête

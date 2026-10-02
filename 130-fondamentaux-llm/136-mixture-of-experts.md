@@ -106,6 +106,10 @@ Mise en situation : pour un service interne à faible trafic sur un seul GPU, on
 
 ---
 
+## Sources
+
+- [Jiang et al. — Mixtral of Experts (2024)](https://arxiv.org/abs/2401.04088)
+
 ## Connexions
 - [[131-transformer-architecture|Architecture Transformer]] — le bloc MLP remplacé
 - [[135-pretraining-scaling-laws|Pré-entraînement & scaling laws]] — capacité vs calcul

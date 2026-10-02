@@ -133,6 +133,10 @@ Mise en situation : on te demande de passer tout le corpus en chunking sémantiq
 
 ---
 
+## Sources
+
+- [Anthropic — Contextual Retrieval (2024)](https://www.anthropic.com/engineering/contextual-retrieval)
+
 ## Connexions
 - [[21-rag-fondamentaux|RAG — Fondamentaux]] — les stratégies de chunking de base
 - [[22-rag-avance|RAG — Avancé]] — hybride, reranking, filtres

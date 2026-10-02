@@ -349,6 +349,11 @@ Mise en situation : le fournisseur de ta plateforme d'agents annonce l'arrêt d'
 
 ---
 
+## Sources
+
+- [AWS — composants de Bedrock AgentCore](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/what-is-bedrock-agentcore.html)
+- [NIST — AI Risk Management Framework](https://www.nist.gov/itl/ai-risk-management-framework)
+
 ## Connexions
 - [[38-plateformes-agents|Plateformes d'agents — Fondamentaux]] — les briques et les offres
 - [[36-orchestration-agents|Orchestration multi-agents]] — A2A et coût du multi-agent

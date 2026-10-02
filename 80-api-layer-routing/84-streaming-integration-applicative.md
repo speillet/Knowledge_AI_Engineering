@@ -136,6 +136,11 @@ Mise en situation : un agent d'analyse met 3 à 8 minutes à produire un rapport
 
 ---
 
+## Sources
+
+- [MDN — utilisation des Server-Sent Events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events)
+- [AG-UI — protocole d’interaction agent-interface](https://docs.ag-ui.com/introduction)
+
 ## Connexions
 - [[81-litellm-api-layer|LiteLLM]] — la gateway qui relaie le flux
 - [[83-gateway-ingress|Ingress & API gateway]] — tampons et timeouts

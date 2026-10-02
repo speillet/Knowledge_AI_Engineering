@@ -140,6 +140,11 @@ Mise en situation : la direction impose que les données ne sortent pas de l'ent
 
 ---
 
+## Sources
+
+- [Hugging Face — méthodologie du Open LLM Leaderboard](https://huggingface.co/docs/leaderboards/open_llm_leaderboard/about)
+- [NIST — AI Risk Management Framework](https://www.nist.gov/itl/ai-risk-management-framework)
+
 ## Connexions
 - [[94-evals-methodologie|Méthodologie d'évaluation]] — départager les candidats
 - [[82-routing-llm|Routing LLM]] — combiner plusieurs modèles

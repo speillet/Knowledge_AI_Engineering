@@ -121,6 +121,11 @@ Mise en situation : ton entreprise a 15 variantes fine-tunées d'un même modèl
 
 ---
 
+## Sources
+
+- [SGLang — documentation du serveur et de ses optimisations](https://docs.sglang.io/)
+- [vLLM — métriques de production](https://docs.vllm.ai/en/latest/usage/metrics/)
+
 ## Connexions
 - [[61-kv-cache-attention|KV cache & attention]] — PagedAttention
 - [[62-optimisations-inference|Optimisations d'inférence]] — ce que le serveur implémente

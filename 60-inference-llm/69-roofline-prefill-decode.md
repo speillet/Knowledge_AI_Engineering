@@ -155,6 +155,10 @@ Mise en situation : sur ton RAG, les réponses « bégaient » : le texte s'arr�
 
 ---
 
+## Sources
+
+- [NVIDIA — Dynamo, inférence distribuée](https://docs.nvidia.com/dynamo/latest/)
+
 ## Connexions
 - [[62-optimisations-inference|Optimisations d'inférence]] — les leviers par phase
 - [[61-kv-cache-attention|KV cache & attention]] — ce que le decode relit et transfère

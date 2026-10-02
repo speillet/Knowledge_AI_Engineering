@@ -116,6 +116,10 @@ Mise en situation : un auditeur veut utiliser la chaîne de pensée affichée pa
 
 ---
 
+## Sources
+
+- [DeepSeek-AI — DeepSeek-R1 (2025)](https://arxiv.org/abs/2501.12948)
+
 ## Connexions
 - [[52-post-training-alignement|Post-training & alignement]] — RL avec récompenses vérifiables
 - [[11-prompt-engineering-avance|Prompt engineering]] — chain-of-thought et self-consistency

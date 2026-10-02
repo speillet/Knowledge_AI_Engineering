@@ -136,6 +136,11 @@ Mise en situation : pendant un entraînement RL d'un agent de code, le taux de r
 
 ---
 
+## Sources
+
+- [verl — documentation du framework RL](https://verl.readthedocs.io/en/latest/)
+- [Microsoft — Agent Lightning](https://github.com/microsoft/agent-lightning)
+
 ## Connexions
 - [[52-post-training-alignement|Post-training & alignement]] — RLHF, GRPO, RLVR et reward hacking
 - [[53-donnees-synthetiques-distillation|Données synthétiques & distillation]] — SFT sur trajectoires

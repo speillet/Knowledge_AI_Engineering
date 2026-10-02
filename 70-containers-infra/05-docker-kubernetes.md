@@ -107,6 +107,10 @@ Mise en situation : un job de CI construit des images en montant le socket Docke
 
 ---
 
+## Sources
+
+- [Kubernetes — FAQ officielle de suppression de dockershim](https://kubernetes.io/blog/2022/02/17/dockershim-faq/)
+
 ## Connexions
 - [[04-kubernetes-kubelet-cri|Kubernetes, kubelet & CRI]] — le contexte CRI
 - [[03-containerd-runc|containerd & runc]] — le remplaçant de dockershim

@@ -133,6 +133,10 @@ Mise en situation : ton équipe veut passer des impressions (« ça marche plut�
 
 ---
 
+## Sources
+
+- [Langfuse — traces, évaluations et gestion des prompts](https://langfuse.com/docs)
+
 ## Connexions
 - [[92-chainforge-evals-prompts|ChainForge & evals]] — l'évaluation hors production
 - [[64-metriques-slo-inference|Métriques & SLO]] — du système à l'application

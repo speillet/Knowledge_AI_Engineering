@@ -146,6 +146,10 @@ Mise en situation : ton laboratoire hésite entre un cluster HPC en Slurm et un 
 
 ---
 
+## Sources
+
+- [Apptainer — support GPU, guide utilisateur 1.5](https://apptainer.org/docs/user/1.5/gpu.html)
+
 ## Connexions
 - [[06-apptainer-singularity|Apptainer & Singularity]] — bases & format SIF
 - [[09-gpu-conteneurs|GPU en conteneur]] — `--nv` vs `--gpus`

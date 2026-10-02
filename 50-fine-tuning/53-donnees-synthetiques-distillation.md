@@ -112,6 +112,11 @@ Mise en situation : pour gagner du temps, un collègue propose de générer 50 0
 
 ---
 
+## Sources
+
+- [Argilla — Distilabel, génération de données synthétiques](https://distilabel.argilla.io/latest/)
+- [DeepSeek-AI — DeepSeek-R1 (2025)](https://arxiv.org/abs/2501.12948)
+
 ## Connexions
 - [[51-fine-tuning-adaptation|Fine-tuning & adaptation]] — SFT et LoRA
 - [[52-post-training-alignement|Post-training & alignement]] — données de préférences

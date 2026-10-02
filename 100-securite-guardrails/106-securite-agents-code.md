@@ -171,6 +171,11 @@ Mise en situation : un développeur senior veut lancer son agent de code avec `-
 
 ---
 
+## Sources
+
+- [Anthropic — sécurité et permissions de Claude Code](https://code.claude.com/docs/en/security)
+- [SWE-agent — documentation du projet](https://swe-agent.com/latest/)
+
 ## Connexions
 - [[34-harness-plugins|Harness & plugins]] — permissions, hooks et sandbox
 - [[102-menaces-agents|Menaces & incidents]] — injection et exécution de code

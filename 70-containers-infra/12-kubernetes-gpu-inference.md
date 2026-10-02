@@ -132,6 +132,10 @@ Mise en situation : plusieurs équipes veulent déployer leurs modèles sur le m
 
 ---
 
+## Sources
+
+- [Kubernetes — planification des GPU](https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/)
+
 ## Connexions
 - [[04-kubernetes-kubelet-cri|Kubernetes, kubelet & CRI]] — base d'orchestration
 - [[09-gpu-conteneurs|GPU en conteneur]] — accès GPU

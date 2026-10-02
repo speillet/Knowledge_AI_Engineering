@@ -137,6 +137,11 @@ Mise en situation : trois équipes déploient chacune leurs modèles, avec leurs
 
 ---
 
+## Sources
+
+- [Google Cloud — MLOps, livraison et pipelines continus](https://docs.cloud.google.com/architecture/mlops-continuous-delivery-and-automation-pipelines-in-machine-learning)
+- [Langfuse — traces, évaluations et gestion des prompts](https://langfuse.com/docs)
+
 ## Connexions
 - [[112-cicd-modeles|CI/CD des modèles]] — le pipeline qui applique ces standards
 - [[113-monitoring-drift-feedback|Monitoring & drift]] — la boucle post-déploiement

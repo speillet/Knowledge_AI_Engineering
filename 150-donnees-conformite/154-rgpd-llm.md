@@ -133,6 +133,11 @@ Mise en situation : le métier veut automatiser le tri des candidatures, avec re
 
 ---
 
+## Sources
+
+- [Union européenne — règlement (UE) 2016/679, RGPD](https://eur-lex.europa.eu/eli/reg/2016/679/oj/fra)
+- [CNIL — ressources sur l’IA et les données personnelles](https://www.cnil.fr/fr/intelligence-artificielle)
+
 ## Connexions
 - [[152-pii-confidentialite|PII & confidentialité]] — les mesures techniques
 - [[155-ai-act|AI Act]] — le règlement spécifique à l'IA

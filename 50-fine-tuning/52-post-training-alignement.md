@@ -131,6 +131,11 @@ Mise en situation : ton modèle entraîné à corriger du code obtient d'excelle
 
 ---
 
+## Sources
+
+- [Rafailov et al. — Direct Preference Optimization (2023)](https://arxiv.org/abs/2305.18290)
+- [Hugging Face — TRL, entraînement et alignement](https://huggingface.co/docs/trl/index)
+
 ## Connexions
 - [[51-fine-tuning-adaptation|Fine-tuning & adaptation]] — SFT, LoRA, DPO en bref
 - [[53-donnees-synthetiques-distillation|Données synthétiques & distillation]] — produire les données de post-training

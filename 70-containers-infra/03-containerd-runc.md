@@ -134,6 +134,10 @@ Mise en situation : un incident mentionne « containerd ne répond plus » et l'
 
 ---
 
+## Sources
+
+- [containerd — documentation du projet et architecture](https://github.com/containerd/containerd)
+
 ## Connexions
 - [[01-oci|OCI]] — runc implémente l'OCI Runtime Spec
 - [[04-kubernetes-kubelet-cri|Kubernetes & CRI]] — containerd est appelé via CRI

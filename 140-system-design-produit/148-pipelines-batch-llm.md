@@ -165,6 +165,10 @@ Mise en situation : ton pipeline de classification tourne depuis trois jours. Tu
 
 ---
 
+## Sources
+
+- [Anthropic — traitement par lots, résultats et expiration](https://platform.claude.com/docs/en/build-with-claude/batch-processing)
+
 ## Connexions
 - [[145-cas-system-design|Cas de system design]] — l'extraction massive de documents
 - [[121-couts-inference|Coûts d'inférence]] — batch API et unit economics

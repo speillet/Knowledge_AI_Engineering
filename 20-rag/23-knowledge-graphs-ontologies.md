@@ -145,6 +145,10 @@ Mise en situation : un chef de projet veut exposer Text2Cypher aux utilisateurs 
 
 ---
 
+## Sources
+
+- [Microsoft — GraphRAG, indexation et recherche](https://microsoft.github.io/graphrag/)
+
 ## Connexions
 - [[21-rag-fondamentaux|RAG — Fondamentaux]] — la recherche vectorielle de base
 - [[22-rag-avance|RAG avancé]] — recherche hybride et agentic RAG

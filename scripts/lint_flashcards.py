@@ -228,6 +228,10 @@ def lint(stale_months):
         verified = parse_date(text)
         if "Vérifié le" in text and verified is None:
             errors.append(f"{rel} date « Vérifié le » illisible (format : 25 septembre 2026)")
+        if verified:
+            source_section = re.search(r"^## Sources\s*\n(.*?)(?=^## |\Z)", text, re.M | re.S)
+            if not source_section or not re.search(r"\[[^\]]+\]\(https://[^)]+\)", source_section[1]):
+                errors.append(f"{rel} fiche datée sans référence HTTPS dans « ## Sources »")
         if verified and verified > today:
             errors.append(f"{rel} date « Vérifié le » dans le futur")
         if verified and stale_months and (today - verified).days > stale_months * 30.5:

@@ -150,6 +150,10 @@ Mise en situation : ton système à quatre agents devient impossible à débogue
 
 ---
 
+## Sources
+
+- [LangGraph — persistance et threads](https://docs.langchain.com/oss/python/langgraph/persistence)
+
 ## Connexions
 - [[44-langgraph-fondamentaux|LangGraph — Fondamentaux]] — state, nodes, edges
 - [[43-langchain-agents|LangChain — Agents]] — HITL et mémoire via middleware
