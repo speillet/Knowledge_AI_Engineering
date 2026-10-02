@@ -93,6 +93,15 @@ Pour un traitement automatique, préférer toujours le schéma strict ; la valid
 
 ---
 
+Que se passe-t-il si la génération atteint `max_tokens` au milieu d'un JSON contraint ?
+?
+<!--anki:3731663364663939323734313431373261653832636436653336323231626565-->
+La sortie est **tronquée** et le JSON est invalide, malgré la contrainte : la guided generation garantit que chaque token **respecte** la grammaire, pas que la génération **aille jusqu'au bout**.
+
+La réponse l'indique (`finish_reason: "length"` ou `stop_reason: "max_tokens"`). Il faut **vérifier ce champ**, dimensionner `max_tokens` pour le pire cas, et borner la taille du schéma (listes de longueur maximale).
+
+---
+
 ## Mises en situation
 
 Mise en situation : depuis que tu contrains la sortie par un JSON Schema, le JSON est toujours valide mais les réponses sont devenues moins bonnes. Que corriges-tu ?

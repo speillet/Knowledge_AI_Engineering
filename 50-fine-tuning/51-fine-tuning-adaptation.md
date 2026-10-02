@@ -114,6 +114,19 @@ Parades :
 
 ---
 
+Calcul : quelle mémoire GPU pour fine-tuner un 7B en LoRA, puis en QLoRA ?
+?
+<!--anki:3337376463643866363135623439663561633937613466613932353937653533-->
+```text
+LoRA  : base figée en BF16  7e9 × 2 octets    ≈ 14 Go
+QLoRA : base figée en NF4   7e9 × ~0,5 octet  ≈  4 Go
+dans les deux cas : adaptateurs (≈ 0,5 % des paramètres) et leurs états Adam < 1 Go,
+                    plus les activations, quelques Go selon la séquence et le batch
+```
+À comparer aux **≈ 112 Go** d'un fine-tuning complet ([[54-entrainement-distribue|calcul complet]]). Un 7B en QLoRA tient sur un GPU de 16 à 24 Go ; un 70B en QLoRA (≈ 35 à 40 Go de poids) tient sur un seul GPU de 80 Go.
+
+---
+
 ## Mises en situation
 
 Mise en situation : le métier veut fine-tuner un modèle « pour qu'il connaisse nos procédures internes », qui changent chaque mois. Que réponds-tu ?

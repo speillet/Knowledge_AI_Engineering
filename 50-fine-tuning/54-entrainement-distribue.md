@@ -114,6 +114,27 @@ Le premier accélère l'entraînement d'un modèle qui tient déjà en mémoire 
 
 ---
 
+Calcul : combien de GPU-heures pour un fine-tuning complet d'un 7B sur 100 millions de tokens ?
+?
+<!--anki:6264366332636363363433613463316539343266666164623039333564333938-->
+```text
+C ≈ 6 × N × D = 6 × 7e9 × 1e8   = 4,2e18 FLOP
+H100 à 40 % de MFU              ≈ 4e14 FLOP/s
+4,2e18 / 4e14                   ≈ 10 500 s ≈ 3 GPU-heures par époque
+```
+Le calcul d'un fine-tuning se compte en **GPU-heures**, pas en GPU-années. La contrainte est la **mémoire** (≈ 112 Go pour un 7B avec Adam), qui impose plusieurs GPU, ou [[51-fine-tuning-adaptation|LoRA]].
+
+---
+
+Que se passe-t-il si un GPU tombe en panne au milieu d'un entraînement distribué ?
+?
+<!--anki:3236353836376335663738323437393161333434323538316365383736326463-->
+L'entraînement est **synchrone** : chaque étape attend les gradients de tous les GPU, donc **tout le job s'arrête**. On le relance depuis le dernier **checkpoint**, et tout ce qui a été calculé depuis est perdu.
+
+À l'échelle de milliers de GPU, les pannes surviennent **plusieurs fois par jour** : on sauvegarde souvent (checkpoints asynchrones, pour ne pas bloquer le calcul), on relance automatiquement, et on garde des nœuds de rechange.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton modèle de 7 milliards de paramètres tourne sans problème en inférence sur un GPU de 80 Go, mais le fine-tuning complet échoue en mémoire. Explique et propose une solution.

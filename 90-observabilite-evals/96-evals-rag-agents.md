@@ -99,6 +99,18 @@ Quelles métriques d'efficacité suivre en plus de la qualité ?
 
 ---
 
+Calcul : un agent réussit 90 % des tâches au premier essai. Quelle probabilité de réussir la même tâche 5 fois sur 5 (pass^5) ?
+?
+<!--anki:6664613061633837663230343433353462663263393038633136326162303030-->
+```text
+pass^1 = 0,90
+pass^5 = 0,90⁵ ≈ 0,59
+pass^8 = 0,90⁸ ≈ 0,43
+```
+Avec des essais indépendants, un agent « à 90 % » ne réussit les cinq essais que **6 fois sur 10**. Pour un usage répété, c'est pass^k qui décrit l'expérience de l'utilisateur, pas pass@1 ([[114-reproductibilite-variance|variance]]).
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton RAG affiche 62 % de réponses jugées correctes, et l'équipe veut changer de modèle de génération. Comment vérifies-tu que c'est le bon levier ?

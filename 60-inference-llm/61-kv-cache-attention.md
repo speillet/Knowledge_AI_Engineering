@@ -110,6 +110,31 @@ Au-delà, les requêtes **attendent en file** ou sont **préemptées** (recalcul
 
 ---
 
+Calcul : combien de requêtes de 8 000 tokens tiennent sur 2 H100 qui servent un 70B en FP8 ?
+?
+<!--anki:6137666465353731643634663436353938383237353137393038343239396564-->
+```text
+VRAM utilisable : 2 × 80 Go × 0,9                 ≈ 144 Go
+poids 70B en FP8                                  ≈  70 Go
+activations, graphes CUDA                         ≈   6 Go
+reste pour le KV cache                            ≈  68 Go
+KV par token (Llama 3.1 70B : 80 couches, 8 têtes KV de 128, BF16)
+  2 × 80 × 8 × 128 × 2 octets                     ≈ 320 Ko → 8 000 tokens ≈ 2,6 Go
+→ environ 26 requêtes simultanées à contexte plein
+```
+Le 70B coûte 2,5 fois plus de KV par token que le 8B (320 Ko contre 128 Ko) : sa concurrence chute vite. Un KV cache en FP8 la double ([[68-quantization|quantization]]).
+
+---
+
+Que se passe-t-il si on double `max_model_len` sur un serveur vLLM ?
+?
+<!--anki:3066363230336533336366653437396238396664636166383237643436363065-->
+Les requêtes longues peuvent occuper **deux fois plus de KV cache** : quand elles arrivent, la concurrence baisse d'autant. Les requêtes courtes ne paient rien de plus, car le cache est alloué par blocs à la demande (**PagedAttention**).
+
+Au démarrage, vLLM vérifie qu'au moins une requête de longueur maximale tient dans le cache, et **refuse de démarrer** sinon. On fixe donc `max_model_len` au besoin réel, pas au maximum du modèle.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton service vLLM tient 60 requêtes simultanées avec des prompts de 2 000 tokens, mais plus que 8 quand tu passes à 32 000 tokens de contexte. Pourquoi, et que fais-tu ?

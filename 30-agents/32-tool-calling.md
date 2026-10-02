@@ -102,6 +102,19 @@ La validité **sémantique** reste à vérifier par l'application : un identifia
 
 ---
 
+Calcul : combien de tokens coûtent les schémas de 40 outils sur une tâche d'agent de 25 tours ?
+?
+<!--anki:3232623534646231383763363464303539666437323536306133333231383237-->
+Hypothèses : 300 tokens par schéma d'outil, renvoyés à chaque appel, 3 €/M en entrée.
+```text
+schémas   : 40 × 300          = 12 000 tokens à chaque appel
+par tâche : 12 000 × 25 tours = 300 000 tokens ≈ 0,90 €
+avec prompt caching (≈ 0,1×)  ≈ 0,09 €, mais le contexte reste occupé
+```
+Au-delà du coût, 12 000 tokens de schémas **diluent l'attention** et dégradent le choix d'outil : on n'expose que les outils utiles à la tâche, ou on les charge à la demande ([[35-context-engineering|context engineering]]).
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton agent dispose de 40 outils et se trompe souvent d'outil ou invente des paramètres. Comment améliores-tu la situation ?

@@ -93,6 +93,15 @@ Critères communs : fournisseurs couverts, budgets et virtual keys, observabilit
 
 ---
 
+Que se passe-t-il quand une virtual key LiteLLM atteint son budget ?
+?
+<!--anki:3363626463666234653138353463303961396535356364323734336663613965-->
+Le proxy **refuse** les requêtes suivantes avec une erreur explicite, jusqu'à la fin de la période (`budget_duration`) ou un relèvement du plafond.
+
+Pour l'application, c'est une **panne** : il faut gérer cette erreur (message clair, mode dégradé), et **alerter avant** le plafond, par exemple à 80 % ([[122-finops-llm|FinOps]]).
+
+---
+
 ## Mises en situation
 
 Mise en situation : cinq équipes appellent directement les API de trois fournisseurs, avec des clés partagées par copier-coller. La facture mensuelle n'est attribuable à personne. Par quoi commences-tu ?

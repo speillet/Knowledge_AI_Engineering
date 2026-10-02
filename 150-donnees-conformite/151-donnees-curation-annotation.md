@@ -92,6 +92,19 @@ Comment préparer des données pour un fine-tuning ?
 
 ---
 
+Calcul : combien coûte l'annotation de 2 000 exemples par des experts ?
+?
+<!--anki:3334646132633937623364663461373839383536306436313733656235646261-->
+Hypothèses : 3 minutes par exemple, expert à 80 €/h, double annotation de 20 % des exemples pour mesurer l'accord.
+```text
+annotation    : 2 000 × 3 min = 100 h × 80 €/h = 8 000 €
+double (20 %) :   400 × 3 min =  20 h × 80 €/h = 1 600 €
+total                                          ≈ 9 600 €, plus le guide d'annotation
+```
+C'est le prix d'un jeu d'eval de référence fiable : on réserve les experts aux cas où l'expertise compte, et on passe par des annotateurs formés ou un LLM pré-annotant pour le volume ([[94-evals-methodologie|golden dataset]]).
+
+---
+
 ## Mises en situation
 
 Mise en situation : deux annotateurs sont en désaccord sur un tiers des cas de ton jeu d'eval. Que fais-tu ?

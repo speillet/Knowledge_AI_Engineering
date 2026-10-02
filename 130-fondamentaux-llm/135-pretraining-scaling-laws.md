@@ -91,6 +91,30 @@ Conséquence pratique : un fine-tuning d'entreprise est du post-training. Il cha
 
 ---
 
+Calcul : combien de GPU-heures pour pré-entraîner un 8B sur 15 000 milliards de tokens ?
+?
+<!--anki:6566616464316664376339343436633939366138316165646262353739633461-->
+```text
+C ≈ 6 × N × D = 6 × 8e9 × 15e12   = 7,2e23 FLOP
+H100 à 40 % de MFU                ≈ 4e14 FLOP/s utiles
+7,2e23 / 4e14 = 1,8e9 s           ≈ 500 000 GPU-heures
+sur 1 000 H100                    ≈ 3 semaines
+```
+Meta a déclaré environ **1,5 million de GPU-heures** pour Llama 3.1 8B : le MFU réel, les reprises et les expériences s'ajoutent. Un AI Engineer part donc d'un modèle existant ([[51-fine-tuning-adaptation|fine-tuning]]).
+
+---
+
+Calcul : combien de tokens d'entraînement Chinchilla recommande-t-il pour un 70B, et combien Llama 3 70B en a-t-il vu ?
+?
+<!--anki:6335373737396634343762663437663162353937616338383032353765326435-->
+```text
+Chinchilla  : ≈ 20 tokens par paramètre → 70e9 × 20 ≈ 1 400 milliards de tokens
+Llama 3 70B : ≈ 15 000 milliards de tokens → ≈ 200 tokens par paramètre, 10 fois plus
+```
+Chinchilla minimise le coût d'**entraînement** ; on va bien au-delà pour obtenir, à qualité égale, un modèle plus petit et donc moins cher à **servir**.
+
+---
+
 ## Mises en situation
 
 Mise en situation : un modèle affiche 92 % sur un benchmark public de raisonnement, mais s'effondre sur tes cas métier. Quelles explications envisages-tu ?

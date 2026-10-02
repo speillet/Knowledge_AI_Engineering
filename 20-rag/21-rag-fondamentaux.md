@@ -129,6 +129,20 @@ Quand ne pas faire de RAG ?
 
 ---
 
+Calcul : combien coûte l'indexation de 50 000 documents de 10 pages ?
+?
+<!--anki:3339373433333537663864353435373962653930323631643639396438623461-->
+Hypothèses : 500 tokens par page, chunks de 500 tokens, embeddings par API à 0,02 € par million de tokens, vecteurs de 1 024 dimensions en float32.
+```text
+tokens    : 50 000 × 10 × 500    = 250 M
+embedding : 250 M × 0,02 €/M     = 5 €
+vecteurs  : 250 M / 500          = 500 000
+stockage  : 500 000 × 1 024 × 4 o ≈ 2 Go, plus l'index HNSW
+```
+L'embedding est presque gratuit. Ce qui coûte : le **parsing** des documents, le **contextual retrieval** (un appel LLM par chunk) et la **ré-indexation** complète à chaque changement de modèle d'embedding ([[25-chunking-contextual-retrieval|contextual retrieval]]).
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton RAG sur la documentation interne répond « je ne trouve pas » sur des questions dont tu sais que la réponse existe. Comment diagnostiques-tu ?

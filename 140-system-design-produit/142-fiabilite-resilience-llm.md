@@ -128,6 +128,18 @@ Parades : réessayer à **une seule couche**, **budget de retries** global (ex. 
 
 ---
 
+Calcul : quelle disponibilité pour une chaîne de 3 services à 99,5 %, et avec un fallback ?
+?
+<!--anki:3430313231643964333833343465356439306135343731396564333462393436-->
+```text
+3 services en série             : 0,995³ ≈ 0,985     → ≈ 11 h d'indisponibilité par mois
+fournisseur à 99,5 %
++ fallback indépendant à 99,5 % : 1 − 0,005² ≈ 0,99998 → ≈ 1 min par mois
+```
+Les dépendances en série **multiplient** les indisponibilités ; un fallback indépendant les fait presque disparaître, à condition que les pannes **ne soient pas corrélées** : même cloud, même région, même modèle ([[82-routing-llm|fallbacks]]).
+
+---
+
 ## Mises en situation
 
 Mise en situation : pendant un pic, ton application renvoie massivement des 429 et tes retries aggravent la situation. Que corriges-tu dans l'ordre ?

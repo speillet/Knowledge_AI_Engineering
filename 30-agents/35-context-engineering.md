@@ -94,6 +94,15 @@ Ne pas tout charger d'avance : donner à l'agent des **références légères** 
 
 ---
 
+Que se passe-t-il si le contexte d'un agent dépasse la fenêtre du modèle ?
+?
+<!--anki:6435353066396565386132663436363262613562303131313639303632356336-->
+L'API **rejette** la requête (prompt trop long) : la tâche s'arrête net si le harness n'a rien prévu. Une troncature naïve par le début ferait perdre les consignes et l'objectif.
+
+Le harness doit donc **compacter avant la limite** : résumer l'historique, retirer les vieux résultats d'outils, garder consignes et objectif. En pratique, on compacte bien avant, car la qualité se dégrade avant la limite ([[137-long-contexte|long contexte]]).
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton agent de support donne de bonnes réponses au début des conversations, puis se dégrade et se contredit au bout d'une heure. Que fais-tu ?

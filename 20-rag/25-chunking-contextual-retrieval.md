@@ -106,6 +106,21 @@ Comme les chunks changent entre stratégies, on juge « passage attendu retrouv�
 
 ---
 
+Calcul : combien coûte le contextual retrieval de 10 000 documents de 8 000 tokens ?
+?
+<!--anki:6336316138626364306238353434323662316364643334376639656430306536-->
+Hypothèses : chunks de 500 tokens (16 par document), 100 tokens de consignes, 75 tokens de contexte générés par chunk, petit modèle à 1 €/M en entrée et 5 €/M en sortie.
+```text
+appels     : 10 000 × 16                              = 160 000
+sans cache : 160 000 × 8 600 tokens = 1 376 M × 1 €/M ≈ 1 380 €
+avec cache : document écrit 1 fois (1,25×), relu 15 fois (0,1×)
+             80 M × 2,75 = 220 M, + chunks et consignes 96 M ≈ 320 €
+sortie     : 160 000 × 75 = 12 M × 5 €/M              ≈    60 €
+```
+Le prompt caching divise le coût d'entrée par plus de 4. Ce coût se paie **à l'ingestion**, et de nouveau pour chaque document modifié.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton RAG sur 3 000 rapports financiers répond souvent « information non trouvée » alors que le chiffre figure dans le corpus. Les chunks font 400 tokens. Comment procèdes-tu ?

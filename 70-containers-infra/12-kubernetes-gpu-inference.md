@@ -105,6 +105,15 @@ Parce que le **GPU est une ressource rare et coûteuse** : son allocation et son
 
 ---
 
+Que se passe-t-il si un Pod demande un GPU alors qu'aucun node n'en a de libre ?
+?
+<!--anki:3663623037653831613230613465336462336361666463326631393961353562-->
+Le Pod reste **Pending** (événement `Insufficient nvidia.com/gpu`). Si un autoscaler de cluster est configuré, il ajoute un node GPU, mais cela prend **plusieurs minutes** : démarrage de la VM, driver, pull de l'image, chargement des poids ([[10-images-modeles-poids|cold start]]).
+
+Pendant ce temps, les requêtes attendent ou échouent. Parades : une **marge** de capacité, une montée en charge anticipée sur la file d'attente, et des GPU réservés aux services critiques.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton service d'inférence tourne sur 4 GPU A100 réservés en permanence, mais le trafic est concentré sur les heures de bureau. Comment réduis-tu la facture sans casser le service ?

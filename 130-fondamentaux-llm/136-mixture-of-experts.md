@@ -79,6 +79,18 @@ La [[68-quantization|quantization]] (des experts surtout) réduit l'écart de m�
 
 ---
 
+Calcul : quelle mémoire et quel calcul pour un MoE de 235B paramètres dont 22B actifs ?
+?
+<!--anki:3665376632613631663333623433376161366631326166316565366464376231-->
+Exemple : Qwen3-235B-A22B, servi en FP8.
+```text
+mémoire : tous les experts restent chargés  235e9 × 1 octet ≈ 235 Go → 4 H100 au minimum
+calcul  : seuls les 22B actifs travaillent  2 × 22e9 ≈ 44 GFLOP par token, comme un dense de 22B
+```
+Un MoE se paie en **mémoire** comme un grand modèle, mais **calcule** comme un petit : il est rentable quand un fort débit amortit la VRAM, moins sur un petit déploiement ([[121-couts-inference|coûts]]).
+
+---
+
 ## Mises en situation
 
 Mise en situation : un modèle MoE annoncé « 37 milliards de paramètres actifs » ne tient pas sur tes deux GPU de 80 Go, alors qu'un modèle dense de 70 milliards y tenait. Explique.

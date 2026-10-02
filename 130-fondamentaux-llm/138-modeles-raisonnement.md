@@ -89,6 +89,20 @@ Conséquence : avec un modèle de raisonnement, on décrit **l'objectif et les c
 
 ---
 
+Calcul : combien coûtent les tokens de raisonnement à 100 000 requêtes par jour ?
+?
+<!--anki:6261636664353832363133613430613738386335656266613266306232393465-->
+Hypothèses : 1 000 tokens d'entrée, 300 tokens de réponse visible, 4 000 tokens de raisonnement facturés comme de la sortie ; 3 €/M en entrée, 15 €/M en sortie.
+```text
+sans raisonnement : 1 000 × 3 €/M + 300 × 15 €/M = 0,0075 € par requête
+raisonnement      : 4 000 × 15 €/M               = 0,060 € de plus
+avec raisonnement :                                0,0675 € (× 9)
+par jour          : 750 € → 6 750 €
+```
+La réponse visible est la même, mais le coût est multiplié par 9 et la latence s'allonge : on règle l'**effort de raisonnement** par type de requête, et on route les questions simples vers un mode sans raisonnement ([[82-routing-llm|routing]]).
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton équipe passe tout le trafic sur un modèle de raisonnement « puisqu'il est meilleur ». Le coût triple et les utilisateurs trouvent l'assistant lent. Que proposes-tu ?

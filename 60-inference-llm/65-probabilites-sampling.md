@@ -121,6 +121,15 @@ Le premier règle l'audace, le second élimine les tokens improbables. Les fourn
 
 ---
 
+Que se passe-t-il si on combine une température élevée (1,5) et un top-p à 1 ?
+?
+<!--anki:3263666230666563316166313465656538393562646233623835343166666633-->
+La température **aplatit** la distribution, et le top-p à 1 ne coupe **aucune** queue : des tokens très improbables finissent par être tirés. Un seul mauvais token suffit à faire **dérailler** la suite (mot inventé, changement de langue, charabia), car le modèle continue à partir de lui.
+
+Pour plus de diversité sans dérive : une température modérée **avec** une coupure de la queue (top-p de 0,9 à 0,95, ou **min-p**, qui s'adapte à la confiance du modèle).
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton extraction de champs à partir de contrats donne des résultats différents à chaque exécution sur le même document. Quels réglages changes-tu ?

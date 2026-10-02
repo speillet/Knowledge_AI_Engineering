@@ -113,6 +113,19 @@ Règle : **code d'abord**, juge pour ce que le code ne sait pas mesurer ([[94-ev
 
 ---
 
+Calcul : combien coûte un LLM-as-a-judge qui note 1 000 réponses par jour ?
+?
+<!--anki:3066323261623265663933613439313038393739636164303336303936303732-->
+Hypothèses : 1 500 tokens d'entrée par jugement (rubrique, question, contexte, réponse), 200 de sortie, 3 €/M en entrée, 15 €/M en sortie.
+```text
+par jugement : 1 500 × 3 €/M + 200 × 15 €/M = 0,0075 €
+par jour     : 1 000 × 0,0075 €             = 7,50 € → ≈ 225 € par mois
+3 critères jugés séparément                 ≈ 675 € par mois
+```
+Abordable sur un **échantillon**, cher si l'on juge 100 % d'un trafic important. Leviers : échantillonner, un juge plus petit **validé contre des annotations humaines**, et des assertions de code pour ce qui est vérifiable.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton juge LLM annonce 95 % d'accord avec les annotations humaines, et l'équipe veut s'en servir comme gate de déploiement. Qu'en penses-tu ?

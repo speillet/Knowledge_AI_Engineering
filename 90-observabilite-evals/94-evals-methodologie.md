@@ -111,6 +111,20 @@ Quels sont les anti-patterns classiques en évaluation ?
 
 ---
 
+Calcul : combien de cas faut-il dans un jeu d'eval pour mesurer un taux de succès d'environ 70 % à ± 3 points ?
+?
+<!--anki:3763333165623463643835383436323462346134626564643634653863326439-->
+On inverse la formule de l'intervalle de confiance à 95 % ([[114-reproductibilite-variance|variance]]) :
+```text
+n ≈ 1,96² × p(1 − p) / marge²
+± 3 points  : 3,84 × 0,7 × 0,3 / 0,03² ≈ 900 cas
+± 5 points  : 3,84 × 0,21 / 0,05²      ≈ 320 cas
+± 10 points :                           ≈  80 cas
+```
+Diviser la marge par 2 demande 4 fois plus de cas. Pour départager deux versions à 2 ou 3 points d'écart, une comparaison **appariée** sur les mêmes cas est plus sensible.
+
+---
+
 ## Mises en situation
 
 Mise en situation : tu reprends un assistant en production qui n'a aucune eval. Que fais-tu pendant la première semaine ?

@@ -118,6 +118,33 @@ Le coût croît comme le **carré** du nombre de tours : 40 tours coûtent envir
 
 ---
 
+Calcul : combien coûte par mois un assistant interne utilisé par 2 000 personnes ?
+?
+<!--anki:6165653035666139373336363437383461383262393763386636316462633865-->
+Hypothèses : 10 requêtes par personne et par jour ouvré, 22 jours, 2 000 tokens d'entrée et 400 de sortie par requête, 3 €/M en entrée, 15 €/M en sortie.
+```text
+requêtes : 2 000 × 10 × 22                       = 440 000 par mois
+entrée   : 440 k × 2 000 = 880 M tokens × 3 €/M  ≈ 2 640 €
+sortie   : 440 k ×   400 = 176 M tokens × 15 €/M ≈ 2 640 €
+total                                            ≈ 5 300 € par mois, ≈ 2,60 € par personne
+```
+Entrée et sortie pèsent autant, car la sortie coûte 5 fois plus cher au token. Un RAG qui porte l'entrée à 8 000 tokens par requête multiplierait la part d'entrée par 4 ([[122-finops-llm|FinOps]]).
+
+---
+
+Calcul : à partir de quel volume un GPU loué devient-il moins cher qu'une API ?
+?
+<!--anki:3165666632316363393062643430633161363538303761346166313231356365-->
+Hypothèses : un H100 loué 2,50 €/h, qui sert un petit modèle open weights ; une API équivalente à 0,20 € par million de tokens, entrée et sortie confondues.
+```text
+GPU 24 h/24 : 2,50 € × 720 h            = 1 800 € par mois
+break-even  : 1 800 € / 0,20 €/M        = 9 000 M tokens par mois
+soit        : 9e9 / (30 × 86 400 s)     ≈ 3 500 tokens/s, en continu
+```
+Il faut une charge **soutenue jour et nuit** pour battre une API bon marché ; à 20 % d'utilisation, l'API reste gagnante. Et ce calcul oublie l'exploitation : ingénieurs, supervision, mises à jour ([[164-llm-local-edge|on-prem]]).
+
+---
+
 ## Mises en situation
 
 Mise en situation : ta direction demande s'il faut passer de l'API à des modèles auto-hébergés pour économiser. Comment calcules-tu ?

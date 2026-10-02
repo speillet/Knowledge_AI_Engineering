@@ -91,6 +91,18 @@ Une chute brutale du taux de hit signale souvent un préfixe devenu instable ([[
 
 ---
 
+Calcul : quel gain de TTFT quand 9 000 des 10 000 tokens d'un prompt sont déjà en cache ?
+?
+<!--anki:6365333934613162646331393439376661353639326434613561303631636664-->
+Sur un 8B, le prefill coûte ≈ 2 × N FLOP par token ([[69-roofline-prefill-decode|roofline]]) :
+```text
+sans cache : 10 000 tokens à calculer → ≈ 0,3 s de prefill
+avec cache :  1 000 tokens à calculer → ≈ 0,03 s, plus la lecture du cache
+```
+Le TTFT est divisé par près de 10, et le GPU libère autant de capacité de prefill pour les autres requêtes. D'où l'intérêt d'un préfixe **stable**, et d'un routage qui envoie la requête au réplica qui a déjà le cache.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton assistant multi-tours affichait 70 % de hits sur le prefix cache. Après une mise à jour, le taux tombe à 5 % et le TTFT double. Que cherches-tu ?

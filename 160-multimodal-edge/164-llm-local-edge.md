@@ -97,6 +97,19 @@ Un Mac avec 128 Go de RAM unifiée charge un 70B en 4 bits, mais le génère plu
 
 ---
 
+Calcul : quelle vitesse de génération pour un 8B en Q4_K_M sur un Mac à 400 Go/s de bande passante mémoire ?
+?
+<!--anki:6662653665313639616561363434653162323664663362306565646566613361-->
+Le decode relit tous les poids à chaque token ([[69-roofline-prefill-decode|roofline]]) :
+```text
+poids 8B en Q4_K_M : 8e9 × 4,8 bits / 8 ≈ 4,8 Go
+plafond            : 400 / 4,8          ≈ 83 tokens/s → 50 à 60 en pratique
+70B en Q4_K_M      : ≈ 42 Go            → plafond ≈ 9,5 tokens/s
+```
+Sur un poste local, c'est la **bande passante mémoire**, pas la puissance de calcul, qui fixe la vitesse : un 70B reste utilisable, mais lent.
+
+---
+
 ## Mises en situation
 
 Mise en situation : une équipe a mis Ollama en production pour 50 utilisateurs et se plaint que « les modèles locaux sont lents ». Que diagnostiques-tu ?

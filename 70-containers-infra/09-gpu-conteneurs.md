@@ -99,6 +99,20 @@ Avec **ROCm** : on expose les devices `/dev/kfd` et `/dev/dri` au conteneur et o
 
 ---
 
+Calcul : quel GPU pour servir un 8B à 30 utilisateurs simultanés avec 4 000 tokens de contexte ?
+?
+<!--anki:6131653231643037393661613436643938623330323430663339666230626637-->
+```text
+poids 8B en BF16                 ≈ 16 Go
+KV : 30 × 4 000 tokens × 128 Ko  ≈ 15,7 Go
+activations, graphes CUDA        ≈  3 Go
+total                            ≈ 35 Go → 48 Go (L40S) ou 80 Go ; 24 Go ne suffit pas
+en FP8 (poids et KV cache)       ≈ 19 Go → tient sur 24 Go
+```
+On dimensionne sur la **concurrence** et la **longueur de contexte**, pas seulement sur la taille du modèle ([[61-kv-cache-attention|KV cache]]).
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton conteneur d'inférence démarre mais `nvidia-smi` n'y répond pas, alors que le GPU est bien visible sur l'hôte. Comment procèdes-tu ?
