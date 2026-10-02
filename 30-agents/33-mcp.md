@@ -78,12 +78,11 @@ Quels risques de sécurité MCP introduit-il ?
 
 ---
 
-Donnez des exemples de serveurs MCP courants.
+Comment un host MCP déclare-t-il un serveur local et un serveur distant ?
 ?
-<!--anki:4b266f24464137705932-->
-**GitHub, systèmes de fichiers, bases de données (Postgres), navigateur, Slack** — plus tout serveur interne maison.
+<!--anki:3861633963323633363765663437353461356231323532633438386235333338-->
+Un serveur **local** est un processus que le host lance (`command`, transport **stdio**) ; un serveur **distant** est une **URL** (transport HTTP) avec son authentification :
 ```json
-// configuration côté host : un serveur local et un serveur distant
 {
   "mcpServers": {
     "github":   { "command": "npx", "args": ["-y", "@modelcontextprotocol/server-github@1.4.0"] },

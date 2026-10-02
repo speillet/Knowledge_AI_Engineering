@@ -211,15 +211,22 @@ En général **le grand modèle quantizé** : à budget mémoire fixe, **4 bits*
 
 ---
 
-Quels outils pour quantizer et servir un modèle quantizé ?
+Avec quel outil produire un checkpoint quantizé pour vLLM, pour TensorRT-LLM ou pour llama.cpp ?
 ?
-<!--anki:48732b41566441324e4a-->
-- **llm-compressor** (projet vLLM) : GPTQ, AWQ, SmoothQuant, FP8, NVFP4, au format *compressed-tensors*
-- **NVIDIA Model Optimizer** : FP8, NVFP4, INT4 AWQ pour TensorRT-LLM, vLLM et SGLang
-- **GPTQModel**, **bitsandbytes**, `llama-quantize` pour GGUF (AutoAWQ et AutoGPTQ ne sont plus maintenus)
-- Des **checkpoints déjà quantizés** sur Hugging Face (suffixes `-FP8`, `-AWQ`, `-GPTQ-Int4`, `-GGUF`)
+<!--anki:3433393265393632646633333430666638643537616161333766356464343137-->
+- **vLLM ou SGLang** : **llm-compressor** (projet vLLM : GPTQ, AWQ, SmoothQuant, FP8, NVFP4, au format *compressed-tensors*)
+- **TensorRT-LLM** : **NVIDIA Model Optimizer** (FP8, NVFP4, INT4 AWQ), dont les checkpoints servent aussi à vLLM et SGLang
+- **llama.cpp et Ollama** : `llama-quantize` vers GGUF
+- **Souvent rien à faire** : des checkpoints déjà quantizés existent sur Hugging Face (`-FP8`, `-AWQ`, `-GPTQ-Int4`, `-GGUF`)
 
-Le [[11-serveurs-inference-llm|serveur d'inférence]] lit la méthode dans la configuration du checkpoint :
+Autres : GPTQModel, bitsandbytes. AutoAWQ et AutoGPTQ ne sont plus maintenus.
+
+---
+
+Comment servir un checkpoint quantizé avec vLLM ?
+?
+<!--anki:3836366337646562333134363438346162663163383366663563393835353332-->
+vLLM **lit la méthode dans la configuration du checkpoint**, et sait aussi quantizer en FP8 **à la volée** ([[11-serveurs-inference-llm|serveurs d'inférence]]) :
 ```bash
 vllm serve org/modele-AWQ                     # méthode détectée automatiquement
 vllm serve org/modele --quantization fp8 \

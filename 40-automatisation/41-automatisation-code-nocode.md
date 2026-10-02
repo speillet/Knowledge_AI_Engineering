@@ -46,12 +46,12 @@ Quand il faut **versionner, tester, faire de la revue de code**, gérer une logi
 
 ---
 
-Quels outils d'orchestration « code » utilise-t-on ?
+Quel orchestrateur « code » pour des pipelines data planifiés, une orchestration Python moderne, ou des workflows longs qui survivent aux pannes ?
 ?
-<!--anki:464b56556f472b613e3e-->
-- **Airflow** : DAG de pipelines batch planifiés (data)
-- **Prefect** / **Dagster** : orchestration Python plus moderne
-- **Temporal** : **durable execution**, workflows longs qui survivent aux pannes
+<!--anki:3965646437363366373533343431323962373938366663616639633465636330-->
+- **Pipelines batch planifiés** (DAG de traitements data) : **Airflow**
+- **Orchestration Python plus moderne**, centrée sur les tâches ou les assets : **Prefect**, **Dagster**
+- **Workflows longs qui doivent survivre aux pannes** (attentes humaines, agents) : **Temporal** et sa **durable execution**
 
 ---
 

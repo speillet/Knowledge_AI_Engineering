@@ -38,5 +38,80 @@
     "id": "4f4f3e637d4351542e2c",
     "question": "Qu'est-ce que le format GGUF ?",
     "raison": "doublon de 164-llm-local-edge, remplacée par la comparaison safetensors et GGUF"
+  },
+  {
+    "id": "4121657b55617d3e2624",
+    "question": "Quels outils de guardrails existent ?",
+    "raison": "liste de produits remplacée par une carte de choix"
+  },
+  {
+    "id": "71335a4821303e723f5b",
+    "question": "Quels outils pour versionner les données ?",
+    "raison": "liste de produits remplacée par une carte de choix"
+  },
+  {
+    "id": "763d5e68713b775b4d2e",
+    "question": "Quels outils de parsing connaître ?",
+    "raison": "liste de produits remplacée par une carte de choix"
+  },
+  {
+    "id": "6c63492e3a4553506f63",
+    "question": "Quels outils pour servir un modèle local ?",
+    "raison": "liste de produits remplacée par une carte de choix"
+  },
+  {
+    "id": "6752677b6567413c462f",
+    "question": "Quels produits et outils connaître ?",
+    "raison": "liste de produits remplacée par une carte de choix"
+  },
+  {
+    "id": "72233e647a6e59473b5f",
+    "question": "Citez d'autres frameworks courants.",
+    "raison": "liste de produits remplacée par une carte de choix"
+  },
+  {
+    "id": "464b56556f472b613e3e",
+    "question": "Quels outils d'orchestration « code » utilise-t-on ?",
+    "raison": "liste de produits remplacée par une carte de choix"
+  },
+  {
+    "id": "787e2f625a5433466645",
+    "question": "Quels outils pour faire du RL agentique ?",
+    "raison": "liste de produits remplacée par une carte de choix"
+  },
+  {
+    "id": "702a6c35687d64612f7d",
+    "question": "Quels outils implémentent la guided generation ?",
+    "raison": "liste de produits remplacée par une carte de choix"
+  },
+  {
+    "id": "48732b41566441324e4a",
+    "question": "Quels outils pour quantizer et servir un modèle quantizé ?",
+    "raison": "liste de produits remplacée par une carte de choix"
+  },
+  {
+    "id": "4e7b3a796e376560212a",
+    "question": "Quels serveurs d'inférence LLM conteneurisés faut-il connaître ?",
+    "raison": "liste de produits remplacée par une carte de choix"
+  },
+  {
+    "id": "4a785a514860456e7223",
+    "question": "Quelles alternatives à LiteLLM ?",
+    "raison": "liste de produits remplacée par une carte de choix"
+  },
+  {
+    "id": "4b266f24464137705932",
+    "question": "Donnez des exemples de serveurs MCP courants.",
+    "raison": "liste de produits remplacée par une carte de choix"
+  },
+  {
+    "id": "67254c614036287a593d",
+    "question": "Donnez des exemples de harness.",
+    "raison": "liste de produits remplacée par une carte de choix"
+  },
+  {
+    "id": "726e3f763269777b4a54",
+    "question": "Quelles bibliothèques dédiées à la mémoire des agents existent ?",
+    "raison": "liste de produits remplacée par une carte de choix"
   }
 ]

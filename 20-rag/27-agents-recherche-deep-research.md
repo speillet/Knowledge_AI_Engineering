@@ -44,7 +44,7 @@ Parce que la recherche se **parallélise** bien : un orchestrateur lance des **s
 
 ---
 
-Quels outils de recherche donner à l'agent ?
+Quels types d'outils donner à un agent de recherche ?
 ?
 <!--anki:6a416525792b62536b65-->
 - **API de recherche web** conçues pour les agents (résultats nettoyés, extraits pertinents), ou recherche web intégrée au fournisseur du modèle

@@ -93,15 +93,14 @@ Combinaison efficace : l'agent **explore** et gère les exceptions, et les traje
 
 ---
 
-Quels produits et outils connaître ?
+Pour qu'un agent pilote un navigateur, quand choisir une bibliothèque open source, un navigateur hébergé ou le computer use natif d'un modèle ?
 ?
-<!--anki:6752677b6567413c462f-->
-- **Modèles avec computer use natif** : Claude (depuis octobre 2024), l'agent d'OpenAI issu d'Operator, Gemini
-- **Bibliothèques open source** : Browser Use, Stagehand, Playwright MCP
-- **Navigateurs d'agents hébergés** : sessions isolées à la demande (Browserbase et équivalents), pratiques pour le passage à l'échelle
-- **Côté plateformes** : outils navigateur intégrés aux plateformes d'agents ([[38-plateformes-agents|plateformes]])
+<!--anki:6138303232363833626435373431663462663937326563396435626161633034-->
+- **Bibliothèque open source** (Browser Use, Stagehand, Playwright MCP) : pour piloter **des sites web** via le DOM ou l'arbre d'accessibilité, sur sa propre infrastructure
+- **Navigateur hébergé** (Browserbase et équivalents) : pour **passer à l'échelle** avec des sessions isolées à la demande
+- **Computer use natif d'un modèle** (Claude, OpenAI, Gemini) : pour les interfaces **sans DOM exploitable** (applications de bureau, canvas), au prix d'une capture d'écran par étape
 
-Le marché bouge vite : on juge sur **ses propres tâches**, pas sur une démo.
+On juge sur **ses propres tâches**, pas sur une démo.
 
 ---
 

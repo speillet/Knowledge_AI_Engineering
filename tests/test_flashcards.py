@@ -160,6 +160,10 @@ class VaultTests(unittest.TestCase):
                 self.assertTrue(any("hors de la fiche" in w for w in lint.lint(0)[1]))
                 self.rag.write_text(self.rag.read_text().replace(question, "Qu'est-ce que le RAG ?", 1))
 
+    def test_product_list_warns(self):
+        self.rag.write_text(self.rag.read_text().replace("Qu'est-ce que le RAG ?", "Quels outils de RAG connaître ?", 1))
+        self.assertTrue(any("liste de produits" in w for w in lint.lint(0)[1]))
+
     def test_missing_id_fails(self):
         self.rag.write_text(lint.ID_RE.sub("", self.rag.read_text(), count=1))
         self.assertIn("identifiant Anki absent", self.errors())

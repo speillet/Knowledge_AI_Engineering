@@ -85,14 +85,13 @@ La **diversité** compte autant : un modèle entraîné sur un seul type de dép
 
 ---
 
-Quels outils pour faire du RL agentique ?
+RL agentique : bibliothèque open source ou service managé de reinforcement fine-tuning ?
 ?
-<!--anki:787e2f625a5433466645-->
-- **Bibliothèques open source** : verl, OpenRLHF, TRL (GRPO), avec un serveur d'inférence rapide pour générer les trajectoires ([[11-serveurs-inference-llm|vLLM, SGLang]])
-- **Services managés** de reinforcement fine-tuning chez certains fournisseurs de modèles, où l'on fournit tâches et **grader**
-- **Infrastructure d'environnements** : conteneurs ou microVM par épisode, orchestrés en masse ([[54-entrainement-distribue|entraînement distribué]])
+<!--anki:6433363235303264663562323463636261366130353530396132616130643530-->
+- **Bibliothèque open source** (verl, OpenRLHF, TRL pour GRPO) : contrôle total sur un modèle **open-weights**, mais toute l'infrastructure est à monter : GPU d'entraînement, serveur d'inférence pour générer les trajectoires ([[11-serveurs-inference-llm|vLLM, SGLang]]), environnements isolés par épisode ([[54-entrainement-distribue|entraînement distribué]])
+- **Service managé** de reinforcement fine-tuning : on fournit les **tâches et le grader**, le fournisseur entraîne **son** modèle
 
-La partie la plus coûteuse est souvent la **génération des trajectoires**, pas la mise à jour des poids.
+Dans les deux cas, le coût dominant est souvent la **génération des trajectoires**, pas la mise à jour des poids.
 
 ---
 

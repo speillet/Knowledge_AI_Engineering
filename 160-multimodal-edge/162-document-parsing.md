@@ -27,15 +27,15 @@ Détecter les **zones** d'une page — titres, paragraphes, tableaux, figures, l
 
 ---
 
-Quels outils de parsing connaître ?
+Quel outil de parsing selon le document : PDF natif simple, mise en page complexe, scans en volume, données confidentielles ?
 ?
-<!--anki:763d5e68713b775b4d2e-->
-- **Bibliothèques classiques** : PyMuPDF, pdfplumber, Tesseract (OCR).
-- **Pipelines open source** avec layout et tableaux : **Docling**, **Unstructured**, **Marker**, MinerU.
-- **Services cloud** : AWS Textract, Azure Document Intelligence, Google Document AI.
-- **VLM** utilisés directement comme parseurs (page → markdown) et modèles OCR dédiés basés sur VLM.
+<!--anki:3963656532376466656136373464373061363131353338666435663437353963-->
+- **PDF natif au texte simple** : une bibliothèque classique (**PyMuPDF**, pdfplumber), rapide et gratuite
+- **Mise en page complexe, tableaux** : un pipeline avec analyse de layout (**Docling**, **Unstructured**, **Marker**, MinerU)
+- **Scans et formulaires en volume** : un service cloud (AWS Textract, Azure Document Intelligence, Google Document AI) ou un **VLM** qui convertit chaque page en Markdown
+- **Données qui ne doivent pas sortir** : un pipeline open source auto-hébergé, avec Tesseract pour l'OCR de base
 
-Choix selon la qualité **mesurée sur ses documents**, le coût, la confidentialité.
+On tranche sur la qualité **mesurée sur ses propres documents**, puis sur le coût.
 
 ---
 

@@ -83,7 +83,7 @@ Un hook peut aussi renvoyer **`jump_to`** (`"end"`, `"tools"`, `"model"`) pour c
 
 ---
 
-Citez des middlewares fournis par LangChain.
+Quels middlewares prêts à l'emploi LangChain fournit-il ?
 ?
 <!--anki:4a5532617776615f543e-->
 - **HumanInTheLoopMiddleware** : approbation humaine avant certains outils

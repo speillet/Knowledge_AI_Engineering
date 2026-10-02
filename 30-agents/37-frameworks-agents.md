@@ -45,12 +45,14 @@ Des frameworks **légers** : **OpenAI Agents SDK** (agents, handoffs, guardrails
 
 ---
 
-Citez d'autres frameworks courants.
+Quel framework d'agents pour un agent centré sur les données, pour des sorties typées, ou dans l'écosystème Microsoft ?
 ?
-<!--anki:72233e647a6e59473b5f-->
-- **LlamaIndex** : orienté données et RAG (ingestion, index, query engines)
-- **Pydantic AI** : typage fort et sorties validées
-- **Microsoft Agent Framework** (héritier d'AutoGen et Semantic Kernel)
+<!--anki:3862306337396462366434393466303962653836363662366539636461653035-->
+- **Agent centré sur les données** (ingestion, index, query engines, RAG) : **LlamaIndex**
+- **Sorties typées et validées** : **Pydantic AI**
+- **Écosystème Microsoft** : **Microsoft Agent Framework**, héritier d'AutoGen et de Semantic Kernel
+
+Pour un flux à états avec checkpoints et interruptions : [[44-langgraph-fondamentaux|LangGraph]].
 
 ---
 

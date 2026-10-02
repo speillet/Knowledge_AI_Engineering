@@ -86,13 +86,13 @@ Une approche inspirée des **systèmes d'exploitation** : des **blocs de mémoir
 
 ---
 
-Quelles bibliothèques dédiées à la mémoire des agents existent ?
+Quelle bibliothèque de mémoire d'agent pour une couche d'extraction simple, une mémoire auto-éditée, des faits qui changent, un graphe avec ontologie ?
 ?
-<!--anki:726e3f763269777b4a54-->
-- **Mem0** : couche mémoire (extraction et consolidation)
-- **Letta** : agents avec mémoire auto-éditée
-- **Zep / Graphiti** : graphe temporel
-- **[[24-cognee|Cognee]]** : knowledge graph + ontologie
+<!--anki:3931613663613465373863633435633661313165373434653566323234346263-->
+- **Couche mémoire** qui extrait et consolide les faits des conversations : **Mem0**
+- **Mémoire auto-éditée** par l'agent lui-même : **Letta**
+- **Faits qui changent dans le temps** (validité, historique) : **Zep / Graphiti**, un graphe temporel
+- **Knowledge graph structuré par une ontologie** : **[[24-cognee|Cognee]]**
 
 ---
 

@@ -34,13 +34,13 @@ Pour **reproduire** une eval ou un entraînement (quelles données exactement ?)
 
 ---
 
-Quels outils pour versionner les données ?
+Quel outil pour versionner quelles données : fichiers à côté du code, data lake, tables analytiques, jeux d'eval ?
 ?
-<!--anki:71335a4821303e723f5b-->
-- **DVC** : versionne les fichiers de données à côté du code git (pointeurs dans git, contenu sur un stockage objet).
-- **lakeFS** : branches et commits façon git **sur un data lake**.
-- **Formats de table** avec historique (Delta Lake, Apache Iceberg : time travel).
-- **Datasets versionnés** des plateformes d'eval ([[91-langfuse-observabilite|Langfuse]], Hugging Face Hub).
+<!--anki:6663323763343033366262303439636539643836643838366461613930353662-->
+- **Fichiers à côté du code** : **DVC** (pointeurs dans git, contenu sur un stockage objet)
+- **Data lake entier**, avec branches et commits façon git : **lakeFS**
+- **Tables analytiques** : **Delta Lake** ou **Apache Iceberg**, avec leur historique (time travel)
+- **Jeux d'eval** : datasets versionnés de la plateforme d'eval ([[91-langfuse-observabilite|Langfuse]]) ou du Hugging Face Hub
 
 ---
 

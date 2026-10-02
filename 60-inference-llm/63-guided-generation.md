@@ -37,10 +37,14 @@ Quels types de contraintes peut-on appliquer ?
 
 ---
 
-Quels outils implémentent la guided generation ?
+Quel moteur de guided generation selon le serveur : vLLM ou SGLang, llama.cpp, ou une bibliothèque Python ?
 ?
-<!--anki:702a6c35687d64612f7d-->
-**XGrammar** (moteur par défaut de vLLM et SGLang), **Outlines**, **llguidance**, **lm-format-enforcer**, et les grammaires **GBNF** de llama.cpp.
+<!--anki:3533363362333633333436643465666461633639333739356631636532343066-->
+- **vLLM et SGLang** : **XGrammar** par défaut, d'autres moteurs en option (llguidance, Outlines)
+- **llama.cpp** : les grammaires **GBNF**
+- **En bibliothèque Python**, autour de son propre code d'inférence : **Outlines**, lm-format-enforcer
+
+Les API propriétaires n'exposent que le JSON Schema : leur moteur est caché.
 
 ---
 

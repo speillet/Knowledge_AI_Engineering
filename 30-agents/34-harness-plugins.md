@@ -27,10 +27,13 @@ Pourquoi dit-on que le harness compte autant que le modèle ?
 
 ---
 
-Donnez des exemples de harness.
+Harness prêt à l'emploi ou harness construit avec un SDK : quand choisir chacun ?
 ?
-<!--anki:67254c614036287a593d-->
-**Claude Code, Cursor, Codex CLI, Aider** pour le code ; les SDK (**Claude Agent SDK**, OpenAI Agents SDK) permettent de construire son propre harness.
+<!--anki:6363323232356361663464393438333438616337616636336438343536663533-->
+- **Prêt à l'emploi** (Claude Code, Cursor, Codex CLI, Aider) : pour **coder** avec un agent ; on l'adapte par fichiers mémoire, skills, hooks et permissions
+- **Construit avec un SDK** (Claude Agent SDK, OpenAI Agents SDK) : pour **intégrer** la boucle d'agent dans son produit, avec ses propres outils et ses propres règles
+
+Le SDK fournit la boucle et les outils de base : on n'écrit que ce qui est propre au produit.
 
 ---
 

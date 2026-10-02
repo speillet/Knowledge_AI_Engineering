@@ -41,7 +41,7 @@ Du plus flexible au plus clé en main :
 
 ---
 
-Donnez des exemples de plateformes d'agents cloud.
+Quel produit sert de plateforme d'agents chez AWS, Google et Microsoft ?
 ?
 <!--anki:6c2e232f513e5d4f3246-->
 - **AWS** : **Bedrock AgentCore** (Harness, Runtime, Memory, Gateway, Identity, Code Interpreter, Browser, Observability, Evaluations, Policy, Registry)

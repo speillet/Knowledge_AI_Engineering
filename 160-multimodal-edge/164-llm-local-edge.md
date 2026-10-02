@@ -28,14 +28,13 @@ Qu'est-ce que llama.cpp et le format GGUF ?
 
 ---
 
-Quels outils pour servir un modèle local ?
+Quel outil pour servir un LLM en local : développeur seul, Mac, interface graphique, équipe ?
 ?
-<!--anki:6c63492e3a4553506f63-->
-- **Ollama** : gestion simple des modèles et API locale (au-dessus de llama.cpp).
-- **LM Studio** : interface graphique.
-- **llama.cpp server** : API compatible OpenAI.
-- **MLX** (Apple Silicon) : framework optimisé pour la mémoire unifiée des Mac.
-- **vLLM / SGLang** sur un serveur GPU on-prem pour le **multi-utilisateur** ([[11-serveurs-inference-llm|serveurs d'inférence]]).
+<!--anki:3462633762323030326236333435653361303765663234343061626430623137-->
+- **Développeur seul** : **Ollama** (gestion des modèles et API locale, au-dessus de llama.cpp), ou directement le serveur **llama.cpp**, compatible OpenAI
+- **Mac Apple Silicon** : **MLX**, optimisé pour la mémoire unifiée
+- **Interface graphique** : **LM Studio**
+- **Équipe, utilisateurs simultanés** : **vLLM** ou **SGLang** sur un serveur GPU on-prem ([[11-serveurs-inference-llm|serveurs d'inférence]])
 
 ---
 

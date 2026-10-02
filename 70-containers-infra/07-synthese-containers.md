@@ -76,10 +76,15 @@ Comment donne-t-on accès au GPU selon l'environnement ?
 
 ---
 
-Quels serveurs d'inférence LLM conteneurisés faut-il connaître ?
+Quel serveur d'inférence pour quel usage : production GPU, performance maximale NVIDIA, modèles hétérogènes, poste local ?
 ?
-<!--anki:4e7b3a796e376560212a-->
-**[[11-serveurs-inference-llm|vLLM, NVIDIA Triton, TGI]]** (et TensorRT-LLM, Ollama).
+<!--anki:3835303563363764303133313463393461306134623039613434386130383463-->
+- **Production sur GPU**, API compatible OpenAI : **vLLM** ou **SGLang**
+- **Performance maximale sur GPU NVIDIA** : **TensorRT-LLM**, souvent servi par **Triton**
+- **Plusieurs types de modèles** (LLM, vision, modèles classiques) derrière un même serveur : **Triton**
+- **Poste local** : **Ollama** ou llama.cpp
+
+TGI est en mode maintenance ([[11-serveurs-inference-llm|serveurs d'inférence]]).
 
 ---
 

@@ -74,10 +74,16 @@ Un **contrôle placé autour du modèle** :
 
 ---
 
-Quels outils de guardrails existent ?
+Quel outil de guardrails pour quel besoin : PII, injection, contenu dangereux, règles de dialogue, format de sortie ?
 ?
-<!--anki:4121657b55617d3e2624-->
-**Llama Guard** et **Prompt Guard** (classifieurs Meta), **NeMo Guardrails** (NVIDIA), **Guardrails AI**, **Presidio** (détection de PII), et les filtres de sécurité des fournisseurs cloud.
+<!--anki:3362383461626362623366353435353739336437393164303264653933393364-->
+- **PII** (détection, anonymisation) : **Presidio**
+- **Prompt injection et jailbreak** : un classifieur dédié, comme **Prompt Guard** (Meta)
+- **Contenu dangereux** en entrée et en sortie : **Llama Guard**, ou les filtres de sécurité du fournisseur cloud
+- **Règles de dialogue** (sujets autorisés, enchaînements imposés) : **NeMo Guardrails** (NVIDIA)
+- **Validation des sorties** (format, valeurs) : **Guardrails AI**
+
+On les combine : aucun classifieur ne bloque l'injection à 100 % ([[103-defenses-agents|défenses]]).
 
 ---
 

@@ -89,7 +89,7 @@ Seuls les Pods qui le demandent paient le surcoût de l'isolation renforcée ([[
 
 ---
 
-Quels outils en ligne de commande parlent à containerd ?
+À ne pas confondre : ctr, nerdctl et crictl ?
 ?
 <!--anki:475279656c3947717c78-->
 - **`ctr`** : client **bas niveau** livré avec containerd, pour le débogage. Attention aux **namespaces** containerd (`-n k8s.io` pour voir les conteneurs de Kubernetes)

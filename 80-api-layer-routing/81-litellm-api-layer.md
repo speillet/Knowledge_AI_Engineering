@@ -82,14 +82,14 @@ L'[[83-gateway-ingress|Ingress]] gère le réseau ; LiteLLM gère la **logique p
 
 ---
 
-Quelles alternatives à LiteLLM ?
+Quel type de gateway LLM choisir : auto-hébergée, service managé du cloud, ou agrégateur SaaS ?
 ?
-<!--anki:4a785a514860456e7223-->
-- **Gateways auto-hébergées** : Portkey, Kong AI Gateway, Envoy AI Gateway, agentgateway (qui gère aussi MCP et A2A)
-- **Services managés des clouds** : gateways IA intégrées aux offres AWS, Azure et Google
-- **Agrégateurs SaaS** : OpenRouter, pour l'accès multi-fournisseurs sans infrastructure
+<!--anki:3236613063623236323539633436323039303964303466393931623061646136-->
+- **Auto-hébergeable** (LiteLLM, Portkey, Kong AI Gateway, Envoy AI Gateway, agentgateway qui gère aussi MCP et A2A) : quand les **données ne doivent pas sortir**, ou pour garder la main sur le routage et les budgets
+- **Service managé du cloud** (AWS, Azure, Google) : quand tout est déjà **chez un même cloud** et qu'on ne veut rien exploiter
+- **Agrégateur SaaS** (OpenRouter) : pour accéder à **beaucoup de fournisseurs** sans infrastructure ni contrats séparés
 
-Critères : fournisseurs couverts, budgets et virtual keys, observabilité, latence ajoutée, et possibilité d'auto-héberger si les données ne doivent pas sortir.
+Critères communs : fournisseurs couverts, budgets et virtual keys, observabilité, latence ajoutée.
 
 ---
 
