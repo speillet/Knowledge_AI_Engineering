@@ -42,7 +42,14 @@ Où des instructions non fiables peuvent-elles se cacher dans des fichiers ?
 Qu'est-ce que le détournement d'agent (agent hijacking) ?
 ?
 <!--anki:726c624a5e3953506252-->
-Une **injection indirecte** qui pousse l'agent à exécuter les **objectifs de l'attaquant** avec les droits de l'utilisateur : exfiltrer des données, envoyer des messages, lancer du code, modifier des configurations. C'est le premier risque du Top 10 OWASP agentique (**détournement de l'objectif**). Le NIST (CAISI) a mesuré **81 % de réussite** de détournement avec de nouvelles attaques, contre 11 % pour les meilleures attaques de référence.
+Une **injection indirecte** qui pousse l'agent à exécuter les **objectifs de l'attaquant** avec les droits de l'utilisateur : exfiltrer des données, envoyer des messages, lancer du code, modifier des configurations. C'est le premier risque du Top 10 OWASP agentique (**détournement de l'objectif**).
+
+---
+
+Quel taux de détournement d'agent le NIST (CAISI) a-t-il mesuré avec de nouvelles attaques ?
+?
+<!--anki:3665336565373235356365323463313539396366326437366139653335363132-->
+**81 %** de réussite avec de nouvelles attaques, contre **11 %** pour les meilleures attaques de référence. Une évaluation limitée aux attaques connues **sous-estime** donc le risque ([[103-defenses-agents|architecture défensive]]).
 
 ---
 

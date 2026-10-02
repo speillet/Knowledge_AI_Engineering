@@ -8,7 +8,12 @@ Pourquoi construire une plateforme d'agents interne plutôt que laisser chaque �
 <!--anki:736971307067364a5850-->
 Sans plateforme, chaque équipe réimplémente runtime, identité, accès aux outils, observabilité et contrôles, chacune à sa manière. L'équipe plateforme fournit un **chemin balisé** (paved road) : templates, outils approuvés, mémoire, authentification, traces et evals prêts à l'emploi. Les équipes produit se concentrent sur la logique métier.
 
-L'enjeu est réel : Gartner prévoit que **plus de 40 % des projets agentiques seront annulés d'ici fin 2027**, pour trois raisons (coûts, valeur floue, contrôle des risques insuffisant) qu'une plateforme traite dès le départ.
+---
+
+Quelle part des projets agentiques Gartner prévoit-il d'annuler d'ici fin 2027, et pour quelles raisons ?
+?
+<!--anki:6233353432366564333864353439316662376461306137396636323031326531-->
+**Plus de 40 %**, pour trois raisons : des **coûts** qui dérapent, une **valeur métier** floue et un **contrôle des risques** insuffisant. Ce sont les sujets qu'une plateforme interne traite dès le départ.
 
 ---
 
@@ -248,13 +253,20 @@ AWS (AgentCore Optimization) et Google (Agent Optimizer) proposent cette boucle 
 Comment maîtriser le coût d'une flotte d'agents ?
 ?
 <!--anki:4a5a787e4c6044325e53-->
-Un agent consomme beaucoup plus qu'un chat : selon Anthropic, **environ 4 fois plus de tokens**, et **environ 15 fois plus** pour un système multi-agents. Les leviers :
+Quatre leviers :
 - **Attribuer** le coût par agent, tâche et équipe, grâce à l'identité et aux tags ([[122-finops-llm|FinOps]])
 - **Budgets par run**
 - **Préfixe stable** pour le cache ([[123-caching-agressif|caching]]) et **compaction** du contexte
 - **Petits modèles** pour les sous-étapes ([[82-routing-llm|routing]])
 
 La métrique qui décide : le **coût par tâche réussie**, comparé au coût du processus actuel.
+
+---
+
+Combien de tokens un agent consomme-t-il par rapport à un chat, selon Anthropic ?
+?
+<!--anki:6165373738373233373436643438306262336238663763393132633938666631-->
+Environ **4 fois plus** pour un agent seul, et environ **15 fois plus** pour un système multi-agents ([[27-agents-recherche-deep-research|agents de recherche]]).
 
 ---
 

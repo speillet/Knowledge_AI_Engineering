@@ -59,11 +59,23 @@ Quels design patterns contre l'injection reposent sur un programme ou sur un con
 
 ---
 
-Comment fonctionnent le pattern Dual LLM et CaMeL ?
+Comment fonctionne le pattern Dual LLM ?
 ?
 <!--anki:455f554841523f57545e-->
-- **Dual LLM** : le LLM privilégié ne voit **jamais** le texte non fiable. Il manipule des **références** (`$email1`) vers les résultats du LLM en quarantaine, qui lit les données mais n'a **aucun outil**
-- **CaMeL** (Google DeepMind, 2025) va plus loin : le LLM privilégié écrit un **programme** à partir de la seule demande de l'utilisateur. Un interpréteur **trace la provenance** de chaque valeur et applique des **politiques** avant chaque appel d'outil (ex. interdit d'envoyer un e-mail à une adresse venue d'une donnée non fiable)
+Deux LLM séparés :
+- un **LLM en quarantaine** lit les données non fiables, mais n'a **aucun outil**
+- un **LLM privilégié** a les outils, mais ne voit **jamais** le texte non fiable : il manipule seulement des **références** (`$email1`) vers les résultats de la quarantaine
+
+Une injection dans les données ne peut donc pas déclencher d'outil.
+
+---
+
+Qu'apporte CaMeL (Google DeepMind, 2025) par rapport au pattern Dual LLM ?
+?
+<!--anki:3863343033363139376664383434383661383330643035663030386533363863-->
+Le LLM privilégié écrit un **programme** à partir de la seule demande de l'utilisateur. Un interpréteur **trace la provenance** de chaque valeur et applique des **politiques** avant chaque appel d'outil (ex. interdit d'envoyer un e-mail à une adresse venue d'une donnée non fiable).
+
+Le Dual LLM protège le **flux de contrôle** ; CaMeL protège aussi le **flux de données**.
 
 ---
 

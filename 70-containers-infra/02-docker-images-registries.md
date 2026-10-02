@@ -60,7 +60,14 @@ Qu'est-ce qu'un container registry ?
 <!--anki:4b706936536a6b482f4e-->
 Un service qui **stocke et distribue des images**, selon l'API de l'[[01-oci|OCI Distribution Specification]] : il conserve les **manifests** et les **couches**, adressées par digest, et les sert sur pull. Exemples : Docker Hub, GitHub Container Registry, Harbor, Amazon ECR, Google Artifact Registry.
 
-En entreprise, il porte aussi le **contrôle d'accès**, l'**analyse de vulnérabilités**, la **signature** et la rétention. C'est un composant critique : si le registry est indisponible, plus aucun Pod ne démarre sur une image non déjà présente sur le node.
+---
+
+Quel rôle le registry joue-t-il en entreprise, et que se passe-t-il s'il tombe ?
+?
+<!--anki:3334393664346233353761633438343761346139383366633838393265663966-->
+Il porte le **contrôle d'accès**, l'**analyse de vulnérabilités**, la **signature** et la rétention des images.
+
+C'est un composant critique : s'il est indisponible, plus aucun Pod ne démarre sur une image qui n'est pas déjà présente sur le node.
 
 ---
 

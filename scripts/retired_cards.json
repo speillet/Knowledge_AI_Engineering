@@ -113,5 +113,40 @@
     "id": "726e3f763269777b4a54",
     "question": "Quelles bibliothèques dédiées à la mémoire des agents existent ?",
     "raison": "liste de produits remplacée par une carte de choix"
+  },
+  {
+    "id": "73492d33343547474e48",
+    "question": "Définis en une phrase : OCI, image, conteneur, registry.",
+    "raison": "plusieurs notions par carte, chacune déjà définie dans sa fiche"
+  },
+  {
+    "id": "516c7c5379535d552f54",
+    "question": "Définis en une phrase : Kubernetes, kubelet, CRI.",
+    "raison": "plusieurs notions par carte, chacune déjà définie dans sa fiche"
+  },
+  {
+    "id": "4a3a2141514b24426a64",
+    "question": "Définis en une phrase : containerd, runc.",
+    "raison": "plusieurs notions par carte, chacune déjà définie dans sa fiche"
+  },
+  {
+    "id": "463e2f2d4074386c7a2d",
+    "question": "Définis en une phrase : NVIDIA Container Toolkit, device plugin, MIG.",
+    "raison": "plusieurs notions par carte, chacune déjà définie dans sa fiche"
+  },
+  {
+    "id": "7860645e5e44623d6a3b",
+    "question": "Définis en une phrase : vLLM, Triton, TGI.",
+    "raison": "plusieurs notions par carte, chacune déjà définie dans sa fiche"
+  },
+  {
+    "id": "6370427b363d21607d52",
+    "question": "Définis en une phrase : KV cache, cold start.",
+    "raison": "plusieurs notions par carte, chacune déjà définie dans sa fiche"
+  },
+  {
+    "id": "7230625557696a456f63",
+    "question": "Comment distinguer namespaces et cgroups ?",
+    "raison": "doublon de 08-linux-primitives-docker-fondamentaux"
   }
 ]

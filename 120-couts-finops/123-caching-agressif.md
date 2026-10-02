@@ -25,6 +25,14 @@ Comment fonctionne le prompt caching chez Anthropic ?
 - Écriture : **1,25×** le prix d'entrée (TTL 5 min) ou **2×** (1 h) ; lecture : **≈ 0,1×**
 - Rentable **dès la 2e requête** avec le TTL de 5 minutes
 
+D'autres fournisseurs cachent automatiquement les longs préfixes (ex. OpenAI).
+
+---
+
+Où placer le point de cache dans une requête Anthropic, et comment vérifier qu'il sert ?
+?
+<!--anki:3831373663633535333531303462326639393035363139393733623433396164-->
+**À la fin de la partie partagée** : tout ce qui précède doit être identique d'une requête à l'autre.
 ```python
 messages = [
   {"role": "system", "content": [
@@ -36,9 +44,7 @@ messages = [
   {"role": "user", "content": question},                # variable, à la fin
 ]
 ```
-Le point de cache se place **à la fin de la partie partagée**. Dans la réponse, `usage.cache_read_input_tokens` dit ce qui a réellement été réutilisé.
-
-D'autres fournisseurs cachent automatiquement les longs préfixes (ex. OpenAI).
+Dans la réponse, `usage.cache_read_input_tokens` dit ce qui a réellement été réutilisé.
 
 ---
 

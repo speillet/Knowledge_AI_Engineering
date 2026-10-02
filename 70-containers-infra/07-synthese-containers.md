@@ -60,13 +60,6 @@ Comment résumer Docker, Kubernetes, containerd et runc ?
 
 ---
 
-Comment distinguer namespaces et cgroups ?
-?
-<!--anki:7230625557696a456f63-->
-**Les [[08-linux-primitives-docker-fondamentaux|namespaces]] isolent (ce qu'un processus voit) ; les [[08-linux-primitives-docker-fondamentaux|cgroups]] limitent (ce qu'un processus consomme).**
-
----
-
 Comment donne-t-on accès au GPU selon l'environnement ?
 ?
 <!--anki:434a6a212c3b70547052-->
@@ -95,64 +88,11 @@ Dans un **[[08-linux-primitives-docker-fondamentaux|volume / bind mount]]** ou u
 
 ---
 
-Définis en une phrase : OCI, image, conteneur, registry.
-?
-<!--anki:73492d33343547474e48-->
-- **OCI** : l'initiative qui standardise le format des images, le runtime et la distribution des conteneurs ([[01-oci|OCI]])
-- **Image** : un paquet **immuable en couches** qui contient une application et ses dépendances
-- **Conteneur** : une **instance en cours d'exécution** d'une image, isolée du reste du système
-- **Registry** : le serveur qui **stocke et distribue** les images (push, pull)
-
----
-
-Définis en une phrase : Kubernetes, kubelet, CRI.
-?
-<!--anki:516c7c5379535d552f54-->
-- **Kubernetes** : l'orchestrateur qui déploie et maintient des conteneurs sur un **cluster**
-- **kubelet** : l'agent de **chaque nœud**, qui fait tourner les Pods qu'on lui assigne
-- **CRI** : l'**interface standard** entre le kubelet et le runtime de conteneurs ([[04-kubernetes-kubelet-cri|Kubernetes & CRI]])
-
----
-
-Définis en une phrase : containerd, runc.
-?
-<!--anki:4a3a2141514b24426a64-->
-- **containerd** : le runtime de **haut niveau** qui gère les images et le cycle de vie des conteneurs (appelé par le kubelet via le CRI)
-- **runc** : le runtime **bas niveau**, conforme OCI, qui crée réellement le conteneur avec les primitives du noyau ([[03-containerd-runc|containerd & runc]])
-
----
-
 Définis en une phrase : Apptainer, SIF.
 ?
 <!--anki:77763777364e6b7a5674-->
 - **Apptainer** : le runtime de conteneurs du **HPC** (ex-Singularity), sans démon et sans droits root ([[06-apptainer-singularity|Apptainer]])
 - **SIF** : le format d'image d'Apptainer, un **fichier unique** et immuable
-
----
-
-Définis en une phrase : NVIDIA Container Toolkit, device plugin, MIG.
-?
-<!--anki:463e2f2d4074386c7a2d-->
-- **NVIDIA Container Toolkit** : ce qui **expose les GPU et le driver** de l'hôte à l'intérieur d'un conteneur ([[09-gpu-conteneurs|GPU en conteneur]])
-- **Device plugin** : le composant qui **annonce les GPU à Kubernetes**, sous la ressource `nvidia.com/gpu`
-- **MIG** : le **partitionnement d'un GPU** (A100, H100) en instances isolées ([[12-kubernetes-gpu-inference|Kubernetes GPU]])
-
----
-
-Définis en une phrase : vLLM, Triton, TGI.
-?
-<!--anki:7860645e5e44623d6a3b-->
-- **vLLM** : le serveur d'inférence LLM open source **de référence** (PagedAttention, continuous batching, API compatible OpenAI)
-- **Triton** : le serveur d'inférence **multi-framework** de NVIDIA
-- **TGI** : le serveur de Hugging Face, historiquement très utilisé, aujourd'hui **en mode maintenance** ([[11-serveurs-inference-llm|serveurs d'inférence]])
-
----
-
-Définis en une phrase : KV cache, cold start.
-?
-<!--anki:6370427b363d21607d52-->
-- **KV cache** : les **clés et valeurs d'attention** gardées en mémoire, pour ne pas recalculer tout le contexte à chaque token ([[61-kv-cache-attention|KV cache]])
-- **Cold start** : le **délai avant la première réponse** d'un nouveau réplica : pull de l'image, téléchargement des poids, chargement en VRAM ([[10-images-modeles-poids|images & poids]])
 
 ---
 
@@ -186,4 +126,6 @@ Repère utile : OCI dit à quoi ressemble une image, CRI dit comment Kubernetes 
 
 ## Connexions
 - [[00-index|Index Conteneurs (MOC)]] — carte complète du sujet
+- [[01-oci|OCI]] — les standards d'image, de runtime et de distribution
+- [[04-kubernetes-kubelet-cri|Kubernetes & CRI]] — le haut de la chaîne d'exécution
 - [[00-moc-ai-engineering|MOC AI Engineering]]
