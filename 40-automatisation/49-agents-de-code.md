@@ -1,6 +1,7 @@
 # Agents de code : usage & intégration — Flashcards
 Tags: #flashcards #ai-engineering #agents #agents-de-code #developpement #llm
 Vérifié le : 30 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: ACI (SWE-agent), boucle pilotée par les tests, `CLAUDE.md` et `AGENTS.md`, mode plan, worktrees et sous-agents, gestion du contexte, mode headless, SWE-bench et ses limites, tâches à déléguer, mesure de l'apport. -->
 
 Qu'est-ce qu'un agent de code ?
 ?

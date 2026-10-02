@@ -1,5 +1,6 @@
 # Probabilités & sampling — Flashcards
 Tags: #flashcards #ai-engineering #inference #sampling #probabilites #llm
+<!-- summary: logits et softmax, température, greedy, top-k, top-p, température ou top-p, min-p, réglages par cas d'usage, logprobs, probabilité d'une séquence, perplexité, calibration, speculative decoding et distribution. -->
 
 Que produit un LLM à chaque pas de génération ?
 ?

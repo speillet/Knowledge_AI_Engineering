@@ -1,6 +1,7 @@
 # Streaming & intégration applicative — Flashcards
 Tags: #flashcards #ai-engineering #api #streaming #agents #llm
 Vérifié le : 30 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: intérêt du streaming, SSE ou WebSocket, tampons des proxys, annulation côté serveur, JSON en streaming, événements d'un agent (AG-UI), tâches longues asynchrones, reprise d'un flux, clé d'idempotence, calcul des connexions ouvertes. -->
 
 Pourquoi streamer les réponses d'un LLM ?
 ?

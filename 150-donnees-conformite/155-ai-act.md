@@ -1,6 +1,7 @@
 # AI Act (règlement européen sur l'IA) — Flashcards
 Tags: #flashcards #ai-engineering #ai-act #conformite #reglementation
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: approche par les risques, pratiques interdites, haut risque et obligations, fournisseur ou déployeur, transparence, modèles à usage général, calendrier, sanctions, plan d'action. -->
 
 Qu'est-ce que l'AI Act ?
 ?

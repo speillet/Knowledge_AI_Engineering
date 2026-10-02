@@ -1,6 +1,7 @@
 # Carte des protocoles agentiques — Flashcards
 Tags: #flashcards #ai-engineering #agents #protocoles #mcp #a2a
 Vérifié le : 30 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: protocoles par frontière, MCP, A2A et AG-UI, Agent Card, cycle d'une tâche A2A, API compatible OpenAI, conventions OpenTelemetry GenAI, `AGENTS.md` et skills, paiements par agents (AP2, ACP), gouvernance des standards, quand ne pas exposer un agent en A2A, frontières de confiance. -->
 
 Quels protocoles relient un agent à son environnement, et à quel niveau ?
 ?

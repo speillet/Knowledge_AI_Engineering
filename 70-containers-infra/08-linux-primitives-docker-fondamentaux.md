@@ -1,5 +1,6 @@
 # Primitives Linux & fondamentaux Docker — Flashcards
 Tags: #flashcards #conteneurs #linux #docker
+<!-- summary: namespaces et cgroups, conteneur ou VM, layers, ordre du Dockerfile et cache, volumes et bind mounts, port mapping. -->
 
 Sur quelles primitives du kernel Linux reposent les conteneurs ?
 ?

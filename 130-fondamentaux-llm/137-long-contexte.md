@@ -1,5 +1,6 @@
 # Long contexte — Flashcards
 Tags: #flashcards #ai-engineering #fondamentaux #long-context #llm
+<!-- summary: extension de RoPE, lost in the middle, needle in a haystack et RULER, context rot, long contexte ou RAG, coût, techniques de serving, limite de sortie, test sur sa tâche. -->
 
 Qu'est-ce que la fenêtre de contexte ?
 ?

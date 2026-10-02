@@ -1,6 +1,7 @@
 # Plateformes d'agents — Architecture & gouvernance — Flashcards
 Tags: #flashcards #ai-engineering #agents #platform #gouvernance #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: plateforme interne (paved road), plan de contrôle et plan d'exécution, architecture de référence, séparation cerveau, mains et session, exécution durable, isolation multi-tenant, échange de jetons pour l'agent délégué, jetons hors du contexte, standards d'identité, moteur de politiques, human-in-the-loop, registre et cycle de vie, Top 10 OWASP agentique, rayon d'impact et kill switch, audit, SLO, evals continues, coûts, AI Act, lock-in, critères de choix. -->
 
 Pourquoi construire une plateforme d'agents interne plutôt que laisser chaque équipe se débrouiller ?
 ?

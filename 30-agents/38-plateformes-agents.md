@@ -1,6 +1,7 @@
 # Plateformes d'agents — Flashcards
 Tags: #flashcards #ai-engineering #agents #platform #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: différence avec un framework, briques, niveaux d'abstraction (API, runtime, harness managé), offres cloud et des fournisseurs de modèles, open source, runtime et double texting, sandbox et services de sandbox, gateway d'outils, registre, identité, agent délégué ou autonome, mémoire, observabilité, evals, protocoles (MCP, A2A), build ou buy. La suite, niveau senior, est la fiche 115 de la section 110. -->
 
 À ne pas confondre : framework et plateforme d'agents ?
 ?

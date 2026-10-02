@@ -1,5 +1,6 @@
 # OCI — Flashcards
 Tags: #flashcards #conteneurs #oci
+<!-- summary: rôle de l'Open Container Initiative, spécifications image, runtime et distribution. -->
 
 Que signifie OCI ?
 ?

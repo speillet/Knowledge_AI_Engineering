@@ -1,5 +1,6 @@
 # Guided generation (sorties structurées) — Flashcards
 Tags: #flashcards #ai-engineering #inference #structured-output #llm
+<!-- summary: masquage des logits, JSON Schema, regex et grammaires, XGrammar et Outlines, structured outputs des API, mode JSON ou structured outputs, validation métier. -->
 
 Qu'est-ce que la guided generation ?
 ?

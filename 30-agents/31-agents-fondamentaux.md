@@ -1,5 +1,6 @@
 # Fondamentaux des agents — Flashcards
 Tags: #flashcards #ai-engineering #agents #llm
+<!-- summary: workflow ou agent, pattern ReAct, composants d'un agent minimal, trois formes de human-in-the-loop, risques et parades, ordres de grandeur de coût, conditions d'arrêt. -->
 
 Qu'est-ce qu'un agent LLM ?
 ?

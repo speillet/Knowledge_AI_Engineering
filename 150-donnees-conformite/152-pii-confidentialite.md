@@ -1,5 +1,6 @@
 # PII & confidentialité des données — Flashcards
 Tags: #flashcards #ai-engineering #donnees #pii #confidentialite #securite
+<!-- summary: où passent les données, détection, masquage, pseudonymisation et anonymisation, pseudonymiser avant l'appel, engagements des fournisseurs, logs, mémorisation, fuites entre utilisateurs, secrets, privacy by design. -->
 
 Où passent les données personnelles dans une application LLM ?
 ?

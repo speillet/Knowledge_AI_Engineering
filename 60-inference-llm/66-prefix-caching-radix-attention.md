@@ -1,6 +1,7 @@
 # Prefix caching & RadixAttention — Flashcards
 Tags: #flashcards #ai-engineering #inference #kv-cache #caching #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: prefix caching de vLLM, arbre radix de SGLang, éviction, ordonnancement et routage cache-aware, offloading du KV cache (LMCache), limites, canal auxiliaire temporel, métriques. -->
 
 Qu'est-ce que le prefix caching côté serveur ?
 ?

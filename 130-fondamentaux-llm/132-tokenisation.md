@@ -1,5 +1,6 @@
 # Tokenisation — Flashcards
 Tags: #flashcards #ai-engineering #fondamentaux #tokenisation #llm
+<!-- summary: token ou mot, BPE, byte-level, taille de vocabulaire, surcoût du français, limites au niveau des caractères, tokens spéciaux, chat templates, frontières de tokens, comptage, sécurité. -->
 
 Qu'est-ce qu'un token ?
 ?

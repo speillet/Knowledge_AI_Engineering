@@ -1,6 +1,7 @@
 # Mémoire des agents — Flashcards
 Tags: #flashcards #ai-engineering #agents #memoire #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: mémoire de travail, sémantique, épisodique et procédurale, thread ou long terme, écriture pendant ou après la conversation, consolidation, score de rappel, réflexion, faits qui changent, stockage, Letta, outils, risques, évaluation, mémoire d'agent ou RAG, quand ne pas donner de mémoire long terme. -->
 
 Pourquoi un agent a-t-il besoin d'une mémoire externe ?
 ?

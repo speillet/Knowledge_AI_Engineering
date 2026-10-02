@@ -1,6 +1,7 @@
 # RL agentique & environnements d'entraînement — Flashcards
 Tags: #flashcards #ai-engineering #fine-tuning #reinforcement-learning #agents #llm
 Vérifié le : 30 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: RL sur trajectoires multi-tours, RLVR ou RL agentique, environnements d'entraînement, récompense de résultat ou de processus, reward hacking des agents, SFT sur trajectoires, GRPO, curriculum de tâches, outils (verl, OpenRLHF, TRL), quand une équipe produit doit s'y lancer. -->
 
 Qu'est-ce que le RL agentique ?
 ?

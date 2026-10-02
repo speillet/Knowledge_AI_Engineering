@@ -1,6 +1,7 @@
 # Orchestration multi-agents — Flashcards
 Tags: #flashcards #ai-engineering #agents #multi-agent #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: orchestrator-workers, supervisor, handoffs, evaluator-optimizer, état partagé, coût du multi-agent, protocole A2A. -->
 
 Qu'est-ce qu'un système multi-agents ?
 ?

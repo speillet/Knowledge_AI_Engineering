@@ -1,6 +1,7 @@
 # Sécurité des agents — Architecture défensive — Flashcards
 Tags: #flashcards #ai-engineering #securite #agents #defense #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: supposer la compromission, Agents Rule of Two, six design patterns, Dual LLM et CaMeL, moindre privilège, réseau sortant, secrets, validation des appels d'outils, approbation humaine fiable, guardrail de contenu ou politique d'autorisation, mémoire, échanges entre agents, défense en profondeur. -->
 
 Quel principe directeur pour sécuriser un agent face à l'injection ?
 ?

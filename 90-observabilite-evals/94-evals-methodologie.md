@@ -1,5 +1,6 @@
 # Évaluation des systèmes LLM — Méthodologie — Flashcards
 Tags: #flashcards #ai-engineering #evals #llm #qualite
+<!-- summary: benchmark ou eval applicative, analyse d'erreurs, golden dataset, taille des jeux, familles d'évaluateurs, critères binaires, avec ou sans référence, offline et online, eval-driven development, saturation, anti-patterns. -->
 
 Pourquoi l'évaluation est-elle la compétence centrale d'un AI Engineer senior ?
 ?

@@ -1,5 +1,6 @@
 # RAG — Avancé — Flashcards
 Tags: #flashcards #ai-engineering #rag #retrieval #llm
+<!-- summary: recherche hybride (BM25, RRF), reranking, query rewriting, HyDE et ses limites, filtrage par métadonnées et ACL, GraphRAG, agentic RAG, triade d'évaluation (RAGAS), « lost in the middle », problèmes de production (fraîcheur, droits, ré-indexation). -->
 
 Qu'est-ce que la recherche hybride ?
 ?

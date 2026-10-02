@@ -1,5 +1,6 @@
 # Conteneurs & infra — Index — Flashcards
 Tags: #flashcards #moc #conteneurs #docker #kubernetes #gpu
+<!-- summary: sommaire des 13 fiches de la section, chaînes à retenir, et une carte sur l'intérêt des conteneurs pour servir des modèles. -->
 
 Sous-carte de la section **70 — Conteneurs & Infra** : du conteneur au GPU, pour déployer des modèles.
 

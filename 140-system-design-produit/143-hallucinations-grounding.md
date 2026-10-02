@@ -1,5 +1,6 @@
 # Hallucinations, grounding & abstention — Flashcards
 Tags: #flashcards #ai-engineering #hallucinations #grounding #qualite #llm
+<!-- summary: types d'hallucinations, leviers, citations vérifiées, abstention, arbitrage avec la couverture, détection, calibration, slopsquatting, communication de l'incertitude. -->
 
 Qu'est-ce qu'une hallucination ?
 ?

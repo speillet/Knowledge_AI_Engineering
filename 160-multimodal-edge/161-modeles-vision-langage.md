@@ -1,6 +1,7 @@
 # Modèles vision-langage (VLM) — Flashcards
 Tags: #flashcards #ai-engineering #multimodal #vision #vlm #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: encodeur visuel et projecteur, calcul du coût de 10 000 images, CLIP, faiblesses, injection visuelle, computer use, VLM ou OCR, évaluation, autres modalités. -->
 
 Qu'est-ce qu'un modèle vision-langage ?
 ?

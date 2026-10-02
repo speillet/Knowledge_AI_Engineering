@@ -1,6 +1,7 @@
 # Docker & Kubernetes — Flashcards
 Tags: #flashcards #docker #kubernetes
 Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: dockershim et sa suppression, architecture actuelle, images Docker exécutées sans Docker Engine, cri-dockerd, vérifications avant de retirer Docker Engine, construction d'images sans démon (BuildKit rootless, Buildah). -->
 
 Historiquement, comment Kubernetes communiquait-il avec Docker Engine ?
 ?

@@ -1,5 +1,6 @@
 # Data flywheel & versioning des données — Flashcards
 Tags: #flashcards #ai-engineering #donnees #flywheel #versioning #mlops
+<!-- summary: boucle d'amélioration, étapes, versioning des données, outils (DVC, lakeFS, Iceberg), lineage d'une eval, versioning d'un index, signaux implicites, pièges, priorisation. -->
 
 Qu'est-ce qu'une data flywheel ?
 ?

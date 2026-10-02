@@ -1,6 +1,7 @@
 # LangGraph — Production (persistance, HITL, multi-agents) — Flashcards
 Tags: #flashcards #ai-engineering #agents #langgraph #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: checkpointers, threads, `interrupt` et `Command(resume=...)`, time travel, Store long terme, durable execution, streaming, subgraphs, patterns multi-agents, déploiement. -->
 
 Qu'est-ce qu'un checkpointer ?
 ?

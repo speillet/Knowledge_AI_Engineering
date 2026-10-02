@@ -1,5 +1,6 @@
 # Images & poids de modèles — Flashcards
 Tags: #flashcards #conteneurs #modeles #stockage #infra
+<!-- summary: calcul du temps de chargement des poids d'un 70B, poids dans l'image ou séparés, cold start, safetensors ou pickle, GGUF, modèles distribués comme artefacts OCI. -->
 
 Calcul : combien de temps pour charger les poids d'un 70B au démarrage d'un pod ?
 ?

@@ -1,5 +1,6 @@
 # Conteneurs — Synthèse
 Tags: #flashcards #conteneurs #revision
+<!-- summary: cartes de révision transverses (OCI, CRI et SIF, chaînes Kubernetes et image, accès GPU, serveurs d'inférence, stockage des poids). -->
 
 OCI, CRI et SIF désignent-ils le même type de chose ?
 ?

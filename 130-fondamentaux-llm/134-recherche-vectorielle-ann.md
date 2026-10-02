@@ -1,5 +1,6 @@
 # Recherche vectorielle & index ANN — Flashcards
 Tags: #flashcards #ai-engineering #fondamentaux #vector-search #rag
+<!-- summary: brute force ou ANN, rappel de l'index ou rappel du retrieval, calcul de la mémoire d'un index HNSW, HNSW et ses paramètres, IVF, Product Quantization, quantization scalaire et binaire, DiskANN, filtrage, recall de l'index, pgvector ou base dédiée, exploitation, dimensionnement. -->
 
 Pourquoi ne pas faire une recherche exacte (brute force) des plus proches voisins ?
 ?

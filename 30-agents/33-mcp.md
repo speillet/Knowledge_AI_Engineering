@@ -1,6 +1,7 @@
 # MCP — Model Context Protocol — Flashcards
 Tags: #flashcards #ai-engineering #agents #mcp #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: problème M×N, host, client et serveur, tools, resources et prompts, transports stdio et HTTP, spec sans état 2026-07-28, serveur MCP ou API REST, risques. -->
 
 Qu'est-ce que MCP ?
 ?

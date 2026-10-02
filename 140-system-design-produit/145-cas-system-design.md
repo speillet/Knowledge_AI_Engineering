@@ -1,5 +1,6 @@
 # Cas de system design LLM — Flashcards
 Tags: #flashcards #ai-engineering #system-design #entretien #llm
+<!-- summary: support client, recherche documentaire, assistant de code, extraction à grande échelle, agent qui agit, chatbot grand public, assistant vocal, trame de réponse, erreurs d'entretien. -->
 
 Cas 1 — Assistant de support client : par quoi passe la requête ?
 ?

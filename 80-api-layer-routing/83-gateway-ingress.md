@@ -1,5 +1,6 @@
 # Ingress & API gateway — Flashcards
 Tags: #flashcards #ai-engineering #kubernetes #ingress #networking
+<!-- summary: Ingress controller, Ingress ou API gateway, TLS, Gateway API, rate limiting, streaming SSE. -->
 
 Qu'est-ce qu'un Ingress dans Kubernetes ?
 ?

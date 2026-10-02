@@ -1,5 +1,6 @@
 # Prompts en production — Flashcards
 Tags: #flashcards #ai-engineering #prompt-engineering #production #llm
+<!-- summary: briques d'un prompt, placement des longs documents, consignes motivées, limites des rôles, prompter un modèle de raisonnement, templates et données utilisateur, registre et versioning, prompt dans le code ou dans un registre, portabilité entre modèles, langue, contrôle de la longueur. -->
 
 Quelles sont les briques d'un prompt de production ?
 ?

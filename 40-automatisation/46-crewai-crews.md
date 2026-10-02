@@ -1,6 +1,7 @@
 # CrewAI — Crews — Flashcards
 Tags: #flashcards #ai-engineering #agents #crewai #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: agents (role, goal, backstory), tâches, process séquentiel ou hiérarchique, délégation, sorties structurées, guardrails de tâche, LLM et outils, mémoire unifiée, structure d'un projet. -->
 
 Qu'est-ce que CrewAI ?
 ?

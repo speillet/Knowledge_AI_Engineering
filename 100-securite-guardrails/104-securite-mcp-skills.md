@@ -1,6 +1,7 @@
 # Sécurité de MCP, des outils & des skills — Flashcards
 Tags: #flashcards #ai-engineering #securite #mcp #supply-chain #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: surface d'attaque, tool poisoning, rug pull et tool shadowing (et leurs différences), postmark-mcp, ClawHub, ToxicSkills, règles d'autorisation de la spec, scopes minimaux, SSRF et URL piégées, serveurs locaux, évaluation avant autorisation, gateway MCP. -->
 
 Pourquoi les serveurs MCP et les skills élargissent-ils la surface d'attaque ?
 ?

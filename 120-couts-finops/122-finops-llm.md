@@ -1,5 +1,6 @@
 # FinOps LLM — Flashcards
 Tags: #flashcards #ai-engineering #finops #gouvernance #llm
+<!-- summary: quatre temps du FinOps, visibilité des coûts, attribution aux équipes, budgets et garde-fous, routage comme premier levier, caches, pratiques GPU, arbitrage coût-qualité-latence, rôle du Lead. -->
 
 Qu'est-ce que le FinOps appliqué aux LLM ?
 ?

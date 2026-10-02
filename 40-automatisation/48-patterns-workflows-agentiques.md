@@ -1,5 +1,6 @@
 # Patterns de workflows agentiques — Flashcards
 Tags: #flashcards #ai-engineering #agents #workflows #patterns #llm
+<!-- summary: prompt chaining, routing, parallélisation (sectioning, voting), evaluator-optimizer, plan-and-execute ou ReAct, Reflexion, calcul de fiabilité d'une chaîne, workflow ou agent, implémentation sans framework. -->
 
 Quels sont les patterns de base pour composer des appels LLM ?
 ?

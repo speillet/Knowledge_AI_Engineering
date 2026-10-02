@@ -1,5 +1,6 @@
 # UX de l'IA & human-in-the-loop — Flashcards
 Tags: #flashcards #ai-engineering #ux #produit #human-in-the-loop #llm
+<!-- summary: copilote ou autopilote, validation humaine efficace, streaming, visibilité des agents, feedback, attentes, chat ou interface dédiée, automation bias, erreurs et refus. -->
 
 Pourquoi l'UX est-elle un sujet d'AI Engineer et pas seulement de designer ?
 ?

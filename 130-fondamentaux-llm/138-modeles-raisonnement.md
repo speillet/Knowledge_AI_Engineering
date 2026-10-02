@@ -1,6 +1,7 @@
 # Modèles de raisonnement & test-time compute — Flashcards
 Tags: #flashcards #ai-engineering #fondamentaux #reasoning #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: modèle de raisonnement ou chain-of-thought par prompt, test-time compute, RLVR, budget de réflexion, facturation, quand ne pas les utiliser, prompting, fidélité de la chaîne de pensée, interleaved thinking, best-of-n. -->
 
 Qu'est-ce qu'un modèle de raisonnement ?
 ?

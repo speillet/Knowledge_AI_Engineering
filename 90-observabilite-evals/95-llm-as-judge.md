@@ -1,5 +1,6 @@
 # LLM-as-a-judge — Flashcards
 Tags: #flashcards #ai-engineering #evals #llm-as-judge #llm
+<!-- summary: formats pointwise et pairwise, biais (position, verbosité, auto-préférence), prompt de juge, validation contre des humains (TPR, TNR, kappa), correction du taux mesuré, choix du modèle juge, juges spécialisés, limites, quand ne pas utiliser de juge. -->
 
 Qu'est-ce que le LLM-as-a-judge ?
 ?

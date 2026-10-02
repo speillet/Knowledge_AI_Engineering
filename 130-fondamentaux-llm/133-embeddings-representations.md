@@ -1,5 +1,6 @@
 # Embeddings & représentations — Flashcards
 Tags: #flashcards #ai-engineering #fondamentaux #embeddings #rag
+<!-- summary: apprentissage contrastif, similarités, bi-encoder ou cross-encoder, ColBERT, Matryoshka, préfixes, choix (MTEB), fine-tuning d'embeddings, changement de modèle, SPLADE, limites. -->
 
 Qu'est-ce qu'un modèle d'embedding ?
 ?

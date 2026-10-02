@@ -1,6 +1,7 @@
 # Kubernetes GPU & inférence — Flashcards
 Tags: #flashcards #kubernetes #gpu #llm #inference
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: device plugin, ressource `nvidia.com/gpu`, MIG, time-slicing, KServe, autoscaling (HPA, KEDA). -->
 
 Comment [[04-kubernetes-kubelet-cri|Kubernetes]] alloue-t-il les GPU aux Pods ?
 ?

@@ -1,6 +1,7 @@
 # LLM locaux, on-prem & edge — Flashcards
 Tags: #flashcards #ai-engineering #edge #local #self-hosting #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: motivations, capacité ou bande passante mémoire, llama.cpp et GGUF, outils locaux, Ollama ou vLLM, Apple Silicon, small language models, hybride local et cloud, flotte d'appareils, rentabilité du on-prem. -->
 
 Pourquoi faire tourner un LLM en local ou sur site ?
 ?

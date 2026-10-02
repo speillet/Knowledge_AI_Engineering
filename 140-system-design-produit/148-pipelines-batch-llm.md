@@ -1,6 +1,7 @@
 # Pipelines batch à grande échelle — Flashcards
 Tags: #flashcards #ai-engineering #batch #system-design #couts #llm
 Vérifié le : 30 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: batch ou en ligne, batch API (JSONL, `custom_id`, 24 h), batch API ou continuous batching, architecture reprenable, calculs de coût et de durée sous quota, classement des erreurs, contrôle qualité statistique, versions enregistrées avec chaque résultat, auto-hébergement hors ligne, quand ne pas utiliser de batch API. -->
 
 Quand traiter des données par LLM en batch plutôt qu'en ligne ?
 ?

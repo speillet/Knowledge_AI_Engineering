@@ -1,6 +1,7 @@
 # Mixture of Experts (MoE) — Flashcards
 Tags: #flashcards #ai-engineering #fondamentaux #moe #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: paramètres totaux et actifs, routeur, load balancing, expert partagé, spécialisation réelle, coût mémoire, expert parallelism, MoE ou dense. -->
 
 Qu'est-ce qu'un modèle Mixture of Experts ?
 ?

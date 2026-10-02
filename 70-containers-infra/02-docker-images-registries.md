@@ -1,5 +1,6 @@
 # Docker, images et registries — Flashcards
 Tags: #flashcards #conteneurs #docker
+<!-- summary: rôle de Docker et différence avec OCI, image ou conteneur (instance, état, volumes), compatibilité « Docker/OCI », registries et workflow push/pull. -->
 
 Docker et OCI sont-ils la même chose ?
 ?

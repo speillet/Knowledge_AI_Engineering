@@ -1,6 +1,7 @@
 # Text-to-SQL & données structurées — Flashcards
 Tags: #flashcards #ai-engineering #rag #text-to-sql #donnees #llm
 Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: text-to-SQL ou RAG, contenu du prompt, schema linking, couche sémantique, sécurisation de l'exécution, boucle de correction, exact match ou execution accuracy, benchmarks (Spider, BIRD, Spider 2.0), questions ambiguës. -->
 
 Qu'est-ce que le text-to-SQL ?
 ?

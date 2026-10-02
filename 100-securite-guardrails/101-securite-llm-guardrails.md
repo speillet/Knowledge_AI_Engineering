@@ -1,6 +1,7 @@
 # Sécurité LLM & guardrails — Flashcards
 Tags: #flashcards #ai-engineering #securite #guardrails #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: OWASP Top 10 LLM, injection directe ou indirecte, « lethal trifecta », exfiltration, excessive agency, guardrails (Llama Guard, NeMo Guardrails), red teaming. -->
 
 Qu'est-ce que l'OWASP Top 10 pour les applications LLM ?
 ?

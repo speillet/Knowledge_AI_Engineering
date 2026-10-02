@@ -1,6 +1,7 @@
 # Sécurité des agents — Menaces & incidents — Flashcards
 Tags: #flashcards #ai-engineering #securite #agents #menaces #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: nouveau modèle de menace, entrées non fiables, détournement d'agent, limites des défenses par détection, incidents (MCP GitHub, EchoLeak, Supabase, Replit), empoisonnement de la mémoire, injection invisible, risques multi-agents, denial of wallet, exécution de code, attaquants équipés d'agents. -->
 
 En quoi un agent change-t-il le modèle de menace par rapport à un chatbot ?
 ?

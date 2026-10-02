@@ -1,6 +1,7 @@
 # Computer use & agents navigateur — Flashcards
 Tags: #flashcards #ai-engineering #agents #computer-use #multimodal #securite
 Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: image ou structure (DOM, arbre d'accessibilité), grounding visuel, benchmarks (OSWorld, WebArena), coût et latence, injection par le contenu web, isolation, quand ne pas l'utiliser, computer use ou RPA, outils. -->
 
 Quelles sont les deux façons pour un agent d'utiliser une interface ?
 ?

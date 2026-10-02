@@ -1,5 +1,6 @@
 # Architecture Transformer — Flashcards
 Tags: #flashcards #ai-engineering #fondamentaux #transformer #llm
+<!-- summary: chemin d'un token, attention, attention causale, multi-head, GQA et MQA, bloc MLP, résiduelles et normalisation, RoPE, coût quadratique, calcul de la mémoire des poids d'un 70B, decoder-only ou encoder, modèle de base ou assistant. -->
 
 Qu'est-ce qu'un LLM, mécaniquement ?
 ?

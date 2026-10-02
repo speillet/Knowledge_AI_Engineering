@@ -1,6 +1,7 @@
 # LiteLLM (API layer) — Flashcards
 Tags: #flashcards #ai-engineering #api-layer #litellm #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: SDK ou proxy, virtual keys, budgets, rate limits, fallbacks, load balancing, callbacks d'observabilité, alternatives (gateways auto-hébergées, services des clouds, agrégateurs). -->
 
 Qu'est-ce qu'une API layer (LLM gateway) ?
 ?

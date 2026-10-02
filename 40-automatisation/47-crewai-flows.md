@@ -1,6 +1,7 @@
 # CrewAI — Flows — Flashcards
 Tags: #flashcards #ai-engineering #agents #crewai #workflow #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: `@start`, `@listen`, `@router`, état structuré, `@persist`, `@human_feedback`, mémoire, CLI, crew ou flow, Flows ou LangGraph. -->
 
 Qu'est-ce qu'un Flow CrewAI ?
 ?

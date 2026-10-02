@@ -1,5 +1,6 @@
 # Tool calling — Flashcards
 Tags: #flashcards #ai-engineering #agents #tool-calling #llm
+<!-- summary: déclaration par JSON Schema, exécution contrôlée par l'application, boucle d'appel, parallel tool calls, tool calling ou MCP, erreurs d'outil actionnables, bonne et mauvaise description d'outil, validité syntaxique et sémantique des arguments. -->
 
 Qu'est-ce que le tool calling (function calling) ?
 ?

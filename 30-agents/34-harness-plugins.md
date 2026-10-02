@@ -1,5 +1,6 @@
 # Harness & plugins — Flashcards
 Tags: #flashcards #ai-engineering #agents #harness #llm
+<!-- summary: rôle du harness, plugins, skills, hooks, permissions, sandbox, fichiers mémoire. -->
 
 Qu'est-ce que le harness (harnais) d'un agent ?
 ?

@@ -1,6 +1,7 @@
 # Knowledge graphs & ontologies — Flashcards
 Tags: #flashcards #ai-engineering #rag #knowledge-graph #ontologie #llm
 Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: triplets, RDF ou property graph (Cypher, GQL), ontologie et taxonomie, extraction par LLM sous schéma, résolution d'entités, graphe ou vecteurs, GraphRAG local et global, Text2Cypher, context graph, coûts. -->
 
 Qu'est-ce qu'un knowledge graph ?
 ?

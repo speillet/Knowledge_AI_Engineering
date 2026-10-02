@@ -1,5 +1,6 @@
 # Fiabilité & résilience des applications LLM — Flashcards
 Tags: #flashcards #ai-engineering #system-design #fiabilite #production #llm
+<!-- summary: timeouts, retries, fallbacks, circuit breaker, retry, fallback ou circuit breaker, retries multipliés entre couches, sorties mal formées, dégradation gracieuse, rate limits, tâches longues, épinglage de version, SLO, chaos testing. -->
 
 Pourquoi une application LLM est-elle plus fragile qu'une application classique ?
 ?

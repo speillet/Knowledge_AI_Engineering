@@ -1,5 +1,6 @@
 # Evals online & A/B testing — Flashcards
 Tags: #flashcards #ai-engineering #evals #ab-testing #production #llm
+<!-- summary: signaux explicites et implicites, A/B test, guardrail metrics, shadow testing, canary ou A/B, peeking, effet de nouveauté, métriques produit, boucle online-offline, confidentialité, calcul de la taille d'échantillon. -->
 
 Pourquoi les evals offline ne suffisent-elles pas ?
 ?

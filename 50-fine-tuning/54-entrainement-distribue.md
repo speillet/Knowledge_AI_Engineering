@@ -1,5 +1,6 @@
 # Entraînement distribué — Flashcards
 Tags: #flashcards #ai-engineering #fine-tuning #distributed-training #gpu
+<!-- summary: calcul de la mémoire d'un fine-tuning 7B avec Adam, data ou model parallelism, DDP, ZeRO et FSDP, tensor et pipeline parallelism, parallélisme 3D, gradient checkpointing, accumulation de gradients, précision mixte BF16, réseau, pannes et checkpoints. -->
 
 Que faut-il stocker en mémoire GPU pendant l'entraînement ?
 ?

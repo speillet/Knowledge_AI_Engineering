@@ -1,5 +1,6 @@
 # System design d'applications LLM — Méthode — Flashcards
 Tags: #flashcards #ai-engineering #system-design #architecture #llm
+<!-- summary: démarche, cadrage, échelle de complexité, triangle qualité-latence-coût, estimation de charge, composants, latence réelle ou perçue, synchrone ou asynchrone, multi-tenant, modes de défaillance, présentation des arbitrages. -->
 
 Par quoi commence la démarche de system design d'une application LLM ?
 ?

@@ -1,6 +1,7 @@
 # Frameworks d'agents — Flashcards
 Tags: #flashcards #ai-engineering #agents #frameworks #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: LangChain, LangGraph, CrewAI, Google ADK, OpenAI Agents SDK, Claude Agent SDK, LlamaIndex, framework ou code maison. -->
 
 À quoi sert un framework d'agents ?
 ?

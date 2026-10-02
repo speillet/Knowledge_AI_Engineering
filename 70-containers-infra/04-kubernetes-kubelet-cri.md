@@ -1,5 +1,6 @@
 # Kubernetes, kubelet & CRI — Flashcards
 Tags: #flashcards #kubernetes #conteneurs #infra
+<!-- summary: Pod, Deployment, Service, control plane, kubelet, CRI (containerd, CRI-O), scheduler, requests et limits, probes. -->
 
 Qu'est-ce que Kubernetes ?
 ?

@@ -1,6 +1,7 @@
 # Apptainer & inférence HPC — Flashcards
 Tags: #flashcards #conteneurs #apptainer #hpc #llm #inference
 Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: Apptainer ou Docker en HPC, modèle de sécurité, intégration Slurm, `--nv`, poids montés depuis le système de fichiers partagé, images SIF, fichier de définition, service multi-nœuds (Ray, InfiniBand, NCCL), exposition d'un serveur lancé dans un job. -->
 
 Pourquoi préfère-t-on Apptainer à Docker en environnement HPC ?
 ?

@@ -1,6 +1,7 @@
 # Voix & agents temps réel — Flashcards
 Tags: #flashcards #ai-engineering #multimodal #voix #temps-reel #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: cascade ou speech-to-speech, budget de latence, réduction de latence, détection de fin de tour, barge-in, texte pour la voix, STT, évaluation, risques. -->
 
 Quelles sont les deux architectures d'un agent vocal ?
 ?

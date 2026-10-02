@@ -1,6 +1,7 @@
 # Optimisation automatique de prompts (DSPy) — Flashcards
 Tags: #flashcards #ai-engineering #prompt-engineering #dspy #evals #llm
 Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: meta-prompting ou optimisation guidée par une métrique, DSPy (signatures, modules, optimiseurs BootstrapFewShot, MIPROv2, GEPA), APE, OPRO, TextGrad, quand l'utiliser ou non, sur-apprentissage, transfert entre modèles, optimisation de prompts ou fine-tuning. -->
 
 Qu'est-ce que l'optimisation automatique de prompts ?
 ?

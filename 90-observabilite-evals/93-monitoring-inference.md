@@ -1,6 +1,7 @@
 # Monitoring de l'inférence & de l'usage — Flashcards
 Tags: #flashcards #ai-engineering #observability #monitoring #inference #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: monitoring ou observabilité, couches à monitorer, métriques vLLM et GPU (DCGM), usage par équipe, finish_reason, validations de chaque réponse, signaux de qualité sans vérité terrain, erreurs et disponibilité, traces OpenTelemetry GenAI, dashboard, alertes, contrôles avant mise en production, détection de régression, journalisation des prompts. -->
 
 Quelles couches faut-il monitorer pour un service d'inférence ?
 ?

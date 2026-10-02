@@ -1,5 +1,6 @@
 # Pré-entraînement & scaling laws — Flashcards
 Tags: #flashcards #ai-engineering #fondamentaux #pretraining #scaling #llm
+<!-- summary: étapes de fabrication, pré-entraînement ou post-training, données, scaling laws, Chinchilla, sur-entraînement pour l'inférence, 6ND, MFU, contamination, knowledge cutoff, capacités émergentes, mur des données. -->
 
 Quelles sont les grandes étapes de fabrication d'un LLM ?
 ?

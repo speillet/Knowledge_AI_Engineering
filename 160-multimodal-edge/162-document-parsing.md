@@ -1,6 +1,7 @@
 # Parsing de documents (PDF, OCR, layout) — Flashcards
 Tags: #flashcards #ai-engineering #multimodal #document-parsing #rag
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: PDF natif ou scanné, analyse de layout, outils (Docling, Unstructured, services cloud, VLM), tableaux, figures, ColPali, chunking structurel, évaluation, exploitation. -->
 
 Pourquoi le parsing de documents est-il souvent le goulot d'un RAG d'entreprise ?
 ?

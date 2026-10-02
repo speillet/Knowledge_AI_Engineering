@@ -1,6 +1,7 @@
 # Chunking avancé & contextual retrieval — Flashcards
 Tags: #flashcards #ai-engineering #rag #chunking #retrieval #llm
 Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: chunks sans contexte, contextual retrieval (gain, coût, prompt caching), late chunking, taille des chunks, small-to-big, chunking sémantique et par propositions, fil d'Ariane et métadonnées, comparaison de stratégies au recall@k. -->
 
 Pourquoi un chunk isolé est-il souvent introuvable ?
 ?

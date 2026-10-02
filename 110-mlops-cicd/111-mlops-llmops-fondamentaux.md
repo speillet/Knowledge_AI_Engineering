@@ -1,6 +1,7 @@
 # MLOps & LLMOps — Fondamentaux — Flashcards
 Tags: #flashcards #ai-engineering #mlops #llmops #llm
 Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: DevOps ou MLOps, spécificités du LLMOps, ce qu'il faut versionner (code et config, modèles et données), model registry, lineage, reproductibilité, environnements dev/staging/prod, rôle du Lead. -->
 
 Qu'est-ce que le MLOps ?
 ?

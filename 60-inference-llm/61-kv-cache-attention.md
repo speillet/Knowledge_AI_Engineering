@@ -1,5 +1,6 @@
 # KV cache & attention — Flashcards
 Tags: #flashcards #ai-engineering #inference #kv-cache #llm
+<!-- summary: rôle et taille du cache, KV cache, prefix caching et prompt caching, calcul de la concurrence sur un H100, PagedAttention et continuous batching, KV cache en FP8, coût des contextes longs. -->
 
 Qu'est-ce que le KV cache ?
 ?

@@ -1,0 +1,66 @@
+{
+  "10-prompt-engineering": {
+    "title": "Prompt engineering",
+    "intro": ""
+  },
+  "20-rag": {
+    "title": "RAG",
+    "intro": ""
+  },
+  "30-agents": {
+    "title": "Agents",
+    "intro": ""
+  },
+  "40-automatisation": {
+    "title": "Automatisation & frameworks d'agents",
+    "intro": "Automatiser des processus, soit avec des outils de workflow, soit avec des agents écrits en code. Chaque framework a deux fiches : ses bases, puis son usage avancé ou en production."
+  },
+  "50-fine-tuning": {
+    "title": "Fine-tuning",
+    "intro": ""
+  },
+  "60-inference-llm": {
+    "title": "Inférence LLM",
+    "intro": ""
+  },
+  "70-containers-infra": {
+    "title": "Conteneurs & Infra",
+    "intro": ""
+  },
+  "80-api-layer-routing": {
+    "title": "API Layer & Routing",
+    "intro": ""
+  },
+  "90-observabilite-evals": {
+    "title": "Observabilité & Evals",
+    "intro": ""
+  },
+  "100-securite-guardrails": {
+    "title": "Sécurité & guardrails",
+    "intro": "De la sécurité des LLM à celle des agents : les menaces et les incidents réels, l'architecture défensive, la chaîne d'approvisionnement des outils et des skills, le DevSecOps, et le cas des agents de code."
+  },
+  "110-mlops-cicd": {
+    "title": "MLOps & CI/CD",
+    "intro": ""
+  },
+  "120-couts-finops": {
+    "title": "Coûts & FinOps",
+    "intro": ""
+  },
+  "130-fondamentaux-llm": {
+    "title": "Fondamentaux LLM",
+    "intro": "Ce qu'il faut comprendre du modèle lui-même pour raisonner sur la qualité, le coût et le serving. À lire en prérequis."
+  },
+  "140-system-design-produit": {
+    "title": "System design & produit",
+    "intro": "La partie qui assemble tout le reste : concevoir, fiabiliser et piloter une application LLM, niveau senior."
+  },
+  "150-donnees-conformite": {
+    "title": "Données & conformité",
+    "intro": ""
+  },
+  "160-multimodal-edge": {
+    "title": "Multimodal & edge",
+    "intro": ""
+  }
+}

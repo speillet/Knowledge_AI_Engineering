@@ -1,5 +1,6 @@
 # Évaluation des RAG & des agents — Flashcards
 Tags: #flashcards #ai-engineering #evals #rag #agents #llm
+<!-- summary: retrieval et génération, recall@k, MRR, nDCG, triade RAG, faithfulness, jeux synthétiques, résultat final ou trajectoire, environnements d'eval (τ-bench, SWE-bench), pass^k, tool calling, multi-tours, efficacité. -->
 
 Comment découper l'évaluation d'un RAG ?
 ?

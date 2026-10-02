@@ -1,6 +1,7 @@
 # Roofline, prefill/decode & désagrégation — Flashcards
 Tags: #flashcards #ai-engineering #inference #gpu #performance #llm
 Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: intensité arithmétique, modèle roofline, memory-bound ou compute-bound, calculs de débit de decode et de durée de prefill, batch en decode, limites de l'utilisation GPU, interférence prefill/decode, chunked prefill ou désagrégation, déploiement désagrégé (Dynamo, llm-d), quand désagréger. -->
 
 Qu'est-ce que l'intensité arithmétique ?
 ?

@@ -1,5 +1,6 @@
 # Débogage & analyse d'échecs des agents — Flashcards
 Tags: #flashcards #ai-engineering #agents #evals #observabilite #debogage
+<!-- summary: error analysis (open et axial coding), symptôme ou cause, catégories d'échec, taxonomie MAST, détection des boucles, reproduction par rejeu, de l'échec au cas de non-régression, signaux de production, quand ne pas accuser le modèle. -->
 
 Pourquoi un agent est-il plus difficile à déboguer qu'un appel LLM ?
 ?

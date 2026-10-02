@@ -1,6 +1,7 @@
 # Serveurs d'inférence LLM — Flashcards
 Tags: #flashcards #ai-engineering #inference #serving #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: vLLM, API compatible OpenAI, multi-LoRA, SGLang, TensorRT-LLM et Triton, TGI, llama.cpp et Ollama. -->
 
 À quoi sert un serveur d'inférence LLM ?
 ?

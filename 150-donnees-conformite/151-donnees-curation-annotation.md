@@ -1,5 +1,6 @@
 # Données : curation & annotation — Flashcards
 Tags: #flashcards #ai-engineering #donnees #annotation #qualite
+<!-- summary: dimensions de qualité, déduplication, guide d'annotation, accord inter-annotateurs, qui annote, active learning, séparation dev et test, données de production, préparation d'un fine-tuning. -->
 
 Pourquoi les données restent-elles décisives à l'ère des LLM pré-entraînés ?
 ?

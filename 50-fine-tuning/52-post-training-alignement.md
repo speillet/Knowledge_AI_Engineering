@@ -1,6 +1,7 @@
 # Post-training & alignement — Flashcards
 Tags: #flashcards #ai-engineering #fine-tuning #alignement #rlhf #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: étapes du RLHF, pénalité KL, reward hacking, DPO et variantes, GRPO, RLVR, RLAIF et Constitutional AI, jeux de préférences, taxe d'alignement, reward model ou vérificateur, quand faire soi-même du DPO ou du RL. -->
 
 Qu'est-ce que le post-training ?
 ?

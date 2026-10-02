@@ -1,5 +1,6 @@
 # Métriques d'inférence & SLO — Flashcards
 Tags: #flashcards #ai-engineering #inference #slo #llm
+<!-- summary: TTFT, TPOT, throughput, goodput, percentiles, définition d'un SLO, calcul de concurrence par la loi de Little, signaux d'autoscaling, benchmarks. -->
 
 Qu'est-ce que le TTFT ?
 ?

@@ -1,6 +1,7 @@
 # Automatisation code & no-code — Flashcards
 Tags: #flashcards #ai-engineering #automatisation #workflow #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: n8n, triggers, Zapier et Make, Airflow, Prefect et Temporal, durable execution, limites du no-code. -->
 
 Workflow ou agent : quelle différence ?
 ?

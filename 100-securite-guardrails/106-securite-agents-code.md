@@ -1,6 +1,7 @@
 # Sécurité des agents de code — Flashcards
 Tags: #flashcards #ai-engineering #securite #agents #coding-agents #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: cible de choix, modes sans permission, isolation du poste, s1ngularity, Amazon Q, fichiers d'instructions piégés, PromptPwnd, agents en CI/CD, slopsquatting et typosquatting, qualité du code généré, revue des PR d'agents, secrets, politique d'entreprise. -->
 
 Pourquoi les agents de code sont-ils une cible de choix ?
 ?

@@ -1,5 +1,6 @@
 # Routing LLM — Flashcards
 Tags: #flashcards #ai-engineering #routing #api-layer #llm
+<!-- summary: routage statique, par règles ou sémantique, RouteLLM, cascade, routage selon la charge, cache sémantique. -->
 
 Pourquoi router les requêtes entre plusieurs modèles ?
 ?

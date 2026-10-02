@@ -1,6 +1,7 @@
 # DevSecOps pour l'IA agentique — Flashcards
 Tags: #flashcards #ai-engineering #securite #devsecops #agents #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: threat modeling (MAESTRO, ATLAS), référentiels (OWASP, NIST, ISO 42001), AI-BOM, SBOM ou AI-BOM, supply chain des modèles, contrôles en CI, tests adversariaux (promptfoo, garak, PyRIT), red teaming, security eval gate, prompts comme du code, environnements, journalisation, détection, réponse à incident, vulnérabilités, responsabilités. -->
 
 Qu'est-ce que le DevSecOps appliqué à l'IA agentique ?
 ?

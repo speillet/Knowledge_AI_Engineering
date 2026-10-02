@@ -1,5 +1,6 @@
 # RAG — Fondamentaux — Flashcards
 Tags: #flashcards #ai-engineering #rag #retrieval #llm
+<!-- summary: RAG ou fine-tuning, pipeline d'ingestion et de requête, stratégies de chunking, embeddings, bases vectorielles (HNSW, pgvector, Qdrant), top-k, grounding et citations, recall@k, quand ne pas faire de RAG. -->
 
 Qu'est-ce que le RAG ?
 ?

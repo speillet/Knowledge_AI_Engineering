@@ -1,6 +1,7 @@
 # Caching agressif — Flashcards
 Tags: #flashcards #ai-engineering #finops #caching #couts #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: prompt caching (TTL, prix d'écriture et de lecture), structure de prompt stable, ce qui casse le cache, contexte append-only, requêtes parallèles et pré-chauffage, caches de réponses, d'embeddings et d'outils, prompt caching, cache exact ou sémantique, invalidation, sécurité, pilotage. -->
 
 Qu'est-ce que le caching agressif pour une application LLM ?
 ?

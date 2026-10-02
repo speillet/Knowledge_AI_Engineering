@@ -1,5 +1,6 @@
 # Optimisations d'inférence — Flashcards
 Tags: #flashcards #ai-engineering #inference #optimisation #llm
+<!-- summary: prefill et decode, continuous batching, quantization (AWQ, GPTQ, FP8), speculative decoding, FlashAttention, parallélisme tensor et pipeline, chunked prefill, désagrégation prefill/decode. -->
 
 Quelles sont les deux phases de l'inférence d'un LLM ?
 ?

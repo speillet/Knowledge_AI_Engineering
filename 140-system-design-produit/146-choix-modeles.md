@@ -1,6 +1,7 @@
 # Choisir un modèle — Flashcards
 Tags: #flashcards #ai-engineering #choix-modele #benchmarks #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: critères, limites des leaderboards, benchmarks, fermé ou open weights, licences, coût par tâche, architecture multi-modèles, lock-in, migration, veille. -->
 
 Quels critères techniques pour choisir un modèle ?
 ?

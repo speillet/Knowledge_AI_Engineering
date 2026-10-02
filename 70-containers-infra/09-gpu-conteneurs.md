@@ -1,5 +1,6 @@
 # GPU en conteneur — Flashcards
 Tags: #flashcards #conteneurs #gpu #cuda #infra
+<!-- summary: NVIDIA Container Toolkit, driver et CUDA, images CUDA, GPU Operator, Apptainer `--nv`, ROCm. -->
 
 Un conteneur voit-il le GPU de l'hôte par défaut ?
 ?

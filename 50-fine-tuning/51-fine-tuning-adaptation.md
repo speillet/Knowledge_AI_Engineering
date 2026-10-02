@@ -1,5 +1,6 @@
 # Fine-tuning & adaptation de modèles — Flashcards
 Tags: #flashcards #ai-engineering #fine-tuning #llm
+<!-- summary: quand fine-tuner, SFT, full fine-tuning ou PEFT, LoRA, QLoRA, RLHF, DPO, distillation, multi-LoRA (exemple vLLM), catastrophic forgetting et parades. -->
 
 Qu'est-ce que le fine-tuning ?
 ?

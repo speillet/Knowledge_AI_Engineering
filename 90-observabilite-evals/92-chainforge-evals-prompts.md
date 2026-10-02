@@ -1,5 +1,6 @@
 # ChainForge & évaluation de prompts — Flashcards
 Tags: #flashcards #ai-engineering #evals #prompts #llm
+<!-- summary: comparer prompts et modèles, golden dataset, evals automatiques, tests de régression et cas qui basculent, evals comme prérequis au déploiement. -->
 
 Qu'est-ce que ChainForge ?
 ?

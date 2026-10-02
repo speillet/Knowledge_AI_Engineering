@@ -1,5 +1,6 @@
 # Prompt engineering avancé — Flashcards
 Tags: #flashcards #ai-engineering #prompt-engineering #llm
+<!-- summary: system prompt et user prompt, few-shot, few-shot ou fine-tuning, chain-of-thought (coût, balises), self-consistency et ses limites, délimiteurs, décomposition en appels, meta-prompting, prompts versionnés comme du code, anti-patterns. -->
 
 Quel est le rôle du system prompt par rapport au user prompt ?
 ?

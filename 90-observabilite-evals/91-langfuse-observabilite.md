@@ -1,6 +1,7 @@
 # Langfuse & observabilité LLM — Flashcards
 Tags: #flashcards #ai-engineering #observability #langfuse #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: périmètre et alternatives (LangSmith, Phoenix, Braintrust), traces, spans et generations, sessions, prompt management, scores, LLM-as-judge, datasets. -->
 
 Qu'est-ce que Langfuse ?
 ?

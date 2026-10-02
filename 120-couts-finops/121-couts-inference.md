@@ -1,5 +1,6 @@
 # Coûts d'inférence — Flashcards
 Tags: #flashcards #ai-engineering #finops #couts #inference #llm
+<!-- summary: structure du coût d'un appel, calcul du coût d'un agent de 20 tours avec et sans cache, prix input et output, prompt caching, coût du self-hosting, break-even API ou self-host, batch API, leviers techniques, contexte long, unit economics, GPU idle. -->
 
 Comment se structure le coût d'un appel LLM API ?
 ?

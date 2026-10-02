@@ -1,6 +1,7 @@
 # containerd & runc — Flashcards
 Tags: #flashcards #conteneurs #containerd #runc
 Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: rôle de containerd, rôle de runc, relation entre les deux, containerd ou CRI-O, crun, RuntimeClass, outils `ctr`, `nerdctl` et `crictl`, place du GPU dans la chaîne. -->
 
 Qu'est-ce que containerd ?
 ?

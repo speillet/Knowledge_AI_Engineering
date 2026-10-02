@@ -1,6 +1,7 @@
 # Agents de recherche (deep research) — Flashcards
 Tags: #flashcards #ai-engineering #rag #agents #deep-research #llm
 Vérifié le : 30 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: RAG ou agent de recherche, boucle de recherche, sous-agents parallèles, outils de recherche, citations fiables, risques (sources, injection, biais), évaluation (couverture, BrowseComp), calcul du coût d'un rapport, quand ne pas l'utiliser. -->
 
 Qu'est-ce qu'un agent de recherche (deep research) ?
 ?

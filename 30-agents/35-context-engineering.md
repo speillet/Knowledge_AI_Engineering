@@ -1,5 +1,6 @@
 # Context engineering — Flashcards
 Tags: #flashcards #ai-engineering #agents #context-engineering #llm
+<!-- summary: le contexte comme budget, context rot, compaction, mémoire court et long terme, sous-agents, prompt caching, contexte chargé au besoin (just-in-time). -->
 
 Qu'est-ce que le context engineering ?
 ?

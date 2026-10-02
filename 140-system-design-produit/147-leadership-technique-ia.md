@@ -1,5 +1,6 @@
 # Leadership technique en AI Engineering — Flashcards
 Tags: #flashcards #ai-engineering #leadership #senior #produit
+<!-- summary: ce qui fait un senior, choix des cas d'usage, ROI, échec des POC, RFC et ADR, build ou buy, go / no-go, standards d'équipe, communication avec les décideurs, veille. -->
 
 Qu'est-ce qui distingue un AI Engineer senior d'un confirmé ?
 ?

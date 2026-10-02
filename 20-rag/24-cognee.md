@@ -1,6 +1,7 @@
 # Cognee — Flashcards
 Tags: #flashcards #ai-engineering #rag #knowledge-graph #memoire #cognee #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: mémoire d'agent en knowledge graph, opérations remember, recall, improve et forget, mémoire permanente ou de session, stratégies de recherche, ontologie OWL, intégrations (plugin, MCP), limites. -->
 
 Qu'est-ce que Cognee ?
 ?

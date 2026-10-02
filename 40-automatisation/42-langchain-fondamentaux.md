@@ -1,6 +1,7 @@
 # LangChain — Fondamentaux — Flashcards
 Tags: #flashcards #ai-engineering #agents #langchain #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: paquets de la v1, `init_chat_model`, messages, outils `@tool` et `bind_tools`, sorties structurées, Runnables et LCEL, briques RAG, LangSmith. -->
 
 Qu'est-ce que LangChain aujourd'hui ?
 ?

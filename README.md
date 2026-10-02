@@ -17,6 +17,9 @@ Knowledge_AI_Engineering/
 ├── .claude/skills/              # skills Claude Code versionnés (grilling, grill-me)
 ├── scripts/lint_flashcards.py   # vérification des conventions + statistiques
 ├── scripts/export_anki.py       # export en paquet Anki (.apkg) pour AnkiDroid
+├── scripts/assign_card_ids.py   # identifiants permanents des nouvelles cartes
+├── scripts/sync_catalog.py      # génération des sommaires README et MOC
+├── scripts/sections.json        # titres et introductions des sections
 ├── scripts/requirements.txt     # dépendances de l'export Anki
 ├── .githooks/pre-commit         # lance le lint avant chaque commit
 ├── .github/workflows/           # lint en CI, et export Anki publié en release
@@ -42,7 +45,7 @@ Knowledge_AI_Engineering/
 - Chaque **section** est un dossier numéroté par dizaine (`20-rag`, `30-agents`…).
 - Chaque **fiche** porte un numéro qui reprend celui de sa section : `21-rag-fondamentaux.md` et `22-rag-avance.md` sont dans `20-rag/`.
 - Exception : la section conteneurs garde sa propre numérotation, de `00-index.md` à `13-apptainer-inference-hpc.md`.
-- Une section compte **au plus 9 fiches** (de `x1` à `x9`). Quand elle est pleine, la fiche va dans la section la plus proche de son sujet et le MOC la signale à côté de sa fiche d'origine. C'est le cas de `115-plateformes-agents-gouvernance.md` (section 110), la suite senior de `38-plateformes-agents.md`, car la section 30 est pleine. De même, `165-computer-use-agents-navigateur.md` rejoint la section 160 (multimodal), à côté des modèles vision-langage.
+- Les noms existants restent stables. **Une section peut dépasser neuf fiches** : après `39-memoire-agents.md`, utiliser `30-010-nouveau-sujet.md`, puis `30-011-autre-sujet.md`, dans `30-agents/`. Le préfixe désigne la section, le second nombre son rang. Les sommaires trient ensemble les deux conventions ; choisir la section selon le sujet.
 - Le point d'entrée est le **MOC** (Map of Content), [00-moc-ai-engineering.md](00-moc-ai-engineering.md).
 
 ---
@@ -95,7 +98,9 @@ Les fiches suivent la syntaxe du plugin communautaire **Spaced Repetition**. Il 
 Pour générer le paquet en local :
 
 ```bash
-pip install -r scripts/requirements.txt
+python3 -m venv .venv
+. .venv/bin/activate
+python3 -m pip install -r scripts/requirements.txt
 python3 scripts/export_anki.py      # écrit dist/ai-engineering.apkg
 ```
 
@@ -110,6 +115,7 @@ Les fiches sont du Markdown simple et se lisent dans n'importe quel éditeur. Se
 ```markdown
 # Tool calling — Flashcards
 Tags: #flashcards #ai-engineering #agents #tool-calling #llm
+<!-- summary: Déclaration, exécution et validation des appels d’outils. -->
 
 Qu'est-ce que le tool calling ?
 ?
@@ -152,14 +158,17 @@ Les conventions à respecter :
 - **Des cartes de raisonnement** plutôt que des définitions seules : « Quand ne pas… ? », « Que se passe-t-il si… ? », et des cartes **« Calcul : … »** qui font poser un ordre de grandeur (VRAM, débit, coût, taille d'échantillon).
 - **Une idée par carte** : si une réponse enchaîne deux sujets (un mécanisme puis une liste de produits, deux incidents), on la découpe. Une carte atomique se note honnêtement en révision.
 - **Des repères chiffrés** et des **exemples exécutables** (commandes, configurations, extraits de code) plutôt que des formulations abstraites.
-- **Une ligne `Vérifié le : …`** juste après les tags, sur les fiches qui citent des produits, des versions ou des textes réglementaires. Elle dit quand le contenu a été confronté à la réalité.
+- **Une ligne `Vérifié le : …`** juste après les tags, sur les fiches qui citent des produits, des versions ou des textes réglementaires. Une section `## Sources`, placée avant `## Connexions`, doit contenir les références primaires utilisées : documentation officielle, spécification versionnée, article des auteurs ou texte réglementaire. Ajouter une référence ne justifie pas à lui seul de changer la date de vérification.
+- **Un commentaire `<!-- summary: … -->`** après les tags et la date éventuelle : il alimente le catalogue du README. Les titres des fiches alimentent les deux sommaires.
+- **Un identifiant `<!--anki:…-->` par carte**, généré par le script dédié. Il est invisible à la lecture et exclu de l’export. Les identifiants historiques ont été conservés lors de la migration.
+- Dans un index comportant une introduction, placer `---` puis `## Cartes` avant la première question ; le parseur ignore ainsi le sommaire et le texte introductif.
 
 ## Ajouter une fiche
 
-1. Choisir la section et le prochain numéro libre, puis nommer le fichier en kebab-case, par exemple `28-rag-multimodal.md`. Si la section est pleine, appliquer la règle décrite dans [Structure du repo](#structure-du-repo).
+1. Choisir la section et le prochain numéro libre, puis nommer le fichier en kebab-case, par exemple `28-rag-multimodal.md`. Pour dépasser neuf fiches, utiliser la numérotation étendue décrite dans [Structure du repo](#structure-du-repo).
 2. **Le nom de fichier doit être unique dans tout le vault**, car Obsidian résout les liens `[[...]]` par nom de fichier, pas par chemin.
-3. Rédiger les cartes au format ci-dessus.
-4. Ajouter la fiche dans le sommaire du MOC, dans la section qui lui correspond, et dans la liste [Concepts couverts](#concepts-couverts) de ce README. Mettre à jour les chiffres en haut du README avec `python3 scripts/lint_flashcards.py --update-readme`.
+3. Rédiger les cartes au format ci-dessus, renseigner le commentaire `summary` et les sources si la fiche est datée, puis lancer `python3 scripts/assign_card_ids.py`.
+4. Lancer `python3 scripts/sync_catalog.py` pour régénérer les catalogues du MOC et du README. Pour une nouvelle section, renseigner d’abord `scripts/sections.json`. Les parcours de lecture restent éditoriaux. Mettre à jour les chiffres avec `python3 scripts/lint_flashcards.py --update-readme`.
 5. Ajouter des liens dans les deux sens : la nouvelle fiche cite ses voisines, et les voisines la citent dans leur section `Connexions`. Relier aussi les fiches qui **mentionnent** la notion traitée sans la lier. Le lint signale tout lien sans retour.
 6. Lancer `python3 scripts/lint_flashcards.py` : il signale les liens morts, les fiches absentes du MOC ou du README, les fiches peu reliées et les écarts de format (voir [Maintenance](#maintenance)).
 
@@ -183,10 +192,12 @@ Conteneur + GPU (Docker/K8s/Apptainer)
 
 Trois sujets traversent toute la stack : l'**observabilité** (traces, métriques, evals), la **sécurité** (injection, moindre privilège, sandbox, DevSecOps) et les **coûts** (FinOps).
 
+<!-- catalog:begin -->
+
 ### 10 — Prompt engineering
 
 - [Prompt engineering avancé](10-prompt-engineering/11-prompt-engineering-avance.md) : system prompt et user prompt, few-shot, few-shot ou fine-tuning, chain-of-thought (coût, balises), self-consistency et ses limites, délimiteurs, décomposition en appels, meta-prompting, prompts versionnés comme du code, anti-patterns.
-- [Optimisation automatique de prompts](10-prompt-engineering/12-optimisation-automatique-prompts.md) : meta-prompting ou optimisation guidée par une métrique, DSPy (signatures, modules, optimiseurs BootstrapFewShot, MIPROv2, GEPA), APE, OPRO, TextGrad, quand l'utiliser ou non, sur-apprentissage, transfert entre modèles, optimisation de prompts ou fine-tuning.
+- [Optimisation automatique de prompts (DSPy)](10-prompt-engineering/12-optimisation-automatique-prompts.md) : meta-prompting ou optimisation guidée par une métrique, DSPy (signatures, modules, optimiseurs BootstrapFewShot, MIPROv2, GEPA), APE, OPRO, TextGrad, quand l'utiliser ou non, sur-apprentissage, transfert entre modèles, optimisation de prompts ou fine-tuning.
 - [Prompts en production](10-prompt-engineering/13-prompts-production.md) : briques d'un prompt, placement des longs documents, consignes motivées, limites des rôles, prompter un modèle de raisonnement, templates et données utilisateur, registre et versioning, prompt dans le code ou dans un registre, portabilité entre modèles, langue, contrôle de la longueur.
 
 ### 20 — RAG
@@ -208,7 +219,7 @@ Trois sujets traversent toute la stack : l'**observabilité** (traces, métrique
 - [Context engineering](30-agents/35-context-engineering.md) : le contexte comme budget, context rot, compaction, mémoire court et long terme, sous-agents, prompt caching, contexte chargé au besoin (just-in-time).
 - [Orchestration multi-agents](30-agents/36-orchestration-agents.md) : orchestrator-workers, supervisor, handoffs, evaluator-optimizer, état partagé, coût du multi-agent, protocole A2A.
 - [Frameworks d'agents](30-agents/37-frameworks-agents.md) : LangChain, LangGraph, CrewAI, Google ADK, OpenAI Agents SDK, Claude Agent SDK, LlamaIndex, framework ou code maison.
-- [Plateformes d'agents — Fondamentaux](30-agents/38-plateformes-agents.md) : différence avec un framework, briques, niveaux d'abstraction (API, runtime, harness managé), offres cloud et des fournisseurs de modèles, open source, runtime et double texting, sandbox et services de sandbox, gateway d'outils, registre, identité, agent délégué ou autonome, mémoire, observabilité, evals, protocoles (MCP, A2A), build ou buy. La suite, niveau senior, est la fiche 115 de la section 110.
+- [Plateformes d'agents](30-agents/38-plateformes-agents.md) : différence avec un framework, briques, niveaux d'abstraction (API, runtime, harness managé), offres cloud et des fournisseurs de modèles, open source, runtime et double texting, sandbox et services de sandbox, gateway d'outils, registre, identité, agent délégué ou autonome, mémoire, observabilité, evals, protocoles (MCP, A2A), build ou buy. La suite, niveau senior, est la fiche 115 de la section 110.
 - [Mémoire des agents](30-agents/39-memoire-agents.md) : mémoire de travail, sémantique, épisodique et procédurale, thread ou long terme, écriture pendant ou après la conversation, consolidation, score de rappel, réflexion, faits qui changent, stockage, Letta, outils, risques, évaluation, mémoire d'agent ou RAG, quand ne pas donner de mémoire long terme.
 
 ### 40 — Automatisation & frameworks d'agents
@@ -219,7 +230,7 @@ Automatiser des processus, soit avec des outils de workflow, soit avec des agent
 - [LangChain — Fondamentaux](40-automatisation/42-langchain-fondamentaux.md) : paquets de la v1, `init_chat_model`, messages, outils `@tool` et `bind_tools`, sorties structurées, Runnables et LCEL, briques RAG, LangSmith.
 - [LangChain — Agents & middleware](40-automatisation/43-langchain-agents.md) : `create_agent`, mémoire par checkpointer et `thread_id`, `response_format`, hooks de middleware, middlewares fournis (human-in-the-loop, résumé, fallback, limites), runtime context, Deep Agents.
 - [LangGraph — Fondamentaux](40-automatisation/44-langgraph-fondamentaux.md) : `StateGraph`, state et reducers, `MessagesState`, nodes et edges conditionnelles, boucle ReAct en graphe, super-steps, `Send` (map-reduce), `Command`, Functional API.
-- [LangGraph — Production](40-automatisation/45-langgraph-production.md) : checkpointers, threads, `interrupt` et `Command(resume=...)`, time travel, Store long terme, durable execution, streaming, subgraphs, patterns multi-agents, déploiement.
+- [LangGraph — Production (persistance, HITL, multi-agents)](40-automatisation/45-langgraph-production.md) : checkpointers, threads, `interrupt` et `Command(resume=...)`, time travel, Store long terme, durable execution, streaming, subgraphs, patterns multi-agents, déploiement.
 - [CrewAI — Crews](40-automatisation/46-crewai-crews.md) : agents (role, goal, backstory), tâches, process séquentiel ou hiérarchique, délégation, sorties structurées, guardrails de tâche, LLM et outils, mémoire unifiée, structure d'un projet.
 - [CrewAI — Flows](40-automatisation/47-crewai-flows.md) : `@start`, `@listen`, `@router`, état structuré, `@persist`, `@human_feedback`, mémoire, CLI, crew ou flow, Flows ou LangGraph.
 - [Patterns de workflows agentiques](40-automatisation/48-patterns-workflows-agentiques.md) : prompt chaining, routing, parallélisation (sectioning, voting), evaluator-optimizer, plan-and-execute ou ReAct, Reflexion, calcul de fiabilité d'une chaîne, workflow ou agent, implémentation sans framework.
@@ -227,7 +238,7 @@ Automatiser des processus, soit avec des outils de workflow, soit avec des agent
 
 ### 50 — Fine-tuning
 
-- [Fine-tuning & adaptation](50-fine-tuning/51-fine-tuning-adaptation.md) : quand fine-tuner, SFT, full fine-tuning ou PEFT, LoRA, QLoRA, RLHF, DPO, distillation, multi-LoRA (exemple vLLM), catastrophic forgetting et parades.
+- [Fine-tuning & adaptation de modèles](50-fine-tuning/51-fine-tuning-adaptation.md) : quand fine-tuner, SFT, full fine-tuning ou PEFT, LoRA, QLoRA, RLHF, DPO, distillation, multi-LoRA (exemple vLLM), catastrophic forgetting et parades.
 - [Post-training & alignement](50-fine-tuning/52-post-training-alignement.md) : étapes du RLHF, pénalité KL, reward hacking, DPO et variantes, GRPO, RLVR, RLAIF et Constitutional AI, jeux de préférences, taxe d'alignement, reward model ou vérificateur, quand faire soi-même du DPO ou du RL.
 - [Données synthétiques & distillation](50-fine-tuning/53-donnees-synthetiques-distillation.md) : génération variée, filtrage, model collapse, distillation sur les sorties ou sur les logits, distillation du raisonnement, contraintes juridiques, projet de distillation, jeux d'eval synthétiques.
 - [Entraînement distribué](50-fine-tuning/54-entrainement-distribue.md) : calcul de la mémoire d'un fine-tuning 7B avec Adam, data ou model parallelism, DDP, ZeRO et FSDP, tensor et pipeline parallelism, parallélisme 3D, gradient checkpointing, accumulation de gradients, précision mixte BF16, réseau, pannes et checkpoints.
@@ -237,7 +248,7 @@ Automatiser des processus, soit avec des outils de workflow, soit avec des agent
 
 - [KV cache & attention](60-inference-llm/61-kv-cache-attention.md) : rôle et taille du cache, KV cache, prefix caching et prompt caching, calcul de la concurrence sur un H100, PagedAttention et continuous batching, KV cache en FP8, coût des contextes longs.
 - [Optimisations d'inférence](60-inference-llm/62-optimisations-inference.md) : prefill et decode, continuous batching, quantization (AWQ, GPTQ, FP8), speculative decoding, FlashAttention, parallélisme tensor et pipeline, chunked prefill, désagrégation prefill/decode.
-- [Guided generation](60-inference-llm/63-guided-generation.md) : masquage des logits, JSON Schema, regex et grammaires, XGrammar et Outlines, structured outputs des API, mode JSON ou structured outputs, validation métier.
+- [Guided generation (sorties structurées)](60-inference-llm/63-guided-generation.md) : masquage des logits, JSON Schema, regex et grammaires, XGrammar et Outlines, structured outputs des API, mode JSON ou structured outputs, validation métier.
 - [Métriques d'inférence & SLO](60-inference-llm/64-metriques-slo-inference.md) : TTFT, TPOT, throughput, goodput, percentiles, définition d'un SLO, calcul de concurrence par la loi de Little, signaux d'autoscaling, benchmarks.
 - [Probabilités & sampling](60-inference-llm/65-probabilites-sampling.md) : logits et softmax, température, greedy, top-k, top-p, température ou top-p, min-p, réglages par cas d'usage, logprobs, probabilité d'une séquence, perplexité, calibration, speculative decoding et distribution.
 - [Prefix caching & RadixAttention](60-inference-llm/66-prefix-caching-radix-attention.md) : prefix caching de vLLM, arbre radix de SGLang, éviction, ordonnancement et routage cache-aware, offloading du KV cache (LMCache), limites, canal auxiliaire temporel, métriques.
@@ -245,16 +256,16 @@ Automatiser des processus, soit avec des outils de workflow, soit avec des agent
 - [Quantization](60-inference-llm/68-quantization.md) : intérêt en mémoire et en vitesse, quantization des poids, des activations ou du KV cache, formats (FP8, INT8, INT4, NVFP4, MXFP4), weight-only ou W8A8, granularité des échelles, outliers d'activation (SmoothQuant, rotations), PTQ ou QAT, GPTQ, AWQ, GGUF, NF4, choix de la méthode selon le matériel, calibration, mesure de la perte, divergence KL et flips, validation avant déploiement, suivi en production, outils (llm-compressor, Model Optimizer, vLLM).
 - [Roofline, prefill/decode & désagrégation](60-inference-llm/69-roofline-prefill-decode.md) : intensité arithmétique, modèle roofline, memory-bound ou compute-bound, calculs de débit de decode et de durée de prefill, batch en decode, limites de l'utilisation GPU, interférence prefill/decode, chunked prefill ou désagrégation, déploiement désagrégé (Dynamo, llm-d), quand désagréger.
 
-### 70 — Conteneurs & infra
+### 70 — Conteneurs & Infra
 
-- [Index Conteneurs](70-containers-infra/00-index.md) : sommaire des 13 fiches de la section, chaînes à retenir, et une carte sur l'intérêt des conteneurs pour servir des modèles.
+- [Conteneurs & infra — Index](70-containers-infra/00-index.md) : sommaire des 13 fiches de la section, chaînes à retenir, et une carte sur l'intérêt des conteneurs pour servir des modèles.
 - [OCI](70-containers-infra/01-oci.md) : rôle de l'Open Container Initiative, spécifications image, runtime et distribution.
-- [Docker, images & registries](70-containers-infra/02-docker-images-registries.md) : rôle de Docker et différence avec OCI, image ou conteneur (instance, état, volumes), compatibilité « Docker/OCI », registries et workflow push/pull.
+- [Docker, images et registries](70-containers-infra/02-docker-images-registries.md) : rôle de Docker et différence avec OCI, image ou conteneur (instance, état, volumes), compatibilité « Docker/OCI », registries et workflow push/pull.
 - [containerd & runc](70-containers-infra/03-containerd-runc.md) : rôle de containerd, rôle de runc, relation entre les deux, containerd ou CRI-O, crun, RuntimeClass, outils `ctr`, `nerdctl` et `crictl`, place du GPU dans la chaîne.
 - [Kubernetes, kubelet & CRI](70-containers-infra/04-kubernetes-kubelet-cri.md) : Pod, Deployment, Service, control plane, kubelet, CRI (containerd, CRI-O), scheduler, requests et limits, probes.
 - [Docker & Kubernetes](70-containers-infra/05-docker-kubernetes.md) : dockershim et sa suppression, architecture actuelle, images Docker exécutées sans Docker Engine, cri-dockerd, vérifications avant de retirer Docker Engine, construction d'images sans démon (BuildKit rootless, Buildah).
 - [Apptainer & Singularity](70-containers-infra/06-apptainer-singularity.md) : usage en HPC, filiation Singularity → Apptainer, format SIF, import d'images Docker, `--nv`.
-- [Synthèse conteneurs](70-containers-infra/07-synthese-containers.md) : cartes de révision transverses (OCI, CRI et SIF, chaînes Kubernetes et image, accès GPU, serveurs d'inférence, stockage des poids).
+- [Conteneurs — Synthèse](70-containers-infra/07-synthese-containers.md) : cartes de révision transverses (OCI, CRI et SIF, chaînes Kubernetes et image, accès GPU, serveurs d'inférence, stockage des poids).
 - [Primitives Linux & fondamentaux Docker](70-containers-infra/08-linux-primitives-docker-fondamentaux.md) : namespaces et cgroups, conteneur ou VM, layers, ordre du Dockerfile et cache, volumes et bind mounts, port mapping.
 - [GPU en conteneur](70-containers-infra/09-gpu-conteneurs.md) : NVIDIA Container Toolkit, driver et CUDA, images CUDA, GPU Operator, Apptainer `--nv`, ROCm.
 - [Images & poids de modèles](70-containers-infra/10-images-modeles-poids.md) : calcul du temps de chargement des poids d'un 70B, poids dans l'image ou séparés, cold start, safetensors ou pickle, GGUF, modèles distribués comme artefacts OCI.
@@ -262,7 +273,7 @@ Automatiser des processus, soit avec des outils de workflow, soit avec des agent
 - [Kubernetes GPU & inférence](70-containers-infra/12-kubernetes-gpu-inference.md) : device plugin, ressource `nvidia.com/gpu`, MIG, time-slicing, KServe, autoscaling (HPA, KEDA).
 - [Apptainer & inférence HPC](70-containers-infra/13-apptainer-inference-hpc.md) : Apptainer ou Docker en HPC, modèle de sécurité, intégration Slurm, `--nv`, poids montés depuis le système de fichiers partagé, images SIF, fichier de définition, service multi-nœuds (Ray, InfiniBand, NCCL), exposition d'un serveur lancé dans un job.
 
-### 80 — API layer & routing
+### 80 — API Layer & Routing
 
 - [LiteLLM (API layer)](80-api-layer-routing/81-litellm-api-layer.md) : SDK ou proxy, virtual keys, budgets, rate limits, fallbacks, load balancing, callbacks d'observabilité, alternatives (gateways auto-hébergées, services des clouds, agrégateurs).
 - [Routing LLM](80-api-layer-routing/82-routing-llm.md) : routage statique, par règles ou sémantique, RouteLLM, cascade, routage selon la charge, cache sémantique.
@@ -270,7 +281,7 @@ Automatiser des processus, soit avec des outils de workflow, soit avec des agent
 - [Streaming & intégration applicative](80-api-layer-routing/84-streaming-integration-applicative.md) : intérêt du streaming, SSE ou WebSocket, tampons des proxys, annulation côté serveur, JSON en streaming, événements d'un agent (AG-UI), tâches longues asynchrones, reprise d'un flux, clé d'idempotence, calcul des connexions ouvertes.
 - [Carte des protocoles agentiques](80-api-layer-routing/85-carte-protocoles-agentiques.md) : protocoles par frontière, MCP, A2A et AG-UI, Agent Card, cycle d'une tâche A2A, API compatible OpenAI, conventions OpenTelemetry GenAI, `AGENTS.md` et skills, paiements par agents (AP2, ACP), gouvernance des standards, quand ne pas exposer un agent en A2A, frontières de confiance.
 
-### 90 — Observabilité & evals
+### 90 — Observabilité & Evals
 
 - [Langfuse & observabilité LLM](90-observabilite-evals/91-langfuse-observabilite.md) : périmètre et alternatives (LangSmith, Phoenix, Braintrust), traces, spans et generations, sessions, prompt management, scores, LLM-as-judge, datasets.
 - [ChainForge & évaluation de prompts](90-observabilite-evals/92-chainforge-evals-prompts.md) : comparer prompts et modèles, golden dataset, evals automatiques, tests de régression et cas qui basculent, evals comme prérequis au déploiement.
@@ -315,39 +326,41 @@ Ce qu'il faut comprendre du modèle lui-même pour raisonner sur la qualité, le
 - [Embeddings & représentations](130-fondamentaux-llm/133-embeddings-representations.md) : apprentissage contrastif, similarités, bi-encoder ou cross-encoder, ColBERT, Matryoshka, préfixes, choix (MTEB), fine-tuning d'embeddings, changement de modèle, SPLADE, limites.
 - [Recherche vectorielle & index ANN](130-fondamentaux-llm/134-recherche-vectorielle-ann.md) : brute force ou ANN, rappel de l'index ou rappel du retrieval, calcul de la mémoire d'un index HNSW, HNSW et ses paramètres, IVF, Product Quantization, quantization scalaire et binaire, DiskANN, filtrage, recall de l'index, pgvector ou base dédiée, exploitation, dimensionnement.
 - [Pré-entraînement & scaling laws](130-fondamentaux-llm/135-pretraining-scaling-laws.md) : étapes de fabrication, pré-entraînement ou post-training, données, scaling laws, Chinchilla, sur-entraînement pour l'inférence, 6ND, MFU, contamination, knowledge cutoff, capacités émergentes, mur des données.
-- [Mixture of Experts](130-fondamentaux-llm/136-mixture-of-experts.md) : paramètres totaux et actifs, routeur, load balancing, expert partagé, spécialisation réelle, coût mémoire, expert parallelism, MoE ou dense.
+- [Mixture of Experts (MoE)](130-fondamentaux-llm/136-mixture-of-experts.md) : paramètres totaux et actifs, routeur, load balancing, expert partagé, spécialisation réelle, coût mémoire, expert parallelism, MoE ou dense.
 - [Long contexte](130-fondamentaux-llm/137-long-contexte.md) : extension de RoPE, lost in the middle, needle in a haystack et RULER, context rot, long contexte ou RAG, coût, techniques de serving, limite de sortie, test sur sa tâche.
-- [Modèles de raisonnement](130-fondamentaux-llm/138-modeles-raisonnement.md) : modèle de raisonnement ou chain-of-thought par prompt, test-time compute, RLVR, budget de réflexion, facturation, quand ne pas les utiliser, prompting, fidélité de la chaîne de pensée, interleaved thinking, best-of-n.
+- [Modèles de raisonnement & test-time compute](130-fondamentaux-llm/138-modeles-raisonnement.md) : modèle de raisonnement ou chain-of-thought par prompt, test-time compute, RLVR, budget de réflexion, facturation, quand ne pas les utiliser, prompting, fidélité de la chaîne de pensée, interleaved thinking, best-of-n.
 
 ### 140 — System design & produit
 
 La partie qui assemble tout le reste : concevoir, fiabiliser et piloter une application LLM, niveau senior.
 
-- [System design LLM — Méthode](140-system-design-produit/141-system-design-llm.md) : démarche, cadrage, échelle de complexité, triangle qualité-latence-coût, estimation de charge, composants, latence réelle ou perçue, synchrone ou asynchrone, multi-tenant, modes de défaillance, présentation des arbitrages.
-- [Fiabilité & résilience](140-system-design-produit/142-fiabilite-resilience-llm.md) : timeouts, retries, fallbacks, circuit breaker, retry, fallback ou circuit breaker, retries multipliés entre couches, sorties mal formées, dégradation gracieuse, rate limits, tâches longues, épinglage de version, SLO, chaos testing.
+- [System design d'applications LLM — Méthode](140-system-design-produit/141-system-design-llm.md) : démarche, cadrage, échelle de complexité, triangle qualité-latence-coût, estimation de charge, composants, latence réelle ou perçue, synchrone ou asynchrone, multi-tenant, modes de défaillance, présentation des arbitrages.
+- [Fiabilité & résilience des applications LLM](140-system-design-produit/142-fiabilite-resilience-llm.md) : timeouts, retries, fallbacks, circuit breaker, retry, fallback ou circuit breaker, retries multipliés entre couches, sorties mal formées, dégradation gracieuse, rate limits, tâches longues, épinglage de version, SLO, chaos testing.
 - [Hallucinations, grounding & abstention](140-system-design-produit/143-hallucinations-grounding.md) : types d'hallucinations, leviers, citations vérifiées, abstention, arbitrage avec la couverture, détection, calibration, slopsquatting, communication de l'incertitude.
 - [UX de l'IA & human-in-the-loop](140-system-design-produit/144-ux-ia-human-in-the-loop.md) : copilote ou autopilote, validation humaine efficace, streaming, visibilité des agents, feedback, attentes, chat ou interface dédiée, automation bias, erreurs et refus.
-- [Cas de system design](140-system-design-produit/145-cas-system-design.md) : support client, recherche documentaire, assistant de code, extraction à grande échelle, agent qui agit, chatbot grand public, assistant vocal, trame de réponse, erreurs d'entretien.
+- [Cas de system design LLM](140-system-design-produit/145-cas-system-design.md) : support client, recherche documentaire, assistant de code, extraction à grande échelle, agent qui agit, chatbot grand public, assistant vocal, trame de réponse, erreurs d'entretien.
 - [Choisir un modèle](140-system-design-produit/146-choix-modeles.md) : critères, limites des leaderboards, benchmarks, fermé ou open weights, licences, coût par tâche, architecture multi-modèles, lock-in, migration, veille.
-- [Leadership technique](140-system-design-produit/147-leadership-technique-ia.md) : ce qui fait un senior, choix des cas d'usage, ROI, échec des POC, RFC et ADR, build ou buy, go / no-go, standards d'équipe, communication avec les décideurs, veille.
+- [Leadership technique en AI Engineering](140-system-design-produit/147-leadership-technique-ia.md) : ce qui fait un senior, choix des cas d'usage, ROI, échec des POC, RFC et ADR, build ou buy, go / no-go, standards d'équipe, communication avec les décideurs, veille.
 - [Pipelines batch à grande échelle](140-system-design-produit/148-pipelines-batch-llm.md) : batch ou en ligne, batch API (JSONL, `custom_id`, 24 h), batch API ou continuous batching, architecture reprenable, calculs de coût et de durée sous quota, classement des erreurs, contrôle qualité statistique, versions enregistrées avec chaque résultat, auto-hébergement hors ligne, quand ne pas utiliser de batch API.
 
 ### 150 — Données & conformité
 
 - [Données : curation & annotation](150-donnees-conformite/151-donnees-curation-annotation.md) : dimensions de qualité, déduplication, guide d'annotation, accord inter-annotateurs, qui annote, active learning, séparation dev et test, données de production, préparation d'un fine-tuning.
-- [PII & confidentialité](150-donnees-conformite/152-pii-confidentialite.md) : où passent les données, détection, masquage, pseudonymisation et anonymisation, pseudonymiser avant l'appel, engagements des fournisseurs, logs, mémorisation, fuites entre utilisateurs, secrets, privacy by design.
-- [Data flywheel & versioning](150-donnees-conformite/153-data-flywheel-versioning.md) : boucle d'amélioration, étapes, versioning des données, outils (DVC, lakeFS, Iceberg), lineage d'une eval, versioning d'un index, signaux implicites, pièges, priorisation.
+- [PII & confidentialité des données](150-donnees-conformite/152-pii-confidentialite.md) : où passent les données, détection, masquage, pseudonymisation et anonymisation, pseudonymiser avant l'appel, engagements des fournisseurs, logs, mémorisation, fuites entre utilisateurs, secrets, privacy by design.
+- [Data flywheel & versioning des données](150-donnees-conformite/153-data-flywheel-versioning.md) : boucle d'amélioration, étapes, versioning des données, outils (DVC, lakeFS, Iceberg), lineage d'une eval, versioning d'un index, signaux implicites, pièges, priorisation.
 - [RGPD appliqué aux LLM](150-donnees-conformite/154-rgpd-llm.md) : champ d'application, RGPD ou AI Act, principes, base légale de la réutilisation, responsable et sous-traitant, transferts hors UE, droit à l'effacement, AIPD, décisions automatisées, données dans le modèle, mesures concrètes.
-- [AI Act](150-donnees-conformite/155-ai-act.md) : approche par les risques, pratiques interdites, haut risque et obligations, fournisseur ou déployeur, transparence, modèles à usage général, calendrier, sanctions, plan d'action.
-- [IA responsable](150-donnees-conformite/156-ia-responsable.md) : safety ou security, sources de biais, tests contrefactuels, métriques d'équité, model cards et system cards, datasheets, sycophancy, sécurité ou utilité, supervision humaine effective, référentiels (NIST AI RMF, ISO 42001).
+- [AI Act (règlement européen sur l'IA)](150-donnees-conformite/155-ai-act.md) : approche par les risques, pratiques interdites, haut risque et obligations, fournisseur ou déployeur, transparence, modèles à usage général, calendrier, sanctions, plan d'action.
+- [IA responsable : biais, équité & transparence](150-donnees-conformite/156-ia-responsable.md) : safety ou security, sources de biais, tests contrefactuels, métriques d'équité, model cards et system cards, datasheets, sycophancy, sécurité ou utilité, supervision humaine effective, référentiels (NIST AI RMF, ISO 42001).
 
 ### 160 — Multimodal & edge
 
-- [Modèles vision-langage](160-multimodal-edge/161-modeles-vision-langage.md) : encodeur visuel et projecteur, calcul du coût de 10 000 images, CLIP, faiblesses, injection visuelle, computer use, VLM ou OCR, évaluation, autres modalités.
-- [Parsing de documents](160-multimodal-edge/162-document-parsing.md) : PDF natif ou scanné, analyse de layout, outils (Docling, Unstructured, services cloud, VLM), tableaux, figures, ColPali, chunking structurel, évaluation, exploitation.
+- [Modèles vision-langage (VLM)](160-multimodal-edge/161-modeles-vision-langage.md) : encodeur visuel et projecteur, calcul du coût de 10 000 images, CLIP, faiblesses, injection visuelle, computer use, VLM ou OCR, évaluation, autres modalités.
+- [Parsing de documents (PDF, OCR, layout)](160-multimodal-edge/162-document-parsing.md) : PDF natif ou scanné, analyse de layout, outils (Docling, Unstructured, services cloud, VLM), tableaux, figures, ColPali, chunking structurel, évaluation, exploitation.
 - [Voix & agents temps réel](160-multimodal-edge/163-voix-temps-reel.md) : cascade ou speech-to-speech, budget de latence, réduction de latence, détection de fin de tour, barge-in, texte pour la voix, STT, évaluation, risques.
 - [LLM locaux, on-prem & edge](160-multimodal-edge/164-llm-local-edge.md) : motivations, capacité ou bande passante mémoire, llama.cpp et GGUF, outils locaux, Ollama ou vLLM, Apple Silicon, small language models, hybride local et cloud, flotte d'appareils, rentabilité du on-prem.
-- [Computer use & agents navigateur](160-multimodal-edge/165-computer-use-agents-navigateur.md) : image ou structure (DOM, arbre d'accessibilité), grounding visuel, benchmarks (OSWorld, WebArena), coût et latence, injection par le contenu web, isolation, quand ne pas l'utiliser, computer use ou RPA, outils. Placée en section 160, la section 30 étant pleine.
+- [Computer use & agents navigateur](160-multimodal-edge/165-computer-use-agents-navigateur.md) : image ou structure (DOM, arbre d'accessibilité), grounding visuel, benchmarks (OSWorld, WebArena), coût et latence, injection par le contenu web, isolation, quand ne pas l'utiliser, computer use ou RPA, outils.
+
+<!-- catalog:end -->
 
 ---
 
@@ -362,13 +375,18 @@ python3 scripts/lint_flashcards.py                  # erreurs et avertissements
 python3 scripts/lint_flashcards.py --stats          # statistiques par fiche
 python3 scripts/lint_flashcards.py --update-readme  # met à jour la ligne « État au … »
 python3 scripts/lint_flashcards.py --stale-months 6 # fiches à revérifier (défaut : 6 mois)
+python3 scripts/assign_card_ids.py                 # identifiants des nouvelles cartes
+python3 scripts/sync_catalog.py                    # régénérer les deux catalogues
+python3 scripts/sync_catalog.py --check            # vérifier sans écrire
 ```
 
-- **Erreurs** (bloquent le commit et la CI) : lien mort, nom de fichier en double, tags absents de la ligne 2, bloc avec deux lignes `?`, réponse vide, section `Mises en situation` ou `Connexions` manquante, dernier lien qui n'est pas le MOC, fiche absente du MOC, date `Vérifié le` illisible.
+- **Erreurs** (bloquent le commit et la CI) : lien mort, nom de fichier en double, tags absents de la ligne 2, séparateur `?` absent ou multiple, question ou réponse vide, identifiant Anki absent/invalide/dupliqué, section `Mises en situation` ou `Connexions` manquante, dernier lien qui n'est pas le MOC, fiche absente du MOC, date `Vérifié le` illisible ou future, fiche datée sans source. Les liens sont contrôlés aussi dans le MOC et le README (hors exemples de code).
 - **Avertissements** : réponse trop longue (110 mots hors code, 140 pour une mise en situation), liste de plus de 5 éléments (6 étapes pour une mise en situation), « Quelle différence… » au lieu de « À ne pas confondre », question en double, Connexion sans lien en retour, fiche citée par moins de 2 autres, fiche absente du README, `Vérifié le` trop ancien.
 
-Le paquet Anki se régénère seul à chaque push (voir [Réviser sur Android avec Anki](#4-réviser-sur-android-avec-anki)). Changer `MODEL_ID` dans `scripts/export_anki.py` casserait la mise à jour des cartes déjà importées : ne pas y toucher.
+Le paquet Anki se régénère seul à chaque push sur `main` (voir [Réviser sur Android avec Anki](#4-réviser-sur-android-avec-anki)). Changer `MODEL_ID` dans `scripts/export_anki.py` casserait la mise à jour des cartes déjà importées : ne pas y toucher.
 
 Pour activer le hook pre-commit, une fois par clone : `git config core.hooksPath .githooks`.
 
 Les fiches qui citent des produits, des versions ou des textes réglementaires portent une ligne `Vérifié le`. Le lint les signale au bout de 6 mois : on les relit, on corrige ce qui a changé, puis on met la date à jour.
+
+Les références ajoutées aux fiches servent de points de contrôle pour leur prochaine revue ; elles ne remplacent pas une validation de chaque affirmation. Les dates existantes n’ont pas été renouvelées par le seul ajout de sources.

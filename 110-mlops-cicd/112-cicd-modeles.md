@@ -1,5 +1,6 @@
 # CI/CD des modèles — Flashcards
 Tags: #flashcards #ai-engineering #mlops #cicd #llm
+<!-- summary: evals statistiques et tests déterministes, eval gates (exemple de seuils), artefact déployé, blue/green et canary, shadow deployment, rollback, GitOps, tests d'une app LLM, prompts en CI, pipeline complet. -->
 
 Qu'apporte le CI/CD d'une app LLM en plus du CI/CD classique ?
 ?

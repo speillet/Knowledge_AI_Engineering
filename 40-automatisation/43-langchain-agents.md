@@ -1,6 +1,7 @@
 # LangChain — Agents & middleware — Flashcards
 Tags: #flashcards #ai-engineering #agents #langchain #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: `create_agent`, mémoire par checkpointer et `thread_id`, `response_format`, hooks de middleware, middlewares fournis (human-in-the-loop, résumé, fallback, limites), runtime context, Deep Agents. -->
 
 Qu'est-ce que `create_agent` ?
 ?

@@ -1,5 +1,6 @@
 # Apptainer & Singularity — Flashcards
 Tags: #flashcards #conteneurs #apptainer #singularity #hpc
+<!-- summary: usage en HPC, filiation Singularity → Apptainer, format SIF, import d'images Docker, `--nv`. -->
 
 Dans quel environnement Apptainer est-il particulièrement utilisé ?
 ?

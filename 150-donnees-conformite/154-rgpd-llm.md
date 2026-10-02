@@ -1,6 +1,7 @@
 # RGPD appliqué aux LLM — Flashcards
 Tags: #flashcards #ai-engineering #rgpd #conformite #donnees
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: champ d'application, RGPD ou AI Act, principes, base légale de la réutilisation, responsable et sous-traitant, transferts hors UE, droit à l'effacement, AIPD, décisions automatisées, données dans le modèle, mesures concrètes. -->
 
 Quand le RGPD s'applique-t-il à une application LLM ?
 ?

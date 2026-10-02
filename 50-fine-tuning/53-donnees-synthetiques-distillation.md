@@ -1,6 +1,7 @@
 # Données synthétiques & distillation — Flashcards
 Tags: #flashcards #ai-engineering #fine-tuning #synthetic-data #distillation #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: génération variée, filtrage, model collapse, distillation sur les sorties ou sur les logits, distillation du raisonnement, contraintes juridiques, projet de distillation, jeux d'eval synthétiques. -->
 
 Qu'est-ce que les données synthétiques en AI Engineering ?
 ?

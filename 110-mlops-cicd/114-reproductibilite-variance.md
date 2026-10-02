@@ -1,5 +1,6 @@
 # Reproductibilité & variance — Flashcards
 Tags: #flashcards #ai-engineering #mlops #reproductibilite #evals #llm
+<!-- summary: non-déterminisme à température 0, invariance au batch, seed, appel rejouable, tests sur des sorties variables, erreur standard et intervalles de confiance, comparaison appariée, pass@k et pass^k, variance du LLM-as-judge, fine-tuning reproductible. -->
 
 Une température à 0 garantit-elle des sorties identiques ?
 ?

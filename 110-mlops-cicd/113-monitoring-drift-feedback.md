@@ -1,5 +1,6 @@
 # Monitoring, drift & boucle de feedback — Flashcards
 Tags: #flashcards #ai-engineering #mlops #monitoring #drift #llm
+<!-- summary: data drift et concept drift, drift d'une app LLM et d'un RAG, qualité en production, boucle de feedback, quand ré-entraîner, annotation régulière, mises à jour des modèles API, alertes sur tendance et par segment. -->
 
 À ne pas confondre : data drift et concept drift ?
 ?
