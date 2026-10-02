@@ -37,7 +37,7 @@ Un **classifieur entraîné sur des données de préférence** qui prédit si le
 
 ---
 
-Qu'est-ce qu'une cascade ?
+Qu'est-ce qu'une cascade de modèles ?
 ?
 <!--anki:704a444b343c593f2c61-->
 Envoyer d'abord la requête au **modèle bon marché**, **vérifier** la réponse (validation de format, score de confiance, juge) et **escalader** vers un modèle plus puissant seulement en cas d'échec.

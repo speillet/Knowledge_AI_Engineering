@@ -63,7 +63,7 @@ Le second coûte moins cher et se relit avant exécution, mais s'adapte moins vi
 
 ---
 
-Qu'est-ce que la réflexion (Reflexion) ?
+Qu'est-ce que le pattern Reflexion (Shinn et al.) ?
 ?
 <!--anki:43766a393a407a512d26-->
 Après un **échec** (test raté, réponse jugée fausse), l'agent écrit une **critique en langage naturel** de ce qui a mal tourné, et la garde en mémoire pour la tentative suivante. Proposé par Shinn et al. (2023), il améliore les tâches à **retour vérifiable** : code avec tests, puzzles.

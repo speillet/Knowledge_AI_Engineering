@@ -10,7 +10,7 @@ Qu'est-ce que le caching agressif pour une application LLM ?
 
 ---
 
-Pourquoi les agents en profitent-ils autant ?
+Pourquoi les agents profitent-ils autant du prompt caching ?
 ?
 <!--anki:7a26753c6f77592c2f51-->
 Leur ratio **entrée / sortie** est énorme : à chaque tour, tout l'historique est renvoyé pour quelques centaines de tokens générés. Avec un préfixe stable, **presque tout l'input** est lu depuis le cache, facturé une fraction du prix normal et sans prefill.
@@ -106,7 +106,7 @@ Comment éviter de servir une réponse périmée ou fausse depuis le cache ?
 
 ---
 
-Quels risques de sécurité et de confidentialité ?
+Quels risques de sécurité et de confidentialité pose le caching des réponses et des prompts ?
 ?
 <!--anki:4674494c5b246e5b6f36-->
 - **Fuite entre utilisateurs** si la clé de cache n'inclut pas le tenant
@@ -115,7 +115,7 @@ Quels risques de sécurité et de confidentialité ?
 
 ---
 
-Comment piloter le caching ?
+Comment piloter le prompt caching en production ?
 ?
 <!--anki:6a474d563c7128623b56-->
 - Suivre le **taux de hit** (tokens lus en cache / tokens d'entrée) et le **coût par tâche**

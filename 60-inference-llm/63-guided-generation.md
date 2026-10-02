@@ -9,7 +9,7 @@ Qu'est-ce que la guided generation ?
 
 ---
 
-Comment fonctionne-t-elle techniquement ?
+Comment la guided generation contraint-elle techniquement le décodage ?
 ?
 <!--anki:77513f6a2e546e395d69-->
 À chaque pas de décodage, un **automate** (issu du schéma ou de la grammaire) calcule les tokens autorisés ; les autres sont **masqués dans les logits** (probabilité mise à zéro) avant l'échantillonnage.
@@ -44,7 +44,7 @@ Quels outils implémentent la guided generation ?
 
 ---
 
-Et côté API propriétaires ?
+Comment obtenir une sortie structurée garantie avec une API propriétaire ?
 ?
 <!--anki:6b4237606b477d4d3c74-->
 Les fournisseurs proposent des **structured outputs** : on fournit un JSON Schema (ex. `response_format` de type `json_schema` en mode strict chez OpenAI, structured outputs chez Anthropic) et l'API garantit la conformité.
@@ -65,7 +65,7 @@ La contrainte peut-elle dégrader la qualité ?
 
 ---
 
-Quel coût en latence ?
+Quel coût en latence ajoute la guided generation ?
 ?
 <!--anki:4b3d5e5e4934672e2836-->
 Une **compilation de la grammaire** au premier usage (mise en cache ensuite) et un calcul de masque à chaque token, devenu **négligeable** avec les moteurs récents comme XGrammar.

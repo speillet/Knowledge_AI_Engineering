@@ -36,6 +36,8 @@ MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet",
 LINK_RE = re.compile(r"\[\[([^\]|#]+)")
 CODE_RE = re.compile(r"```.*?```", re.S)
 VERIFIE_RE = re.compile(r"^Vérifié le : (\d{1,2}) (\w+) (\d{4})", re.M)
+# question qui ne se comprend qu'avec la carte précédente (« Et TGI ? », « Comment fonctionne-t-elle ? »)
+HORS_CONTEXTE_RE = re.compile(r"^(Et\b|Comment \w+-t-(il|elle) ?\w* \?$|Que fait \w+ \?$)")
 
 Card = collections.namedtuple("Card", "question answer line guid", defaults=[None])
 ID_RE = re.compile(r"<!--anki:([0-9a-f]+)-->")
@@ -231,6 +233,8 @@ def lint(stale_months):
                 warnings.append(f"{rel}:{c.line} liste de {list_items(c.answer)} éléments (> {max_items}) : {c.question[:60]}")
             if re.match(r"Quelles? (est la )?différences?", c.question):
                 warnings.append(f"{rel}:{c.line} préférer « À ne pas confondre : X et Y ? » : {c.question[:60]}")
+            if HORS_CONTEXTE_RE.match(c.question):
+                warnings.append(f"{rel}:{c.line} question incompréhensible hors de la fiche, nommer le sujet : {c.question[:60]}")
 
         for target in set(LINK_RE.findall(text)):
             target = target.strip()

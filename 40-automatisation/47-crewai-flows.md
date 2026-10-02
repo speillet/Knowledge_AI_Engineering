@@ -17,7 +17,7 @@ Parce qu'ils donnent un **contrôle déterministe** du déroulé (étapes, condi
 
 ---
 
-Quels décorateurs structurent un Flow ?
+Quels décorateurs structurent un Flow CrewAI ?
 ?
 <!--anki:7a2571382c507c776739-->
 - **`@start()`** : point d'entrée (plusieurs possibles, lancés en parallèle)
@@ -56,7 +56,7 @@ SupportFlow().kickoff(inputs={"message": "L'export PDF plante"})
 
 ---
 
-État structuré ou non structuré ?
+Dans un Flow CrewAI, état structuré ou non structuré ?
 ?
 <!--anki:7a3c687e3b4823246c6c-->
 - **Non structuré** : `self.state` est un dict libre — rapide pour prototyper
@@ -79,7 +79,7 @@ Avec le décorateur **`@human_feedback`** (CrewAI 1.8+) : le Flow **se met en pa
 
 ---
 
-Comment un Flow utilise-t-il la mémoire ?
+Comment un Flow CrewAI utilise-t-il la mémoire ?
 ?
 <!--anki:4836683e74747c21725f-->
 Via la mémoire unifiée : `self.remember(...)` pour stocker, `self.recall(...)` pour retrouver, `self.extract_memories(...)` pour découper un texte en faits — ce qui permet d'**accumuler des connaissances d'une exécution à l'autre**.

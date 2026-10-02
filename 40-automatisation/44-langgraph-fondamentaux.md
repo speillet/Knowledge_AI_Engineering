@@ -26,7 +26,7 @@ Quels sont les trois éléments d'un graphe LangGraph ?
 
 ---
 
-Qu'est-ce qu'un reducer ?
+Qu'est-ce qu'un reducer dans LangGraph ?
 ?
 <!--anki:66312c767534457c4079-->
 La fonction qui dit **comment appliquer la mise à jour d'un nœud** à une clé de l'état. Par défaut la valeur est **remplacée** ; avec un reducer elle est **combinée** :
@@ -70,7 +70,7 @@ graph = builder.compile()
 
 ---
 
-Qu'est-ce qu'une edge conditionnelle ?
+Qu'est-ce qu'une edge conditionnelle dans LangGraph ?
 ?
 <!--anki:4335732e4d703f5b4531-->
 Une transition dont la destination est calculée par une **fonction de routage** qui lit l'état : `add_conditional_edges("noeud", route)`. C'est ce qui crée les **branches** et les **boucles** (cycles) du graphe.
@@ -84,7 +84,7 @@ Par **super-steps** (modèle Pregel) : tous les nœuds actifs d'une étape s'ex�
 
 ---
 
-À quoi sert l'API `Send` ?
+À quoi sert l'API `Send` de LangGraph ?
 ?
 <!--anki:6d3b50523a447c7d7e4a-->
 Au **map-reduce dynamique** : quand le nombre de branches n'est connu qu'à l'exécution, une edge conditionnelle renvoie une liste de `Send`, un par élément à traiter.
@@ -98,7 +98,7 @@ def repartir(state):
 
 ---
 
-À quoi sert `Command` ?
+À quoi sert `Command` dans LangGraph ?
 ?
 <!--anki:756a654c29346c544574-->
 À **mettre à jour l'état et choisir le nœud suivant** depuis un nœud, en une seule instruction : `return Command(update={"statut": "ok"}, goto="valider")`. Très utilisé pour les **handoffs** entre agents.
@@ -112,7 +112,7 @@ Avec la **`recursion_limit`** (nombre maximal de super-steps, passé dans la con
 
 ---
 
-Existe-t-il une alternative au graphe explicite ?
+Existe-t-il dans LangGraph une alternative au graphe explicite ?
 ?
 <!--anki:4d6557676c3834252436-->
 **Oui** : la **Functional API** (décorateurs `@entrypoint` et `@task`) écrit le flux en **Python classique** (if, boucles) tout en profitant de la persistance et des interruptions de LangGraph.

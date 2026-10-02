@@ -120,7 +120,7 @@ Une tâche d'agent de plusieurs minutes **ne doit pas** tenir une requête HTTP 
 
 ---
 
-Comment traiter la multi-location (multi-tenant) ?
+Comment isoler les clients d'une application LLM multi-tenant ?
 ?
 <!--anki:45785b5e5036705d493b-->
 - **Isolation des données** : filtre de tenant **obligatoire** dans le retrieval (idéalement imposé côté serveur, pas par le prompt), voire index séparés.

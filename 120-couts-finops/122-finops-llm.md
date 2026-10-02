@@ -33,7 +33,7 @@ Sans attribution, personne n'est responsable d'un coût qui double, et les optim
 
 ---
 
-Comment encadrer les dépenses ?
+Comment encadrer les dépenses LLM des équipes ?
 ?
 <!--anki:532b47722b306e7350-->
 **Budgets et quotas par clé/équipe** dans la gateway, **alertes** avant dépassement, **kill switch** en cas d'emballement.

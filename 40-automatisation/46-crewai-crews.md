@@ -21,7 +21,7 @@ Plus ses `tools`, son `llm` et des réglages (`max_iter`, `reasoning`, `verbose`
 
 ---
 
-Comment définit-on une tâche ?
+Comment définit-on une tâche CrewAI ?
 ?
 <!--anki:412a4645332e30695766-->
 Par une **`description`** (quoi faire), un **`expected_output`** (à quoi ressemble le résultat attendu) et l'**`agent`** responsable. Le champ `context` liste les **tâches dont la sortie** doit être fournie à celle-ci.
@@ -52,7 +52,7 @@ Les `{variables}` sont remplacées par les `inputs` du kickoff.
 
 ---
 
-Quels modes d'exécution (process) existent ?
+Quels modes d'exécution (process) propose un crew CrewAI ?
 ?
 <!--anki:4f623b5a442b527c2b4d-->
 - **Sequential** : les tâches s'exécutent **dans l'ordre**, chaque sortie alimente la suivante
@@ -60,7 +60,7 @@ Quels modes d'exécution (process) existent ?
 
 ---
 
-Qu'est-ce que la délégation ?
+Qu'est-ce que la délégation dans CrewAI ?
 ?
 <!--anki:67436a665f6224415725-->
 Avec `allow_delegation=True` (désactivé par défaut), un agent peut **confier une sous-tâche ou poser une question** à un autre agent de la crew. Pratique, mais cela multiplie les appels et rend l'exécution moins prévisible.
@@ -74,7 +74,7 @@ Avec **`output_pydantic`** (ou `output_json`) sur la tâche : le résultat est v
 
 ---
 
-Qu'est-ce qu'un guardrail de tâche ?
+Qu'est-ce qu'un guardrail de tâche dans CrewAI ?
 ?
 <!--anki:6761785230593f39772d-->
 Une **validation de la sortie avant de passer à la suite** :

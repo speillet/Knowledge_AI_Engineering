@@ -23,14 +23,14 @@ Gérer un ensemble de **Pods identiques** (via un ReplicaSet) : nombre de répli
 
 ---
 
-À quoi sert un Service ?
+À quoi sert un Service Kubernetes ?
 ?
 <!--anki:4c2d5e652833592c4a4e-->
 À fournir une **adresse stable** (IP virtuelle et nom DNS) devant des Pods éphémères, avec **répartition de charge** entre eux.
 
 ---
 
-Que contient le control plane ?
+Que contient le control plane de Kubernetes ?
 ?
 <!--anki:484723506a4126657e57-->
 - **kube-apiserver** : point d'entrée de toutes les opérations

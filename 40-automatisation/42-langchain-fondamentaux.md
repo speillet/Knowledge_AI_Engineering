@@ -41,7 +41,7 @@ Quels types de messages manipule LangChain ?
 
 ---
 
-Comment déclarer un outil ?
+Comment déclarer un outil avec LangChain ?
 ?
 <!--anki:4e2668233f3b707b5663-->
 Avec le décorateur `@tool` : le **nom de la fonction**, la **docstring** et les **type hints** deviennent le nom, la description et le JSON Schema de l'[[32-tool-calling|outil]].
@@ -64,7 +64,7 @@ Comment un modèle utilise-t-il des outils hors agent ?
 
 ---
 
-Comment obtenir une sortie structurée ?
+Comment obtenir une sortie structurée avec LangChain ?
 ?
 <!--anki:79644644213972374439-->
 `model.with_structured_output(MonModele)` avec un modèle **Pydantic** (ou un JSON Schema) : l'appel renvoie directement un objet validé, en s'appuyant sur les structured outputs ou le tool calling du fournisseur ([[63-guided-generation|guided generation]]).

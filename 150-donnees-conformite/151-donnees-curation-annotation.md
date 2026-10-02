@@ -27,7 +27,7 @@ Quelles dimensions d'hygiène et de conformité vérifier sur un jeu de données
 
 ---
 
-Pourquoi et comment dédupliquer ?
+Pourquoi et comment dédupliquer un jeu de données d'entraînement ou d'eval ?
 ?
 <!--anki:733b53586434355f6835-->
 Les doublons **surpondèrent** certains exemples, **gonflent** les scores d'eval (le même cas en train et en test) et gaspillent du calcul. On déduplique en **exact** (hash du texte normalisé), en **quasi-doublon** (MinHash / LSH sur les n-grammes) et en **sémantique** (similarité d'embeddings au-dessus d'un seuil).
@@ -52,7 +52,7 @@ Faire annoter un **même échantillon** par plusieurs personnes et calculer le *
 
 ---
 
-Qui doit annoter ?
+Qui doit annoter les données d'un projet LLM ?
 ?
 <!--anki:655759474a3971454429-->
 - **Experts métier** pour les critères qui exigent de la compétence (médical, juridique, code) — chers mais indispensables sur le jeu d'eval de référence.

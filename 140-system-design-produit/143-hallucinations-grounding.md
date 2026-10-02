@@ -68,7 +68,7 @@ Comment détecter une hallucination après génération ?
 
 ---
 
-Les modèles sont-ils calibrés ?
+Les LLM sont-ils calibrés : leur confiance reflète-t-elle leur taux de réponses justes ?
 ?
 <!--anki:65443c5a7252553d7a3a-->
 Partiellement : les **logprobs** d'un modèle de base sont souvent assez bien calibrés, mais le **post-training** dégrade cette calibration, et la **confiance exprimée en mots** (« je suis sûr ») est peu fiable. On ne peut pas afficher « confiance : 95 % » sans avoir **mesuré** sur un jeu labellisé que ce score correspond à 95 % de réponses justes.

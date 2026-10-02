@@ -53,7 +53,7 @@ Quelles sont les composantes du contexte d'un agent ?
 
 ---
 
-Qu'est-ce que la compaction ?
+Qu'est-ce que la compaction du contexte d'un agent ?
 ?
 <!--anki:6e5f505d713a4b7b5677-->
 **Résumer l'historique** quand on approche de la limite, pour repartir avec un contexte plus court qui garde décisions, état et tâches en cours. Variante légère : **effacer les vieux résultats d'outils**.

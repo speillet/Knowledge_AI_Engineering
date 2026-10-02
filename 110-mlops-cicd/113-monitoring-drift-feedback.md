@@ -81,7 +81,7 @@ Pour tenir dans le temps : un volume fixe et régulier (par exemple 50 traces pa
 
 ---
 
-Comment alerter sur la qualité ?
+Comment alerter sur une baisse de qualité d'une application LLM en production ?
 ?
 <!--anki:724b5141763b4c37746b-->
 Comme sur la disponibilité : des **seuils** sur les scores de qualité, les taux de refus et d'erreurs, les latences, **par segment**, reliés aux [[64-metriques-slo-inference|SLO]].

@@ -70,7 +70,7 @@ Quel est le coût du multi-agent ?
 
 ---
 
-Comment les agents partagent-ils l'information ?
+Comment les agents d'un système multi-agents partagent-ils l'information ?
 ?
 <!--anki:726a607969306e577a79-->
 Par des **messages** (résumés renvoyés à l'orchestrateur), un **état partagé** (graphe d'état, tableau blanc) ou des **artefacts externes** (fichiers, base) — ce qui évite de tout faire passer par le contexte.

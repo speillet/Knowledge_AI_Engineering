@@ -43,7 +43,7 @@ Afficher les **étapes** en cours (« recherche dans les documents », « exécu
 
 ---
 
-Comment collecter du feedback utile ?
+Comment collecter du feedback utile sur les réponses d'un assistant IA ?
 ?
 <!--anki:6f52726d5e2c6f7d3d67-->
 - **Explicite léger** : pouce haut/bas **au niveau de la réponse**, avec raison optionnelle en un clic.
@@ -64,7 +64,7 @@ Comment gérer les attentes des utilisateurs ?
 
 ---
 
-Chat ou interface dédiée ?
+Pour une fonctionnalité IA, chat ou interface dédiée ?
 ?
 <!--anki:642d7846327c23796a26-->
 Le **chat** est flexible mais oblige l'utilisateur à **savoir quoi demander** et à écrire. Pour une tâche **récurrente et bien définie**, une interface dédiée (bouton « résumer », formulaire, action intégrée dans l'outil existant) est plus rapide, plus **évaluable** et plus fiable. Le chat convient à l'**exploration**.

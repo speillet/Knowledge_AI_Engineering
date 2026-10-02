@@ -40,7 +40,7 @@ Prendre **à chaque pas le token le plus probable** (température 0). Simple et 
 
 ---
 
-Qu'est-ce que le top-k ?
+Qu'est-ce que le top-k sampling ?
 ?
 <!--anki:74476e34764847357059-->
 Ne garder que les **k tokens les plus probables**, **renormaliser** leurs probabilités, puis échantillonner. Limite : k est **fixe**, que le modèle soit sûr de lui (un seul bon candidat) ou qu'il hésite (des dizaines).

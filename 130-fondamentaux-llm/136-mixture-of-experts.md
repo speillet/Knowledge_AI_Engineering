@@ -27,7 +27,7 @@ Il découple **capacité** et **coût de calcul** : on obtient la qualité d'un 
 
 ---
 
-Comment fonctionne le routeur ?
+Comment fonctionne le routeur d'un modèle MoE ?
 ?
 <!--anki:68243021393e6371397e-->
 Une petite couche linéaire calcule un **score par expert** pour le token ; on garde les **top-k** et on combine leurs sorties **pondérées** par ces scores (après softmax). Le routage se fait **par token et par couche** : un même mot peut aller vers des experts différents à chaque couche.

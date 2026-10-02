@@ -156,7 +156,7 @@ Plus deux vues : **usage et coût** par équipe, **qualité** (scores, feedback)
 
 ---
 
-Quelles alertes configurer ?
+Quelles alertes configurer sur un serveur d'inférence ?
 ?
 <!--anki:6954683b7c7e24746059-->
 Alerter sur les **symptômes vus par les utilisateurs**, pas sur chaque cause :

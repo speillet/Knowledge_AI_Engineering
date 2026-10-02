@@ -54,7 +54,7 @@ Pour éviter le **peeking** : regarder le résultat tous les jours et **arrêter
 
 ---
 
-Qu'est-ce que l'effet de nouveauté ?
+Qu'est-ce que l'effet de nouveauté dans un A/B test ?
 ?
 <!--anki:782c3c2e4b3e40457e26-->
 Les utilisateurs réagissent au **changement lui-même** (curiosité, méfiance) plutôt qu'à sa qualité ; l'effet s'estompe en quelques jours ou semaines. D'où la nécessité de faire tourner le test **assez longtemps** et de regarder l'évolution de l'écart dans le temps.

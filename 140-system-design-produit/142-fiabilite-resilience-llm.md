@@ -9,7 +9,7 @@ Elle dépend d'un service **externe, lent, coûteux et non déterministe** : lat
 
 ---
 
-Quels timeouts configurer ?
+Quels timeouts configurer sur les appels à un LLM ?
 ?
 <!--anki:455f43415a692f2c7b6f-->
 - **Timeout de connexion** court.
@@ -21,7 +21,7 @@ Un seul timeout global de 60 s laisse l'utilisateur attendre **sans rien voir**.
 
 ---
 
-Comment faire des retries correctement ?
+Comment faire des retries correctement sur une API LLM ?
 ?
 <!--anki:47233729762a372f7c5f-->
 - Seulement sur les erreurs **transitoires** (429, 5xx, timeouts), **jamais** sur les 400 (requête invalide).
@@ -101,7 +101,7 @@ Avec un **budget d'erreur** qui décide quand geler les changements ([[64-metriq
 
 ---
 
-Comment tester la résilience ?
+Comment tester la résilience d'une application LLM ?
 ?
 <!--anki:68407a3a592331445669-->
 Par du **chaos testing** : injecter des 429, des timeouts, des flux coupés, des réponses invalides, un index vide, et vérifier que les fallbacks, circuit breakers et messages dégradés fonctionnent. Et des **tests de charge** avec des longueurs de prompt **réalistes** (la charge dépend des tokens, pas du nombre de requêtes).

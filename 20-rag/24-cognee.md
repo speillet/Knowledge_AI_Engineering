@@ -24,7 +24,7 @@ results = await cognee.recall("Où est née Marie Curie ?", datasets=["demo"])
 
 ---
 
-Que fait remember en mémoire permanente ?
+Que fait l'opération remember de Cognee en mémoire permanente ?
 ?
 <!--anki:4a3726612a4444423334-->
 Le pipeline complet, en trois phases :
@@ -44,14 +44,14 @@ Mémoire permanente ou mémoire de session ?
 
 ---
 
-Comment recall choisit-il sa stratégie ?
+Comment l'opération recall de Cognee choisit-elle sa stratégie de recherche ?
 ?
 <!--anki:636d76242e427a3c316e-->
 Par **routage automatique** : des règles repèrent les citations exactes ou les demandes de règles de code, sinon il utilise **HYBRID_COMPLETION** (chunks, résumés et voisinage des entités en un seul appel LLM). On peut forcer une stratégie : `GRAPH_COMPLETION`, `RAG_COMPLETION`, `CHUNKS`, `CHUNKS_LEXICAL` (BM25), `SUMMARIES`, `TEMPORAL`, `CYPHER`… C'est une **récupération par graphe**, pas une simple similarité d'embeddings.
 
 ---
 
-Que fait improve ?
+Que fait l'opération improve de Cognee ?
 ?
 <!--anki:6e43464e492d4e46546f-->
 - **Enrichit** un graphe existant sans ré-ingérer les sources (structures dérivées, triplets indexés)
@@ -80,7 +80,7 @@ Il sait aussi importer une mémoire existante depuis Mem0, Letta, Zep ou Graphit
 
 ---
 
-Quelles limites garder en tête ?
+Quelles limites de Cognee garder en tête ?
 ?
 <!--anki:4a404e6c463832774659-->
 - L'extraction par LLM a un **coût** et produit du **bruit** : la qualité dépend du modèle et de l'ontologie

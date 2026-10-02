@@ -59,7 +59,7 @@ Que proposent les fournisseurs de modèles ?
 
 ---
 
-Existe-t-il des plateformes open source ?
+Existe-t-il des plateformes d'agents open source, et à quels niveaux ?
 ?
 <!--anki:63642e78254937534137-->
 **Oui**, à deux niveaux :
@@ -98,7 +98,7 @@ Quatre stratégies (vocabulaire de LangSmith Deployment) :
 
 ---
 
-Pourquoi une sandbox d'exécution ?
+Pourquoi une plateforme d'agents fournit-elle une sandbox d'exécution ?
 ?
 <!--anki:74725137757b39403351-->
 Le code, les commandes et la navigation web générés par le modèle sont du **code non fiable**, potentiellement influencé par une injection de prompt. La sandbox les exécute dans un environnement **isolé et jetable** :
@@ -132,7 +132,7 @@ Exemples : AgentCore Gateway, Agent Gateway de Google, agentgateway en open sour
 
 ---
 
-Pourquoi un registre d'outils centralisé ?
+Pourquoi tenir un registre centralisé des outils d'agents ?
 ?
 <!--anki:6f2a595b353e4852725a-->
 Pour **publier une fois** les agents, serveurs MCP, outils et skills de l'entreprise, avec un **circuit de revue et d'approbation**. Il sert à :

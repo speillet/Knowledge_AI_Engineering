@@ -39,7 +39,7 @@ Choix selon la qualité **mesurée sur ses documents**, le coût, la confidentia
 
 ---
 
-Comment traiter les tableaux ?
+Comment traiter les tableaux lors du parsing de documents ?
 ?
 <!--anki:4b3d5068593763564574-->
 Les extraire en **structure** (markdown, HTML ou JSON), pas en texte aplati. Pour le RAG : garder le tableau **entier** dans un chunk avec son **titre et ses en-têtes de colonnes** ; pour un grand tableau, répéter les en-têtes dans chaque morceau. On peut aussi générer un **résumé textuel** du tableau pour l'embedding et fournir le tableau complet au LLM.

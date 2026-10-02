@@ -92,7 +92,7 @@ Avec l'option **`--nv`** (ex. `apptainer exec --nv image.sif python train.py`), 
 
 ---
 
-Et pour les GPU AMD ?
+Comment donner accès à un GPU AMD à un conteneur ?
 ?
 <!--anki:507e28233f496e5a7523-->
 Avec **ROCm** : on expose les devices `/dev/kfd` et `/dev/dri` au conteneur et on utilise des images ROCm. vLLM et PyTorch supportent ROCm.

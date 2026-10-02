@@ -41,14 +41,14 @@ Un **paquet d'extensions** qu'on installe dans le host : **commandes** (slash co
 
 ---
 
-Qu'est-ce qu'une skill ?
+Qu'est-ce qu'une skill pour un agent ?
 ?
 <!--anki:6f3f3e3a684076505951-->
 Un **dossier d'instructions et de ressources** (ex. `SKILL.md` + scripts) que l'agent **charge à la demande** quand la tâche s'y prête : seule une courte description reste en permanence dans le contexte (**progressive disclosure**).
 
 ---
 
-Qu'est-ce qu'un hook ?
+Qu'est-ce qu'un hook dans un harness d'agent ?
 ?
 <!--anki:4c427a57297048423e58-->
 Un **script exécuté par le harness** à un moment précis du cycle (avant ou après un appel d'outil, fin de tour…) : **déterministe**, il peut bloquer une action, formater du code ou journaliser, sans dépendre du bon vouloir du modèle.

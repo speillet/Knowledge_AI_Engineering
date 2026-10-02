@@ -89,7 +89,7 @@ Un stockage qui indexe les embeddings pour une **recherche des plus proches vois
 
 ---
 
-Comment choisir le top-k ?
+Comment choisir le top-k d'un RAG ?
 ?
 <!--anki:6b342c707e4867592653-->
 C'est un compromis : **k trop petit** → information manquante (**recall** faible) ; **k trop grand** → bruit, coût et dilution du contexte. On récupère souvent large, puis on filtre ou on [[22-rag-avance|re-classe]].

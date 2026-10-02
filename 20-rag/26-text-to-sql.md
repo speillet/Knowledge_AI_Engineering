@@ -92,7 +92,7 @@ L'écart entre ces benchmarks rappelle qu'un score public ne prédit pas le rés
 
 ---
 
-Comment gérer une question ambiguë ?
+Comment un système text-to-SQL doit-il gérer une question ambiguë ?
 ?
 <!--anki:62717d725e7e684b387b-->
 « Les ventes de mars » : quelle année, quel périmètre, CA brut ou net ? Options :

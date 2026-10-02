@@ -24,7 +24,7 @@ Kubernetes utilise-t-il encore dockershim nativement ?
 
 ---
 
-Quelle architecture est aujourd'hui courante ?
+Sans dockershim, quelle chaîne d'exécution est aujourd'hui courante sur un node Kubernetes ?
 ?
 <!--anki:464d5d4f407e2a234050-->
 `kubelet → CRI → containerd (ou CRI-O) → runc → noyau Linux`

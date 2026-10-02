@@ -10,7 +10,7 @@ Un LLM est **sans état** : il ne sait que ce qui est dans sa fenêtre de contex
 
 ---
 
-Quels types de mémoire distingue-t-on ?
+Quels types de mémoire distingue-t-on pour un agent ?
 ?
 <!--anki:234b3f24393a6b7661-->
 - **De travail** : le contexte de la tâche en cours
@@ -55,7 +55,7 @@ Plus des **filtres** (utilisateur, type de souvenir). Mieux vaut **peu de souven
 
 ---
 
-Qu'est-ce que la réflexion (reflection) ?
+En mémoire d'agent, qu'est-ce que la réflexion (reflection) ?
 ?
 <!--anki:747d5b5b70284a2c677b-->
 L'agent **synthétise périodiquement** ses souvenirs bruts en conclusions de plus haut niveau (« l'utilisateur préfère des réponses courtes avec du code »), ou tire des **leçons** de ses échecs. Il transforme ainsi l'épisodique en sémantique ou en procédural.
@@ -69,7 +69,7 @@ Comment gérer les faits qui changent dans le temps ?
 
 ---
 
-Où stocker la mémoire ?
+Où stocker la mémoire long terme d'un agent ?
 ?
 <!--anki:474e52572d285e445668-->
 - **Base vectorielle** : souvenirs en texte + embeddings, recherche par similarité

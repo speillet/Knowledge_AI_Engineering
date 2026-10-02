@@ -89,7 +89,7 @@ Quand le speculative decoding aide-t-il et quand nuit-il ?
 
 ---
 
-Quelles métriques d'inférence améliore-t-il ?
+Quelles métriques d'inférence le speculative decoding améliore-t-il ?
 ?
 <!--anki:503836423d712d492f3d-->
 Le **TPOT** (temps par token généré) et donc la **latence totale** des réponses longues. Pas le **TTFT** : le prefill n'est pas accéléré, et le brouillon ajoute même un peu de travail au départ ([[64-metriques-slo-inference|métriques & SLO]]).

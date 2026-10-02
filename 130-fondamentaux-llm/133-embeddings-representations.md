@@ -16,7 +16,7 @@ Par **apprentissage contrastif** : on rapproche les paires **positives** (questi
 
 ---
 
-Quelles mesures de similarité utiliser ?
+Quelles mesures de similarité utiliser entre embeddings ?
 ?
 <!--anki:716c647e42323e3f283e-->
 - **Cosinus** : angle entre vecteurs, insensible à la norme.

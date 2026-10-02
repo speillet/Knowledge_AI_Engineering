@@ -67,7 +67,7 @@ Retenir l'ordre de grandeur : **une à cinq minutes**, à comparer aux secondes 
 
 ---
 
-Comment réduire le cold start ?
+Comment réduire le cold start d'un pod d'inférence ?
 ?
 <!--anki:643a67575b6d6a61735d-->
 **Pré-puller les images** sur les nodes GPU (DaemonSet), garder les poids en **cache local**, télécharger via un **init container**, streamer les poids directement vers le GPU, garder un minimum de réplicas chauds.

@@ -63,7 +63,7 @@ Ordre utile : **stable d'abord** (rôle, format), **variable à la fin** (docume
 
 ---
 
-Instructions positives ou négatives ?
+Dans un prompt, vaut-il mieux formuler les consignes positivement ou négativement ?
 ?
 <!--anki:42213a39796140435942-->
 **Dire quoi faire** (« réponds en JSON ») fonctionne mieux que quoi ne pas faire (« pas de prose ») — les négations sont plus souvent ignorées.
@@ -101,7 +101,7 @@ Voir [[13-prompts-production|prompts en production]] et [[91-langfuse-observabil
 
 ---
 
-Quels anti-patterns courants ?
+Quels anti-patterns courants en écriture de prompts ?
 ?
 <!--anki:7621382e254d7e3f6163-->
 Prompt **fourre-tout**, exemples **contradictoires** avec les instructions, contexte non trié, redondances — et demander un format strict au lieu de le **[[63-guided-generation|contraindre]]**.

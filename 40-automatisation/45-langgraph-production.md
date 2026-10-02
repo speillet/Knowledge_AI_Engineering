@@ -3,7 +3,7 @@ Tags: #flashcards #ai-engineering #agents #langgraph #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 <!-- summary: checkpointers, threads, `interrupt` et `Command(resume=...)`, time travel, Store long terme, durable execution, streaming, subgraphs, patterns multi-agents, déploiement. -->
 
-Qu'est-ce qu'un checkpointer ?
+Qu'est-ce qu'un checkpointer dans LangGraph ?
 ?
 <!--anki:73715178653d54644d38-->
 Le composant qui **sauvegarde l'état du graphe après chaque super-step**. Il apporte la mémoire de conversation, la reprise après erreur, le human-in-the-loop et le time travel.
@@ -14,7 +14,7 @@ graph = builder.compile(checkpointer=checkpointer)
 
 ---
 
-Quels checkpointers existent ?
+Quels checkpointers LangGraph propose-t-il ?
 ?
 <!--anki:4a23792655613437387d-->
 - **`InMemorySaver`** : en mémoire, perdu au redémarrage (tests)
@@ -23,7 +23,7 @@ Quels checkpointers existent ?
 
 ---
 
-Qu'est-ce qu'un thread ?
+Qu'est-ce qu'un thread dans LangGraph ?
 ?
 <!--anki:65266e7a71676c416a5b-->
 Une **suite de checkpoints** identifiée par un **`thread_id`**, passé dans la config (`{"configurable": {"thread_id": "..."}}`). Même `thread_id` = on reprend l'état ; nouveau `thread_id` = on repart de zéro.
@@ -54,7 +54,7 @@ Parce que la reprise peut arriver **des minutes ou des jours plus tard**, dans u
 
 ---
 
-Qu'est-ce que le time travel ?
+Qu'est-ce que le time travel dans LangGraph ?
 ?
 <!--anki:43524756212128393c4d-->
 Parcourir l'**historique des checkpoints** d'un thread (`get_state_history`), **rejouer** depuis un checkpoint passé ou le **modifier** (`update_state`) pour explorer une autre branche — très utile pour déboguer un agent.
@@ -69,7 +69,7 @@ Checkpointer ou Store : quelle différence ?
 
 ---
 
-Qu'est-ce que la durable execution ?
+Qu'est-ce que la durable execution dans LangGraph ?
 ?
 <!--anki:6e5a3837745771543752-->
 La capacité d'un workflow à **reprendre après une panne** ou une longue pause **depuis le dernier checkpoint**, sans refaire le travail déjà fait. Les **effets de bord** (appels d'API, écritures) doivent être isolés dans des tâches pour ne pas être rejoués.
@@ -83,7 +83,7 @@ L'**état complet** après chaque étape (`values`), les **mises à jour** de ch
 
 ---
 
-Qu'est-ce qu'un subgraph ?
+Qu'est-ce qu'un subgraph dans LangGraph ?
 ?
 <!--anki:447762797072732f477e-->
 Un **graphe compilé utilisé comme nœud** d'un autre graphe. On découpe ainsi un système complexe en modules, souvent **un subgraph par agent**.

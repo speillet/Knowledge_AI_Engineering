@@ -24,7 +24,7 @@ La technique de **SGLang** qui range les préfixes en cache dans un **arbre radi
 
 ---
 
-Comment l'arbre radix est-il évincé ?
+Comment SGLang évince-t-il les entrées de l'arbre radix ?
 ?
 <!--anki:746d6a686e7c2f454321-->
 En **LRU sur les feuilles** : on retire d'abord les branches les moins récemment utilisées. Un **compteur de références** protège les nœuds utilisés par des requêtes en cours, et la mémoire libérée retourne au pool commun.

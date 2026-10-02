@@ -40,7 +40,7 @@ Une réponse longue est donc dominée par le TPOT, une réponse courte sur un lo
 
 ---
 
-Qu'est-ce que le throughput ?
+Qu'est-ce que le throughput d'un service d'inférence ?
 ?
 <!--anki:49216f726b2d6a6f292d-->
 Le **débit** du service : **tokens de sortie par seconde** (tous utilisateurs confondus) ou **requêtes par seconde**. C'est lui qui détermine le **coût par token**.
@@ -61,7 +61,7 @@ Le débit **des seules requêtes qui respectent le SLO** (TTFT et TPOT sous les 
 
 ---
 
-Pourquoi raisonner en percentiles ?
+Pourquoi raisonner en percentiles pour la latence d'inférence ?
 ?
 <!--anki:4b306636786f4b446d71-->
 Parce que la moyenne cache la **queue de distribution** : on fixe les SLO sur **p95/p99**. Un p50 excellent avec un p99 de 20 s reste une mauvaise expérience pour 1 % des utilisateurs.
@@ -86,7 +86,7 @@ Surtout la **VRAM disponible pour le [[61-kv-cache-attention|KV cache]]** : chaq
 
 ---
 
-Quels signaux utiliser pour l'autoscaling ?
+Quels signaux utiliser pour l'autoscaling d'un serveur d'inférence LLM ?
 ?
 <!--anki:6e46644e3e766a2e4a7d-->
 La **longueur de la file d'attente** (requêtes en attente) et le **taux d'occupation du KV cache**, exposés en métriques Prometheus par le serveur ([[11-serveurs-inference-llm|vLLM]]). **Pas l'utilisation GPU**, souvent proche de 100 % et peu discriminante.

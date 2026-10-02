@@ -22,7 +22,7 @@ S'y ajoute un régime propre aux **modèles d'IA à usage général** (GPAI).
 
 ---
 
-Quelles pratiques sont interdites ?
+Quelles pratiques d'IA l'AI Act interdit-il ?
 ?
 <!--anki:6e6f4a2c7d6c3c7c4856-->
 Notamment : la **manipulation** subliminale ou l'exploitation des vulnérabilités causant un préjudice, la **notation sociale**, la **reconnaissance des émotions** au **travail** et à l'**école** (sauf raisons médicales ou de sécurité), le **moissonnage non ciblé** d'images faciales pour bâtir des bases de reconnaissance, la catégorisation biométrique sur des **caractéristiques sensibles**, et, sauf exceptions strictes, l'**identification biométrique à distance en temps réel** dans l'espace public par les forces de l'ordre. Interdictions applicables depuis le **2 février 2025**.

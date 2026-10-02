@@ -42,7 +42,7 @@ Deux déploiements sous le même nom : le proxy **répartit la charge** entre eu
 
 ---
 
-Que sont les virtual keys ?
+Que sont les virtual keys de LiteLLM ?
 ?
 <!--anki:685b522c2437213a3750-->
 Des **clés API émises par le proxy** (par équipe, projet ou utilisateur) : les vraies clés des fournisseurs restent **secrètes**, et chaque virtual key a ses **modèles autorisés, budget et limites**.

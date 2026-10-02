@@ -67,14 +67,14 @@ Qu'est-ce que TensorRT-LLM et Triton ?
 
 ---
 
-Et TGI ?
+Où en est TGI (Text Generation Inference) de Hugging Face ?
 ?
 <!--anki:62455d30213b665d742b-->
 **Text Generation Inference** (Hugging Face) : serveur historiquement très utilisé, aujourd'hui **en mode maintenance** ; Hugging Face oriente vers vLLM et SGLang.
 
 ---
 
-Qu'utiliser pour l'inférence locale ?
+Quel serveur utiliser pour l'inférence LLM locale ?
 ?
 <!--anki:6f484e484e652c34492a-->
 **llama.cpp** et **Ollama** : modèles **GGUF quantizés**, CPU, Mac (Apple Silicon) ou GPU grand public. Parfaits pour le dev local, pas pour une forte concurrence en production.

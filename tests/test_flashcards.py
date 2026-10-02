@@ -153,6 +153,13 @@ class VaultTests(unittest.TestCase):
         self.rag.write_text(text.replace(identifiers[1], identifiers[0], 1))
         self.assertIn("identifiant Anki en double", self.errors())
 
+    def test_out_of_context_question_warns(self):
+        for question in ("Et TGI ?", "Comment fonctionne-t-elle techniquement ?", "Que fait improve ?"):
+            with self.subTest(question=question):
+                self.rag.write_text(self.rag.read_text().replace("Qu'est-ce que le RAG ?", question, 1))
+                self.assertTrue(any("hors de la fiche" in w for w in lint.lint(0)[1]))
+                self.rag.write_text(self.rag.read_text().replace(question, "Qu'est-ce que le RAG ?", 1))
+
     def test_missing_id_fails(self):
         self.rag.write_text(lint.ID_RE.sub("", self.rag.read_text(), count=1))
         self.assertIn("identifiant Anki absent", self.errors())
