@@ -102,7 +102,8 @@ class VaultTests(unittest.TestCase):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
         self.root = Path(self.tmp.name)
-        for source in lint.fiche_files() + [ROOT / "README.md", ROOT / f"{lint.MOC}.md", ROOT / "scripts/sections.json"]:
+        for source in lint.fiche_files() + [ROOT / "README.md", ROOT / f"{lint.MOC}.md", ROOT / "scripts/sections.json",
+                                            ROOT / lint.RETIRED]:
             target = self.root / source.relative_to(ROOT)
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(source, target)
@@ -156,6 +157,37 @@ class VaultTests(unittest.TestCase):
         self.rag.write_text(lint.ID_RE.sub("", self.rag.read_text(), count=1))
         self.assertIn("identifiant Anki absent", self.errors())
 
+    def retire_first_rag_card(self, keep_in_vault=False):
+        text = self.rag.read_text()
+        card = lint.parse_cards(text)[0][0]
+        hexa = lint.ID_RE.search(text)[1]
+        if not keep_in_vault:
+            start = text.index(card.question)
+            self.rag.write_text(text[:start] + text[text.index("---\n", start) + 4:])
+        (self.root / lint.RETIRED).write_text(json.dumps(
+            [{"id": hexa, "question": card.question, "raison": "test"}], ensure_ascii=False))
+        return card
+
+    def test_retired_id_still_in_vault_fails(self):
+        self.retire_first_rag_card(keep_in_vault=True)
+        self.assertIn("la carte est encore dans le vault", self.errors())
+
+    def test_malformed_retired_entry_fails(self):
+        (self.root / lint.RETIRED).write_text('[{"id": "zz", "question": "Q ?"}]')
+        self.assertIn("entrée mal formée", self.errors())
+
+    def test_retired_card_is_exported_suspended(self):
+        card = self.retire_first_rag_card()
+        self.assertEqual(self.errors(), "")
+        with patch.object(export, "ROOT", self.root):
+            decks, total, sections = export.build()
+        notes = [note for deck in decks for note in deck.notes if note.guid == card.guid]
+        self.assertEqual(len(notes), 1)
+        self.assertEqual(notes[0].tags, ["retired"])
+        self.assertTrue(all(c.suspend for c in notes[0].cards))
+        self.assertEqual(sum(len(deck.notes) for deck in decks), total + 1)
+        self.assertEqual(sections, 16)
+
     def test_generated_catalog_drift(self):
         with contextlib.redirect_stdout(io.StringIO()):
             self.assertTrue(catalog.sync(self.root, check=True))
@@ -192,8 +224,10 @@ class ExportTests(unittest.TestCase):
     def test_legacy_guids_preserved(self):
         historical = set(json.loads((ROOT / "tests/fixtures/legacy_guids.json").read_text()))
         current = [c.guid for p in lint.fiche_files() for c in lint.parse_cards(p.read_text())[0]]
+        retired = {lint.decode_guid(entry["id"]) for entry in lint.retired_cards()}
         self.assertEqual(len(current), len(set(current)))
-        self.assertTrue(historical <= set(current), "Une carte historique a perdu son identifiant ; vérifier toute suppression intentionnelle.")
+        self.assertTrue(historical <= set(current) | retired,
+                        "Une carte historique a perdu son identifiant sans figurer dans scripts/retired_cards.json.")
 
     def test_container_question_and_legacy_guid(self):
         card = lint.parse_cards((ROOT / "70-containers-infra/00-index.md").read_text())[0][0]
@@ -206,8 +240,12 @@ class ExportTests(unittest.TestCase):
         self.assertIn("---\napiVersion: v1\nkind: Pod", card.answer)
         self.assertIn("runtimeClassName: gvisor", card.answer)
 
+    def test_question_shows_its_fiche(self):
+        self.assertIn("{{Fiche}}", export.MODEL.templates[0]["qfmt"])
+
     def test_package_database(self):
         decks, total, sections = export.build()
+        total += len(lint.retired_cards())
         with tempfile.TemporaryDirectory() as tmp:
             package = Path(tmp) / "test.apkg"
             export.genanki.Package(decks).write_to_file(package)

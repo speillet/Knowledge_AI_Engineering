@@ -13,6 +13,7 @@ Les avertissements signalent un écart au guide de style (carte trop longue, fic
 import argparse
 import collections
 import datetime
+import json
 import re
 import sys
 from pathlib import Path
@@ -21,6 +22,7 @@ from urllib.parse import unquote
 ROOT = Path(__file__).resolve().parent.parent
 MOC = "00-moc-ai-engineering"
 INDEXES = {MOC, "00-index"}
+RETIRED = "scripts/retired_cards.json"
 
 MAX_WORDS = 110          # carte standard, hors blocs de code
 MAX_WORDS_SITUATION = 140
@@ -56,6 +58,23 @@ def markdown_lines(text):
 
 def fiche_files():
     return sorted(p for p in ROOT.glob("[0-9]*/*.md") if p.stem != MOC)
+
+
+def decode_guid(hexa):
+    """Identifiant <!--anki:…--> (hexadécimal) → GUID Anki ; ValueError s'il est invalide."""
+    try:
+        guid = bytes.fromhex(hexa).decode("ascii")
+    except UnicodeDecodeError as exc:
+        raise ValueError("GUID non ASCII") from exc
+    if not guid or any(ord(c) < 33 or ord(c) > 126 for c in guid):
+        raise ValueError("GUID non imprimable")
+    return guid
+
+
+def retired_cards():
+    """Cartes retirées du vault : l'export les republie avec le tag retired pour les supprimer d'Anki."""
+    path = ROOT / RETIRED
+    return json.loads(path.read_text()) if path.exists() else []
 
 
 def parse_cards(text):
@@ -101,10 +120,8 @@ def parse_cards(text):
             if metadata.count("<!--anki:") != len(ids) or len(ids) > 1:
                 raise ValueError("identifiant mal formé ou multiple")
             if ids:
-                guid = bytes.fromhex(ids[0]).decode("ascii")
-                if not guid or any(ord(c) < 33 or ord(c) > 126 for c in guid):
-                    raise ValueError("GUID non imprimable")
-        except (ValueError, UnicodeDecodeError):
+                guid = decode_guid(ids[0])
+        except ValueError:
             malformed.append(block[sep][0])
             continue
         question = " ".join(line for _, line, code in block[:sep]
@@ -240,6 +257,22 @@ def lint(stale_months):
         stats.append((str(rel), len(cards), len(situations),
                       sum(c.question.startswith("À ne pas confondre") for c in cards),
                       round(sum(words(c.answer) for c in cards) / max(1, len(cards)))))
+
+    retired = set()
+    for entry in retired_cards():
+        hexa = entry.get("id", "") if isinstance(entry, dict) else ""
+        try:
+            if not ID_RE.fullmatch(f"<!--anki:{hexa}-->") or not entry.get("question"):
+                raise ValueError
+            guid = decode_guid(hexa)
+        except ValueError:
+            errors.append(f"{RETIRED} entrée mal formée (id hexadécimal et question requis) : {entry}")
+            continue
+        if guid in retired:
+            errors.append(f"{RETIRED} identifiant retiré en double : {hexa}")
+        elif guid in guids:
+            errors.append(f"{guids[guid]} identifiant retiré dans {RETIRED}, mais la carte est encore dans le vault")
+        retired.add(guid)
 
     for q, where in questions.items():
         if len(where) > 1:

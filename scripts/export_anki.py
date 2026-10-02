@@ -8,6 +8,8 @@ Usage :
 
 Chaque note porte un identifiant permanent <!--anki:...--> : un réimport met à jour
 les notes existantes même si leur question ou leur fichier change.
+Les cartes de scripts/retired_cards.json sont republiées suspendues, avec le tag retired :
+une recherche tag:retired dans Anki permet de les supprimer.
 Les commentaires <!--SR:...--> du plugin Obsidian sont ignorés.
 """
 import argparse
@@ -20,9 +22,10 @@ import genanki
 from markdown_it import MarkdownIt
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from lint_flashcards import MOC, ROOT, fiche_files, lint, parse_cards  # noqa: E402
+from lint_flashcards import MOC, ROOT, decode_guid, fiche_files, lint, parse_cards, retired_cards  # noqa: E402
 
 RACINE = "AI Engineering"
+RETIREES = "999 — Cartes retirées"
 MODEL_ID = 1718293041  # fixe : changer cet identifiant dupliquerait toutes les notes
 
 SR_RE = re.compile(r"<!--SR:.*?-->", re.S)
@@ -35,6 +38,7 @@ CSS = """
   font-size: 18px; line-height: 1.45; text-align: left;
   color: #1d1d1f; background: #ffffff; padding: 0 4px;
 }
+.contexte { margin-bottom: .5em; font-size: .72em; color: #6b6b70; }
 .question { font-weight: 600; }
 strong { color: #0b3d91; }
 ul, ol { padding-left: 1.3em; }
@@ -57,7 +61,8 @@ hr#answer { border: 0; border-top: 1px solid #d0d0d5; margin: 1em 0; }
 .nightMode code, .night_mode code, .nightMode pre, .night_mode pre { background: #2c2c30; }
 .nightMode pre code, .night_mode pre code { background: none; }
 .nightMode .lien, .night_mode .lien { color: #8ab4f8; }
-.nightMode .source, .night_mode .source { color: #9a9aa0; }
+.nightMode .source, .night_mode .source,
+.nightMode .contexte, .night_mode .contexte { color: #9a9aa0; }
 .nightMode hr#answer, .night_mode hr#answer { border-top-color: #44444a; }
 """
 
@@ -67,9 +72,9 @@ MODEL = genanki.Model(
     fields=[{"name": "Question"}, {"name": "Réponse"}, {"name": "Fiche"}, {"name": "Section"}],
     templates=[{
         "name": "Question → Réponse",
-        "qfmt": '<div class="question">{{Question}}</div>',
+        "qfmt": '<div class="contexte">{{Fiche}}</div><div class="question">{{Question}}</div>',
         "afmt": '{{FrontSide}}<hr id="answer">{{Réponse}}'
-                '<div class="source">{{Section}} · {{Fiche}}</div>',
+                '<div class="source">{{Section}}</div>',
     }],
     css=CSS,
 )
@@ -142,7 +147,30 @@ def build():
                 guid=guid,
             ))
             total += 1
-    return list(decks.values()), total, len({d.split("::")[1] for d in decks})
+    n_sections = len({d.split("::")[1] for d in decks})
+
+    retired = retired_cards()
+    if retired:
+        deck_name = f"{RACINE}::{RETIREES}"
+        deck = decks.setdefault(deck_name, genanki.Deck(stable_id(deck_name), deck_name))
+        for entry in retired:
+            guid = decode_guid(entry["id"])
+            if guid in guids:
+                raise ValueError(f"identifiant retiré encore présent dans le vault : {entry['question'][:60]}")
+            guids.add(guid)
+            raison = f" ({entry['raison']})" if entry.get("raison") else ""
+            note = genanki.Note(
+                model=MODEL,
+                fields=[to_html(entry["question"], titres),
+                        f"<p>Carte retirée du vault{raison}. À supprimer : rechercher <code>tag:retired</code>.</p>",
+                        "Cartes retirées", RETIREES],
+                tags=["retired"],
+                guid=guid,
+            )
+            for card in note.cards:
+                card.suspend = True  # un nouvel import ne les propose pas en révision
+            deck.add_note(note)
+    return list(decks.values()), total, n_sections
 
 
 def main():
@@ -157,7 +185,8 @@ def main():
     out = Path(args.output)
     out.parent.mkdir(parents=True, exist_ok=True)
     genanki.Package(decks).write_to_file(out)
-    print(f"{total} cartes, {len(decks)} fiches, {n_sections} sections → {out}")
+    fiches = sum(not d.name.endswith(RETIREES) for d in decks)
+    print(f"{total} cartes, {fiches} fiches, {n_sections} sections, {len(retired_cards())} carte(s) retirée(s) → {out}")
 
 
 if __name__ == "__main__":

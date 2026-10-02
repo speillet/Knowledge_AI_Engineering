@@ -18,6 +18,7 @@ Knowledge_AI_Engineering/
 ├── scripts/lint_flashcards.py   # vérification des conventions + statistiques
 ├── scripts/export_anki.py       # export en paquet Anki (.apkg) pour AnkiDroid
 ├── scripts/assign_card_ids.py   # identifiants permanents des nouvelles cartes
+├── scripts/retired_cards.json   # cartes retirées du vault, à supprimer d'Anki
 ├── scripts/sync_catalog.py      # génération des sommaires README et MOC
 ├── scripts/sections.json        # titres et introductions des sections
 ├── tests/                       # tests du parseur, du lint, des sommaires et de l’export
@@ -86,7 +87,7 @@ Les fiches suivent la syntaxe du plugin communautaire **Spaced Repetition**. Il 
 2. Ouvrir l'adresse ci-dessus sur le téléphone, puis ouvrir le fichier téléchargé avec AnkiDroid : il s'importe dans le paquet **AI Engineering**, rangé par section puis par fiche.
 3. **Mettre à jour** : retélécharger le fichier et le réimporter. Chaque carte possède un identifiant permanent `<!--anki:…-->` : les cartes existantes sont mises à jour et gardent leur progression, même après reformulation de la question ou renommage du fichier.
    - Conserver ce commentaire lors d’une correction ou d’un déplacement. Pour créer une **nouvelle carte** par copie, retirer uniquement son identifiant, puis lancer `python3 scripts/assign_card_ids.py`.
-   - Une carte supprimée du vault n'est pas supprimée d'Anki : la retirer à la main, par exemple en cherchant son texte.
+   - Une carte supprimée du vault n'est pas supprimée d'Anki par le réimport. Elle est donc republiée **suspendue**, avec le tag `retired` : dans AnkiDroid, chercher `tag:retired`, tout sélectionner, puis **Supprimer**.
 4. **Réviser un seul type de carte** avec un paquet filtré (menu **Créer un paquet filtré**) :
    - `tag:type::situation` : les mises en situation ;
    - `tag:type::confusion` : les cartes « à ne pas confondre » ;
@@ -161,7 +162,8 @@ Les conventions à respecter :
 - **Des repères chiffrés** et des **exemples exécutables** (commandes, configurations, extraits de code) plutôt que des formulations abstraites.
 - **Une ligne `Vérifié le : …`** juste après les tags, sur les fiches qui citent des produits, des versions ou des textes réglementaires. Une section `## Sources`, placée avant `## Connexions`, doit contenir les références primaires utilisées : documentation officielle, spécification versionnée, article des auteurs ou texte réglementaire. Ajouter une référence ne justifie pas à lui seul de changer la date de vérification.
 - **Un commentaire `<!-- summary: … -->`** après les tags et la date éventuelle : il alimente le catalogue du README. Les titres des fiches alimentent les deux sommaires.
-- **Un identifiant `<!--anki:…-->` par carte**, généré par le script dédié. Il est invisible à la lecture et exclu de l’export. Les identifiants historiques ont été conservés lors de la migration.
+- **Un identifiant `<!--anki:…-->` par carte**, généré par le script dédié. Il est invisible à la lecture et exclu de l’export. Les identifiants historiques ont été conservés lors de la migration. Une reformulation garde l'identifiant ; une question qui change de sens en reçoit un nouveau.
+- **Supprimer une carte** : retirer le bloc de la fiche et reporter son identifiant dans `scripts/retired_cards.json`, avec la question et la raison (`{"id": "…", "question": "…", "raison": "doublon de 95-llm-as-judge"}`). L'export la republie suspendue, avec le tag `retired`.
 - Dans un index comportant une introduction, placer `---` puis `## Cartes` avant la première question ; le parseur ignore ainsi le sommaire et le texte introductif.
 
 ## Ajouter une fiche
@@ -382,7 +384,7 @@ python3 scripts/sync_catalog.py --check            # vérifier sans écrire
 python3 -m unittest discover -s tests -v           # tests (dépendances Anki requises)
 ```
 
-- **Erreurs** (bloquent le commit et la CI) : lien mort, nom de fichier en double, tags absents de la ligne 2, séparateur `?` absent ou multiple, question ou réponse vide, identifiant Anki absent/invalide/dupliqué, section `Mises en situation` ou `Connexions` manquante, dernier lien qui n'est pas le MOC, fiche absente du MOC, date `Vérifié le` illisible ou future, fiche datée sans source. Les liens sont contrôlés aussi dans le MOC et le README (hors exemples de code).
+- **Erreurs** (bloquent le commit et la CI) : lien mort, nom de fichier en double, tags absents de la ligne 2, séparateur `?` absent ou multiple, question ou réponse vide, identifiant Anki absent/invalide/dupliqué, identifiant retiré encore présent dans le vault ou entrée mal formée dans `retired_cards.json`, section `Mises en situation` ou `Connexions` manquante, dernier lien qui n'est pas le MOC, fiche absente du MOC, date `Vérifié le` illisible ou future, fiche datée sans source. Les liens sont contrôlés aussi dans le MOC et le README (hors exemples de code).
 - **Avertissements** : réponse trop longue (110 mots hors code, 140 pour une mise en situation), liste de plus de 5 éléments (6 étapes pour une mise en situation), « Quelle différence… » au lieu de « À ne pas confondre », question en double, Connexion sans lien en retour, fiche citée par moins de 2 autres, fiche absente du README, `Vérifié le` trop ancien.
 
 Les pull requests vérifient le lint, la synchronisation des catalogues, les tests et la génération d’un paquet Anki téléchargeable comme artefact CI. La publication en release reste réservée à `main` ou au déclenchement manuel.
@@ -395,4 +397,4 @@ Les fiches qui citent des produits, des versions ou des textes réglementaires p
 
 Les références ajoutées aux fiches servent de points de contrôle pour leur prochaine revue ; elles ne remplacent pas une validation de chaque affirmation. Les dates existantes n’ont pas été renouvelées par le seul ajout de sources.
 
-`tests/fixtures/legacy_guids.json` conserve les identifiants antérieurs à la migration : le test empêche leur perte accidentelle. En cas de suppression volontaire d’une carte, retirer aussi son GUID de ce fichier après vérification ; la suppression dans Anki reste manuelle.
+`tests/fixtures/legacy_guids.json` conserve les identifiants antérieurs à la migration : le test empêche leur perte accidentelle. Une suppression volontaire passe par `scripts/retired_cards.json`, que le test accepte.
