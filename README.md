@@ -80,8 +80,8 @@ Les fiches suivent la syntaxe du plugin communautaire **Spaced Repetition**. Il 
 
 1. Installer **AnkiDroid**, gratuit, depuis le Play Store ou F-Droid.
 2. Ouvrir l'adresse ci-dessus sur le téléphone, puis ouvrir le fichier téléchargé avec AnkiDroid : il s'importe dans le paquet **AI Engineering**, rangé par section puis par fiche.
-3. **Mettre à jour** : retélécharger le fichier et le réimporter. Chaque carte est identifiée par sa fiche et sa question : les cartes existantes sont mises à jour et gardent leur progression.
-   - Reformuler une question crée une **nouvelle carte**, et l'ancienne reste dans Anki.
+3. **Mettre à jour** : retélécharger le fichier et le réimporter. Chaque carte possède un identifiant permanent `<!--anki:…-->` : les cartes existantes sont mises à jour et gardent leur progression, même après reformulation de la question ou renommage du fichier.
+   - Conserver ce commentaire lors d’une correction ou d’un déplacement. Pour créer une **nouvelle carte** par copie, retirer uniquement son identifiant, puis lancer `python3 scripts/assign_card_ids.py`.
    - Une carte supprimée du vault n'est pas supprimée d'Anki : la retirer à la main, par exemple en cherchant son texte.
 4. **Réviser un seul type de carte** avec un paquet filtré (menu **Créer un paquet filtré**) :
    - `tag:type::situation` : les mises en situation ;

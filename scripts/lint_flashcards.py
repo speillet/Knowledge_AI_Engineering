@@ -16,6 +16,7 @@ import datetime
 import re
 import sys
 from pathlib import Path
+from urllib.parse import unquote
 
 ROOT = Path(__file__).resolve().parent.parent
 MOC = "00-moc-ai-engineering"
@@ -34,7 +35,23 @@ LINK_RE = re.compile(r"\[\[([^\]|#]+)")
 CODE_RE = re.compile(r"```.*?```", re.S)
 VERIFIE_RE = re.compile(r"^Vérifié le : (\d{1,2}) (\w+) (\d{4})", re.M)
 
-Card = collections.namedtuple("Card", "question answer line")
+Card = collections.namedtuple("Card", "question answer line guid", defaults=[None])
+ID_RE = re.compile(r"<!--anki:([0-9a-f]+)-->")
+META_RE = re.compile(r"<!--\s*(?:anki:|SR:|summary:).*?-->")
+
+
+def markdown_lines(text):
+    """Lignes numérotées ; les fences et leur contenu ne sont pas structurels."""
+    fence = None
+    for number, line in enumerate(text.splitlines(), 1):
+        marker = re.match(r"^ {0,3}(`{3,}|~{3,})(.*)$", line)
+        code = fence is not None or marker is not None
+        if fence:
+            if marker and marker[1][0] == fence[0] and len(marker[1]) >= len(fence) and not marker[2].strip():
+                fence = None
+        elif marker:
+            fence = marker[1]
+        yield number, line, code
 
 
 def fiche_files():
@@ -42,23 +59,60 @@ def fiche_files():
 
 
 def parse_cards(text):
-    """Découpe le corps d'une fiche (avant ## Connexions) en cartes question/réponse."""
-    body = text.split("\n## Connexions")[0]
+    """Lit les cartes hors code, avant Sources/Connexions, après un éventuel ## Cartes.
+
+    Tout bloc de contenu doit être une carte. Les index utilisent ## Cartes
+    pour distinguer explicitement leur introduction du contenu à réviser.
+    Card.line est la ligne du séparateur ?. Les GUID sont encodés en hexadécimal.
+    """
+    lines = list(markdown_lines(text))
+    headers = [n for n, line, code in lines if not code and line == "## Cartes"]
+    start = headers[0] if headers else 0
+    blocks, block = [], []
+    for number, line, code in lines:
+        if number <= start:
+            continue
+        if not code and re.match(r"^## (Sources|Connexions)\s*$", line):
+            break
+        if not code and line.strip() == "---":
+            blocks.append(block)
+            block = []
+        else:
+            block.append((number, line, code))
+    blocks.append(block)
     cards, malformed = [], []
-    offset = 0
-    for block in body.split("\n---\n"):
-        start = body.count("\n", 0, offset) + 1
-        offset += len(block) + 5
-        parts = re.split(r"^\?$", block, flags=re.M)
-        line = start + parts[0].rstrip("\n").count("\n")
-        if len(parts) == 1:
+    for block in blocks:
+        separators = [i for i, (_, line, code) in enumerate(block) if not code and line.strip() == "?"]
+        payload = [(n, line) for n, line, code in block
+                   if code or (line.strip() and not line.startswith(("#", "Tags:", "Vérifié le"))
+                               and not META_RE.fullmatch(line.strip()))]
+        if not payload:
+            if any(not code and "<!--anki:" in line for _, line, code in block):
+                malformed.append(block[0][0])
             continue
-        if len(parts) > 2:
-            malformed.append(line)
+        if len(separators) != 1:
+            malformed.append(payload[0][0])
             continue
-        q_lines = [l for l in parts[0].split("\n")
-                   if l.strip() and not l.startswith(("#", "Tags:", "Vérifié le"))]
-        cards.append(Card(" ".join(q_lines).strip(), parts[1].strip(), line))
+        sep = separators[0]
+        metadata = "\n".join(line for _, line, code in block if not code)
+        ids = ID_RE.findall(metadata)
+        guid = None
+        try:
+            if metadata.count("<!--anki:") != len(ids) or len(ids) > 1:
+                raise ValueError("identifiant mal formé ou multiple")
+            if ids:
+                guid = bytes.fromhex(ids[0]).decode("ascii")
+                if not guid or any(ord(c) < 33 or ord(c) > 126 for c in guid):
+                    raise ValueError("GUID non imprimable")
+        except (ValueError, UnicodeDecodeError):
+            malformed.append(block[sep][0])
+            continue
+        question = " ".join(line for _, line, code in block[:sep]
+                            if code or (line.strip() and not line.startswith(("#", "Tags:", "Vérifié le"))
+                                        and not META_RE.fullmatch(line.strip()))).strip()
+        answer = "\n".join(line for _, line, code in block[sep + 1:]
+                           if code or not META_RE.fullmatch(line.strip())).strip()
+        cards.append(Card(question, answer, block[sep][0], guid))
     return cards, malformed
 
 
@@ -74,13 +128,16 @@ def parse_date(text):
     m = VERIFIE_RE.search(text)
     if not m or m.group(2) not in MOIS:
         return None
-    return datetime.date(int(m.group(3)), MOIS.index(m.group(2)) + 1, int(m.group(1)))
+    try:
+        return datetime.date(int(m.group(3)), MOIS.index(m.group(2)) + 1, int(m.group(1)))
+    except ValueError:
+        return None
 
 
 def lint(stale_months):
     errors, warnings = [], []
     files = fiche_files()
-    all_md = [p for p in ROOT.glob("**/*.md") if not any(s.startswith(".") for s in p.relative_to(ROOT).parts)]
+    all_md = files + [ROOT / f"{MOC}.md", ROOT / "README.md"]
     names = collections.Counter(p.stem for p in all_md)
     for n, c in names.items():
         if c > 1:
@@ -91,8 +148,22 @@ def lint(stale_months):
     readme = (ROOT / "README.md").read_text()
     inbound = collections.Counter()
     questions = collections.defaultdict(list)
+    guids = {}
     stats = []
     today = datetime.date.today()
+
+    for p in all_md:
+        visible = "\n".join(line for _, line, code in markdown_lines(p.read_text()) if not code)
+        visible = re.sub(r"`+[^`]*`+", "", visible)
+        for target in set(LINK_RE.findall(visible)):
+            if target.strip() not in names:
+                errors.append(f"{p.relative_to(ROOT)} lien mort : [[{target.strip()}]]")
+        for target in re.findall(r"(?<!!)\[[^\]\n]*\]\(([^)\s]+)\)", visible):
+            if re.match(r"[a-zA-Z][a-zA-Z0-9+.-]*:", target) or target.startswith("#"):
+                continue
+            destination = unquote(target.split("#", 1)[0])
+            if not (p.parent / destination).exists():
+                errors.append(f"{p.relative_to(ROOT)} lien Markdown mort : {target}")
 
     for p in files:
         rel = p.relative_to(ROOT)
@@ -107,7 +178,9 @@ def lint(stale_months):
 
         cards, malformed = parse_cards(text)
         for line in malformed:
-            errors.append(f"{rel}:{line} bloc avec plusieurs lignes « ? » (séparateur --- manquant ?)")
+            errors.append(f"{rel}:{line} carte mal formée : séparateur ? absent ou multiple, ou identifiant invalide")
+        if not cards:
+            errors.append(f"{rel} aucune carte valide")
 
         if p.stem not in INDEXES and "\n## Mises en situation" not in text:
             errors.append(f"{rel} section « ## Mises en situation » manquante")
@@ -123,6 +196,14 @@ def lint(stale_months):
             warnings.append(f"{rel} {len(situations)} mise(s) en situation, {MIN_SITUATIONS} attendues")
         for c in cards:
             questions[c.question.lower()].append(str(rel))
+            if not c.question:
+                errors.append(f"{rel}:{c.line} question vide")
+            if not c.guid:
+                errors.append(f"{rel}:{c.line} identifiant Anki absent (scripts/assign_card_ids.py)")
+            elif c.guid in guids:
+                errors.append(f"{rel}:{c.line} identifiant Anki en double avec {guids[c.guid]}")
+            else:
+                guids[c.guid] = f"{rel}:{c.line}"
             if not c.answer:
                 errors.append(f"{rel}:{c.line} réponse vide : {c.question[:60]}")
             limit = MAX_WORDS_SITUATION if c in situations else MAX_WORDS
@@ -136,9 +217,7 @@ def lint(stale_months):
 
         for target in set(LINK_RE.findall(text)):
             target = target.strip()
-            if target not in names:
-                errors.append(f"{rel} lien mort : [[{target}]]")
-            elif target != p.stem:
+            if target in names and target != p.stem:
                 inbound[target] += 1
 
         if p.stem not in INDEXES and f"[[{p.stem}" not in moc_text and f"[[{p.stem}" not in index_text:
@@ -149,6 +228,8 @@ def lint(stale_months):
         verified = parse_date(text)
         if "Vérifié le" in text and verified is None:
             errors.append(f"{rel} date « Vérifié le » illisible (format : 25 septembre 2026)")
+        if verified and verified > today:
+            errors.append(f"{rel} date « Vérifié le » dans le futur")
         if verified and stale_months and (today - verified).days > stale_months * 30.5:
             warnings.append(f"{rel} vérifiée le {verified}, à reconfronter à la réalité")
 
@@ -222,7 +303,7 @@ def main():
     s = summary(stats)
     print(f"\n{s['fiches']} fiches, {s['cartes']} cartes, {s['situations']} mises en situation, "
           f"{s['confusions']} « à ne pas confondre » — {len(errors)} erreur(s), {len(warnings)} avertissement(s)")
-    if args.update_readme:
+    if args.update_readme and not errors:
         print("README :", update_readme(s))
     return 1 if errors else 0
 

@@ -3,12 +3,14 @@ Tags: #flashcards #conteneurs #gpu #cuda #infra
 
 Un conteneur voit-il le GPU de l'hôte par défaut ?
 ?
+<!--anki:7278436c2c57552b3c74-->
 **Non.** Il faut exposer explicitement les **périphériques GPU** (`/dev/nvidia*`) et les **bibliothèques du driver** dans le conteneur.
 
 ---
 
 Qu'est-ce que le NVIDIA Container Toolkit ?
 ?
+<!--anki:464b64547e593d74596f-->
 Le composant qui **injecte le GPU dans les conteneurs** au démarrage : il monte les devices `/dev/nvidia*` et les **bibliothèques du driver de l'hôte** (dont `libcuda.so`), pour Docker, containerd, CRI-O ou Podman. Il s'insère comme un **hook du runtime** OCI, ou déclare le matériel via **CDI** (Container Device Interface), la voie standardisée qui fonctionne aussi en rootless.
 
 Sans lui, l'image a bien CUDA mais le conteneur ne voit **aucun GPU**.
@@ -17,6 +19,7 @@ Sans lui, l'image a bien CUDA mais le conteneur ne voit **aucun GPU**.
 
 Comment lancer un conteneur avec GPU sous Docker ?
 ?
+<!--anki:6826774e63433865767d-->
 ```bash
 docker run --gpus all nvidia/cuda:12.4.1-base-ubuntu22.04 nvidia-smi
 ```
@@ -26,6 +29,7 @@ docker run --gpus all nvidia/cuda:12.4.1-base-ubuntu22.04 nvidia-smi
 
 Où se trouvent le driver et CUDA ?
 ?
+<!--anki:5136266a643a60475856-->
 - **Driver NVIDIA** (module noyau) : **sur l'hôte**, jamais dans l'image
 - **CUDA toolkit / runtime** et bibliothèques (cuDNN, NCCL) : **dans l'image**
 
@@ -33,12 +37,14 @@ Où se trouvent le driver et CUDA ?
 
 Quelle contrainte de compatibilité entre driver et CUDA ?
 ?
+<!--anki:6f476a253b514c4a3043-->
 Le **driver de l'hôte doit être assez récent** pour la version de CUDA de l'image. Une image CUDA 12.x sur un hôte au driver trop ancien échoue au démarrage : on aligne les versions de CUDA des images sur le parc de drivers.
 
 ---
 
 Quelles images de base NVIDIA existent ?
 ?
+<!--anki:4c6f73773453635d4e79-->
 - **base** : le minimum CUDA
 - **runtime** : + bibliothèques CUDA pour exécuter
 - **devel** : + compilateurs et en-têtes pour **compiler**
@@ -48,6 +54,7 @@ Bon réflexe : compiler dans `devel`, livrer sur `runtime` (**multi-stage build*
 
 Peut-on limiter la VRAM d'un conteneur comme la RAM ?
 ?
+<!--anki:4743213f66743c323749-->
 **Non**, les cgroups ne gèrent pas la VRAM : un conteneur qui a accès au GPU peut en utiliser toute la mémoire. Le partage propre passe par **MIG** ou le time-slicing ([[12-kubernetes-gpu-inference|Kubernetes GPU]]).
 
 Seul garde-fou applicatif : les serveurs d'inférence **préallouent** une fraction de la VRAM (`--gpu-memory-utilization` de vLLM, 0,9 par défaut), ce qui plafonne leur propre usage mais ne protège de rien d'autre.
@@ -56,6 +63,7 @@ Seul garde-fou applicatif : les serveurs d'inférence **préallouent** une fract
 
 Quels repères de VRAM pour les GPU courants ?
 ?
+<!--anki:6c37477e77387b442667-->
 ```text
 RTX 4090 / 5090   24 à 32 Go   poste de travail
 L4                 24 Go       inférence économe
@@ -71,18 +79,21 @@ B200              ~180 Go      Blackwell, FP4 natif
 
 Qu'est-ce que le NVIDIA GPU Operator ?
 ?
+<!--anki:6a3f28646d4a55596924-->
 Un opérateur Kubernetes qui **installe et gère toute la pile GPU** sur les nodes : driver, Container Toolkit, **device plugin**, exporter de métriques **DCGM**, configuration MIG.
 
 ---
 
 Comment utilise-t-on le GPU avec Apptainer ?
 ?
+<!--anki:77556b3d6648472f756b-->
 Avec l'option **`--nv`** (ex. `apptainer exec --nv image.sif python train.py`), qui monte le driver NVIDIA de l'hôte dans le conteneur.
 
 ---
 
 Et pour les GPU AMD ?
 ?
+<!--anki:507e28233f496e5a7523-->
 Avec **ROCm** : on expose les devices `/dev/kfd` et `/dev/dri` au conteneur et on utilise des images ROCm. vLLM et PyTorch supportent ROCm.
 
 ---
@@ -91,6 +102,7 @@ Avec **ROCm** : on expose les devices `/dev/kfd` et `/dev/dri` au conteneur et o
 
 Mise en situation : ton conteneur d'inférence démarre mais `nvidia-smi` n'y répond pas, alors que le GPU est bien visible sur l'hôte. Comment procèdes-tu ?
 ?
+<!--anki:4f613c7a75292524322a-->
 1. **Vérifier l'exposition** : le conteneur a-t-il été lancé avec `--gpus` (ou la ressource GPU sous Kubernetes) ?
 2. **Vérifier le toolkit** : sans NVIDIA Container Toolkit, ni les devices ni les bibliothèques du driver ne sont injectés
 3. **Vérifier les versions** : une image CUDA plus récente que le driver de l'hôte échoue. Le driver reste **sur l'hôte**, CUDA **dans l'image**
@@ -103,6 +115,7 @@ Mise en situation : ton conteneur d'inférence démarre mais `nvidia-smi` n'y r�
 
 Mise en situation : deux équipes se partagent un GPU pour leurs services d'inférence, et l'une sature régulièrement la VRAM, faisant tomber l'autre. Que proposes-tu ?
 ?
+<!--anki:6c7a70385b75254f5d2d-->
 1. **Expliquer la limite** : les cgroups ne limitent pas la VRAM. Un conteneur avec accès au GPU peut la consommer entièrement
 2. **MIG** : partitionner le GPU en instances **isolées**, avec mémoire dédiée, sur les GPU qui le supportent
 3. **Time-slicing** : partage possible, mais sans isolation mémoire, donc le problème resterait

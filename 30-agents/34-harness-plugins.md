@@ -3,12 +3,14 @@ Tags: #flashcards #ai-engineering #agents #harness #llm
 
 Qu'est-ce que le harness (harnais) d'un agent ?
 ?
+<!--anki:7976774a57665d6f6958-->
 Le **programme qui entoure le modèle** : il fait tourner la boucle, **exécute les outils**, gère le contexte, applique les permissions et affiche le résultat. Le modèle propose, **le harness dispose**.
 
 ---
 
 Quelles sont les responsabilités d'un harness ?
 ?
+<!--anki:73483b4938322d2e4366-->
 - **Boucle** d'agent et conditions d'arrêt
 - **Exécution** des [[32-tool-calling|appels d'outils]] et renvoi des résultats
 - **Gestion du contexte** : system prompt, historique, compaction
@@ -19,30 +21,35 @@ Quelles sont les responsabilités d'un harness ?
 
 Pourquoi dit-on que le harness compte autant que le modèle ?
 ?
+<!--anki:4976284543642a78436b-->
 À modèle égal, la **qualité des outils, du contexte fourni et de la boucle** change radicalement les résultats : un agent de code dépend autant de ses outils de recherche et d'édition que du LLM.
 
 ---
 
 Donnez des exemples de harness.
 ?
+<!--anki:67254c614036287a593d-->
 **Claude Code, Cursor, Codex CLI, Aider** pour le code ; les SDK (**Claude Agent SDK**, OpenAI Agents SDK) permettent de construire son propre harness.
 
 ---
 
 Qu'est-ce qu'un plugin dans un harness ?
 ?
+<!--anki:21632f592e76504753-->
 Un **paquet d'extensions** qu'on installe dans le host : **commandes** (slash commands), **skills**, **sous-agents**, **hooks** et **serveurs MCP**, distribués ensemble.
 
 ---
 
 Qu'est-ce qu'une skill ?
 ?
+<!--anki:6f3f3e3a684076505951-->
 Un **dossier d'instructions et de ressources** (ex. `SKILL.md` + scripts) que l'agent **charge à la demande** quand la tâche s'y prête : seule une courte description reste en permanence dans le contexte (**progressive disclosure**).
 
 ---
 
 Qu'est-ce qu'un hook ?
 ?
+<!--anki:4c427a57297048423e58-->
 Un **script exécuté par le harness** à un moment précis du cycle (avant ou après un appel d'outil, fin de tour…) : **déterministe**, il peut bloquer une action, formater du code ou journaliser, sans dépendre du bon vouloir du modèle.
 ```json
 {
@@ -64,24 +71,28 @@ Un code de sortie non nul **bloque** l'action : c'est la différence entre une c
 
 Comment un harness gère-t-il les permissions ?
 ?
+<!--anki:723e704a553f6c796757-->
 Par des **modes et des règles** : lecture seule, approbation à chaque action, allowlist de commandes, ou autonomie complète — avec **demande de confirmation humaine** pour les actions sensibles.
 
 ---
 
 Pourquoi exécuter un agent dans une sandbox ?
 ?
+<!--anki:497a51314634782d6450-->
 Pour **limiter le rayon d'impact** d'une erreur ou d'une [[101-securite-llm-guardrails|prompt injection]] : système de fichiers restreint, réseau filtré, conteneur ou VM jetable.
 
 ---
 
 À ne pas confondre : fichier mémoire (ex. `CLAUDE.md`) et skill ?
 ?
+<!--anki:77702e78736c33755528-->
 Le **fichier mémoire** est chargé **à chaque session** (conventions du projet) ; la **skill** n'est chargée **que quand elle est utile** — on y met les procédures longues et spécialisées.
 
 ---
 
 À ne pas confondre : harness, framework et plateforme d'agents ?
 ?
+<!--anki:785e4a4b2b72266e5651-->
 - **Harness** : le **programme qui exécute** la boucle chez vous (Claude Code, Cursor, ou le vôtre). Il tient les outils, le contexte et les permissions
 - **Framework** : la **bibliothèque** avec laquelle vous écrivez cette boucle (LangGraph, CrewAI) ([[37-frameworks-agents|frameworks]])
 - **Plateforme** : le **service managé** qui l'héberge et la gouverne en production ([[38-plateformes-agents|plateformes]])
@@ -94,6 +105,7 @@ Un harness peut être écrit sans framework, et déployé sans plateforme. Les t
 
 Mise en situation : deux équipes utilisent le même modèle pour le même agent de code, mais l'une obtient de bien meilleurs résultats. Où cherches-tu la différence ?
 ?
+<!--anki:7142566f2e2663332b4c-->
 1. **Dans le harness, pas dans le modèle** : à modèle égal, ce sont les outils, le contexte et la boucle qui font la différence
 2. **Outils** : qualité de la recherche dans le code, de l'édition, de l'exécution des tests ; descriptions et retours d'erreur
 3. **Contexte** : fichier de conventions du projet, skills disponibles, compaction bien réglée ([[35-context-engineering|context engineering]])
@@ -106,6 +118,7 @@ Mise en situation : deux équipes utilisent le même modèle pour le même agent
 
 Mise en situation : tu veux garantir qu'aucun agent de ton équipe ne puisse lancer `terraform apply` sans relecture, quelle que soit la consigne donnée au modèle. Comment t'y prends-tu ?
 ?
+<!--anki:4c7879576f32706a6e53-->
 1. **Ne pas compter sur le prompt** : une consigne se contourne, un contrôle non
 2. **Hook** exécuté par le harness avant chaque appel d'outil : il inspecte la commande et **bloque** celles qui correspondent à un motif interdit
 3. **Permissions** : liste blanche de commandes, mode approbation pour tout le reste

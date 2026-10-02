@@ -4,6 +4,7 @@ Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou 
 
 Comment [[04-kubernetes-kubelet-cri|Kubernetes]] alloue-t-il les GPU aux Pods ?
 ?
+<!--anki:782d706f674268736979-->
 Via le **NVIDIA device plugin**, déployé en **DaemonSet** : il découvre les GPU de chaque node, les **annonce au kubelet** comme ressource `nvidia.com/gpu`, et fournit au runtime les devices à injecter quand un Pod en demande. Le scheduler ne fait ensuite que de l'**arithmétique entière** sur cette ressource.
 
 En pratique, on l'installe via le **GPU Operator**, qui gère aussi driver, toolkit, métriques DCGM et configuration MIG ([[09-gpu-conteneurs|GPU en conteneur]]).
@@ -12,6 +13,7 @@ En pratique, on l'installe via le **GPU Operator**, qui gère aussi driver, tool
 
 Comment demander un GPU pour un conteneur dans Kubernetes ?
 ?
+<!--anki:6f716621355b686f6048-->
 En déclarant la ressource **`nvidia.com/gpu`** dans les `resources.limits`.
 
 ```yaml
@@ -24,6 +26,7 @@ resources:
 
 Un GPU peut-il être partagé entre plusieurs Pods par défaut ?
 ?
+<!--anki:4f2d4d2f21696245696b-->
 **Non.** La ressource `nvidia.com/gpu` est **entière et exclusive** : on ne peut pas demander « 0,5 GPU ». Un Pod qui obtient le GPU le garde pour lui, même s'il ne l'utilise qu'à 10 %.
 
 Trois façons de partager :
@@ -35,6 +38,7 @@ Trois façons de partager :
 
 Qu'est-ce que MIG (Multi-Instance GPU) ?
 ?
+<!--anki:6e4870724d693d6c2b2a-->
 Une technologie NVIDIA qui **partitionne physiquement** un GPU (A100, H100, H200, B200) en **instances isolées**, chacune avec sa mémoire et ses unités de calcul. Chaque instance apparaît comme un GPU distinct, donc allouable à un Pod différent.
 ```text
 A100 80 Go → jusqu'à 7 instances (profils 1g.10gb, 2g.20gb, 3g.40gb…)
@@ -45,6 +49,7 @@ Intérêt : servir plusieurs **petits modèles** ou environnements de test sans 
 
 À ne pas confondre : MIG et time-slicing ?
 ?
+<!--anki:6b3b5f755d694f4f6851-->
 - **MIG** : isolation **matérielle**. Mémoire dédiée, performances prévisibles, nombre d'instances limité par les profils
 - **Time-slicing** : simple **partage temporel**. Aucune isolation mémoire, un Pod peut saturer la VRAM et faire tomber les autres, mais le partage est souple et sans reconfiguration
 
@@ -54,6 +59,7 @@ Règle : **MIG pour la production multi-tenant**, time-slicing pour du développ
 
 À quoi servent les node selectors, taints et tolerations pour le GPU ?
 ?
+<!--anki:786472704640764f4057-->
 À **cibler et réserver les nodes GPU** :
 - **Node selector ou affinité** : « place-moi sur un node qui a des H100 ». C'est le Pod qui **choisit**
 - **Taint sur le node** : « personne ne vient ici sans y être invité ». C'est le node qui **repousse**
@@ -65,6 +71,7 @@ Sans taint, des charges sans GPU viennent occuper la mémoire et le CPU de machi
 
 Que sont KServe et Kubeflow ?
 ?
+<!--anki:63503c706e2e62445352-->
 - **KServe** : une couche de **serving de modèles** sur Kubernetes. Une ressource `InferenceService` décrit le modèle et son runtime, et KServe gère endpoint, autoscaling (jusqu'au scale-to-zero), versions et découpage du trafic (canary)
 - **Kubeflow** : une **suite MLOps** plus large (notebooks, pipelines, entraînement, tuning), dont KServe a été extrait
 
@@ -74,6 +81,7 @@ Alternative fréquente pour les LLM : un Deployment vLLM classique, plus un rout
 
 Comment gère-t-on la charge variable d'un service d'inférence sur Kubernetes ?
 ?
+<!--anki:4b5451773748245e6355-->
 Par l'**autoscaling** : le **HPA** sur des métriques personnalisées, ou **KEDA** pour se brancher directement sur Prometheus. On scale sur la **file d'attente** et l'**occupation du KV cache**, pas sur l'utilisation GPU ([[93-monitoring-inference|métriques]]).
 ```yaml
 resources:
@@ -91,6 +99,7 @@ Le **scale-to-zero** ne vaut que si l'on accepte un **cold start** de plusieurs 
 
 Pourquoi la gestion des GPU est-elle si importante en inférence sur Kubernetes ?
 ?
+<!--anki:697851257b26396e486d-->
 Parce que le **GPU est une ressource rare et coûteuse** : son allocation et son partage conditionnent le coût et la densité du service.
 
 ---
@@ -99,6 +108,7 @@ Parce que le **GPU est une ressource rare et coûteuse** : son allocation et son
 
 Mise en situation : ton service d'inférence tourne sur 4 GPU A100 réservés en permanence, mais le trafic est concentré sur les heures de bureau. Comment réduis-tu la facture sans casser le service ?
 ?
+<!--anki:474124573d3839286841-->
 1. **Mesurer le profil réel** : trafic par heure, concurrence de pointe, SLO à tenir ([[64-metriques-slo-inference|SLO]])
 2. **Autoscaling** sur la file d'attente et l'occupation du KV cache, pas sur l'utilisation GPU
 3. **Anticiper le cold start** : plusieurs minutes pour charger les poids, donc garder un socle de réplicas chauds ([[10-images-modeles-poids|cold start]])
@@ -111,6 +121,7 @@ Mise en situation : ton service d'inférence tourne sur 4 GPU A100 réservés en
 
 Mise en situation : plusieurs équipes veulent déployer leurs modèles sur le même cluster GPU, et se disputent les ressources. Comment organises-tu le partage ?
 ?
+<!--anki:76356329543d292b5349-->
 1. **Réserver les nodes GPU** aux charges concernées avec taints et tolerations
 2. **Quotas par namespace** : nombre de GPU par équipe, plutôt qu'une course au premier arrivé
 3. **Partage fin** : MIG pour isoler des instances, time-slicing seulement pour les charges tolérantes

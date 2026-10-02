@@ -3,6 +3,7 @@ Tags: #flashcards #ai-engineering #evals #rag #agents #llm
 
 Comment découper l'évaluation d'un RAG ?
 ?
+<!--anki:486239767d48454b594b-->
 En deux étages :
 1. **Retrieval** : les bons passages sont-ils remontés ? (recall@k, precision@k, MRR, nDCG)
 2. **Génération** : la réponse est-elle **fidèle** aux passages et **répond-elle** à la question ?
@@ -13,6 +14,7 @@ Un mauvais score global ne dit pas lequel corriger ; les métriques par étage, 
 
 Que mesurent recall@k, MRR et nDCG ?
 ?
+<!--anki:4a7e6f715833634b5574-->
 - **Recall@k** : part des passages pertinents présents dans les **k premiers** — la métrique clé, car le LLM ne voit que ceux-là.
 - **MRR** (Mean Reciprocal Rank) : **1/rang** du premier résultat pertinent, moyenné.
 - **nDCG** : qualité du **classement** avec pertinence graduée, pénalisant les bons résultats placés bas.
@@ -21,6 +23,7 @@ Que mesurent recall@k, MRR et nDCG ?
 
 Quelle est la « triade RAG » ?
 ?
+<!--anki:6a653b4e2d6648756538-->
 1. **Context relevance** : les passages récupérés sont-ils pertinents pour la question ?
 2. **Faithfulness / groundedness** : chaque affirmation de la réponse est-elle **soutenue par le contexte** ?
 3. **Answer relevance** : la réponse traite-t-elle **la question posée** ?
@@ -31,18 +34,21 @@ C'est la base de [[22-rag-avance|RAGAS]] et des évaluateurs équivalents.
 
 Comment mesurer la faithfulness ?
 ?
+<!--anki:775151472b433d507b78-->
 Décomposer la réponse en **affirmations atomiques**, puis faire vérifier par un [[95-llm-as-judge|juge]] (ou un modèle NLI) que chacune est **impliquée par le contexte**. Score = affirmations soutenues / total. Une réponse **vraie mais absente du contexte** compte comme non fidèle : elle révèle une connaissance paramétrique non vérifiée.
 
 ---
 
 Comment construire un jeu d'eval de retrieval sans annotation manuelle massive ?
 ?
+<!--anki:492e45662f7739523f5b-->
 **Génération synthétique** : pour chaque chunk, faire écrire par un LLM des **questions dont ce chunk est la réponse** → paires (question, chunk attendu). À compléter par des **questions réelles** annotées, car les questions synthétiques sont souvent **trop proches du texte** (recouvrement lexical) et surestiment le recall.
 
 ---
 
 Qu'évalue-t-on dans un agent ?
 ?
+<!--anki:4c60365159432332473a-->
 - **Résultat final** : la tâche est-elle accomplie ? (vérifiable par l'**état final** : fichier créé, ticket fermé, tests verts)
 - **Trajectoire** : bons outils, bons arguments, pas d'étapes inutiles ni dangereuses.
 - **Efficacité** : nombre d'étapes, tokens, coût, durée.
@@ -52,36 +58,42 @@ Qu'évalue-t-on dans un agent ?
 
 Pourquoi préférer vérifier l'état final plutôt que la trajectoire exacte ?
 ?
+<!--anki:665d214731723872667a-->
 Parce qu'il existe **plusieurs chemins valides** : imposer une séquence exacte d'appels pénalise des solutions correctes et rend l'eval **fragile**. On vérifie le **résultat** dans un environnement contrôlé, et on n'impose sur la trajectoire que des **contraintes** (outil interdit, étape obligatoire, budget max).
 
 ---
 
 Qu'est-ce qu'un environnement d'eval pour agents ?
 ?
+<!--anki:77776f6c5d3a242e7325-->
 Un **bac à sable reproductible** : faux services (API mockées, base de test, dépôt git figé), **utilisateur simulé** par un LLM pour les conversations multi-tours, et **vérificateur automatique** de l'état final. Exemples publics : **τ-bench** (support client), **SWE-bench** (correction de bugs), **WebArena**, **OSWorld**.
 
 ---
 
 Pourquoi pass^k est-il crucial pour un agent en production ?
 ?
+<!--anki:4e5e397b574e687a6f79-->
 **pass@k** = au moins un succès sur k essais (capacité) ; **pass^k** = **k succès sur k** (fiabilité). Un agent à 70 % de succès par essai n'a que **≈ 34 %** de pass^3. En production, l'utilisateur subit **chaque** essai : c'est pass^k qui compte ([[114-reproductibilite-variance|pass@k et pass^k]]).
 
 ---
 
 Comment évaluer l'appel d'outils (tool calling) isolément ?
 ?
+<!--anki:4e634e67316076667936-->
 Sur des cas unitaires : pour une requête donnée, vérifier **le choix de l'outil**, la **validité des arguments** (schéma, valeurs), les cas où **aucun outil** ne doit être appelé, et les **appels parallèles**. Évaluations **par règles**, rapides et déterministes → idéales en [[112-cicd-modeles|CI]].
 
 ---
 
 Comment évaluer une conversation multi-tours ?
 ?
+<!--anki:6c46715556596074525d-->
 Avec un **simulateur d'utilisateur** (LLM avec un persona et un objectif) qui dialogue avec le système jusqu'à la fin, puis un juge sur **l'objectif atteint**, la **cohérence** entre les tours et la **gestion des changements d'avis**. Il faut rejouer **plusieurs fois** : le simulateur ajoute sa propre variance.
 
 ---
 
 Quelles métriques d'efficacité suivre en plus de la qualité ?
 ?
+<!--anki:515e3872755f6a3b5d67-->
 **Tokens et coût par tâche réussie**, **nombre d'étapes**, **latence de bout en bout**, taux de **boucles** ou d'abandons. Un agent plus précis mais trois fois plus cher n'est pas forcément meilleur : on compare sur un **front qualité / coût** ([[122-finops-llm|FinOps]]).
 
 ---
@@ -90,6 +102,7 @@ Quelles métriques d'efficacité suivre en plus de la qualité ?
 
 Mise en situation : ton RAG affiche 62 % de réponses jugées correctes, et l'équipe veut changer de modèle de génération. Comment vérifies-tu que c'est le bon levier ?
 ?
+<!--anki:4f663b6b4b4a55712b34-->
 1. **Découper la mesure** : recall@k du retrieval d'un côté, fidélité et pertinence de la génération de l'autre
 2. **Si le recall est faible** : le problème est en amont (chunking, parsing, recherche hybride), changer de modèle n'y fera rien
 3. **Si le recall est bon** : mesurer la **faithfulness** en décomposant les réponses en affirmations et en vérifiant chacune contre le contexte
@@ -102,6 +115,7 @@ Mise en situation : ton RAG affiche 62 % de réponses jugées correctes, et l'é
 
 Mise en situation : ton agent de support réussit 80 % des tâches en test, mais les utilisateurs le trouvent peu fiable. Comment expliques-tu l'écart ?
 ?
+<!--anki:6339702b49452f682876-->
 1. **Différence entre capacité et fiabilité** : 80 % par essai donne environ 51 % de réussite sur trois essais consécutifs (pass^3)
 2. **Mesurer pass^k**, puisque l'utilisateur subit **chaque** tentative, pas la meilleure
 3. **Regarder la variance** : mêmes entrées rejouées plusieurs fois, pour repérer les tâches instables
@@ -114,6 +128,7 @@ Mise en situation : ton agent de support réussit 80 % des tâches en test, mais
 
 Mise en situation : tu dois évaluer un agent qui modifie des tickets et envoie des e-mails. Comment construis-tu l'environnement de test ?
 ?
+<!--anki:425a3d32585b2a4c7d41-->
 1. **Bac à sable reproductible** : services simulés, base de test, dépôt figé, aucune action réelle
 2. **Vérifier l'état final** : le ticket est-il dans le bon statut, l'e-mail contient-il les bons éléments ?
 3. **Ne pas imposer la trajectoire exacte** : plusieurs chemins sont valides. On pose des contraintes (outil interdit, budget d'étapes)

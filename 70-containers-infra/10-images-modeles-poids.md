@@ -3,6 +3,7 @@ Tags: #flashcards #conteneurs #modeles #stockage #infra
 
 Calcul : combien de temps pour charger les poids d'un 70B au démarrage d'un pod ?
 ?
+<!--anki:4e2e2a7a3e49745e523f-->
 Les poids pèsent **paramètres × octets par paramètre** : ≈ **140 Go** pour un 70B en BF16 ([[131-transformer-architecture|mémoire des poids]]).
 ```text
 140 Go × 8 = 1 120 Gbit
@@ -16,6 +17,7 @@ D'où les poids **hors de l'image**, sur un volume partagé ou mis en cache sur 
 
 Faut-il mettre les poids dans l'image du conteneur ?
 ?
+<!--anki:707d512f4d7270214938-->
 - **Dans l'image** : artefact **autonome et immuable**, mais image énorme, pull lent et rebuild à chaque version de modèle
 - **Séparés** (recommandé pour les gros modèles) : image légère avec le runtime, poids chargés depuis un stockage
 
@@ -23,6 +25,7 @@ Faut-il mettre les poids dans l'image du conteneur ?
 
 Où stocker les poids quand ils sont séparés de l'image ?
 ?
+<!--anki:6d5d53393124313f7072-->
 - **Volume partagé** (PVC, NFS) monté dans les Pods
 - **Stockage objet** (S3, GCS) téléchargé au démarrage
 - **Hugging Face Hub** (ou miroir interne), avec un **cache persistant** (`HF_HOME`)
@@ -40,6 +43,7 @@ Le **cache local sur le node** est le plus rapide, le **volume partagé** le plu
 
 À ne pas confondre : container registry et model registry ?
 ?
+<!--anki:666631384e6473424e60-->
 - **Container registry** (Docker Hub, Harbor, ECR) : stocke des **images** OCI, adressées par tag ou digest
 - **Model registry** (MLflow, W&B, Hugging Face) : stocke des **versions de modèles** avec leurs **métadonnées** : métriques, lineage, étape (staging, production), auteur
 
@@ -49,6 +53,7 @@ Les deux se complètent : l'image contient le **runtime**, le model registry dit
 
 Qu'est-ce que le cold start d'un serveur de modèle ?
 ?
+<!--anki:655d3c2f5b7a6d6e494b-->
 Le temps avant la première réponse : **pull de l'image + téléchargement des poids + chargement en VRAM** (+ compilation éventuelle). Il peut atteindre **plusieurs minutes**, ce qui pénalise le scale-from-zero.
 ```text
 pull image (10 Go)        30 s à 3 min selon le réseau et le cache
@@ -63,36 +68,42 @@ Retenir l'ordre de grandeur : **une à cinq minutes**, à comparer aux secondes 
 
 Comment réduire le cold start ?
 ?
+<!--anki:643a67575b6d6a61735d-->
 **Pré-puller les images** sur les nodes GPU (DaemonSet), garder les poids en **cache local**, télécharger via un **init container**, streamer les poids directement vers le GPU, garder un minimum de réplicas chauds.
 
 ---
 
 Pourquoi préférer le format safetensors ?
 ?
+<!--anki:6a617730764d4a24792f-->
 Parce qu'il ne contient **que des tenseurs** : pas de code exécuté au chargement, contrairement aux fichiers **pickle** PyTorch (`.bin`, `.pt`) qui peuvent **exécuter du code arbitraire**. Il est aussi plus rapide à charger (mmap).
 
 ---
 
 Qu'est-ce que le format GGUF ?
 ?
+<!--anki:4f4f3e637d4351542e2c-->
 Le format **fichier unique** de llama.cpp (et Ollama) : poids **quantizés** + métadonnées (tokenizer, architecture). Adapté à l'inférence **locale ou sur CPU**.
 
 ---
 
 Comment garder une image de serveur d'inférence raisonnable ?
 ?
+<!--anki:483132742f7d464d5863-->
 **Multi-stage build** (compiler dans une image `devel`, livrer sur `runtime`), dépendances minimales, couches ordonnées pour **maximiser le cache**, et surtout **pas de poids** dans l'image.
 
 ---
 
 Comment garantir la traçabilité des modèles déployés ?
 ?
+<!--anki:722b4e75573023266877-->
 En **versionnant les poids** (révision/commit Hugging Face, digest, registre de modèles) et en les **épinglant** dans la configuration de déploiement, comme on épingle le digest d'une image.
 
 ---
 
 Quelle tendance pour distribuer les modèles ?
 ?
+<!--anki:426c59524537246c475d-->
 Distribuer les poids comme **artefacts OCI** dans un registry, puis les monter comme volumes (volumes d'image Kubernetes, KitOps) : même outillage que les images (versioning, cache, signature).
 
 ---
@@ -101,6 +112,7 @@ Distribuer les poids comme **artefacts OCI** dans un registry, puis les monter c
 
 Mise en situation : ton autoscaling ajoute un réplica au pic de charge, mais le nouveau Pod met 7 minutes à servir sa première requête. Comment réduis-tu ce délai ?
 ?
+<!--anki:664c5d31717646235664-->
 1. **Décomposer le cold start** : pull de l'image, téléchargement des poids, chargement en VRAM, éventuelle compilation
 2. **Pré-puller** l'image sur les nodes GPU, avec un DaemonSet
 3. **Mettre les poids en cache local** sur le node, ou les servir depuis un volume partagé rapide
@@ -113,6 +125,7 @@ Mise en situation : ton autoscaling ajoute un réplica au pic de charge, mais le
 
 Mise en situation : un collègue télécharge un modèle depuis un dépôt public et veut le déployer en production dès demain. Quels contrôles imposes-tu ?
 ?
+<!--anki:464963526d393250565e-->
 1. **Format** : privilégier **safetensors**. Un fichier pickle peut exécuter du code au chargement
 2. **Provenance** : éditeur officiel, révision épinglée par empreinte, signature vérifiée si disponible ([[105-devsecops-ia-agentique|chaîne d'approvisionnement]])
 3. **Licence** : usage commercial autorisé, conditions sur les modèles dérivés

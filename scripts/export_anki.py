@@ -6,8 +6,8 @@ Usage :
     python3 scripts/export_anki.py                        # écrit dist/ai-engineering.apkg
     python3 scripts/export_anki.py --output autre.apkg
 
-Chaque note a un identifiant tiré de sa fiche et de sa question : un réimport met à jour
-les notes existantes sans perdre la progression. Reformuler une question crée une nouvelle carte.
+Chaque note porte un identifiant permanent <!--anki:...--> : un réimport met à jour
+les notes existantes même si leur question ou leur fichier change.
 Les commentaires <!--SR:...--> du plugin Obsidian sont ignorés.
 """
 import argparse
@@ -20,7 +20,7 @@ import genanki
 from markdown_it import MarkdownIt
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from lint_flashcards import MOC, ROOT, fiche_files, parse_cards  # noqa: E402
+from lint_flashcards import MOC, ROOT, fiche_files, lint, parse_cards  # noqa: E402
 
 RACINE = "AI Engineering"
 MODEL_ID = 1718293041  # fixe : changer cet identifiant dupliquerait toutes les notes
@@ -86,10 +86,6 @@ def stable_id(text):
     return int(hashlib.sha1(text.encode()).hexdigest()[:8], 16) % (1 << 30) + (1 << 30)
 
 
-def normalise(question):
-    return " ".join(SR_RE.sub("", question).lower().split())
-
-
 def to_html(markdown, titres):
     html = md.render(SR_RE.sub("", markdown).strip())
 
@@ -113,14 +109,14 @@ def build():
     moc = (ROOT / f"{MOC}.md").read_text()
     sections = {num: nom.strip() for num, nom in SECTION_RE.findall(moc)}
     files = fiche_files()
-    titres = {p.stem: titre(p) for p in ROOT.glob("**/*.md") if not p.name.startswith(".")}
+    titres = {p.stem: titre(p) for p in files + [ROOT / f"{MOC}.md"]}
 
     decks, guids, total = {}, set(), 0
     for p in files:
         num_section = p.parent.name.split("-", 1)[0]
         section = f"{int(num_section):03d} — {sections[num_section]}"  # 3 chiffres : Anki trie par ordre alphabétique
         fiche = titres[p.stem]
-        num_fiche = p.stem.split("-", 1)[0]
+        num_fiche = re.match(r"\d+(?:-\d+)?", p.stem)[0]
         deck_name = f"{RACINE}::{section}::{num_fiche} {fiche}"
         deck = decks.setdefault(deck_name, genanki.Deck(stable_id(deck_name), deck_name))
 
@@ -129,11 +125,15 @@ def build():
         if "\nVérifié le" in text:
             tags.append("verifie")
 
-        cards, _ = parse_cards(text)
+        cards, malformed = parse_cards(text)
+        if malformed or not cards:
+            raise ValueError(f"{p.name} : cartes mal formées ou absentes (lignes {malformed})")
         for c in cards:
-            guid = genanki.guid_for(p.stem, normalise(c.question))
+            guid = c.guid
+            if not guid or not c.question or not c.answer:
+                raise ValueError(f"{p.name}:{c.line} : identifiant, question ou réponse manquant")
             if guid in guids:
-                sys.exit(f"ERREUR  identifiant en double dans {p.name} : {c.question[:60]}")
+                raise ValueError(f"identifiant en double dans {p.name} : {c.question[:60]}")
             guids.add(guid)
             deck.add_note(genanki.Note(
                 model=MODEL,
@@ -150,6 +150,9 @@ def main():
     ap.add_argument("--output", default=str(ROOT / "dist" / "ai-engineering.apkg"), help="fichier .apkg à écrire")
     args = ap.parse_args()
 
+    errors, _, _ = lint(stale_months=0)
+    if errors:
+        sys.exit("Export annulé :\n" + "\n".join(errors))
     decks, total, n_sections = build()
     out = Path(args.output)
     out.parent.mkdir(parents=True, exist_ok=True)

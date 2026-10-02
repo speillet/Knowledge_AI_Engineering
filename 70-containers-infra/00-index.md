@@ -36,10 +36,13 @@ Dockerfile → build → image OCI → registry → pull → runtime → contene
 
 Accès GPU : Docker `--gpus` · Apptainer `--nv` · Kubernetes `nvidia.com/gpu`
 
-## Pourquoi des conteneurs
+---
+
+## Cartes
 
 Pourquoi les conteneurs sont-ils devenus le standard pour servir des modèles ?
 ?
+<!--anki:45514a373c635d6d4a50-->
 Ils figent **l'environnement complet** (CUDA, bibliothèques, serveur d'inférence) : le même artefact tourne en dev, en CI et en production, et s'orchestre sur Kubernetes.
 
 ---

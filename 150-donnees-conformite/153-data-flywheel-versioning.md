@@ -3,12 +3,14 @@ Tags: #flashcards #ai-engineering #donnees #flywheel #versioning #mlops
 
 Qu'est-ce qu'une data flywheel ?
 ?
+<!--anki:452f4c54795042304253-->
 Une **boucle d'amélioration continue** : le produit est utilisé → on collecte **traces et feedback** → on **analyse** les échecs → on améliore (prompts, retrieval, evals, fine-tuning) → le produit est meilleur → plus d'usage et de données. L'avantage concurrentiel durable vient de cette boucle, pas du modèle, que tout le monde peut acheter.
 
 ---
 
 Comment commence un tour de data flywheel ?
 ?
+<!--anki:4f4d77716748323a2d5f-->
 1. **Collecter** traces et feedback, explicite comme implicite.
 2. **Échantillonner** en priorité les échecs et les cas incertains.
 3. **Analyser** et catégoriser les erreurs.
@@ -17,6 +19,7 @@ Comment commence un tour de data flywheel ?
 
 Comment se termine un tour de data flywheel ?
 ?
+<!--anki:4f217724235b63464567-->
 4. **Labelliser** et ajouter au golden dataset.
 5. **Corriger**, en commençant par le levier le moins coûteux : prompt, puis retrieval, puis fine-tuning.
 6. **Valider** offline, **déployer** en canary, **mesurer** online.
@@ -25,12 +28,14 @@ Comment se termine un tour de data flywheel ?
 
 Pourquoi versionner les données ?
 ?
+<!--anki:695e49255e7a682b623f-->
 Pour **reproduire** une eval ou un entraînement (quelles données exactement ?), **comparer** des résultats dans le temps, **revenir en arrière** après une mauvaise modification, et prouver la **provenance** des données (audit, [[155-ai-act|AI Act]], droit d'auteur). Un score d'eval sans version du jeu de données n'a pas de sens.
 
 ---
 
 Quels outils pour versionner les données ?
 ?
+<!--anki:71335a4821303e723f5b-->
 - **DVC** : versionne les fichiers de données à côté du code git (pointeurs dans git, contenu sur un stockage objet).
 - **lakeFS** : branches et commits façon git **sur un data lake**.
 - **Formats de table** avec historique (Delta Lake, Apache Iceberg : time travel).
@@ -40,18 +45,21 @@ Quels outils pour versionner les données ?
 
 Que faut-il versionner ensemble pour qu'une eval soit reproductible ?
 ?
+<!--anki:645344583a7e797b6d2a-->
 La **version du jeu de données**, du **prompt**, du **modèle** (identifiant daté), de la **configuration** (température, outils), de l'**index** RAG et du **modèle d'embedding**, du **code** des évaluateurs et du **prompt du juge**. C'est le **lineage** ([[111-mlops-llmops-fondamentaux|MLOps]], [[114-reproductibilite-variance|reproductibilité]]).
 
 ---
 
 Comment versionner un index RAG ?
 ?
+<!--anki:5b24386779354f4f48-->
 En enregistrant pour chaque index : la **liste des documents et leurs versions** (hash), les paramètres de **chunking**, le **modèle d'embedding**, la date de construction. Les mises à jour incrémentales gardent un **journal** ; une reconstruction complète crée une **nouvelle version** qu'on peut comparer à l'ancienne sur l'eval de retrieval avant de basculer.
 
 ---
 
 Quels signaux de production alimentent la flywheel sans annotation humaine ?
 ?
+<!--anki:7a4a7a5b6b2153607d79-->
 - **Reformulations** de la même question (la première réponse a échoué).
 - **Escalades** vers un humain et leur résolution.
 - **Modifications** apportées par l'utilisateur à la sortie (la version finale est une correction).
@@ -62,6 +70,7 @@ Quels signaux de production alimentent la flywheel sans annotation humaine ?
 
 Quels pièges menacent une data flywheel ?
 ?
+<!--anki:4d62452a5442293c4656-->
 - **Biais de sélection** : seuls certains utilisateurs donnent du feedback.
 - **Boucle auto-renforçante** : on n'améliore que ce qu'on mesure déjà.
 - **Dérive des labels** si le guide d'annotation change sans re-labelliser.
@@ -71,6 +80,7 @@ Quels pièges menacent une data flywheel ?
 
 Comment prioriser les améliorations issues de la flywheel ?
 ?
+<!--anki:7649423b5a6439217743-->
 Par **fréquence × gravité** de chaque catégorie d'échec, rapportées au **coût** de la correction. Une erreur rare mais grave (engagement financier) peut passer avant une erreur fréquente mais bénigne (ton). Tenir un **tableau des modes de défaillance** mis à jour à chaque tour.
 
 ---
@@ -79,6 +89,7 @@ Par **fréquence × gravité** de chaque catégorie d'échec, rapportées au **c
 
 Mise en situation : un concurrent utilise le même modèle que toi, avec les mêmes prompts publics. Où se construit ton avantage ?
 ?
+<!--anki:642928604c4d28683850-->
 1. **Pas dans le modèle** : il est achetable par tout le monde
 2. **Dans les données** : traces, feedback, corrections d'utilisateurs, jeux d'eval propres à ton métier
 3. **Dans la boucle** : capter les échecs, les analyser, corriger et mesurer, tour après tour
@@ -91,6 +102,7 @@ Mise en situation : un concurrent utilise le même modèle que toi, avec les mê
 
 Mise en situation : un score d'eval obtenu il y a trois mois est impossible à reproduire aujourd'hui. Qu'est-ce qui n'a pas été versionné ?
 ?
+<!--anki:413f6b777e754d7a2d72-->
 1. **Le jeu de données** lui-même, qui a été enrichi depuis
 2. **Le prompt**, le **modèle** (identifiant daté) et la **configuration** de génération
 3. **L'index RAG** et le **modèle d'embedding** utilisés à ce moment

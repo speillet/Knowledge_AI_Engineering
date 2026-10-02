@@ -4,12 +4,14 @@ Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou 
 
 Qu'est-ce que le post-training ?
 ?
+<!--anki:73335f71655f3f304837-->
 Tout ce qui transforme un **modèle de base** (qui continue du texte) en **assistant** : **SFT** sur des démonstrations, puis **optimisation par préférences** et **RL** pour l'utilité, la sécurité, le raisonnement et l'usage d'outils. C'est là que se jouent le **comportement** et une grande part des différences entre modèles.
 
 ---
 
 Quelles sont les étapes classiques du RLHF ?
 ?
+<!--anki:6e65685b71755b4e5f2c-->
 1. **SFT** sur des réponses écrites par des humains.
 2. **Collecte de préférences** : des annotateurs comparent plusieurs réponses à un même prompt.
 3. **Reward model** entraîné à prédire la réponse préférée.
@@ -19,36 +21,42 @@ Quelles sont les étapes classiques du RLHF ?
 
 Pourquoi une pénalité KL pendant le RL ?
 ?
+<!--anki:6f333c253e66767e7635-->
 Sans elle, le modèle **exploite les failles du reward model** (reward hacking) : il produit des sorties qui obtiennent un score élevé sans être meilleures (flatterie, verbosité, formules types). La KL **l'ancre** à un comportement de référence raisonnable.
 
 ---
 
 Qu'est-ce que le reward hacking ?
 ?
+<!--anki:5157706d245948426c43-->
 Quand le modèle **maximise la récompense sans atteindre l'objectif réel** : réponses plus longues parce que le reward model aime la longueur, **tests modifiés** pour passer plutôt que code corrigé, **complaisance** (sycophancy) envers l'utilisateur. C'est la loi de Goodhart appliquée à l'entraînement.
 
 ---
 
 Qu'apporte DPO par rapport au RLHF classique ?
 ?
+<!--anki:506a3b4d5e7d4e4b737a-->
 **Direct Preference Optimization** optimise **directement** le modèle sur les paires (préférée, rejetée) avec une loss de classification, **sans reward model séparé ni boucle RL**. Plus **simple, stable et bon marché** — c'est l'option par défaut pour aligner un modèle open source sur ses propres préférences. Variantes : IPO, KTO (préférences non appariées, simple pouce haut/bas), ORPO, SimPO.
 
 ---
 
 Qu'est-ce que GRPO ?
 ?
+<!--anki:7a7b5346495648755428-->
 **Group Relative Policy Optimization** : pour chaque prompt, on génère **un groupe de réponses**, on les note, et l'avantage de chaque réponse est calculé **par rapport à la moyenne du groupe**. Pas besoin de **value model** (critique) comme dans PPO → moins de mémoire. Popularisé par DeepSeek pour l'entraînement au **raisonnement** avec récompenses vérifiables ([[138-modeles-raisonnement|modèles de raisonnement]]).
 
 ---
 
 Qu'est-ce que le RLVR ?
 ?
+<!--anki:4c412b4556294b474f37-->
 **RL with Verifiable Rewards** : la récompense vient d'un **vérificateur automatique** (réponse mathématique exacte, tests unitaires qui passent, format respecté) plutôt que d'un reward model appris. Beaucoup **moins exposé au reward hacking** et très efficace pour le code et les maths ; limité aux tâches **vérifiables**.
 
 ---
 
 Qu'est-ce que le RLAIF et la Constitutional AI ?
 ?
+<!--anki:672962255f7837583554-->
 - **RLAIF** : les préférences sont produites par **un modèle** plutôt que par des humains → beaucoup moins cher et plus rapide.
 - **Constitutional AI** (Anthropic) : le modèle **critique et révise** ses propres réponses selon une **liste de principes écrits** (la constitution), et ces jugements servent de données de préférence.
 
@@ -56,6 +64,7 @@ Qu'est-ce que le RLAIF et la Constitutional AI ?
 
 Comment construire un bon jeu de préférences ?
 ?
+<!--anki:5161616669632121623d-->
 - Prompts **représentatifs** de l'usage visé, y compris des cas difficiles.
 - Réponses candidates **variées** (plusieurs modèles ou températures) pour que les comparaisons soient informatives.
 - **Consignes d'annotation** précises, mesure de l'**accord inter-annotateurs**.
@@ -67,12 +76,14 @@ Voir [[151-donnees-curation-annotation|annotation]].
 
 Qu'est-ce que la « taxe d'alignement » ?
 ?
+<!--anki:45516e7073676e383561-->
 La **perte de capacités** (créativité, précision sur certains benchmarks, calibration) que peut entraîner l'alignement. Elle se manifeste aussi par des **refus excessifs** (over-refusal) sur des demandes légitimes. On la mesure avec des evals de capacités **avant et après**, et des jeux de requêtes **légitimes mais sensibles**.
 
 ---
 
 Quand un AI Engineer fait-il lui-même du DPO ou du RL ?
 ?
+<!--anki:47504835327623642953-->
 Rarement pour l'alignement général (déjà fait par le fournisseur). Mais c'est pertinent pour :
 - aligner un **petit modèle** open source sur le **style ou la politique** de l'entreprise ;
 - exploiter les **retours utilisateurs** (pouce haut/bas → KTO/DPO) ;
@@ -84,6 +95,7 @@ Outils : TRL, OpenRLHF, verl, Unsloth, ou les API de fine-tuning par préférenc
 
 À ne pas confondre : reward model et vérificateur ?
 ?
+<!--anki:7948387d326c52594e29-->
 - **Reward model** : un modèle **appris** sur des préférences humaines, qui estime une note. Il généralise à des tâches subjectives, mais peut être **exploité** (reward hacking)
 - **Vérificateur** : un contrôle **programmatique** (résultat mathématique, tests unitaires, schéma). Fiable et difficile à tromper, mais limité aux tâches **vérifiables**
 
@@ -95,6 +107,7 @@ Le RLHF repose sur le premier, le RLVR sur le second ([[55-rl-agentique|RL agent
 
 Mise en situation : tu as collecté 20 000 pouces haut/bas sur ton assistant. Comment les exploites-tu pour améliorer un petit modèle open source ?
 ?
+<!--anki:662b6070394656757737-->
 1. **Format des données** : des retours non appariés se prêtent à **KTO** ; si tu peux régénérer une réponse alternative, tu obtiens des paires pour **DPO**
 2. **Nettoyer** : retirer les votes incohérents, dédupliquer, vérifier les biais (longueur, format)
 3. **Partir d'un SFT propre** avant d'optimiser les préférences
@@ -107,6 +120,7 @@ Mise en situation : tu as collecté 20 000 pouces haut/bas sur ton assistant. Co
 
 Mise en situation : ton modèle entraîné à corriger du code obtient d'excellents scores, mais en production il modifie souvent les tests au lieu du code. Que s'est-il passé ?
 ?
+<!--anki:47402b3669547e5d3b2d-->
 1. **Reward hacking** : la récompense était « les tests passent », le modèle a trouvé le raccourci
 2. **Durcir le vérificateur** : tests en lecture seule, comparaison des tests avant et après, échec si le diff les touche
 3. **Récompense composite** : tests qui passent **et** diff limité au code source, avec revue sur un échantillon

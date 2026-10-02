@@ -3,18 +3,21 @@ Tags: #flashcards #ai-engineering #kubernetes #ingress #networking
 
 Qu'est-ce qu'un Ingress dans Kubernetes ?
 ?
+<!--anki:49586e334f397c2c6740-->
 La **porte d'entrée HTTP(S) du cluster** : il route le trafic externe vers les Services selon l'hôte et le chemin.
 
 ---
 
 Un Ingress fonctionne-t-il seul ?
 ?
+<!--anki:45497c54723d663e553e-->
 **Non.** L'objet Ingress n'est qu'une **déclaration** ; il faut un **Ingress controller** (ingress-nginx, Traefik, HAProxy, Envoy Gateway) qui l'observe et configure réellement un proxy. Sans controller installé, l'objet est accepté par l'API et **rien ne se passe** : c'est une cause classique de « mon Ingress ne répond pas ».
 
 ---
 
 Que gère typiquement un Ingress ?
 ?
+<!--anki:46493d40694175445866-->
 - Routage **par hôte** (`api.example.com`) et **par chemin** (`/v1/...`)
 - **Terminaison TLS** (HTTPS)
 
@@ -22,6 +25,7 @@ Que gère typiquement un Ingress ?
 
 Qu'est-ce que la Gateway API ?
 ?
+<!--anki:4c73712d31366d6b342d-->
 Le **successeur de l'Ingress** dans Kubernetes, avec des rôles séparés :
 ```text
 GatewayClass → l'implémentation (choisie par la plateforme)
@@ -34,6 +38,7 @@ Apports : **délégation par équipe** sans annotations propriétaires, découpa
 
 À ne pas confondre : Ingress et API gateway ?
 ?
+<!--anki:443d4d6b453641476b78-->
 - **Ingress** : du **routage HTTP** (L7) vers les Services du cluster, par hôte et par chemin, avec terminaison TLS
 - **API gateway** : ajoute la **logique d'API** : authentification, rate limiting, quotas, transformation de requêtes, analytics
 
@@ -43,6 +48,7 @@ Pour une stack LLM, on ajoute souvent une **gateway LLM** (LiteLLM) derrière, q
 
 À ne pas confondre : Ingress, API gateway et gateway LLM ?
 ?
+<!--anki:68587e30382d4f264f2a-->
 ```text
 Ingress        → entrée réseau : TLS, hôte, chemin
 API gateway    → authentification, quotas, transformation, WAF
@@ -55,12 +61,14 @@ Les trois se cumulent, dans cet ordre. Une API gateway sait compter les **requê
 
 Pourquoi rate-limiter un endpoint LLM ?
 ?
+<!--anki:6b603e5625303c4c4a78-->
 Parce que chaque requête consomme du **GPU coûteux** : sans limite, un client peut saturer le service et faire exploser les coûts.
 
 ---
 
 À quoi ressemble la chaîne réseau d'une stack LLM sur Kubernetes ?
 ?
+<!--anki:482648216e5375467761-->
 ```text
 Client → Ingress (TLS, routage) → gateway/LiteLLM (auth, quotas) → Service vLLM → Pods GPU
 ```
@@ -69,6 +77,7 @@ Client → Ingress (TLS, routage) → gateway/LiteLLM (auth, quotas) → Service
 
 Pourquoi le streaming (SSE) impose-t-il des réglages particuliers ?
 ?
+<!--anki:715e606d2e4e6d786140-->
 Les réponses LLM sont **longues et streamées** : il faut des **timeouts allongés** et désactiver le **buffering**, sinon le proxy garde la réponse et l'utilisateur attend tout le texte d'un coup.
 ```yaml
 annotations:                       # ingress-nginx
@@ -82,6 +91,7 @@ Penser aussi aux **load balancers cloud** en amont, avec leur propre délai d'in
 
 Quels repères de configuration pour un endpoint LLM ?
 ?
+<!--anki:6a586e4237583a6c5656-->
 ```text
 timeout de lecture      300 à 900 s selon la longueur des réponses
 buffering               désactivé sur les routes de streaming
@@ -97,6 +107,7 @@ Un défaut à 60 secondes coupe les réponses longues : c'est le symptôme le pl
 
 Mise en situation : en production, les réponses longues de ton assistant sont coupées au bout de 60 secondes, alors qu'elles fonctionnent en local. Que vérifies-tu ?
 ?
+<!--anki:716b504c607369232b6a-->
 1. **Les timeouts de l'Ingress** et de tout proxy intermédiaire, souvent à 60 s par défaut
 2. **Le buffering** : un proxy qui met la réponse en tampon casse le streaming, à désactiver pour ces routes
 3. **La chaîne complète** : load balancer cloud, Ingress, gateway applicative, serveur d'inférence, chacun avec ses délais
@@ -109,6 +120,7 @@ Mise en situation : en production, les réponses longues de ton assistant sont c
 
 Mise en situation : un client unique sature ton service d'inférence en lançant des milliers de requêtes en parallèle. Où poses-tu les limites ?
 ?
+<!--anki:42676956437a5a6f296b-->
 1. **À l'entrée** : rate limiting par clé ou par IP sur l'Ingress ou l'API gateway
 2. **Dans la gateway LLM** : limites en requêtes et en **tokens** par minute, plus un budget ([[81-litellm-api-layer|LiteLLM]])
 3. **Dans le serveur d'inférence** : concurrence maximale, pour préserver le SLO des autres utilisateurs

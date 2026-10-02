@@ -4,6 +4,7 @@ Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou 
 
 Qu'est-ce qu'un knowledge graph ?
 ?
+<!--anki:75794e4c4c3a65215f7b-->
 Une représentation des connaissances sous forme de **graphe** : des **entités** (nœuds : personnes, produits, contrats…) reliées par des **relations typées** (arêtes), chacune pouvant porter des propriétés. L'unité de base est le **triplet** :
 ```text
 (Marie Curie) —[NÉE_À]→ (Varsovie)
@@ -14,6 +15,7 @@ Une représentation des connaissances sous forme de **graphe** : des **entités*
 
 RDF ou property graph ?
 ?
+<!--anki:6f6a784b296a54416f74-->
 - **RDF** (standard W3C) : tout est triplet, identifié par des URI, interrogé en **SPARQL**, décrit par des ontologies **OWL**. Fort pour l'interopérabilité et le raisonnement.
 - **Property graph** (Neo4j, FalkorDB, Amazon Neptune…) : nœuds et arêtes portent directement des propriétés, interrogés en **Cypher** ou en **GQL** (norme ISO depuis 2024). Plus pratique pour les applications, c'est le choix courant des stacks LLM.
 
@@ -21,6 +23,7 @@ RDF ou property graph ?
 
 Qu'est-ce qu'une ontologie ?
 ?
+<!--anki:473f21414c2b645b3135-->
 Le **schéma formel d'un domaine** : les **classes** (Personne, Entreprise), leur **hiérarchie** (un Fournisseur *est une* Entreprise), les **types de relations** autorisés entre classes et leurs contraintes. Elle permet de valider les données et d'**inférer** des faits.
 - **Taxonomie** : seulement la hiérarchie des classes
 - **Ontologie** : le schéma complet, avec relations et règles
@@ -30,12 +33,14 @@ Le **schéma formel d'un domaine** : les **classes** (Personne, Entreprise), leu
 
 Pourquoi une ontologie quand un LLM construit le graphe ?
 ?
+<!--anki:66354d4240287b307542-->
 Sans schéma, l'extraction **dérive** : doublons (« Paris », « Ville de Paris »), relations synonymes (TRAVAILLE_POUR, EMPLOYÉ_DE), types inventés, et le graphe devient impossible à interroger. L'ontologie **contraint l'extraction** (types d'entités et de relations autorisés, en [[63-guided-generation|sortie structurée]]) et ramène les entités à des **termes canoniques**.
 
 ---
 
 Comment construire un knowledge graph avec un LLM ?
 ?
+<!--anki:7645732d313e6c377d63-->
 ```text
 documents → chunking → extraction (entités + relations, sous schéma)
 → résolution d'entités → chargement dans la base graphe → embeddings des nœuds
@@ -46,12 +51,14 @@ Outils : LLMGraphTransformer (LangChain), PropertyGraphIndex (LlamaIndex), Neo4j
 
 Qu'est-ce que la résolution d'entités ?
 ?
+<!--anki:70586539675d5f58613a-->
 Reconnaître que plusieurs mentions désignent **la même entité réelle** et les **fusionner** : normalisation, similarité d'embeddings, règles métier (même SIREN), puis un LLM pour trancher les cas ambigus. Trop timide, le graphe est **fragmenté** ; trop agressive, elle **fusionne à tort** des entités distinctes.
 
 ---
 
 Quand un graphe bat-il la recherche vectorielle ?
 ?
+<!--anki:696f362a64337e444e58-->
 - Questions **multi-hop** (« quels fournisseurs des filiales de X sont en retard ? »)
 - **Relations explicites** et chemins entre entités
 - **Agrégations** et comptages (« combien de contrats par client ? »)
@@ -63,6 +70,7 @@ La recherche vectorielle reste meilleure pour la **proximité de sens** dans du 
 
 Comment combiner graphe et vecteurs ?
 ?
+<!--anki:5268263e733e2e3f7d6a-->
 1. **Recherche vectorielle** pour trouver les chunks ou les nœuds d'entrée pertinents
 2. **Parcours du graphe** à k sauts autour de ces nœuds (voisins, relations)
 3. Assemblage du **sous-graphe et des chunks** dans le contexte du LLM
@@ -73,6 +81,7 @@ C'est le principe du GraphRAG « local », utile quand la réponse est répartie
 
 Comment fonctionne GraphRAG de Microsoft ?
 ?
+<!--anki:7a516429687c6a513b6d-->
 À l'indexation : extraction des entités et relations, détection de **communautés** (algorithme de Leiden), puis **résumés hiérarchiques** de chaque communauté. À la requête :
 - **Local search** : partir des entités de la question et de leur voisinage
 - **Global search** : map-reduce sur les résumés de communautés, pour les questions sur **tout le corpus** (« quels sont les thèmes principaux ? »)
@@ -83,12 +92,14 @@ L'indexation est **coûteuse** ; LazyGraphRAG repousse le travail LLM au moment 
 
 Qu'est-ce que Text2Cypher et quels sont ses risques ?
 ?
+<!--anki:4450547e3f4856545139-->
 Le LLM **traduit la question en requête Cypher**, avec le schéma du graphe dans le prompt. Risques : requête fausse, labels inventés, requête coûteuse ou **destructrice** (injection). Parades : utilisateur de base **en lecture seule**, validation de la requête, timeouts et limites de résultats, requêtes **paramétrées** pour les cas fréquents.
 
 ---
 
 Qu'est-ce qu'un context graph ?
 ?
+<!--anki:7256243e362425497749-->
 Un terme récent, **non standardisé**, avec deux sens :
 - **Traces de décision** (Foundation Capital, fin 2025) : un graphe qui relie les entités métier aux **décisions prises** (règle appliquée, exception accordée, qui a validé, quel précédent), pour que les agents retrouvent les précédents et qu'on puisse auditer leurs choix.
 - **Graphe temporel** (Graphiti, Zep) : un knowledge graph où chaque fait a une **fenêtre de validité** et remonte aux **épisodes** (données brutes) qui l'ont produit.
@@ -97,6 +108,7 @@ Un terme récent, **non standardisé**, avec deux sens :
 
 Quels sont les coûts et les pièges d'un knowledge graph ?
 ?
+<!--anki:64642c3535557229767e-->
 - **Extraction LLM** sur tout le corpus : coûteuse et bruitée
 - **Maintenance** : mises à jour incrémentales, faits qui changent, dérive du schéma
 - **Évaluation** difficile : qualité de l'extraction et des réponses
@@ -109,6 +121,7 @@ Démarrer avec une **ontologie restreinte** aux besoins réels, et comparer à u
 
 Mise en situation : ton graphe extrait par LLM contient « Société Générale », « Societe Generale » et « SG » comme trois entités distinctes, et les requêtes multi-hop échouent. Comment corriges-tu ?
 ?
+<!--anki:6670413d484e4a557b4d-->
 1. **Cause** : extraction sans ontologie ni résolution d'entités, donc un graphe **fragmenté**
 2. **Ontologie restreinte** : types d'entités et de relations autorisés, extraction en sortie structurée ([[63-guided-generation|guided generation]])
 3. **Résolution d'entités** : normalisation, similarité d'embeddings, règles métier (même SIREN), LLM en arbitre sur les cas douteux
@@ -121,6 +134,7 @@ Mise en situation : ton graphe extrait par LLM contient « Société Générale 
 
 Mise en situation : un chef de projet veut exposer Text2Cypher aux utilisateurs métier, pour qu'ils interrogent le graphe en langage naturel. Quelles conditions poses-tu ?
 ?
+<!--anki:4a3b4c694f233a516228-->
 1. **Utilisateur de base en lecture seule** : aucune requête ne doit pouvoir modifier ou supprimer le graphe
 2. **Validation de la requête générée** avant exécution, avec labels et relations vérifiés contre le schéma
 3. **Timeouts et limites** de résultats, contre les requêtes qui balayent tout le graphe

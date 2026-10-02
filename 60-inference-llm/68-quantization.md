@@ -4,6 +4,7 @@ Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou 
 
 Qu'est-ce que la quantization (quantification) d'un LLM ?
 ?
+<!--anki:723d7149494058234777-->
 Représenter les nombres du modèle avec **moins de bits** : chaque valeur est ramenée sur une petite grille, avec un **facteur d'échelle** (scale) pour retrouver l'ordre de grandeur d'origine.
 ```text
 x ≈ scale × (q − z)      q sur 8 ou 4 bits (entier ou petit flottant)
@@ -15,6 +16,7 @@ On peut quantizer les **poids**, les **activations** et le [[61-kv-cache-attenti
 
 Pourquoi quantizer un LLM ?
 ?
+<!--anki:703678237b5b54653950-->
 - **Moins de VRAM** : les poids sont divisés par 2 (8 bits) ou par 4 (4 bits) par rapport au BF16
 - **Decode plus rapide** : il est limité par la bande passante mémoire, et on relit moins d'octets à chaque token
 - **Plus de place pour le KV cache**, donc plus de requêtes en parallèle
@@ -27,6 +29,7 @@ Pourquoi quantizer un LLM ?
 
 Quels formats numériques rencontre-t-on ?
 ?
+<!--anki:4b245f5862716c2a7e75-->
 - **BF16 / FP16** (16 bits) : la référence, considérée sans perte
 - **FP8** (8 bits) : le défaut en production sur les GPU récents. **E4M3** (plus de précision) pour l'inférence, **E5M2** (plus de plage) pour les gradients
 - **INT8** (8 bits) : poids et activations sur les GPU sans FP8 (Ampere)
@@ -37,6 +40,7 @@ Quels formats numériques rencontre-t-on ?
 
 Weight-only (W4A16) ou poids + activations (W8A8) : quelle différence ?
 ?
+<!--anki:6b39775e3a7726676030-->
 La notation **WxAy** donne le nombre de bits des poids (W) et des activations (A).
 - **W4A16** (weight-only) : poids stockés en 4 bits, **déquantizés à la volée**, calcul en 16 bits. Accélère le **decode à petit batch**, limité par la mémoire, mais pas le prefill ; à gros batch, le gain disparaît
 - **W8A8** (FP8 ou INT8) : le **calcul lui-même** se fait en 8 bits sur les tensor cores, ce qui accélère aussi le **prefill** et les **gros batchs**
@@ -47,6 +51,7 @@ Voir [[62-optimisations-inference|prefill et decode]] et [[64-metriques-slo-infe
 
 Qu'est-ce que la granularité de quantization ?
 ?
+<!--anki:715b716529555e2f695a-->
 Le nombre de valeurs qui **partagent un même facteur d'échelle** :
 - **Par tenseur** : une échelle pour toute la matrice, simple mais sensible aux valeurs extrêmes
 - **Par canal** : une échelle par ligne ou par colonne
@@ -58,6 +63,7 @@ Plus c'est fin, plus c'est **précis**, mais les échelles occupent de la place 
 
 Pourquoi les activations sont-elles plus difficiles à quantizer que les poids ?
 ?
+<!--anki:4b4355607366724d7b2a-->
 À cause des **outliers** : dans les LLM, quelques **canaux d'activation** prennent des valeurs **bien plus grandes** que les autres. Une échelle commune écrase alors toutes les petites valeurs. Les parades :
 - **SmoothQuant** : transférer la difficulté des activations vers les poids, par une mise à l'échelle par canal mathématiquement équivalente
 - **Rotations** (QuaRot, SpinQuant) : multiplier par une matrice orthogonale (Hadamard) qui **étale les outliers** sur tous les canaux
@@ -67,6 +73,7 @@ Pourquoi les activations sont-elles plus difficiles à quantizer que les poids ?
 
 PTQ ou QAT ?
 ?
+<!--anki:4d4276533f3f3c26692e-->
 - **PTQ** (post-training quantization) : on quantize un modèle **déjà entraîné**, sans données ou avec un petit jeu de **calibration**. Rapide (quelques minutes à quelques heures) : GPTQ, AWQ et FP8 sont des PTQ
 - **QAT** (quantization-aware training) : on **simule la quantization pendant l'entraînement** pour que le modèle s'y adapte. Plus coûteux, mais **nettement meilleur en 4 bits et en dessous**
 
@@ -76,18 +83,21 @@ Des modèles sont désormais **publiés quantizés nativement**, par QAT ou post
 
 Comment fonctionne GPTQ ?
 ?
+<!--anki:4f366a575e4973377544-->
 Une PTQ des **poids, couche par couche** (souvent INT4 par groupes de 128). Sur un jeu de calibration, GPTQ quantize les poids **colonne par colonne** et **corrige les poids restants** pour compenser l'erreur commise, grâce à une information de second ordre (une approximation de la **hessienne**). Bonne qualité en 4 bits, avec un risque de **sur-ajuster le jeu de calibration**.
 
 ---
 
 Comment fonctionne AWQ ?
 ?
+<!--anki:6f356c62755260316047-->
 **Activation-aware Weight Quantization** : environ **1 % des poids sont décisifs**, ceux qui multiplient les **activations les plus fortes**. AWQ les repère sur un jeu de calibration et **agrandit ces canaux avant la quantization** (en compensant côté activations) pour les protéger. Il n'y a ni rétropropagation ni reconstruction : c'est rapide, et **moins dépendant du jeu de calibration** que GPTQ.
 
 ---
 
 Pourquoi FP8 est-il le choix par défaut en production ?
 ?
+<!--anki:505f6a2158383c2f3164-->
 - **Quasi sans perte** sur la plupart des tâches, avec des poids et un KV cache **divisés par deux**
 - **Calcul natif sur les tensor cores** des GPU récents (H100, H200, L40S, B200, MI300) : gain en **débit** et en **TTFT**, pas seulement en mémoire
 - **Peu d'effort** : dans vLLM, `--quantization fp8` quantize à la volée, **sans calibration**, avec des échelles d'activation calculées dynamiquement
@@ -96,6 +106,7 @@ Pourquoi FP8 est-il le choix par défaut en production ?
 
 Que sont NVFP4 et MXFP4 ?
 ?
+<!--anki:6d213f642a5d7670466f-->
 Deux formats **flottants 4 bits** (E2M1) avec des **échelles par petits blocs**, exécutés nativement par les GPU **Blackwell** (≈ 2 fois le débit du FP8) :
 - **MXFP4** (standard OCP) : blocs de **32** valeurs, échelle en puissance de deux. Exemple : gpt-oss
 - **NVFP4** (NVIDIA) : blocs de **16** valeurs, échelle FP8 plus une échelle globale par tenseur, donc **plus précis** que MXFP4
@@ -106,6 +117,7 @@ Ils visent le **W4A4**, poids et activations en 4 bits, là où l'INT4 classique
 
 Qu'est-ce que la quantization GGUF de llama.cpp ?
 ?
+<!--anki:4279436741614c7e3e4f-->
 Le format de [[10-images-modeles-poids|llama.cpp et Ollama]] propose des niveaux nommés d'après leur nombre de bits :
 - **Q8_0** : quasi sans perte
 - **Q5_K_M, Q4_K_M** : le compromis courant (Q4_K_M ≈ 4,8 bits par poids)
@@ -117,12 +129,14 @@ Les **K-quants** gardent certains tenseurs en plus haute précision, et une **im
 
 Qu'est-ce que NF4 et quand l'utiliser ?
 ?
+<!--anki:79393c4d63614f3a6148-->
 **NormalFloat 4 bits**, le format de **bitsandbytes** : ses 16 niveaux sont placés selon une **loi normale**, la distribution typique des poids. C'est la base de **QLoRA** ([[51-fine-tuning-adaptation|fine-tuning]]) : charger un gros modèle en 4 bits pour l'adapter sur un petit GPU. Pour le **serving**, on préfère FP8, AWQ ou GPTQ, qui ont des noyaux bien plus rapides.
 
 ---
 
 Quelle méthode de quantization choisir selon le contexte ?
 ?
+<!--anki:66505d4d5421646f257b-->
 - **GPU Hopper ou Blackwell en production** : **FP8** (W8A8) par défaut ; **NVFP4** sur Blackwell si les evals tiennent
 - **GPU Ampere (A100) ou grand public, mémoire serrée** : **INT4 weight-only** (AWQ ou GPTQ, avec les noyaux Marlin) ; **INT8 W8A8** (SmoothQuant) pour le débit
 - **CPU, Mac, poste local** : **GGUF de Q4_K_M à Q8_0**, ou MLX sur Apple Silicon
@@ -133,18 +147,21 @@ Quelle méthode de quantization choisir selon le contexte ?
 
 Que garde-t-on généralement en haute précision ?
 ?
+<!--anki:652a504b395d47797b63-->
 Les parties petites mais sensibles : **embeddings**, **lm_head** (la couche de sortie), **normalisations**, et dans les **MoE** le **routeur**, souvent l'attention aussi. On quantize d'abord les **couches linéaires**, et en priorité les **experts des MoE**, qui représentent l'essentiel des poids.
 
 ---
 
 Pourquoi le jeu de calibration compte-t-il ?
 ?
+<!--anki:486856647e3f6424266b-->
 GPTQ, AWQ, SmoothQuant ou le FP8 statique fixent leurs échelles à partir de **quelques centaines d'exemples**. S'ils ne ressemblent pas au trafic réel (autre langue, code, contexte long, format de chat), la qualité baisse **précisément sur ce trafic**. Il faut des exemples **représentatifs du domaine**, formatés avec le **chat template** du modèle.
 
 ---
 
 Comment mesurer la perte de qualité d'un modèle quantizé ?
 ?
+<!--anki:64773d654d3b283f5942-->
 La **perplexité** ne suffit pas ([[65-probabilites-sampling|probabilités]]). On compare le modèle quantizé à la **version BF16 sur ses propres evals**, question par question ([[114-reproductibilite-variance|comparaison appariée]]), en surveillant les zones fragiles : **raisonnement long, maths, code, contexte long, langues autres que l'anglais, tool calling**, et les **petits modèles**. Ordres de grandeur :
 - **FP8 et INT8** : quasi sans perte
 - **INT4 weight-only** : à 1 à 3 % près sur les gros modèles
@@ -154,6 +171,7 @@ La **perplexité** ne suffit pas ([[65-probabilites-sampling|probabilités]]). O
 
 Quelles métriques comparent directement un modèle quantizé à sa version BF16 ?
 ?
+<!--anki:782d547b304c23294b65-->
 On fait tourner les deux modèles sur les **mêmes textes** et on compare leurs sorties token par token :
 - **Divergence KL** moyenne entre les deux distributions de probabilités (0 = identiques) : la mesure la plus sensible
 - **Accord du top-1** : part des positions où les deux modèles choisissent le même token
@@ -166,6 +184,7 @@ llama.cpp calcule la divergence KL et l'accord du top-1 avec `llama-perplexity -
 
 Comment valider un modèle quantizé avant de le déployer ?
 ?
+<!--anki:4e602c2f2d606e6e4977-->
 Avec un **eval gate**, en comparant au modèle BF16 ([[112-cicd-modeles|CI/CD des modèles]]) :
 1. **Evals métier** question par question, avec un seuil fixé à l'avance (ex. ≥ 99 % du score BF16 sur chaque tâche critique)
 2. **Tests de format** : validité du JSON et des appels d'outils, contexte long
@@ -176,6 +195,7 @@ Avec un **eval gate**, en comparant au modèle BF16 ([[112-cicd-modeles|CI/CD de
 
 Que surveiller en production après une quantization ?
 ?
+<!--anki:48663f2b752d297e6f7d-->
 - **Performance**, pour confirmer le gain : TPOT, TTFT, débit, occupation du KV cache et concurrence atteinte
 - **Qualité**, pour repérer une perte que les evals n'ont pas vue : taux d'échec de validation (JSON, outils), taux de `finish_reason=length` (boucles), taux de refus, longueur des réponses, feedback et scores LLM-as-judge **par segment** (langue, tâche)
 
@@ -185,12 +205,14 @@ Chaque métrique est étiquetée avec la **variante du modèle** pour comparer �
 
 À mémoire égale, vaut-il mieux un grand modèle quantizé ou un petit modèle en pleine précision ?
 ?
+<!--anki:78244434472d6f667748-->
 En général **le grand modèle quantizé** : à budget mémoire fixe, **4 bits** est souvent le meilleur compromis entre taille et précision. En dessous, la perte finit par annuler l'avantage de taille. Nuance : les modèles récents, **entraînés sur beaucoup plus de tokens**, supportent moins bien une quantization agressive, d'où la montée du QAT.
 
 ---
 
 Quels outils pour quantizer et servir un modèle quantizé ?
 ?
+<!--anki:48732b41566441324e4a-->
 - **llm-compressor** (projet vLLM) : GPTQ, AWQ, SmoothQuant, FP8, NVFP4, au format *compressed-tensors*
 - **NVIDIA Model Optimizer** : FP8, NVFP4, INT4 AWQ pour TensorRT-LLM, vLLM et SGLang
 - **GPTQModel**, **bitsandbytes**, `llama-quantize` pour GGUF (AutoAWQ et AutoGPTQ ne sont plus maintenus)
@@ -207,6 +229,7 @@ vllm serve org/modele --quantization fp8 \
 
 À ne pas confondre : quantization des poids, des activations et du KV cache ?
 ?
+<!--anki:472f61333a5d544d7225-->
 - **Poids** (W4A16, W8) : réduit la **mémoire du modèle** et accélère le **decode** memory-bound
 - **Activations** (W8A8, FP8) : permet les calculs en basse précision sur les unités dédiées, et accélère aussi le **prefill** compute-bound
 - **KV cache** (FP8) : réduit la mémoire **par requête**, donc augmente la **concurrence** et la longueur de contexte servable ([[61-kv-cache-attention|KV cache]])
@@ -219,6 +242,7 @@ Trois réglages indépendants, à valider séparément ([[69-roofline-prefill-de
 
 Mise en situation : tu dois servir un modèle 70B sur des GPU A100 de 80 Go, avec un budget de deux GPU. Quelle quantization choisis-tu ?
 ?
+<!--anki:786c3b6c673a2d742b6b-->
 1. **Calculer** : 140 Go en BF16, donc impossible sur deux A100 avec de la place pour le KV cache
 2. **Écarter FP8** : les A100 (Ampere) n'ont pas de tensor cores FP8. Le gain serait limité à la mémoire
 3. **Retenir INT4 weight-only** (AWQ ou GPTQ, noyaux Marlin) : environ 40 Go de poids, beaucoup de place pour le cache
@@ -231,6 +255,7 @@ Mise en situation : tu dois servir un modèle 70B sur des GPU A100 de 80 Go, ave
 
 Mise en situation : après le passage en INT4, tes evals globales perdent seulement 1 %, mais le support signale des réponses fausses en allemand et sur les longs documents. Que fais-tu ?
 ?
+<!--anki:733a714d6e3255376136-->
 1. **Ne pas se fier à la moyenne** : les pertes se concentrent sur des segments précis
 2. **Évaluer par segment** : langue, longueur de contexte, type de tâche, appels d'outils
 3. **Mesurer finement** : divergence KL et accord du top-1 contre le modèle BF16 sur ces cas
@@ -243,6 +268,7 @@ Mise en situation : après le passage en INT4, tes evals globales perdent seulem
 
 Mise en situation : ton fournisseur publie le même modèle en BF16, FP8 et GGUF Q4_K_M. Trois équipes te demandent lequel prendre : production GPU, poste de développeur, démonstration hors ligne. Que réponds-tu ?
 ?
+<!--anki:4645564758673a5d7750-->
 1. **Production GPU récent** : **FP8**, quasi sans perte, natif sur Hopper et Blackwell, moitié moins de VRAM
 2. **Poste de développeur** : **GGUF Q4_K_M** avec llama.cpp ou Ollama, qui tourne sur CPU ou Mac
 3. **Démonstration hors ligne** : GGUF aussi, en privilégiant Q5_K_M ou Q8_0 si la machine le permet

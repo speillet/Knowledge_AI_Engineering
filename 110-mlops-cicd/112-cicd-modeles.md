@@ -3,6 +3,7 @@ Tags: #flashcards #ai-engineering #mlops #cicd #llm
 
 Qu'apporte le CI/CD d'une app LLM en plus du CI/CD classique ?
 ?
+<!--anki:4a6b3758755748575f5d-->
 Des **eval gates** : la qualité du modèle ou du prompt est testée automatiquement **comme du code**, en plus des tests logiciels habituels.
 
 La différence de fond : les tests classiques sont **déterministes** (réussi ou échoué), les evals sont **statistiques** (un score sur un jeu de cas, avec de la variance). Il faut donc des seuils, des marges et assez d'exemples pour qu'un écart soit significatif ([[114-reproductibilite-variance|variance]]).
@@ -11,6 +12,7 @@ La différence de fond : les tests classiques sont **déterministes** (réussi o
 
 Qu'est-ce qu'un eval gate ?
 ?
+<!--anki:6a4b402e5157293d4533-->
 Un **seuil d'évaluation bloquant** dans la CI : si les scores régressent, le merge ou le déploiement est **refusé** ([[92-chainforge-evals-prompts|evals]]).
 ```yaml
 eval_gate:
@@ -26,6 +28,7 @@ On bloque sur la **régression** par rapport à la version en production, pas se
 
 Que contient l'artefact déployé d'une app LLM ?
 ?
+<!--anki:695e35574c713148795a-->
 Trois versions distinctes, à tracer **ensemble** :
 - L'**image conteneur** de l'application
 - La **référence du modèle** (identifiant daté chez un fournisseur, ou poids et adapter dans un registry)
@@ -37,6 +40,7 @@ Un manifeste de release qui les regroupe permet de redéployer ou d'annuler l'en
 
 À ne pas confondre : blue/green et canary pour un modèle ?
 ?
+<!--anki:4c433e55363b3a3f6e2a-->
 - **Blue/green** : bascule totale, rollback instantané
 - **Canary** : % de trafic progressif, comparaison des **[[64-metriques-slo-inference|métriques/SLO]]** et scores avant promotion
 
@@ -44,6 +48,7 @@ Un manifeste de release qui les regroupe permet de redéployer ou d'annuler l'en
 
 Qu'est-ce que le shadow deployment ?
 ?
+<!--anki:644e744c303250597258-->
 Le nouveau modèle reçoit une **copie du trafic réel**, mais ses réponses ne sont **pas montrées** aux utilisateurs : on compare en conditions réelles, sans risque.
 
 Limites : il **double le coût** d'inférence pendant la période, il ne mesure pas la réaction des utilisateurs, et les actions à effets de bord (outils d'écriture) doivent être désactivées dans la copie ([[97-evals-online-ab-testing|shadow testing]]).
@@ -52,6 +57,7 @@ Limites : il **double le coût** d'inférence pendant la période, il ne mesure 
 
 Comment fonctionne le rollback d'un modèle ?
 ?
+<!--anki:7a484c43315e344e4931-->
 On revient à la **version précédente** du modèle, de l'adapter ou du prompt, par exemple en redéplaçant une étiquette dans le registry.
 
 Conditions : un versioning strict, l'ancienne version **encore disponible** (un modèle d'API peut avoir été retiré), et des **schémas de sortie compatibles**, sinon les systèmes en aval cassent. Un rollback se **teste** avant d'en avoir besoin.
@@ -60,6 +66,7 @@ Conditions : un versioning strict, l'ancienne version **encore disponible** (un 
 
 Qu'est-ce que le GitOps appliqué aux modèles ?
 ?
+<!--anki:423a6e24507a51415361-->
 L'**état désiré** (version du modèle, config du serveur d'inférence, prompts) est déclaré **dans Git** ; un opérateur comme **Argo CD** ou **Flux** réconcilie le cluster en continu avec cet état.
 
 Avantages : chaque changement passe par une **pull request** revue, l'historique Git sert d'audit, et le rollback est un `git revert` ([[12-kubernetes-gpu-inference|Kubernetes GPU]]).
@@ -68,6 +75,7 @@ Avantages : chaque changement passe par une **pull request** revue, l'historique
 
 Quels types de tests pour une app LLM en CI ?
 ?
+<!--anki:507d662a4f776c345758-->
 - **Unitaires** (parsing, outils)
 - **Intégration** (LLM mocké)
 - **Evals** (qualité sur golden dataset)
@@ -77,6 +85,7 @@ Quels types de tests pour une app LLM en CI ?
 
 Pourquoi les prompts passent-ils par la CI ?
 ?
+<!--anki:6e4f4a30597944562b70-->
 Un prompt modifié **change le comportement en production** autant qu'un changement de code, et souvent de façon moins prévisible : une consigne ajoutée pour un cas peut en dégrader dix autres.
 
 Chaque modification déclenche donc les **tests de régression** sur le golden dataset ([[92-chainforge-evals-prompts|golden datasets]]), et le diff du prompt est relu comme du code.
@@ -85,6 +94,7 @@ Chaque modification déclenche donc les **tests de régression** sur le golden d
 
 À quoi ressemble un pipeline complet ?
 ?
+<!--anki:633b61656533535d3e3f-->
 ```text
 PR → tests + evals → build image → push registry
 → deploy canary → métriques/SLO OK → promotion
@@ -96,6 +106,7 @@ PR → tests + evals → build image → push registry
 
 Mise en situation : une modification d'une ligne du system prompt part en production sans revue, et la qualité chute pendant deux jours avant qu'on s'en aperçoive. Que mets-tu en place ?
 ?
+<!--anki:6e6a4676534d666b7c3f-->
 1. **Traiter le prompt comme du code** : versionné dans Git, relu en pull request
 2. **Eval gate** : rejeu du golden dataset à chaque modification, blocage si régression ([[94-evals-methodologie|evals]])
 3. **Traçabilité** : la version du prompt apparaît dans les traces, pour savoir ce qui tournait ([[91-langfuse-observabilite|traces]])
@@ -108,6 +119,7 @@ Mise en situation : une modification d'une ligne du system prompt part en produc
 
 Mise en situation : tu dois déployer une nouvelle version de modèle sur un service critique, sans fenêtre de maintenance. Quelle stratégie choisis-tu ?
 ?
+<!--anki:6f55366b2969522d7352-->
 1. **Valider offline** : evals de non-régression et tests de contrat sur les sorties structurées
 2. **Shadow** d'abord si le budget le permet : trafic réel dupliqué, sans réponse montrée à l'utilisateur
 3. **Canary** ensuite : petit pourcentage, surveillance des SLO, des erreurs et des scores de qualité

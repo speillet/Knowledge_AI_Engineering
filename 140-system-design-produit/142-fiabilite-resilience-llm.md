@@ -3,12 +3,14 @@ Tags: #flashcards #ai-engineering #system-design #fiabilite #production #llm
 
 Pourquoi une application LLM est-elle plus fragile qu'une application classique ?
 ?
+<!--anki:47364949697173294a73-->
 Elle dépend d'un service **externe, lent, coûteux et non déterministe** : latences de plusieurs secondes à plusieurs minutes, **rate limits**, pannes du fournisseur, **sorties mal formées**, et changements de comportement lors des **mises à jour du modèle**. La résilience doit être **conçue**, pas ajoutée après coup.
 
 ---
 
 Quels timeouts configurer ?
 ?
+<!--anki:455f43415a692f2c7b6f-->
 - **Timeout de connexion** court.
 - **Timeout jusqu'au premier token** (TTFT) : détecte un modèle saturé.
 - **Timeout entre tokens** en streaming : détecte un flux bloqué.
@@ -20,6 +22,7 @@ Un seul timeout global de 60 s laisse l'utilisateur attendre **sans rien voir**.
 
 Comment faire des retries correctement ?
 ?
+<!--anki:47233729762a372f7c5f-->
 - Seulement sur les erreurs **transitoires** (429, 5xx, timeouts), **jamais** sur les 400 (requête invalide).
 - **Backoff exponentiel avec jitter**, en respectant l'en-tête **Retry-After**.
 - **Nombre limité** de tentatives et **budget de retries** global pour ne pas amplifier une panne.
@@ -29,18 +32,21 @@ Comment faire des retries correctement ?
 
 Qu'est-ce qu'une chaîne de fallbacks ?
 ?
+<!--anki:4b612e3c3921336d733a-->
 En cas d'échec du modèle principal : **même modèle chez un autre fournisseur/région** → **autre modèle** comparable → **modèle plus petit** → **réponse dégradée** (message d'attente, FAQ, humain). Chaque fallback doit être **évalué** : un prompt optimisé pour un modèle peut mal marcher sur un autre ([[81-litellm-api-layer|fallbacks LiteLLM]]).
 
 ---
 
 Qu'est-ce qu'un circuit breaker et pourquoi l'utiliser ?
 ?
+<!--anki:424258362c2624254676-->
 Un composant qui, après un **taux d'échec** élevé vers un fournisseur, **coupe** les appels vers lui pendant un moment et bascule directement sur le fallback. Il évite d'**attendre des timeouts** à chaque requête et de **surcharger** un service déjà en difficulté.
 
 ---
 
 Comment gérer une sortie mal formée ?
 ?
+<!--anki:507e476873755e536655-->
 1. **Prévenir** : [[63-guided-generation|structured outputs]] / décodage contraint.
 2. **Valider** : schéma (Pydantic, JSON Schema) + règles métier.
 3. **Réparer** : ré-appel avec **le message d'erreur** de validation (1 ou 2 fois max).
@@ -50,12 +56,14 @@ Comment gérer une sortie mal formée ?
 
 Qu'est-ce que la dégradation gracieuse ?
 ?
+<!--anki:706e317761743a564431-->
 Continuer à rendre **un service réduit** plutôt que tomber : réponse sans RAG si l'index est indisponible (en le signalant), petit modèle si le gros sature, **désactivation** des fonctions non essentielles, **file d'attente** plutôt que refus. On définit à l'avance **quels niveaux de service** existent.
 
 ---
 
 Comment gérer les rate limits d'un fournisseur ?
 ?
+<!--anki:71434b7834454773454e-->
 - Connaître ses quotas (**requêtes/min et tokens/min**) et les **répartir** entre applications.
 - **File d'attente** avec priorités (interactif avant batch).
 - **Limiteur côté client** (token bucket) pour ne pas envoyer des requêtes vouées au 429.
@@ -65,6 +73,7 @@ Comment gérer les rate limits d'un fournisseur ?
 
 Comment rendre fiable une tâche d'agent de longue durée ?
 ?
+<!--anki:6432522c7d30417a6769-->
 - L'exécuter **hors de la requête HTTP** (file de tâches, workflow durable).
 - **Checkpointer l'état** à chaque étape pour reprendre après une panne ([[45-langgraph-production|durable execution]], [[41-automatisation-code-nocode|Temporal]]).
 - **Idempotence** des outils à effets de bord (clé d'idempotence).
@@ -74,12 +83,14 @@ Comment rendre fiable une tâche d'agent de longue durée ?
 
 Pourquoi épingler la version du modèle ?
 ?
+<!--anki:5043614c313623677e64-->
 Un alias type « latest » peut **changer de modèle sans prévenir** → comportement, format ou coût modifiés en production. On épingle une **version datée**, on **teste** la nouvelle version sur les evals, puis on migre volontairement — et on surveille les **dates de dépréciation** des fournisseurs ([[113-monitoring-drift-feedback|mises à jour des modèles API]]).
 
 ---
 
 Quels SLO définir pour une application LLM ?
 ?
+<!--anki:6c773648497256297b71-->
 - **Disponibilité** (taux de requêtes réussies, fallbacks compris).
 - **Latence** : TTFT p95, durée totale p95 par type de tâche.
 - **Qualité** : taux de sorties valides, score d'eval online au-dessus d'un seuil.
@@ -91,12 +102,14 @@ Avec un **budget d'erreur** qui décide quand geler les changements ([[64-metriq
 
 Comment tester la résilience ?
 ?
+<!--anki:68407a3a592331445669-->
 Par du **chaos testing** : injecter des 429, des timeouts, des flux coupés, des réponses invalides, un index vide, et vérifier que les fallbacks, circuit breakers et messages dégradés fonctionnent. Et des **tests de charge** avec des longueurs de prompt **réalistes** (la charge dépend des tokens, pas du nombre de requêtes).
 
 ---
 
 À ne pas confondre : retry, fallback et circuit breaker ?
 ?
+<!--anki:712c79247c783766604f-->
 - **Retry** : **rejouer la même requête** sur le même fournisseur, pour une erreur transitoire
 - **Fallback** : envoyer la requête **ailleurs** (autre modèle, autre fournisseur, réponse dégradée) quand le premier choix échoue
 - **Circuit breaker** : **arrêter d'appeler** un fournisseur défaillant pendant un temps, pour ne pas empiler les timeouts
@@ -107,6 +120,7 @@ Ils s'enchaînent : quelques retries, puis fallback, et le disjoncteur évite de
 
 Que se passe-t-il si chaque couche d'un système réessaie trois fois ?
 ?
+<!--anki:64766361467b4e364763-->
 Les retries se **multiplient** : front, orchestrateur et client LLM à 3 tentatives chacun donnent jusqu'à **3³ = 27 appels** au fournisseur pour une requête utilisateur. Pendant une panne partielle, c'est une **tempête de retries** qui empêche le service de récupérer, et qui coûte en tokens.
 
 Parades : réessayer à **une seule couche**, **budget de retries** global (ex. 10 % du trafic), **jitter** pour désynchroniser les clients, et **circuit breaker** ([[82-routing-llm|fallbacks]]).
@@ -117,6 +131,7 @@ Parades : réessayer à **une seule couche**, **budget de retries** global (ex. 
 
 Mise en situation : pendant un pic, ton application renvoie massivement des 429 et tes retries aggravent la situation. Que corriges-tu dans l'ordre ?
 ?
+<!--anki:64417942635e45495449-->
 1. **Arrêter l'amplification** : backoff exponentiel avec jitter, respect de l'en-tête de reprise, budget global de retries
 2. **Limiteur côté client** : ne pas envoyer des requêtes vouées au refus, avec des priorités (interactif avant batch)
 3. **Circuit breaker** : couper vers le fournisseur en difficulté et basculer directement sur le fallback
@@ -129,6 +144,7 @@ Mise en situation : pendant un pic, ton application renvoie massivement des 429 
 
 Mise en situation : ton équipe veut « tester la résilience » avant une mise en production critique. Que proposes-tu concrètement ?
 ?
+<!--anki:427533363e3e53507373-->
 1. **Injecter des pannes** : 429, timeouts, flux coupé en plein streaming, réponse invalide, index vide
 2. **Vérifier chaque parade** : fallback réellement fonctionnel, circuit breaker qui s'ouvre, message dégradé affiché
 3. **Tests de charge réalistes** : distribution des longueurs de prompts, pas seulement un nombre de requêtes

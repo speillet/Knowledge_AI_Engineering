@@ -3,18 +3,21 @@ Tags: #flashcards #ai-engineering #mlops #reproductibilite #evals #llm
 
 Une température à 0 garantit-elle des sorties identiques ?
 ?
+<!--anki:6354476e2a6372354e28-->
 **Non.** Les calculs GPU en **virgule flottante** ne sont pas associatifs : (a + b) + c ≠ a + (b + c). Un infime écart sur les logits suffit à changer le token choisi quand deux candidats sont presque à égalité, et toute la suite de la réponse diverge.
 
 ---
 
 D'où vient principalement le non-déterminisme d'un serveur d'inférence ?
 ?
+<!--anki:42575a626e2f243e7b46-->
 Du **manque d'invariance au batch** : les kernels (matmul, normalisation, attention) changent leur **ordre de réduction** selon la taille du batch. Or, avec le [[62-optimisations-inference|continuous batching]], le batch dépend des **autres requêtes** présentes à cet instant : le résultat dépend de la charge du serveur. Des kernels **batch-invariants** (modes déterministes de SGLang ou vLLM) corrigent cela, au prix de performances.
 
 ---
 
 Quels réglages du modèle peuvent changer sa sortie, à prompt identique ?
 ?
+<!--anki:7445534225614d64687a-->
 - Paramètres de sampling et **seed**
 - **Version exacte** du modèle, du tokenizer et du chat template
 - **Quantization** (FP16, FP8, INT4…)
@@ -23,6 +26,7 @@ Quels réglages du modèle peuvent changer sa sortie, à prompt identique ?
 
 Quels facteurs d'infrastructure et d'application peuvent changer la sortie d'un même modèle, à prompt identique ?
 ?
+<!--anki:4b5a6e72257228217c42-->
 - **Moteur d'inférence** et sa version, type de **GPU**, degré de **tensor parallelism**
 - **Charge du serveur** (taille des batchs)
 - Côté application : prompt système, outils, **documents récupérés** par le RAG
@@ -31,24 +35,28 @@ Quels facteurs d'infrastructure et d'application peuvent changer la sortie d'un 
 
 À quoi sert le paramètre seed ?
 ?
+<!--anki:4b30415a706a76365a43-->
 À **fixer le générateur aléatoire** du sampling pour rejouer le même tirage. vLLM l'accepte par requête ; côté API, c'est au mieux un **« best effort »** (OpenAI l'accompagne d'un `system_fingerprint` qui change quand le backend change). Le seed ne neutralise **ni les écarts numériques ni les changements de version**.
 
 ---
 
 Comment rendre un appel LLM rejouable ?
 ?
+<!--anki:693e60316b3025562574-->
 Journaliser **tout ce qui le détermine** : identifiant **daté** du modèle, prompt **rendu** (après templating) et sa version, paramètres de sampling, seed, schémas d'outils, **documents injectés**, et la **réponse obtenue**. Les [[91-langfuse-observabilite|traces]] servent de journal pour rejouer et déboguer.
 
 ---
 
 Pourquoi ne pas comparer la sortie d'un LLM à une chaîne attendue ?
 ?
+<!--anki:656d592d3b347921397b-->
 Parce qu'elle **varie** d'un appel à l'autre sans être fausse. On vérifie des **propriétés** (JSON valide, bonne entité extraite, aucune donnée interdite) ou on note contre un **seuil** (métrique, juge). Pour tester le code autour du LLM, on **enregistre puis rejoue** les réponses (record/replay) : tests déterministes et gratuits.
 
 ---
 
 Pourquoi un écart de score entre deux prompts peut-il n'être que du bruit ?
 ?
+<!--anki:422b296b24785b465177-->
 Un score mesuré sur **n exemples** est incertain. Pour une exactitude p :
 ```text
 erreur standard  SE = √( p (1 − p) / n )    ex. p = 0,8 et n = 100 → SE = 0,04
@@ -60,6 +68,7 @@ Sur 100 exemples, un écart de 3 points **ne prouve rien**.
 
 Comment comparer rigoureusement deux variantes (prompt, modèle) ?
 ?
+<!--anki:74766263287b66405325-->
 - **Même dataset** et analyse **appariée** (différence exemple par exemple) : bien moins de variance qu'en comparant deux moyennes
 - **Plusieurs runs** par exemple, pour lisser le bruit du sampling
 - Rapporter **moyenne ± intervalle de confiance**, et **agrandir le dataset** quand l'écart recherché est petit
@@ -68,6 +77,7 @@ Comment comparer rigoureusement deux variantes (prompt, modèle) ?
 
 À ne pas confondre : pass@k et pass^k ?
 ?
+<!--anki:4c352d733b676a657961-->
 - **pass@k** : probabilité qu'**au moins une** des k tentatives réussisse → le **potentiel** (utile quand on peut vérifier puis relancer, ex. du code avec des tests)
 - **pass^k** : probabilité que **les k tentatives** réussissent → la **fiabilité** vécue par l'utilisateur qui repose la même question
 
@@ -77,6 +87,7 @@ Avec 80 % de succès par tentative (tentatives indépendantes) : pass@3 ≈ 99 %
 
 Comment estimer pass@k sans biais ?
 ?
+<!--anki:4467264a4f62364f6a33-->
 Générer **n ≥ k** échantillons par problème, compter les **c** réussites, puis :
 ```text
 pass@k = 1 − C(n − c, k) / C(n, k)
@@ -87,12 +98,14 @@ C'est l'estimateur du papier Codex (2021), plus stable que de ne tirer que k ess
 
 Pourquoi un LLM-as-judge ajoute-t-il de la variance ?
 ?
+<!--anki:6d765b41246831436431-->
 Le juge est lui-même un LLM **non déterministe** et **biaisé** (ordre de présentation, longueur, style). On le fait tourner à **température basse**, on **permute l'ordre** des réponses comparées, on **moyenne plusieurs passes**, et on le calibre sur des annotations humaines.
 
 ---
 
 Comment rendre un fine-tuning reproductible ?
 ?
+<!--anki:74213c39574676285476-->
 - Fixer **toutes les seeds** (Python, NumPy, PyTorch/CUDA) et l'**ordre des données**
 - Forcer les algorithmes déterministes : `torch.use_deterministic_algorithms(True)`, `CUBLAS_WORKSPACE_CONFIG=:4096:8`, `cudnn.benchmark = False`
 - **Versionner** données, code, config, image et **type de GPU**
@@ -103,6 +116,7 @@ Changer de matériel ou de nombre de GPU modifie quand même les résultats au b
 
 Faut-il viser le déterminisme partout ?
 ?
+<!--anki:4e404d572d6036633c3c-->
 **Non.** Il sert là où l'on compare ou enquête : **tests, audits, débogage, evals comparatives**. En production, on **conçoit pour la variabilité** : validation des sorties, [[63-guided-generation|sorties contraintes]], retries et evals sur plusieurs runs. Un système fiable ne dépend pas d'un tirage chanceux.
 
 ---
@@ -111,6 +125,7 @@ Faut-il viser le déterminisme partout ?
 
 Mise en situation : un client exige par contrat que « le même document donne toujours la même extraction ». Que t'engages-tu à faire, et sur quoi refuses-tu de t'engager ?
 ?
+<!--anki:417a783d2b7d663c296b-->
 1. **Expliquer honnêtement** : même à température 0, les calculs GPU ne garantissent pas une sortie identique au bit près
 2. **S'engager sur des propriétés** : mêmes champs extraits, mêmes valeurs métier, format valide
 3. **Rendre l'appel rejouable** : journaliser modèle daté, prompt rendu, paramètres, documents et réponse
@@ -123,6 +138,7 @@ Mise en situation : un client exige par contrat que « le même document donne t
 
 Mise en situation : ton équipe teste un agent de correction de bugs. Il réussit 4 fois sur 5 en démonstration, et le produit veut annoncer « 80 % de réussite ». Que précises-tu ?
 ?
+<!--anki:6376583a3e3362543e7d-->
 1. **Cinq essais ne mesurent rien** : l'intervalle de confiance est énorme sur si peu de cas
 2. **Distinguer pass@k et pass^k** : réussir au moins une fois sur k essais n'est pas réussir à chaque fois
 3. **Choisir la métrique selon l'usage** : si un humain peut relancer et vérifier, pass@k a du sens ; sinon c'est pass^k qui compte

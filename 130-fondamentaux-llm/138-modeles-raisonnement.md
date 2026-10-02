@@ -4,12 +4,14 @@ Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou 
 
 Qu'est-ce qu'un modèle de raisonnement ?
 ?
+<!--anki:44457a7a766655556330-->
 Un LLM entraîné à **produire une longue réflexion interne** (chaîne de pensée : exploration, vérification, retours en arrière) **avant sa réponse finale**. Il est nettement meilleur en **maths, code, planification et problèmes à plusieurs étapes**, au prix de **plus de tokens et de latence**.
 
 ---
 
 Qu'est-ce que le test-time compute ?
 ?
+<!--anki:68657a773f6c3b31424f-->
 Dépenser **plus de calcul au moment de l'inférence** pour améliorer la réponse, au lieu (ou en plus) d'un plus gros modèle. Deux formes :
 - **séquentielle** : raisonner plus longtemps (plus de tokens de réflexion) ;
 - **parallèle** : générer **plusieurs réponses** et choisir (vote majoritaire, vérificateur, best-of-n).
@@ -18,24 +20,28 @@ Dépenser **plus de calcul au moment de l'inférence** pour améliorer la répon
 
 Comment entraîne-t-on un modèle à raisonner ?
 ?
+<!--anki:452d33327c713c6e6424-->
 Par **RL avec récompenses vérifiables** (RLVR) : on pose des problèmes dont la réponse est **vérifiable automatiquement** (résultat mathématique, tests unitaires), on récompense les réponses **correctes**, et le modèle apprend **de lui-même** des stratégies (vérifier, reprendre, décomposer). Algorithmes typiques : **PPO**, **GRPO** ([[52-post-training-alignement|post-training]]).
 
 ---
 
 Qu'est-ce qu'un budget de réflexion (thinking budget / reasoning effort) ?
 ?
+<!--anki:765438515a4753303f29-->
 Un paramètre d'API qui borne ou oriente **la quantité de tokens de raisonnement** (niveau faible/moyen/élevé, ou nombre max de tokens). C'est le **curseur qualité / latence / coût** : un effort élevé pour un problème difficile, faible pour une tâche simple ou interactive.
 
 ---
 
 Comment les tokens de raisonnement sont-ils facturés ?
 ?
+<!--anki:75577c53737b3a2f4b71-->
 Comme des **tokens de sortie**, même s'ils ne sont pas tous visibles (certains fournisseurs n'en renvoient qu'un **résumé**). Une réponse courte peut donc coûter **des milliers de tokens**. À suivre dans les métriques d'usage et dans le calcul du **coût par tâche** ([[121-couts-inference|coûts]]).
 
 ---
 
 Quand ne pas utiliser un modèle de raisonnement ?
 ?
+<!--anki:51502558695d4271762f-->
 - Tâches **simples** (classification, extraction, reformulation) : aucun gain, coût et latence multipliés.
 - Interfaces **temps réel** (voix, autocomplétion) où le TTFT prime.
 - Tâches de **style ou de créativité**, où réfléchir plus n'aide pas.
@@ -46,30 +52,35 @@ Le [[82-routing-llm|routage]] par difficulté est la réponse naturelle.
 
 Faut-il encore écrire « réfléchis étape par étape » ?
 ?
+<!--anki:4c503b7432776c5b584d-->
 Pour un modèle de raisonnement, **non** : il raisonne déjà, et imposer une méthode détaillée peut **nuire**. Mieux vaut décrire **clairement l'objectif, les contraintes et le format** de sortie, et laisser le modèle organiser sa réflexion. Le chain-of-thought explicite reste utile pour les modèles **sans raisonnement natif** ([[11-prompt-engineering-avance|prompt engineering]]).
 
 ---
 
 Peut-on faire confiance à la chaîne de pensée affichée ?
 ?
+<!--anki:4339773d41252f6d6749-->
 **Pas entièrement.** Des travaux montrent que la réflexion affichée n'est **pas toujours fidèle** au processus réel : le modèle peut utiliser un indice sans le mentionner. Elle est utile pour **déboguer** et **surveiller**, mais ce n'est pas une **explication garantie** ni une preuve de correction.
 
 ---
 
 Qu'est-ce que le interleaved thinking dans un agent ?
 ?
+<!--anki:482670287673403f334a-->
 Le modèle **raisonne entre deux appels d'outils** : il analyse le résultat d'un outil avant de décider du suivant. Cela améliore la qualité des **trajectoires d'agent** ; il faut en général **renvoyer les blocs de raisonnement** précédents dans l'historique pour garder la cohérence ([[31-agents-fondamentaux|agents]]).
 
 ---
 
 Qu'est-ce que le best-of-n avec vérificateur ?
 ?
+<!--anki:674758746a32554c483a-->
 Générer **n réponses** puis choisir la meilleure grâce à un **vérificateur** : tests unitaires (code), vérification formelle, [[95-llm-as-judge|juge]] ou reward model. Le gain dépend surtout de la **qualité du vérificateur** : un vérificateur exécutable (tests) est bien plus fiable qu'un juge LLM.
 
 ---
 
 À ne pas confondre : modèle de raisonnement et chain-of-thought par prompt ?
 ?
+<!--anki:44797d3846553d526763-->
 - **Chain-of-thought par prompt** : on **demande** à un modèle classique d'écrire ses étapes. Le gain dépend de la formulation et reste limité ([[11-prompt-engineering-avance|prompt engineering]])
 - **Modèle de raisonnement** : le modèle a été **entraîné par RL** à produire une longue réflexion, à se vérifier et à revenir en arrière. La réflexion est **native**, souvent réglable par un budget, et parfois masquée
 
@@ -81,6 +92,7 @@ Conséquence : avec un modèle de raisonnement, on décrit **l'objectif et les c
 
 Mise en situation : ton équipe passe tout le trafic sur un modèle de raisonnement « puisqu'il est meilleur ». Le coût triple et les utilisateurs trouvent l'assistant lent. Que proposes-tu ?
 ?
+<!--anki:4c38422a7861506f2f53-->
 1. **Segmenter** : classification, extraction et reformulation ne tirent aucun bénéfice du raisonnement
 2. **Router par difficulté** : raisonnement réservé aux problèmes à plusieurs étapes ([[82-routing-llm|routing]])
 3. **Régler l'effort** : le budget de réflexion est un curseur qualité, latence et coût
@@ -93,6 +105,7 @@ Mise en situation : ton équipe passe tout le trafic sur un modèle de raisonnem
 
 Mise en situation : un auditeur veut utiliser la chaîne de pensée affichée par le modèle comme justification des décisions prises par ton système. Qu'en dis-tu ?
 ?
+<!--anki:734e60406e7636373164-->
 1. **Avertir** : la réflexion affichée n'est pas toujours fidèle au processus réel du modèle
 2. **Ce à quoi elle sert** : déboguer, surveiller, repérer des trajectoires aberrantes
 3. **Ce qu'elle ne fournit pas** : une explication garantie ni une preuve de correction

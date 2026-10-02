@@ -3,18 +3,21 @@ Tags: #flashcards #ai-engineering #agents #context-engineering #llm
 
 Qu'est-ce que le context engineering ?
 ?
+<!--anki:6d7964697b53773a6a7e-->
 L'art de **choisir, à chaque appel, l'ensemble minimal de tokens le plus utile** dans la fenêtre de contexte : instructions, outils, historique, mémoire, documents récupérés.
 
 ---
 
 À ne pas confondre : context engineering et prompt engineering ?
 ?
+<!--anki:267e45776566756838-->
 Le **[[11-prompt-engineering-avance|prompt engineering]]** optimise la **formulation** d'une instruction ; le **context engineering** gère **tout ce qui entre dans le contexte**, sur la durée d'une session ou d'un agent.
 
 ---
 
 Pourquoi traiter la fenêtre de contexte comme un budget ?
 ?
+<!--anki:6565374d7c3f655b753c-->
 Chaque token **coûte** (prix, latence, VRAM du [[61-kv-cache-attention|KV cache]]) et **dilue l'attention** : plus le contexte grossit, moins le modèle exploite bien chaque information.
 ```text
 Budget d'un tour d'agent (exemple) :
@@ -33,12 +36,14 @@ Le poste qui grossit tout seul est l'**historique** : c'est lui qu'on compacte e
 
 Qu'est-ce que le context rot ?
 ?
+<!--anki:493a7c686b5f307c324d-->
 La **dégradation des performances quand le contexte s'allonge** : informations anciennes contradictoires, bruit accumulé, effet [[22-rag-avance|« lost in the middle »]]. Une grande fenêtre n'est pas un contexte bien utilisé.
 
 ---
 
 Quelles sont les composantes du contexte d'un agent ?
 ?
+<!--anki:6b38662a4c5f6b385871-->
 - **Instructions** (system prompt)
 - **Définitions d'outils**
 - **Historique** de la conversation et des résultats d'outils
@@ -49,6 +54,7 @@ Quelles sont les composantes du contexte d'un agent ?
 
 Qu'est-ce que la compaction ?
 ?
+<!--anki:6e5f505d713a4b7b5677-->
 **Résumer l'historique** quand on approche de la limite, pour repartir avec un contexte plus court qui garde décisions, état et tâches en cours. Variante légère : **effacer les vieux résultats d'outils**.
 
 Deux effets de bord à connaître : la compaction **casse le cache de préfixe** (tout ce qui suit change), et elle **perd des détails** — d'où l'intérêt d'écrire l'essentiel dans un fichier ou une mémoire **avant** de compacter ([[39-memoire-agents|mémoire]]).
@@ -57,6 +63,7 @@ Deux effets de bord à connaître : la compaction **casse le cache de préfixe**
 
 À ne pas confondre : compaction, troncature et mémoire ?
 ?
+<!--anki:7229785e5a41372d3b28-->
 - **Troncature** : on **coupe** les messages les plus anciens. Gratuit, mais on perd tout ce qui est coupé, y compris les décisions prises
 - **Compaction** : on **résume** l'historique. Coûte un appel LLM, conserve l'essentiel, mais perd les détails et invalide le cache
 - **Mémoire** : on **écrit hors du contexte** les faits durables, et on les relit à la demande. Seule solution qui survit à la session
@@ -67,6 +74,7 @@ Les trois se combinent : mémoire pour ce qui doit durer, compaction pour tenir 
 
 Mémoire court terme vs long terme ?
 ?
+<!--anki:6d477d606d29413d6764-->
 - **Court terme** : le contexte de la session en cours
 - **Long terme** : des faits **écrits hors du contexte** (fichiers, base) et relus à la demande — ex. un fichier de notes que l'agent met à jour
 
@@ -74,18 +82,21 @@ Mémoire court terme vs long terme ?
 
 Comment les sous-agents aident-ils à gérer le contexte ?
 ?
+<!--anki:4f7d3b7869655a2c734e-->
 Un [[36-orchestration-agents|sous-agent]] explore dans **son propre contexte** et ne renvoie qu'un **résumé condensé** : le contexte de l'agent principal reste propre.
 
 ---
 
 Pourquoi garder un préfixe de prompt stable ?
 ?
+<!--anki:4e48317c44305d665b56-->
 Pour profiter du **prompt caching** : le fournisseur réutilise le calcul (KV cache) d'un **préfixe identique**. On met le contenu stable (instructions, outils) **au début** et le contenu variable **à la fin**.
 
 ---
 
 Qu'est-ce que le just-in-time context ?
 ?
+<!--anki:6a6c3e4a7c636c713068-->
 Ne pas tout charger d'avance : donner à l'agent des **références légères** (chemins de fichiers, requêtes, outils de recherche) et le laisser **récupérer l'information au moment où il en a besoin**.
 
 ---
@@ -94,6 +105,7 @@ Ne pas tout charger d'avance : donner à l'agent des **références légères** 
 
 Mise en situation : ton agent de support donne de bonnes réponses au début des conversations, puis se dégrade et se contredit au bout d'une heure. Que fais-tu ?
 ?
+<!--anki:463a55674e31642c4634-->
 1. **Reconnaître le context rot** : le contexte a gonflé, les informations anciennes et contradictoires s'accumulent
 2. **Compacter** : résumer l'historique en gardant décisions, état et tâches en cours ; supprimer les vieux résultats d'outils
 3. **Sortir les faits durables** vers une mémoire relue à la demande ([[39-memoire-agents|mémoire]])
@@ -106,6 +118,7 @@ Mise en situation : ton agent de support donne de bonnes réponses au début des
 
 Mise en situation : ton assistant coûte deux fois plus cher que prévu, alors que le system prompt et les définitions d'outils sont identiques à chaque appel. Quelle piste ?
 ?
+<!--anki:6a563d5e6c7b32533143-->
 1. **Vérifier le prompt caching** : le préfixe est-il réellement stable, ou y insères-tu la date, l'ID de session ou des outils réordonnés ?
 2. **Réorganiser** : contenu stable (instructions, outils) au début, contenu variable à la fin ([[123-caching-agressif|caching]])
 3. **Mesurer** le taux de tokens lus en cache dans les traces, avant et après
@@ -118,6 +131,7 @@ Mise en situation : ton assistant coûte deux fois plus cher que prévu, alors q
 
 Mise en situation : ton agent doit analyser 300 pages de documentation technique pour répondre à une question précise. Comment organises-tu son contexte ?
 ?
+<!--anki:6b6b564f527c422b5958-->
 1. **Ne pas tout charger** : 300 pages saturent le contexte, coûtent cher et diluent l'attention
 2. **Recherche d'abord** : RAG ou outil de recherche pour ne récupérer que les passages utiles ([[21-rag-fondamentaux|RAG]])
 3. **Sous-agents** : si plusieurs sections doivent être explorées, chacun travaille dans son contexte et ne remonte qu'un résumé ([[36-orchestration-agents|sous-agents]])

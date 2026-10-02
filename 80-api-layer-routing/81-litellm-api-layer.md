@@ -4,18 +4,21 @@ Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou 
 
 Qu'est-ce qu'une API layer (LLM gateway) ?
 ?
+<!--anki:79752c38462d5a6c3765-->
 Une **couche unique entre les applications et tous les modèles** (API cloud et modèles auto-hébergés) : une seule interface, et des fonctions transverses centralisées (auth, budgets, fallbacks, logs).
 
 ---
 
 Qu'est-ce que LiteLLM ?
 ?
+<!--anki:496b6e43213c2b593774-->
 Un projet open source qui expose **plus de 100 fournisseurs de LLM au format de l'API OpenAI**. Il existe sous deux formes : un **SDK Python** et un **proxy** (serveur gateway).
 
 ---
 
 SDK ou proxy LiteLLM ?
 ?
+<!--anki:7531606c2c72556e5870-->
 - **SDK** : bibliothèque dans le code (`litellm.completion(...)`), idéale pour un seul service
 - **Proxy** : serveur **centralisé** pour toute l'organisation, avec clés, budgets et observabilité partagés
 
@@ -23,6 +26,7 @@ SDK ou proxy LiteLLM ?
 
 À quoi ressemble une configuration du proxy ?
 ?
+<!--anki:75244e56214c4d524272-->
 ```yaml
 model_list:
   - model_name: chat-default
@@ -39,18 +43,21 @@ Deux déploiements sous le même nom : le proxy **répartit la charge** entre eu
 
 Que sont les virtual keys ?
 ?
+<!--anki:685b522c2437213a3750-->
 Des **clés API émises par le proxy** (par équipe, projet ou utilisateur) : les vraies clés des fournisseurs restent **secrètes**, et chaque virtual key a ses **modèles autorisés, budget et limites**.
 
 ---
 
 Comment LiteLLM maîtrise-t-il les coûts ?
 ?
+<!--anki:462c433f457b28282c46-->
 Par le **suivi des dépenses** par clé, équipe ou utilisateur, des **budgets** (plafond sur une période) et des **rate limits** en requêtes et tokens par minute (RPM/TPM).
 
 ---
 
 Comment LiteLLM améliore-t-il la fiabilité ?
 ?
+<!--anki:6369583735646953616f-->
 - **Retries** sur erreurs transitoires
 - **Fallbacks** vers un autre modèle ou fournisseur si le premier échoue
 - **Load balancing** entre déploiements, avec cooldown des déploiements en erreur
@@ -59,12 +66,14 @@ Comment LiteLLM améliore-t-il la fiabilité ?
 
 Comment relier LiteLLM à l'observabilité ?
 ?
+<!--anki:4e6e34374d5732535658-->
 Par des **callbacks** : chaque appel est envoyé à [[91-langfuse-observabilite|Langfuse]] (ou OpenTelemetry, Prometheus) avec prompt, réponse, tokens, coût et latence — sans instrumenter chaque application.
 
 ---
 
 Où se place LiteLLM dans la stack ?
 ?
+<!--anki:65484f7c36453a766272-->
 ```text
 Client → Ingress (TLS) → LiteLLM (auth, quotas, routing) → vLLM / API cloud
 ```
@@ -74,6 +83,7 @@ L'[[83-gateway-ingress|Ingress]] gère le réseau ; LiteLLM gère la **logique p
 
 Quelles alternatives à LiteLLM ?
 ?
+<!--anki:4a785a514860456e7223-->
 - **Gateways auto-hébergées** : Portkey, Kong AI Gateway, Envoy AI Gateway, agentgateway (qui gère aussi MCP et A2A)
 - **Services managés des clouds** : gateways IA intégrées aux offres AWS, Azure et Google
 - **Agrégateurs SaaS** : OpenRouter, pour l'accès multi-fournisseurs sans infrastructure
@@ -86,6 +96,7 @@ Critères : fournisseurs couverts, budgets et virtual keys, observabilité, late
 
 Mise en situation : cinq équipes appellent directement les API de trois fournisseurs, avec des clés partagées par copier-coller. La facture mensuelle n'est attribuable à personne. Par quoi commences-tu ?
 ?
+<!--anki:6a6e56307e5b2b4c726f-->
 1. **Mettre une gateway devant** : toutes les applications passent par le proxy, au format de l'API OpenAI
 2. **Virtual keys** par équipe et par projet : les vraies clés des fournisseurs redeviennent secrètes
 3. **Budgets et rate limits** par clé, avec alertes avant dépassement ([[122-finops-llm|FinOps]])
@@ -98,6 +109,7 @@ Mise en situation : cinq équipes appellent directement les API de trois fournis
 
 Mise en situation : ton fournisseur principal connaît une panne de 40 minutes en pleine journée. Comment ton architecture aurait-elle dû réagir ?
 ?
+<!--anki:67297e4a71396d5d5e4f-->
 1. **Fallback configuré** vers un autre fournisseur ou un modèle auto-hébergé pour les routes critiques
 2. **Retries** avec backoff sur les erreurs transitoires, et **cooldown** du déploiement en erreur
 3. **Dégradation acceptable** : modèle moins bon mais disponible, ou réponse d'attente explicite ([[142-fiabilite-resilience-llm|fiabilité]])
