@@ -3,9 +3,9 @@ Tags: #flashcards #ai-engineering #securite #agents #coding-agents #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 <!-- summary: cible de choix, modes sans permission, isolation du poste, s1ngularity, Amazon Q, fichiers d'instructions piégés, PromptPwnd, agents en CI/CD, slopsquatting et typosquatting, qualité du code généré, revue des PR d'agents, secrets, politique d'entreprise. -->
 
-Pourquoi les agents de code sont-ils une cible de choix ?
+
+Pourquoi les agents de code sont-ils une cible de choix ? <!--anki:476b3a2c623d293b2560-->
 ?
-<!--anki:476b3a2c623d293b2560-->
 Ils tournent **sur les postes des développeurs et dans la CI**, avec accès :
 - au **code source** et aux **secrets** (`.env`, clés SSH, identifiants cloud)
 - au **shell**, au **réseau**, aux gestionnaires de paquets et à `git push`
@@ -14,18 +14,16 @@ Ils lisent aussi beaucoup de **contenu non fiable** : issues, pull requests, REA
 
 ---
 
-Pourquoi les modes « sans permission » des agents de code sont-ils dangereux ?
+Pourquoi les modes « sans permission » des agents de code sont-ils dangereux ? <!--anki:4f3b28362d317a4f6d47-->
 ?
-<!--anki:4f3b28362d317a4f6d47-->
 Les options qui suppriment les demandes d'approbation (`--dangerously-skip-permissions`, `--yolo`…) laissent l'agent **exécuter n'importe quelle commande** qu'une injection lui suggère. On ne les utilise que dans un environnement **isolé et jetable** : conteneur ou VM, **sans secrets**, réseau limité.
 
 Sinon, on travaille avec des **listes blanches** de commandes et des **règles de refus** sur les chemins sensibles ([[34-harness-plugins|permissions du harness]]).
 
 ---
 
-Comment isoler un agent de code sur un poste de développement ?
+Comment isoler un agent de code sur un poste de développement ? <!--anki:712b49724371326c6477-->
 ?
-<!--anki:712b49724371326c6477-->
 - **Devcontainer ou VM** : le dossier personnel et les clés SSH ne sont pas montés
 - **Jetons limités** : un jeton GitHub à grain fin pour **un seul dépôt**, un profil cloud **en lecture seule**
 - **Réseau sortant** limité aux registres de paquets et aux API nécessaires
@@ -33,9 +31,8 @@ Comment isoler un agent de code sur un poste de développement ?
 
 ---
 
-Qu'a révélé l'attaque s1ngularity contre Nx (août 2025) ?
+Qu'a révélé l'attaque s1ngularity contre Nx (août 2025) ? <!--anki:495d797c65437a405750-->
 ?
-<!--anki:495d797c65437a405750-->
 Des versions piégées du paquet npm **Nx** exécutaient à l'installation un script qui appelait les **agents de code installés** (Claude Code, Gemini CLI, Amazon Q) **avec leurs options de contournement des permissions**, pour chercher des secrets et des portefeuilles crypto. Le butin était publié dans des **dépôts GitHub publics**.
 
 Les leçons :
@@ -45,18 +42,16 @@ Les leçons :
 
 ---
 
-Que s'est-il passé avec l'extension Amazon Q pour VS Code (juillet 2025) ?
+Que s'est-il passé avec l'extension Amazon Q pour VS Code (juillet 2025) ? <!--anki:45217a77463752505454-->
 ?
-<!--anki:45217a77463752505454-->
 Une **pull request malveillante** a ajouté au prompt de l'extension une instruction demandant à l'agent d'**effacer les fichiers locaux et des ressources cloud**. Cette version a été **publiée officiellement** avant d'être retirée.
 
 La leçon : les **prompts et configurations d'un outil IA sont du code**. Ils suivent les mêmes contrôles de revue et de chaîne d'approvisionnement que le reste.
 
 ---
 
-Comment un dépôt peut-il piéger un agent de code ?
+Comment un dépôt peut-il piéger un agent de code ? <!--anki:694862525d5e7d444e4f-->
 ?
-<!--anki:694862525d5e7d444e4f-->
 Par ses **fichiers d'instructions** : AGENTS.md, CLAUDE.md, fichiers de règles de l'éditeur, README. L'agent les lit comme des **consignes**.
 - La technique **Rules File Backdoor** (Pillar Security, 2025) cache des instructions en **Unicode invisible** dans un fichier de règles, pour faire insérer une porte dérobée dans le code généré
 - Un dépôt cloné ou une dépendance peuvent contenir de tels fichiers
@@ -65,16 +60,14 @@ Parades : **relire les changements** de ces fichiers comme du code, et **détect
 
 ---
 
-Qu'est-ce que PromptPwnd (décembre 2025) ?
+Qu'est-ce que PromptPwnd (décembre 2025) ? <!--anki:646f625f655846687644-->
 ?
-<!--anki:646f625f655846687644-->
 Une classe de failles découverte par Aikido dans des **workflows GitHub Actions et GitLab CI** qui passent du texte externe (titre et corps d'issue, de pull request, messages de commit) dans le **prompt d'un agent** (Gemini CLI, Claude Code, Codex) doté d'un **jeton privilégié**. Un attaquant ouvre une issue piégée, et l'agent exécute des commandes ou **publie des secrets**. Au moins cinq entreprises du Fortune 500 étaient touchées.
 
 ---
 
-Comment sécuriser un agent qui tourne dans la CI/CD ?
+Comment sécuriser un agent qui tourne dans la CI/CD ? <!--anki:47602d4c4b4f3d792e72-->
 ?
-<!--anki:47602d4c4b4f3d792e72-->
 - **Ne jamais** insérer du texte externe dans le prompt d'un agent qui a des outils privilégiés
 - **Permissions minimales** pour le jeton du workflow (lecture seule par défaut)
 - **Aucun secret** dans les jobs déclenchés par des contributeurs externes ; prudence avec `pull_request_target`, qui donne accès aux secrets
@@ -83,9 +76,8 @@ Comment sécuriser un agent qui tourne dans la CI/CD ?
 
 ---
 
-Qu'est-ce que le slopsquatting ?
+Qu'est-ce que le slopsquatting ? <!--anki:412c2a396a414e493956-->
 ?
-<!--anki:412c2a396a414e493956-->
 Les modèles **inventent des noms de paquets** qui n'existent pas (environ **20 %** des paquets recommandés dans une étude de 2025 sur 576 000 échantillons de code), et souvent **les mêmes** d'une fois à l'autre. Des attaquants **enregistrent ces noms** avec un contenu malveillant. Parades :
 - **Vérifier l'existence et la réputation** d'un paquet avant de l'ajouter
 - **Proxy de paquets** interne avec liste blanche, blocage des paquets trop récents
@@ -93,9 +85,8 @@ Les modèles **inventent des noms de paquets** qui n'existent pas (environ **20 
 
 ---
 
-Le code généré par IA est-il sûr par défaut ?
+Le code généré par IA est-il sûr par défaut ? <!--anki:66647c4730375d625b50-->
 ?
-<!--anki:66647c4730375d625b50-->
 **Non.** Selon Veracode (2025), **45 %** des échantillons de code générés contenaient une vulnérabilité du Top 10 OWASP. Les défauts fréquents : **injections**, **contrôle d'accès manquant**, secrets en dur, configurations permissives, dépendances obsolètes. Il faut donc :
 - La **même revue et le même SAST** que pour du code humain
 - Des **consignes de sécurité** dans AGENTS.md et des templates sécurisés
@@ -103,9 +94,8 @@ Le code généré par IA est-il sûr par défaut ?
 
 ---
 
-Comment encadrer les pull requests produites par des agents ?
+Comment encadrer les pull requests produites par des agents ? <!--anki:4225285247304b4e3425-->
 ?
-<!--anki:4225285247304b4e3425-->
 - **Petites PR**, faciles à relire
 - **CODEOWNERS** humains sur les chemins sensibles : authentification, workflows CI, IaC, dépendances
 - Un agent ne peut **ni approuver ni fusionner** ses propres PR (protection de branche)
@@ -114,9 +104,8 @@ Comment encadrer les pull requests produites par des agents ?
 
 ---
 
-Comment protéger les secrets face aux agents de code ?
+Comment protéger les secrets face aux agents de code ? <!--anki:7441306c3a563f2f7e41-->
 ?
-<!--anki:7441306c3a563f2f7e41-->
 L'agent lit les fichiers `.env` et les logs ; il peut **envoyer un secret au fournisseur** dans son contexte ou le **commiter**. Parades :
 - **Gestionnaire de secrets** plutôt que des fichiers `.env` en clair
 - **Règles de refus** sur les fichiers de secrets dans la configuration de l'agent
@@ -125,9 +114,8 @@ L'agent lit les fichiers `.env` et les logs ; il peut **envoyer un secret au fou
 
 ---
 
-Quelle politique d'entreprise pour les outils de code IA ?
+Quelle politique d'entreprise pour les outils de code IA ? <!--anki:555b5e314e2a775b24-->
 ?
-<!--anki:555b5e314e2a775b24-->
 - **Liste d'outils approuvés**, en offre entreprise (pas d'entraînement sur les données, rétention maîtrisée)
 - **Paramètres gérés centralement** et non modifiables par l'utilisateur : règles de refus, sandbox, serveurs MCP autorisés
 - **Serveurs MCP et skills** issus du registre interne uniquement ([[104-securite-mcp-skills|MCP & skills]])
@@ -135,9 +123,8 @@ Quelle politique d'entreprise pour les outils de code IA ?
 
 ---
 
-À ne pas confondre : typosquatting et slopsquatting ?
+À ne pas confondre : typosquatting et slopsquatting ? <!--anki:46332f6b2a535544773e-->
 ?
-<!--anki:46332f6b2a535544773e-->
 - **Typosquatting** : l'attaquant publie un paquet au nom **proche** d'un paquet populaire (`reqeusts`) et attend une **faute de frappe humaine**
 - **Slopsquatting** : l'attaquant publie un paquet au nom **inventé par un LLM**, que les agents de code recommandent de façon récurrente
 
@@ -147,9 +134,8 @@ Le second vise les **hallucinations** des modèles plutôt que les humains. Para
 
 ## Mises en situation
 
-Mise en situation : un workflow GitHub Actions lance Claude Code sur chaque nouvelle issue pour proposer un correctif. Il dispose d'un `GITHUB_TOKEN` en écriture et des secrets de déploiement. Qu'est-ce qui ne va pas ?
+Mise en situation : un workflow GitHub Actions lance Claude Code sur chaque nouvelle issue pour proposer un correctif. Il dispose d'un `GITHUB_TOKEN` en écriture et des secrets de déploiement. Qu'est-ce qui ne va pas ? <!--anki:475b4864355d5d7a5e71-->
 ?
-<!--anki:475b4864355d5d7a5e71-->
 1. **PromptPwnd** : le corps de l'issue, écrit par n'importe qui, entre dans le prompt d'un agent privilégié
 2. **Jeton trop large** : lecture seule par défaut ; les modifications passent par une pull request relue
 3. **Secrets inutiles** : aucun secret de déploiement dans ce job
@@ -160,9 +146,8 @@ Mise en situation : un workflow GitHub Actions lance Claude Code sur chaque nouv
 
 ---
 
-Mise en situation : un développeur senior veut lancer son agent de code avec `--dangerously-skip-permissions` sur son poste, pour aller plus vite. Que lui proposes-tu ?
+Mise en situation : un développeur senior veut lancer son agent de code avec `--dangerously-skip-permissions` sur son poste, pour aller plus vite. Que lui proposes-tu ? <!--anki:472c37752a4869333d59-->
 ?
-<!--anki:472c37752a4869333d59-->
 1. **Comprendre le besoin** : trop de demandes d'approbation pour des commandes courantes
 2. **Liste blanche** des commandes sûres (tests, lint, build) et **règles de refus** sur les fichiers de secrets et les commandes destructrices ([[34-harness-plugins|permissions]])
 3. **Si le mode sans permission reste nécessaire** : seulement dans un devcontainer ou une VM jetable, sans clés SSH ni identifiants cloud, avec un réseau limité

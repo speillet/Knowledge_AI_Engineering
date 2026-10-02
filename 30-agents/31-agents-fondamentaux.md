@@ -2,23 +2,21 @@
 Tags: #flashcards #ai-engineering #agents #llm
 <!-- summary: workflow ou agent, pattern ReAct, composants d'un agent minimal, trois formes de human-in-the-loop, risques et parades, ordres de grandeur de coût, conditions d'arrêt. -->
 
-Qu'est-ce qu'un agent LLM ?
+
+Qu'est-ce qu'un agent LLM ? <!--anki:502c4c3f7a7c7b624a33-->
 ?
-<!--anki:502c4c3f7a7c7b624a33-->
 Un **LLM doté d'outils et d'une boucle d'exécution** (percevoir → raisonner → agir) qui poursuit un **objectif** en décidant lui-même de ses étapes.
 
 ---
 
-À ne pas confondre : workflow et agent ?
+À ne pas confondre : workflow et agent ? <!--anki:712b5a28436a7b683047-->
 ?
-<!--anki:712b5a28436a7b683047-->
 Un **workflow** suit des étapes prédéfinies par le développeur ; un **agent** décide dynamiquement de ses actions — distinction popularisée par Anthropic (« Building effective agents »).
 
 ---
 
-Qu'est-ce que le pattern ReAct ?
+Qu'est-ce que le pattern ReAct ? <!--anki:4e773142733d352f7878-->
 ?
-<!--anki:4e773142733d352f7878-->
 Une boucle **Reasoning + Acting** : le modèle alterne raisonnement, appel d'outil et observation du résultat jusqu'à la réponse finale.
 ```text
 Pensée      : il me faut le statut de la commande
@@ -31,9 +29,8 @@ En pratique, avec le [[32-tool-calling|tool calling]] natif, ce cycle n'a plus b
 
 ---
 
-De quoi est composé un agent minimal ?
+De quoi est composé un agent minimal ? <!--anki:43784f552a2f34552f69-->
 ?
-<!--anki:43784f552a2f34552f69-->
 - Un **modèle** qui décide
 - Des **[[32-tool-calling|outils]]** qui agissent
 - Une **boucle** de contrôle : tant que le modèle demande un outil, on l'exécute et on lui renvoie le résultat
@@ -44,16 +41,14 @@ La boucle tient en vingt lignes de code. La difficulté est ailleurs : la qualit
 
 ---
 
-Quand ne faut-il PAS construire un agent ?
+Quand ne faut-il PAS construire un agent ? <!--anki:7330797b4f57247a213f-->
 ?
-<!--anki:7330797b4f57247a213f-->
 Quand la tâche est **prévisible** : un workflow fixe est plus fiable, moins cher et plus simple à déboguer. **L'agent se justifie quand le chemin est inconnu à l'avance.**
 
 ---
 
-Qu'est-ce que le human-in-the-loop ?
+Qu'est-ce que le human-in-the-loop ? <!--anki:6e254c244e5b5d6d4e5d-->
 ?
-<!--anki:6e254c244e5b5d6d4e5d-->
 Des **points de validation humaine** insérés dans la boucle de l'agent, là où une erreur coûterait cher. Trois formes :
 - **Approbation avant action** : paiement, envoi d'e-mail, suppression. L'agent s'arrête et attend
 - **Demande de précision** : l'agent pose une question plutôt que de deviner
@@ -63,9 +58,8 @@ Trop d'approbations produit de la **fatigue** et des validations à l'aveugle : 
 
 ---
 
-Quels sont les principaux risques d'un agent ?
+Quels sont les principaux risques d'un agent ? <!--anki:6c23424a5e3f5e732375-->
 ?
-<!--anki:6c23424a5e3f5e732375-->
 - **Boucles infinies** : même action répétée sans progrès. Parade : budget d'étapes et détection de répétition
 - **Dérive d'objectif** : l'agent poursuit un autre but, parfois après une injection. Parade : outils étroits, politiques hors du modèle ([[103-defenses-agents|défenses]])
 - **Actions destructives** : suppression, envoi, paiement. Parade : permissions minimales et approbation humaine
@@ -74,9 +68,8 @@ Quels sont les principaux risques d'un agent ?
 
 ---
 
-Quels ordres de grandeur pour le coût d'un agent ?
+Quels ordres de grandeur pour le coût d'un agent ? <!--anki:743745713e294b57476e-->
 ?
-<!--anki:743745713e294b57476e-->
 ```text
 chat simple                      1 ×   référence
 agent avec outils               ~4 ×   (historique renvoyé à chaque tour)
@@ -86,18 +79,16 @@ Ces repères, mesurés par Anthropic, expliquent pourquoi un agent se justifie p
 
 ---
 
-Comment un agent sait-il quand s'arrêter ?
+Comment un agent sait-il quand s'arrêter ? <!--anki:653272545f6866677138-->
 ?
-<!--anki:653272545f6866677138-->
 Quand le modèle **répond sans appeler d'outil** (ou émet un signal de fin), ou quand le harnais atteint une **limite** (itérations, budget).
 
 ---
 
 ## Mises en situation
 
-Mise en situation : le métier veut « un agent IA » pour traiter les demandes de congés, qui suivent toujours les mêmes règles. Que réponds-tu ?
+Mise en situation : le métier veut « un agent IA » pour traiter les demandes de congés, qui suivent toujours les mêmes règles. Que réponds-tu ? <!--anki:6f2d7b747a3e764a7673-->
 ?
-<!--anki:6f2d7b747a3e764a7673-->
 1. **Qualifier la tâche** : le chemin est-il connu à l'avance ? Ici oui, donc un **workflow** est plus fiable, moins cher et plus simple à déboguer ([[41-automatisation-code-nocode|automatisation]])
 2. **Placer le LLM là où il apporte de la valeur** : comprendre la demande en langage naturel et extraire les champs, le reste étant du code déterministe
 3. **Garder une porte de sortie** : les cas hors règles partent vers un humain
@@ -108,9 +99,8 @@ Mise en situation : le métier veut « un agent IA » pour traiter les demandes 
 
 ---
 
-Mise en situation : ton agent d'analyse tourne parfois 40 étapes, coûte cher et finit sans réponse utile. Quelles limites poses-tu ?
+Mise en situation : ton agent d'analyse tourne parfois 40 étapes, coûte cher et finit sans réponse utile. Quelles limites poses-tu ? <!--anki:42587c246536282e3159-->
 ?
-<!--anki:42587c246536282e3159-->
 1. **Plafonds** : nombre maximal d'itérations, budget en tokens et durée par tâche ([[122-finops-llm|FinOps]])
 2. **Conditions d'arrêt claires** : critères de succès explicites dans le prompt et, si possible, vérifiables par du code
 3. **Détecter les boucles** : mêmes appels d'outils répétés, absence de progrès entre deux étapes

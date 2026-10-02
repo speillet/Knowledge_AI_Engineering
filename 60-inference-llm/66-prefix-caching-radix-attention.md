@@ -3,44 +3,39 @@ Tags: #flashcards #ai-engineering #inference #kv-cache #caching #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 <!-- summary: prefix caching de vLLM, arbre radix de SGLang, éviction, ordonnancement et routage cache-aware, offloading du KV cache (LMCache), limites, canal auxiliaire temporel, métriques. -->
 
-Qu'est-ce que le prefix caching côté serveur ?
+
+Qu'est-ce que le prefix caching côté serveur ? <!--anki:703830706b2926403428-->
 ?
-<!--anki:703830706b2926403428-->
 La **réutilisation du [[61-kv-cache-attention|KV cache]]** d'un préfixe déjà calculé par une requête précédente : le serveur saute le prefill de ces tokens. Résultat : **TTFT plus court** et **débit plus élevé**. Il faut une correspondance **exacte, token par token, depuis le début** du prompt.
 
 ---
 
-Comment vLLM implémente-t-il l'automatic prefix caching ?
+Comment vLLM implémente-t-il l'automatic prefix caching ? <!--anki:4e4853344a45633c4345-->
 ?
-<!--anki:4e4853344a45633c4345-->
 Le KV cache est découpé en **blocs** ([[61-kv-cache-attention|PagedAttention]]). Chaque bloc plein est identifié par un **hash** (hash du bloc parent + tokens du bloc + clés éventuelles : adaptateur LoRA, image, sel). Une table hash → bloc permet de retrouver les préfixes ; les blocs libres sont évincés en **LRU**. Activé par défaut dans vLLM V1.
 
 ---
 
-Qu'est-ce que RadixAttention ?
+Qu'est-ce que RadixAttention ? <!--anki:71516b533b7348404c3e-->
 ?
-<!--anki:71516b533b7348404c3e-->
 La technique de **SGLang** qui range les préfixes en cache dans un **arbre radix** : chaque arête porte une séquence de tokens, chaque nœud pointe vers ses pages de KV cache. Une requête **descend l'arbre** jusqu'au plus long préfixe commun, réutilise son KV cache et ajoute une branche pour la suite. Le partage est **automatique** entre requêtes, tours de conversation et branches parallèles.
 
 ---
 
-Comment SGLang évince-t-il les entrées de l'arbre radix ?
+Comment SGLang évince-t-il les entrées de l'arbre radix ? <!--anki:746d6a686e7c2f454321-->
 ?
-<!--anki:746d6a686e7c2f454321-->
 En **LRU sur les feuilles** : on retire d'abord les branches les moins récemment utilisées. Un **compteur de références** protège les nœuds utilisés par des requêtes en cours, et la mémoire libérée retourne au pool commun.
 
 ---
 
-Qu'est-ce que l'ordonnancement cache-aware ?
+Qu'est-ce que l'ordonnancement cache-aware ? <!--anki:736e6973636b5e717b7b-->
 ?
-<!--anki:736e6973636b5e717b7b-->
 Servir en priorité les requêtes dont le **préfixe en cache est le plus long** : cela maximise les hits avant que ces préfixes soient évincés. Le risque est de **faire attendre** les autres requêtes : on l'équilibre avec une règle d'équité.
 
 ---
 
-Quels workloads en profitent le plus ?
+Quels workloads en profitent le plus ? <!--anki:4c337b29762e50327361-->
 ?
-<!--anki:4c337b29762e50327361-->
 - **Agents multi-tours** : l'historique grossit mais son début ne change pas
 - Longs **system prompts et définitions d'outils** partagés
 - **Few-shot**, **self-consistency**, arbres de raisonnement : un même préfixe, plusieurs branches
@@ -49,23 +44,20 @@ Quels workloads en profitent le plus ?
 
 ---
 
-Pourquoi le routage entre réplicas doit-il tenir compte du cache ?
+Pourquoi le routage entre réplicas doit-il tenir compte du cache ? <!--anki:723d5362493f5e2c4929-->
 ?
-<!--anki:723d5362493f5e2c4929-->
 Chaque réplica a **son propre cache** : un load balancer round-robin disperse les préfixes et le taux de hit s'effondre. Un routage par **affinité de préfixe** envoie la requête là où son préfixe est déjà chaud, tout en équilibrant la charge : SGLang router, llm-d, NVIDIA Dynamo, vLLM production stack ([[82-routing-llm|routage LLM]]).
 
 ---
 
-Qu'est-ce que l'offloading du KV cache ?
+Qu'est-ce que l'offloading du KV cache ? <!--anki:482b3a513b2b5b7e2545-->
 ?
-<!--anki:482b3a513b2b5b7e2545-->
 Étendre le cache **au-delà de la VRAM** : RAM CPU, SSD, stockage distant, voire un cache **partagé entre instances** (LMCache, gestionnaire de blocs de Dynamo). On conserve ainsi beaucoup plus de préfixes, et pour un long préfixe, **recharger** coûte moins cher que **recalculer**.
 
 ---
 
-Quelles sont les limites du prefix caching ?
+Quelles sont les limites du prefix caching ? <!--anki:7a28604f3a4f7871363e-->
 ?
-<!--anki:7a28604f3a4f7871363e-->
 - Correspondance **exacte depuis le début** : un token différent en tête, et rien n'est réutilisé
 - **Granularité par bloc** (vLLM ne cache que les blocs pleins)
 - Cache **borné** par la mémoire et évincé sous forte charge
@@ -73,16 +65,14 @@ Quelles sont les limites du prefix caching ?
 
 ---
 
-Quel risque de sécurité en multi-tenant ?
+Quel risque de sécurité en multi-tenant ? <!--anki:6b45506d623c422f4b4a-->
 ?
-<!--anki:6b45506d623c422f4b4a-->
 Un **canal auxiliaire temporel** : un TTFT plus court révèle qu'un préfixe est déjà en cache, ce qui permet de deviner le prompt d'un autre utilisateur morceau par morceau. Parades : **isoler le cache par tenant** (ex. `cache_salt` dans vLLM) ; les fournisseurs d'API isolent le cache par organisation ou par workspace.
 
 ---
 
-Comment mesurer l'efficacité du prefix cache ?
+Comment mesurer l'efficacité du prefix cache ? <!--anki:79677d5a467a362a2129-->
 ?
-<!--anki:79677d5a467a362a2129-->
 - **Taux de hit** du prefix cache (métriques Prometheus de vLLM et SGLang)
 - **TTFT** par percentile, avant et après
 - Côté API : part des tokens d'entrée **lus depuis le cache**
@@ -91,9 +81,8 @@ Une chute brutale du taux de hit signale souvent un préfixe devenu instable ([[
 
 ---
 
-Calcul : quel gain de TTFT quand 9 000 des 10 000 tokens d'un prompt sont déjà en cache ?
+Calcul : quel gain de TTFT quand 9 000 des 10 000 tokens d'un prompt sont déjà en cache ? <!--anki:6365333934613162646331393439376661353639326434613561303631636664-->
 ?
-<!--anki:6365333934613162646331393439376661353639326434613561303631636664-->
 Sur un 8B, le prefill coûte ≈ 2 × N FLOP par token ([[69-roofline-prefill-decode|roofline]]) :
 ```text
 sans cache : 10 000 tokens à calculer → ≈ 0,3 s de prefill
@@ -105,9 +94,8 @@ Le TTFT est divisé par près de 10, et le GPU libère autant de capacité de pr
 
 ## Mises en situation
 
-Mise en situation : ton assistant multi-tours affichait 70 % de hits sur le prefix cache. Après une mise à jour, le taux tombe à 5 % et le TTFT double. Que cherches-tu ?
+Mise en situation : ton assistant multi-tours affichait 70 % de hits sur le prefix cache. Après une mise à jour, le taux tombe à 5 % et le TTFT double. Que cherches-tu ? <!--anki:7964774643443c5a3328-->
 ?
-<!--anki:7964774643443c5a3328-->
 1. **Un changement en tête de prompt** : horodatage, identifiant de session, ordre des outils devenu variable
 2. **Vérifier la règle** : le prefix caching exige une correspondance **exacte depuis le premier token**
 3. **Regarder le déploiement** : nouveaux réplicas aux caches froids, ou routage redevenu round-robin
@@ -118,9 +106,8 @@ Mise en situation : ton assistant multi-tours affichait 70 % de hits sur le pref
 
 ---
 
-Mise en situation : tu passes de 1 à 4 réplicas vLLM derrière un load balancer classique, et le TTFT se dégrade alors que tu as plus de GPU. Pourquoi ?
+Mise en situation : tu passes de 1 à 4 réplicas vLLM derrière un load balancer classique, et le TTFT se dégrade alors que tu as plus de GPU. Pourquoi ? <!--anki:6e67712c2325372c714e-->
 ?
-<!--anki:6e67712c2325372c714e-->
 1. **Cause** : chaque réplica a **son propre cache**. Un round-robin disperse les requêtes et fait chuter les hits
 2. **Mesurer** : taux de hit par réplica, avant et après le passage à l'échelle
 3. **Corriger** : routeur **cache-aware** (SGLang router, llm-d, Dynamo, vLLM production stack) qui envoie la requête là où son préfixe est chaud
@@ -131,9 +118,8 @@ Mise en situation : tu passes de 1 à 4 réplicas vLLM derrière un load balance
 
 ---
 
-Mise en situation : ton service multi-clients partage un même modèle, et un client s'inquiète que ses prompts puissent fuiter via le cache. Que réponds-tu ?
+Mise en situation : ton service multi-clients partage un même modèle, et un client s'inquiète que ses prompts puissent fuiter via le cache. Que réponds-tu ? <!--anki:7542547e2e756e342652-->
 ?
-<!--anki:7542547e2e756e342652-->
 1. **Le risque est réel** : le prefix caching crée un **canal auxiliaire temporel**. Un TTFT plus court révèle qu'un préfixe est déjà en cache
 2. **Ce qui fuit** : pas le contenu directement, mais la possibilité de **deviner un prompt** morceau par morceau en mesurant les temps de réponse
 3. **Parade principale** : isoler le cache par client (`cache_salt` dans vLLM), comme les fournisseurs d'API le font par organisation

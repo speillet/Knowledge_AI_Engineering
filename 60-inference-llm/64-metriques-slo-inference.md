@@ -2,23 +2,21 @@
 Tags: #flashcards #ai-engineering #inference #slo #llm
 <!-- summary: TTFT, TPOT, throughput, goodput, percentiles, définition d'un SLO, calcul de concurrence par la loi de Little, signaux d'autoscaling, benchmarks. -->
 
-Qu'est-ce que le TTFT ?
+
+Qu'est-ce que le TTFT ? <!--anki:68355e7b7b31743d5d46-->
 ?
-<!--anki:68355e7b7b31743d5d46-->
 **Time To First Token** : délai entre l'envoi de la requête et le **premier token reçu**. Il dépend de la file d'attente et du **prefill** (longueur du prompt). C'est la réactivité perçue en streaming.
 
 ---
 
-Qu'est-ce que le TPOT (ou ITL) ?
+Qu'est-ce que le TPOT (ou ITL) ? <!--anki:68424b38777e6e2a472f-->
 ?
-<!--anki:68424b38777e6e2a472f-->
 **Time Per Output Token** / **Inter-Token Latency** : le temps entre deux tokens générés pendant le **decode**. Il fixe la **vitesse de lecture** du streaming (ex. 30 ms/token ≈ 33 tokens/s).
 
 ---
 
-Quels repères de latence viser selon l'usage ?
+Quels repères de latence viser selon l'usage ? <!--anki:6f5537494a4a4244263c-->
 ?
-<!--anki:6f5537494a4a4244263c-->
 ```text
 Autocomplétion de code      TTFT < 200 à 300 ms   (sinon inutilisable)
 Assistant vocal             réponse < 1 s de bout en bout
@@ -30,9 +28,8 @@ Repère de lecture : **20 tokens par seconde** suffit à suivre un texte qui dé
 
 ---
 
-Comment se décompose la latence end-to-end ?
+Comment se décompose la latence end-to-end ? <!--anki:797160634d527b2e5e4d-->
 ?
-<!--anki:797160634d527b2e5e4d-->
 ```text
 latence E2E ≈ TTFT + TPOT × (nb tokens de sortie − 1)
 ```
@@ -40,37 +37,32 @@ Une réponse longue est donc dominée par le TPOT, une réponse courte sur un lo
 
 ---
 
-Qu'est-ce que le throughput d'un service d'inférence ?
+Qu'est-ce que le throughput d'un service d'inférence ? <!--anki:49216f726b2d6a6f292d-->
 ?
-<!--anki:49216f726b2d6a6f292d-->
 Le **débit** du service : **tokens de sortie par seconde** (tous utilisateurs confondus) ou **requêtes par seconde**. C'est lui qui détermine le **coût par token**.
 
 ---
 
-Quel compromis entre latence et débit ?
+Quel compromis entre latence et débit ? <!--anki:7a332c303b47545233-->
 ?
-<!--anki:7a332c303b47545233-->
 Un **batch plus gros** augmente le débit (GPU mieux rempli) mais **dégrade le TPOT** de chaque requête. On règle la **concurrence maximale** pour tenir le SLO de latence.
 
 ---
 
-Qu'est-ce que le goodput ?
+Qu'est-ce que le goodput ? <!--anki:4b7157417d2d3c3f7e39-->
 ?
-<!--anki:4b7157417d2d3c3f7e39-->
 Le débit **des seules requêtes qui respectent le SLO** (TTFT et TPOT sous les seuils). Plus honnête que le throughput brut : servir vite des requêtes hors SLO ne compte pas.
 
 ---
 
-Pourquoi raisonner en percentiles pour la latence d'inférence ?
+Pourquoi raisonner en percentiles pour la latence d'inférence ? <!--anki:4b306636786f4b446d71-->
 ?
-<!--anki:4b306636786f4b446d71-->
 Parce que la moyenne cache la **queue de distribution** : on fixe les SLO sur **p95/p99**. Un p50 excellent avec un p99 de 20 s reste une mauvaise expérience pour 1 % des utilisateurs.
 
 ---
 
-À quoi ressemble un SLO d'inférence ?
+À quoi ressemble un SLO d'inférence ? <!--anki:6b77706546525e735472-->
 ?
-<!--anki:6b77706546525e735472-->
 Un objectif chiffré sur une fenêtre de temps, par exemple :
 ```text
 p95 TTFT < 800 ms, p95 TPOT < 50 ms, disponibilité ≥ 99,5 % sur 30 jours
@@ -79,30 +71,26 @@ Il pilote le dimensionnement, les [[83-gateway-ingress|timeouts et le rate limit
 
 ---
 
-Qu'est-ce qui limite la concurrence d'un serveur ?
+Qu'est-ce qui limite la concurrence d'un serveur ? <!--anki:4e7d7c3d6a4c3c4f5f3b-->
 ?
-<!--anki:4e7d7c3d6a4c3c4f5f3b-->
 Surtout la **VRAM disponible pour le [[61-kv-cache-attention|KV cache]]** : chaque requête active y occupe une place proportionnelle à son contexte. Quand le cache est plein, les requêtes **attendent en file** ou sont préemptées.
 
 ---
 
-Quels signaux utiliser pour l'autoscaling d'un serveur d'inférence LLM ?
+Quels signaux utiliser pour l'autoscaling d'un serveur d'inférence LLM ? <!--anki:6e46644e3e766a2e4a7d-->
 ?
-<!--anki:6e46644e3e766a2e4a7d-->
 La **longueur de la file d'attente** (requêtes en attente) et le **taux d'occupation du KV cache**, exposés en métriques Prometheus par le serveur ([[11-serveurs-inference-llm|vLLM]]). **Pas l'utilisation GPU**, souvent proche de 100 % et peu discriminante.
 
 ---
 
-Comment mesurer les performances d'un déploiement ?
+Comment mesurer les performances d'un déploiement ? <!--anki:505e777663703b53257c-->
 ?
-<!--anki:505e777663703b53257c-->
 Par des **benchmarks de charge** réalistes (distribution des longueurs de prompt/sortie, taux d'arrivée) : `vllm bench serve`, **GuideLLM**, **genai-perf** (NVIDIA). On trace la **courbe latence vs débit**.
 
 ---
 
-Calcul : combien de requêtes simultanées faut-il servir pour 10 requêtes/s qui durent 8 secondes ?
+Calcul : combien de requêtes simultanées faut-il servir pour 10 requêtes/s qui durent 8 secondes ? <!--anki:44597b556d555a6b6b32-->
 ?
-<!--anki:44597b556d555a6b6b32-->
 **Loi de Little** : concurrence = débit × durée.
 ```text
 L = λ × W = 10 req/s × 8 s = 80 requêtes en vol en moyenne
@@ -113,9 +101,8 @@ Avec 8 000 tokens de contexte par requête sur un 8B, c'est **≈ 80 Go de KV ca
 
 ## Mises en situation
 
-Mise en situation : le produit demande « une réponse en moins de 2 secondes » pour un assistant qui streame des réponses de 400 tokens. Comment traduis-tu ce besoin en SLO ?
+Mise en situation : le produit demande « une réponse en moins de 2 secondes » pour un assistant qui streame des réponses de 400 tokens. Comment traduis-tu ce besoin en SLO ? <!--anki:772b352d2f4c5b694141-->
 ?
-<!--anki:772b352d2f4c5b694141-->
 1. **Décomposer** : en streaming, l'utilisateur perçoit d'abord le **TTFT**, puis la vitesse de lecture (**TPOT**)
 2. **Poser des cibles** : par exemple p95 TTFT < 800 ms et p95 TPOT < 50 ms, soit environ 20 tokens par seconde
 3. **Vérifier la cohérence** : 400 tokens à 50 ms font 20 s au total. Si le besoin est « tout en 2 s », il faut raccourcir la réponse, pas accélérer le GPU
@@ -126,9 +113,8 @@ Mise en situation : le produit demande « une réponse en moins de 2 secondes »
 
 ---
 
-Mise en situation : ton dashboard affiche 100 % d'utilisation GPU et l'équipe conclut qu'il faut acheter des GPU. Comment vérifies-tu ?
+Mise en situation : ton dashboard affiche 100 % d'utilisation GPU et l'équipe conclut qu'il faut acheter des GPU. Comment vérifies-tu ? <!--anki:4a3363746c6836453d3b-->
 ?
-<!--anki:4a3363746c6836453d3b-->
 1. **Se méfier de cette métrique** : elle indique qu'un kernel tourne, pas que le GPU est bien exploité
 2. **Regarder les vraies causes** : file d'attente, occupation du KV cache, préemptions ([[93-monitoring-inference|métriques vLLM]])
 3. **Tracer la courbe latence-débit** : à quel niveau de charge le SLO casse-t-il vraiment ?
@@ -139,9 +125,8 @@ Mise en situation : ton dashboard affiche 100 % d'utilisation GPU et l'équipe c
 
 ---
 
-Mise en situation : ton autoscaling se déclenche trop tard, et des requêtes attendent plusieurs secondes avant d'être traitées. Sur quoi le règles-tu ?
+Mise en situation : ton autoscaling se déclenche trop tard, et des requêtes attendent plusieurs secondes avant d'être traitées. Sur quoi le règles-tu ? <!--anki:6c6759312a4c4c493574-->
 ?
-<!--anki:6c6759312a4c4c493574-->
 1. **Pas sur l'utilisation GPU**, presque toujours proche de 100 %
 2. **Signaux utiles** : longueur de la file d'attente et taux d'occupation du KV cache, exposés en métriques par le serveur
 3. **Anticiper le temps de démarrage** : un réplica LLM met plusieurs minutes à charger ses poids ([[10-images-modeles-poids|cold start]])

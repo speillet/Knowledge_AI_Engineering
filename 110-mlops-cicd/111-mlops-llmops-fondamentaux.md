@@ -3,30 +3,27 @@ Tags: #flashcards #ai-engineering #mlops #llmops #llm
 Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 <!-- summary: DevOps ou MLOps, spécificités du LLMOps, ce qu'il faut versionner (code et config, modèles et données), model registry, lineage, reproductibilité, environnements dev/staging/prod, rôle du Lead. -->
 
-Qu'est-ce que le MLOps ?
+
+Qu'est-ce que le MLOps ? <!--anki:72493079506c593c216d-->
 ?
-<!--anki:72493079506c593c216d-->
 L'application des pratiques **DevOps au cycle de vie ML** : données → entraînement → évaluation → déploiement → monitoring, avec **automatisation et reproductibilité**.
 
 ---
 
-À ne pas confondre : DevOps et MLOps ?
+À ne pas confondre : DevOps et MLOps ? <!--anki:47765959597d7b3a6634-->
 ?
-<!--anki:47765959597d7b3a6634-->
 DevOps versionne du **code** ; MLOps versionne **code + données + modèle + configuration** — le comportement d'un système ML vient des données, pas seulement du code.
 
 ---
 
-Qu'est-ce que le LLMOps par rapport au MLOps classique ?
+Qu'est-ce que le LLMOps par rapport au MLOps classique ? <!--anki:4f587838485048773f3c-->
 ?
-<!--anki:4f587838485048773f3c-->
 On entraîne rarement from scratch : le cycle est centré sur **prompts, RAG, fine-tuning, evals et coûts** ; les artefacts sont des prompts versionnés, des adapters et des index.
 
 ---
 
-Quels artefacts de code et de configuration faut-il versionner dans un système LLM ?
+Quels artefacts de code et de configuration faut-il versionner dans un système LLM ? <!--anki:723b4b462f6130794733-->
 ?
-<!--anki:723b4b462f6130794733-->
 - Le **code** applicatif et les pipelines
 - Les **prompts**, y compris les descriptions d'outils
 - La **config de génération** : modèle et version exacte, température, `max_tokens`, schéma de sortie
@@ -35,9 +32,8 @@ Changer l'un d'eux change le comportement : chaque réponse en production doit p
 
 ---
 
-Quels artefacts de modèle et de données faut-il versionner dans un système LLM ?
+Quels artefacts de modèle et de données faut-il versionner dans un système LLM ? <!--anki:364c47756e29552b3e-->
 ?
-<!--anki:364c47756e29552b3e-->
 - Les **poids ou adapters** fine-tunés ([[51-fine-tuning-adaptation|LoRA]]), avec les données et la recette qui les ont produits
 - Les **golden datasets** d'éval, pour que deux scores soient comparables
 - Les **index RAG** : documents sources, chunking et modèle d'embedding ([[153-data-flywheel-versioning|versioning]])
@@ -46,16 +42,14 @@ Un score d'eval sans la version du jeu de test ne veut rien dire.
 
 ---
 
-Qu'est-ce qu'un model registry ?
+Qu'est-ce qu'un model registry ? <!--anki:726f4b36424a7d697952-->
 ?
-<!--anki:726f4b36424a7d697952-->
 Un service qui **stocke et versionne les modèles** avec métadonnées, stages (staging/prod) et lineage — ex. **MLflow, W&B, Hugging Face Hub**. Distinct du [[10-images-modeles-poids|container registry]].
 
 ---
 
-Qu'est-ce que le lineage d'un modèle ?
+Qu'est-ce que le lineage d'un modèle ? <!--anki:4a724a21746435493b53-->
 ?
-<!--anki:4a724a21746435493b53-->
 La **traçabilité complète** : quelles données, quel code et quels hyperparamètres ont produit cette version du modèle.
 ```yaml
 # manifeste d'un artefact déployé : les 4 versions à tracer ensemble
@@ -68,9 +62,8 @@ Sans ce manifeste, une régression en production devient une enquête sans pièc
 
 ---
 
-À ne pas confondre : versionner et épingler ?
+À ne pas confondre : versionner et épingler ? <!--anki:6c38252c232c417e7d21-->
 ?
-<!--anki:6c38252c232c417e7d21-->
 - **Versionner** : conserver l'**historique** des artefacts (code, prompts, poids, datasets) pour pouvoir revenir en arrière et comparer
 - **Épingler** : déclarer dans le déploiement une **version exacte** (digest, identifiant daté) au lieu d'un alias mouvant comme `latest`
 
@@ -78,16 +71,14 @@ On peut très bien versionner ses prompts **et** appeler un modèle via un alias
 
 ---
 
-Pourquoi la reproductibilité est-elle difficile avec les LLM ?
+Pourquoi la reproductibilité est-elle difficile avec les LLM ? <!--anki:6f574d3477383b5a6656-->
 ?
-<!--anki:6f574d3477383b5a6656-->
 **Non-déterminisme** (sampling), **versions de modèles API qui changent**, dépendances GPU — d'où : fixer les seeds/température, **épingler les versions** et tracer les configs.
 
 ---
 
-Comment gérer dev/staging/prod pour une app LLM ?
+Comment gérer dev/staging/prod pour une app LLM ? <!--anki:69354f78696b443b7756-->
 ?
-<!--anki:69354f78696b443b7756-->
 - **Mêmes pipelines** de déploiement partout, seules les valeurs changent
 - Modèles, prompts et datasets **épinglés** par environnement
 - **Evals de non-régression** obligatoires avant chaque promotion ([[112-cicd-modeles|eval gate]])
@@ -97,9 +88,8 @@ Piège fréquent : un alias de modèle (`latest`) en production, qui change sans
 
 ---
 
-Quel est le rôle du Lead sur le volet MLOps ?
+Quel est le rôle du Lead sur le volet MLOps ? <!--anki:7a3e4144593a524b4139-->
 ?
-<!--anki:7a3e4144593a524b4139-->
 Imposer les **standards** plutôt que tout faire lui-même :
 - **Registry unique** et conventions de versioning
 - **Gates d'éval** obligatoires ([[112-cicd-modeles|CI/CD]])
@@ -112,9 +102,8 @@ Le but : qu'un changement risqué ne puisse pas partir en production **par accid
 
 ## Mises en situation
 
-Mise en situation : une application LLM en production donne des réponses différentes d'il y a deux mois, et personne ne sait ce qui a changé. Que manque-t-il, et comment le corriges-tu ?
+Mise en situation : une application LLM en production donne des réponses différentes d'il y a deux mois, et personne ne sait ce qui a changé. Que manque-t-il, et comment le corriges-tu ? <!--anki:75382a6c5a6c4a356639-->
 ?
-<!--anki:75382a6c5a6c4a356639-->
 1. **Constater** : sans versionnage complet, on ne peut ni expliquer ni revenir en arrière
 2. **Versionner les quatre briques** : code, prompts et configuration de génération, modèle ou adapter, index RAG
 3. **Épingler** la version exacte du modèle, y compris côté API, qui évolue sans commit chez toi ([[113-monitoring-drift-feedback|mises à jour du provider]])
@@ -125,9 +114,8 @@ Mise en situation : une application LLM en production donne des réponses diffé
 
 ---
 
-Mise en situation : trois équipes déploient chacune leurs modèles, avec leurs conventions, et personne ne sait qui est responsable de quoi en production. Que mets-tu en place comme lead ?
+Mise en situation : trois équipes déploient chacune leurs modèles, avec leurs conventions, et personne ne sait qui est responsable de quoi en production. Que mets-tu en place comme lead ? <!--anki:782852524b5072625831-->
 ?
-<!--anki:782852524b5072625831-->
 1. **Un registre unique** pour les modèles et adapters, avec métadonnées, étapes et lineage
 2. **Des conventions de versionnage** communes, appliquées par la CI plutôt que par la discipline
 3. **Un propriétaire nommé** par modèle en production, responsable de sa qualité et de son retrait

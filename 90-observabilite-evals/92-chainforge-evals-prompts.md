@@ -2,25 +2,23 @@
 Tags: #flashcards #ai-engineering #evals #prompts #llm
 <!-- summary: comparer prompts et modèles, evals automatiques, tests de régression et cas qui basculent, evals comme prérequis au déploiement. -->
 
-Qu'est-ce que ChainForge ?
+
+Qu'est-ce que ChainForge ? <!--anki:50782b535f40475d557e-->
 ?
-<!--anki:50782b535f40475d557e-->
 Un **environnement visuel open source** pour **comparer systématiquement prompts et modèles** côte à côte : on relie des nœuds d'entrées, de prompts, de modèles et d'évaluateurs, et on visualise les résultats en grille.
 
 Utile en **phase d'exploration** : choisir un modèle, tester des variantes de prompt sur quelques dizaines de cas. Pour les evals en CI et en production, on passe à des outils scriptables ([[94-evals-methodologie|méthodologie]]).
 
 ---
 
-Quel problème ChainForge adresse-t-il ?
+Quel problème ChainForge adresse-t-il ? <!--anki:6521623b3457727e2555-->
 ?
-<!--anki:6521623b3457727e2555-->
 Le prompt engineering « au feeling » : il permet de **tester un prompt sur N variantes × M modèles × K inputs** en une passe.
 
 ---
 
-Quels ordres de grandeur pour un jeu d'évaluation ?
+Quels ordres de grandeur pour un jeu d'évaluation ? <!--anki:4346514f6f3c29256635-->
 ?
-<!--anki:4346514f6f3c29256635-->
 ```text
 20 à 50 exemples    itérer vite sur un prompt, détecter les gros écarts
 100 exemples        écart mesurable ≈ 8 points (à 80 % de réussite)
@@ -31,9 +29,8 @@ La règle : la taille dépend de **l'écart qu'on veut détecter**. Sur 100 exem
 
 ---
 
-Quelles évaluations automatiques simples existent ?
+Quelles évaluations automatiques simples existent ? <!--anki:767d70246e577d7b7829-->
 ?
-<!--anki:767d70246e577d7b7829-->
 **Exact match, regex, contains, validité JSON, tests de code** — rapides, gratuites et déterministes quand la tâche s'y prête.
 ```python
 def evaluer(sortie, attendu):
@@ -46,18 +43,16 @@ Règle : **le plus simple qui marche**. On ne sort le juge LLM que pour ce que l
 
 ---
 
-Qu'est-ce qu'un test de régression de prompts ?
+Qu'est-ce qu'un test de régression de prompts ? <!--anki:632b5d52586e586c503e-->
 ?
-<!--anki:632b5d52586e586c503e-->
 Rejouer le **golden dataset à chaque modification** de prompt ou de modèle, souvent en [[112-cicd-modeles|CI]], et comparer les scores à la version en production.
 
 On regarde les scores globaux **et** les cas qui **basculent** de réussi à échoué : un score stable peut masquer dix régressions compensées par dix améliorations.
 
 ---
 
-Pourquoi les evals sont-elles un prérequis au déploiement ?
+Pourquoi les evals sont-elles un prérequis au déploiement ? <!--anki:4d4f4667637553714c55-->
 ?
-<!--anki:4d4f4667637553714c55-->
 Sans mesure, impossible de **choisir un modèle**, de **[[82-routing-llm|router]]**, de valider un changement de prompt ou de savoir si une optimisation de coût a dégradé la qualité : on pilote à l'aveugle, sur des impressions tirées de quelques exemples.
 
 Un jeu d'eval de quelques centaines de cas représentatifs est le premier livrable d'un projet LLM, avant le prompt définitif.
@@ -66,9 +61,8 @@ Un jeu d'eval de quelques centaines de cas représentatifs est le premier livrab
 
 ## Mises en situation
 
-Mise en situation : ton équipe doit choisir entre trois modèles pour une tâche d'extraction, et chacun a son avis. Comment tranches-tu en une journée ?
+Mise en situation : ton équipe doit choisir entre trois modèles pour une tâche d'extraction, et chacun a son avis. Comment tranches-tu en une journée ? <!--anki:4d6e266669303f537a7a-->
 ?
-<!--anki:4d6e266669303f537a7a-->
 1. **Constituer un golden dataset** de 50 à 100 cas réels, avec réponses attendues, y compris des cas difficiles
 2. **Définir les métriques** : exactitude par champ, validité du format, coût et latence
 3. **Comparer en une passe** les trois modèles sur les mêmes entrées, avec le même prompt puis avec un prompt adapté à chacun
@@ -79,9 +73,8 @@ Mise en situation : ton équipe doit choisir entre trois modèles pour une tâch
 
 ---
 
-Mise en situation : une modification de prompt améliore visiblement les réponses en démonstration, mais tu ne sais pas si elle dégrade autre chose. Que fais-tu avant de la déployer ?
+Mise en situation : une modification de prompt améliore visiblement les réponses en démonstration, mais tu ne sais pas si elle dégrade autre chose. Que fais-tu avant de la déployer ? <!--anki:726354326a61687c2d2f-->
 ?
-<!--anki:726354326a61687c2d2f-->
 1. **Rejouer le golden dataset** avant et après, sur les mêmes entrées
 2. **Analyser en appariant** les résultats cas par cas, pour voir ce qui s'améliore et ce qui casse
 3. **Automatiser** ce rejeu en CI, à chaque changement de prompt ou de modèle ([[112-cicd-modeles|eval gate]])

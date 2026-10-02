@@ -3,18 +3,17 @@ Tags: #flashcards #ai-engineering #rag #agents #deep-research #llm
 Vérifié le : 30 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 <!-- summary: RAG ou agent de recherche, boucle de recherche, sous-agents parallèles, outils de recherche, citations fiables, risques (sources, injection, biais), évaluation (couverture, BrowseComp), calcul du coût d'un rapport, quand ne pas l'utiliser. -->
 
-Qu'est-ce qu'un agent de recherche (deep research) ?
+
+Qu'est-ce qu'un agent de recherche (deep research) ? <!--anki:315f783362537c352a-->
 ?
-<!--anki:315f783362537c352a-->
 Un agent qui répond à une question complexe en **menant lui-même une recherche** : il planifie, lance des dizaines de requêtes (web ou documents internes), lit les sources, **creuse** les pistes prometteuses, puis rédige un **rapport cité**. Il dure de quelques minutes à une heure, contre quelques secondes pour un RAG.
 
 Toutes les grandes offres grand public en proposent un depuis 2025.
 
 ---
 
-À ne pas confondre : RAG classique et agent de recherche ?
+À ne pas confondre : RAG classique et agent de recherche ? <!--anki:6d437d676a3c354d443e-->
 ?
-<!--anki:6d437d676a3c354d443e-->
 - **RAG** : **une** recherche, top-k passages, une réponse. Rapide et bon marché, mais limité à ce que la première requête trouve ([[21-rag-fondamentaux|RAG]])
 - **Agent de recherche** : **boucle** de requêtes qui dépendent de ce qui a déjà été lu, sur de nombreuses sources, avec synthèse. Couvre les questions **ouvertes ou à plusieurs sauts**, mais coûte 10 à 100 fois plus
 
@@ -22,9 +21,8 @@ Entre les deux, l'**agentic RAG** : quelques recherches décidées par le modèl
 
 ---
 
-Comment se déroule la boucle d'un agent de recherche ?
+Comment se déroule la boucle d'un agent de recherche ? <!--anki:4c7b53673262534b5173-->
 ?
-<!--anki:4c7b53673262534b5173-->
 1. **Clarifier** la question, parfois en interrogeant l'utilisateur
 2. **Planifier** : décomposer en sous-questions
 3. **Chercher et lire** : requêtes, sélection des résultats, lecture des pages utiles
@@ -35,18 +33,16 @@ L'arrêt se décide sur **couverture suffisante** ou **budget épuisé**.
 
 ---
 
-Pourquoi les agents de recherche utilisent-ils souvent plusieurs agents ?
+Pourquoi les agents de recherche utilisent-ils souvent plusieurs agents ? <!--anki:4831403a517c48356826-->
 ?
-<!--anki:4831403a517c48356826-->
 Parce que la recherche se **parallélise** bien : un orchestrateur lance des **sous-agents** sur des sous-questions indépendantes, chacun avec son propre contexte, qui ne renvoient qu'un **résumé**. Anthropic rapporte un gain important de son système multi-agents sur un agent seul, au prix d'environ **15 fois plus de tokens** qu'un chat ([[36-orchestration-agents|orchestration]]).
 
 À réserver aux questions **larges** : pour une question étroite, un seul agent suffit.
 
 ---
 
-Quels types d'outils donner à un agent de recherche ?
+Quels types d'outils donner à un agent de recherche ? <!--anki:6a416525792b62536b65-->
 ?
-<!--anki:6a416525792b62536b65-->
 - **API de recherche web** conçues pour les agents (résultats nettoyés, extraits pertinents), ou recherche web intégrée au fournisseur du modèle
 - **Récupération de page** qui renvoie du texte propre, pas du HTML brut
 - **Recherche interne** : index documentaire, SharePoint, tickets, via [[33-mcp|MCP]]
@@ -56,9 +52,8 @@ Des résultats **courts et denses** comptent plus que le nombre d'outils ([[49-a
 
 ---
 
-Comment rendre les citations d'un rapport fiables ?
+Comment rendre les citations d'un rapport fiables ? <!--anki:77332e51657671396742-->
 ?
-<!--anki:77332e51657671396742-->
 - Attacher **chaque affirmation** à un passage précis d'une source lue, pas seulement à une URL
 - Faire vérifier, par un appel séparé, que le **passage soutient bien** l'affirmation
 - Signaler les **sources contradictoires** au lieu d'en choisir une en silence
@@ -68,9 +63,8 @@ Une citation vers une page qui ne dit pas ce qu'on lui prête est pire qu'aucune
 
 ---
 
-Quels risques spécifiques pose un agent de recherche ?
+Quels risques spécifiques pose un agent de recherche ? <!--anki:435a7b2d2f7670487140-->
 ?
-<!--anki:435a7b2d2f7670487140-->
 - **Sources peu fiables ou générées par IA** citées comme autorités
 - **Prompt injection** par les pages lues, qui peuvent orienter la synthèse ou tenter d'exfiltrer ([[102-menaces-agents|menaces]])
 - **Biais de confirmation** : l'agent cherche ce qui confirme sa première hypothèse
@@ -80,9 +74,8 @@ D'où des sources autorisées ou priorisées, et un rapport qui dit **ce qui n'a
 
 ---
 
-Comment évaluer un agent de recherche ?
+Comment évaluer un agent de recherche ? <!--anki:50402c6137552b754438-->
 ?
-<!--anki:50402c6137552b754438-->
 - **Exactitude** sur des questions à réponse vérifiable, dont des questions **difficiles à trouver** (benchmarks comme BrowseComp)
 - **Couverture** : part des points clés attendus présents dans le rapport, listés par un expert
 - **Fidélité des citations** : chaque affirmation est-elle soutenue par sa source ?
@@ -92,9 +85,8 @@ Un **juge calibré** note couverture et citations ; l'exactitude se vérifie par
 
 ---
 
-Calcul : combien coûte un rapport de recherche ?
+Calcul : combien coûte un rapport de recherche ? <!--anki:7332246760345a2c3f25-->
 ?
-<!--anki:7332246760345a2c3f25-->
 Hypothèses : 5 sous-agents, 15 pages lues chacun, 4 000 tokens par page, plus l'orchestrateur et la rédaction.
 ```text
 lecture : 5 × 15 × 4 000         = 300 000 tokens d'entrée
@@ -106,9 +98,8 @@ Raisonnable pour une note d'analyse, prohibitif pour une question de support. D'
 
 ---
 
-Quand ne pas utiliser d'agent de recherche ?
+Quand ne pas utiliser d'agent de recherche ? <!--anki:777e6c2d5123333b7074-->
 ?
-<!--anki:777e6c2d5123333b7074-->
 - **Question factuelle simple**, à laquelle un RAG ou une recherche unique répond
 - **Latence attendue en secondes** : chat de support, assistant vocal
 - **Corpus fermé et petit**, qui tient dans le contexte
@@ -120,9 +111,8 @@ Il sert les questions **ouvertes, larges et à forte valeur** : veille, due dili
 
 ## Mises en situation
 
-Mise en situation : l'équipe juridique veut un agent qui prépare des notes de veille réglementaire à partir du web et de la base documentaire interne. Comment le conçois-tu ?
+Mise en situation : l'équipe juridique veut un agent qui prépare des notes de veille réglementaire à partir du web et de la base documentaire interne. Comment le conçois-tu ? <!--anki:6e2c4d595d2f65235548-->
 ?
-<!--anki:6e2c4d595d2f65235548-->
 1. **Sources** : textes officiels et sites institutionnels en priorité, base interne via un outil de recherche, liste de domaines de confiance
 2. **Architecture** : plan validé par le juriste, sous-agents par sous-question, rédaction finale avec citations au passage près
 3. **Vérification** : contrôle séparé que chaque passage soutient l'affirmation, contradictions signalées
@@ -133,9 +123,8 @@ Mise en situation : l'équipe juridique veut un agent qui prépare des notes de 
 
 ---
 
-Mise en situation : ton agent de recherche produit de bons rapports, mais coûte 8 € et 25 minutes par question, et les utilisateurs l'emploient pour des questions simples. Que fais-tu ?
+Mise en situation : ton agent de recherche produit de bons rapports, mais coûte 8 € et 25 minutes par question, et les utilisateurs l'emploient pour des questions simples. Que fais-tu ? <!--anki:45436375787a3d634c5f-->
 ?
-<!--anki:45436375787a3d634c5f-->
 1. **Mesurer** la répartition des questions : simples, moyennes, vraiment ouvertes
 2. **Router** : RAG ou recherche unique pour les questions simples, agent seulement pour les autres ([[82-routing-llm|routing]])
 3. **Budgéter** : nombre maximal de sous-agents, de pages et de tokens par question

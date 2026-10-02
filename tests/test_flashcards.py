@@ -14,6 +14,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 import assign_card_ids as ids
 import export_anki as export
 import lint_flashcards as lint
+import sr_plugin
 import sync_catalog as catalog
 
 ROOT = lint.ROOT
@@ -92,6 +93,17 @@ class ParserTests(unittest.TestCase):
         changed = lint.parse_cards(text.replace("Question ?", "Autre formulation ?"))[0][0].guid
         self.assertEqual(original, changed)
 
+    def test_assign_puts_id_at_end_of_question(self):
+        text, _ = ids.assign("Question\nsur deux lignes ?\n?\nRéponse\n")
+        self.assertRegex(text, r"^Question\nsur deux lignes \? <!--anki:[0-9a-f]+-->\n\?\nRéponse\n$")
+        self.assertEqual(lint.parse_cards(text)[0][0].question, "Question sur deux lignes ?")
+
+    def test_plugin_skips_the_line_after_a_comment(self):
+        standalone = sr_plugin.parse("Q ?\n?\n<!--anki:61-->\nRéponse\n\n---\n")
+        inline = sr_plugin.parse("Q ? <!--anki:61-->\n?\nRéponse\n\nSuite\n\n---\n")
+        self.assertEqual(standalone, [("multiline", "Q ?\n?")])
+        self.assertEqual(inline, [("multiline", "Q ? <!--anki:61-->\n?\nRéponse\n\nSuite")])
+
     def test_assign_rejects_invalid_cards(self):
         with self.assertRaises(ValueError):
             ids.assign("Question\nRéponse\n")
@@ -152,6 +164,16 @@ class VaultTests(unittest.TestCase):
         identifiers = lint.ID_RE.findall(text)
         self.rag.write_text(text.replace(identifiers[1], identifiers[0], 1))
         self.assertIn("identifiant Anki en double", self.errors())
+
+    def test_standalone_id_breaks_the_plugin(self):
+        text = self.rag.read_text()
+        marker = lint.ID_RE.search(text)[0]
+        self.rag.write_text(text.replace(f" {marker}\n?\n", f"\n?\n{marker}\n", 1))
+        self.assertIn("réponse lue par le plugin", self.errors())
+
+    def test_summary_needs_two_blank_lines(self):
+        self.rag.write_text(self.rag.read_text().replace("-->\n\n\n", "-->\n\n", 1))
+        self.assertIn("question lue par le plugin", self.errors())
 
     def test_out_of_context_question_warns(self):
         for question in ("Et TGI ?", "Comment fonctionne-t-elle techniquement ?", "Que fait improve ?"):

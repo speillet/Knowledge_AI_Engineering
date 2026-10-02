@@ -19,6 +19,8 @@ import sys
 from pathlib import Path
 from urllib.parse import unquote
 
+import sr_plugin
+
 ROOT = Path(__file__).resolve().parent.parent
 MOC = "00-moc-ai-engineering"
 INDEXES = {MOC, "00-index"}
@@ -45,6 +47,7 @@ LISTE_PRODUITS_RE = re.compile(
 Card = collections.namedtuple("Card", "question answer line guid", defaults=[None])
 ID_RE = re.compile(r"<!--anki:([0-9a-f]+)-->")
 META_RE = re.compile(r"<!--\s*(?:anki:|SR:|summary:).*?-->")
+INLINE_META_RE = re.compile(r"\s*<!--\s*(?:anki:|SR:).*?-->")
 
 
 def markdown_lines(text):
@@ -87,7 +90,8 @@ def parse_cards(text):
 
     Tout bloc de contenu doit être une carte. Les index utilisent ## Cartes
     pour distinguer explicitement leur introduction du contenu à réviser.
-    Card.line est la ligne du séparateur ?. Les GUID sont encodés en hexadécimal.
+    Card.line est la ligne du séparateur ?. Les GUID sont encodés en hexadécimal ;
+    l'identifiant se place en fin de question, et n'appartient pas à son texte.
     """
     lines = list(markdown_lines(text))
     headers = [n for n, line, code in lines if not code and line == "## Cartes"]
@@ -131,11 +135,43 @@ def parse_cards(text):
             continue
         question = " ".join(line for _, line, code in block[:sep]
                             if code or (line.strip() and not line.startswith(("#", "Tags:", "Vérifié le"))
-                                        and not META_RE.fullmatch(line.strip()))).strip()
+                                        and not META_RE.fullmatch(line.strip())))
+        question = INLINE_META_RE.sub("", question).strip()
         answer = "\n".join(line for _, line, code in block[sep + 1:]
                            if code or not META_RE.fullmatch(line.strip())).strip()
         cards.append(Card(question, answer, block[sep][0], guid))
     return cards, malformed
+
+
+def plugin_differences(text, cards):
+    """Cartes que le plugin Spaced Repetition lit autrement que l'export Anki (voir sr_plugin.py)."""
+    def norm(t):
+        return re.sub(r"\s+", " ", re.sub(r"<!--.*?-->", "", t, flags=re.S)).strip()
+    seen = []
+    for kind, card_text in sr_plugin.parse(text):
+        lines = card_text.split("\n")
+        if kind != "multiline" or "?" not in [l.strip() for l in lines]:
+            seen.append((None, card_text))
+            continue
+        sep = [l.strip() for l in lines].index("?")
+        seen.append((norm("\n".join(lines[:sep])), norm("\n".join(lines[sep + 1:]))))
+    problems = []
+    for index, card in enumerate(cards):
+        expected = (norm(card.question), norm(card.answer))
+        got = seen[index] if index < len(seen) else None
+        if got != expected:
+            if got is None:
+                problems.append((card.line, "carte absente pour le plugin"))
+            elif got[0] is None:
+                problems.append((card.line, f"le plugin lit une carte d'un autre type : {got[1][:50]!r}"))
+            elif got[0] != expected[0]:
+                problems.append((card.line, f"question lue par le plugin : {got[0][:60]!r}"))
+            else:
+                problems.append((card.line, f"réponse lue par le plugin ({len(got[1].split())} mots au lieu de {len(expected[1].split())})"))
+            break  # la suite est décalée : seul le premier écart est utile
+    if not problems and len(seen) > len(cards):
+        problems.append((None, f"{len(seen) - len(cards)} carte(s) en trop pour le plugin : {str(seen[len(cards)][1])[:50]!r}"))
+    return problems
 
 
 def words(answer):
@@ -203,6 +239,10 @@ def lint(stale_months):
             errors.append(f"{rel}:{line} carte mal formée : séparateur ? absent ou multiple, ou identifiant invalide")
         if not cards:
             errors.append(f"{rel} aucune carte valide")
+        elif not malformed:
+            for line, problem in plugin_differences(text, cards):
+                where = f"{rel}:{line}" if line else str(rel)
+                errors.append(f"{where} {problem} (commentaire HTML en début de ligne, ou réglages du README ?)")
 
         if p.stem not in INDEXES and "\n## Mises en situation" not in text:
             errors.append(f"{rel} section « ## Mises en situation » manquante")

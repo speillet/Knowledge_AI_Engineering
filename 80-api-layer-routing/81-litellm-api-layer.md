@@ -3,31 +3,28 @@ Tags: #flashcards #ai-engineering #api-layer #litellm #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 <!-- summary: SDK ou proxy, virtual keys, budgets, rate limits, fallbacks, load balancing, callbacks d'observabilité, alternatives (gateways auto-hébergées, services des clouds, agrégateurs). -->
 
-Qu'est-ce qu'une API layer (LLM gateway) ?
+
+Qu'est-ce qu'une API layer (LLM gateway) ? <!--anki:79752c38462d5a6c3765-->
 ?
-<!--anki:79752c38462d5a6c3765-->
 Une **couche unique entre les applications et tous les modèles** (API cloud et modèles auto-hébergés) : une seule interface, et des fonctions transverses centralisées (auth, budgets, fallbacks, logs).
 
 ---
 
-Qu'est-ce que LiteLLM ?
+Qu'est-ce que LiteLLM ? <!--anki:496b6e43213c2b593774-->
 ?
-<!--anki:496b6e43213c2b593774-->
 Un projet open source qui expose **plus de 100 fournisseurs de LLM au format de l'API OpenAI**. Il existe sous deux formes : un **SDK Python** et un **proxy** (serveur gateway).
 
 ---
 
-SDK ou proxy LiteLLM ?
+SDK ou proxy LiteLLM ? <!--anki:7531606c2c72556e5870-->
 ?
-<!--anki:7531606c2c72556e5870-->
 - **SDK** : bibliothèque dans le code (`litellm.completion(...)`), idéale pour un seul service
 - **Proxy** : serveur **centralisé** pour toute l'organisation, avec clés, budgets et observabilité partagés
 
 ---
 
-À quoi ressemble une configuration du proxy ?
+À quoi ressemble une configuration du proxy ? <!--anki:75244e56214c4d524272-->
 ?
-<!--anki:75244e56214c4d524272-->
 ```yaml
 model_list:
   - model_name: chat-default
@@ -42,39 +39,34 @@ Deux déploiements sous le même nom : le proxy **répartit la charge** entre eu
 
 ---
 
-Que sont les virtual keys de LiteLLM ?
+Que sont les virtual keys de LiteLLM ? <!--anki:685b522c2437213a3750-->
 ?
-<!--anki:685b522c2437213a3750-->
 Des **clés API émises par le proxy** (par équipe, projet ou utilisateur) : les vraies clés des fournisseurs restent **secrètes**, et chaque virtual key a ses **modèles autorisés, budget et limites**.
 
 ---
 
-Comment LiteLLM maîtrise-t-il les coûts ?
+Comment LiteLLM maîtrise-t-il les coûts ? <!--anki:462c433f457b28282c46-->
 ?
-<!--anki:462c433f457b28282c46-->
 Par le **suivi des dépenses** par clé, équipe ou utilisateur, des **budgets** (plafond sur une période) et des **rate limits** en requêtes et tokens par minute (RPM/TPM).
 
 ---
 
-Comment LiteLLM améliore-t-il la fiabilité ?
+Comment LiteLLM améliore-t-il la fiabilité ? <!--anki:6369583735646953616f-->
 ?
-<!--anki:6369583735646953616f-->
 - **Retries** sur erreurs transitoires
 - **Fallbacks** vers un autre modèle ou fournisseur si le premier échoue
 - **Load balancing** entre déploiements, avec cooldown des déploiements en erreur
 
 ---
 
-Comment relier LiteLLM à l'observabilité ?
+Comment relier LiteLLM à l'observabilité ? <!--anki:4e6e34374d5732535658-->
 ?
-<!--anki:4e6e34374d5732535658-->
 Par des **callbacks** : chaque appel est envoyé à [[91-langfuse-observabilite|Langfuse]] (ou OpenTelemetry, Prometheus) avec prompt, réponse, tokens, coût et latence — sans instrumenter chaque application.
 
 ---
 
-Où se place LiteLLM dans la stack ?
+Où se place LiteLLM dans la stack ? <!--anki:65484f7c36453a766272-->
 ?
-<!--anki:65484f7c36453a766272-->
 ```text
 Client → Ingress (TLS) → LiteLLM (auth, quotas, routing) → vLLM / API cloud
 ```
@@ -82,9 +74,8 @@ L'[[83-gateway-ingress|Ingress]] gère le réseau ; LiteLLM gère la **logique p
 
 ---
 
-Quel type de gateway LLM choisir : auto-hébergée, service managé du cloud, ou agrégateur SaaS ?
+Quel type de gateway LLM choisir : auto-hébergée, service managé du cloud, ou agrégateur SaaS ? <!--anki:3236613063623236323539633436323039303964303466393931623061646136-->
 ?
-<!--anki:3236613063623236323539633436323039303964303466393931623061646136-->
 - **Auto-hébergeable** (LiteLLM, Portkey, Kong AI Gateway, Envoy AI Gateway, agentgateway qui gère aussi MCP et A2A) : quand les **données ne doivent pas sortir**, ou pour garder la main sur le routage et les budgets
 - **Service managé du cloud** (AWS, Azure, Google) : quand tout est déjà **chez un même cloud** et qu'on ne veut rien exploiter
 - **Agrégateur SaaS** (OpenRouter) : pour accéder à **beaucoup de fournisseurs** sans infrastructure ni contrats séparés
@@ -93,9 +84,8 @@ Critères communs : fournisseurs couverts, budgets et virtual keys, observabilit
 
 ---
 
-Que se passe-t-il quand une virtual key LiteLLM atteint son budget ?
+Que se passe-t-il quand une virtual key LiteLLM atteint son budget ? <!--anki:3363626463666234653138353463303961396535356364323734336663613965-->
 ?
-<!--anki:3363626463666234653138353463303961396535356364323734336663613965-->
 Le proxy **refuse** les requêtes suivantes avec une erreur explicite, jusqu'à la fin de la période (`budget_duration`) ou un relèvement du plafond.
 
 Pour l'application, c'est une **panne** : il faut gérer cette erreur (message clair, mode dégradé), et **alerter avant** le plafond, par exemple à 80 % ([[122-finops-llm|FinOps]]).
@@ -104,9 +94,8 @@ Pour l'application, c'est une **panne** : il faut gérer cette erreur (message c
 
 ## Mises en situation
 
-Mise en situation : cinq équipes appellent directement les API de trois fournisseurs, avec des clés partagées par copier-coller. La facture mensuelle n'est attribuable à personne. Par quoi commences-tu ?
+Mise en situation : cinq équipes appellent directement les API de trois fournisseurs, avec des clés partagées par copier-coller. La facture mensuelle n'est attribuable à personne. Par quoi commences-tu ? <!--anki:6a6e56307e5b2b4c726f-->
 ?
-<!--anki:6a6e56307e5b2b4c726f-->
 1. **Mettre une gateway devant** : toutes les applications passent par le proxy, au format de l'API OpenAI
 2. **Virtual keys** par équipe et par projet : les vraies clés des fournisseurs redeviennent secrètes
 3. **Budgets et rate limits** par clé, avec alertes avant dépassement ([[122-finops-llm|FinOps]])
@@ -117,9 +106,8 @@ Mise en situation : cinq équipes appellent directement les API de trois fournis
 
 ---
 
-Mise en situation : ton fournisseur principal connaît une panne de 40 minutes en pleine journée. Comment ton architecture aurait-elle dû réagir ?
+Mise en situation : ton fournisseur principal connaît une panne de 40 minutes en pleine journée. Comment ton architecture aurait-elle dû réagir ? <!--anki:67297e4a71396d5d5e4f-->
 ?
-<!--anki:67297e4a71396d5d5e4f-->
 1. **Fallback configuré** vers un autre fournisseur ou un modèle auto-hébergé pour les routes critiques
 2. **Retries** avec backoff sur les erreurs transitoires, et **cooldown** du déploiement en erreur
 3. **Dégradation acceptable** : modèle moins bon mais disponible, ou réponse d'attente explicite ([[142-fiabilite-resilience-llm|fiabilité]])

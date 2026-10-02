@@ -2,9 +2,9 @@
 Tags: #flashcards #ai-engineering #agents #evals #observabilite #debogage
 <!-- summary: error analysis (open et axial coding), symptôme ou cause, catégories d'échec, taxonomie MAST, détection des boucles, reproduction par rejeu, de l'échec au cas de non-régression, signaux de production, quand ne pas accuser le modèle. -->
 
-Pourquoi un agent est-il plus difficile à déboguer qu'un appel LLM ?
+
+Pourquoi un agent est-il plus difficile à déboguer qu'un appel LLM ? <!--anki:63762b3d6f2b7d677546-->
 ?
-<!--anki:63762b3d6f2b7d677546-->
 - L'échec apparaît souvent **loin de sa cause** : un mauvais résultat d'outil à l'étape 3 produit une réponse fausse à l'étape 15
 - Le comportement est **non déterministe** : l'échec ne se reproduit pas à chaque essai ([[114-reproductibilite-variance|variance]])
 - La trace est **longue** : des dizaines d'appels, d'outils et de milliers de tokens
@@ -13,18 +13,16 @@ Il faut donc des **traces complètes** et une méthode, pas seulement des logs d
 
 ---
 
-Qu'est-ce que l'analyse d'erreurs (error analysis) ?
+Qu'est-ce que l'analyse d'erreurs (error analysis) ? <!--anki:6c6b3c60573e3c384654-->
 ?
-<!--anki:6c6b3c60573e3c384654-->
 Une méthode **qualitative d'abord** : lire des dizaines de traces ratées, noter librement ce qui cloche (**open coding**), puis regrouper ces notes en **catégories** d'échec (**axial coding**) et les compter.
 
 Elle révèle les **vrais** modes d'échec du système, avant de choisir quoi mesurer. Les métriques génériques (« utilité », « pertinence ») passent souvent à côté ([[94-evals-methodologie|méthodologie]]).
 
 ---
 
-À ne pas confondre : symptôme et cause d'un échec d'agent ?
+À ne pas confondre : symptôme et cause d'un échec d'agent ? <!--anki:68364270646b286a3855-->
 ?
-<!--anki:68364270646b286a3855-->
 - **Symptôme** : ce que l'utilisateur voit. « Réponse fausse », « l'agent tourne en rond »
 - **Cause** : la **première étape** où la trace dévie. Recherche mal formulée, description d'outil ambiguë, résultat d'outil tronqué, consigne contradictoire
 
@@ -32,9 +30,8 @@ On corrige la **première erreur** de la trace : les suivantes en découlent sou
 
 ---
 
-Quelles catégories d'échec rencontre-t-on le plus souvent ?
+Quelles catégories d'échec rencontre-t-on le plus souvent ? <!--anki:727553234b4d6c736937-->
 ?
-<!--anki:727553234b4d6c736937-->
 - **Spécification** : consigne ambiguë ou contradictoire, critère de fin absent
 - **Outils** : mauvais choix d'outil, arguments invalides, résultat mal interprété ([[32-tool-calling|tool calling]])
 - **Contexte** : information manquante, noyée ou périmée ([[35-context-engineering|context engineering]])
@@ -45,9 +42,8 @@ Le classement indique **où agir** : prompt, outil, retrieval, garde-fous ou mod
 
 ---
 
-Que dit la taxonomie MAST sur les échecs des systèmes multi-agents ?
+Que dit la taxonomie MAST sur les échecs des systèmes multi-agents ? <!--anki:71372c644f7061407923-->
 ?
-<!--anki:71372c644f7061407923-->
 Une étude de 2025 (« Why Do Multi-Agent LLM Systems Fail? ») classe les échecs observés en **trois familles** :
 - **Conception et spécification** : rôles mal définis, consignes non respectées
 - **Désalignement entre agents** : informations non transmises, travail ignoré ou dupliqué
@@ -57,9 +53,8 @@ Conclusion utile : beaucoup d'échecs viennent de la **conception du système**,
 
 ---
 
-Comment détecter qu'un agent tourne en boucle ?
+Comment détecter qu'un agent tourne en boucle ? <!--anki:732d7e23564a363e2826-->
 ?
-<!--anki:732d7e23564a363e2826-->
 - **Répétition** : même outil avec les mêmes arguments plusieurs fois de suite
 - **Absence de progrès** : aucun nouvel état (fichier, donnée) depuis N étapes
 - **Dépassement** du nombre d'étapes ou du budget prévus
@@ -68,9 +63,8 @@ Réaction : interrompre, renvoyer au modèle un message qui **décrit la boucle*
 
 ---
 
-Comment reproduire un échec d'agent ?
+Comment reproduire un échec d'agent ? <!--anki:71245e54613635634565-->
 ?
-<!--anki:71245e54613635634565-->
 - **Rejouer la trace** : réinjecter les mêmes entrées et les **mêmes résultats d'outils enregistrés**, pour isoler la décision du modèle
 - **Figer** modèle, prompt et paramètres ; température basse pour le diagnostic
 - **Relancer N fois** l'état juste avant la déviation, pour mesurer la fréquence de l'erreur
@@ -80,9 +74,8 @@ Un échec vu une fois sur dix n'est pas corrigé tant qu'on ne mesure pas cette 
 
 ---
 
-Que faire d'un échec une fois compris ?
+Que faire d'un échec une fois compris ? <!--anki:69374a72434a62663952-->
 ?
-<!--anki:69374a72434a62663952-->
 1. **Corriger** au bon endroit : prompt, description d'outil, retrieval, garde-fou en code
 2. **Ajouter le cas** au jeu de non-régression, avec le critère de réussite ([[153-data-flywheel-versioning|flywheel]])
 3. **Vérifier** que la correction n'en casse pas d'autres, sur le jeu complet
@@ -92,9 +85,8 @@ Sans l'étape 2, le même échec revient au prochain changement de modèle.
 
 ---
 
-Quels signaux de production pointent vers les traces à lire ?
+Quels signaux de production pointent vers les traces à lire ? <!--anki:43695d442f3f3f7d6d33-->
 ?
-<!--anki:43695d442f3f3f7d6d33-->
 - **Feedback négatif** et escalades vers un humain
 - **Erreurs d'outils** et refus de politique ([[115-plateformes-agents-gouvernance|gateway]])
 - **Traces anormalement longues** ou coûteuses
@@ -105,9 +97,8 @@ Lire chaque semaine un lot de traces reste l'activité la plus rentable pour am�
 
 ---
 
-Quand ne pas accuser le modèle ?
+Quand ne pas accuser le modèle ? <!--anki:7574796a2a7975773c63-->
 ?
-<!--anki:7574796a2a7975773c63-->
 Tant que la trace montre un problème **en amont** : l'information n'était pas dans le contexte, l'outil a renvoyé une erreur illisible, deux consignes se contredisaient, ou le critère de fin n'existait pas. Changer de modèle masque parfois ces défauts, sans les corriger.
 
 On accuse le modèle quand il échoue **avec** un contexte correct et des outils clairs, et que d'autres modèles réussissent sur le même cas ([[146-choix-modeles|choix de modèle]]).
@@ -116,9 +107,8 @@ On accuse le modèle quand il échoue **avec** un contexte correct et des outils
 
 ## Mises en situation
 
-Mise en situation : ton agent de support a un taux de réussite de 72 %, et l'équipe propose de passer au modèle supérieur, trois fois plus cher. Comment décides-tu ?
+Mise en situation : ton agent de support a un taux de réussite de 72 %, et l'équipe propose de passer au modèle supérieur, trois fois plus cher. Comment décides-tu ? <!--anki:413a343e41525d3b266a-->
 ?
-<!--anki:413a343e41525d3b266a-->
 1. **Lire 50 traces ratées** et noter librement ce qui cloche, sans catégories préétablies
 2. **Regrouper et compter** : par exemple 40 % d'outil mal choisi, 30 % d'information absente du contexte, 15 % d'arrêt sans vérification
 3. **Corriger les causes non liées au modèle** : descriptions d'outils, retrieval, étape de vérification
@@ -129,9 +119,8 @@ Mise en situation : ton agent de support a un taux de réussite de 72 %, et l'é
 
 ---
 
-Mise en situation : un utilisateur signale qu'un agent multi-agents a produit un rapport « complètement à côté ». La trace fait 140 étapes. Par où commences-tu ?
+Mise en situation : un utilisateur signale qu'un agent multi-agents a produit un rapport « complètement à côté ». La trace fait 140 étapes. Par où commences-tu ? <!--anki:7734242e6f3b4b567d29-->
 ?
-<!--anki:7734242e6f3b4b567d29-->
 1. **Relire la demande et la réponse finale** pour décrire précisément l'écart
 2. **Remonter aux décisions de l'orchestrateur** : plan et consignes données à chaque sous-agent
 3. **Chercher la première déviation** : consigne mal transmise, sous-agent qui a répondu à une autre question, résumé qui a perdu l'essentiel

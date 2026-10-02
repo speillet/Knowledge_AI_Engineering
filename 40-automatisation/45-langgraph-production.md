@@ -3,9 +3,9 @@ Tags: #flashcards #ai-engineering #agents #langgraph #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 <!-- summary: checkpointers, threads, `interrupt` et `Command(resume=...)`, time travel, Store long terme, durable execution, streaming, subgraphs, patterns multi-agents, déploiement. -->
 
-Qu'est-ce qu'un checkpointer dans LangGraph ?
+
+Qu'est-ce qu'un checkpointer dans LangGraph ? <!--anki:73715178653d54644d38-->
 ?
-<!--anki:73715178653d54644d38-->
 Le composant qui **sauvegarde l'état du graphe après chaque super-step**. Il apporte la mémoire de conversation, la reprise après erreur, le human-in-the-loop et le time travel.
 
 ```python
@@ -14,25 +14,22 @@ graph = builder.compile(checkpointer=checkpointer)
 
 ---
 
-Quels checkpointers LangGraph propose-t-il ?
+Quels checkpointers LangGraph propose-t-il ? <!--anki:4a23792655613437387d-->
 ?
-<!--anki:4a23792655613437387d-->
 - **`InMemorySaver`** : en mémoire, perdu au redémarrage (tests)
 - **`SqliteSaver`** : fichier local (développement)
 - **`PostgresSaver`** / `AsyncPostgresSaver` : **production**
 
 ---
 
-Qu'est-ce qu'un thread dans LangGraph ?
+Qu'est-ce qu'un thread dans LangGraph ? <!--anki:65266e7a71676c416a5b-->
 ?
-<!--anki:65266e7a71676c416a5b-->
 Une **suite de checkpoints** identifiée par un **`thread_id`**, passé dans la config (`{"configurable": {"thread_id": "..."}}`). Même `thread_id` = on reprend l'état ; nouveau `thread_id` = on repart de zéro.
 
 ---
 
-Comment mettre un humain dans la boucle ?
+Comment mettre un humain dans la boucle ? <!--anki:4e2d79524e626742322d-->
 ?
-<!--anki:4e2d79524e626742322d-->
 Un nœud appelle **`interrupt(payload)`** : l'état est sauvegardé et l'exécution **s'arrête** en renvoyant le payload. On reprend avec **`Command(resume=valeur)`** sur le même thread ; `valeur` devient le retour de `interrupt()`.
 
 ```python
@@ -47,52 +44,45 @@ graph.invoke(Command(resume=True), config=config)
 
 ---
 
-Pourquoi un checkpointer est-il obligatoire pour `interrupt` ?
+Pourquoi un checkpointer est-il obligatoire pour `interrupt` ? <!--anki:52647e3824313c325d47-->
 ?
-<!--anki:52647e3824313c325d47-->
 Parce que la reprise peut arriver **des minutes ou des jours plus tard**, dans un autre processus : l'état doit être **persisté** pour que le graphe reparte exactement du point d'arrêt.
 
 ---
 
-Qu'est-ce que le time travel dans LangGraph ?
+Qu'est-ce que le time travel dans LangGraph ? <!--anki:43524756212128393c4d-->
 ?
-<!--anki:43524756212128393c4d-->
 Parcourir l'**historique des checkpoints** d'un thread (`get_state_history`), **rejouer** depuis un checkpoint passé ou le **modifier** (`update_state`) pour explorer une autre branche — très utile pour déboguer un agent.
 
 ---
 
-Checkpointer ou Store : quelle différence ?
+Checkpointer ou Store : quelle différence ? <!--anki:4b5042685f574b50716d-->
 ?
-<!--anki:4b5042685f574b50716d-->
 - **Checkpointer** : mémoire **court terme**, propre à **un thread**
 - **Store** (ex. `InMemoryStore`) : mémoire **long terme, partagée entre threads**, organisée en **namespaces** (ex. `("user-123", "preferences")`), avec recherche sémantique possible
 
 ---
 
-Qu'est-ce que la durable execution dans LangGraph ?
+Qu'est-ce que la durable execution dans LangGraph ? <!--anki:6e5a3837745771543752-->
 ?
-<!--anki:6e5a3837745771543752-->
 La capacité d'un workflow à **reprendre après une panne** ou une longue pause **depuis le dernier checkpoint**, sans refaire le travail déjà fait. Les **effets de bord** (appels d'API, écritures) doivent être isolés dans des tâches pour ne pas être rejoués.
 
 ---
 
-Que peut-on streamer depuis un graphe ?
+Que peut-on streamer depuis un graphe ? <!--anki:445e71583c4f4f626c26-->
 ?
-<!--anki:445e71583c4f4f626c26-->
 L'**état complet** après chaque étape (`values`), les **mises à jour** de chaque nœud (`updates`), les **tokens** du LLM (`messages`) ou des **événements personnalisés** (`custom`). Les versions récentes ajoutent aussi `stream_events(..., version="v3")`.
 
 ---
 
-Qu'est-ce qu'un subgraph dans LangGraph ?
+Qu'est-ce qu'un subgraph dans LangGraph ? <!--anki:447762797072732f477e-->
 ?
-<!--anki:447762797072732f477e-->
 Un **graphe compilé utilisé comme nœud** d'un autre graphe. On découpe ainsi un système complexe en modules, souvent **un subgraph par agent**.
 
 ---
 
-Quels patterns multi-agents LangChain/LangGraph documentent-ils ?
+Quels patterns multi-agents LangChain/LangGraph documentent-ils ? <!--anki:78287e6656626f715b77-->
 ?
-<!--anki:78287e6656626f715b77-->
 - **Subagents** : un agent principal appelle des sous-agents **comme des outils**
 - **Handoffs** : un agent **passe la main** à un autre via un appel d'outil
 - **Router** : une étape classe la requête et l'envoie au bon agent
@@ -101,9 +91,8 @@ Quels patterns multi-agents LangChain/LangGraph documentent-ils ?
 
 ---
 
-Comment déployer et déboguer un graphe LangGraph ?
+Comment déployer et déboguer un graphe LangGraph ? <!--anki:6c6747322662447d7252-->
 ?
-<!--anki:6c6747322662447d7252-->
 - **LangSmith Deployment** (ex-LangGraph Platform) : un **Agent Server** qui expose le graphe en API, avec persistance, files de tâches et streaming gérés
 - **Studio** : IDE visuel pour exécuter pas à pas et inspecter l'état
 - **Auto-hébergé** : le graphe dans son propre service (FastAPI, conteneur) avec un `PostgresSaver`
@@ -112,9 +101,8 @@ Comment déployer et déboguer un graphe LangGraph ?
 
 ## Mises en situation
 
-Mise en situation : ton agent de traitement de commandes s'arrête pour une validation humaine qui arrive parfois deux jours plus tard. Il tourne aujourd'hui avec `InMemorySaver`. Que changes-tu ?
+Mise en situation : ton agent de traitement de commandes s'arrête pour une validation humaine qui arrive parfois deux jours plus tard. Il tourne aujourd'hui avec `InMemorySaver`. Que changes-tu ? <!--anki:4d2f6936553058693334-->
 ?
-<!--anki:4d2f6936553058693334-->
 1. **Checkpointer persistant** : `PostgresSaver` en production, sinon un redémarrage perd tous les dossiers en attente
 2. **Thread par dossier** : `thread_id` stable, pour reprendre exactement au point d'arrêt
 3. **Reprise** par `Command(resume=...)` avec la décision, depuis un autre processus que celui qui a interrompu
@@ -125,9 +113,8 @@ Mise en situation : ton agent de traitement de commandes s'arrête pour une vali
 
 ---
 
-Mise en situation : un agent a produit une réponse aberrante hier à 14 h, et l'utilisateur veut comprendre pourquoi. Comment enquêtes-tu ?
+Mise en situation : un agent a produit une réponse aberrante hier à 14 h, et l'utilisateur veut comprendre pourquoi. Comment enquêtes-tu ? <!--anki:432a625f5e245f5a3577-->
 ?
-<!--anki:432a625f5e245f5a3577-->
 1. **Retrouver le thread** à partir de l'identifiant de conversation, puis son historique de checkpoints
 2. **Time travel** : rejouer depuis le checkpoint qui précède l'erreur pour voir l'état exact d'alors
 3. **Isoler l'étape fautive** : outil qui a renvoyé une donnée fausse, routage inattendu, contexte tronqué
@@ -138,9 +125,8 @@ Mise en situation : un agent a produit une réponse aberrante hier à 14 h, et l
 
 ---
 
-Mise en situation : ton système à quatre agents devient impossible à déboguer, chaque agent ayant ses propres outils et son état. Comment le restructures-tu ?
+Mise en situation : ton système à quatre agents devient impossible à déboguer, chaque agent ayant ses propres outils et son état. Comment le restructures-tu ? <!--anki:4b4347547d6645526b3f-->
 ?
-<!--anki:4b4347547d6645526b3f-->
 1. **Un subgraph par agent** : chacun devient un module compilé, testable seul
 2. **Choisir un pattern explicite** : router en entrée, handoffs entre pairs, ou sous-agents appelés comme outils ([[36-orchestration-agents|orchestration]])
 3. **État partagé minimal** : ce qui circule entre agents est structuré et limité, le reste reste local

@@ -3,23 +3,21 @@ Tags: #flashcards #ai-engineering #agents #mcp #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 <!-- summary: problème M×N, host, client et serveur, tools, resources et prompts, transports stdio et HTTP, spec sans état 2026-07-28, serveur MCP ou API REST, risques. -->
 
-Qu'est-ce que MCP ?
+
+Qu'est-ce que MCP ? <!--anki:516d532139606b765240-->
 ?
-<!--anki:516d532139606b765240-->
 Le **Model Context Protocol** : un **standard ouvert** (initié par Anthropic, hébergé depuis décembre 2025 par l'**Agentic AI Foundation** de la Linux Foundation) pour connecter les applications IA à des outils et sources de données via une architecture client-serveur.
 
 ---
 
-Quel problème MCP résout-il ?
+Quel problème MCP résout-il ? <!--anki:6c3b47315f4c6e566d3b-->
 ?
-<!--anki:6c3b47315f4c6e566d3b-->
 Le problème **M×N** : sans standard, chaque app doit intégrer chaque outil ; avec MCP, une app parle à **tout serveur MCP** — d'où l'image du « **USB-C des apps IA** ».
 
 ---
 
-Quelle est l'architecture de MCP ?
+Quelle est l'architecture de MCP ? <!--anki:505935676943515d3e6b-->
 ?
-<!--anki:505935676943515d3e6b-->
 - **Host** : l'application IA (IDE, chat, agent)
 - **Client** : la connexion gérée par le host, **une par serveur**
 - **Serveur MCP** : expose outils et données
@@ -33,9 +31,8 @@ Le **modèle ne parle jamais directement** à un serveur : c'est le host qui lis
 
 ---
 
-Quelles sont les trois primitives exposées par un serveur MCP ?
+Quelles sont les trois primitives exposées par un serveur MCP ? <!--anki:7334672d62745828472a-->
 ?
-<!--anki:7334672d62745828472a-->
 - **Tools** : actions invocables **par le modèle** (il décide)
 - **Resources** : données ou documents consultables, choisis **par l'application ou l'utilisateur**
 - **Prompts** : templates réutilisables, déclenchés **par l'utilisateur** (souvent des commandes)
@@ -44,9 +41,8 @@ La distinction porte sur **qui décide** de l'utiliser : le modèle, l'applicati
 
 ---
 
-Quels transports MCP existent ?
+Quels transports MCP existent ? <!--anki:683c4f6b67296425664d-->
 ?
-<!--anki:683c4f6b67296425664d-->
 - **stdio** : serveur local lancé en sous-processus
 - **HTTP streamable** : serveur distant
 
@@ -54,9 +50,8 @@ Depuis la spec **2026-07-28**, le protocole est **sans état** (plus de session 
 
 ---
 
-À ne pas confondre : serveur MCP et API REST ?
+À ne pas confondre : serveur MCP et API REST ? <!--anki:6a476f7b5b3434754e73-->
 ?
-<!--anki:6a476f7b5b3434754e73-->
 - **API REST** : un contrat pensé pour des **développeurs**, qui lisent la doc et écrivent le code d'appel
 - **Serveur MCP** : un contrat pensé pour un **modèle**, qui **découvre** à l'exécution outils, ressources et prompts, décrits en langage naturel avec leur JSON Schema
 
@@ -64,23 +59,20 @@ Un serveur MCP **enveloppe** souvent une API REST : il choisit quelles opératio
 
 ---
 
-Un serveur MCP est-il lié à un modèle particulier ?
+Un serveur MCP est-il lié à un modèle particulier ? <!--anki:6b6f7e2628343e304b4f-->
 ?
-<!--anki:6b6f7e2628343e304b4f-->
 **Non.** C'est l'intérêt : le même serveur (GitHub, base de données, navigateur…) sert n'importe quel host compatible MCP.
 
 ---
 
-Quels risques de sécurité MCP introduit-il ?
+Quels risques de sécurité MCP introduit-il ? <!--anki:6b5735663b3e5b48284d-->
 ?
-<!--anki:6b5735663b3e5b48284d-->
 **Serveurs tiers non audités, [[101-securite-llm-guardrails|prompt injection]] via les résultats et les descriptions d'outils, permissions trop larges** — d'où sandboxing et validation humaine des actions sensibles. Détail des attaques (tool poisoning, rug pull…) : [[104-securite-mcp-skills|sécurité de MCP & des skills]].
 
 ---
 
-Comment un host MCP déclare-t-il un serveur local et un serveur distant ?
+Comment un host MCP déclare-t-il un serveur local et un serveur distant ? <!--anki:3861633963323633363765663437353461356231323532633438386235333338-->
 ?
-<!--anki:3861633963323633363765663437353461356231323532633438386235333338-->
 Un serveur **local** est un processus que le host lance (`command`, transport **stdio**) ; un serveur **distant** est une **URL** (transport HTTP) avec son authentification :
 ```json
 {
@@ -96,9 +88,8 @@ Bonne pratique : **version épinglée** plutôt que `@latest`, et serveurs inter
 
 ## Mises en situation
 
-Mise en situation : chaque équipe intègre à sa façon les API internes dans ses agents, et le même connecteur Jira existe en quatre versions. Que proposes-tu ?
+Mise en situation : chaque équipe intègre à sa façon les API internes dans ses agents, et le même connecteur Jira existe en quatre versions. Que proposes-tu ? <!--anki:436d2a2b63586a323e77-->
 ?
-<!--anki:436d2a2b63586a323e77-->
 1. **Un serveur MCP par système** : publié une fois, réutilisable par tous les hosts, quel que soit le modèle
 2. **Registre interne** : découverte, propriétaire, version épinglée, circuit d'approbation ([[38-plateformes-agents|plateformes]])
 3. **Gateway MCP** devant les serveurs : authentification, liste blanche d'outils par agent, quotas, audit
@@ -109,9 +100,8 @@ Mise en situation : chaque équipe intègre à sa façon les API internes dans s
 
 ---
 
-Mise en situation : ton serveur MCP interne, écrit avant la spec 2026-07-28, garde l'état des requêtes en mémoire par session. Le passage à trois réplicas casse tout. Que fais-tu ?
+Mise en situation : ton serveur MCP interne, écrit avant la spec 2026-07-28, garde l'état des requêtes en mémoire par session. Le passage à trois réplicas casse tout. Que fais-tu ? <!--anki:7a3f694b376861363352-->
 ?
-<!--anki:7a3f694b376861363352-->
 1. **Comprendre** : la spec récente rend le protocole **sans état**, justement pour permettre plusieurs réplicas derrière un load balancer
 2. **Sortir l'état de la mémoire du processus** : le serveur émet un **handle opaque** que le client renvoie comme argument, et l'état vit dans un stockage partagé
 3. **Lier le handle à l'utilisateur** authentifié côté serveur : le détenir ne doit pas suffire à y accéder ([[104-securite-mcp-skills|sécurité MCP]])

@@ -18,6 +18,7 @@ Knowledge_AI_Engineering/
 ├── scripts/lint_flashcards.py   # vérification des conventions + statistiques
 ├── scripts/export_anki.py       # export en paquet Anki (.apkg) pour AnkiDroid
 ├── scripts/assign_card_ids.py   # identifiants permanents des nouvelles cartes
+├── scripts/sr_plugin.py         # lecture des fiches par le plugin Spaced Repetition, vérifiée par le lint
 ├── scripts/retired_cards.json   # cartes retirées du vault, à supprimer d'Anki
 ├── scripts/sync_catalog.py      # génération des sommaires README et MOC
 ├── scripts/sections.json        # titres et introductions des sections
@@ -72,7 +73,11 @@ Les fiches suivent la syntaxe du plugin communautaire **Spaced Repetition**. Il 
 
 1. **Settings → Community plugins** : activer les plugins communautaires, puis chercher et installer **Spaced Repetition**.
 2. Le plugin retrouve automatiquement les fiches grâce au tag `#flashcards` qui figure en ligne 2 de chacune.
-3. Dans les réglages du plugin, garder `?` comme séparateur des cartes multilignes. Choisir aussi `---` comme marqueur de fin de carte, car certaines réponses contiennent des lignes vides.
+3. Dans les réglages du plugin :
+   - **Separator for multiline flashcards** : garder `?` ;
+   - **Characters denoting the end of clozes and multiline flashcards** : saisir `---`. **Indispensable** : sans ce réglage, chaque réponse s'arrête à sa première ligne vide ;
+   - **Convert folders to decks and subdecks** : activer, pour obtenir un paquet par section ;
+   - **Show context in cards** : activer, pour voir le titre de la fiche au-dessus de la question.
 4. Lancer une révision avec l'icône du plugin dans la barre latérale, ou depuis la palette de commandes. La palette permet aussi de ne réviser que la note ouverte.
 
 > Le plugin enregistre la planification des révisions **dans les fiches elles-mêmes**, sous forme de commentaires `<!--SR:...-->` placés après chaque carte. Si le vault est versionné avec git, ces commentaires apparaîtront dans les diffs.
@@ -163,8 +168,9 @@ Les conventions à respecter :
 - **Une idée par carte** : si une réponse enchaîne deux sujets (un mécanisme puis une liste de produits, deux incidents), on la découpe. Une carte atomique se note honnêtement en révision.
 - **Des repères chiffrés** et des **exemples exécutables** (commandes, configurations, extraits de code) plutôt que des formulations abstraites.
 - **Une ligne `Vérifié le : …`** juste après les tags, sur les fiches qui citent des produits, des versions ou des textes réglementaires. Une section `## Sources`, placée avant `## Connexions`, doit contenir les références primaires utilisées : documentation officielle, spécification versionnée, article des auteurs ou texte réglementaire. Ajouter une référence ne justifie pas à lui seul de changer la date de vérification.
-- **Un commentaire `<!-- summary: … -->`** après les tags et la date éventuelle : il alimente le catalogue du README. Les titres des fiches alimentent les deux sommaires.
-- **Un identifiant `<!--anki:…-->` par carte**, généré par le script dédié. Il est invisible à la lecture et exclu de l’export. Les identifiants historiques ont été conservés lors de la migration. Une reformulation garde l'identifiant ; une question qui change de sens en reçoit un nouveau.
+- **Un commentaire `<!-- summary: … -->`** après les tags et la date éventuelle, **suivi de deux lignes vides** : il alimente le catalogue du README. Les titres des fiches alimentent les deux sommaires.
+- **Un identifiant `<!--anki:…-->` par carte, en fin de question** (`Qu'est-ce que le RAG ? <!--anki:…-->`), généré par le script dédié. Il est invisible à la lecture et exclu de l’export. Les identifiants historiques ont été conservés lors de la migration. Une reformulation garde l'identifiant ; une question qui change de sens en reçoit un nouveau.
+- **Pas de commentaire HTML en début de ligne dans une fiche**, hors `<!--SR:` : le plugin Spaced Repetition saute la ligne qui suit un tel commentaire. Un identifiant placé seul sur sa ligne lui faisait perdre la réponse ; c'est pour cela que le résumé est suivi de deux lignes vides. Le lint rejoue la lecture du plugin (`scripts/sr_plugin.py`) et signale toute carte qu'il lirait autrement que l'export Anki.
 - **Supprimer une carte** : retirer le bloc de la fiche et reporter son identifiant dans `scripts/retired_cards.json`, avec la question et la raison (`{"id": "…", "question": "…", "raison": "doublon de 95-llm-as-judge"}`). L'export la republie suspendue, avec le tag `retired`.
 - Dans un index comportant une introduction, placer `---` puis `## Cartes` avant la première question ; le parseur ignore ainsi le sommaire et le texte introductif.
 
@@ -386,7 +392,7 @@ python3 scripts/sync_catalog.py --check            # vérifier sans écrire
 python3 -m unittest discover -s tests -v           # tests (dépendances Anki requises)
 ```
 
-- **Erreurs** (bloquent le commit et la CI) : lien mort, nom de fichier en double, tags absents de la ligne 2, séparateur `?` absent ou multiple, question ou réponse vide, identifiant Anki absent/invalide/dupliqué, identifiant retiré encore présent dans le vault ou entrée mal formée dans `retired_cards.json`, section `Mises en situation` ou `Connexions` manquante, dernier lien qui n'est pas le MOC, fiche absente du MOC, date `Vérifié le` illisible ou future, fiche datée sans source. Les liens sont contrôlés aussi dans le MOC et le README (hors exemples de code).
+- **Erreurs** (bloquent le commit et la CI) : lien mort, nom de fichier en double, tags absents de la ligne 2, séparateur `?` absent ou multiple, question ou réponse vide, carte que le plugin Spaced Repetition lirait autrement que l'export Anki, identifiant Anki absent/invalide/dupliqué, identifiant retiré encore présent dans le vault ou entrée mal formée dans `retired_cards.json`, section `Mises en situation` ou `Connexions` manquante, dernier lien qui n'est pas le MOC, fiche absente du MOC, date `Vérifié le` illisible ou future, fiche datée sans source. Les liens sont contrôlés aussi dans le MOC et le README (hors exemples de code).
 - **Avertissements** : réponse trop longue (110 mots hors code, 140 pour une mise en situation), liste de plus de 5 éléments (6 étapes pour une mise en situation), « Quelle différence… » au lieu de « À ne pas confondre », question qui suppose la carte précédente, liste de produits à réciter (« Citez… », « Quels outils… »), question en double, Connexion sans lien en retour, fiche citée par moins de 2 autres, fiche absente du README, `Vérifié le` trop ancien.
 
 Les pull requests vérifient le lint, la synchronisation des catalogues, les tests et la génération d’un paquet Anki téléchargeable comme artefact CI. La publication en release reste réservée à `main` ou au déclenchement manuel.

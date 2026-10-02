@@ -2,9 +2,9 @@
 Tags: #flashcards #ai-engineering #finops #gouvernance #llm
 <!-- summary: quatre temps du FinOps, visibilité des coûts, attribution aux équipes, budgets et garde-fous, routage comme premier levier, caches, pratiques GPU, arbitrage coût-qualité-latence, rôle du Lead. -->
 
-Qu'est-ce que le FinOps appliqué aux LLM ?
+
+Qu'est-ce que le FinOps appliqué aux LLM ? <!--anki:7438516d555137566925-->
 ?
-<!--anki:7438516d555137566925-->
 La discipline de **gestion des dépenses IA** (tokens d'API et GPU), en quatre temps :
 1. **Visibilité** : savoir ce qui coûte, au jour près
 2. **Attribution** : à quelle équipe, quel produit, quelle fonctionnalité
@@ -15,16 +15,14 @@ La spécificité des LLM : un coût **variable** qui dépend du comportement des
 
 ---
 
-Quelle est la première étape FinOps d'une plateforme LLM ?
+Quelle est la première étape FinOps d'une plateforme LLM ? <!--anki:6a5f702e5f54365e3c38-->
 ?
-<!--anki:6a5f702e5f54365e3c38-->
 La **visibilité** : tracer le coût **par requête, équipe et feature** via la [[81-litellm-api-layer|gateway]] et les [[91-langfuse-observabilite|traces]] — on ne pilote pas ce qu'on ne voit pas.
 
 ---
 
-Comment attribuer les coûts aux équipes ?
+Comment attribuer les coûts aux équipes ? <!--anki:74243d714f553e3e7e64-->
 ?
-<!--anki:74243d714f553e3e7e64-->
 - **Virtual keys** par équipe ou produit dans la gateway, et **tags** par fonctionnalité ([[81-litellm-api-layer|LiteLLM]])
 - **Showback** d'abord : chaque équipe voit sa consommation
 - **Chargeback** ensuite : refacturation interne, une fois les chiffres fiables
@@ -33,9 +31,8 @@ Sans attribution, personne n'est responsable d'un coût qui double, et les optim
 
 ---
 
-Comment encadrer les dépenses LLM des équipes ?
+Comment encadrer les dépenses LLM des équipes ? <!--anki:532b47722b306e7350-->
 ?
-<!--anki:532b47722b306e7350-->
 **Budgets et quotas par clé/équipe** dans la gateway, **alertes** avant dépassement, **kill switch** en cas d'emballement.
 ```yaml
 # exemple de garde-fous par clé virtuelle (gateway LLM)
@@ -50,9 +47,8 @@ Les deux limites comptent : **requêtes** contre les rafales, **tokens** contre 
 
 ---
 
-Quels gains attendre des principaux leviers FinOps ?
+Quels gains attendre des principaux leviers FinOps ? <!--anki:73443a342f707e49655b-->
 ?
-<!--anki:73443a342f707e49655b-->
 ```text
 Routage vers un modèle plus petit   −30 à −70 % selon la part de cas simples
 Prompt caching (préfixe stable)     tokens d'entrée lus ≈ 10 % du prix plein
@@ -65,16 +61,14 @@ Ordre d'attaque recommandé : **routage**, puis **caching**, puis **contexte**. 
 
 ---
 
-Quel est souvent le premier levier d'économie ?
+Quel est souvent le premier levier d'économie ? <!--anki:6a712b5f4f6e30675d6e-->
 ?
-<!--anki:6a712b5f4f6e30675d6e-->
 Le **[[82-routing-llm|routing]]** : envoyer chaque requête au **modèle le moins cher qui suffit** (cascades) — souvent plusieurs dizaines de % de gain.
 
 ---
 
-Quels caches actionner côté FinOps ?
+Quels caches actionner côté FinOps ? <!--anki:492b6e722363457c3733-->
 ?
-<!--anki:492b6e722363457c3733-->
 Quatre niveaux, du plus rentable au plus spécifique :
 - **Prompt caching** des préfixes : effet massif sur les agents, dont l'entrée domine le coût
 - **Cache de réponses** pour les requêtes identiques : gain égal au taux de hit
@@ -85,9 +79,8 @@ Chacun a son risque : réponses périmées, fuite entre clients si la clé oubli
 
 ---
 
-Quelles pratiques FinOps côté GPU ?
+Quelles pratiques FinOps côté GPU ? <!--anki:75432b70652f39746a70-->
 ?
-<!--anki:75432b70652f39746a70-->
 - **Droit-dimensionnement** : le plus petit GPU ou la plus petite tranche **MIG** qui tient la charge
 - **Objectif d'utilisation** suivi, par exemple au-dessus de 60 %
 - **Spot ou préemptible** pour le non-critique (batch, evals), avec reprise sur interruption
@@ -96,9 +89,8 @@ Quelles pratiques FinOps côté GPU ?
 
 ---
 
-Comment arbitrer coût, qualité et latence ?
+Comment arbitrer coût, qualité et latence ? <!--anki:69412d2547702d7c503f-->
 ?
-<!--anki:69412d2547702d7c503f-->
 C'est un **triangle** : on ne maximise pas les trois. Les [[92-chainforge-evals-prompts|evals]] et les [[64-metriques-slo-inference|SLO]] rendent l'arbitrage **objectif** :
 1. Fixer un **plancher de qualité** et un **plafond de latence**
 2. Parmi les options qui les respectent, choisir la **moins chère**
@@ -108,18 +100,16 @@ Sans plancher de qualité explicite, l'optimisation des coûts dégrade le produ
 
 ---
 
-Quel est le rôle du Lead sur le FinOps ?
+Quel est le rôle du Lead sur le FinOps ? <!--anki:4d55412c6953465d317e-->
 ?
-<!--anki:4d55412c6953465d317e-->
 Suivre les **unit economics par produit**, imposer les **standards d'attribution**, tenir des **revues de coûts** régulières — le coût est une métrique de premier ordre, pas une surprise de fin de mois.
 
 ---
 
 ## Mises en situation
 
-Mise en situation : la facture IA de l'entreprise a triplé en un trimestre et la direction financière demande des explications que personne ne peut donner. Par où commences-tu ?
+Mise en situation : la facture IA de l'entreprise a triplé en un trimestre et la direction financière demande des explications que personne ne peut donner. Par où commences-tu ? <!--anki:78704d55386b76524b3d-->
 ?
-<!--anki:78704d55386b76524b3d-->
 1. **Visibilité d'abord** : sans attribution, aucune décision n'est possible. Tout passe par la gateway, avec des clés par équipe et par projet
 2. **Attribuer** : coût par équipe, application et fonctionnalité, puis showback avant chargeback
 3. **Identifier les gros postes** : quelles routes, quels modèles, quels utilisateurs concentrent la dépense
@@ -130,9 +120,8 @@ Mise en situation : la facture IA de l'entreprise a triplé en un trimestre et l
 
 ---
 
-Mise en situation : une équipe veut passer au modèle le plus puissant pour toutes ses requêtes, au motif que « la qualité prime ». Comment cadres-tu la discussion ?
+Mise en situation : une équipe veut passer au modèle le plus puissant pour toutes ses requêtes, au motif que « la qualité prime ». Comment cadres-tu la discussion ? <!--anki:713930583e38726a4a71-->
 ?
-<!--anki:713930583e38726a4a71-->
 1. **Sortir de l'opposition** : le sujet est un triangle coût, qualité, latence, pas un choix binaire
 2. **Demander des mesures** : sur quels segments le modèle le plus puissant est-il réellement meilleur ? ([[94-evals-methodologie|evals]])
 3. **Chiffrer** : coût par requête et par tâche réussie pour chaque option

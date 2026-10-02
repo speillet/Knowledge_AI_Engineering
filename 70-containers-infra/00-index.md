@@ -2,6 +2,7 @@
 Tags: #flashcards #moc #conteneurs #docker #kubernetes #gpu
 <!-- summary: sommaire des 13 fiches de la section, chaînes à retenir, et une carte sur l'intérêt des conteneurs pour servir des modèles. -->
 
+
 Sous-carte de la section **70 — Conteneurs & Infra** : du conteneur au GPU, pour déployer des modèles.
 
 ## Fiches de la série
@@ -41,9 +42,8 @@ Accès GPU : Docker `--gpus` · Apptainer `--nv` · Kubernetes `nvidia.com/gpu`
 
 ## Cartes
 
-Pourquoi les conteneurs sont-ils devenus le standard pour servir des modèles ?
+Pourquoi les conteneurs sont-ils devenus le standard pour servir des modèles ? <!--anki:45514a373c635d6d4a50-->
 ?
-<!--anki:45514a373c635d6d4a50-->
 Ils figent **l'environnement complet** (CUDA, bibliothèques, serveur d'inférence) : le même artefact tourne en dev, en CI et en production, et s'orchestre sur Kubernetes.
 
 ---

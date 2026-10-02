@@ -2,24 +2,22 @@
 Tags: #flashcards #ai-engineering #inference #optimisation #llm
 <!-- summary: prefill et decode, continuous batching, quantization (AWQ, GPTQ, FP8), FlashAttention, parallélisme tensor et pipeline, chunked prefill, désagrégation prefill/decode. -->
 
-Quelles sont les deux phases de l'inférence d'un LLM ?
+
+Quelles sont les deux phases de l'inférence d'un LLM ? <!--anki:482678244d584c28753b-->
 ?
-<!--anki:482678244d584c28753b-->
 - **Prefill** : traitement de **tout le prompt en parallèle** → produit le premier token et remplit le [[61-kv-cache-attention|KV cache]]
 - **Decode** : génération **token par token**, chacun dépendant du précédent
 
 ---
 
-Pourquoi prefill et decode ont-ils des goulots différents ?
+Pourquoi prefill et decode ont-ils des goulots différents ? <!--anki:423164672b2b78664256-->
 ?
-<!--anki:423164672b2b78664256-->
 Le **prefill** est **compute-bound** (beaucoup de calcul matriciel en parallèle) ; le **decode** est **memory-bandwidth-bound** (on relit tous les poids et le KV cache pour produire **un seul** token).
 
 ---
 
-À ne pas confondre : les leviers qui agissent sur le TTFT et ceux qui agissent sur le TPOT ?
+À ne pas confondre : les leviers qui agissent sur le TTFT et ceux qui agissent sur le TPOT ? <!--anki:477c572b3f2d422a736d-->
 ?
-<!--anki:477c572b3f2d422a736d-->
 ```text
 TTFT (prefill)          prefix caching, chunked prefill, contexte plus court,
                         désagrégation, plus de calcul
@@ -31,9 +29,8 @@ Un même changement peut **améliorer l'un et dégrader l'autre** : un gros batc
 
 ---
 
-Qu'est-ce que le continuous batching ?
+Qu'est-ce que le continuous batching ? <!--anki:6f76727c477c5a746c4d-->
 ?
-<!--anki:6f76727c477c5a746c4d-->
 Un batching **au niveau de l'itération** : les requêtes **entrent et sortent du batch à chaque pas de décodage** au lieu d'attendre la plus longue. Le GPU reste plein et le débit est multiplié.
 ```text
 Batch statique : ████████████░░░░░░  4 requêtes, on attend la plus longue
@@ -48,56 +45,49 @@ C'est la raison principale de l'écart de débit **d'un ordre de grandeur** entr
 
 ---
 
-Qu'est-ce que la quantization ?
+Qu'est-ce que la quantization ? <!--anki:712b5a5a4e2d6f442a35-->
 ?
-<!--anki:712b5a5a4e2d6f442a35-->
 Réduire la **précision des poids** (et parfois des activations) : FP16 → **FP8, INT8, INT4**. Moins de VRAM et de bande passante, donc plus rapide, au prix d'une **légère perte de qualité** ([[68-quantization|quantization]]).
 
 ---
 
-Quelles méthodes de quantization courantes ?
+Quelles méthodes de quantization courantes ? <!--anki:796f767d2a297674625a-->
 ?
-<!--anki:796f767d2a297674625a-->
 - **Weight-only** (poids seuls) : **AWQ, GPTQ** (INT4), GGUF pour llama.cpp
 - **Poids + activations** : **FP8** (H100 et plus récents), W8A8 INT8
 Le weight-only accélère surtout le **decode**, limité par la mémoire.
 
 ---
 
-Qu'est-ce que FlashAttention ?
+Qu'est-ce que FlashAttention ? <!--anki:4b232642746c452f422f-->
 ?
-<!--anki:4b232642746c452f422f-->
 Une implémentation de l'attention **consciente de la hiérarchie mémoire du GPU** (calcul par tuiles en SRAM) : **résultat exact**, beaucoup moins d'accès à la HBM, donc plus rapide et moins gourmande en mémoire.
 
 ---
 
-Tensor parallelism ou pipeline parallelism ?
+Tensor parallelism ou pipeline parallelism ? <!--anki:514f686c4c5338235550-->
 ?
-<!--anki:514f686c4c5338235550-->
 - **Tensor parallelism** : chaque couche est **découpée entre plusieurs GPU** (demande un interconnect rapide type **NVLink**)
 - **Pipeline parallelism** : les **couches sont réparties** par étages sur plusieurs GPU ou nœuds
 
 ---
 
-Qu'est-ce que le chunked prefill ?
+Qu'est-ce que le chunked prefill ? <!--anki:674f44515326767c7e37-->
 ?
-<!--anki:674f44515326767c7e37-->
 Découper un long prefill **en morceaux mélangés aux decodes** en cours : un gros prompt n'**interrompt plus** la génération des autres requêtes (latence inter-token plus stable).
 
 ---
 
-Qu'est-ce que la désagrégation prefill/decode ?
+Qu'est-ce que la désagrégation prefill/decode ? <!--anki:51242a2437253078482b-->
 ?
-<!--anki:51242a2437253078482b-->
 Exécuter prefill et decode sur des **pools de GPU séparés**, avec transfert du KV cache entre eux : chaque pool est dimensionné pour son goulot et on optimise **TTFT et TPOT** indépendamment.
 
 ---
 
 ## Mises en situation
 
-Mise en situation : ton service d'inférence tient le SLO de latence à faible charge, mais aux heures de pointe le TTFT explose alors que le débit stagne. Quels leviers actionnes-tu ?
+Mise en situation : ton service d'inférence tient le SLO de latence à faible charge, mais aux heures de pointe le TTFT explose alors que le débit stagne. Quels leviers actionnes-tu ? <!--anki:6932733f3f45586b4746-->
 ?
-<!--anki:6932733f3f45586b4746-->
 1. **Diagnostiquer** : file d'attente longue et préemptions pointent vers un manque de capacité KV cache, pas de calcul ([[93-monitoring-inference|métriques]])
 2. **Chunked prefill** : les longs prompts n'interrompent plus les décodages en cours, ce qui stabilise la latence inter-token
 3. **Quantization** en FP8 : moins de VRAM, donc plus de requêtes simultanées et plus de débit ([[68-quantization|quantization]])
@@ -108,9 +98,8 @@ Mise en situation : ton service d'inférence tient le SLO de latence à faible c
 
 ---
 
-Mise en situation : on te propose de passer de 2 GPU à 4 GPU en tensor parallelism pour accélérer un modèle 70B. Que vérifies-tu avant ?
+Mise en situation : on te propose de passer de 2 GPU à 4 GPU en tensor parallelism pour accélérer un modèle 70B. Que vérifies-tu avant ? <!--anki:63652b765a21517a6169-->
 ?
-<!--anki:63652b765a21517a6169-->
 1. **L'interconnect** : le tensor parallelism échange beaucoup entre GPU. Sans NVLink, le gain s'effondre
 2. **Ce qu'on cherche** : plus de débit, ou moins de latence ? Le TP réduit la latence, mais au prix d'une efficacité par GPU plus faible
 3. **L'alternative** : deux réplicas de 2 GPU donnent souvent plus de débit total qu'un seul réplica de 4
