@@ -24,6 +24,10 @@ jobs:
         run: pip install -r scripts/requirements.txt
       - name: Vérifier les fiches
         run: python3 scripts/lint_flashcards.py --quiet --stale-months 0
+      - name: Vérifier les sommaires générés
+        run: python3 scripts/sync_catalog.py --check
+      - name: Tester les scripts et le paquet Anki
+        run: python3 -m unittest discover -s tests -v
       - name: Générer le paquet Anki
         run: python3 scripts/export_anki.py
       - name: Publier dans la release « anki »

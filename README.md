@@ -20,6 +20,7 @@ Knowledge_AI_Engineering/
 ├── scripts/assign_card_ids.py   # identifiants permanents des nouvelles cartes
 ├── scripts/sync_catalog.py      # génération des sommaires README et MOC
 ├── scripts/sections.json        # titres et introductions des sections
+├── tests/                       # tests du parseur, du lint, des sommaires et de l’export
 ├── scripts/requirements.txt     # dépendances de l'export Anki
 ├── .githooks/pre-commit         # lance le lint avant chaque commit
 ├── .github/workflows/           # lint en CI, et export Anki publié en release
@@ -378,10 +379,13 @@ python3 scripts/lint_flashcards.py --stale-months 6 # fiches à revérifier (dé
 python3 scripts/assign_card_ids.py                 # identifiants des nouvelles cartes
 python3 scripts/sync_catalog.py                    # régénérer les deux catalogues
 python3 scripts/sync_catalog.py --check            # vérifier sans écrire
+python3 -m unittest discover -s tests -v           # tests (dépendances Anki requises)
 ```
 
 - **Erreurs** (bloquent le commit et la CI) : lien mort, nom de fichier en double, tags absents de la ligne 2, séparateur `?` absent ou multiple, question ou réponse vide, identifiant Anki absent/invalide/dupliqué, section `Mises en situation` ou `Connexions` manquante, dernier lien qui n'est pas le MOC, fiche absente du MOC, date `Vérifié le` illisible ou future, fiche datée sans source. Les liens sont contrôlés aussi dans le MOC et le README (hors exemples de code).
 - **Avertissements** : réponse trop longue (110 mots hors code, 140 pour une mise en situation), liste de plus de 5 éléments (6 étapes pour une mise en situation), « Quelle différence… » au lieu de « À ne pas confondre », question en double, Connexion sans lien en retour, fiche citée par moins de 2 autres, fiche absente du README, `Vérifié le` trop ancien.
+
+Les pull requests vérifient le lint, la synchronisation des catalogues, les tests et la génération d’un paquet Anki téléchargeable comme artefact CI. La publication en release reste réservée à `main` ou au déclenchement manuel.
 
 Le paquet Anki se régénère seul à chaque push sur `main` (voir [Réviser sur Android avec Anki](#4-réviser-sur-android-avec-anki)). Changer `MODEL_ID` dans `scripts/export_anki.py` casserait la mise à jour des cartes déjà importées : ne pas y toucher.
 
@@ -390,3 +394,5 @@ Pour activer le hook pre-commit, une fois par clone : `git config core.hooksPath
 Les fiches qui citent des produits, des versions ou des textes réglementaires portent une ligne `Vérifié le`. Le lint les signale au bout de 6 mois : on les relit, on corrige ce qui a changé, puis on met la date à jour.
 
 Les références ajoutées aux fiches servent de points de contrôle pour leur prochaine revue ; elles ne remplacent pas une validation de chaque affirmation. Les dates existantes n’ont pas été renouvelées par le seul ajout de sources.
+
+`tests/fixtures/legacy_guids.json` conserve les identifiants antérieurs à la migration : le test empêche leur perte accidentelle. En cas de suppression volontaire d’une carte, retirer aussi son GUID de ce fichier après vérification ; la suppression dans Anki reste manuelle.
