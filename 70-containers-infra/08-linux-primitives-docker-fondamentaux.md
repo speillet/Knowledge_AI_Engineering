@@ -25,17 +25,23 @@ cgroup  → la vue des cgroups
 ```
 C'est pour cela que deux conteneurs peuvent écouter le **port 8000** sans conflit.
 
+L'absence de conflit suppose des **namespaces réseau distincts**. Avec un réseau partagé, notamment entre conteneurs d'un même Pod, les ports peuvent entrer en conflit. Les namespaces ne constituent pas une virtualisation complète : les processus partagent le noyau de l'hôte et l'isolation dépend des espaces effectivement configurés.
+
 ---
 
 À quoi servent les cgroups ? <!--anki:4a2c613b3d4068604965-->
 ?
 À **limiter et allouer les ressources** qu'un processus consomme (CPU, mémoire, I/O, accès aux devices comme le [[09-gpu-conteneurs|GPU]]).
 
+Les cgroups regroupent des processus pour leur appliquer des contrôles et mesurer leur consommation. Une limite CPU peut provoquer du throttling ; une limite mémoire peut conduire à un arrêt pour manque de mémoire. Le contrôle d'accès aux devices ne partitionne pas automatiquement la VRAM ou le calcul GPU : ce partage demande des mécanismes spécifiques.
+
 ---
 
 Quelle phrase permet de retenir la différence namespaces / cgroups ? <!--anki:4351766a67394b416049-->
 ?
 **Les namespaces isolent (ce qu'on voit) ; les cgroups limitent (ce qu'on consomme).**
+
+Exemple : un namespace PID masque les processus d'autres groupes, tandis qu'un cgroup mémoire borne la quantité utilisable. Un conteneur peut donc avoir une vue isolée sans limite stricte de mémoire, ou une limite sans réseau isolé. Les deux mécanismes se complètent avec permissions, capabilities et filtrage d'appels système.
 
 ---
 
@@ -53,13 +59,17 @@ Une **couche en lecture seule** ; les layers sont empilés via un **union/overla
 
 Pourquoi l'ordre des instructions d'un Dockerfile influence-t-il le build ? <!--anki:48487e3d602d24354b28-->
 ?
-Parce que chaque instruction crée un **layer mis en cache** : placer ce qui change rarement en premier maximise la réutilisation du cache et accélère les rebuilds.
+Le builder réutilise les résultats d'étapes dont les instructions et dépendances n'ont pas changé. Une modification invalide l'étape concernée et les étapes qui en dépendent. Les instructions **RUN, COPY ou ADD** peuvent modifier le système de fichiers ; toutes les instructions ne créent pas une couche de fichiers.
+
+Copier d'abord le fichier de dépendances, installer, puis copier le code évite de réinstaller à chaque modification applicative. Épingler aussi les versions : un cache efficace n'est pas une garantie de reproductibilité.
 
 ---
 
 À ne pas confondre : volume et bind mount ? <!--anki:794d3870536e79555836-->
 ?
 Les deux **persistent des données hors du cycle de vie du conteneur** ; un **volume** est géré par le runtime (emplacement, sauvegarde, pilotes), un **bind mount** monte un chemin précis de l'hôte.
+
+Un volume simplifie la gestion du stockage par le moteur ; un bind mount convient pour un chemin local précis, mais couple le conteneur à l'hôte. Les données ne sont pas sauvegardées automatiquement du seul fait d'être dans un volume. Pour des poids de modèle non modifiables, préférer un montage en lecture seule.
 
 ---
 
@@ -76,6 +86,8 @@ Qu'est-ce qu'un Dockerfile ? <!--anki:6641264b537b71293034-->
 ?
 Une **recette déclarative** décrivant comment construire une image (base, dépendances, code, commande de démarrage).
 
+Par exemple, `FROM` choisit la base, `COPY` ajoute des fichiers, `RUN` installe les dépendances et `CMD` fournit une commande par défaut. Le Dockerfile est une entrée du build ; l'image en est le résultat. Épingler base et dépendances, et exclure secrets et fichiers inutiles du contexte de construction.
+
 ---
 
 À quoi sert le port mapping (`-p`) ? <!--anki:7366346b4c3365405e54-->
@@ -85,6 +97,8 @@ Une **recette déclarative** décrivant comment construire une image (base, dép
 ```bash
 docker run -p 8000:8000 my-inference-server
 ```
+
+Le premier nombre est le port de l'hôte, le second celui du conteneur. L'application doit écouter sur une adresse joignable dans le conteneur. Sans adresse explicite, le port peut être publié sur toutes les interfaces ; pour un usage local, utiliser `-p 127.0.0.1:8000:8000` et garder l'authentification adaptée au service.
 
 ---
 

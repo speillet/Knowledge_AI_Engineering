@@ -22,6 +22,8 @@ resources:
     nvidia.com/gpu: 1
 ```
 
+Le nœud doit annoncer cette ressource via un device plugin configuré. Pour une ressource GPU étendue, la limite sert de request si celle-ci est omise ; si les deux sont définies, elles doivent être égales. Sans capacité éligible, le Pod reste Pending. La demande alloue une unité annoncée, dont la signification dépend du partage configuré.
+
 ---
 
 Un GPU peut-il être partagé entre plusieurs Pods par défaut ? <!--anki:4f2d4d2f21696245696b-->
@@ -94,6 +96,8 @@ Le **scale-to-zero** ne vaut que si l'on accepte un **cold start** de plusieurs 
 Pourquoi la gestion des GPU est-elle si importante en inférence sur Kubernetes ? <!--anki:697851257b26396e486d-->
 ?
 Parce que le **GPU est une ressource rare et coûteuse** : son allocation et son partage conditionnent le coût et la densité du service.
+
+Une allocation trop large immobilise de la capacité ; un partage mal contrôlé dégrade mémoire et latence des voisins. Choisir GPU entier, partition matérielle ou partage temporel selon le besoin d'isolation. Suivre utilisation, mémoire, file d'attente et débit utile pour vérifier que la densité obtenue respecte les SLO.
 
 ---
 

@@ -34,7 +34,7 @@ Servir en priorité les requêtes dont le **préfixe en cache est le plus long**
 
 ---
 
-Quels workloads en profitent le plus ? <!--anki:4c337b29762e50327361-->
+Quels workloads profitent le plus du prefix caching ? <!--anki:4c337b29762e50327361-->
 ?
 - **Agents multi-tours** : l'historique grossit mais son début ne change pas
 - Longs **system prompts et définitions d'outils** partagés

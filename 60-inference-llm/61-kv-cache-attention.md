@@ -13,7 +13,9 @@ Sans lui, chaque token généré recalculerait l'attention sur toute la séquenc
 
 Pourquoi le KV cache est-il indispensable ? <!--anki:426d336e30672d4b5324-->
 ?
-Sans lui, chaque nouveau token obligerait à **recalculer l'attention sur tout le contexte** ; avec lui, on ne calcule que le token courant.
+Le KV cache conserve les **clés et valeurs des tokens déjà traités** à chaque couche. Pour le prochain token, on calcule ses nouvelles représentations puis son attention sur les K/V passés, sans recalculer ceux-ci à chaque tour.
+
+Le passé n'est donc pas gratuit : le nouveau token doit encore consulter le cache, ce qui consomme de la bande passante. Sans cache, une implémentation autorégressive répète beaucoup de calculs sur le préfixe ; avec cache, elle échange ce calcul contre de la mémoire.
 
 ---
 
@@ -46,11 +48,15 @@ Pourquoi le KV cache limite-t-il le nombre de requêtes simultanées ? <!--anki:
 ?
 Parce que chaque requête occupe de la **VRAM proportionnelle à son contexte** : la mémoire GPU devient le goulot d'étranglement, pas le calcul.
 
+Le budget restant après les poids et les autres allocations doit couvrir tous les tokens actifs, entrée et sortie. Une requête longue peut prendre la place de plusieurs courtes. La mémoire n'est pas toujours le seul goulot : calcul, bande passante et SLO peuvent imposer une concurrence inférieure au maximum qui tient en VRAM.
+
 ---
 
 Qu'est-ce que PagedAttention ? <!--anki:6b4d433358527e784d24-->
 ?
-La technique de [[11-serveurs-inference-llm|vLLM]] qui gère le KV cache en **blocs paginés non contigus** (comme la mémoire virtuelle d'un OS), éliminant la fragmentation.
+**PagedAttention** organise le KV cache en blocs physiques qui peuvent être non contigus, associés aux positions logiques d'une séquence. Le serveur alloue les blocs à mesure que celle-ci grandit, sans réserver un grand espace contigu pour sa longueur maximale.
+
+Cette organisation **réduit fortement le gaspillage et la fragmentation** ; il peut rester un bloc partiellement rempli par séquence et des métadonnées. Elle facilite aussi certains partages de blocs. Elle ne réduit pas la quantité de K/V nécessaire pour des tokens distincts ([[11-serveurs-inference-llm|vLLM]]).
 
 ---
 
@@ -84,6 +90,8 @@ Quel lien entre KV cache et contexte long ? <!--anki:793936344b2c75354c44-->
 ?
 Plus le contexte est long, plus le cache est gros : le **contexte long coûte de la VRAM et de la latence**, d'où l'intérêt de la [[35-context-engineering|gestion du contexte]].
 
+Pour une attention dense, chaque nouveau token consulte davantage de K/V lorsque l'historique grandit. Réduire le contexte peut donc améliorer à la fois concurrence et temps de décodage. Quantifier le cache ou partager des préfixes aide la mémoire, mais ne remplace pas une sélection de sources pertinentes et une limite de longueur de sortie.
+
 ---
 
 Calcul : combien de requêtes de 8 000 tokens tiennent sur un H100 80 Go qui sert un modèle 8B en BF16 ? <!--anki:6a4724747a7e6e796170-->
@@ -97,6 +105,8 @@ KV par token (Llama 3.1 8B)                    ≈ 128 Ko → 8 000 tokens ≈ 1
 → environ 50 requêtes simultanées à contexte plein
 ```
 Au-delà, les requêtes **attendent en file** ou sont **préemptées** (recalcul ou swap), et la latence p99 explose. En FP8, le KV cache double la concurrence ([[64-metriques-slo-inference|concurrence]]).
+
+Ce sont des capacités mémoire approximatives, avec Go décimaux et un cache d'environ 128 Kio par token. Réserver aussi les tokens qui seront générés et les marges du moteur. **Deux fois moins d'octets par K/V ne garantit pas deux fois plus de requêtes dans le SLO** : vérifier bande passante et latence en charge.
 
 ---
 
@@ -112,6 +122,8 @@ KV par token (Llama 3.1 70B : 80 couches, 8 têtes KV de 128, BF16)
 → environ 26 requêtes simultanées à contexte plein
 ```
 Le 70B coûte 2,5 fois plus de KV par token que le 8B (320 Ko contre 128 Ko) : sa concurrence chute vite. Un KV cache en FP8 la double ([[68-quantization|quantization]]).
+
+L'estimation suppose que les poids et le cache se répartissent correctement entre GPU ; tenir au total ne garantit pas de tenir sur chaque carte. Inclure les sorties futures et les allocations du moteur. Le FP8 peut approximativement doubler la capacité mémoire du cache, mais pas nécessairement le débit utile sous contrainte de latence.
 
 ---
 

@@ -8,11 +8,15 @@ Qu'est-ce qu'une API layer (LLM gateway) ? <!--anki:79752c38462d5a6c3765-->
 ?
 Une **couche unique entre les applications et tous les modèles** (API cloud et modèles auto-hébergés) : une seule interface, et des fonctions transverses centralisées (auth, budgets, fallbacks, logs).
 
+Elle donne aux applications un point d'accès cohérent et centralise les politiques communes. Par exemple, une clé d'équipe peut accéder à certains modèles dans un budget donné. Cette couche devient aussi une dépendance du service : prévoir disponibilité, configuration versionnée et capacité à diagnostiquer une erreur de routage.
+
 ---
 
 Qu'est-ce que LiteLLM ? <!--anki:496b6e43213c2b593774-->
 ?
 Un projet open source qui expose **plus de 100 fournisseurs de LLM au format de l'API OpenAI**. Il existe sous deux formes : un **SDK Python** et un **proxy** (serveur gateway).
+
+L'interface commune simplifie le code client, mais ne gomme pas toutes les différences des fournisseurs : paramètres, outils, schémas et erreurs peuvent varier. Vérifier les capacités du modèle et de l'intégration choisis. Tester le chemin exact de l'application avant de considérer deux backends comme interchangeables.
 
 ---
 
@@ -21,9 +25,11 @@ SDK ou proxy LiteLLM ? <!--anki:7531606c2c72556e5870-->
 - **SDK** : bibliothèque dans le code (`litellm.completion(...)`), idéale pour un seul service
 - **Proxy** : serveur **centralisé** pour toute l'organisation, avec clés, budgets et observabilité partagés
 
+Le SDK évite un service réseau supplémentaire mais disperse la configuration si plusieurs applications l'utilisent séparément. Le proxy facilite les politiques communes, au prix d'un composant à héberger et superviser. Dans les deux cas, les permissions du fournisseur et les règles de traitement des données doivent correspondre à l'usage.
+
 ---
 
-À quoi ressemble une configuration du proxy ? <!--anki:75244e56214c4d524272-->
+Comment configurer plusieurs déploiements derrière un alias du proxy LiteLLM ? <!--anki:75244e56214c4d524272-->
 ?
 ```yaml
 model_list:
@@ -37,17 +43,23 @@ model_list:
 ```
 Deux déploiements sous le même nom : le proxy **répartit la charge** entre eux.
 
+`model_name` est l'alias demandé par le client ; chaque entrée est un déploiement candidat. Ajouter les identifiants via des secrets et choisir la stratégie de routage. Ici les modèles diffèrent : la répartition peut changer la qualité des réponses ; pour une simple réplication, utiliser des backends fonctionnellement équivalents et tester les capacités requises.
+
 ---
 
 Que sont les virtual keys de LiteLLM ? <!--anki:685b522c2437213a3750-->
 ?
 Des **clés API émises par le proxy** (par équipe, projet ou utilisateur) : les vraies clés des fournisseurs restent **secrètes**, et chaque virtual key a ses **modèles autorisés, budget et limites**.
 
+L'application utilise sa clé virtuelle et le proxy appelle le fournisseur avec le secret approprié. Cela facilite révocation et attribution de dépenses sans distribuer les clés maîtresses. Protéger néanmoins la clé virtuelle : elle autorise des appels facturables. Vérifier les permissions effectives, la rotation et la disponibilité du stockage de configuration.
+
 ---
 
 Comment LiteLLM maîtrise-t-il les coûts ? <!--anki:462c433f457b28282c46-->
 ?
 Par le **suivi des dépenses** par clé, équipe ou utilisateur, des **budgets** (plafond sur une période) et des **rate limits** en requêtes et tokens par minute (RPM/TPM).
+
+Les budgets bornent la dépense sur une durée, tandis que les limites RPM/TPM contrôlent le rythme. Des requêtes concurrentes et une comptabilité différée peuvent produire un dépassement : tester les garanties de la configuration choisie. Prévoir alertes, marges et conduite en cas de quota atteint, sans retries qui aggraveraient la saturation.
 
 ---
 
@@ -57,11 +69,15 @@ Comment LiteLLM améliore-t-il la fiabilité ? <!--anki:6369583735646953616f-->
 - **Fallbacks** vers un autre modèle ou fournisseur si le premier échoue
 - **Load balancing** entre déploiements, avec cooldown des déploiements en erreur
 
+Limiter le nombre de tentatives et le temps total pour éviter une tempête de retries. Un fallback doit respecter les mêmes contraintes de données, de capacités et de qualité que le modèle initial. Après le début d'un streaming, remplacer silencieusement la réponse est délicat : définir le comportement de reprise côté client.
+
 ---
 
 Comment relier LiteLLM à l'observabilité ? <!--anki:4e6e34374d5732535658-->
 ?
 Par des **callbacks** : chaque appel est envoyé à [[91-langfuse-observabilite|Langfuse]] (ou OpenTelemetry, Prometheus) avec prompt, réponse, tokens, coût et latence — sans instrumenter chaque application.
+
+La gateway voit les appels modèles, mais pas forcément toutes les étapes métier ou les outils externes ; propager un identifiant de trace et instrumenter ces étapes dans l'application. Filtrer les données sensibles avant export et définir rétention et accès. Une trace complète doit expliquer le résultat sans collecter inutilement des secrets.
 
 ---
 
@@ -71,6 +87,8 @@ Où se place LiteLLM dans la stack ? <!--anki:65484f7c36453a766272-->
 Client → Ingress (TLS) → LiteLLM (auth, quotas, routing) → vLLM / API cloud
 ```
 L'[[83-gateway-ingress|Ingress]] gère le réseau ; LiteLLM gère la **logique propre aux LLM**.
+
+Le client reçoit une interface commune tandis que la gateway choisit le backend et applique les politiques de coût. Chaque saut ajoute une possibilité d'erreur, de délai ou de buffering du stream. Aligner les timeouts, propager les identifiants de requête et vérifier l'authentification à chaque frontière exposée.
 
 ---
 

@@ -16,6 +16,8 @@ Quel est le modèle de sécurité d'Apptainer ? <!--anki:6957347b4c5a59334768-->
 ?
 Le conteneur s'exécute **avec les droits de l'utilisateur** qui le lance, sans démon privilégié en arrière-plan.
 
+Cela facilite le respect des permissions sur les fichiers partagés et l'intégration à l'ordonnanceur. Certaines installations utilisent néanmoins des mécanismes privilégiés encadrés pour préparer l'environnement. Un processus conserve l'accès aux fichiers que l'utilisateur peut lire ou écrire via les montages : ne pas assimiler exécution sans démon root et sandbox hermétique.
+
 ---
 
 Comment Apptainer s'intègre-t-il avec Slurm ? <!--anki:4e31232b53236e642f30-->
@@ -34,11 +36,11 @@ Les variables `SLURM_*` et `CUDA_VISIBLE_DEVICES` sont **héritées** par le con
 
 Que fait précisément l'option `--nv` d'Apptainer ? <!--anki:62453d6048415f292569-->
 ?
-Elle **monte les bibliothèques et le driver NVIDIA de l'hôte** dans le conteneur pour permettre l'[[09-gpu-conteneurs|accès GPU]].
-
+`--nv` rend accessibles les **devices NVIDIA** et les **bibliothèques utilisateur du driver** nécessaires à l'application. Le module noyau reste celui de l'hôte ; il n'est pas chargé par l'image.
 ```bash
 apptainer exec --nv model.sif python inference.py
 ```
+Vérifier compatibilité entre ces bibliothèques et l'environnement du conteneur. L'option expose l'[[09-gpu-conteneurs|accès GPU]] mais ne réserve pas de ressources sur le cluster : l'allocation Slurm et les restrictions du site restent nécessaires.
 
 ---
 
@@ -50,11 +52,15 @@ En **montant le système de fichiers partagé** avec `--bind`.
 apptainer exec --nv --bind /data/models:/models model.sif python serve.py
 ```
 
+Le chemin de gauche désigne le stockage visible sur l'hôte, celui de droite son emplacement dans le conteneur. Utiliser une révision précise des poids et un montage en lecture seule si aucune modification n'est nécessaire. Vérifier droits, débit du stockage partagé et présence de tous les fichiers attendus avant de lancer le serveur.
+
 ---
 
 Pourquoi le format SIF (fichier unique) est-il pratique en HPC ? <!--anki:796a74462e3c2d7e774b-->
 ?
 Parce que l'image est **un seul fichier**, facile à stocker, copier et partager sur un **système de fichiers partagé**.
+
+Un fichier unique simplifie le transfert, le calcul d'empreinte et la distribution entre nœuds, tout en évitant de manipuler des milliers de fichiers d'image séparés. Garder données et résultats dans des montages dédiés. Le SIF ne supprime pas les coûts d'accès au stockage partagé ni les dépendances au driver et au matériel hôtes.
 
 ---
 
@@ -65,6 +71,8 @@ Avec `apptainer pull` et le préfixe `docker://` (voir [[06-apptainer-singularit
 ```bash
 apptainer pull vllm.sif docker://vllm/vllm-openai:latest
 ```
+
+Apptainer télécharge l'image du registry et la convertit en SIF ; Docker Engine n'a pas besoin de tourner sur le nœud. `latest` est pratique pour illustrer la commande mais n'est pas reproductible. En production, utiliser une référence immuable ou un tag contrôlé, conserver l'empreinte du SIF et vérifier la compatibilité du point d'entrée.
 
 ---
 
@@ -86,6 +94,8 @@ apptainer build vllm.sif vllm.def      # souvent possible sans root (--fakeroot)
 apptainer run --nv --bind /data/models:/models vllm.sif /models/llama-70b
 ```
 Le fichier `.def` se **versionne** dans Git, et le SIF produit est un artefact immuable.
+
+Le mode offline suppose que poids, tokenizer et configurations nécessaires existent déjà dans le montage. Le tag donné est illustratif : choisir une version compatible avec le modèle et les drivers du cluster. Les possibilités de build sans root dépendent des namespaces utilisateur et de la configuration administrateur ; vérifier ces prérequis avant de planifier le job.
 
 ---
 
@@ -137,6 +147,8 @@ Mise en situation : ton laboratoire hésite entre un cluster HPC en Slurm et un 
 ---
 
 ## Sources
+
+- [Apptainer — accès aux périphériques et bibliothèques GPU](https://apptainer.org/docs/user/main/gpu.html)
 
 - [Apptainer — support GPU, guide utilisateur 1.5](https://apptainer.org/docs/user/1.5/gpu.html)
 

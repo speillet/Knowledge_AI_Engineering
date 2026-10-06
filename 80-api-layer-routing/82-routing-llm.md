@@ -13,11 +13,15 @@ Qu'est-ce que le routage statique ? <!--anki:44773775513569557677-->
 ?
 Un **modèle fixé par cas d'usage** (classification → petit modèle, rédaction juridique → gros modèle). Simple et prévisible, c'est le **point de départ** recommandé.
 
+Le choix découle d'evals sur le cas d'usage, pas uniquement de l'étiquette « simple » ou « complexe ». Un petit modèle peut être excellent pour un format spécialisé, et un grand modèle peut encore échouer. Cette baseline stable sert à mesurer si un routage plus dynamique apporte assez de gain pour justifier sa complexité.
+
 ---
 
 Qu'est-ce que le routage par règles ? <!--anki:5162254473514a51595d-->
 ?
 Des **heuristiques** sur la requête : longueur du prompt, langue, présence de code, client ou tenant, niveau d'abonnement. Déterministe et facile à auditer.
+
+Exemple : envoyer une entrée trop longue vers un modèle disposant d'un contexte suffisant. Définir les priorités si plusieurs règles s'appliquent et une route par défaut explicite. Les exigences de confidentialité ou de région sont des contraintes dures ; elles ne doivent pas être contournées par une règle de coût.
 
 ---
 
@@ -30,6 +34,8 @@ On compare l'**embedding de la requête** à des exemples de référence pour ch
 Qu'est-ce qu'un routeur appris (ex. RouteLLM) ? <!--anki:733a60734a2a716f745b-->
 ?
 Un **classifieur entraîné sur des données de préférence** qui prédit si le modèle faible suffira pour une requête donnée. Un **seuil** règle le compromis coût/qualité.
+
+Entraîner et calibrer ce routeur sur des requêtes proches du trafic cible, puis évaluer ses erreurs d'orientation. Un faux choix du petit modèle peut coûter de la qualité ; choisir trop souvent le grand annule l'économie. Inclure latence et coût du routeur lui-même dans la comparaison avec une règle statique.
 
 ---
 
@@ -50,11 +56,15 @@ Le calcul ne tient que si la **vérification est fiable et bon marché** : sinon
 ?
 Le **routing** choisit le modèle **avant** l'appel (optimisation) ; le **fallback** bascule vers un autre modèle **après une erreur** (panne, rate limit, timeout) — c'est de la **fiabilité**, gérée par l'[[81-litellm-api-layer|API layer]].
 
+Un fallback doit être admissible pour le même contrat : accès aux données, longueur de contexte, outils et format de sortie. Une réponse de mauvaise qualité peut déclencher une cascade, ce qui est un autre mécanisme. Tracer la raison du choix ou de la bascule permet de distinguer problème de qualité et incident technique.
+
 ---
 
 Qu'est-ce que le routage selon la charge ? <!--anki:47573371746971216e2e-->
 ?
 Répartir entre **réplicas d'un même modèle** selon leur état : file d'attente, latence, occupation du [[61-kv-cache-attention|KV cache]], voire **affinité de préfixe** (envoyer la requête là où son préfixe est déjà en cache).
+
+Une affinité de cache économise du prefill mais peut surcharger un réplica populaire ; la décision doit équilibrer réutilisation et attente en file. Utiliser des signaux récents et limiter les oscillations. Tester avec des séquences de prompts réalistes, car des requêtes aléatoires sans préfixes partagés ne révèlent pas ce compromis.
 
 ---
 
@@ -68,6 +78,8 @@ Qu'est-ce qu'un cache sémantique ? <!--anki:702925434b335a303e56-->
 ?
 Renvoyer une **réponse déjà générée** pour une question **sémantiquement proche** d'une question passée. Gros gain de coût et de latence, mais risque de **mauvaise réponse** si le seuil de similarité est trop permissif.
 
+Deux questions proches peuvent différer par une négation, une date ou un utilisateur. Inclure tenant, permissions et versions des sources dans les conditions d'accès au cache, puis prévoir invalidation et contrôle des hits. Réserver cette technique aux tâches où une réponse réutilisée est acceptable et mesurable, pas aux données changeant à chaque requête.
+
 ---
 
 À ne pas confondre : les quatre décisions autour du modèle ? <!--anki:7265624f26605e34686c-->
@@ -79,6 +91,8 @@ Fallback  → APRÈS une erreur technique, basculer          (fiabilité)
 Retry     → APRÈS une erreur transitoire, réessayer       (fiabilité)
 ```
 Les deux premiers visent le **coût et la qualité**, les deux derniers la **disponibilité**. Ils vivent souvent dans le même composant, la [[81-litellm-api-layer|gateway]], mais répondent à des questions différentes ([[142-fiabilite-resilience-llm|fiabilité]]).
+
+Par exemple, router une extraction vers un petit modèle, escalader si le contrôle qualité échoue, basculer si le fournisseur est indisponible et réessayer brièvement sur une erreur transitoire. Partager un budget global entre ces mécanismes : leur composition peut sinon multiplier les appels et dépasser le délai utilisateur.
 
 ---
 

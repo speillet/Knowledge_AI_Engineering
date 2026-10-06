@@ -13,6 +13,8 @@ Une image construite avec Docker peut-elle être utilisée sans Docker Engine ? 
 ?
 **Oui.** Une image compatible OCI peut être utilisée par d'autres technologies compatibles.
 
+Docker est un outil de construction et d'exécution, pas une dépendance incorporée à toute image qu'il produit. Par exemple, Kubernetes peut confier l'image à containerd. Vérifier néanmoins architecture, système d'exploitation et dépendances externes ; une image x86_64 avec des besoins GPU précis ne tourne pas sur n'importe quel hôte.
+
 ---
 
 Que signifie « Docker/OCI compatible » ? <!--anki:494f576456637d502555-->
@@ -32,6 +34,8 @@ serveur d'inférence LLM ~8 à 12 Go
 poids d'un modèle 8B    ~16 Go   ← à garder hors de l'image
 ```
 Retenir l'ordre de grandeur : une image applicative se compte en **centaines de Mo**, une image GPU en **Go**, et les **poids** ne doivent pas y entrer ([[10-images-modeles-poids|poids de modèles]]).
+
+Ces tailles varient avec la version, les dépendances et la compression ; distinguer taille téléchargée et espace décompressé sur le nœud. Séparer les poids est souvent pratique, mais les intégrer peut être un choix explicite pour un artefact autonome. Mesurer surtout temps de pull, espace disque et fréquence de mise à jour.
 
 ---
 
@@ -74,6 +78,8 @@ docker pull registry.interne/app@sha256:9f2c…   # par digest : immuable
 ```
 En production, on déploie par **digest** et non par tag ([[112-cicd-modeles|CI/CD]]).
 
+Le build fabrique l'artefact, le push le publie et le pull le récupère avant exécution. Le digest désigne le contenu précis, tandis qu'un tag peut être déplacé. Le digest abrégé ci-dessus est illustratif : utiliser sa valeur complète. Ajouter provenance et signature si la chaîne de livraison doit vérifier l'origine de l'image.
+
 ---
 
 Docker Hub est-il un runtime ? <!--anki:715d2f71583467563355-->
@@ -89,7 +95,7 @@ En pratique, deux conséquences : Docker Hub applique des **limites de pull** au
 - **Tag** (`app:1.2.0`, `app:latest`) : une **étiquette mutable**. Elle peut être **réécrite** et pointer demain vers une autre image
 - **Digest** (`app@sha256:9f2c…`) : l'**empreinte du contenu**, donc **immuable** et vérifiable
 
-En production, on **épingle le digest** : c'est ce qui garantit que le déploiement d'aujourd'hui exécute exactement ce qui a été testé hier.
+En production, on **épingle le digest** : cela identifie le contenu de l'image testée ; configuration, poids montés, secrets, architecture et driver doivent aussi être maîtrisés pour reproduire son comportement.
 
 ---
 

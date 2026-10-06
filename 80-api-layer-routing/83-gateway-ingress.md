@@ -7,6 +7,8 @@ Qu'est-ce qu'un Ingress dans Kubernetes ? <!--anki:49586e334f397c2c6740-->
 ?
 La **porte d'entrée HTTP(S) du cluster** : il route le trafic externe vers les Services selon l'hôte et le chemin.
 
+Un objet Ingress décrit des règles ; un **Ingress controller** doit les implémenter pour que le trafic soit effectivement routé. Les Services dirigent ensuite vers les Pods éligibles. L'Ingress ne décide pas automatiquement du bon modèle LLM et ne constitue pas, à lui seul, une politique d'authentification ou de budget.
+
 ---
 
 Un Ingress fonctionne-t-il seul ? <!--anki:45497c54723d663e553e-->
@@ -19,6 +21,8 @@ Que gère typiquement un Ingress ? <!--anki:46493d40694175445866-->
 ?
 - Routage **par hôte** (`api.example.com`) et **par chemin** (`/v1/...`)
 - **Terminaison TLS** (HTTPS)
+
+Par exemple, envoyer `api.example.com/v1` vers le Service de la gateway tout en présentant un certificat HTTPS. Certaines fonctions supplémentaires dépendent du controller et de sa configuration. Vérifier taille des corps, timeouts et streaming sur toute la chaîne ; une règle de routage correcte ne garantit pas qu'une longue réponse arrive intacte.
 
 ---
 
@@ -46,18 +50,21 @@ Pour une stack LLM, on ajoute souvent une **gateway LLM** (LiteLLM) derrière, q
 À ne pas confondre : Ingress, API gateway et gateway LLM ? <!--anki:68587e30382d4f264f2a-->
 ?
 ```text
-Ingress        → entrée réseau : TLS, hôte, chemin
-API gateway    → authentification, quotas, transformation, WAF
-Gateway LLM    → clés virtuelles, budgets par équipe, routage entre modèles,
-                 fallbacks, comptage des tokens, traces
+Ingress       → exposition HTTP(S), hôte, chemin, TLS
+API gateway   → politiques d'API : auth, quotas, transformations
+Gateway LLM   → modèles, tokens, budgets, fallbacks, traces LLM
 ```
-Les trois se cumulent, dans cet ordre. Une API gateway sait compter les **requêtes**, pas les **tokens** : c'est précisément ce qu'apporte la couche LLM ([[81-litellm-api-layer|LiteLLM]]).
+Ce sont des **responsabilités**, pas nécessairement trois produits empilés. Une gateway généraliste peut intégrer des fonctions LLM ou une extension de comptage des tokens ; une gateway LLM peut aussi terminer TLS.
+
+Choisir l'assemblage qui couvre les besoins sans dupliquer les contrôles, et désigner qui applique chaque quota ou timeout ([[81-litellm-api-layer|LiteLLM]]).
 
 ---
 
 Pourquoi rate-limiter un endpoint LLM ? <!--anki:6b603e5625303c4c4a78-->
 ?
 Parce que chaque requête consomme du **GPU coûteux** : sans limite, un client peut saturer le service et faire exploser les coûts.
+
+Les requêtes n'ont pas toutes le même coût : une génération longue peut monopoliser beaucoup plus de ressources qu'une classification. Combiner limites de requêtes, tokens et concurrence, par identité et globalement. Retourner une erreur explicite avec une politique de retry adaptée et garder une file bornée pour protéger la latence des autres clients.
 
 ---
 
@@ -66,6 +73,8 @@ Parce que chaque requête consomme du **GPU coûteux** : sans limite, un client 
 ```text
 Client → Ingress (TLS, routage) → gateway/LiteLLM (auth, quotas) → Service vLLM → Pods GPU
 ```
+
+L'Ingress expose le domaine ; la gateway authentifie et choisit le backend ; le Service fournit une destination stable vers les Pods prêts ; les Pods exécutent le modèle. Certains composants peuvent être fusionnés. Diagnostiquer chaque saut : résolution DNS, TLS, autorisation, routage, readiness et calcul, en gardant un identifiant commun dans les logs.
 
 ---
 
@@ -84,14 +93,15 @@ Penser aussi aux **load balancers cloud** en amont, avec leur propre délai d'in
 
 Quels repères de configuration pour un endpoint LLM ? <!--anki:6a586e4237583a6c5656-->
 ?
+Définir les réglages à partir du **SLO et du profil des requêtes**, pas de valeurs universelles :
 ```text
-timeout de lecture      300 à 900 s selon la longueur des réponses
-buffering               désactivé sur les routes de streaming
-taille max de requête   10 à 50 Mo  (documents, images, audio)
-rate limit              en requêtes ET en tokens par minute
-keep-alive              supérieur au timeout du client
+délai total          budget de bout en bout côté client et serveur
+timeout d'inactivité adapté aux pauses entre événements du stream
+buffering            éviter d'accumuler les tokens avant envoi
+taille de requête    plafonnée selon les formats réellement acceptés
+quotas               requêtes, tokens et concurrence
 ```
-Un défaut à 60 secondes coupe les réponses longues : c'est le symptôme le plus courant en mise en production ([[142-fiabilite-resilience-llm|fiabilité]]).
+Distinguer délai de connexion, délai entre lectures et durée totale. Tester un stream long, une période sans émission et une déconnexion client. Un timeout très élevé sans annulation peut laisser tourner du GPU inutilement ([[142-fiabilite-resilience-llm|fiabilité]]).
 
 ---
 

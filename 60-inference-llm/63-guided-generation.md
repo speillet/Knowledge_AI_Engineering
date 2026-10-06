@@ -5,7 +5,9 @@ Tags: #flashcards #ai-engineering #inference #structured-output #llm
 
 Qu'est-ce que la guided generation ? <!--anki:574e547021574d687c-->
 ?
-**Contraindre le décodage** pour que la sortie respecte **à coup sûr** un format : JSON Schema, regex, liste de choix ou grammaire. On parle aussi de **constrained decoding** ou de **structured outputs**.
+La **guided generation** restreint les tokens autorisés pendant le décodage pour respecter une grammaire ou un schéma supporté : JSON, valeurs d'énumération ou langage spécifique. Le modèle choisit parmi les continuations encore valides.
+
+La garantie porte sur la **structure d'une sortie achevée dans les conditions prévues**. Refus, erreur, troncature et contraintes non supportées doivent être traités séparément. Une date bien formée ou un montant numérique peuvent rester faux : la validation métier reste nécessaire.
 
 ---
 
@@ -17,20 +19,26 @@ Comment la guided generation contraint-elle techniquement le décodage ? <!--ank
 logits → masque(état de la grammaire) → échantillonnage → mise à jour de l'état
 ```
 
+Par exemple, après une clé JSON attendue, le moteur n'autorise que les tokens compatibles avec sa valeur et la suite du schéma. Le masque est mis à jour à chaque token, lequel peut représenter plusieurs caractères. Le schéma doit rester satisfaisable et ses fonctionnalités être supportées par le moteur.
+
 ---
 
 Demander du JSON dans le prompt ou le contraindre ? <!--anki:7352453c3f755a7a7363-->
 ?
-Le **[[11-prompt-engineering-avance|prompt]]** (« réponds en JSON ») donne un résultat **probable** : champ manquant, virgule en trop, texte autour. La **contrainte** donne une **garantie syntaxique** : la sortie est toujours parsable.
+Une consigne « réponds en JSON » **oriente** la génération, mais peut produire du texte autour de l'objet, des champs manquants ou une syntaxe invalide. Le décodage contraint restreint effectivement les continuations possibles.
+
+Distinguer **JSON valide** et **conformité à un schéma** : un objet parsable peut avoir les mauvais champs. Même en mode strict, vérifier le statut de fin, les refus et les sorties tronquées avant de parser, puis appliquer les règles métier. Une contrainte de format ne remplace pas ces contrôles.
 
 ---
 
-Quels types de contraintes peut-on appliquer ? <!--anki:694a55557556246d483b-->
+Quels types de contraintes peut-on appliquer au décodage d'un LLM ? <!--anki:694a55557556246d483b-->
 ?
 - **Choix** : une valeur parmi une liste (classification)
 - **Regex** : dates, identifiants
 - **JSON Schema** : objets typés
 - **Grammaire hors contexte (CFG)** : SQL, DSL, code
+
+Choisir la contrainte minimale qui exprime le besoin. Une regex de date impose une forme mais peut accepter un jour inexistant ; une grammaire SQL n'impose pas les droits d'accès ni un coût de requête raisonnable. Tester les contraintes réellement prises en charge et compléter par une validation sémantique côté application.
 
 ---
 
@@ -48,29 +56,39 @@ Comment obtenir une sortie structurée garantie avec une API propriétaire ? <!-
 ?
 Les fournisseurs proposent des **structured outputs** : on fournit un JSON Schema (ex. `response_format` de type `json_schema` en mode strict chez OpenAI, structured outputs chez Anthropic) et l'API garantit la conformité.
 
+La garantie dépend du modèle, du mode choisi et du sous-ensemble de JSON Schema accepté. Prévoir une branche pour les refus et les réponses interrompues par la limite de sortie. Pour un flux streamé, attendre l'objet complet avant de le traiter comme un résultat valide ; des fragments seuls peuvent être impossibles à parser.
+
 ---
 
 Une sortie valide syntaxiquement est-elle correcte ? <!--anki:49726331503b73342157-->
 ?
 **Non.** La contrainte garantit la **forme**, pas le **fond** : les valeurs peuvent être fausses ou inventées. Il faut toujours une **validation métier** (ex. Pydantic, règles) et des [[92-chainforge-evals-prompts|evals]].
 
+Par exemple, un objet JSON portant un montant de 120 est bien typé mais peut contredire une facture de 12 euros. Pydantic vérifie les contraintes déclarées ; seule une comparaison à la source ou une règle métier détectera certaines erreurs factuelles. Une action externe doit aussi vérifier l'autorisation, indépendamment de la validité du JSON.
+
 ---
 
-La contrainte peut-elle dégrader la qualité ? <!--anki:7669615e6153286a544d-->
+La contrainte de format peut-elle dégrader la qualité d'une réponse LLM ? <!--anki:7669615e6153286a544d-->
 ?
-**Oui**, si elle force le modèle trop tôt : on laisse de la place au raisonnement (champ `reasoning` **avant** le champ `answer`, ou raisonnement libre puis extraction structurée). **L'ordre des champs compte.**
+**Oui.** Un schéma trop étroit peut forcer une réponse alors qu'il manque des informations, ou imposer un ordre de génération défavorable à la tâche. Prévoir des champs d'incertitude, une valeur nulle ou une catégorie « information absente » lorsque cela a du sens.
+
+Comparer plusieurs schémas sur des exemples difficiles et séparer analyse et extraction si cela apporte un gain mesuré. Ajouter un champ `reasoning` n'est pas une recette universelle ; une courte justification ou des références vérifiables sont souvent plus utiles à l'application.
 
 ---
 
 Quel coût en latence ajoute la guided generation ? <!--anki:4b3d5e5e4934672e2836-->
 ?
-Une **compilation de la grammaire** au premier usage (mise en cache ensuite) et un calcul de masque à chaque token, devenu **négligeable** avec les moteurs récents comme XGrammar.
+La contrainte peut ajouter une **préparation du schéma ou de la grammaire**, puis un calcul du masque pendant la génération. Certains moteurs mettent les structures préparées en cache et optimisent fortement ce travail.
+
+Le surcoût dépend de la complexité du schéma, du moteur, du cache et du nombre de requêtes : il n'est pas toujours négligeable. Mesurer premier appel et appels suivants séparément, puis vérifier le débit sous charge avec les schémas réellement utilisés.
 
 ---
 
-Quel lien avec le tool calling ? <!--anki:727c60472d7655416165-->
+Quel lien entre guided generation et tool calling ? <!--anki:727c60472d7655416165-->
 ?
-Les **arguments d'un [[32-tool-calling|appel d'outil]]** sont générés sous contrainte du JSON Schema de l'outil : c'est ce qui rend le tool calling **fiable syntaxiquement**.
+Le tool calling décrit un outil et ses arguments attendus, souvent par **JSON Schema**. Un mode strict de sortie structurée peut contraindre leur génération, mais **tout appel d'outil n'est pas automatiquement décodé sous contrainte** : cela dépend du fournisseur et de la configuration.
+
+L'application doit donc valider nom, arguments, permissions et règles métier avant d'exécuter. Même des arguments parfaitement conformes peuvent viser le mauvais compte ou déclencher une action non autorisée ([[32-tool-calling|tool calling]]).
 
 ---
 

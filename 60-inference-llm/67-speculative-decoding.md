@@ -86,7 +86,7 @@ Le **TPOT** (temps par token généré) et donc la **latence totale** des répon
 
 ---
 
-Comment l'activer dans un serveur d'inférence ? <!--anki:676979656b57647b6226-->
+Comment activer le speculative decoding dans un serveur d'inférence ? <!--anki:676979656b57647b6226-->
 ?
 Les principaux moteurs le supportent : vLLM, SGLang, TensorRT-LLM, llama.cpp. Dans vLLM :
 ```bash
@@ -95,6 +95,8 @@ vllm serve <modèle-cible> --speculative-config '{
   "prompt_lookup_min": 2, "prompt_lookup_max": 5 }'
 ```
 Autres valeurs de `method` : `draft_model`, `eagle3`, `mtp`, `suffix`…
+
+La commande est un exemple à adapter à la version installée ; vérifier les méthodes compatibles avec modèle, parallélisme et matériel. Le mode n-gram propose des suites issues du contexte sans charger de petit modèle. Mesurer taux d'acceptation, latence et débit : une proposition souvent rejetée peut ralentir le service.
 
 ---
 
@@ -165,6 +167,8 @@ Mise en situation : un responsable qualité s'inquiète que le speculative decod
 ---
 
 ## Sources
+
+- [vLLM — speculative decoding et limites de reproductibilité numérique](https://docs.vllm.ai/en/latest/features/speculative_decoding/index.html)
 
 - [vLLM — Speculative Decoding](https://docs.vllm.ai/en/latest/features/speculative_decoding/)
 

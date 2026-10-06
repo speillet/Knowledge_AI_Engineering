@@ -11,6 +11,8 @@ OCI, CRI et SIF désignent-ils le même type de chose ? <!--anki:6d445f2c347a236
 - CRI → interface Kubernetes ↔ container runtime
 - SIF → format d'image Singularity/Apptainer
 
+Ils concernent trois niveaux : OCI favorise l'interopérabilité, CRI relie le kubelet à son runtime, SIF empaquette une image destinée à Apptainer. Par exemple, construire avec Docker puis exécuter dans Kubernetes concerne OCI et CRI ; convertir une image en fichier Apptainer concerne SIF. Aucun de ces noms ne remplace les deux autres.
+
 ---
 
 Quelle chaîne Kubernetes faut-il savoir reconstruire ? <!--anki:6f705f3e4421453a6f2d-->
@@ -28,6 +30,8 @@ runc
     ↓
 Linux Kernel
 ```
+
+C'est une **chaîne possible**, fréquente : le kubelet demande l'exécution via la CRI, containerd gère le cycle de vie et délègue la création du processus à un runtime OCI tel que runc. Le noyau fournit isolation et contrôle des ressources. D'autres implémentations peuvent remplacer containerd ou runc tout en respectant les interfaces attendues.
 
 ---
 
@@ -49,11 +53,15 @@ Runtime
 Container
 ```
 
+Le Dockerfile décrit la construction ; l'image est l'artefact versionné ; le registry la distribue. Le runtime prépare ensuite une instance exécutable, le **conteneur**, avec processus, réseau et montages. Plusieurs conteneurs peuvent partir de la même image. Les données écrites pendant l'exécution ne deviennent pas automatiquement une nouvelle version de cette image.
+
 ---
 
 Comment résumer Docker, Kubernetes, containerd et runc ? <!--anki:4a54653c552f697c7a31-->
 ?
 **Docker construit/manipule les conteneurs, Kubernetes les orchestre, containerd les gère et runc réalise leur exécution bas niveau.**
+
+Ces responsabilités se complètent : un développeur construit une image avec Docker, Kubernetes place des Pods, puis containerd et runc réalisent leur exécution sur le nœud. Ce schéma aide au diagnostic : une erreur de pull, une erreur de scheduling et un refus d'appel système ne se cherchent pas au même niveau.
 
 ---
 
@@ -62,6 +70,8 @@ Comment donne-t-on accès au GPU selon l'environnement ? <!--anki:434a6a212c3b70
 - [[09-gpu-conteneurs|Docker]] → `--gpus`
 - [[13-apptainer-inference-hpc|Apptainer]] → `--nv`
 - [[12-kubernetes-gpu-inference|Kubernetes]] → ressource `nvidia.com/gpu`
+
+Ces options expriment un accès ou une allocation, mais nécessitent une pile GPU fonctionnelle sur l'hôte. Sous Docker, configurer le Container Toolkit ; sous Kubernetes, publier les ressources via le device plugin ; en HPC, obtenir aussi l'allocation de l'ordonnanceur. Aucun de ces réglages n'augmente la VRAM disponible ni ne corrige une incompatibilité de driver.
 
 ---
 
@@ -80,12 +90,16 @@ Où stocker les poids d'un modèle plutôt que dans l'image ? <!--anki:7a6525313
 ?
 Dans un **[[08-linux-primitives-docker-fondamentaux|volume / bind mount]]** ou un **stockage externe** ; on évite de « baker » les poids dans l'image. → [[10-images-modeles-poids|Images & poids]]
 
+Cela permet de mettre à jour le serveur et les poids séparément, de réutiliser un cache local et d'éviter de republier une image énorme. Épingler une révision ou une empreinte et vérifier l'intégrité au chargement. Un téléchargement au démarrage sans cache peut en revanche rallonger fortement le cold start.
+
 ---
 
-Définis en une phrase : Apptainer, SIF. <!--anki:77763777364e6b7a5674-->
+Comment distinguer Apptainer, le runtime, et SIF, le format d'image ? <!--anki:77763777364e6b7a5674-->
 ?
 - **Apptainer** : le runtime de conteneurs du **HPC** (ex-Singularity), sans démon et sans droits root ([[06-apptainer-singularity|Apptainer]])
 - **SIF** : le format d'image d'Apptainer, un **fichier unique** et immuable
+
+Le runtime lance les processus, tandis que SIF transporte leur environnement sous une forme facile à copier et vérifier. Un SIF est généralement utilisé en lecture seule ; les sorties peuvent aller dans des montages externes. Ne pas confondre image en lecture seule et impossibilité d'écrire sur l'hôte : les droits et montages de l'utilisateur restent déterminants.
 
 ---
 

@@ -35,6 +35,8 @@ Qu'est-ce que le décodage greedy ? <!--anki:6f593a673f4456597d3a-->
 ?
 Prendre **à chaque pas le token le plus probable** (température 0). Simple et stable, mais il peut **tourner en boucle** (répétitions) et ne donne **pas** forcément la séquence la plus probable dans son ensemble.
 
+Le choix est local : le token préféré maintenant peut conduire à une suite globalement moins probable qu'un autre début. Température zéro n'assure pas non plus une identité parfaite entre infrastructures, à cause des arrondis et de l'implémentation. Évaluer répétitions et exactitude, sans assimiler absence de sampling et vérité.
+
 ---
 
 Qu'est-ce que le top-k sampling ? <!--anki:74476e34764847357059-->
@@ -46,6 +48,8 @@ Ne garder que les **k tokens les plus probables**, **renormaliser** leurs probab
 Qu'est-ce que le top-p (nucleus sampling) ? <!--anki:46793e5f305777615e5f-->
 ?
 Garder le **plus petit ensemble de tokens dont la probabilité cumulée atteint p** (ex. 0,9), renormaliser, échantillonner. L'ensemble **s'adapte** : étroit quand le modèle est sûr, large quand il hésite.
+
+Pour des probabilités 0,6, 0,25, 0,1 et 0,05, un seuil de 0,8 garde les deux premiers tokens, qui cumulent 0,85. On renormalise avant tirage. Le seuil réduit les options peu probables mais ne mesure pas la confiance factuelle ; un modèle peut être très concentré sur une réponse erronée.
 
 ---
 
@@ -95,7 +99,9 @@ Un modèle **calibré** a raison environ 80 % du temps quand il annonce 80 %. Le
 
 Le speculative decoding modifie-t-il la distribution des sorties ? <!--anki:745b47483e2155344a39-->
 ?
-**Non.** L'étape de vérification par le grand modèle (acceptation ou rejet probabiliste de chaque token proposé) garantit **exactement la même distribution** que le grand modèle seul, et la même sortie en greedy. Seule la vitesse change ([[62-optimisations-inference|optimisations d'inférence]]).
+Le **speculative sampling exact** préserve mathématiquement la distribution de la cible grâce à une règle d'acceptation/rejet et à un tirage corrigé en cas de rejet. En greedy, la vérification vise les mêmes choix que le modèle cible seul.
+
+Cette propriété concerne l'algorithme et ses hypothèses, pas toutes les variantes approximatives ni une égalité bit à bit de toute implémentation. Les arrondis, kernels et modes de vérification peuvent produire des écarts. Valider la méthode activée et tester la qualité sur la charge réelle ([[62-optimisations-inference|optimisations d'inférence]]).
 
 ---
 
@@ -141,6 +147,10 @@ Mise en situation : ton classifieur doit envoyer les cas incertains à un humain
 **Piège** : utiliser la perplexité comme score de qualité d'une réponse, ce qu'elle ne mesure pas.
 
 ---
+
+## Sources
+
+- [vLLM — speculative decoding et limites de reproductibilité numérique](https://docs.vllm.ai/en/latest/features/speculative_decoding/index.html)
 
 ## Connexions
 - [[61-kv-cache-attention|KV cache & attention]] — la génération token par token

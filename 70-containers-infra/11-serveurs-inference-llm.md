@@ -8,6 +8,8 @@ Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou 
 ?
 À **charger le modèle sur les GPU** et le servir efficacement à de nombreux utilisateurs : batching, gestion du [[61-kv-cache-attention|KV cache]], streaming, **API HTTP** et métriques.
 
+Il ordonne les requêtes pour partager le matériel, gère la mémoire des séquences actives et expose l'état du service. Une API autour d'un simple appel `generate` ne fournit pas nécessairement ces mécanismes. Dimensionner le serveur à partir des longueurs d'entrée et sortie, de la concurrence et du SLO attendu.
+
 ---
 
 À ne pas confondre : serveur d'inférence et gateway LLM ? <!--anki:4441306c4a2b54426b3d-->
@@ -21,7 +23,9 @@ Chaîne complète : `client → Ingress → gateway LLM → serveur d'inférence
 
 Pourquoi ne pas servir un modèle avec un simple script Transformers ? <!--anki:7371754d53625342432e-->
 ?
-Parce qu'il traite les requêtes **une par une** ou en batch statique : GPU sous-utilisé, mémoire gaspillée, débit **10 à 20 fois inférieur** à un serveur optimisé.
+Un script naïf qui traite les requêtes une à une laisse souvent le GPU sous-utilisé et ne gère pas bien file d'attente, cache et concurrence. Un serveur spécialisé apporte ordonnancement, batching continu, limites et métriques.
+
+Le gain n'est **pas un facteur fixe de 10 ou 20** : il dépend du modèle, de l'implémentation de départ et de la charge. Un script peut suffire pour un usage local ou un petit batch ; comparer les options sur un benchmark représentatif avant de complexifier le déploiement.
 
 ---
 
@@ -33,11 +37,15 @@ Le serveur d'inférence open source de référence : **PagedAttention**, **conti
 vllm serve meta-llama/Llama-3.1-8B-Instruct --max-model-len 8192
 ```
 
+Le moteur mutualise les calculs entre requêtes et gère la mémoire des séquences actives. La commande limite la longueur totale acceptée à 8 192 tokens selon la configuration du modèle. Vérifier disponibilité des poids, compatibilité matérielle et mémoire, puis protéger l'endpoint et tester sa tenue en charge avant exposition.
+
 ---
 
 Pourquoi l'API compatible OpenAI est-elle importante ? <!--anki:484b513771565d286c7b-->
 ?
 Elle permet de **changer de backend sans modifier le code client** : SDK OpenAI, [[81-litellm-api-layer|LiteLLM]] et frameworks d'agents parlent au serveur auto-hébergé comme à une API cloud.
+
+Cette compatibilité réduit les adaptations de transport et de format, mais n'assure pas une équivalence complète. Vérifier endpoints, paramètres, erreurs, streaming, outils et sorties structurées réellement supportés. Changer `base_url` peut suffire pour un appel simple ; une application avancée demande des tests de contrat et de qualité.
 
 ---
 
@@ -45,24 +53,31 @@ Qu'est-ce que le multi-LoRA en serving ? <!--anki:46362e6e346d5f39534d-->
 ?
 Charger **plusieurs adapters [[51-fine-tuning-adaptation|LoRA]]** au-dessus d'un **seul modèle de base** en VRAM : chaque requête choisit son adapter, et on sert des dizaines de variantes fine-tunées pour le prix d'un modèle.
 
+L'économie vient du partage des gros poids de base ; les adapters ont encore un coût mémoire et de gestion. Ils doivent correspondre à la bonne architecture et à la bonne révision de base. Mesurer latence lors des chargements et transitions, et empêcher qu'une requête accède à un adapter d'un autre tenant.
+
 ---
 
 Qu'est-ce que SGLang ? <!--anki:483f5936213a34336e4e-->
 ?
 Un serveur concurrent de vLLM, très performant, avec **RadixAttention** (arbre de préfixes partagés en cache) : particulièrement efficace pour les workloads **agentiques** et multi-appels qui réutilisent de longs préfixes.
 
+Le partage aide lorsque les requêtes ont réellement des préfixes communs et que le cache peut les conserver. Il ne garantit pas la meilleure performance sur toute charge. Comparer support du modèle, stabilité, latence et débit avec le même matériel et les mêmes entrées, en distinguant cache froid et cache chaud.
+
 ---
 
 Qu'est-ce que TensorRT-LLM et Triton ? <!--anki:703f3e3e306448765b68-->
 ?
-- **TensorRT-LLM** : bibliothèque NVIDIA qui **compile** le modèle en moteurs optimisés pour ses GPU (performances maximales, moins flexible)
-- **Triton Inference Server** : serveur NVIDIA **multi-framework** (TensorRT, PyTorch, ONNX) avec batching dynamique
+**TensorRT-LLM** fournit des composants et moteurs d'inférence optimisés pour les GPU NVIDIA ; ses backends et modes de préparation dépendent de la version et du modèle. **Triton Inference Server** expose et orchestre des modèles via plusieurs backends, avec API, métriques et ordonnancement.
+
+Ils peuvent se combiner : TensorRT-LLM effectue le calcul LLM et Triton fournit une couche de service. Vérifier le chemin d'intégration supporté et mesurer les gains ; « optimisé » ne signifie pas systématiquement meilleur sur tout workload.
 
 ---
 
 Où en est TGI (Text Generation Inference) de Hugging Face ? <!--anki:62455d30213b665d742b-->
 ?
 **Text Generation Inference** (Hugging Face) : serveur historiquement très utilisé, aujourd'hui **en mode maintenance** ; Hugging Face oriente vers vLLM et SGLang.
+
+Le mode maintenance signifie qu'il ne faut pas supposer une évolution fonctionnelle au même rythme que les moteurs privilégiés pour de nouveaux projets. Pour un service existant, examiner correctifs nécessaires, modèles supportés et coût de migration. Une migration se décide sur ces besoins et des tests comparatifs, pas sur le seul nom du serveur.
 
 ---
 
@@ -78,9 +93,11 @@ La bascule se fait dès que plusieurs utilisateurs arrivent en même temps : le 
 
 ---
 
-Quels critères pour choisir un serveur ? <!--anki:645063305f2e3f68515b-->
+Quels critères utiliser pour choisir un serveur d'inférence LLM ? <!--anki:645063305f2e3f68515b-->
 ?
 **Support du modèle** et du matériel, débit et latence mesurés sur **votre** charge ([[64-metriques-slo-inference|benchmark]]), fonctionnalités (LoRA, guided generation, prefix caching), métriques exposées, maturité et facilité d'opération sur Kubernetes.
+
+Tester aussi démarrage, montée en charge, annulation des requêtes, reprise après panne et mises à jour. Une fonctionnalité annoncée peut n'être disponible que pour certaines combinaisons de modèle et de GPU. Retenir une version précise et publier les hypothèses du benchmark pour rendre la décision reproductible.
 
 ---
 
@@ -111,6 +128,8 @@ Mise en situation : ton entreprise a 15 variantes fine-tunées d'un même modèl
 ---
 
 ## Sources
+
+- [Hugging Face — TGI en mode maintenance](https://huggingface.co/docs/text-generation-inference/main/en/index)
 
 - [SGLang — documentation du serveur et de ses optimisations](https://docs.sglang.io/)
 - [vLLM — métriques de production](https://docs.vllm.ai/en/latest/usage/metrics/)

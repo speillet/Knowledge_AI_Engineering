@@ -16,6 +16,8 @@ autres agents ── A2A ── AGENT ── MCP ── outils, données
 ```
 Chaque protocole règle **une frontière**. Les confondre mène à tout faire passer par un seul, par exemple exposer un agent comme un simple outil MCP.
 
+Ce schéma montre des options d'intégration, pas une pile obligatoire. Un agent peut être exposé comme outil si un simple appel/résultat suffit ; une délégation avec cycle de tâche et événements demande un contrat plus riche. Choisir selon les interactions attendues, puis vérifier versions, authentification et capacités réellement communes aux participants.
+
 ---
 
 À ne pas confondre : MCP, A2A et AG-UI ? <!--anki:517e403a342b5e76755a-->

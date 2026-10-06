@@ -7,11 +7,15 @@ Que signifie OCI ? <!--anki:6f362a5b606568722d5a-->
 ?
 **Open Container Initiative** : un projet de la **Linux Foundation**, lancé en 2015 à l'initiative de Docker, pour éviter que chaque éditeur impose son propre format de conteneur.
 
+L'initiative sépare les contrats d'interopérabilité des produits qui les implémentent. Elle décrit notamment comment empaqueter, distribuer et exécuter des conteneurs. Pour un déploiement, retenir surtout que le constructeur d'une image et le moteur qui la lance peuvent être différents, sous réserve de compatibilité de plateforme et des fonctions utilisées.
+
 ---
 
 Quel est le rôle d'OCI ? <!--anki:43286e50532924447e3c-->
 ?
-Définir des **standards ouverts pour les technologies de conteneurisation** afin de favoriser leur interopérabilité : une image OCI tourne aussi bien sur Docker, Podman, containerd que Kubernetes.
+OCI définit des **spécifications ouvertes** pour l'image, sa distribution et l'exécution du conteneur. Elles permettent de construire une image avec un outil, de la publier dans un registry et de l'exécuter avec un autre moteur compatible.
+
+Cette portabilité n'est pas universelle : architecture CPU, système d'exploitation, fonctionnalités et dépendances de l'hôte doivent convenir. **Kubernetes orchestre** le déploiement et délègue l'exécution à un runtime ; il n'est pas lui-même un runtime OCI.
 
 ---
 
@@ -19,13 +23,17 @@ OCI est-il un logiciel ? <!--anki:633b584966716644446b-->
 ?
 **Non**, c'est un **organisme de normalisation** : il publie des **spécifications**, c'est-à-dire des documents. Les logiciels les **implémentent** : [[03-containerd-runc|runc]] pour le runtime (donné par Docker comme implémentation de référence), containerd, Podman, CRI-O.
 
+Par analogie, une spécification de format décrit ce qu'un fichier valide doit contenir ; un programme sait ensuite le lire ou le produire. Cette distinction permet de changer d'outil sans changer nécessairement d'image. La conformité à un standard ne remplace pas les tests de compatibilité sur l'environnement cible.
+
 ---
 
 Quelles sont les trois grandes spécifications OCI ? <!--anki:4d426b496f495d577c37-->
 ?
-- OCI Image Specification
-- OCI Runtime Specification
-- OCI Distribution Specification
+- **Image Specification** : structure de l'image, couches, configuration et manifests.
+- **Runtime Specification** : configuration et cycle de vie d'un conteneur à partir d'un bundle.
+- **Distribution Specification** : échanges permettant de publier et récupérer les contenus dans un registry.
+
+Ces contrats couvrent des étapes distinctes : une image est produite et distribuée, puis préparée pour être exécutée. Ils n'imposent ni orchestrateur particulier ni outil de build unique. C'est cette séparation qui rend possibles des chaînes mêlant plusieurs implémentations.
 
 ---
 

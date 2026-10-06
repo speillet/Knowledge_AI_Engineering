@@ -7,6 +7,8 @@ Dans quel environnement Apptainer est-il particulièrement utilisé ? <!--anki:7
 ?
 Dans les environnements **HPC**, calcul scientifique, clusters partagés (Slurm, MPI) et workloads GPU : pas de démon root, le conteneur s'exécute **avec l'identité de l'utilisateur** (détails dans [[13-apptainer-inference-hpc|Apptainer & inférence HPC]]).
 
+Cette intégration facilite l'accès aux répertoires partagés et aux ressources allouées par l'ordonnanceur. Elle n'accorde pas de droits supplémentaires sur ces données. Le niveau d'isolation et les mécanismes de privilège dépendent de l'installation ; examiner la configuration du cluster avant de considérer le conteneur comme une sandbox de code non fiable.
+
 ---
 
 Quelle relation existe entre Singularity et Apptainer ? <!--anki:75255f5a4e5e676b2342-->
@@ -53,6 +55,8 @@ Par défaut, le **répertoire courant et le dossier personnel sont montés** et 
 apptainer exec --nv model.sif python inference.py
 ```
 
+L'option rend accessibles les périphériques et les bibliothèques NVIDIA nécessaires, tandis que le module noyau reste celui de l'hôte. Elle n'installe pas un driver manquant et ne réserve pas un GPU dans Slurm. Il faut une allocation valide, une compatibilité CUDA/driver et les dépendances applicatives dans l'image.
+
 ---
 
 ## Mises en situation
@@ -80,6 +84,10 @@ Mise en situation : un collègue veut stocker les poids d'un modèle de 40 Go da
 **Piège** : confondre immuabilité et reproductibilité, qui s'obtient aussi par le versionnage.
 
 ---
+
+## Sources
+
+- [Apptainer — accès aux périphériques et bibliothèques GPU](https://apptainer.org/docs/user/main/gpu.html)
 
 ## Connexions
 - [[13-apptainer-inference-hpc|Apptainer & inférence HPC]] — usage avancé pour le serving LLM

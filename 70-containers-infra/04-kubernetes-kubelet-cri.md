@@ -7,6 +7,8 @@ Qu'est-ce que Kubernetes ? <!--anki:727e3f4d405d3b296743-->
 ?
 Un **orchestrateur de conteneurs** : on déclare l'**état désiré** (quelles applications, combien de réplicas, quelles ressources) et des contrôleurs le **maintiennent en continu** (redémarrage, placement, scaling).
 
+Si un Pod disparaît, les contrôleurs cherchent à rétablir le nombre demandé ; le scheduler choisit un nœud et le kubelet y lance les conteneurs. Kubernetes automatise cette réconciliation, mais ne garantit pas qu'une application répliquée soit correcte. Readiness, ressources, stockage et logique métier restent à configurer.
+
 ---
 
 Qu'est-ce qu'un Pod ? <!--anki:7850754b2339264c582f-->
@@ -19,11 +21,15 @@ Quel est le rôle d'un Deployment ? <!--anki:62577b514a5248636034-->
 ?
 Gérer un ensemble de **Pods identiques** (via un ReplicaSet) : nombre de réplicas, **rolling updates** et rollback.
 
+Lors d'une nouvelle version, le Deployment ajuste les ReplicaSets pour remplacer progressivement les Pods selon la stratégie choisie. Il convient aux services dont les instances sont interchangeables. Un rollback restaure une configuration précédente ; il ne restaure pas automatiquement une base de données ni les effets déjà produits par la nouvelle application.
+
 ---
 
 À quoi sert un Service Kubernetes ? <!--anki:4c2d5e652833592c4a4e-->
 ?
 À fournir une **adresse stable** (IP virtuelle et nom DNS) devant des Pods éphémères, avec **répartition de charge** entre eux.
+
+Un Service sélectionne des endpoints correspondant aux Pods attendus et masque leurs changements d'adresse. Dans le cas courant `ClusterIP`, l'adresse est interne au cluster ; l'exposition externe demande un mécanisme supplémentaire. Un Service headless constitue un cas différent, sans IP virtuelle. La readiness aide à exclure les instances non prêtes.
 
 ---
 
@@ -34,11 +40,15 @@ Que contient le control plane de Kubernetes ? <!--anki:484723506a4126657e57-->
 - **kube-scheduler** : choisit le node de chaque Pod
 - **controller-manager** : boucles de réconciliation
 
+Le scheduler décide du placement ; les contrôleurs réconcilient l'état désiré ; le kubelet réalise l'exécution sur le nœud. L'API server centralise les échanges et les autorisations. Une panne du control plane peut empêcher de nouvelles décisions sans arrêter immédiatement tous les conteneurs déjà en cours d'exécution.
+
 ---
 
 Quel est le rôle du kubelet ? <!--anki:526151232c463e387774-->
 ?
 L'**agent présent sur chaque node** : il reçoit les Pods assignés, demande au runtime de **lancer les conteneurs**, surveille leur santé (probes) et **remonte leur état** à l'API server.
+
+Le kubelet ne choisit généralement pas sur quel nœud placer le Pod : cette décision vient du scheduler. Il traduit localement le PodSpec en opérations de runtime, monte les ressources nécessaires et applique les probes. Pour diagnostiquer un lancement raté, consulter événements du Pod, état du nœud et messages du runtime.
 
 ---
 
@@ -46,11 +56,15 @@ Qu'est-ce que la CRI ? <!--anki:792f3230294d735a244f-->
 ?
 La **Container Runtime Interface** : l'API (gRPC) par laquelle le kubelet pilote **n'importe quel runtime** compatible, comme **containerd** ou **CRI-O**. Le support direct de Docker (dockershim) a été retiré en v1.24.
 
+Elle sépare Kubernetes des implémentations concrètes du runtime : le kubelet demande par exemple la préparation d'une sandbox ou le lancement d'un conteneur. Une image construite avec Docker reste utilisable après la suppression de dockershim. Ne pas confondre CRI avec OCI, qui décrit notamment le format des images et l'exécution bas niveau.
+
 ---
 
 Comment le scheduler choisit-il un node ? <!--anki:6f6d4e346d365b51612c-->
 ?
 Il **filtre** les nodes capables d'accueillir le Pod (ressources demandées, node selectors, taints/tolerations, affinités), puis **note** les candidats restants et prend le meilleur.
+
+Il utilise notamment les **requests déclarées**, pas simplement la consommation instantanée des Pods existants. Si aucun nœud ne satisfait les contraintes, le Pod reste Pending. Vérifier les événements de scheduling avant d'ajouter des ressources : une affinité incompatible ou une absence de tolération peut être la vraie cause.
 
 ---
 
@@ -59,11 +73,15 @@ Il **filtre** les nodes capables d'accueillir le Pod (ressources demandées, nod
 - **Requests** : ressources **réservées**, utilisées par le scheduler pour placer le Pod
 - **Limits** : **plafond** d'usage ; dépassement mémoire → **OOMKilled**, dépassement CPU → ralenti (throttling)
 
+Pour CPU et mémoire, les requests servent au placement et aux garanties relatives ; le conteneur peut consommer davantage si disponible et autorisé. Une limite mémoire n'est pas une réservation supplémentaire. Les GPU exposés comme ressources étendues suivent d'autres règles : ils sont généralement demandés en unités entières et leurs requests et limits doivent coïncider.
+
 ---
 
 Qu'est-ce qu'un DaemonSet ? <!--anki:647c2c386d5138336533-->
 ?
 Un contrôleur qui lance **un Pod sur chaque node** (ou chaque node sélectionné) : agents de logs, monitoring, ou le **NVIDIA device plugin** ([[12-kubernetes-gpu-inference|GPU]]).
+
+Quand un nœud éligible rejoint le cluster, le contrôleur y fait créer le Pod correspondant. C'est adapté aux services attachés à la machine, pas à un nombre arbitraire de réplicas applicatifs. Les sélecteurs, taints et tolérations restent importants pour ne déployer un agent GPU que sur les nœuds concernés.
 
 ---
 

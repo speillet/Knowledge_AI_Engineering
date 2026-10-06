@@ -8,11 +8,15 @@ Quelles sont les deux phases de l'inférence d'un LLM ? <!--anki:482678244d584c2
 - **Prefill** : traitement de **tout le prompt en parallèle** → produit le premier token et remplit le [[61-kv-cache-attention|KV cache]]
 - **Decode** : génération **token par token**, chacun dépendant du précédent
 
+Le prefill prépare les représentations de tous les tokens d'entrée ; le decode ajoute les nouvelles positions une à une. Un long document avec une réponse courte charge surtout le prefill ; une rédaction longue sollicite beaucoup le decode. Cette distinction aide à choisir l'optimisation et la métrique pertinentes.
+
 ---
 
 Pourquoi prefill et decode ont-ils des goulots différents ? <!--anki:423164672b2b78664256-->
 ?
-Le **prefill** est **compute-bound** (beaucoup de calcul matriciel en parallèle) ; le **decode** est **memory-bandwidth-bound** (on relit tous les poids et le KV cache pour produire **un seul** token).
+Le **prefill** expose beaucoup d'opérations matricielles parallèles et devient souvent limité par le calcul pour des prompts assez longs. Le **decode à petit batch** effectue peu de calcul par poids chargé et est souvent limité par la bande passante mémoire.
+
+Ce sont des régimes typiques, pas des propriétés absolues : batch élevé, long contexte, architecture MoE ou communication entre GPU peuvent déplacer le goulot. Profiler le workload avant de choisir quantization, batching ou parallélisme.
 
 ---
 
@@ -26,6 +30,8 @@ TPOT (decode)           quantization, speculative decoding, GQA, moins de
 Débit total             continuous batching, batch plus gros, parallélisme
 ```
 Un même changement peut **améliorer l'un et dégrader l'autre** : un gros batch augmente le débit mais allonge le TPOT ([[64-metriques-slo-inference|SLO]]).
+
+Le TTFT inclut aussi attente en file et transport ; accélérer uniquement le prefill ne résout pas une saturation du service. Le chunked prefill protège surtout les requêtes déjà en decode et peut retarder la fin d'un nouveau prefill. Comparer les percentiles à charge identique pour éviter de confondre meilleur débit et meilleure expérience.
 
 ---
 
@@ -47,21 +53,25 @@ C'est la raison principale de l'écart de débit **d'un ordre de grandeur** entr
 
 Qu'est-ce que la quantization ? <!--anki:712b5a5a4e2d6f442a35-->
 ?
-Réduire la **précision des poids** (et parfois des activations) : FP16 → **FP8, INT8, INT4**. Moins de VRAM et de bande passante, donc plus rapide, au prix d'une **légère perte de qualité** ([[68-quantization|quantization]]).
+La **quantization** représente les poids et parfois les activations ou le KV cache avec moins de bits : FP8, INT8 ou INT4, par exemple. Elle réduit l'empreinte mémoire et peut diminuer les transferts, ce qui accélère certains workloads.
+
+Le gain dépend des kernels et du matériel ; déquantifier peut coûter du temps. La perte de qualité n'est pas toujours légère, notamment sur les valeurs extrêmes et certaines tâches. Mesurer qualité, mémoire et latence sur le modèle et la charge visés ([[68-quantization|quantization]]).
 
 ---
 
 Quelles méthodes de quantization courantes ? <!--anki:796f767d2a297674625a-->
 ?
-- **Weight-only** (poids seuls) : **AWQ, GPTQ** (INT4), GGUF pour llama.cpp
-- **Poids + activations** : **FP8** (H100 et plus récents), W8A8 INT8
-Le weight-only accélère surtout le **decode**, limité par la mémoire.
+Distinguer **ce qui est quantifié** et **la méthode** : AWQ et GPTQ concernent notamment la quantification des poids, souvent en 4 bits ; W8A8 décrit des poids et activations sur 8 bits. FP8 désigne une famille de formats numériques dont le support dépend du GPU et des kernels.
+
+**GGUF est un format de fichier**, qui peut contenir différents types de quantification pour des moteurs comme llama.cpp. Comparer des configurations complètes, pas seulement ces noms : précision, calibration, kernels et workload déterminent qualité et vitesse.
 
 ---
 
 Qu'est-ce que FlashAttention ? <!--anki:4b232642746c452f422f-->
 ?
 Une implémentation de l'attention **consciente de la hiérarchie mémoire du GPU** (calcul par tuiles en SRAM) : **résultat exact**, beaucoup moins d'accès à la HBM, donc plus rapide et moins gourmande en mémoire.
+
+L'algorithme évite de matérialiser toute la matrice d'attention en mémoire externe. « Exact » signifie ici qu'il calcule la même opération, à l'arrondi numérique près, contrairement à une approximation de l'attention. Pour une attention dense, le nombre d'opérations reste quadratique avec la longueur au prefill ; les gains concernent surtout les accès mémoire et l'exécution.
 
 ---
 
@@ -70,17 +80,23 @@ Tensor parallelism ou pipeline parallelism ? <!--anki:514f686c4c5338235550-->
 - **Tensor parallelism** : chaque couche est **découpée entre plusieurs GPU** (demande un interconnect rapide type **NVLink**)
 - **Pipeline parallelism** : les **couches sont réparties** par étages sur plusieurs GPU ou nœuds
 
+Le tensor parallelism échange des résultats intermédiaires fréquemment et souffre d'un réseau lent. Le pipeline parallelism transmet des activations entre étages et peut laisser des GPU inactifs si le pipeline est mal rempli. Choisir selon la mémoire nécessaire, les interconnexions et la charge ; ajouter des GPU n'accélère pas automatiquement une requête isolée.
+
 ---
 
 Qu'est-ce que le chunked prefill ? <!--anki:674f44515326767c7e37-->
 ?
 Découper un long prefill **en morceaux mélangés aux decodes** en cours : un gros prompt n'**interrompt plus** la génération des autres requêtes (latence inter-token plus stable).
 
+Le scheduler attribue un budget de tokens au prefill puis intercale les autres travaux. Cela limite les longues pauses de streaming, sans faire disparaître le coût total du prompt. Des morceaux trop petits ajoutent des frais d'ordonnancement ; trop gros peuvent encore pénaliser les decodes. Mesurer TTFT et latence inter-token ensemble.
+
 ---
 
 Qu'est-ce que la désagrégation prefill/decode ? <!--anki:51242a2437253078482b-->
 ?
 Exécuter prefill et decode sur des **pools de GPU séparés**, avec transfert du KV cache entre eux : chaque pool est dimensionné pour son goulot et on optimise **TTFT et TPOT** indépendamment.
+
+Cette séparation réduit certaines interférences entre gros prompts et générations en cours. Son coût est le transfert du cache et la coordination des pools, qui peuvent annuler le gain si le réseau est insuffisant. Évaluer la taille des K/V, le taux d'arrivée et les déséquilibres de charge avant de complexifier le déploiement.
 
 ---
 

@@ -211,6 +211,8 @@ vllm serve org/modele --quantization fp8 \
            --kv-cache-dtype fp8               # poids FP8 à la volée + KV cache FP8
 ```
 
+Vérifier la compatibilité entre checkpoint, GPU et kernels avant lancement. Le FP8 à la volée peut nécessiter de charger une base plus volumineuse au démarrage ; tenir après conversion ne garantit pas de passer ce pic. Évaluer séparément la qualité des poids et du KV cache quantifiés, puis mesurer le gain sous charge.
+
 ---
 
 À ne pas confondre : quantization des poids, des activations et du KV cache ? <!--anki:472f61333a5d544d7225-->

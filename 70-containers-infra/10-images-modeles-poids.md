@@ -67,6 +67,8 @@ Comment réduire le cold start d'un pod d'inférence ? <!--anki:643a67575b6d6a61
 ?
 **Pré-puller les images** sur les nodes GPU (DaemonSet), garder les poids en **cache local**, télécharger via un **init container**, streamer les poids directement vers le GPU, garder un minimum de réplicas chauds.
 
+Mesurer séparément attente de nœud, pull d'image, transfert des poids, chargement GPU et échauffement. Un init container ordonne le téléchargement mais ne le rend pas plus rapide à lui seul. Conserver un réplica chaud réduit la latence au prix de ressources inactives ; choisir selon le SLO et la variabilité du trafic.
+
 ---
 
 Pourquoi préférer le format safetensors ? <!--anki:6a617730764d4a24792f-->
@@ -88,17 +90,23 @@ Comment garder une image de serveur d'inférence raisonnable ? <!--anki:48313274
 ?
 **Multi-stage build** (compiler dans une image `devel`, livrer sur `runtime`), dépendances minimales, couches ordonnées pour **maximiser le cache**, et surtout **pas de poids** dans l'image.
 
+Mesurer taille compressée, taille déployée et durée de démarrage. Éviter les caches de téléchargement inutiles et les outils de build dans l'image finale. La séparation des poids est un choix fréquent pour les mises à jour indépendantes ; si un artefact autonome les inclut, documenter le compromis et versionner explicitement ces poids.
+
 ---
 
 Comment garantir la traçabilité des modèles déployés ? <!--anki:722b4e75573023266877-->
 ?
 En **versionnant les poids** (révision/commit Hugging Face, digest, registre de modèles) et en les **épinglant** dans la configuration de déploiement, comme on épingle le digest d'une image.
 
+Tracer aussi tokenizer, chat template, adapter, quantification et configuration du serveur. Deux déploiements avec les mêmes poids peuvent se comporter différemment si ces éléments changent. Un manifeste de déploiement relie ces versions aux résultats d'évaluation et permet de reconstruire ou restaurer la variante réellement validée.
+
 ---
 
 Quelle tendance pour distribuer les modèles ? <!--anki:426c59524537246c475d-->
 ?
 Distribuer les poids comme **artefacts OCI** dans un registry, puis les monter comme volumes (volumes d'image Kubernetes, KitOps) : même outillage que les images (versioning, cache, signature).
+
+Cela sépare l'artefact de modèle de l'image applicative tout en réutilisant le registry et les contrôles de livraison. Vérifier les fonctionnalités disponibles dans la version Kubernetes et le runtime choisis. L'emballage OCI ne résout pas à lui seul les temps de téléchargement, le format des poids ni leur compatibilité avec le moteur d'inférence.
 
 ---
 

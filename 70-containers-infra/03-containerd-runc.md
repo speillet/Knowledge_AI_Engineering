@@ -48,7 +48,7 @@ Deux **runtimes de haut niveau** qui implémentent la [[04-kubernetes-kubelet-cr
 - **containerd** : généraliste, utilisé par Docker **et** par Kubernetes, défaut de la plupart des distributions managées (EKS, GKE, AKS)
 - **CRI-O** : conçu **uniquement pour Kubernetes**, sans fonctions superflues, défaut d'**OpenShift**
 
-Pour une image et un Pod, le résultat est le même : c'est la standardisation [[01-oci|OCI]] qui le garantit.
+La standardisation [[01-oci|OCI]] facilite la portabilité des images ; les fonctions, paramètres de sécurité et comportements propres au runtime doivent néanmoins être testés.
 
 ---
 
@@ -79,6 +79,8 @@ spec:
       image: registry.example.com/agent-sandbox:1.4
 ```
 Seuls les Pods qui le demandent paient le surcoût de l'isolation renforcée ([[106-securite-agents-code|agents de code]]).
+
+Créer l'objet RuntimeClass ne suffit pas : le handler doit déjà être installé et configuré sur les nœuds éligibles. Prévoir leur sélection et, si nécessaire, le surcoût de ressources. Tester les appels système et périphériques requis par l'application, car une isolation renforcée peut limiter certaines fonctionnalités.
 
 ---
 

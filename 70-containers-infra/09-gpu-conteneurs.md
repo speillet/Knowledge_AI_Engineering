@@ -7,6 +7,8 @@ Un conteneur voit-il le GPU de l'hôte par défaut ? <!--anki:7278436c2c57552b3c
 ?
 **Non.** Il faut exposer explicitement les **périphériques GPU** (`/dev/nvidia*`) et les **bibliothèques du driver** dans le conteneur.
 
+Le moteur doit être configuré pour transmettre cet accès, par exemple via le NVIDIA Container Toolkit. Le driver noyau fonctionne sur l'hôte ; l'image fournit l'environnement applicatif compatible. Vérifier d'abord le GPU côté hôte, puis dans le conteneur, afin de distinguer un problème de driver d'un problème d'exposition.
+
 ---
 
 Qu'est-ce que le NVIDIA Container Toolkit ? <!--anki:464b64547e593d74596f-->
@@ -24,12 +26,16 @@ docker run --gpus all nvidia/cuda:12.4.1-base-ubuntu22.04 nvidia-smi
 ```
 `--gpus all` (ou `--gpus '"device=0,1"'`) ; `nvidia-smi` dans le conteneur vérifie l'accès.
 
+Cette commande suppose un driver hôte compatible et le NVIDIA Container Toolkit configuré pour Docker. Le tag CUDA est un exemple versionné. `nvidia-smi` valide la visibilité et l'accès au driver, mais pas toute la pile de calcul ; lancer ensuite un petit calcul avec le framework utilisé pour vérifier CUDA et les kernels nécessaires.
+
 ---
 
 Où se trouvent le driver et CUDA ? <!--anki:5136266a643a60475856-->
 ?
 - **Driver NVIDIA** (module noyau) : **sur l'hôte**, jamais dans l'image
 - **CUDA toolkit / runtime** et bibliothèques (cuDNN, NCCL) : **dans l'image**
+
+Le conteneur utilise le noyau et le module NVIDIA de l'hôte ; des bibliothèques utilisateur du driver lui sont rendues accessibles. L'image applicative apporte les bibliothèques dont elle a besoin, pas nécessairement le toolkit complet. Choisir des versions compatibles : installer CUDA dans l'image ne peut pas réparer un driver hôte absent.
 
 ---
 
@@ -45,6 +51,8 @@ Quelles images de base NVIDIA existent ? <!--anki:4c6f73773453635d4e79-->
 - **runtime** : + bibliothèques CUDA pour exécuter
 - **devel** : + compilateurs et en-têtes pour **compiler**
 Bon réflexe : compiler dans `devel`, livrer sur `runtime` (**multi-stage build**).
+
+Une image `devel` aide à construire une extension CUDA, mais embarquer compilateurs et en-têtes augmente taille et surface de maintenance. Copier seulement les artefacts nécessaires dans l'étape finale et vérifier les bibliothèques dynamiques requises. Certaines applications compilent au démarrage : tester ce comportement avant de retirer les outils de compilation.
 
 ---
 
@@ -67,7 +75,7 @@ H100               80 Go       FP8 natif, NVLink
 H200              141 Go       idéal pour les contextes longs
 B200              ~180 Go      Blackwell, FP4 natif
 ```
-À croiser avec la règle « paramètres × octets par paramètre », plus le [[61-kv-cache-attention|KV cache]] : un 70B en BF16 (140 Go) ne tient pas sur un H100, mais tient sur un H200.
+Ces capacités sont des repères de variantes matérielles ; vérifier la fiche exacte du GPU. Comparer **poids + KV cache + allocations du moteur** à la mémoire réellement utilisable, avec des unités cohérentes. Les seuls poids d'un 70B en BF16 représentent environ 140 Go : cela ne garantit pas un serving exploitable sur un H200 de 141 Go, faute de marge suffisante selon la configuration.
 
 ---
 
@@ -75,17 +83,25 @@ Qu'est-ce que le NVIDIA GPU Operator ? <!--anki:6a3f28646d4a55596924-->
 ?
 Un opérateur Kubernetes qui **installe et gère toute la pile GPU** sur les nodes : driver, Container Toolkit, **device plugin**, exporter de métriques **DCGM**, configuration MIG.
 
+Il automatise le déploiement et la maintenance de composants compatibles, dont certains peuvent être déjà fournis par l'administrateur. Son installation ne suffit pas à fixer une politique de partage, de quota ou de placement. Vérifier la santé des composants, les ressources annoncées et la stratégie choisie pour les différents types de nœuds.
+
 ---
 
 Comment utilise-t-on le GPU avec Apptainer ? <!--anki:77556b3d6648472f756b-->
 ?
-Avec l'option **`--nv`** (ex. `apptainer exec --nv image.sif python train.py`), qui monte le driver NVIDIA de l'hôte dans le conteneur.
+L'option **`--nv`** expose les périphériques NVIDIA et les bibliothèques utilisateur nécessaires dans le conteneur :
+```bash
+apptainer exec --nv image.sif python train.py
+```
+Le module noyau du driver reste chargé sur l'hôte. Cette option ne réserve pas de GPU auprès de Slurm et n'assure pas toute compatibilité CUDA. Utiliser les GPU alloués par le cluster, puis vérifier leur visibilité et un calcul réel avec le framework de l'image.
 
 ---
 
 Comment donner accès à un GPU AMD à un conteneur ? <!--anki:507e28233f496e5a7523-->
 ?
 Avec **ROCm** : on expose les devices `/dev/kfd` et `/dev/dri` au conteneur et on utilise des images ROCm. vLLM et PyTorch supportent ROCm.
+
+Vérifier la matrice de support du GPU, du système et de la version ROCm, ainsi que les permissions sur les devices. Le support d'un framework ne signifie pas que toutes les architectures de modèles ou optimisations CUDA soient disponibles. Tester un calcul élémentaire puis le modèle cible avant de comparer les performances.
 
 ---
 
@@ -99,6 +115,8 @@ total                            ≈ 35 Go → 48 Go (L40S) ou 80 Go ; 24 Go ne 
 en FP8 (poids et KV cache)       ≈ 19 Go → tient sur 24 Go
 ```
 On dimensionne sur la **concurrence** et la **longueur de contexte**, pas seulement sur la taille du modèle ([[61-kv-cache-attention|KV cache]]).
+
+Les 128 Ko sont ici environ **128 Kio**, pour une architecture précise et un cache BF16 ; tous les 8B n'ont pas cette taille de cache. Ajouter les tokens de sortie et les marges. Le total FP8 de 19 Go suggère une faisabilité mémoire, mais ne garantit ni le pic de chargement ni le respect de la latence cible.
 
 ---
 
@@ -127,6 +145,12 @@ Mise en situation : deux équipes se partagent un GPU pour leurs services d'inf�
 **Piège** : croire qu'une limite mémoire de conteneur protège la mémoire du GPU.
 
 ---
+
+## Sources
+
+- [NVIDIA — capacités mémoire des systèmes HGX H100, H200 et B200](https://docs.nvidia.com/enterprise-reference-architectures/hgx-ai-factory-h100-h200-b200/latest/components.html)
+
+- [Apptainer — accès aux périphériques et bibliothèques GPU](https://apptainer.org/docs/user/main/gpu.html)
 
 ## Connexions
 - [[00-index|Index Conteneurs]] — les bases des conteneurs
