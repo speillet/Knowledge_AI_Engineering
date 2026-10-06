@@ -4,7 +4,7 @@ Un vault [Obsidian](https://obsidian.md) de **fiches de révision (flashcards) e
 
 Chaque fiche traite **un concept** en 8 à 34 cartes question/réponse, une quinzaine en moyenne, et se termine par des **mises en situation** : des cas concrets à diagnostiquer, concevoir ou arbitrer. Les fiches sont reliées entre elles par des liens, pour qu'on puisse passer d'un sujet à ses voisins, et elles se révisent en **répétition espacée**.
 
-**État au 2 octobre 2026** : 110 fiches et 1 553 cartes, réparties en 16 sections, dont 235 mises en situation et 99 cartes « à ne pas confondre ».
+**État au 6 octobre 2026** : 110 fiches et 1 553 cartes, réparties en 16 sections, dont 235 mises en situation et 99 cartes « à ne pas confondre ».
 
 ---
 
@@ -13,6 +13,7 @@ Chaque fiche traite **un concept** en 8 à 34 cartes question/réponse, une quin
 ```text
 Knowledge_AI_Engineering/
 ├── README.md
+├── docs/                       # bilans de revue et documentation de maintenance
 ├── .obsidian/                   # configuration Obsidian
 ├── .claude/skills/              # skills Claude Code versionnés (grilling, grill-me)
 ├── scripts/lint_flashcards.py   # vérification des conventions + statistiques
@@ -124,15 +125,20 @@ Les fiches sont du Markdown simple et se lisent dans n'importe quel éditeur. Se
 Tags: #flashcards #ai-engineering #agents #tool-calling #llm
 <!-- summary: Déclaration, exécution et validation des appels d’outils. -->
 
+
 Qu'est-ce que le tool calling ?
 ?
-Le mécanisme par lequel un LLM **émet un appel structuré** que **l'application exécute**.
+Le **tool calling** permet au modèle de demander une opération en produisant un nom d'outil et des arguments structurés. L'application valide la demande, exécute la fonction autorisée et renvoie son résultat au modèle pour qu'il poursuive la tâche.
+
+Par exemple, `statut_commande(id)` consulte une source métier avant la réponse au client. Un appel conforme au schéma ne garantit ni des arguments corrects ni une action autorisée : ces contrôles restent dans l'application.
 
 ---
 
 Le modèle exécute-t-il lui-même les outils ?
 ?
-**Non.** Il génère l'intention d'appel ; c'est le [[34-harness-plugins|harness]] qui exécute.
+**Non.** Le modèle produit une demande ; le [[34-harness-plugins|harness]] décide si elle est autorisée et lance l'outil. Il gère aussi les arguments invalides, les délais et les erreurs, puis transmet une observation au modèle.
+
+Cette séparation permet de limiter les ressources accessibles et les effets possibles. Une instruction dans le prompt ne remplace pas un contrôle de permission au moment de l'exécution.
 
 ---
 
@@ -142,7 +148,8 @@ Mise en situation : ton agent dispose de 40 outils et se trompe souvent d'outil.
 ?
 1. **Réduire le choix** : n'exposer que les outils utiles à la tâche en cours.
 2. **Soigner les descriptions** : nom explicite, cas d'usage, ce que l'outil ne fait pas.
-3. …
+3. **Vérifier les arguments** : utiliser des schémas précis et des erreurs qui permettent de corriger l'appel.
+4. **Mesurer le résultat** : rejouer des tâches représentatives et comparer choix d'outil, réussite et nombre d'appels.
 
 **Piège** : ajouter un outil supplémentaire pour corriger les erreurs des précédents.
 
@@ -153,14 +160,16 @@ Mise en situation : ton agent dispose de 40 outils et se trompe souvent d'outil.
 - [[00-moc-ai-engineering|MOC AI Engineering]]
 ```
 
+Cet exemple montre une fiche avant attribution des identifiants permanents. Lancer `python3 scripts/assign_card_ids.py` après sa création ; conserver ensuite les identifiants lors des reformulations.
+
 Les conventions à respecter :
 
 - **Pas de frontmatter YAML.** Les tags sont écrits en texte sur la ligne 2.
 - **Une carte** = la question, puis une ligne contenant seulement `?`, puis la réponse. Les cartes sont séparées par `---`.
-- **Des réponses courtes**, avec les termes clés en gras, et un bloc de code quand c'est utile.
+- **Des réponses autonomes et suffisamment expliquées** : commencer par la réponse directe, puis expliquer le mécanisme, donner un exemple ou préciser les limites utiles. Mettre les termes clés en gras. Accompagner les commandes, calculs et schémas d'une explication de leurs hypothèses et de leur interprétation ; un bloc de code seul ne suffit pas.
 - **Une section `## Mises en situation`** avant les connexions : 2 cartes (3 pour les fiches avancées) dont la question commence par `Mise en situation :`, tient en un seul paragraphe et décrit un cas concret. La réponse déroule une **démarche en 3 à 6 étapes** et peut finir par un **piège** à éviter.
 - **Une section `## Connexions`** à la fin, dont le dernier lien renvoie toujours au MOC. Chaque lien a une raison courte, et il est **réciproque** : la fiche citée cite en retour.
-- **Des cartes courtes** : au-delà de 5 éléments, une liste se découpe en sous-cartes thématiques dont la question donne un indice.
+- **Une question ciblée, une réponse développée** : conserver une notion principale par carte, sans imposer une réponse télégraphique. Au-delà de 5 éléments, une liste se découpe en sous-cartes thématiques dont la question donne un indice. La longueur est un repère de lisibilité, pas une mesure de qualité : éviter les ajouts qui ne font que répéter la question.
 - **Des cartes « À ne pas confondre : X et Y ? »** pour les notions que l'on mélange (OCI et CRI, tag et digest, routing et fallback, rappel et précision, few-shot et fine-tuning…). On n'écrit pas « Quelle différence entre X et Y ? » : le format unique permet de toutes les retrouver par une recherche.
 - **Des cartes de raisonnement** plutôt que des définitions seules : « Quand ne pas… ? », « Que se passe-t-il si… ? », et des cartes **« Calcul : … »** qui font poser un ordre de grandeur (VRAM, débit, coût, taille d'échantillon).
 - **Une question qui se comprend seule** : en révision, les cartes sont mélangées. On nomme le sujet (« Qu'est-ce qu'un thread dans LangGraph ? », pas « Qu'est-ce qu'un thread ? ») et on évite « Et X ? » ou « Comment fonctionne-t-elle ? », qui supposent la carte précédente.
@@ -377,6 +386,8 @@ La partie qui assemble tout le reste : concevoir, fiabiliser et piloter une appl
 
 ## Maintenance
 
+La [revue du 6 octobre 2026](docs/revue-flashcards-2026-10-06.md) détaille les réponses enrichies, les corrections de fond et les contrôles effectués.
+
 L'écosystème LLM change vite : noms de produits, versions et outils recommandés peuvent devenir obsolètes en quelques mois. Quand une réponse ne correspond plus à la réalité, on corrige la carte plutôt que d'en ajouter une nouvelle, pour que l'historique de révision de la carte soit conservé.
 
 Le script `scripts/lint_flashcards.py` vérifie les conventions et calcule les statistiques :
@@ -394,6 +405,8 @@ python3 -m unittest discover -s tests -v           # tests (dépendances Anki re
 
 - **Erreurs** (bloquent le commit et la CI) : lien mort, nom de fichier en double, tags absents de la ligne 2, séparateur `?` absent ou multiple, question ou réponse vide, carte que le plugin Spaced Repetition lirait autrement que l'export Anki, identifiant Anki absent/invalide/dupliqué, identifiant retiré encore présent dans le vault ou entrée mal formée dans `retired_cards.json`, section `Mises en situation` ou `Connexions` manquante, dernier lien qui n'est pas le MOC, fiche absente du MOC, date `Vérifié le` illisible ou future, fiche datée sans source. Les liens sont contrôlés aussi dans le MOC et le README (hors exemples de code).
 - **Avertissements** : réponse trop longue (110 mots hors code, 140 pour une mise en situation), liste de plus de 5 éléments (6 étapes pour une mise en situation), « Quelle différence… » au lieu de « À ne pas confondre », question qui suppose la carte précédente, liste de produits à réciter (« Citez… », « Quels outils… »), question en double, Connexion sans lien en retour, fiche citée par moins de 2 autres, fiche absente du README, `Vérifié le` trop ancien.
+
+Le lint contrôle la structure, les liens et les conventions ; il ne juge pas l'exactitude ou la profondeur pédagogique. Lors d'une revue, vérifier que la réponse traite toute la question, explique les termes nécessaires, précise les hypothèses des chiffres et donne un exemple ou une limite lorsque cela aide à comprendre. Une réponse courte peut être suffisante ; une réponse longue peut rester vague. Consigner dans `docs/` le périmètre de la revue et les validations réalisées.
 
 Les pull requests vérifient le lint, la synchronisation des catalogues, les tests et la génération d’un paquet Anki téléchargeable comme artefact CI. La publication en release reste réservée à `main` ou au déclenchement manuel.
 

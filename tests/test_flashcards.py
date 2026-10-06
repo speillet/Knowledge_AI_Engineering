@@ -114,8 +114,11 @@ class VaultTests(unittest.TestCase):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
         self.root = Path(self.tmp.name)
-        for source in lint.fiche_files() + [ROOT / "README.md", ROOT / f"{lint.MOC}.md", ROOT / "scripts/sections.json",
-                                            ROOT / lint.RETIRED]:
+        sources = lint.fiche_files() + list((ROOT / "docs").glob("*.md")) + [
+            ROOT / "README.md", ROOT / f"{lint.MOC}.md", ROOT / "scripts/sections.json",
+            ROOT / lint.RETIRED,
+        ]
+        for source in sources:
             target = self.root / source.relative_to(ROOT)
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(source, target)
