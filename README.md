@@ -1,6 +1,6 @@
 # Knowledge Vault — AI Engineering
 
-Un vault [Obsidian](https://obsidian.md) de **fiches de révision (flashcards) en français** qui couvre les compétences clés de l'**AI Engineering**. Le parcours va de l'utilisation des modèles jusqu'à leur mise en production et leur sécurisation.
+Un vault [Obsidian](https://obsidian.md) de **fiches de révision (flashcards) en français** qui couvre les compétences clés de l'**AI Engineering**. Le parcours va du choix entre règles, ML classique et LLM jusqu'à leur mise en production et leur sécurisation, avec les fondations en données et systèmes distribués nécessaires à leur fiabilité.
 
 Chaque fiche traite **un concept** en 8 à 34 cartes question/réponse, une quinzaine en moyenne, et se termine par des **mises en situation** : des cas concrets à diagnostiquer, concevoir ou arbitrer. Les fiches sont reliées entre elles par des liens, pour qu'on puisse passer d'un sujet à ses voisins, et elles se révisent en **répétition espacée**.
 
@@ -67,6 +67,7 @@ Knowledge_AI_Engineering/
 
 - **Suivre le parcours de lecture** du MOC, qui va dans cet ordre : ML classique et validation, fondamentaux LLM (prérequis), prompt engineering, RAG, agents, automatisation et frameworks d'agents, fine-tuning, inférence, conteneurs, API layer, observabilité, sécurité, MLOps & CI/CD, coûts & FinOps, données & conformité, multimodal & edge, puis system design & produit, qui assemble le tout. Le MOC propose aussi un **parcours AI Engineer agentique**, qui enchaîne en 8 étapes les fiches sur les agents réparties dans plusieurs sections.
 - **Rebondir entre les concepts** : chaque fiche se termine par une section `Connexions` qui explique pourquoi les fiches liées sont liées. Ces liens sont **réciproques** : si A cite B, B cite A. Des liens apparaissent aussi dans les réponses elles-mêmes.
+- **Compléter les fondations senior** : le parcours dédié du MOC relie choix et validation des modèles, contrats et ingestion des données, puis idempotence et transactions. Le [bilan des trois priorités](docs/fondations-senior-2026-10-06.md) détaille les sept fiches ajoutées et leur validation.
 - **Voir l'ensemble** : la **vue graphe** d'Obsidian montre comment les concepts s'articulent, et le panneau **Backlinks** liste les fiches qui citent la fiche ouverte.
 
 ### 3. Réviser en répétition espacée
