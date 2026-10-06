@@ -19,6 +19,8 @@ Quelle est la première étape FinOps d'une plateforme LLM ? <!--anki:6a5f702e5f
 ?
 La **visibilité** : tracer le coût **par requête, équipe et feature** via la [[81-litellm-api-layer|gateway]] et les [[91-langfuse-observabilite|traces]] — on ne pilote pas ce qu'on ne voit pas.
 
+Propager des identifiants de requête, de tenant et de fonctionnalité jusqu'aux appels de modèles et d'outils. Distinguer coûts mesurés, estimés et partagés, puis rapprocher les totaux de la facture. Sans attribution fiable, une optimisation locale peut déplacer la dépense vers une autre étape sans réduire le coût complet.
+
 ---
 
 Comment attribuer les coûts aux équipes ? <!--anki:74243d714f553e3e7e64-->
@@ -49,21 +51,17 @@ Les deux limites comptent : **requêtes** contre les rafales, **tokens** contre 
 
 Quels gains attendre des principaux leviers FinOps ? <!--anki:73443a342f707e49655b-->
 ?
-```text
-Routage vers un modèle plus petit   −30 à −70 % selon la part de cas simples
-Prompt caching (préfixe stable)     tokens d'entrée lus ≈ 10 % du prix plein
-Traitement différé (batch API)      ≈ −50 %
-Cache de réponses exactes           gain = taux de hit (0 à 90 % selon l'usage)
-Contexte mieux trié                 proportionnel aux tokens supprimés
-Quantization (self-host)            moins de GPU par réplica
-```
-Ordre d'attaque recommandé : **routage**, puis **caching**, puis **contexte**. Les trois se cumulent ([[121-couts-inference|coûts d'inférence]]).
+Les gains se **mesurent sur le trafic réel** ; aucun pourcentage n'est universel. Un modèle moins cher peut suffire aux cas simples, un cache évite du travail répété, et le batch échange un délai plus long contre des conditions tarifaires différentes.
+
+Exemple fictif : si une dépense d'entrée représente 60 % du total et baisse de moitié, l'économie totale est **30 %**, pas 50 %. Compter coût du routeur, écritures du cache et échecs. Prioriser les postes dominants, puis réévaluer les gains combinés : ils ne s'additionnent pas mécaniquement ([[121-couts-inference|coûts d'inférence]]).
 
 ---
 
 Quel est souvent le premier levier d'économie ? <!--anki:6a712b5f4f6e30675d6e-->
 ?
-Le **[[82-routing-llm|routing]]** : envoyer chaque requête au **modèle le moins cher qui suffit** (cascades) — souvent plusieurs dizaines de % de gain.
+Commencer par le **poste dominant mesuré**. Si beaucoup de tâches simples utilisent un grand modèle, le [[82-routing-llm|routing]] vers un modèle moins cher est un bon candidat. Si la dépense vient de contextes répétés ou de boucles, cache, réduction du contexte ou limites d'appels peuvent être plus efficaces.
+
+Comparer coût par tâche réussie et qualité avant/après, en incluant le prix du routeur et des escalades. Le meilleur premier levier dépend de la charge, pas d'un ordre universel d'optimisations.
 
 ---
 
@@ -103,6 +101,8 @@ Sans plancher de qualité explicite, l'optimisation des coûts dégrade le produ
 Quel est le rôle du Lead sur le FinOps ? <!--anki:4d55412c6953465d317e-->
 ?
 Suivre les **unit economics par produit**, imposer les **standards d'attribution**, tenir des **revues de coûts** régulières — le coût est une métrique de premier ordre, pas une surprise de fin de mois.
+
+Définir des budgets par usage et les arbitrages autorisés quand ils sont dépassés : ralentir, traiter en batch ou router différemment. Partager coût et qualité dans la même revue évite de récompenser une baisse de facture qui détériore le service. Attribuer un responsable et une mesure de résultat à chaque optimisation.
 
 ---
 

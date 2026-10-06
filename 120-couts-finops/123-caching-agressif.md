@@ -29,19 +29,20 @@ D'autres fournisseurs cachent automatiquement les longs préfixes (ex. OpenAI).
 
 Où placer le point de cache dans une requête Anthropic, et comment vérifier qu'il sert ? <!--anki:3831373663633535333531303462326639393035363139393733623433396164-->
 ?
-**À la fin de la partie partagée** : tout ce qui précède doit être identique d'une requête à l'autre.
+Placer `cache_control` **à la fin du préfixe réutilisable**. Dans l'API Messages native Anthropic, `system` est un paramètre séparé, pas un rôle dans `messages` :
 ```python
-messages = [
-  {"role": "system", "content": [
-      {"type": "text", "text": SYSTEM_PROMPT},          # stable
-      {"type": "text", "text": DOC_REFERENCE,
-       "cache_control": {"type": "ephemeral"}},         # ← point de cache ici
-  ]},
-  *historique,                                          # append-only
-  {"role": "user", "content": question},                # variable, à la fin
-]
+response = client.messages.create(
+    model=MODEL, max_tokens=512,
+    system=[
+        {"type": "text", "text": SYSTEM_PROMPT},
+        {"type": "text", "text": DOC_REFERENCE,
+         "cache_control": {"type": "ephemeral"}},
+    ],
+    messages=[*historique, {"role": "user", "content": question}],
+)
+print(response.usage.cache_read_input_tokens)
 ```
-Dans la réponse, `usage.cache_read_input_tokens` dit ce qui a réellement été réutilisé.
+L'extrait suppose un client configuré et les variables définies. Vérifier aussi les tokens écrits en cache, les seuils du modèle et le TTL ; une valeur de lecture nulle peut correspondre au premier appel ou à un préfixe non admissible.
 
 ---
 
@@ -54,7 +55,7 @@ Comment structurer un prompt pour le cache ? <!--anki:4f51376957666f576324-->
 
 ---
 
-Qu'est-ce qui casse silencieusement le cache ? <!--anki:6e785d3b6e524c4f7c69-->
+Qu'est-ce qui invalide silencieusement le cache de préfixe d'un LLM ? <!--anki:6e785d3b6e524c4f7c69-->
 ?
 - **Un seul octet modifié** dans le préfixe (horodatage, UUID, JSON non trié)
 - Ajouter, retirer ou **réordonner un outil**
@@ -72,13 +73,13 @@ Toute modification d'un message passé **invalide le cache de tout ce qui suit**
 
 ---
 
-Quel piège avec les requêtes parallèles ? <!--anki:652c325f3b695271513b-->
+Quel piège les requêtes parallèles posent-elles pour le prompt caching Anthropic ? <!--anki:652c325f3b695271513b-->
 ?
 Une entrée de cache n'est lisible qu'**une fois que la première réponse commence à streamer**. N requêtes lancées au même instant avec le même préfixe paient donc **toutes l'écriture**. Parade : **pré-chauffer** le cache (chez Anthropic, un appel avec `max_tokens: 0`), ou lancer une requête avant les autres.
 
 ---
 
-Quand choisir un TTL d'une heure ? <!--anki:6f6f646f25692c73362f-->
+Quand choisir un TTL d'une heure pour le prompt caching Anthropic ? <!--anki:6f6f646f25692c73362f-->
 ?
 Quand l'écart entre deux requêtes qui partagent le préfixe est **entre 5 et 60 minutes** (un utilisateur qui répond après 20 minutes). En dessous de 5 minutes, chaque lecture rafraîchit le TTL de 5 minutes : il reste chaud tout seul et coûte moins cher à écrire.
 

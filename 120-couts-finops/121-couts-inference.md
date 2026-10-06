@@ -39,11 +39,19 @@ Quel effet du prompt caching sur la facture ? <!--anki:796c756e764b716c6232-->
 ?
 Les **tokens de préfixe déjà en cache sont facturés à prix réduit** : gros gains sur les system prompts et définitions d'outils répétés ([[35-context-engineering|prompt caching]]).
 
+Le gain réel dépend du taux de réutilisation, des tokens admissibles, du TTL et d'un éventuel prix d'écriture. La sortie reste généralement facturée comme une nouvelle génération. Mesurer les champs d'usage et la facture : un préfixe répété ne garantit pas un hit, et un cache peu relu peut ne pas être rentable.
+
 ---
 
 Comment se calcule le coût du self-hosting ? <!--anki:455d7b3a6f6040737e3c-->
 ?
-**Coût par token = coût GPU (par heure ou amorti) ÷ débit (tokens/s)** : maximiser l'utilisation et le [[64-metriques-slo-inference|goodput]] fait mécaniquement baisser le coût unitaire.
+Utiliser des **unités cohérentes** :
+```text
+coût/token = coût total par heure / tokens utiles par heure
+          = coût horaire / (débit moyen en tokens/s × 3 600)
+Exemple fictif : 3,60 €/h et 100 tokens/s → 0,00001 €/token
+```
+Inclure GPU, CPU, stockage, réseau, exploitation et périodes d'inactivité. Le débit retenu doit correspondre à la charge réelle et aux [[64-metriques-slo-inference|SLO]], pas au pic théorique. Comparer ensuite le coût par tâche réussie, car un token peu cher ne garantit pas une réponse utile.
 
 ---
 
@@ -52,17 +60,19 @@ API ou self-host : où est le break-even ? <!--anki:4f5871495e2e6540443a-->
 - **Self-host** rentable à **fort volume constant** et forte utilisation GPU
 - **API** gagne à faible volume ou charge irrégulière (pas de GPU idle, scale-to-zero implicite)
 
+Comparer à qualité, latence et disponibilité équivalentes, avec coût d'exploitation et capacité de secours inclus. Les pointes imposent parfois de payer une réserve inutilisée le reste du temps. Le seuil se calcule sur le profil de charge et les tarifs réels ; un modèle hybride peut absorber la base localement et les pointes par API.
+
 ---
 
 Qu'est-ce qu'une batch API ? <!--anki:434167563b555a475567-->
 ?
-Un traitement **différé**, avec des résultats garantis sous **24 heures**, facturé environ **50 % moins cher** et avec des quotas séparés du trafic en ligne.
+Une **batch API** accepte un lot de requêtes pour un traitement asynchrone, avec une fenêtre de traitement, des quotas et des tarifs propres au fournisseur. Elle convient aux evals, extractions et enrichissements qui supportent un délai.
 
-Idéal pour tout ce qui n'est pas interactif : evals massives, ingestion, enrichissement de catalogue, classification d'un historique ([[148-pipelines-batch-llm|pipelines batch]]).
+Une remise de 50 % et une fenêtre de 24 heures sont des exemples d'offre, **pas une garantie universelle de réussite de chaque ligne**. Certaines requêtes échouent ou expirent. Associer un identifiant à chaque entrée, récupérer les statuts et reprendre seulement les lignes nécessaires ([[148-pipelines-batch-llm|pipelines batch]]).
 
 ---
 
-Quels leviers techniques réduisent le coût ? <!--anki:4a616c7c46297d3f3e52-->
+Quels leviers techniques réduisent le coût d'inférence d'un LLM ? <!--anki:4a616c7c46297d3f3e52-->
 ?
 - **[[82-routing-llm|Routing]]** vers un modèle moins cher pour les requêtes simples
 - **Prompt caching** du préfixe stable ([[123-caching-agressif|caching]])
@@ -78,11 +88,15 @@ Que coûte réellement le contexte long ? <!--anki:70715578642e522529-->
 ?
 Chaque token de contexte coûte **trois fois** : en argent (facturation), en latence (prefill) et en VRAM ([[61-kv-cache-attention|KV cache]]) — trier son contexte, c'est économiser.
 
+Ces trois dimensions ne se traduisent pas forcément par trois lignes de facture : la VRAM est surtout un coût de capacité en self-hosting. Le cache peut réduire une partie du prefill et du prix d'entrée, mais le contexte reste à gérer lors du décodage. Supprimer le bruit aide ; retirer une preuve nécessaire dégrade le résultat.
+
 ---
 
 Qu'est-ce que les unit economics d'une feature LLM ? <!--anki:7135367b5678255e2b5b-->
 ?
 Le **coût par requête / utilisateur / feature rapporté à la valeur produite** — la métrique qui décide si une feature IA est viable.
+
+Par exemple, rapporter le coût total d'un dossier traité au temps effectivement économisé ou à la marge générée. Inclure retries, échecs, vérification humaine et outils externes. Une moyenne par requête peut masquer un petit nombre de tâches très coûteuses ; segmenter par usage et suivre aussi les percentiles.
 
 ---
 
@@ -157,6 +171,10 @@ Mise en situation : le coût de ton assistant est dominé par les tokens d'entr�
 **Piège** : commencer par changer de modèle, alors que le contexte envoyé est le vrai poste de coût.
 
 ---
+
+## Sources
+
+- [Anthropic — traitement batch, échecs et expiration des requêtes](https://platform.claude.com/docs/en/build-with-claude/batch-processing)
 
 ## Connexions
 - [[122-finops-llm|FinOps LLM]] — la gouvernance de ces coûts
