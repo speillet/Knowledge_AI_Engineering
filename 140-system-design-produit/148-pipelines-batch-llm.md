@@ -120,7 +120,7 @@ Le mode **hors ligne** de vLLM (`LLM.generate` sur une grande liste de prompts) 
 
 Quand ne pas utiliser une batch API ? <!--anki:4b552b3350372d2f6a78-->
 ?
-- **Résultats nécessaires en moins de quelques heures** : le délai est garanti sous 24 h, pas plus tôt
+- **Résultats nécessaires en moins de quelques heures** : une fenêtre de traitement de 24 h, selon l’offre, ne garantit ni fin plus rapide ni succès de chaque ligne
 - **Étapes dépendantes** : un agent ou une chaîne où chaque appel dépend du précédent ne se soumet pas en un lot
 - **Itérations rapides** sur le prompt : pendant la mise au point, l'appel en ligne sur un échantillon est plus pratique
 - **Très petits volumes** : la gestion des lots coûte plus que l'économie

@@ -17,6 +17,8 @@ Cas 1 — Assistant de support client : comment encadre-t-on la réponse ? <!--a
 2. **Escalade** vers un humain avec résumé de la conversation.
 3. Evals : taux de **résolution sans humain**, faithfulness, CSAT.
 
+L'assistant doit relier les affirmations à la politique applicable et éviter de promettre un remboursement non autorisé. L'escalade transmet le problème, les preuves et les étapes déjà tentées pour éviter à l'utilisateur de tout répéter. Évaluer la résolution réelle et les erreurs coûteuses ; un bon score de satisfaction ne suffit pas à prouver la factualité.
+
 ---
 
 Cas 1 — Quels risques spécifiques au support client ? <!--anki:6f2e25642c397d425d38-->
@@ -82,21 +84,25 @@ La **latence de bout en bout** (< 1 s ressentie) : pipeline **STT → LLM → TT
 
 ---
 
-Quelle est la première moitié de la trame de réponse en system design ? <!--anki:7525777d58607c31264e-->
+Comment cadrer le besoin, l'architecture et les données dans une réponse de system design ? <!--anki:7525777d58607c31264e-->
 ?
 1. **Clarifier** besoin et contraintes, **chiffrer** la charge.
 2. **Baseline simple** + critères de succès mesurables.
 3. **Architecture** (schéma) et **flux** d'une requête.
 4. **Données** : ingestion, fraîcheur, accès.
 
+Chiffrer par exemple le nombre de dossiers par jour, la longueur des entrées et le délai attendu. Le flux doit montrer d'où vient l'information et à quel moment les permissions sont appliquées. Une baseline testable rend les hypothèses explicites et fournit un point de comparaison pour les optimisations futures.
+
 ---
 
-Quelle est la seconde moitié de la trame de réponse en system design ? <!--anki:62545b3b23662a533b7a-->
+Comment couvrir modèles, risques et exploitation dans une réponse de system design ? <!--anki:62545b3b23662a533b7a-->
 ?
 5. **Modèles** : choix, routage, fallbacks.
 6. **Sécurité et conformité**.
 7. **Evals** offline et online, **observabilité**.
 8. **Coûts** et **évolution** (v2, v3).
+
+Expliquer un incident et sa réponse : fallback admissible, restitution partielle ou escalade humaine. Donner un coût par tâche et les métriques qui justifieraient une version plus complexe. La conclusion doit faire apparaître un choix motivé, ses limites et la façon de vérifier qu'il fonctionne sur la charge prévue.
 
 ---
 

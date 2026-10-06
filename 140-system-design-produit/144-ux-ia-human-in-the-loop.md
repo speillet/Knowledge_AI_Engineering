@@ -49,7 +49,7 @@ Relier chaque feedback à la **trace complète** ([[91-langfuse-observabilite|La
 
 ---
 
-Comment gérer les attentes des utilisateurs ? <!--anki:5165422e7e717c7b467e-->
+Comment gérer les attentes des utilisateurs d'une application IA ? <!--anki:5165422e7e717c7b467e-->
 ?
 - Annoncer **ce que le système sait faire et ne sait pas faire** (périmètre, fraîcheur des données).
 - Proposer des **exemples de requêtes** pour guider l'usage.

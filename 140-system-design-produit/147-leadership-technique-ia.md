@@ -74,6 +74,8 @@ Quels standards de développement un lead met-il en place pour l'équipe ? <!--a
 - **Evals obligatoires** en CI pour tout changement de prompt ou de modèle.
 - **Templates** de design doc et d'ADR.
 
+Le standard doit rendre une décision reproductible : artefacts identifiés, critères de réussite et trace de l'arbitrage. Adapter la profondeur de la revue au risque ; les petits changements ont besoin de contrôles ciblés et rapides. Le lead fournit exemples et outillage pour que ces pratiques soient effectivement utilisées, pas seulement documentées.
+
 ---
 
 Quels standards d'exploitation et de sécurité un lead met-il en place ? <!--anki:6c386e6a59785458604f-->
@@ -81,6 +83,8 @@ Quels standards d'exploitation et de sécurité un lead met-il en place ? <!--an
 - **Gateway unique** : clés, budgets, observabilité.
 - **Checklist de sécurité** : injection, PII, permissions des outils.
 - **Traces** systématiques et revue régulière d'échantillons.
+
+Nommer les responsables des alertes, incidents, budgets et migrations de modèles. Tester arrêt d'urgence, révocation d'accès et reprise sur un scénario réaliste. Les traces doivent être utiles au diagnostic et proportionnées aux données sensibles ; une centralisation technique ne remplace pas la responsabilité des équipes pour les usages qu'elles livrent.
 
 ---
 

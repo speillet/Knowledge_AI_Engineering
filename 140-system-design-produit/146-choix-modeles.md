@@ -19,9 +19,11 @@ Quels critères non techniques pèsent sur le choix d'un modèle ? <!--anki:693e
 2. **Licence** et conditions d'usage.
 3. **Fiabilité du fournisseur** : SLA, rate limits, dépréciations annoncées.
 
+Vérifier ces exigences sur l'offre exacte : contrat, région et fonctionnalités activées peuvent changer les conditions. Une licence autorisant l'usage interne n'autorise pas nécessairement toute redistribution. Documenter les contraintes éliminatoires avant les benchmarks, puis prévoir une migration si le fournisseur retire le modèle ou modifie ses conditions.
+
 ---
 
-Pourquoi le leaderboard ne suffit-il pas ? <!--anki:6d6d6943634d763c4d30-->
+Pourquoi un classement de benchmarks ne suffit-il pas pour choisir un modèle ? <!--anki:6d6d6943634d763c4d30-->
 ?
 - Les benchmarks mesurent des **capacités générales**, pas **ta tâche**.
 - **Contamination** : certains scores sont gonflés ([[135-pretraining-scaling-laws|contamination]]).
@@ -47,6 +49,8 @@ Quels benchmarks mesurent les capacités utiles en application ? <!--anki:515e6c
 - **τ-bench** : agents de support avec outils et utilisateur simulé.
 - **IFEval** : respect d'instructions vérifiables.
 - **RULER** : exploitation réelle du long contexte.
+
+Ils explorent des capacités distinctes ; un bon score sur l'un ne prédit pas tout le produit. Examiner version, protocole, outils autorisés et budget de calcul avant de comparer. Les résultats publiés servent à présélectionner, puis un jeu interne représentatif doit vérifier les erreurs, la latence et le coût sur le véritable usage.
 
 ---
 
@@ -86,10 +90,10 @@ Comment éviter le lock-in fournisseur ? <!--anki:6a3132365f365e506038-->
 
 ---
 
-Comment migrer vers un nouveau modèle sans risque ? <!--anki:4d265f5f36683060794b-->
+Comment limiter les risques lors d'une migration vers un nouveau modèle ? <!--anki:4d265f5f36683060794b-->
 ?
 1. Faire tourner le **jeu d'eval** complet (qualité, format, coût, latence).
-2. **Ajuster les prompts** : chaque modèle a ses préférences, un prompt n'est pas portable tel quel.
+2. **Tester les prompts existants**, puis les ajuster si nécessaire : leur portabilité se mesure.
 3. **Shadow** ou **canary** sur le trafic réel.
 4. **A/B test** si l'enjeu produit est important.
 5. Garder l'ancien modèle en **fallback** jusqu'à stabilisation ([[112-cicd-modeles|CI/CD des modèles]]).

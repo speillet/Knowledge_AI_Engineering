@@ -9,6 +9,8 @@ Par quoi commence la démarche de system design d'une application LLM ? <!--anki
 2. **Définir le succès** : métriques produit et [[94-evals-methodologie|evals]].
 3. Proposer **l'architecture la plus simple** qui peut marcher.
 
+Par exemple, distinguer un brouillon relu d'un traitement automatique engageant une décision. Donner des hypothèses chiffrées sur trafic, longueur des demandes et coût acceptable, puis une baseline permettant de tester la valeur. Le choix du framework ou de la base vectorielle vient après les exigences, pas avant leur clarification.
+
 ---
 
 Une fois l'architecture esquissée, que reste-t-il à traiter en system design ? <!--anki:504079722d576245485a-->
@@ -16,6 +18,8 @@ Une fois l'architecture esquissée, que reste-t-il à traiter en system design ?
 4. **Détailler** les composants critiques (retrieval, modèle, outils, garde-fous).
 5. Traiter **fiabilité, sécurité, coûts, observabilité**.
 6. Expliquer les **arbitrages** et comment le système **évolue**.
+
+Dérouler une requête réelle et un échec concret : source absente, fournisseur lent ou outil indisponible. Pour chaque composant critique, préciser entrée, sortie, responsable et comportement dégradé. Justifier les choix par les exigences établies, puis indiquer quelles mesures déclencheraient une évolution plutôt que présenter une architecture définitive.
 
 ---
 
@@ -25,6 +29,8 @@ Quelles questions de cadrage poser sur l'usage et les contraintes produit ? <!--
 - Quelle **tolérance à l'erreur** ? (suggestion relue par un humain ≠ action automatique)
 - Quelle **latence** acceptable ? Interactif, asynchrone, batch ?
 
+Ces réponses déterminent le contrat produit : une suggestion peut être corrigée, alors qu'un paiement erroné a un coût immédiat. Quantifier les pics et les délais par segment, pas seulement en moyenne. Documenter les inconnues et proposer une mesure pilote pour éviter de dimensionner l'architecture sur des hypothèses cachées.
+
 ---
 
 Quelles questions de cadrage poser sur les données et le cadre de l'entreprise ? <!--anki:6e255a234929572f2443-->
@@ -32,6 +38,8 @@ Quelles questions de cadrage poser sur les données et le cadre de l'entreprise 
 - Quelles **données** : volume, fraîcheur, sensibilité, droits d'accès ?
 - **Budget** par requête ou par utilisateur ?
 - **Contraintes** : on-prem, souveraineté, [[155-ai-act|réglementation]] ?
+
+Cartographier aussi qui possède les sources, comment elles changent et qui peut y accéder. Une exigence de résidence peut exclure certains fournisseurs ; une source mise à jour chaque heure impose un mécanisme de synchronisation. Relier chaque contrainte à une décision d'architecture et à un contrôle vérifiable.
 
 ---
 
@@ -46,11 +54,9 @@ On monte d'un cran **seulement si le précédent ne suffit pas**, et **on le pro
 
 Quels sont les derniers barreaux de l'échelle de complexité, et à quel prix ? <!--anki:64486d53634b69783433-->
 ?
-4. **Agent** avec boucle et outils.
-5. **Multi-agents**.
-6. **Fine-tuning**.
+Une **boucle agentique** aide quand les étapes ne sont pas connues à l'avance ; le **multi-agent** peut aider des sous-tâches réellement indépendantes. Ils ajoutent coordination, état et appels à diagnostiquer.
 
-Chaque cran ajoute du coût, de la latence et de la difficulté de débogage : c'est l'argument « workflow avant agent » ([[31-agents-fondamentaux|agents]]).
+Le **fine-tuning est un autre axe**, adapté à un comportement répétitif insuffisamment obtenu par le prompt : ce n'est pas nécessairement l'étape après le multi-agent. Il coûte à entraîner et maintenir, mais peut réduire prompt et latence en service. Ajouter une complexité seulement pour résoudre une limite mesurée de la baseline ([[31-agents-fondamentaux|agents]]).
 
 ---
 
@@ -81,6 +87,8 @@ Quelles briques de support complètent une architecture LLM de production ? <!--
 - **Caches** à tous les niveaux et **file de messages** pour l'asynchrone.
 - **Observabilité** (traces, evals online) et **boucle de feedback**.
 
+Ces briques répondent à des besoins précis et ne sont pas toutes obligatoires. Une extraction autonome n'exige pas nécessairement de retrieval ; une réponse dépendant de données privées exige des caches correctement isolés. Identifier le goulot ou le risque traité par chaque composant avant de l'ajouter à la baseline.
+
 ---
 
 Comment réduire la latence perçue d'une application LLM, côté interface ? <!--anki:697a3f7d53485e56495f-->
@@ -97,9 +105,11 @@ Comment réduire la latence réelle d'une application LLM, côté calcul ? <!--a
 - **Prompt caching** des préfixes longs ([[123-caching-agressif|caching]]).
 - Réponses **pré-calculées** pour les questions fréquentes.
 
+Mesurer d'abord le chemin critique : attente, retrieval, outils, prefill et decode. Les petits modèles n'aident que si leur qualité suffit et leur appel ne crée pas plus d'escalades. Paralléliser les étapes indépendantes et limiter la sortie peuvent aussi réduire la durée ; le streaming améliore surtout la perception du temps d'attente.
+
 ---
 
-Synchrone ou asynchrone : comment choisir ? <!--anki:4c506377553d6f47263d-->
+Quand choisir un traitement LLM synchrone ou asynchrone ? <!--anki:4c506377553d6f47263d-->
 ?
 - **Synchrone** (streaming) : interaction humaine, réponse en secondes.
 - **Asynchrone** (file + workers + notification) : tâches longues (agents, rapports, traitements de documents), pics de charge à **lisser**, **batch API** moins chère.

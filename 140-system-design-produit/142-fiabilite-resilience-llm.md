@@ -41,7 +41,7 @@ Un composant qui, après un **taux d'échec** élevé vers un fournisseur, **cou
 
 ---
 
-Comment gérer une sortie mal formée ? <!--anki:507e476873755e536655-->
+Comment gérer une sortie LLM mal formée dans une application ? <!--anki:507e476873755e536655-->
 ?
 1. **Prévenir** : [[63-guided-generation|structured outputs]] / décodage contraint.
 2. **Valider** : schéma (Pydantic, JSON Schema) + règles métier.
@@ -50,7 +50,7 @@ Comment gérer une sortie mal formée ? <!--anki:507e476873755e536655-->
 
 ---
 
-Qu'est-ce que la dégradation gracieuse ? <!--anki:706e317761743a564431-->
+Qu'est-ce que la dégradation gracieuse d'un service LLM ? <!--anki:706e317761743a564431-->
 ?
 Continuer à rendre **un service réduit** plutôt que tomber : réponse sans RAG si l'index est indisponible (en le signalant), petit modèle si le gros sature, **désactivation** des fonctions non essentielles, **file d'attente** plutôt que refus. On définit à l'avance **quels niveaux de service** existent.
 
@@ -117,12 +117,14 @@ Parades : réessayer à **une seule couche**, **budget de retries** global (ex. 
 
 Calcul : quelle disponibilité pour une chaîne de 3 services à 99,5 %, et avec un fallback ? <!--anki:3430313231643964333833343465356439306135343731396564333462393436-->
 ?
+Sous hypothèse d'**indépendance** et de bascule parfaite :
 ```text
-3 services en série             : 0,995³ ≈ 0,985     → ≈ 11 h d'indisponibilité par mois
-fournisseur à 99,5 %
-+ fallback indépendant à 99,5 % : 1 − 0,005² ≈ 0,99998 → ≈ 1 min par mois
+3 services obligatoires en série : 0,995³ ≈ 0,985075
+→ environ 10,75 h indisponibles sur 30 jours
+2 fournisseurs redondants : 1 − (1 − 0,995)² = 0,999975
+→ environ 1,08 min indisponible sur 30 jours
 ```
-Les dépendances en série **multiplient** les indisponibilités ; un fallback indépendant les fait presque disparaître, à condition que les pannes **ne soient pas corrélées** : même cloud, même région, même modèle ([[82-routing-llm|fallbacks]]).
+En série, ce sont les **disponibilités qui se multiplient**. En redondance, on multiplie les probabilités d'indisponibilité simultanée. Le fallback ne protège pas une gateway commune en panne ; corrélation, délais de détection, capacité de secours et échecs de bascule dégradent le résultat réel ([[82-routing-llm|fallbacks]]).
 
 ---
 
