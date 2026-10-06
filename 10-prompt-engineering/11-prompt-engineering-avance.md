@@ -7,6 +7,8 @@ Quel est le rôle du system prompt par rapport au user prompt ? <!--anki:6876605
 ?
 Le **system prompt fixe le cadre** (rôle, règles, format, périmètre) et a priorité ; le **user prompt porte la tâche** du moment.
 
+Par exemple, le système définit un assistant de support qui cite sa documentation ; l'utilisateur demande comment réinitialiser son compte. Le cadre doit préciser quoi faire si l'information manque. **Une instruction de priorité supérieure n'est pas une barrière de sécurité** : les permissions et validations des actions restent appliquées par le code.
+
 ---
 
 Qu'est-ce que le few-shot prompting ? <!--anki:64397243675666243d58-->
@@ -60,7 +62,9 @@ Ordre utile : **stable d'abord** (rôle, format), **variable à la fin** (docume
 
 Dans un prompt, vaut-il mieux formuler les consignes positivement ou négativement ? <!--anki:42213a39796140435942-->
 ?
-**Dire quoi faire** (« réponds en JSON ») fonctionne mieux que quoi ne pas faire (« pas de prose ») — les négations sont plus souvent ignorées.
+Privilégier une **action attendue explicite**, accompagnée d'un exemple : « Retourne un objet JSON avec `statut` et `motif` » est plus opérationnel que « N'écris pas de prose ». Une interdiction reste utile pour nommer une limite, mais il faut indiquer la conduite de remplacement : « Si la source manque, indique que tu ne sais pas ».
+
+Ce n'est pas une loi sur les négations : comparer les formulations sur des cas représentatifs. Pour un format strict, utiliser aussi un schéma et une validation applicative.
 
 ---
 
@@ -95,6 +99,8 @@ Voir [[13-prompts-production|prompts en production]] et [[91-langfuse-observabil
 Quels anti-patterns courants en écriture de prompts ? <!--anki:7621382e254d7e3f6163-->
 ?
 Prompt **fourre-tout**, exemples **contradictoires** avec les instructions, contexte non trié, redondances — et demander un format strict au lieu de le **[[63-guided-generation|contraindre]]**.
+
+Ils rendent la tâche ambiguë : le modèle doit arbitrer entre des objectifs incompatibles ou chercher l'information utile dans du bruit. **Séparer objectif, données et format attendu**, harmoniser les exemples, puis tester les cas limites. Un prompt long n'est pas mauvais en soi ; chaque partie doit contribuer à un comportement vérifiable.
 
 ---
 

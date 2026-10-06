@@ -12,6 +12,8 @@ Une représentation des connaissances sous forme de **graphe** : des **entités*
    sujet          prédicat      objet
 ```
 
+L'intérêt est de pouvoir suivre les relations : retrouver les personnes liées à une organisation, puis les contrats concernés. Conserver la source et, si nécessaire, la période de validité des faits. Un graphe représente ce qui a été enregistré ; il ne garantit pas que chaque relation extraite soit vraie.
+
 ---
 
 RDF ou property graph ? <!--anki:6f6a784b296a54416f74-->
@@ -39,10 +41,12 @@ Sans schéma, l'extraction **dérive** : doublons (« Paris », « Ville de Pari
 Comment construire un knowledge graph avec un LLM ? <!--anki:7645732d313e6c377d63-->
 ?
 ```text
-documents → chunking → extraction (entités + relations, sous schéma)
-→ résolution d'entités → chargement dans la base graphe → embeddings des nœuds
+documents → passages → extraction d'entités et relations sous schéma
+→ résolution d'entités → validation → stockage du graphe
 ```
-Outils : LLMGraphTransformer (LangChain), PropertyGraphIndex (LlamaIndex), Neo4j LLM Graph Builder, [[24-cognee|Cognee]], Graphiti.
+Définir d'abord les types d'entités et de relations autorisés. L'extracteur doit associer chaque fait à un passage source ; la **résolution d'entités** fusionne ensuite les mentions désignant le même objet sans confondre les homonymes.
+
+Vérifier contraintes, doublons et relations douteuses avant chargement. Des embeddings peuvent faciliter la recherche, mais ne sont pas obligatoires. Des outils comme [[24-cognee|Cognee]] automatisent une partie du pipeline ; ils ne remplacent pas la validation des faits.
 
 ---
 

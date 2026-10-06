@@ -83,7 +83,7 @@ Quand ne pas utiliser d'optimisation automatique ? <!--anki:79246d48245a6a6b7e25
 ?
 - **Pas de métrique automatique** : l'optimiseur maximiserait du bruit
 - **Tâche simple** qu'un bon prompt et trois exemples règlent déjà
-- **Moins de quelques dizaines d'exemples** : sur-apprentissage garanti
+- **Moins de quelques dizaines d'exemples** : risque élevé de sur-apprentissage et validation peu précise
 - **Contraintes de ton ou de conformité** difficiles à mesurer : l'optimiseur peut les sacrifier pour gagner des points
 
 Dans ces cas, un prompt écrit à la main et testé reste plus lisible et plus sûr.

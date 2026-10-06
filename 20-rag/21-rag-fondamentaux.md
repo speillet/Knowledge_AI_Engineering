@@ -7,6 +7,8 @@ Qu'est-ce que le RAG ? <!--anki:45677223625926775b30-->
 ?
 **Retrieval-Augmented Generation** : on **récupère des passages pertinents** dans une base de connaissances et on les **injecte dans le contexte** du LLM avant qu'il génère sa réponse.
 
+Par exemple, un assistant retrouve la procédure de remboursement avant de répondre en citant le passage. Les documents sont consultés à l'exécution : **les poids du modèle ne changent pas**. La qualité dépend à la fois de la recherche et de l'utilisation des sources ; un RAG n'empêche pas automatiquement les hallucinations.
+
 ---
 
 Quel problème le RAG résout-il ? <!--anki:6d5e59414b626f25585e-->
@@ -19,6 +21,8 @@ RAG ou fine-tuning pour apporter des connaissances ? <!--anki:4c7d4823364c5e317e
 ?
 **RAG pour les connaissances** (fraîches, volumineuses, avec droits d'accès), **[[51-fine-tuning-adaptation|fine-tuning]] pour le comportement** (format, ton, tâche). Les deux se combinent.
 
+Le RAG permet de mettre à jour ou retirer une source sans réentraîner le modèle et facilite les citations. Le fine-tuning apprend des régularités à partir d'exemples, sans garantir la restitution fidèle d'un fait ni son effacement ultérieur. Exemple : retrouver une politique commerciale par RAG et adapter par fine-tuning la façon de structurer la réponse.
+
 ---
 
 Quelles sont les étapes d'un pipeline RAG ? <!--anki:416b4c68676631527378-->
@@ -28,11 +32,15 @@ Ingestion : documents → parsing → chunking → embeddings → vector store
 Requête   : question → embedding → retrieval top-k → prompt augmenté → LLM → réponse
 ```
 
+L'**ingestion** prépare les passages et leurs métadonnées ; elle se relance quand les sources changent. À chaque **requête**, la recherche sélectionne les passages autorisés, éventuellement reclassés, puis le modèle construit une réponse sourcée. Conserver les identifiants de documents et les versions permet de diagnostiquer une erreur. La recherche peut aussi être lexicale ou hybride : une base vectorielle n'est pas obligatoire.
+
 ---
 
 Qu'est-ce que le chunking et pourquoi est-il critique ? <!--anki:4165744b3d31647a653d-->
 ?
 Le **découpage des documents en passages** indexables. Trop gros : du bruit et du contexte gaspillé. Trop petit : on perd le sens. C'est souvent **le premier levier de qualité** du RAG.
+
+Préserver les unités de sens : un titre avec son paragraphe, un tableau avec ses en-têtes, une règle avec ses exceptions. Évaluer plusieurs découpages sur des questions réelles et vérifier si le passage récupéré suffit à répondre. Le chevauchement limite les coupures mais augmente le stockage et les doublons.
 
 ---
 
@@ -56,11 +64,15 @@ Contexte ajouté      titre du document + chemin des sections
 ```
 Ce sont des **points de départ à mesurer**, pas des vérités : le bon réglage dépend des documents et se valide au recall@k ([[96-evals-rag-agents|evals de RAG]]).
 
+Faire varier un paramètre à la fois sur un jeu fixe de questions. Mesurer aussi la précision des passages, la fidélité de la réponse, la latence et le nombre de tokens transmis. Un meilleur rappel ne suffit pas si les passages supplémentaires noient l'information ou dépassent le budget de contexte.
+
 ---
 
 Qu'est-ce qu'un embedding ? <!--anki:714a71323d3b2f513621-->
 ?
-Un **vecteur dense** qui représente le sens d'un texte : deux textes proches en sens ont des vecteurs proches (**similarité cosinus**). Documents et requêtes doivent être encodés **avec le même modèle** ([[133-embeddings-representations|embeddings en détail]]).
+Un **embedding** est un vecteur numérique appris pour représenter un texte dans un espace où une mesure de proximité aide à retrouver des contenus pertinents. La similarité cosinus est fréquente, mais dépend de l'entraînement du modèle.
+
+Requêtes et documents doivent utiliser des **encodeurs compatibles dans le même espace**, parfois avec des préfixes ou encodeurs distincts prévus par le modèle. Une proximité élevée n'est ni une preuve d'identité ni une probabilité de vérité. Changer de modèle exige généralement de recalculer les vecteurs ([[133-embeddings-representations|embeddings en détail]]).
 
 ---
 
@@ -76,7 +88,9 @@ D'où le **reranking** (qui évalue la paire question-passage) et la **recherche
 
 Qu'est-ce qu'une base vectorielle ? <!--anki:77764970652b4b3d5857-->
 ?
-Un stockage qui indexe les embeddings pour une **recherche des plus proches voisins approximative** (ANN, ex. **HNSW**) en quelques ms, même sur des millions de vecteurs. Exemples : **pgvector, Qdrant, Weaviate, Milvus, Chroma**.
+Une **base vectorielle** stocke des vecteurs, leurs identifiants et des métadonnées, puis retrouve les éléments proches d'une requête selon une métrique. Un index approximatif, comme **HNSW**, échange un peu de rappel contre moins de calcul ; une recherche exacte reste possible sur de petits corpus.
+
+Évaluer conjointement rappel, latence, mémoire, mises à jour et filtres d'accès. Le nombre de vecteurs seul ne garantit pas une réponse en quelques millisecondes : la dimension, les filtres et le matériel comptent aussi.
 
 ---
 
@@ -84,11 +98,15 @@ Comment choisir le top-k d'un RAG ? <!--anki:6b342c707e4867592653-->
 ?
 C'est un compromis : **k trop petit** → information manquante (**recall** faible) ; **k trop grand** → bruit, coût et dilution du contexte. On récupère souvent large, puis on filtre ou on [[22-rag-avance|re-classe]].
 
+Distinguer le nombre de **candidats récupérés** de celui des passages réellement envoyés au modèle. Sur un jeu annoté, augmenter le premier jusqu'à obtenir un rappel satisfaisant, puis limiter le second selon la précision et le budget de tokens. Dédupliquer les passages évite de dépenser ce budget plusieurs fois pour la même preuve.
+
 ---
 
 Quelle est la limite principale du retrieval vectoriel seul ? <!--anki:4d2f444e6238555b4c3b-->
 ?
 Il rate les **termes exacts** (codes produits, références, noms propres, sigles) → on passe à la **[[22-rag-avance|recherche hybride]]** (BM25 + vectoriel) et au reranking.
+
+Par exemple, une recherche sur `AB-123` peut remonter un produit au nom proche au lieu de la référence exacte. La branche lexicale préserve ces correspondances ; la branche vectorielle retrouve les paraphrases. Fusionner leurs candidats puis mesurer le rappel par type de requête permet de vérifier que l'hybride apporte réellement un gain.
 
 ---
 
@@ -96,11 +114,15 @@ Comment rendre une réponse RAG vérifiable ? <!--anki:737874235b314a4a3373-->
 ?
 En demandant au modèle de **citer ses sources** (identifiants de chunks) et de **répondre « je ne sais pas »** si le contexte ne contient pas l'information : c'est le **grounding**.
 
+L'application doit vérifier que chaque identifiant cité existe et renvoie à un passage accessible. Ensuite, contrôler que le passage **étaye réellement l'affirmation** : une citation valide peut être hors sujet. Présenter la source et sa date aide l'utilisateur à vérifier ; une consigne de citation seule ne garantit pas la fidélité.
+
 ---
 
 Comment évaluer un RAG ? <!--anki:79282e50452d245d4c69-->
 ?
 Séparément : le **retrieval** (**recall@k**, MRR : a-t-on récupéré le bon passage ?) et la **génération** (**faithfulness**, pertinence de la réponse), sur un [[92-chainforge-evals-prompts|golden dataset]] de questions.
+
+Ajouter des questions sans réponse dans le corpus pour tester l'abstention et des cas avec restrictions d'accès. Si la preuve manque dans les passages récupérés, corriger la recherche ; si elle est présente mais mal utilisée, corriger la génération. Mesurer aussi latence et coût afin de comparer des variantes déployables.
 
 ---
 

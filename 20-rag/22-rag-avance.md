@@ -61,17 +61,23 @@ Limites : un appel LLM en plus, et une réponse hypothétique **fausse** peut or
 ?
 À combiner similarité et **filtres structurés** (date, source, tenant, **permissions/ACL**) — indispensable pour la sécurité : ne jamais retrouver ce que l'utilisateur n'a pas le droit de voir.
 
+Les droits proviennent de l'identité authentifiée et du système d'autorisation, jamais d'un tenant fourni librement par le modèle. Appliquer les restrictions avant toute exposition au LLM, et propager la même isolation aux caches et citations. Tester notamment deux utilisateurs posant la même question avec des permissions différentes.
+
 ---
 
 Qu'est-ce que GraphRAG ? <!--anki:654c65592a606b60292c-->
 ?
 Un RAG appuyé sur un **knowledge graph** : utile pour les questions **multi-hop** ou globales (« quels liens entre X et Y ? ») où la similarité plate échoue.
 
+Par exemple, relier une entreprise à ses filiales, puis aux contrats concernés, demande plusieurs relations explicites. Selon l'architecture, la recherche parcourt le graphe ou utilise des résumés de communautés. Le coût d'extraction, la résolution des entités et la maintenance du graphe doivent être justifiés par un gain mesuré face à un RAG plus simple.
+
 ---
 
 Qu'est-ce que l'agentic RAG ? <!--anki:625d426536733d593a29-->
 ?
 L'**agent décide quand et quoi chercher** : il itère (recherche → lecture → nouvelle requête) au lieu d'un retrieval unique en amont.
+
+Une première source peut révéler une date ou une entité à vérifier par une deuxième recherche. Cette adaptation aide les questions complexes, mais ajoute des appels et des risques de boucle. Fixer un budget de recherches, conserver les preuves et arrêter avec une réponse partielle ou une abstention si les sources restent insuffisantes.
 
 ---
 
@@ -87,7 +93,9 @@ Quels problèmes de production spécifiques au RAG ? <!--anki:6a455549472f7c2474
 
 Pourquoi l'ordre des chunks dans le contexte compte-t-il ? <!--anki:6e6c685336744b2e532a-->
 ?
-Effet **« lost in the middle »** : l'information au milieu du contexte est moins bien exploitée → placer les chunks clés **en début/fin**.
+Certains modèles exploitent moins bien une preuve située **au milieu d'un long contexte** : c'est l'effet « lost in the middle ». L'ordre des passages peut donc changer la réponse, même si les sources sont identiques.
+
+Tester plusieurs ordres, placer les preuves importantes dans des positions bien exploitées par le modèle et supprimer les redondances. **Ce n'est pas une règle universelle début/fin** : l'effet dépend du modèle, de la tâche et de la longueur. Préserver aussi la cohérence des passages liés.
 
 ---
 

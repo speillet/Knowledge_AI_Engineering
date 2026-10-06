@@ -44,12 +44,12 @@ Comment prompter un modèle de raisonnement ? <!--anki:725b7449614f33655476-->
 
 ---
 
-Comment injecter des données utilisateur dans un template sans risque ? <!--anki:63687347434c42302e68-->
+Comment limiter les risques en injectant des données utilisateur dans un template ? <!--anki:63687347434c42302e68-->
 ?
 - **Délimiter** les données (balises XML) et dire que ce qu'elles contiennent n'est **pas une instruction**
 - **Échapper** ou refuser les balises de fermeture dans les données, pour qu'un utilisateur ne sorte pas de son bloc
 - Ne jamais **concaténer** une entrée utilisateur dans le system prompt
-- Rendre le template avec un moteur **sans exécution de code** (Jinja en bac à sable)
+- Garder le template **sous contrôle applicatif** : ne pas compiler le texte utilisateur comme un template ; l’insérer comme donnée
 
 Cela limite l'injection accidentelle, sans remplacer les défenses contre l'injection volontaire ([[101-securite-llm-guardrails|sécurité]]).
 
@@ -88,7 +88,7 @@ Faut-il écrire le prompt en anglais pour une application francophone ? <!--anki
 **Pas forcément.** Les modèles récents suivent bien des consignes en français. Ce qui compte :
 - Dire explicitement la **langue de réponse** (celle de l'utilisateur, ou toujours le français)
 - Garder des **exemples dans la langue cible** : le modèle imite leur langue
-- **Mesurer** sur son jeu d'eval les deux versions, en coût aussi : l'anglais consomme moins de tokens ([[132-tokenisation|tokenisation]])
+- **Mesurer** sur son jeu d'eval les deux versions, en coût aussi : le nombre de tokens dépend du tokenizer et de la formulation, pas seulement de la langue ([[132-tokenisation|tokenisation]])
 
 ---
 
