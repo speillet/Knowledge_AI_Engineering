@@ -163,4 +163,5 @@ Mise en situation : ton équipe veut « tester la résilience » avant une mise 
 - [[93-monitoring-inference|Monitoring de l'inférence]] — détecter les défaillances
 - [[84-streaming-integration-applicative|Streaming & intégration]] — idempotence et tâches longues
 - [[145-cas-system-design|Cas de system design]] — des architectures types commentées
+- [[149-livraison-idempotence-concurrence|Idempotence & concurrence]] — sécuriser les retries et gérer les résultats inconnus
 - [[00-moc-ai-engineering|MOC AI Engineering]]

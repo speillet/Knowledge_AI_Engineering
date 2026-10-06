@@ -140,4 +140,5 @@ Mise en situation : le job d'indexation réussit, mais certains documents récen
 - [[159-donnees-temporelles-features|Données temporelles]] — traiter événements tardifs et disponibilité historique
 - [[153-data-flywheel-versioning|Versioning des données]] — versions d'index et sources à rejouer
 - [[148-pipelines-batch-llm|Pipelines batch LLM]] — reprendre les traitements volumineux
+- [[149-livraison-idempotence-concurrence|Garanties de livraison]] — protéger les reprises et écritures concurrentes
 - [[00-moc-ai-engineering|MOC AI Engineering]]

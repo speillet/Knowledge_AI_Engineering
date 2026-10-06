@@ -172,4 +172,5 @@ Mise en situation : ton système à quatre agents devient impossible à débogue
 - [[38-plateformes-agents|Plateformes d'agents]] — runtimes managés, double texting
 - [[115-plateformes-agents-gouvernance|Plateformes d'agents — gouvernance]] — identité, politiques, audit et coûts d'une flotte d'agents
 - [[142-fiabilite-resilience-llm|Fiabilité & résilience]] — timeouts, retries, fallbacks et dégradation
+- [[140-010-transactions-outbox-sagas|Transactions & sagas]] — compléter les checkpoints pour les effets externes
 - [[00-moc-ai-engineering|MOC AI Engineering]]

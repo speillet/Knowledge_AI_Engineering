@@ -37,6 +37,12 @@ Pour se concentrer sur les agents, à travers les sections :
 7. [[84-streaming-integration-applicative|Intégration applicative]] et [[38-plateformes-agents|plateformes]] — mettre en production
 8. [[115-plateformes-agents-gouvernance|Gouvernance]] et [[55-rl-agentique|RL agentique]] — niveau senior
 
+### Parcours fondations senior
+Pour relier les trois priorités transversales aux applications IA :
+1. [[171-choisir-modele-ml|Choisir une approche]] puis [[172-validation-metriques-ml|valider sans fuite]] — règles, ML classique ou LLM
+2. [[157-contrats-qualite-donnees|Définir les contrats]], [[158-ingestion-cdc-backfills|fiabiliser l’ingestion]] puis [[159-donnees-temporelles-features|reconstruire les données disponibles]] — qualité et temporalité
+3. [[149-livraison-idempotence-concurrence|Maîtriser livraison et concurrence]] puis [[140-010-transactions-outbox-sagas|orchestrer les transactions]] — effets métier sûrs malgré les pannes
+
 ### Liens transversaux
 - [[38-plateformes-agents|Plateformes]] → [[115-plateformes-agents-gouvernance|architecture et gouvernance]]
 - [[165-computer-use-agents-navigateur|Agents d’interface]] : complément multimodal du parcours agentique.
@@ -183,6 +189,8 @@ Pour se concentrer sur les agents, à travers les sections :
 - [[146-choix-modeles|Choisir un modèle]]
 - [[147-leadership-technique-ia|Leadership technique en AI Engineering]]
 - [[148-pipelines-batch-llm|Pipelines batch à grande échelle]]
+- [[149-livraison-idempotence-concurrence|Livraison, idempotence & concurrence]]
+- [[140-010-transactions-outbox-sagas|Transactions, outbox & sagas pour les agents]]
 
 ## 150 — Données & conformité
 

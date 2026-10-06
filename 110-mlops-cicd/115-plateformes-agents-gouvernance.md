@@ -366,4 +366,5 @@ Mise en situation : le fournisseur de ta plateforme d'agents annonce l'arrêt d'
 - [[44-langgraph-fondamentaux|LangGraph]] — graphes d'états pour agents et workflows
 - [[84-streaming-integration-applicative|Streaming & intégration]] — SSE, annulation et tâches longues
 - [[95-llm-as-judge|LLM-as-a-judge]] — noter automatiquement, et valider le juge
+- [[140-010-transactions-outbox-sagas|Transactions, outbox & sagas]] — implémenter compensation et validation des actions
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -143,4 +143,5 @@ Mise en situation : un agent d'analyse met 3 à 8 minutes à produire un rapport
 - [[141-system-design-llm|System design LLM]] — la méthode de conception
 - [[61-kv-cache-attention|KV cache]] — la mémoire qui limite la concurrence
 - [[33-mcp|MCP]] — le protocole standard entre agents et outils
+- [[149-livraison-idempotence-concurrence|Livraison & idempotence]] — suivre une opération après timeout ou déconnexion
 - [[00-moc-ai-engineering|MOC AI Engineering]]

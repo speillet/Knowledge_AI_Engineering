@@ -4,7 +4,7 @@ Un vault [Obsidian](https://obsidian.md) de **fiches de révision (flashcards) e
 
 Chaque fiche traite **un concept** en 8 à 34 cartes question/réponse, une quinzaine en moyenne, et se termine par des **mises en situation** : des cas concrets à diagnostiquer, concevoir ou arbitrer. Les fiches sont reliées entre elles par des liens, pour qu'on puisse passer d'un sujet à ses voisins, et elles se révisent en **répétition espacée**.
 
-**État au 6 octobre 2026** : 115 fiches et 1 631 cartes, réparties en 17 sections, dont 250 mises en situation et 108 cartes « à ne pas confondre ».
+**État au 6 octobre 2026** : 117 fiches et 1 663 cartes, réparties en 17 sections, dont 256 mises en situation et 113 cartes « à ne pas confondre ».
 
 ---
 
@@ -41,7 +41,7 @@ Knowledge_AI_Engineering/
 ├── 110-mlops-cicd/              # LLMOps, CI/CD, drift, variance, gouvernance des agents
 ├── 120-couts-finops/            # coûts d'inférence, FinOps, caching
 ├── 130-fondamentaux-llm/         # Transformer, tokenisation, embeddings, MoE, raisonnement
-├── 140-system-design-produit/    # system design, fiabilité, UX, choix de modèle, leadership, batch
+├── 140-system-design-produit/    # system design, fiabilité, UX, batch, idempotence, transactions
 ├── 150-donnees-conformite/       # curation, conformité, contrats, ingestion, données temporelles
 ├── 160-multimodal-edge/          # VLM, parsing de documents, voix, LLM locaux, computer use
 └── 170-ml-classique/            # choix des modèles, validation, fuites et métriques
@@ -363,6 +363,8 @@ La partie qui assemble tout le reste : concevoir, fiabiliser et piloter une appl
 - [Choisir un modèle](140-system-design-produit/146-choix-modeles.md) : critères, limites des leaderboards, benchmarks, fermé ou open weights, licences, coût par tâche, architecture multi-modèles, lock-in, migration, veille.
 - [Leadership technique en AI Engineering](140-system-design-produit/147-leadership-technique-ia.md) : ce qui fait un senior, choix des cas d'usage, ROI, échec des POC, RFC et ADR, build ou buy, go / no-go, standards d'équipe, communication avec les décideurs, veille.
 - [Pipelines batch à grande échelle](140-system-design-produit/148-pipelines-batch-llm.md) : batch ou en ligne, batch API (JSONL, `custom_id`, 24 h), batch API ou continuous batching, architecture reprenable, calculs de coût et de durée sous quota, classement des erreurs, contrôle qualité statistique, versions enregistrées avec chaque résultat, auto-hébergement hors ligne, quand ne pas utiliser de batch API.
+- [Livraison, idempotence & concurrence](140-system-design-produit/149-livraison-idempotence-concurrence.md) : garanties de livraison, limites du exactement une fois, timeout ambigu, identité des opérations, déduplication atomique, rétention, ack, ordre par entité, concurrence optimiste, isolation et fencing tokens.
+- [Transactions, outbox & sagas pour les agents](140-system-design-produit/140-010-transactions-outbox-sagas.md) : invariants métier, double écriture, outbox et inbox, périmètre transactionnel, sagas et compensation, isolation des workflows, états inconnus, checkpoints, validation humaine et tests de panne.
 
 ### 150 — Données & conformité
 

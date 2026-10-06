@@ -111,4 +111,5 @@ Mise en situation : ton assistant met 12 secondes à répondre et les utilisateu
 - [[83-gateway-ingress|Gateway]] — streaming SSE
 - [[163-voix-temps-reel|Voix & agents temps réel]] — l'UX quand l'interface est la voix
 - [[84-streaming-integration-applicative|Streaming & intégration]] — la mécanique derrière le streaming
+- [[140-010-transactions-outbox-sagas|Transactions & approbations]] — lier le consentement aux paramètres effectivement exécutés
 - [[00-moc-ai-engineering|MOC AI Engineering]]
