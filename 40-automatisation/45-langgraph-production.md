@@ -12,6 +12,8 @@ Le composant qui **sauvegarde l'état du graphe après chaque super-step**. Il a
 graph = builder.compile(checkpointer=checkpointer)
 ```
 
+Le backend et le mode de durabilité déterminent quand une sauvegarde est effectivement conservée. Les checkpoints décrivent l'état du graphe ; ils ne sauvegardent pas arbitrairement toute la mémoire du processus et n'annulent pas une opération distante. Tester un redémarrage au milieu d'une tâche pour vérifier la reprise réelle.
+
 ---
 
 Quels checkpointers LangGraph propose-t-il ? <!--anki:4a23792655613437387d-->
@@ -20,15 +22,19 @@ Quels checkpointers LangGraph propose-t-il ? <!--anki:4a23792655613437387d-->
 - **`SqliteSaver`** : fichier local (développement)
 - **`PostgresSaver`** / `AsyncPostgresSaver` : **production**
 
+Le choix dépend de la durabilité, du nombre de workers et des contraintes d'exploitation. Une base persistante demande initialisation du schéma, sauvegardes et politique de rétention. Les checkpoints peuvent contenir les messages et résultats d'outils : limiter les accès et prévoir l'effacement des données sensibles.
+
 ---
 
 Qu'est-ce qu'un thread dans LangGraph ? <!--anki:65266e7a71676c416a5b-->
 ?
 Une **suite de checkpoints** identifiée par un **`thread_id`**, passé dans la config (`{"configurable": {"thread_id": "..."}}`). Même `thread_id` = on reprend l'état ; nouveau `thread_id` = on repart de zéro.
 
+Le thread est une unité de continuité de l'état, pas une identité utilisateur. L'application doit vérifier son propriétaire et gérer les exécutions concurrentes. Un nouveau thread peut néanmoins lire une mémoire long terme partagée via un Store ; repartir sans historique ne signifie pas repartir sans aucune connaissance persistée.
+
 ---
 
-Comment mettre un humain dans la boucle ? <!--anki:4e2d79524e626742322d-->
+Comment mettre un humain dans la boucle d'un graphe LangGraph ? <!--anki:4e2d79524e626742322d-->
 ?
 Un nœud appelle **`interrupt(payload)`** : l'état est sauvegardé et l'exécution **s'arrête** en renvoyant le payload. On reprend avec **`Command(resume=valeur)`** sur le même thread ; `valeur` devient le retour de `interrupt()`.
 
@@ -42,11 +48,15 @@ def approbation(state):
 graph.invoke(Command(resume=True), config=config)
 ```
 
+À la reprise, **le nœud recommence depuis son début** : le code précédant `interrupt()` peut s'exécuter à nouveau. Placer l'effet externe après l'approbation et le rendre idempotent. Présenter à l'humain les arguments précis de l'action, puis vérifier que sa réponse vient d'une identité autorisée.
+
 ---
 
 Pourquoi un checkpointer est-il obligatoire pour `interrupt` ? <!--anki:52647e3824313c325d47-->
 ?
-Parce que la reprise peut arriver **des minutes ou des jours plus tard**, dans un autre processus : l'état doit être **persisté** pour que le graphe reparte exactement du point d'arrêt.
+Le checkpointer conserve l'état et l'interruption en attente afin de reprendre le **même thread** plus tard, éventuellement dans un autre processus. Une sauvegarde en RAM ne survit pas à un redémarrage : utiliser un stockage durable pour ce besoin.
+
+La reprise ne restaure pas une pile Python figée : **le nœud interrompu redémarre**, puis `interrupt()` reçoit la valeur transmise par `Command(resume=...)`. Les effets avant l'interruption doivent donc être idempotents ou déplacés dans une étape séparée.
 
 ---
 
@@ -54,12 +64,16 @@ Qu'est-ce que le time travel dans LangGraph ? <!--anki:43524756212128393c4d-->
 ?
 Parcourir l'**historique des checkpoints** d'un thread (`get_state_history`), **rejouer** depuis un checkpoint passé ou le **modifier** (`update_state`) pour explorer une autre branche — très utile pour déboguer un agent.
 
+Un rejeu peut refaire des appels LLM ou des outils et produire des résultats différents. Il ne remonte pas le temps dans les systèmes externes : un e-mail déjà envoyé reste envoyé. Pour déboguer sans duplication d'effets, utiliser des outils simulés ou des opérations protégées par des clés d'idempotence.
+
 ---
 
 Checkpointer ou Store : quelle différence ? <!--anki:4b5042685f574b50716d-->
 ?
 - **Checkpointer** : mémoire **court terme**, propre à **un thread**
 - **Store** (ex. `InMemoryStore`) : mémoire **long terme, partagée entre threads**, organisée en **namespaces** (ex. `("user-123", "preferences")`), avec recherche sémantique possible
+
+Le premier garde l'avancement d'une conversation ; le second peut conserver une préférence utile dans de futures conversations. « Long terme » désigne le périmètre, pas une garantie de durabilité : `InMemoryStore` reste volatil. Pour les deux, définir autorisations, rétention et gestion des mises à jour concurrentes.
 
 ---
 
@@ -69,15 +83,19 @@ La capacité d'un workflow à **reprendre après une panne** ou une longue pause
 
 ---
 
-Que peut-on streamer depuis un graphe ? <!--anki:445e71583c4f4f626c26-->
+Quelles données peut-on streamer depuis un graphe LangGraph ? <!--anki:445e71583c4f4f626c26-->
 ?
 L'**état complet** après chaque étape (`values`), les **mises à jour** de chaque nœud (`updates`), les **tokens** du LLM (`messages`) ou des **événements personnalisés** (`custom`). Les versions récentes ajoutent aussi `stream_events(..., version="v3")`.
+
+Choisir le flux selon l'interface : tokens pour afficher une réponse progressivement, updates pour montrer une étape achevée, événements personnalisés pour une progression métier. Filtrer ce qui est exposé : l'état complet peut contenir des données internes. Vérifier les modes disponibles dans la version installée et gérer déconnexion ou reprise côté client.
 
 ---
 
 Qu'est-ce qu'un subgraph dans LangGraph ? <!--anki:447762797072732f477e-->
 ?
 Un **graphe compilé utilisé comme nœud** d'un autre graphe. On découpe ainsi un système complexe en modules, souvent **un subgraph par agent**.
+
+Définir les entrées et sorties du module, puis traduire les clés si son état diffère de celui du parent. Cette séparation facilite réutilisation et tests. Vérifier la propagation des checkpoints et des interruptions selon la configuration ; découper en sous-graphes ne crée pas automatiquement une isolation de sécurité.
 
 ---
 
@@ -104,7 +122,7 @@ Comment déployer et déboguer un graphe LangGraph ? <!--anki:6c6747322662447d72
 Mise en situation : ton agent de traitement de commandes s'arrête pour une validation humaine qui arrive parfois deux jours plus tard. Il tourne aujourd'hui avec `InMemorySaver`. Que changes-tu ? <!--anki:4d2f6936553058693334-->
 ?
 1. **Checkpointer persistant** : `PostgresSaver` en production, sinon un redémarrage perd tous les dossiers en attente
-2. **Thread par dossier** : `thread_id` stable, pour reprendre exactement au point d'arrêt
+2. **Thread par dossier** : `thread_id` stable, pour recharger le bon état ; le début du nœud interrompu peut être rejoué
 3. **Reprise** par `Command(resume=...)` avec la décision, depuis un autre processus que celui qui a interrompu
 4. **Délais et relances** : un dossier en attente depuis trop longtemps doit alerter ou expirer
 5. **Effets de bord isolés** : les écritures et envois ne doivent pas être rejoués après une reprise
@@ -138,6 +156,8 @@ Mise en situation : ton système à quatre agents devient impossible à débogue
 ---
 
 ## Sources
+
+- [LangGraph — interruptions et réexécution du nœud à la reprise](https://docs.langchain.com/oss/python/langgraph/interrupts)
 
 - [LangGraph — persistance et threads](https://docs.langchain.com/oss/python/langgraph/persistence)
 

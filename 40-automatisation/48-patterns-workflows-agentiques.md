@@ -91,7 +91,7 @@ Règle d'Anthropic : commencer par **l'option la plus simple** qui marche, et n'
 Quand ne pas utiliser d'evaluator-optimizer ? <!--anki:70363f3e4a7e4a215d56-->
 ?
 - **Pas de critère vérifiable** : le juge valide ou rejette au hasard, et la boucle ajoute du coût sans gain
-- **Latence critique** : chaque tour double le temps de réponse
+- **Latence critique** : chaque tour ajoute une génération et une évaluation sur le chemin critique
 - **Première réponse déjà bonne** dans la grande majorité des cas : mieux vaut évaluer seulement les cas douteux
 - **Même modèle, même contexte** pour générer et critiquer : il tend à **valider ses propres erreurs**
 
@@ -99,7 +99,7 @@ Mesurer le gain par tour : souvent, le deuxième tour apporte l'essentiel.
 
 ---
 
-Comment implémenter ces patterns sans framework ? <!--anki:4867683c232863727074-->
+Comment implémenter chaining, routage et parallélisation LLM sans framework ? <!--anki:4867683c232863727074-->
 ?
 Ce sont quelques **fonctions** : un appel LLM, du code Python entre les appels, `asyncio.gather` pour paralléliser.
 ```python
@@ -112,6 +112,8 @@ async def repondre(ticket):
     return await relire(brouillon)                       # chaining
 ```
 Un framework devient utile pour la **persistance**, la reprise et la supervision humaine ([[44-langgraph-fondamentaux|LangGraph]]).
+
+Cet extrait suppose des fonctions déjà définies et un import d'`asyncio`. Les deux appels parallèles doivent être indépendants. Ajouter timeouts, annulation et gestion des exceptions ; `gather` ne constitue pas une politique de reprise. Enregistrer le résultat de chaque étape utile permet de diagnostiquer un échec sans relancer toute la tâche.
 
 ---
 

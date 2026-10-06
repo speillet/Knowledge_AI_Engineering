@@ -7,6 +7,8 @@ Qu'est-ce que le harness (harnais) d'un agent ? <!--anki:7976774a57665d6f6958-->
 ?
 Le **programme qui entoure le modèle** : il fait tourner la boucle, **exécute les outils**, gère le contexte, applique les permissions et affiche le résultat. Le modèle propose, **le harness dispose**.
 
+Il transforme une prédiction du modèle en exécution contrôlée : un appel d'outil devient une opération autorisée, tracée et limitée dans le temps. Si l'outil échoue, il transmet une observation exploitable ou arrête le run. Deux applications utilisant le même modèle peuvent donc avoir des comportements très différents selon leur harness.
+
 ---
 
 Quelles sont les responsabilités d'un harness ? <!--anki:73483b4938322d2e4366-->
@@ -16,6 +18,8 @@ Quelles sont les responsabilités d'un harness ? <!--anki:73483b4938322d2e4366--
 - **Gestion du contexte** : system prompt, historique, compaction
 - **Permissions**, sandboxing, approbations
 - **Intégrations** : [[33-mcp|MCP]], plugins, hooks
+
+Ces responsabilités constituent le **contrôle effectif de l'exécution**. Par exemple, un outil de paiement doit être bloqué par le programme tant que l'autorisation requise manque, même si le modèle demande son lancement. Les traces relient décision, arguments, résultat et erreur pour permettre l'audit et la reprise.
 
 ---
 
@@ -38,11 +42,15 @@ Qu'est-ce qu'un plugin dans un harness ? <!--anki:21632f592e76504753-->
 ?
 Un **paquet d'extensions** qu'on installe dans le host : **commandes** (slash commands), **skills**, **sous-agents**, **hooks** et **serveurs MCP**, distribués ensemble.
 
+Le contenu exact dépend du host : tous les plugins n'incluent pas chacun de ces composants. Le paquet apporte une intégration ou une procédure réutilisable, par exemple un ensemble d'outils pour travailler sur des tickets. Examiner sa provenance, sa version et ses permissions ; installer une extension ne doit pas lui donner implicitement accès à toutes les données.
+
 ---
 
 Qu'est-ce qu'une skill pour un agent ? <!--anki:6f3f3e3a684076505951-->
 ?
 Un **dossier d'instructions et de ressources** (ex. `SKILL.md` + scripts) que l'agent **charge à la demande** quand la tâche s'y prête : seule une courte description reste en permanence dans le contexte (**progressive disclosure**).
+
+Par exemple, une procédure d'export de document peut regrouper règles de mise en page, script de rendu et exemples. Elle guide le travail sans constituer un nouvel entraînement du modèle. Sa bonne exécution dépend toujours des outils disponibles et de ses prérequis ; les instructions chargées doivent rester compatibles avec les permissions du host.
 
 ---
 
@@ -71,17 +79,23 @@ Comment un harness gère-t-il les permissions ? <!--anki:723e704a553f6c796757-->
 ?
 Par des **modes et des règles** : lecture seule, approbation à chaque action, allowlist de commandes, ou autonomie complète — avec **demande de confirmation humaine** pour les actions sensibles.
 
+La décision est appliquée **au moment de l'exécution**, avec l'identité de l'utilisateur, la cible et les arguments réels. Une approbation pour lire un fichier ne vaut pas autorisation de le publier. Préférer des droits limités et temporaires ; une simple consigne « ne fais rien de dangereux » ne remplace pas ce contrôle.
+
 ---
 
 Pourquoi exécuter un agent dans une sandbox ? <!--anki:497a51314634782d6450-->
 ?
 Pour **limiter le rayon d'impact** d'une erreur ou d'une [[101-securite-llm-guardrails|prompt injection]] : système de fichiers restreint, réseau filtré, conteneur ou VM jetable.
 
+Par exemple, limiter les écritures à un répertoire de travail et bloquer les sorties réseau inutiles réduit les conséquences d'un script malveillant. La sandbox doit aussi borner durée, mémoire et CPU. Elle ne suffit pas si un secret est accessible ou si un service externe autorise une action excessive : isolation et permissions se complètent.
+
 ---
 
 À ne pas confondre : fichier mémoire (ex. `CLAUDE.md`) et skill ? <!--anki:77702e78736c33755528-->
 ?
 Le **fichier mémoire** est chargé **à chaque session** (conventions du projet) ; la **skill** n'est chargée **que quand elle est utile** — on y met les procédures longues et spécialisées.
+
+Mettre les conventions générales, comme la commande de test, dans les instructions du projet ; placer une procédure de migration détaillée dans une skill spécialisée. Le chargement précis dépend du host et du périmètre des fichiers. Aucun de ces mécanismes n'est une mémoire des poids du modèle : ce sont des instructions ajoutées au contexte.
 
 ---
 

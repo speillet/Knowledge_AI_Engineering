@@ -8,6 +8,8 @@ Qu'est-ce que CrewAI ? <!--anki:773073683f6e7832596e-->
 ?
 Un framework Python **multi-agents par rôles**, écrit **indépendamment de LangChain**. On décrit une équipe (**crew**) d'agents spécialisés et les **tâches** qu'ils doivent accomplir ; les **Flows** ([[47-crewai-flows|CrewAI Flows]]) orchestrent le tout.
 
+Le rôle décrit une spécialisation, tandis que les outils déterminent ce que l'agent peut réellement faire. Une crew peut réaliser une analyse en plusieurs tâches ; un Flow encadre ses déclenchements et ses branches. Mesurer l'intérêt de la coopération par rapport à un pipeline plus simple avant de multiplier les agents.
+
 ---
 
 Comment définit-on un agent CrewAI ? <!--anki:5064625e6870296b515a-->
@@ -24,9 +26,11 @@ Comment définit-on une tâche CrewAI ? <!--anki:412a4645332e30695766-->
 ?
 Par une **`description`** (quoi faire), un **`expected_output`** (à quoi ressemble le résultat attendu) et l'**`agent`** responsable. Le champ `context` liste les **tâches dont la sortie** doit être fournie à celle-ci.
 
+Une bonne tâche nomme les sources, le périmètre et les critères de réussite. `expected_output` est une consigne au modèle, pas à lui seul une garantie de conformité : ajouter un schéma ou un validateur si le résultat alimente du code. Éviter de transmettre toutes les tâches précédentes lorsqu'une seule suffit.
+
 ---
 
-À quoi ressemble une crew minimale ? <!--anki:7129717e4e6e464e4c69-->
+Comment construire et lancer une crew minimale avec CrewAI ? <!--anki:7129717e4e6e464e4c69-->
 ?
 ```python
 from crewai import Agent, Task, Crew, Process
@@ -47,6 +51,8 @@ resultat = crew.kickoff(inputs={"topic": "agents LLM"})
 ```
 Les `{variables}` sont remplacées par les `inputs` du kickoff.
 
+L'exemple comporte un agent et une tâche : une crew n'exige pas plusieurs agents. `search_tool` doit être défini, et le modèle ainsi que ses identifiants configurés. Le rôle et la biographie orientent la génération mais ne prouvent pas la véracité des annonces ; vérifier dates et sources dans le résultat.
+
 ---
 
 Quels modes d'exécution (process) propose un crew CrewAI ? <!--anki:4f623b5a442b527c2b4d-->
@@ -54,17 +60,23 @@ Quels modes d'exécution (process) propose un crew CrewAI ? <!--anki:4f623b5a442
 - **Sequential** : les tâches s'exécutent **dans l'ordre**, chaque sortie alimente la suivante
 - **Hierarchical** : un **agent manager** (`manager_llm` ou `manager_agent` obligatoire) **répartit** les tâches et **valide** les résultats
 
+Le séquentiel convient lorsque les dépendances sont connues ; le hiérarchique ajoute une décision de coordination par modèle. Ce manager augmente les appels et peut mal déléguer. Dans les deux cas, expliciter le contexte nécessaire aux tâches et vérifier le résultat final avec des critères métier indépendants du rôle des agents.
+
 ---
 
 Qu'est-ce que la délégation dans CrewAI ? <!--anki:67436a665f6224415725-->
 ?
 Avec `allow_delegation=True` (désactivé par défaut), un agent peut **confier une sous-tâche ou poser une question** à un autre agent de la crew. Pratique, mais cela multiplie les appels et rend l'exécution moins prévisible.
 
+Réserver cette capacité aux tâches qui gagnent réellement à demander une expertise complémentaire. Donner une question précise, des limites d'appels et un format de retour évite les échanges circulaires. Une délégation ne doit pas contourner les permissions : l'agent sollicité ne peut agir que dans le périmètre autorisé du système.
+
 ---
 
-Comment obtenir une sortie structurée d'une tâche ? <!--anki:4e2826512a3b38495426-->
+Comment obtenir une sortie structurée d'une tâche CrewAI ? <!--anki:4e2826512a3b38495426-->
 ?
 Avec **`output_pydantic`** (ou `output_json`) sur la tâche : le résultat est validé contre le modèle. `output_file` écrit en plus le résultat dans un fichier.
+
+Définir un modèle de résultat, par exemple une liste de constats avec source et gravité. Traiter explicitement l'échec de conversion ou de validation ; ne pas laisser un texte libre passer pour un objet valide. Le fichier produit reste un artefact à contrôler et sa destination doit être limitée au répertoire prévu.
 
 ---
 
@@ -87,6 +99,8 @@ Comment fonctionnent les outils dans CrewAI ? <!--anki:73416c25474152545177-->
 ?
 Le paquet **`crewai-tools`** fournit des outils prêts (recherche web, scraping, lecture de fichiers, RAG…) ; on crée les siens avec le décorateur **`@tool`** ou en héritant de `BaseTool`. Les serveurs [[33-mcp|MCP]] sont aussi utilisables.
 
+Un outil doit exposer un contrat clair : arguments, résultat, cas d'erreur et effets éventuels. Limiter les permissions du compte utilisé et les destinations réseau. Tester les fonctions séparément des agents ; une réponse plausible du LLM peut masquer un outil qui n'a jamais consulté la source ou qui a échoué.
+
 ---
 
 Comment fonctionne la mémoire dans CrewAI ? <!--anki:4e7d6e76596a3b63702c-->
@@ -101,7 +115,7 @@ La CLI (`crewai create`, `crewai install`, `crewai run`) génère un projet. Les
 
 ---
 
-Quelles sont les limites des crews ? <!--anki:4b30352368505d537624-->
+Quelles sont les limites des crews de CrewAI ? <!--anki:4b30352368505d537624-->
 ?
 Le comportement repose sur des **prompts de rôle** : moins de contrôle fin que [[44-langgraph-fondamentaux|LangGraph]], exécution **moins prévisible** en mode hiérarchique, et **coût en tokens** élevé. D'où l'usage de **Flows** pour encadrer les crews en production.
 
@@ -134,6 +148,8 @@ Mise en situation : un collègue propose de passer ta crew en mode hiérarchique
 ---
 
 ## Sources
+
+- [CrewAI — crews](https://docs.crewai.com/en/concepts/crews)
 
 - [CrewAI — Crews, documentation v1.15.23](https://docs.crewai.com/v1.15.23/en/concepts/crews)
 

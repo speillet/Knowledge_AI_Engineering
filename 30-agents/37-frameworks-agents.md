@@ -8,6 +8,8 @@ Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou 
 ?
 À fournir des **briques prêtes** : abstraction des fournisseurs de modèles, déclaration d'outils, boucle d'agent, mémoire, persistance de l'état, streaming et intégrations d'observabilité.
 
+Ces briques réduisent le code d'intégration et rendent certains comportements standardisés. Elles ne définissent pas automatiquement les bons outils, les permissions ni les critères de réussite. Avant adoption, vérifier qu'on peut comprendre le flux réel, inspecter les messages et reprendre une exécution interrompue sans dépendre d'un état caché.
+
 ---
 
 Qu'est-ce que LangChain ? <!--anki:43603633354a63316478-->
@@ -38,6 +40,8 @@ Que proposent les SDK des fournisseurs de modèles ? <!--anki:4c6e4c5d7621547763
 ?
 Des frameworks **légers** : **OpenAI Agents SDK** (agents, handoffs, guardrails, tracing) et **Claude Agent SDK** (le harness de Claude Code réutilisable : outils, sous-agents, hooks, MCP).
 
+Ils facilitent l'accès aux capacités de leur écosystème, mais n'offrent pas nécessairement les mêmes garanties de portabilité ou de persistance. Vérifier sur la version choisie les outils disponibles, l'authentification, les points d'approbation et les dépendances au service du fournisseur. Évaluer une petite tâche complète avant de bâtir toute l'application autour du SDK.
+
 ---
 
 Quel framework d'agents pour un agent centré sur les données, pour des sorties typées, ou dans l'écosystème Microsoft ? <!--anki:3862306337396462366434393466303962653836363662366539636461653035-->
@@ -56,15 +60,19 @@ Une boucle d'agent tient en **quelques dizaines de lignes** : le code maison gar
 
 ---
 
-Quels critères pour choisir un framework ? <!--anki:7350393a5947214d4f25-->
+Quels critères utiliser pour choisir un framework d'agents ? <!--anki:7350393a5947214d4f25-->
 ?
 **Contrôle** du flux (graphe explicite ou boucle autonome), **persistance** et reprise, support **multi-modèles** et MCP, **observabilité** native, maturité et stabilité de l'API, langage de l'équipe.
 
+Faire un prototype couvrant un cas difficile : outil en erreur, interruption humaine, redémarrage et changement de modèle. Vérifier la traçabilité et le coût d'exploitation, pas seulement la brièveté du code de démonstration. Préférer le plus petit ensemble de fonctionnalités qui répond aux besoins mesurés de l'équipe.
+
 ---
 
-Quel piège classique avec les frameworks ? <!--anki:692c52522b5d41257d52-->
+Quel piège d'abstraction faut-il éviter avec les frameworks d'agents ? <!--anki:692c52522b5d41257d52-->
 ?
 Les **abstractions opaques** : on ne voit plus le prompt réellement envoyé au modèle. Il faut toujours pouvoir **inspecter les appels bruts** (traces [[91-langfuse-observabilite|Langfuse]]).
+
+Inspecter messages système, descriptions d'outils, paramètres, résultats et retries réellement exécutés. Un composant peut ajouter un appel ou modifier le contexte sans que cela apparaisse dans le code métier. Sur un incident, reproduire un cas minimal et identifier la couche fautive avant de changer de modèle ou d'empiler une nouvelle abstraction.
 
 ---
 

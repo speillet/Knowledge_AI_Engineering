@@ -20,11 +20,15 @@ result = agent.invoke({"messages": [{"role": "user", "content": "Météo à Lyon
 print(result["messages"][-1].content)
 ```
 
+Dans cet exemple, `get_weather` doit déjà être défini et l'intégration du modèle configurée. La fonction construit la boucle, mais il reste à borner les appels, valider les outils et gérer les échecs. La dernière réponse doit être vérifiée selon la tâche, même si l'exécution se termine normalement.
+
 ---
 
 Sur quoi repose `create_agent` ? <!--anki:48725f6e587475697364-->
 ?
 Sur **[[44-langgraph-fondamentaux|LangGraph]]** : l'agent est un graphe compilé. Il hérite donc de la **persistance**, du **human-in-the-loop**, du streaming et de la durable execution de LangGraph.
+
+Ces capacités nécessitent une configuration appropriée : un checkpointer persistant pour survivre au redémarrage, des interruptions aux bons endroits et une gestion des effets externes. Construire un agent ne crée pas automatiquement une base de données, une interface d'approbation ou une garantie d'exécution unique des outils.
 
 ---
 
@@ -40,11 +44,15 @@ config = {"configurable": {"thread_id": "conv-42"}}
 agent.invoke({"messages": [...]}, config=config)
 ```
 
+`InMemorySaver` convient à une démonstration, mais perd l'historique à l'arrêt du processus. En production, choisir un backend durable et vérifier que l'utilisateur est autorisé à accéder au thread demandé. Réutiliser un identifiant partagé entre utilisateurs mélangerait leurs conversations et pourrait exposer leurs données.
+
 ---
 
-Comment obtenir une réponse finale structurée ? <!--anki:6e2d72285b7b3141633b-->
+Comment obtenir une réponse finale structurée avec create_agent de LangChain ? <!--anki:6e2d72285b7b3141633b-->
 ?
 Avec `response_format=MonModelePydantic` : l'agent termine par une sortie validée, disponible dans **`result["structured_response"]`**.
+
+Le modèle Pydantic décrit les champs, types et contraintes attendus, par exemple `categorie` et `priorite` pour un ticket. La stratégie utilisée dépend du support du fournisseur. Traiter explicitement validation impossible, refus et budget épuisé. Vérifier ensuite le contenu : une priorité autorisée par le schéma peut rester inadaptée au problème décrit.
 
 ---
 
@@ -54,15 +62,17 @@ Un composant qui **s'insère dans la boucle de l'agent** pour observer ou modifi
 
 ---
 
-Quels hooks un middleware peut-il implémenter ? <!--anki:623b496e31414c772f60-->
+Quels hooks un middleware d'agent LangChain peut-il implémenter ? <!--anki:623b496e31414c772f60-->
 ?
 - **Style nœud** : `before_agent`, `before_model`, `after_model`, `after_agent`
 - **Style wrapper** : `wrap_model_call`, `wrap_tool_call` (pour retry, fallback, cache…)
 Chaque hook existe aussi en **décorateur** (`@before_model`, `@wrap_tool_call`…), plus `@dynamic_prompt`.
 
+Choisir un hook selon l'endroit où agir : préparer le contexte avant le modèle, examiner sa sortie après, ou entourer un appel pour gérer les erreurs. L'ordre des middlewares influence le résultat. Éviter que plusieurs couches de retry multiplient silencieusement les tentatives et dépassent le budget global.
+
 ---
 
-À quoi ressemble un middleware personnalisé ? <!--anki:62663d2665583f485161-->
+Comment écrire un middleware before_model personnalisé pour un agent LangChain ? <!--anki:62663d2665583f485161-->
 ?
 ```python
 from langchain.agents.middleware import before_model, AgentState
@@ -75,6 +85,8 @@ def log_before_model(state: AgentState, runtime: Runtime):
 ```
 Un hook peut aussi renvoyer **`jump_to`** (`"end"`, `"tools"`, `"model"`) pour court-circuiter la boucle.
 
+Ce hook observe l'état sans le modifier. Pour router avec `jump_to`, déclarer les destinations permises via la configuration `can_jump_to` du middleware ; renvoyer une destination arbitraire ne suffit pas. Les logs doivent rester sobres : compter les messages peut être utile sans enregistrer leur contenu confidentiel.
+
 ---
 
 Quels middlewares prêts à l'emploi LangChain fournit-il ? <!--anki:4a5532617776615f543e-->
@@ -85,6 +97,8 @@ Quels middlewares prêts à l'emploi LangChain fournit-il ? <!--anki:4a553261777
 - **ModelCallLimitMiddleware**, **ToolCallLimitMiddleware** : plafonner les coûts
 - **PIIMiddleware**, **ContextEditingMiddleware**, **TodoListMiddleware**
 
+Choisir les middlewares en fonction du problème observé : boucle trop longue, contexte saturé, outil sensible ou erreur transitoire. Tester leur ordre et leur interaction sur un cas concret. Une limite d'appels doit couvrir toute l'exécution, tandis qu'une approbation humaine doit précéder l'effet externe qu'elle autorise.
+
 ---
 
 Comment fonctionne l'approbation humaine avec `create_agent` ? <!--anki:494756303d597a3c6960-->
@@ -93,9 +107,11 @@ Le **HumanInTheLoopMiddleware** interrompt l'agent avant les outils sensibles (e
 
 ---
 
-Comment passer des données propres à l'exécution (utilisateur, tenant) ? <!--anki:734e286f38437868654c-->
+Comment passer l'utilisateur et le tenant au runtime d'un agent LangChain ? <!--anki:734e286f38437868654c-->
 ?
 Par un **`context_schema`** : on passe `context=...` à `invoke`, et ces données sont accessibles dans les middlewares et les outils via le **runtime**, sans être mises dans les messages vus par le modèle.
+
+L'application construit ce contexte à partir d'une identité authentifiée. Un outil peut ainsi filtrer une requête par tenant sans demander au LLM de choisir le tenant. Ne pas recopier ces valeurs dans une sortie d'outil non nécessaire, et appliquer les contrôles d'accès côté service : être invisible dans le prompt ne suffit pas à sécuriser une donnée.
 
 ---
 
@@ -103,11 +119,15 @@ Qu'est-ce que Deep Agents ? <!--anki:7670636152256a7e7468-->
 ?
 Une surcouche « **batteries included** » bâtie sur les agents LangChain : **planification** (todo list), **système de fichiers virtuel**, **sous-agents** et **compression automatique du contexte**, pour les tâches longues.
 
+Cette surcouche réduit l'assemblage initial pour une tâche qui planifie, lit et produit des artefacts. Vérifier quel backend stocke les fichiers et quelle isolation entoure les outils de code. Les sous-agents et la compression ajoutent des comportements à évaluer, notamment pertes d'information, consommation de tokens et propagation des permissions.
+
 ---
 
 Quand descendre de `create_agent` vers LangGraph ? <!--anki:6c6473235e656b6e5743-->
 ?
 Quand le flux doit être **explicite** : étapes déterministes mêlées à des étapes agentiques, branches et boucles sur mesure, plusieurs agents coordonnés — c'est le domaine de [[44-langgraph-fondamentaux|LangGraph]].
+
+Exemple : récupérer des documents, demander une approbation, exécuter un traitement puis vérifier son résultat selon des branches prédéfinies. Un graphe rend les transitions et l'état inspectables. Garder `create_agent` dans les nœuds où une boucle autonome est utile ; il n'est pas nécessaire de réimplémenter chaque appel de modèle.
 
 ---
 
@@ -138,6 +158,8 @@ Mise en situation : tes outils ont besoin de l'identifiant du client et de son n
 ---
 
 ## Sources
+
+- [LangChain — middlewares personnalisés et routage](https://docs.langchain.com/oss/python/langchain/middleware/custom)
 
 - [LangChain — agents et middleware](https://docs.langchain.com/oss/python/langchain/agents)
 

@@ -7,6 +7,8 @@ Qu'est-ce que le tool calling (function calling) ? <!--anki:4c434c62492628352f4a
 ?
 Le mécanisme par lequel un LLM **émet un appel structuré** (nom d'outil + arguments JSON) que **l'application exécute** avant de renvoyer le résultat au modèle.
 
+Le modèle ne lance pas directement la fonction. L'application valide les arguments, l'autorisation et les limites, puis associe le résultat à l'identifiant d'appel attendu. Exemple : `statut_commande(id)` fournit un fait à utiliser dans la réponse. Une sortie conforme au schéma n'implique pas que les arguments soient légitimes ou corrects.
+
 ---
 
 Le modèle exécute-t-il lui-même les outils ? <!--anki:672f7363513542412f2f-->
@@ -44,6 +46,8 @@ prompt → le modèle émet tool_call(name, args)
 → l'app exécute → résultat renvoyé au modèle
 → nouveau tool_call ou réponse finale
 ```
+
+À chaque tour, l'application **valide le nom et les arguments**, contrôle les permissions, exécute avec un timeout et renvoie un résultat ou une erreur structurée. Le modèle peut alors corriger sa demande ou répondre. Conserver les identifiants d'appels et limiter les itérations. Pour une action avec effet externe, prévoir l'idempotence afin qu'une reprise ne crée pas de doublon.
 
 ---
 

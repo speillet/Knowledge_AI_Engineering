@@ -8,6 +8,8 @@ Qu'est-ce que LangChain aujourd'hui ? <!--anki:6d5e30397b5f6e244140-->
 ?
 Un framework open source (Python et JS) qui fournit des **composants LLM standardisés** (modèles, messages, outils, retrievers) et, depuis la **v1**, un **harness d'agent** minimal et configurable : `create_agent` ([[43-langchain-agents|LangChain agents]]).
 
+Il relie des composants via des interfaces communes, mais les capacités restent celles du fournisseur sous-jacent. Choisir les abstractions utiles à son application et épingler les dépendances. Un framework ne dispense pas de définir validation, autorisations, budget et évaluation ; il facilite leur intégration au flux.
+
 ---
 
 Comment sont organisés les paquets LangChain ? <!--anki:6a7e44294e70317a3d68-->
@@ -19,7 +21,7 @@ Comment sont organisés les paquets LangChain ? <!--anki:6a7e44294e70317a3d68-->
 
 ---
 
-Comment instancier un modèle indépendamment du fournisseur ? <!--anki:4e6c666e705f3a35383f-->
+Comment instancier un modèle via LangChain indépendamment du fournisseur ? <!--anki:4e6c666e705f3a35383f-->
 ?
 Avec `init_chat_model` et une chaîne `fournisseur:modèle` : on **change de fournisseur sans changer le code** applicatif.
 
@@ -29,6 +31,8 @@ from langchain.chat_models import init_chat_model
 model = init_chat_model("anthropic:claude-sonnet-4-5")
 reponse = model.invoke("Explique le RAG en une phrase.")
 ```
+
+Installer l'intégration du fournisseur et configurer ses identifiants restent nécessaires. L'interface d'appel est commune, mais les modèles diffèrent sur les outils, les sorties structurées, les paramètres et les limites de contexte. Après changement de fournisseur, rejouer les tests fonctionnels et les evals plutôt que supposer une équivalence de comportement.
 
 ---
 
@@ -51,17 +55,23 @@ def get_weather(city: str) -> str:
     return f"Il fait beau à {city}"
 ```
 
+Cet exemple renvoie une **valeur fictive** : un vrai outil météo interrogerait une source et gérerait les erreurs. Une description précise aide le modèle à choisir quand appeler la fonction. Les annotations décrivent le contrat ; les contrôles d'accès et la validation métier doivent être implémentés dans l'application.
+
 ---
 
 Comment un modèle utilise-t-il des outils hors agent ? <!--anki:6873426d3e2d217e434c-->
 ?
 `model.bind_tools([get_weather])` attache les schémas des outils ; la réponse contient alors `response.tool_calls` (nom + arguments). **C'est à vous d'exécuter** l'outil et de renvoyer un `ToolMessage` — ce que `create_agent` automatise.
 
+Associer chaque résultat au bon identifiant d'appel, notamment si plusieurs outils sont demandés. Gérer nom inconnu, arguments invalides et timeout sans masquer l'erreur au modèle. Lier un schéma n'exécute rien et ne donne aucune permission supplémentaire : la boucle applicative reste responsable des effets réels.
+
 ---
 
 Comment obtenir une sortie structurée avec LangChain ? <!--anki:79644644213972374439-->
 ?
 `model.with_structured_output(MonModele)` avec un modèle **Pydantic** (ou un JSON Schema) : l'appel renvoie directement un objet validé, en s'appuyant sur les structured outputs ou le tool calling du fournisseur ([[63-guided-generation|guided generation]]).
+
+Le schéma fixe des champs et des types, par exemple une catégorie et un montant. Prévoir les erreurs de validation, refus et sorties incomplètes selon l'intégration. La conformité structurelle ne prouve pas que le montant extrait soit exact ; le comparer à la source et appliquer les règles métier avant utilisation.
 
 ---
 
@@ -76,11 +86,15 @@ chain.invoke({"sujet": "le KV cache"})
 
 Toujours disponible dans `langchain-core`, mais la v1 met l'accent sur les agents.
 
+Dans cet extrait, le prompt prépare les messages, le modèle génère et le parser extrait le texte. Les variables et imports doivent être définis dans l'application. Cette composition convient à un pipeline fixe ; des reprises persistantes et des transitions complexes demandent une orchestration plus explicite.
+
 ---
 
 Quelles briques LangChain fournit-il pour le RAG ? <!--anki:6d7c557541244b554728-->
 ?
 **Document loaders** (PDF, web, bases), **text splitters** (ex. `RecursiveCharacterTextSplitter`), **embeddings**, **vector stores** et **retrievers** (`vector_store.as_retriever()`) — tout le pipeline du [[21-rag-fondamentaux|RAG]] avec des interfaces communes.
+
+L'intérêt est de pouvoir remplacer un chargeur ou un retriever sans réécrire tout le pipeline. Les interfaces ne choisissent pas le bon découpage ni les passages pertinents. Conserver les métadonnées de source et les droits d'accès, puis évaluer recherche et génération séparément sur des questions représentatives.
 
 ---
 
@@ -88,11 +102,15 @@ Quel est le rôle de LangSmith ? <!--anki:47476469236b7933533b-->
 ?
 La plateforme de l'éditeur pour **tracer, déboguer et évaluer** les applications LangChain/LangGraph (activée par variables d'environnement, ex. `LANGSMITH_TRACING=true`). Alternative open source : [[91-langfuse-observabilite|Langfuse]].
 
+Une trace permet de retrouver les appels, outils, durées et erreurs d'une requête, puis d'en faire un cas d'évaluation. Configurer les données effectivement envoyées et leur rétention avant d'activer la collecte. L'observabilité ne nécessite pas de stocker tous les secrets ou tous les contenus bruts.
+
 ---
 
 Quelle critique revient souvent sur LangChain ? <!--anki:4f6a534f5b2a36356f23-->
 ?
 Des **abstractions épaisses** qui masquent le prompt réellement envoyé et des **API qui ont beaucoup changé** entre versions. La v1 a répondu en **simplifiant** (un seul `create_agent`, anciennes chains déplacées dans `langchain-classic`).
+
+Pour limiter ce risque, épingler les versions, consulter les guides de migration et conserver des tests de contrat sur les messages et sorties. Examiner une trace réelle lors d'un comportement inattendu. La simplification de l'API ne supprime pas la nécessité de comprendre la boucle et les transformations appliquées aux données.
 
 ---
 

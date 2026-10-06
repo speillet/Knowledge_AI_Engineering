@@ -8,6 +8,8 @@ Qu'est-ce que LangGraph ? <!--anki:6c283f532b7b414f4e78-->
 ?
 Un framework **bas niveau d'orchestration et un runtime** pour des agents **longs et avec état**. Il permet de **mélanger étapes déterministes (code) et étapes agentiques (LLM)** dans un même graphe.
 
+L'état transporte les informations entre étapes et les transitions déterminent la suite du travail. Exemple : rechercher, analyser, demander une validation, puis agir. Le graphe rend le contrôle explicite ; la fiabilité dépend encore des fonctions exécutées, du stockage de checkpoints et du traitement des effets externes.
+
 ---
 
 Quels sont les trois éléments d'un graphe LangGraph ? <!--anki:2571304a364929733c-->
@@ -15,6 +17,8 @@ Quels sont les trois éléments d'un graphe LangGraph ? <!--anki:2571304a3649297
 - **State** : l'état partagé (TypedDict ou Pydantic)
 - **Nodes** : des fonctions qui reçoivent l'état et renvoient une **mise à jour partielle**
 - **Edges** : les transitions entre nœuds (fixes ou conditionnelles)
+
+Par exemple, l'état contient un ticket, un nœud calcule sa catégorie et une transition choisit le traitement correspondant. Définir des clés et contrats clairs évite que les étapes dépendent implicitement de l'historique. Pour les écritures concurrentes, préciser comment fusionner les mises à jour au moyen de reducers adaptés.
 
 ---
 
@@ -31,11 +35,15 @@ class State(TypedDict):
     notes: Annotated[list[str], add]  # les listes s'accumulent
 ```
 
+Avec cet exemple, deux sorties `['a']` et `['b']` s'accumulent au lieu que la seconde écrase la première. Le choix doit respecter le sens métier : concaténer peut créer des doublons lors d'une reprise. Pour des objets identifiés, une fusion par identifiant est parfois préférable à une addition aveugle.
+
 ---
 
 Qu'est-ce que `MessagesState` ? <!--anki:516c586a45296d392342-->
 ?
 Un état prédéfini avec une clé **`messages`** et le reducer **`add_messages`**, qui **ajoute** les nouveaux messages (et met à jour ceux qui ont le même id) : la base de tout agent conversationnel.
+
+Le reducer traite donc l'historique comme des messages identifiés, et non comme une simple liste à concaténer. Préserver les liens entre appels d'outils et réponses reste essentiel. Ce type d'état n'ajoute pas, à lui seul, de stockage durable ni de mémoire commune à toutes les conversations.
 
 ---
 
@@ -57,11 +65,15 @@ builder.add_edge("tools", "llm")
 graph = builder.compile()
 ```
 
+Le nœud `llm` ajoute la réponse du modèle ; `tools_condition` termine si aucun outil n'est demandé, sinon `ToolNode` exécute puis rend la main au modèle. `get_weather` et `model_with_tools` sont des prérequis : le modèle doit être lié aux mêmes outils. Ajouter limites d'itérations, permissions et gestion des erreurs avant un usage réel.
+
 ---
 
 Qu'est-ce qu'une edge conditionnelle dans LangGraph ? <!--anki:4335732e4d703f5b4531-->
 ?
 Une transition dont la destination est calculée par une **fonction de routage** qui lit l'état : `add_conditional_edges("noeud", route)`. C'est ce qui crée les **branches** et les **boucles** (cycles) du graphe.
+
+Par exemple, router vers une correction si la validation échoue, sinon vers la fin. Tester toutes les valeurs de retour et assurer une condition de sortie pour chaque cycle. Une transition peut être déterministe même si l'information utilisée pour la choisir provient d'un LLM incertain.
 
 ---
 
@@ -82,23 +94,31 @@ def repartir(state):
     return [Send("resumer", {"doc": d}) for d in state["docs"]]
 ```
 
+Chaque branche reçoit un état adapté à un document, puis ses résultats doivent être réunis avec un reducer. Borner le nombre de tâches simultanées pour respecter les quotas du modèle. Définir aussi le comportement lorsqu'un document échoue : retry limité, résultat partiel ou arrêt de l'ensemble.
+
 ---
 
 À quoi sert `Command` dans LangGraph ? <!--anki:756a654c29346c544574-->
 ?
 À **mettre à jour l'état et choisir le nœud suivant** depuis un nœud, en une seule instruction : `return Command(update={"statut": "ok"}, goto="valider")`. Très utilisé pour les **handoffs** entre agents.
 
+`update` décrit les changements d'état et `goto` la destination choisie. C'est utile lorsqu'une décision produit à la fois une information et un transfert de contrôle. Vérifier les autres edges du nœud : une edge statique peut encore déclencher son chemin, même si `Command` demande une autre destination.
+
 ---
 
-Comment éviter qu'un graphe boucle à l'infini ? <!--anki:4341417b4c627b246c37-->
+Comment éviter qu'un graphe LangGraph boucle à l'infini ? <!--anki:4341417b4c627b246c37-->
 ?
 Avec la **`recursion_limit`** (nombre maximal de super-steps, passé dans la config) et des **conditions de sortie** explicites dans les fonctions de routage.
+
+Cette limite compte les étapes du graphe, pas directement les tokens ni la durée. Ajouter un délai global, un budget d'appels et une détection des actions répétées sans progrès. Intercepter l'erreur de limite et restituer l'état partiel ; augmenter le plafond sans diagnostic peut seulement rendre l'échec plus coûteux.
 
 ---
 
 Existe-t-il dans LangGraph une alternative au graphe explicite ? <!--anki:4d6557676c3834252436-->
 ?
 **Oui** : la **Functional API** (décorateurs `@entrypoint` et `@task`) écrit le flux en **Python classique** (if, boucles) tout en profitant de la persistance et des interruptions de LangGraph.
+
+Elle convient lorsque le flux existant est déjà lisible en Python et qu'on veut lui ajouter des points de persistance. Encapsuler les opérations concernées dans des tâches facilite la reprise. Il faut toujours réfléchir aux actions qui peuvent être rejouées : une syntaxe impérative ne fournit pas automatiquement une exécution exactement une fois.
 
 ---
 
@@ -129,6 +149,8 @@ Mise en situation : ton équipe hésite entre le graphe explicite et la Function
 ---
 
 ## Sources
+
+- [LangGraph — état, reducers, transitions et Command](https://docs.langchain.com/oss/python/langgraph/graph-api)
 
 - [LangGraph — concepts et architecture](https://docs.langchain.com/oss/python/langgraph/overview)
 

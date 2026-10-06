@@ -14,6 +14,8 @@ Pourquoi CrewAI recommande-t-il les Flows pour la production ? <!--anki:493f4033
 ?
 Parce qu'ils donnent un **contrôle déterministe** du déroulé (étapes, conditions, état) tout en gardant l'autonomie des [[46-crewai-crews|crews]] là où elle est utile — le principe « [[41-automatisation-code-nocode|workflow]] d'abord, agent quand nécessaire ».
 
+Les événements et conditions rendent les chemins d'exécution visibles, mais la sortie d'une crew reste probabiliste. Mettre une validation entre cette sortie et une action métier, par exemple avant d'enregistrer une commande. Prévoir aussi reprise, idempotence et supervision : un graphe d'étapes explicite ne suffit pas à garantir la fiabilité.
+
 ---
 
 Quels décorateurs structurent un Flow CrewAI ? <!--anki:7a2571382c507c776739-->
@@ -25,7 +27,7 @@ Quels décorateurs structurent un Flow CrewAI ? <!--anki:7a2571382c507c776739-->
 
 ---
 
-À quoi ressemble un Flow avec routage ? <!--anki:6543357a5b677a2565-->
+Comment écrire un Flow CrewAI qui route un ticket vers une branche de traitement ? <!--anki:6543357a5b677a2565-->
 ?
 ```python
 from crewai.flow.flow import Flow, listen, router, start
@@ -51,6 +53,8 @@ class SupportFlow(Flow[TicketState]):
 SupportFlow().kickoff(inputs={"message": "L'export PDF plante"})
 ```
 
+`@start` lance la classification ; `@router` émet une étiquette ; `@listen` exécute le traitement correspondant. `classifier` et `crew_support` sont des dépendances à définir. Cet extrait illustre uniquement la branche technique : ajouter un listener commercial et une gestion des catégories inconnues pour couvrir tous les chemins d'un vrai service.
+
 ---
 
 Dans un Flow CrewAI, état structuré ou non structuré ? <!--anki:7a3c687e3b4823246c6c-->
@@ -67,9 +71,11 @@ Avec le décorateur **`@persist`** (sur la classe ou sur des méthodes) : l'éta
 
 ---
 
-Comment intégrer une validation humaine dans un Flow ? <!--anki:736663553e494c2a4138-->
+Comment intégrer une validation humaine dans un Flow CrewAI ? <!--anki:736663553e494c2a4138-->
 ?
 Avec le décorateur **`@human_feedback`** (CrewAI 1.8+) : le Flow **se met en pause** pour demander l'avis d'un humain, et la réponse peut **router** vers différentes branches (approuvé, à corriger…).
+
+Présenter le résultat à valider, les conséquences et les options de refus ou correction. Le mécanisme d'attente et de reprise dépend de l'intégration utilisée ; vérifier sa persistance sur redémarrage. Une approbation doit porter sur l'action et les arguments effectifs, sans autoriser implicitement toutes les actions suivantes.
 
 ---
 
@@ -77,9 +83,11 @@ Comment un Flow CrewAI utilise-t-il la mémoire ? <!--anki:4836683e74747c21725f-
 ?
 Via la mémoire unifiée : `self.remember(...)` pour stocker, `self.recall(...)` pour retrouver, `self.extract_memories(...)` pour découper un texte en faits — ce qui permet d'**accumuler des connaissances d'une exécution à l'autre**.
 
+Séparer les faits durables des observations temporaires : une préférence stable peut être mémorisée, une erreur d'outil ne doit pas devenir une vérité. Définir stockage, portée utilisateur, rétention et effacement. Lors d'un rappel, vérifier la provenance et la date, car une mémoire ancienne peut contredire une instruction ou une source plus récente.
+
 ---
 
-Comment créer et lancer un projet Flow ? <!--anki:6a725b613d5b23617567-->
+Comment créer et lancer un projet Flow CrewAI ? <!--anki:6a725b613d5b23617567-->
 ?
 ```bash
 crewai create flow mon_flow
@@ -88,6 +96,8 @@ crewai install
 crewai run
 ```
 Le projet généré contient le Flow et un dossier `crews/` pour les crews qu'il orchestre.
+
+Le générateur fournit une structure de projet, pas un workflow métier achevé. Configurer les modèles et leurs identifiants, implémenter les étapes, puis tester les branches et les erreurs avant lancement. Épingler les dépendances et garder les secrets hors du dépôt pour rendre l'installation reproductible et partageable.
 
 ---
 
@@ -131,6 +141,8 @@ Mise en situation : ton Flow tourne depuis un mois, mais après chaque redéploi
 ---
 
 ## Sources
+
+- [CrewAI — flows](https://docs.crewai.com/en/concepts/flows)
 
 - [CrewAI — Flows, documentation v1.15.23](https://docs.crewai.com/v1.15.23/en/concepts/flows)
 

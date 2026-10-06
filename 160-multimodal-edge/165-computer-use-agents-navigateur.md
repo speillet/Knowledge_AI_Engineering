@@ -6,10 +6,12 @@ Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou 
 
 Quelles sont les deux façons pour un agent d'utiliser une interface ? <!--anki:6b51676a79395d336043-->
 ?
-- **Par l'image** (computer use) : l'agent reçoit des **captures d'écran** et renvoie des actions en **coordonnées** (cliquer en x, y, taper, défiler). Marche sur **n'importe quelle interface**, bureau compris
-- **Par la structure** (agent navigateur) : l'agent lit le **DOM** ou l'**arbre d'accessibilité** de la page et agit sur des **éléments identifiés** (« cliquer sur le bouton ref=12 »). Plus rapide, moins cher et plus précis, mais limité au web
+Deux représentations principales sont possibles :
 
-Beaucoup d'agents combinent les deux : structure d'abord, image en secours.
+- **Visuelle** : captures d'écran et actions par coordonnées ; utile pour bureau, canvas ou interfaces sans structure exploitable, avec risque de mauvais ciblage.
+- **Structurée** : DOM pour le web, arbre d'accessibilité ou API d'automatisation pour identifier rôles, libellés et états. Les arbres d'accessibilité existent aussi sur le bureau : cette approche n'est pas réservée au navigateur.
+
+Beaucoup de systèmes combinent les deux. Aucune ne fonctionne sans limites sur toute interface ; observer le résultat après une action aide à détecter un clic erroné ou un écran inattendu.
 
 ---
 
@@ -78,10 +80,9 @@ Le computer use sert les **longues traînes** : applications sans API, parcours 
 
 À ne pas confondre : agent computer use et RPA ? <!--anki:4b3a5169762f3855377c-->
 ?
-- **RPA** (UiPath, Power Automate) : un **script fixe** enregistré, qui rejoue exactement les mêmes clics. Rapide et prévisible, mais **casse** dès que l'interface change
-- **Agent computer use** : **décide** à chaque étape d'après ce qu'il voit. S'adapte aux variations, mais plus lent, plus cher et non déterministe
+La **RPA** automatise un workflow défini : elle peut utiliser sélecteurs, variables, règles, OCR et gestion d'exceptions, pas seulement rejouer des coordonnées fixes. Un changement d'interface peut la casser, mais pas nécessairement chaque variation.
 
-Combinaison efficace : l'agent **explore** et gère les exceptions, et les trajectoires réussies deviennent des **scripts** rejoués sans LLM.
+Un **agent computer use** choisit dynamiquement la prochaine action à partir de l'état observé et de l'objectif. Cette souplesse coûte des appels de modèle et ajoute de la variabilité. Combiner les approches peut être utile : automatiser les parcours stables et réserver l'agent aux exceptions, avec vérification et permissions adaptées.
 
 ---
 
@@ -122,6 +123,8 @@ Mise en situation : pendant un test, ton agent navigateur, chargé de comparer d
 ---
 
 ## Sources
+
+- [UiPath — sélecteurs dynamiques pour automatisation d’interface](https://docs.uipath.com/activities/other/latest/ui-automation/dynamic-selectors)
 
 - [OSWorld — benchmark des agents sur ordinateur](https://osworld-v1.xlang.ai/)
 - [Anthropic — sécurité et permissions de Claude Code](https://code.claude.com/docs/en/security)

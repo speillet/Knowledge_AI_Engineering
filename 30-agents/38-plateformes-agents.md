@@ -77,6 +77,8 @@ Qu'est-ce que le double texting ? <!--anki:6d6275635935573e2957-->
 ?
 L'utilisateur envoie un **nouveau message pendant que l'agent travaille** encore sur le précédent. Le runtime doit décider quoi faire du run en cours : le finir, l'interrompre ou l'annuler.
 
+La politique peut mettre le message en file, interrompre le travail ou remplacer la demande selon le produit. Il faut préserver un historique cohérent et éviter deux écritures concurrentes dans le même état. Une annulation ne défait pas les effets externes déjà réalisés : informer l'utilisateur de ce qui est encore en cours ou déjà accompli.
+
 ---
 
 Quelles stratégies un runtime propose-t-il face au double texting ? <!--anki:42397a604d446b253650-->
@@ -168,6 +170,8 @@ Quel rôle joue l'observabilité dans une plateforme ? <!--anki:7751412e48372c7b
 ?
 - **Avant déploiement** : datasets de tâches et **simulation** (utilisateurs synthétiques, outils virtualisés)
 - **En continu** : **scoring d'un échantillon de traces** de production par des évaluateurs (souvent LLM-as-judge)
+
+L'évaluation avant déploiement sert à bloquer les régressions sur des cas connus ; celle de production détecte nouveaux usages et dérives. Ajouter des contrôles sur les résultats des outils et les actions métier. Un score de juge seul reste insuffisant : l'étalon humain, les incidents et les métriques de réussite doivent pouvoir le contredire.
 
 ---
 

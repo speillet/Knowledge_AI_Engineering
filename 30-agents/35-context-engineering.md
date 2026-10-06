@@ -7,11 +7,15 @@ Qu'est-ce que le context engineering ? <!--anki:6d7964697b53773a6a7e-->
 ?
 L'art de **choisir, à chaque appel, l'ensemble minimal de tokens le plus utile** dans la fenêtre de contexte : instructions, outils, historique, mémoire, documents récupérés.
 
+Il faut conserver ce qui permet la prochaine décision : objectif, contraintes, preuves et état d'avancement. Par exemple, remplacer un long journal d'exécution par un résumé des résultats avec des liens vers les détails. Le but n'est pas de réduire aveuglément les tokens : retirer une exception importante peut coûter plus qu'un contexte légèrement plus long.
+
 ---
 
 À ne pas confondre : context engineering et prompt engineering ? <!--anki:267e45776566756838-->
 ?
 Le **[[11-prompt-engineering-avance|prompt engineering]]** optimise la **formulation** d'une instruction ; le **context engineering** gère **tout ce qui entre dans le contexte**, sur la durée d'une session ou d'un agent.
+
+Réécrire « résume ce contrat » en consignes précises relève du prompt engineering. Sélectionner la bonne version du contrat, charger ses annexes, conserver les contraintes utilisateur et résumer les tours précédents relève du context engineering. Une instruction excellente ne compense pas une source manquante ou périmée : il faut travailler sur les deux niveaux.
 
 ---
 
@@ -37,6 +41,8 @@ Qu'est-ce que le context rot ? <!--anki:493a7c686b5f307c324d-->
 ?
 La **dégradation des performances quand le contexte s'allonge** : informations anciennes contradictoires, bruit accumulé, effet [[22-rag-avance|« lost in the middle »]]. Une grande fenêtre n'est pas un contexte bien utilisé.
 
+Repérer les symptômes : oubli d'une contrainte, répétition d'une recherche ou utilisation d'une ancienne valeur. Réduire les résultats d'outils redondants, garder un état explicite et recharger la source si nécessaire. Comparer la réussite avant et après compaction, car un résumé trop agressif peut lui aussi supprimer une information décisive.
+
 ---
 
 Quelles sont les composantes du contexte d'un agent ? <!--anki:6b38662a4c5f6b385871-->
@@ -46,6 +52,8 @@ Quelles sont les composantes du contexte d'un agent ? <!--anki:6b38662a4c5f6b385
 - **Historique** de la conversation et des résultats d'outils
 - **Mémoire** (faits persistés)
 - **Connaissances récupérées** ([[21-rag-fondamentaux|RAG]])
+
+Chaque composante a une fonction : définir la tâche, rendre les actions possibles, conserver l'avancement ou apporter des faits. Les documents et résultats d'outils restent des **données à examiner**, pas des instructions de confiance. Réserver aussi assez de place pour la sortie du modèle et pour les observations du prochain tour.
 
 ---
 
@@ -71,17 +79,23 @@ Comment les sous-agents aident-ils à gérer le contexte ? <!--anki:4f7d3b786965
 ?
 Un [[36-orchestration-agents|sous-agent]] explore dans **son propre contexte** et ne renvoie qu'un **résumé condensé** : le contexte de l'agent principal reste propre.
 
+Le résumé doit inclure conclusions, références et incertitudes, afin que le principal puisse vérifier ce qui compte. Cette délégation aide une recherche décomposable, mais peut perdre des détails ou répéter du travail. Définir une question étroite et un format de retour précis ; donner à chaque sous-agent uniquement les outils et données nécessaires.
+
 ---
 
 Pourquoi garder un préfixe de prompt stable ? <!--anki:4e48317c44305d665b56-->
 ?
 Pour profiter du **prompt caching** : le fournisseur réutilise le calcul (KV cache) d'un **préfixe identique**. On met le contenu stable (instructions, outils) **au début** et le contenu variable **à la fin**.
 
+Un horodatage ou identifiant variable placé avant les instructions peut empêcher leur réutilisation. Mesurer les tokens réellement lus en cache, car les seuils, durées de conservation et tarifs dépendent du fournisseur. Le cache accélère une partie du calcul d'entrée ; il ne dispense pas de générer la nouvelle réponse ni de vérifier sa qualité.
+
 ---
 
 Qu'est-ce que le just-in-time context ? <!--anki:6a6c3e4a7c636c713068-->
 ?
 Ne pas tout charger d'avance : donner à l'agent des **références légères** (chemins de fichiers, requêtes, outils de recherche) et le laisser **récupérer l'information au moment où il en a besoin**.
+
+Par exemple, fournir l'index d'un dépôt puis lire seulement les fichiers concernés. Cela économise du contexte et évite de travailler sur des copies anciennes, à condition que les outils permettent une recherche fiable. Garder les références exactes et les versions consultées ; sinon l'agent peut chercher longtemps ou relire une source qui a changé.
 
 ---
 

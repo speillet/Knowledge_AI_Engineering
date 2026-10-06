@@ -14,11 +14,15 @@ Qu'est-ce que n8n ? <!--anki:5074357b48742c717130-->
 ?
 Un outil d'**automatisation de workflows** visuel, **self-hostable** (licence fair-code) : des **nœuds** reliés (API, bases, LLM) déclenchés par des **triggers**, avec la possibilité d'insérer du code JavaScript ou Python.
 
+Chaque nœud reçoit des données, réalise une opération et transmet sa sortie au suivant. Exemple : réception d'un formulaire, extraction de champs, validation et création d'un ticket. L'auto-hébergement donne le contrôle de l'infrastructure mais implique mises à jour, sauvegardes, secrets et supervision ; vérifier les conditions de licence pour l'usage prévu.
+
 ---
 
 Qu'est-ce qu'un trigger dans un outil de workflow ? <!--anki:68544b7e4c744e677a2d-->
 ?
 L'**événement qui lance le workflow** : webhook, planification (cron), nouveau mail, message Slack, ligne ajoutée dans une base…
+
+Le trigger fournit généralement un événement avec ses données : identifiant, date et contenu utile. Une même notification peut arriver plusieurs fois ; prévoir une clé de déduplication avant une action comme créer une facture. Distinguer le déclenchement de la réussite du traitement et définir comment reprendre après un échec.
 
 ---
 
@@ -26,18 +30,23 @@ Comment intègre-t-on un LLM dans un workflow n8n ? <!--anki:4b76742c3c456f2b267
 ?
 Par des **nœuds IA** : appel de modèle, extraction structurée, classification, ou nœud **AI Agent** avec outils et mémoire — l'agent devient **une étape** d'un workflow maîtrisé.
 
+Entourer l'appel par des contrôles : schéma d'entrée, validation de sortie, timeout et branche d'erreur. Pour classer un ticket, limiter les catégories possibles puis vérifier la valeur obtenue avant de le router. Le reste du workflow conserve des règles explicites ; une réponse libre du modèle ne doit pas décider seule d'une action irréversible.
+
 ---
 
-n8n, Zapier ou Make ? <!--anki:78707c3f7a57534d4161-->
+Comment choisir entre n8n, Zapier et Make pour un workflow ? <!--anki:78707c3f7a57534d4161-->
 ?
-- **Zapier / Make** : SaaS, très simples, énormément de connecteurs, coût à l'exécution
-- **n8n** : **self-hosting**, données chez soi, code possible, mieux adapté aux besoins techniques
+Comparer les outils sur le **besoin d'intégration et d'exploitation**. Zapier et Make proposent des services hébergés avec des connecteurs et un éditeur visuel ; n8n offre notamment une option d'auto-hébergement et l'insertion de code.
+
+Vérifier les connecteurs réellement nécessaires, les conditions de licence, la localisation des données, les limites et le coût au volume prévu. Tester aussi retries, export, revue et maintenance. L'auto-hébergement n'est pas gratuit à exploiter et un grand catalogue ne garantit pas la bonne couverture d'une API.
 
 ---
 
 Quand passer du no-code au code ? <!--anki:4c5a477837435f66672d-->
 ?
 Quand il faut **versionner, tester, faire de la revue de code**, gérer une logique complexe, de gros volumes ou des SLA stricts. Le no-code excelle pour **prototyper** et pour les intégrations simples.
+
+Ces capacités existent à des degrés variables dans les plateformes : ce sont leurs limites concrètes qui motivent la transition. Par exemple, garder l'éditeur pour connecter des services et déplacer une règle métier complexe dans une API testée. Comparer le coût de maintenance et les compétences de l'équipe avant de réécrire tout le workflow.
 
 ---
 
@@ -77,6 +86,8 @@ Un agent qui attend une validation pendant deux jours relève du second, pas du 
 Quelles limites du no-code en production ? <!--anki:4169365566313b657b25-->
 ?
 **Versioning et diff** difficiles, **tests automatisés** limités, gestion des erreurs et des secrets à surveiller, et risque de **workflows « shadow IT »** que personne ne maintient.
+
+Nommer un responsable, documenter les dépendances et prévoir sauvegarde, alertes et procédure de reprise. Tester la panne d'un connecteur et les notifications dupliquées. Un workflow visuellement simple peut engager des droits importants ; les identifiants de service doivent être limités et renouvelables, comme ceux d'une application développée en code.
 
 ---
 

@@ -14,6 +14,8 @@ Quel problème MCP résout-il ? <!--anki:6c3b47315f4c6e566d3b-->
 ?
 Le problème **M×N** : sans standard, chaque app doit intégrer chaque outil ; avec MCP, une app parle à **tout serveur MCP** — d'où l'image du « **USB-C des apps IA** ».
 
+Le protocole standardise notamment la découverte et l'invocation de capacités, ce qui réduit les adaptateurs spécifiques. L'interopérabilité reste conditionnée aux transports, versions et fonctionnalités supportés des deux côtés. Il faut encore configurer l'authentification, les permissions et la sémantique des outils : une connexion réussie ne rend pas tous les serveurs interchangeables.
+
 ---
 
 Quelle est l'architecture de MCP ? <!--anki:505935676943515d3e6b-->
@@ -62,6 +64,8 @@ Un serveur MCP **enveloppe** souvent une API REST : il choisit quelles opératio
 Un serveur MCP est-il lié à un modèle particulier ? <!--anki:6b6f7e2628343e304b4f-->
 ?
 **Non.** C'est l'intérêt : le même serveur (GitHub, base de données, navigateur…) sert n'importe quel host compatible MCP.
+
+Le serveur expose des capacités selon le protocole ; le host les présente au modèle et gère l'interaction. Changer de modèle ne demande donc pas nécessairement de modifier le serveur. En revanche, la qualité d'utilisation dépend des capacités du modèle, des descriptions d'outils et des fonctionnalités MCP prises en charge par le host.
 
 ---
 

@@ -7,11 +7,15 @@ Qu'est-ce qu'un agent LLM ? <!--anki:502c4c3f7a7c7b624a33-->
 ?
 Un **LLM doté d'outils et d'une boucle d'exécution** (percevoir → raisonner → agir) qui poursuit un **objectif** en décidant lui-même de ses étapes.
 
+Le modèle choisit une action ; le programme qui l'entoure vérifie les droits, exécute l'outil et renvoie l'observation. Par exemple, il cherche une commande avant d'en expliquer le statut. Son autonomie reste bornée par les outils disponibles, le budget et les critères d'arrêt : **le modèle ne s'accorde pas lui-même des permissions**.
+
 ---
 
 À ne pas confondre : workflow et agent ? <!--anki:712b5a28436a7b683047-->
 ?
 Un **workflow** suit des étapes prédéfinies par le développeur ; un **agent** décide dynamiquement de ses actions — distinction popularisée par Anthropic (« Building effective agents »).
+
+Un workflow peut contenir des appels LLM tout en gardant un parcours fixé : extraire des champs, valider, enregistrer. Un agent choisit la prochaine recherche selon ce qu'il découvre. Les deux se combinent : un workflow peut déléguer une étape ouverte à un agent, puis valider son résultat avant de poursuivre.
 
 ---
 
@@ -45,6 +49,8 @@ Quand ne faut-il PAS construire un agent ? <!--anki:7330797b4f57247a213f-->
 ?
 Quand la tâche est **prévisible** : un workflow fixe est plus fiable, moins cher et plus simple à déboguer. **L'agent se justifie quand le chemin est inconnu à l'avance.**
 
+Une extraction de facture suivie de contrôles comptables connus peut rester un pipeline : LLM pour lire les champs, code pour les règles, humain pour les exceptions. Comparer à cette baseline avant d'introduire une boucle autonome. Des erreurs fréquentes d'un workflow ne prouvent pas qu'il faille un agent ; elles peuvent révéler des données ou règles mal définies.
+
 ---
 
 Qu'est-ce que le human-in-the-loop ? <!--anki:6e254c244e5b5d6d4e5d-->
@@ -70,18 +76,17 @@ Quels sont les principaux risques d'un agent ? <!--anki:6c23424a5e3f5e732375-->
 
 Quels ordres de grandeur pour le coût d'un agent ? <!--anki:743745713e294b57476e-->
 ?
-```text
-chat simple                      1 ×   référence
-agent avec outils               ~4 ×   (historique renvoyé à chaque tour)
-système multi-agents           ~15 ×   (chaque agent a son contexte)
-```
-Ces repères, mesurés par Anthropic, expliquent pourquoi un agent se justifie par la **valeur de la tâche** et non par élégance technique. À compenser par le prompt caching, dont l'effet est massif sur ce profil de charge ([[123-caching-agressif|caching]], [[122-finops-llm|FinOps]]).
+Dans les workloads de recherche rapportés par Anthropic, un agent seul consommait environ **4 fois plus de tokens** qu'un chat, et un système multi-agents environ **15 fois plus**. Ces observations ne sont pas des multiplicateurs universels de facture.
+
+Chaque tour peut renvoyer l'historique ; chaque agent ajoute son propre contexte. Estimer le coût avec tokens d'entrée, sortie, cache, modèles et outils réellement utilisés. Comparer ensuite le coût **par tâche réussie** à la valeur produite ([[123-caching-agressif|caching]], [[122-finops-llm|FinOps]]).
 
 ---
 
 Comment un agent sait-il quand s'arrêter ? <!--anki:653272545f6866677138-->
 ?
 Quand le modèle **répond sans appeler d'outil** (ou émet un signal de fin), ou quand le harnais atteint une **limite** (itérations, budget).
+
+Distinguer **fin d'exécution et succès métier** : une réponse finale peut annoncer à tort que la tâche est accomplie. Vérifier l'état attendu quand c'est possible, par exemple l'existence du fichier produit. En cas de budget épuisé, restituer le travail effectué, les incertitudes et la prochaine étape plutôt que présenter l'arrêt comme une réussite.
 
 ---
 
@@ -110,6 +115,10 @@ Mise en situation : ton agent d'analyse tourne parfois 40 étapes, coûte cher e
 **Piège** : relever la limite d'itérations quand l'agent échoue, au lieu de comprendre pourquoi il n'avance plus.
 
 ---
+
+## Sources
+
+- [Anthropic — consommation observée dans son système de recherche multi-agents](https://www.anthropic.com/engineering/multi-agent-research-system)
 
 ## Connexions
 - [[32-tool-calling|Tool calling]] — les mains de l'agent

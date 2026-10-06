@@ -24,6 +24,8 @@ Mémoire de thread ou mémoire long terme ? <!--anki:4f61472d505b28496777-->
 - **Thread** : l'historique d'**une** conversation, rechargé à chaque tour (ex. [[45-langgraph-production|checkpointer]] LangGraph)
 - **Long terme** : partagée **entre conversations**, rangée par **namespace** (utilisateur, équipe, organisation) et retrouvée par recherche (ex. Store LangGraph)
 
+L'état de thread permet de reprendre un dossier en cours ; une préférence durable peut être réutilisée dans un nouveau dossier. Un namespace organise les données mais ne constitue pas à lui seul une autorisation. Définir droits de lecture, durée de conservation et effacement, notamment pour éviter qu'une information d'un utilisateur soit rappelée à un autre.
+
 ---
 
 Quand écrire en mémoire : pendant la conversation ou en arrière-plan ? <!--anki:514f75377d7373513a29-->
@@ -91,6 +93,8 @@ Quelles mémoires sont intégrées aux frameworks, aux fournisseurs et aux plate
 - **Frameworks** : **LangMem** et le **Store** de LangGraph, la mémoire de [[46-crewai-crews|CrewAI]]
 - **Fournisseurs de modèles** : le **memory tool** d'Anthropic (fichiers)
 - **Plateformes d'agents** : AgentCore Memory, Memory Bank de Google ([[38-plateformes-agents|plateformes]])
+
+Distinguer le stockage brut des mécanismes qui extraient, sélectionnent et mettent à jour les souvenirs. Une intégration prête à l'emploi ne garantit ni pertinence ni confidentialité. Vérifier l'isolation par utilisateur, les opérations d'effacement, la provenance et la gestion des contradictions avant de laisser l'agent écrire automatiquement en mémoire.
 
 ---
 

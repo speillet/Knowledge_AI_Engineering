@@ -8,11 +8,15 @@ Qu'est-ce qu'un système multi-agents ? <!--anki:63233b336f5f4325367c-->
 ?
 Plusieurs **agents LLM spécialisés** (rôle, outils et contexte propres) qui **coopèrent** sur une tâche, coordonnés par un orchestrateur ou par des règles de passage de main.
 
+Un agent peut rechercher les sources pendant qu'un autre analyse des données, puis un coordinateur assemble les résultats. La spécialisation doit correspondre à une sous-tâche et à un contrat de sortie clairs. Prévoir budgets, gestion des conflits et vérification finale : multiplier les rôles ne garantit ni diversité des raisonnements ni meilleure qualité.
+
 ---
 
 Quand passer au multi-agent ? <!--anki:42663463505b794a2840-->
 ?
 Quand la tâche est **parallélisable**, qu'elle **dépasse la fenêtre de contexte** d'un seul agent, ou qu'elle demande des **outils ou expertises très différents**. Sinon, **un seul agent** reste plus simple et moins cher.
+
+Mesurer le gain sur des tâches où les sous-problèmes ont peu de dépendances. Une comparaison de plusieurs marchés se parallélise mieux qu'une modification séquentielle du même fichier. Tester aussi une simple séparation en appels ou en contextes : elle peut suffire sans introduire coordination autonome, état partagé et surcoûts de communication.
 
 ---
 
@@ -32,6 +36,8 @@ Qu'est-ce que le pattern supervisor (hiérarchique) ? <!--anki:68252d3e6e7552793
 ?
 Un agent **superviseur** choisit à chaque étape **quel agent spécialisé** doit agir, et peut empiler plusieurs niveaux (superviseurs de superviseurs).
 
+Le superviseur formule une sous-tâche, transmet le contexte nécessaire, examine le résultat et décide de poursuivre ou conclure. Par exemple, il délègue une recherche documentaire à un spécialiste puis demande une vérification des chiffres. Borner la profondeur et le nombre de délégations ; sinon la coordination devient elle-même une boucle coûteuse.
+
 ---
 
 Qu'est-ce qu'un handoff ? <!--anki:4a76714a787563664645-->
@@ -49,23 +55,29 @@ Choix pratique : sous-agent pour **explorer** ou paralléliser, handoff pour **r
 
 ---
 
-Quels autres patterns de composition existent ? <!--anki:433e64396f3367454834-->
+Quels patterns séquentiels, parallèles ou de critique permettent de composer des agents ? <!--anki:433e64396f3367454834-->
 ?
 - **Séquentiel** (pipeline) : la sortie de l'un est l'entrée du suivant
 - **Parallèle** : sections indépendantes ou votes
 - **Evaluator-optimizer** : un agent produit, un autre critique, on itère
 
+Choisir selon la structure de la tâche : dépendances fortes pour le pipeline, sous-problèmes indépendants pour le parallèle, critère de correction explicite pour la critique. L'evaluator-optimizer doit avoir un nombre d'itérations maximal et une condition d'amélioration mesurable ; deux agents qui échangent des avis ne constituent pas une validation fiable.
+
 ---
 
 Quel est le coût du multi-agent ? <!--anki:4f3e644c6456264e4e2e-->
 ?
-**Beaucoup plus de tokens** (chaque agent a son contexte), une **latence** qui s'additionne et un **débogage plus difficile** : les erreurs se propagent d'un agent à l'autre.
+Le coût total comprend les **appels de tous les agents**, les contextes répétés, les outils et la synthèse. La latence dépend du **chemin critique** : elle s'additionne pour des étapes séquentielles, mais des branches indépendantes peuvent s'exécuter en parallèle.
+
+Ajouter un agent peut donc réduire le temps écoulé tout en augmentant la facture. Mesurer coût par tâche réussie, délai et qualité face à un agent unique. Les dépendances et erreurs de transmission ajoutent aussi une difficulté de débogage.
 
 ---
 
 Comment les agents d'un système multi-agents partagent-ils l'information ? <!--anki:726a607969306e577a79-->
 ?
 Par des **messages** (résumés renvoyés à l'orchestrateur), un **état partagé** (graphe d'état, tableau blanc) ou des **artefacts externes** (fichiers, base) — ce qui évite de tout faire passer par le contexte.
+
+Définir qui peut lire et écrire chaque information, sous quelle version et avec quel format. Deux agents modifiant le même artefact peuvent écraser leurs résultats ; utiliser partitions de travail ou contrôle de concurrence. Transmettre les preuves et les incertitudes avec la synthèse, afin qu'une conclusion provisoire ne devienne pas un fait acquis.
 
 ---
 
@@ -78,6 +90,8 @@ Qu'est-ce que le protocole A2A ? <!--anki:752355255f5525695870-->
 Quel est l'intérêt principal des sous-agents ? <!--anki:4c52586b37256f59494e-->
 ?
 L'**isolation du contexte** : chaque sous-agent explore dans son propre contexte et ne remonte que l'essentiel ([[35-context-engineering|context engineering]]).
+
+C'est utile pour explorer plusieurs documents sans remplir l'historique principal de toutes les lectures. Un bon retour précise le résultat, ses sources et les limites de l'analyse. Le principal garde la responsabilité d'intégrer et vérifier ces retours ; un résumé peut omettre une exception ou transmettre une erreur avec assurance.
 
 ---
 
