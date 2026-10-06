@@ -115,7 +115,7 @@ Mise en situation : ton RAG affiche 62 % de réponses jugées correctes, et l'é
 
 Mise en situation : ton agent de support réussit 80 % des tâches en test, mais les utilisateurs le trouvent peu fiable. Comment expliques-tu l'écart ? <!--anki:6339702b49452f682876-->
 ?
-1. **Différence entre capacité et fiabilité** : 80 % par essai donne environ 51 % de réussite sur trois essais consécutifs (pass^3)
+1. **Différence entre capacité et fiabilité** : avec probabilité constante de 80 % et essais indépendants, trois réussites consécutives valent 0,8³ ≈ 51 % ; mesurer par tâche si ces hypothèses ne tiennent pas
 2. **Mesurer pass^k**, puisque l'utilisateur subit **chaque** tentative, pas la meilleure
 3. **Regarder la variance** : mêmes entrées rejouées plusieurs fois, pour repérer les tâches instables
 4. **Stabiliser** : outils plus étroits, validations déterministes, étapes vérifiables plutôt que libres

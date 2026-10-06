@@ -8,6 +8,8 @@ Tags: #flashcards #ai-engineering #mlops #monitoring #drift #llm
 - **Data drift** : la distribution des **entrées** change (nouveaux sujets, jargon)
 - **Concept drift** : la **relation entrée → sortie attendue** change (le « bon » comportement évolue)
 
+Exemple de data drift : davantage de demandes dans une nouvelle langue. Exemple de concept drift : une règle commerciale change et une ancienne réponse correcte devient fausse. Une distribution d'entrée stable n'exclut donc pas une baisse de qualité. Mesurer les deux séparément et rechercher la cause avant de modifier ou réentraîner le modèle.
+
 ---
 
 Comment le drift se manifeste-t-il sur une app LLM ? <!--anki:4477547a5d582b2a403a-->
@@ -21,7 +23,7 @@ Invisible sans **evals continues** sur des échantillons de production.
 
 ---
 
-Comment monitorer la qualité en production ? <!--anki:786d2e5876493b586624-->
+Comment monitorer la qualité d'une application LLM en production ? <!--anki:786d2e5876493b586624-->
 ?
 - **Scores sur échantillons** par un juge calibré ([[95-llm-as-judge|LLM-as-a-judge]])
 - **Feedback utilisateur** explicite et implicite (reformulations, abandons)
@@ -32,7 +34,7 @@ Tout est rattaché aux [[91-langfuse-observabilite|traces]], et **segmenté** (p
 
 ---
 
-Qu'est-ce que la boucle de feedback ? <!--anki:7568493c4c666036326e-->
+Qu'est-ce que la boucle de feedback d'une application LLM ? <!--anki:7568493c4c666036326e-->
 ?
 ```text
 traces prod → curation → golden datasets enrichis
@@ -40,9 +42,11 @@ traces prod → curation → golden datasets enrichis
 ```
 Les données de production **nourrissent** l'amélioration continue.
 
+La **curation** transforme un signal brut en exemple exploitable : vérifier l'erreur, enlever les données inutiles, produire une référence et choisir le bon jeu. Garder un test indépendant évite d'optimiser uniquement les incidents déjà vus. Mesurer après déploiement si la correction améliore réellement l'usage sans dégrader d'autres segments.
+
 ---
 
-Quand ré-entraîner ou re-fine-tuner ? <!--anki:69216450773565735339-->
+Quand réentraîner ou fine-tuner à nouveau un modèle en production ? <!--anki:69216450773565735339-->
 ?
 **Sur signal**, pas sur calendrier :
 - Chute des scores sur un segment
@@ -56,13 +60,17 @@ Avant de ré-entraîner, vérifier que le problème ne se règle pas plus simple
 
 Quel est l'équivalent du drift pour un système RAG ? <!--anki:623f3a36415d4739725d-->
 ?
-La **fraîcheur de l'index** : sans ré-ingestion continue, les réponses deviennent obsolètes même si le modèle n'a pas changé ([[22-rag-avance|RAG en prod]]).
+Un RAG peut dériver à plusieurs niveaux : **sources obsolètes**, index mal synchronisé, changement des questions, permissions modifiées ou perte de rappel après changement d'embeddings. La fraîcheur est donc une cause de dérive, pas son unique équivalent.
+
+Suivre dates d'ingestion, suppressions, couverture des questions et qualité des passages récupérés. Si la bonne source existe mais n'est plus retrouvée, ré-ingérer davantage ne suffit pas : vérifier index, filtres, découpage et modèle de recherche ([[22-rag-avance|RAG en production]]).
 
 ---
 
 Pourquoi les mises à jour des modèles API sont-elles un risque ? <!--anki:4a50656f363156493461-->
 ?
 Le provider **met à jour ou déprécie** les modèles : le comportement change sans commit chez vous → **épingler les versions** et re-jouer les evals à chaque changement.
+
+Un alias stable peut pointer vers une version différente, et un identifiant daté peut finir par être retiré. Maintenir une procédure de migration : comparer sur le même jeu d'evals, vérifier formats et outils, déployer progressivement et prévoir une solution de repli. L'épinglage réduit les changements implicites sans supprimer les dépréciations.
 
 ---
 

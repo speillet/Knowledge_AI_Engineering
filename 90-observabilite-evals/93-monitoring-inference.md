@@ -97,10 +97,9 @@ Chaque échec est **compté comme une métrique** (taux d'échec de validation) 
 
 Quels signaux automatiques révèlent une baisse de qualité sans vérité terrain ? <!--anki:6955656e71496a394f63-->
 ?
-- **Taux de refus** et de réponses vides
-- **Boucles et répétitions** (n-grammes répétés)
-- **Dérive de la longueur** des réponses
-- **Confiance** : logprob moyenne ou entropie en baisse ([[65-probabilites-sampling|logprobs]])
+Surveiller **réponses vides, refus inattendus, boucles, répétitions et changements de longueur**, en segmentant par tâche et langue. Ces variations signalent un comportement à examiner, sans prouver à elles seules une perte de qualité.
+
+Les logprobs et l'entropie décrivent la distribution du modèle : une entropie basse peut correspondre à une réponse prévisible, correcte ou fausse. **Aucun sens de variation n'est universellement bon ou mauvais.** Comparer à une baseline et confirmer sur un échantillon relu ou évalué ([[65-probabilites-sampling|logprobs]]).
 
 ---
 
@@ -110,6 +109,8 @@ Quels signaux humains ou jugés suivre pour la qualité, sans vérité terrain ?
 - **LLM-as-judge** sur un échantillon, segmenté par tâche et par langue
 
 Ces signaux alimentent la détection de dérive ([[113-monitoring-drift-feedback|monitoring & drift]]).
+
+Le feedback explicite est souvent rare et biaisé vers les utilisateurs mécontents ou très engagés. Une reformulation peut signaler un échec, mais aussi une nouvelle demande. Croiser plusieurs signaux, calibrer le juge sur une relecture humaine et vérifier les segments concernés avant de lancer une correction globale.
 
 ---
 
@@ -201,7 +202,7 @@ Mise en situation : on te signale « l'assistant est lent ce matin ». Tu n'as q
 4. **Infrastructure** : erreurs XID, throttling thermique, un réplica tombé, un nœud dégradé
 5. **Changement récent** : déploiement, nouveau prompt, nouveau modèle, cache de préfixes cassé
 
-**Piège** : regarder l'utilisation GPU, qui sera à 100 % dans tous les cas.
+**Piège** : conclure à la saturation du calcul à partir de la seule utilisation GPU ; la corréler à la file, au débit et aux temps par phase.
 
 ---
 

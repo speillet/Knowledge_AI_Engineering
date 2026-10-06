@@ -15,21 +15,22 @@ Quel problème ChainForge adresse-t-il ? <!--anki:6521623b3457727e2555-->
 ?
 Le prompt engineering « au feeling » : il permet de **tester un prompt sur N variantes × M modèles × K inputs** en une passe.
 
+La comparaison repose sur les mêmes entrées, des variantes identifiées et des critères d'évaluation explicites. Répéter les essais si les sorties varient et regarder les erreurs par catégorie. L'interface facilite l'expérience ; elle ne choisit pas automatiquement un jeu représentatif et ne transforme pas un score subjectif en mesure fiable.
+
 ---
 
 Quels ordres de grandeur pour un jeu d'évaluation ? <!--anki:4346514f6f3c29256635-->
 ?
+La taille dépend de la **précision voulue**, des cas rares et du protocole de comparaison. Quelques dizaines d'exemples peuvent détecter de gros défauts pendant l'itération. Pour un **score unique** proche de 80 %, sous hypothèse d'observations indépendantes :
 ```text
-20 à 50 exemples    itérer vite sur un prompt, détecter les gros écarts
-100 exemples        écart mesurable ≈ 8 points (à 80 % de réussite)
-400 exemples        écart mesurable ≈ 4 points
-1 000 et plus       décision de mise en production, comparaison fine
+100 exemples → marge normale à 95 % d'environ ± 8 points
+400 exemples → environ ± 4 points
 ```
-La règle : la taille dépend de **l'écart qu'on veut détecter**. Sur 100 exemples, un gain de 3 points ne prouve rien ([[114-reproductibilite-variance|intervalles de confiance]]).
+Ce ne sont pas des seuils universels de différence détectable entre modèles. Une comparaison appariée dépend de leurs désaccords ; une décision de production demande aussi une couverture des erreurs coûteuses ([[114-reproductibilite-variance|incertitude statistique]]).
 
 ---
 
-Quelles évaluations automatiques simples existent ? <!--anki:767d70246e577d7b7829-->
+Quelles évaluations automatiques simples appliquer aux réponses d'un LLM ? <!--anki:767d70246e577d7b7829-->
 ?
 **Exact match, regex, contains, validité JSON, tests de code** — rapides, gratuites et déterministes quand la tâche s'y prête.
 ```python
@@ -84,6 +85,10 @@ Mise en situation : une modification de prompt améliore visiblement les répons
 **Piège** : valider un prompt sur les exemples qui ont servi à l'écrire.
 
 ---
+
+## Sources
+
+- [NIST — test de McNemar pour observations binaires appariées](https://www.itl.nist.gov/div898/software/dataplot/refman1/auxillar/mcnemar.htm)
 
 ## Connexions
 - [[91-langfuse-observabilite|Langfuse]] — evals en production (scores, datasets)

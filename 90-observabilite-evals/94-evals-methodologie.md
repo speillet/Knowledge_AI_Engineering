@@ -128,13 +128,13 @@ Mise en situation : tu reprends un assistant en production qui n'a aucune eval. 
 
 Mise en situation : un collègue annonce que son nouveau prompt fait passer le score de 78 % à 81 % sur 100 exemples. Quelle est ta réaction ? <!--anki:63427c294379574b6125-->
 ?
-1. **Calculer le bruit** : à 80 % de succès sur 100 exemples, l'erreur standard vaut environ 4 points. Un écart de 3 points ne prouve rien
-2. **Comparer en apparié** : regarder les cas qui changent d'état, pas seulement les moyennes ([[114-reproductibilite-variance|comparaison appariée]])
-3. **Agrandir le jeu** ou répéter les exécutions pour réduire l'incertitude
-4. **Regarder ce qui casse** : un gain global peut cacher une régression sur un segment critique
-5. **Vérifier la contamination** : le prompt a-t-il été écrit en regardant ces mêmes exemples ?
+1. **Vérifier le protocole** : mêmes 100 exemples, références correctes et conditions comparables ?
+2. **Comparer en apparié** : compter les cas gagnés et perdus ; la différence des moyennes ne donne pas son incertitude ([[114-reproductibilite-variance|comparaison appariée]]).
+3. **Quantifier l'incertitude** avec une méthode adaptée aux observations, puis répéter les générations si elles varient.
+4. **Examiner les régressions** par segment, surtout les erreurs coûteuses.
+5. **Vérifier l'indépendance du test**, puis augmenter l'échantillon si la décision reste incertaine.
 
-**Piège** : promouvoir un changement sur un écart inférieur à l'intervalle de confiance.
+**Piège** : assimiler la marge d'erreur d'un score individuel à celle de la différence appariée, ou promouvoir trois réussites supplémentaires sans analyser les cas.
 
 ---
 
@@ -149,6 +149,10 @@ Mise en situation : ton eval principale affiche 99 % depuis trois mois, alors qu
 **Piège** : se rassurer avec un score élevé sur un jeu qui ne ressemble plus au trafic réel.
 
 ---
+
+## Sources
+
+- [NIST — test de McNemar pour observations binaires appariées](https://www.itl.nist.gov/div898/software/dataplot/refman1/auxillar/mcnemar.htm)
 
 ## Connexions
 - [[95-llm-as-judge|LLM-as-a-judge]] — l'évaluateur automatique des critères subjectifs

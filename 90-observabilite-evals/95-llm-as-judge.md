@@ -31,6 +31,8 @@ Comment neutraliser le biais de position en pairwise ? <!--anki:513e7939646b5044
 ?
 **Juger deux fois en inversant l'ordre** (A/B puis B/A) et ne retenir que les verdicts **cohérents** ; un désaccord compte comme **égalité**. On peut aussi randomiser l'ordre sur l'ensemble du jeu.
 
+Cette procédure réduit le biais sans garantir sa disparition. Documenter comment les désaccords sont comptés : les traiter comme égalités peut masquer des cas difficiles, les exclure peut biaiser le score. Rapporter leur fréquence et relire un échantillon permet de distinguer préférence réelle, sensibilité à l'ordre et ambiguïté de la consigne.
+
 ---
 
 Comment rédiger un bon prompt de juge ? <!--anki:6939636d73502e7a64-->
@@ -72,6 +74,8 @@ Souvent oui pour les critères difficiles, mais ce n'est **pas obligatoire** : v
 Qu'est-ce qu'un modèle juge spécialisé ? <!--anki:4344644c2c2b60703e4b-->
 ?
 Un modèle **entraîné pour évaluer** (reward models, juges fine-tunés type Prometheus, classifieurs de sécurité comme [[101-securite-llm-guardrails|Llama Guard]]). Moins cher et plus stable qu'un LLM généraliste sur son critère, mais **moins flexible**.
+
+Leur avantage dépend du critère et du domaine d'entraînement ; il doit être mesuré face à des annotations humaines. Un classifieur de sécurité ne juge pas nécessairement la factualité ou l'utilité. Surveiller les cas hors distribution et recalibrer après un changement de tâche, de langue ou de modèle évalué.
 
 ---
 

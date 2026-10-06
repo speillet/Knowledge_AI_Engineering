@@ -8,17 +8,23 @@ Qu'est-ce que le MLOps ? <!--anki:72493079506c593c216d-->
 ?
 L'application des pratiques **DevOps au cycle de vie ML** : données → entraînement → évaluation → déploiement → monitoring, avec **automatisation et reproductibilité**.
 
+Le but est de livrer un comportement mesurable et de pouvoir expliquer ce qui l'a produit. Par exemple, relier une version déployée à ses données d'entraînement, sa configuration et ses scores de validation. Le monitoring peut déclencher une investigation ou un nouvel entraînement ; il ne faut pas réentraîner automatiquement sans vérifier la cause d'une baisse de qualité.
+
 ---
 
 À ne pas confondre : DevOps et MLOps ? <!--anki:47765959597d7b3a6634-->
 ?
-DevOps versionne du **code** ; MLOps versionne **code + données + modèle + configuration** — le comportement d'un système ML vient des données, pas seulement du code.
+**DevOps** organise la livraison et l'exploitation du logiciel, y compris code, configuration et infrastructure. **MLOps** étend cette démarche aux données, modèles et évaluations statistiques, car une modification des données peut changer le comportement sans modifier le code.
+
+Une release ML doit relier les versions de code, données, entraînement et modèle aux résultats de validation. Le rollback concerne donc plusieurs artefacts, et les tests de code seuls ne suffisent pas à détecter une baisse de qualité prédictive.
 
 ---
 
 Qu'est-ce que le LLMOps par rapport au MLOps classique ? <!--anki:4f587838485048773f3c-->
 ?
 On entraîne rarement from scratch : le cycle est centré sur **prompts, RAG, fine-tuning, evals et coûts** ; les artefacts sont des prompts versionnés, des adapters et des index.
+
+Une release peut changer seulement le prompt ou le corpus tout en modifiant fortement les réponses. Tracer le système complet, y compris modèle fournisseur, outils et paramètres. Évaluer des tâches représentatives et surveiller coût par résultat utile ; l'absence d'entraînement interne ne supprime pas la responsabilité de validation et d'exploitation.
 
 ---
 
@@ -46,6 +52,8 @@ Qu'est-ce qu'un model registry ? <!--anki:726f4b36424a7d697952-->
 ?
 Un service qui **stocke et versionne les modèles** avec métadonnées, stages (staging/prod) et lineage — ex. **MLflow, W&B, Hugging Face Hub**. Distinct du [[10-images-modeles-poids|container registry]].
 
+Il relie un artefact aux expériences, métriques et approbations qui justifient son déploiement. Les mécanismes de promotion varient selon l'outil : labels, aliases ou environnements. Il ne remplace pas le stockage des dépendances ni un protocole d'évaluation ; l'existence d'une version « production » ne prouve pas sa qualité.
+
 ---
 
 Qu'est-ce que le lineage d'un modèle ? <!--anki:4a724a21746435493b53-->
@@ -59,6 +67,8 @@ prompts:      prompts/support@v14
 index_rag:    support-fr-2026-09-20 (embedding: e5-large@v2)
 ```
 Sans ce manifeste, une régression en production devient une enquête sans pièces à conviction ([[114-reproductibilite-variance|reproductibilité]]).
+
+Le manifeste doit désigner des versions récupérables, pas seulement des noms lisibles. Ajouter configuration de sampling, outils et éventuels adapters selon le système. Conserver les résultats d'evals associés et les empreintes des artefacts : cela permet de distinguer changement de modèle, changement de contexte et changement applicatif lors d'une régression.
 
 ---
 
@@ -74,6 +84,8 @@ On peut très bien versionner ses prompts **et** appeler un modèle via un alias
 Pourquoi la reproductibilité est-elle difficile avec les LLM ? <!--anki:6f574d3477383b5a6656-->
 ?
 **Non-déterminisme** (sampling), **versions de modèles API qui changent**, dépendances GPU — d'où : fixer les seeds/température, **épingler les versions** et tracer les configs.
+
+Même avec une seed, l'ordre des calculs parallèles, les kernels ou le batching peuvent modifier certains choix de tokens. Reproduire l'environnement réduit la variance sans toujours supprimer toute différence. Pour comparer des versions, répéter les essais et mesurer les distributions de scores, en conservant aussi les entrées et résultats d'outils.
 
 ---
 

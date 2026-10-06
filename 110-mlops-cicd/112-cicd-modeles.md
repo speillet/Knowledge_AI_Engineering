@@ -39,16 +39,18 @@ Un manifeste de release qui les regroupe permet de redéployer ou d'annuler l'en
 
 À ne pas confondre : blue/green et canary pour un modèle ? <!--anki:4c433e55363b3a3f6e2a-->
 ?
-- **Blue/green** : bascule totale, rollback instantané
-- **Canary** : % de trafic progressif, comparaison des **[[64-metriques-slo-inference|métriques/SLO]]** et scores avant promotion
+- **Blue/green** : deux environnements ; le trafic bascule de l'ancien vers le nouveau après validation. Le retour est rapide si l'ancien reste disponible et compatible.
+- **Canary** : une part du trafic utilise la nouvelle version ; on l'augmente si qualité, erreurs, coût et [[64-metriques-slo-inference|SLO]] restent acceptables.
+
+Le premier facilite une bascule globale, le second limite l'exposition initiale. Aucun ne garantit un rollback instantané des données ou des actions externes. Prévoir compatibilité des schémas, critères d'arrêt et durée d'observation.
 
 ---
 
 Qu'est-ce que le shadow deployment ? <!--anki:644e744c303250597258-->
 ?
-Le nouveau modèle reçoit une **copie du trafic réel**, mais ses réponses ne sont **pas montrées** aux utilisateurs : on compare en conditions réelles, sans risque.
+En **shadow deployment**, une nouvelle version reçoit une copie du trafic mais sa sortie n'est pas présentée aux utilisateurs. Cela permet de comparer qualité, latence et formats sur des entrées réelles.
 
-Limites : il **double le coût** d'inférence pendant la période, il ne mesure pas la réaction des utilisateurs, et les actions à effets de bord (outils d'écriture) doivent être désactivées dans la copie ([[97-evals-online-ab-testing|shadow testing]]).
+Désactiver ou simuler les effets externes et vérifier droits, confidentialité et capacité : l'absence d'affichage ne supprime pas tout risque. Le surcoût dépend du trafic copié et des modèles ; il ne double pas nécessairement la facture. Cette méthode n'observe pas l'effet de la nouvelle réponse sur le comportement des utilisateurs ([[97-evals-online-ab-testing|shadow testing]]).
 
 ---
 
@@ -75,6 +77,8 @@ Quels types de tests pour une app LLM en CI ? <!--anki:507d662a4f776c345758-->
 - **Evals** (qualité sur golden dataset)
 - **Contrats** : validité des schémas de [[63-guided-generation|sorties structurées]]
 
+Les mocks rendent les tests rapides et reproductibles, mais ne vérifient pas le comportement du fournisseur réel. Prévoir aussi un petit ensemble d'intégrations réelles, borné en coût et en fréquence, et des evals sur cas difficiles. Les assertions doivent porter sur des contrats ou résultats utiles, pas seulement sur la présence d'un texte non vide.
+
 ---
 
 Pourquoi les prompts passent-ils par la CI ? <!--anki:6e4f4a30597944562b70-->
@@ -85,12 +89,14 @@ Chaque modification déclenche donc les **tests de régression** sur le golden d
 
 ---
 
-À quoi ressemble un pipeline complet ? <!--anki:633b61656533535d3e3f-->
+Quelles étapes composent un pipeline CI/CD d'application LLM ? <!--anki:633b61656533535d3e3f-->
 ?
 ```text
 PR → tests + evals → build image → push registry
 → deploy canary → métriques/SLO OK → promotion
 ```
+
+Chaque passage doit avoir un critère : tests déterministes valides, seuils d'evals atteints, artefact identifié, puis observation du canary. Conserver le manifeste reliant code, modèle, prompt et données à cette validation. Une régression de qualité ou de SLO bloque la promotion et peut déclencher le rollback ; une simple réponse HTTP 200 ne suffit pas.
 
 ---
 

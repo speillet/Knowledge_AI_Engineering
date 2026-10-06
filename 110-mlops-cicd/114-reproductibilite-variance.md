@@ -21,6 +21,8 @@ Quels réglages du modèle peuvent changer sa sortie, à prompt identique ? <!--
 - **Version exacte** du modèle, du tokenizer et du chat template
 - **Quantization** (FP16, FP8, INT4…)
 
+Tracer ces valeurs avec la requête et utiliser le même environnement pour comparer deux variantes. FP16 est ici une précision de référence, tandis que FP8 ou INT4 réduisent davantage la représentation numérique. Une seed identique n'assure une répétabilité que dans les conditions supportées par le moteur ; elle ne fige pas toutes les sources de variation.
+
 ---
 
 Quels facteurs d'infrastructure et d'application peuvent changer la sortie d'un même modèle, à prompt identique ? <!--anki:4b5a6e72257228217c42-->
@@ -28,6 +30,8 @@ Quels facteurs d'infrastructure et d'application peuvent changer la sortie d'un 
 - **Moteur d'inférence** et sa version, type de **GPU**, degré de **tensor parallelism**
 - **Charge du serveur** (taille des batchs)
 - Côté application : prompt système, outils, **documents récupérés** par le RAG
+
+Distinguer prompt utilisateur identique et **entrée complète du modèle identique** : un document récupéré différent change le problème posé. Enregistrer le contexte final permet de séparer cette variabilité applicative des effets numériques. Pour un diagnostic, figer d'abord les sources et les outils, puis comparer les configurations d'inférence.
 
 ---
 
@@ -51,12 +55,13 @@ Parce qu'elle **varie** d'un appel à l'autre sans être fausse. On vérifie des
 
 Pourquoi un écart de score entre deux prompts peut-il n'être que du bruit ? <!--anki:422b296b24785b465177-->
 ?
-Un score mesuré sur **n exemples** est incertain. Pour une exactitude p :
+Un score calculé sur un échantillon a une **incertitude**. Pour une proportion de succès `p` sur `n` observations indépendantes :
 ```text
-erreur standard  SE = √( p (1 − p) / n )    ex. p = 0,8 et n = 100 → SE = 0,04
-IC à 95 %        ≈ p ± 1,96 × SE           → 80 % ± 8 points
+SE ≈ √(p × (1 − p) / n)
+p = 0,8 ; n = 100 → SE ≈ 0,04
+IC normal à 95 % ≈ 80 % ± 7,8 points
 ```
-Sur 100 exemples, un écart de 3 points **ne prouve rien**.
+Cet intervalle concerne **un score**, pas directement l'écart entre deux prompts. Sur les mêmes exemples, utiliser une comparaison appariée : l'incertitude dépend des désaccords entre variantes. Répéter les générations si elles varient ; ne pas conclure à un gain robuste à partir de quelques points sans analyse.
 
 ---
 
@@ -84,6 +89,8 @@ Générer **n ≥ k** échantillons par problème, compter les **c** réussites,
 pass@k = 1 − C(n − c, k) / C(n, k)
 ```
 C'est l'estimateur du papier Codex (2021), plus stable que de ne tirer que k essais.
+
+`C(a, b)` est le nombre de combinaisons ; si `n − c < k`, le terme d'échec vaut zéro. Calculer par problème puis moyenner. L'interprétation suppose des tirages selon un protocole comparable et un vérificateur fiable. Pass@k mesure la présence d'au moins une réussite, pas la capacité à identifier cette réussite sans oracle.
 
 ---
 
@@ -114,7 +121,7 @@ Faut-il viser le déterminisme partout ? <!--anki:4e404d572d6036633c3c-->
 Mise en situation : un client exige par contrat que « le même document donne toujours la même extraction ». Que t'engages-tu à faire, et sur quoi refuses-tu de t'engager ? <!--anki:417a783d2b7d663c296b-->
 ?
 1. **Expliquer honnêtement** : même à température 0, les calculs GPU ne garantissent pas une sortie identique au bit près
-2. **S'engager sur des propriétés** : mêmes champs extraits, mêmes valeurs métier, format valide
+2. **Définir des critères testables** : schéma, exactitude des champs et gestion des erreurs ; ne pas promettre des valeurs identiques à chaque régénération
 3. **Rendre l'appel rejouable** : journaliser modèle daté, prompt rendu, paramètres, documents et réponse
 4. **Réduire la variance** : température basse, sortie contrainte, éventuellement un mode déterministe du moteur, au prix de performances
 5. **Cacher les résultats** : pour un même document déjà traité, renvoyer la sortie enregistrée plutôt que régénérer
@@ -134,6 +141,10 @@ Mise en situation : ton équipe teste un agent de correction de bugs. Il réussi
 **Piège** : communiquer un taux issu d'une poignée d'essais réussis pendant une démonstration.
 
 ---
+
+## Sources
+
+- [NIST — test de McNemar pour observations binaires appariées](https://www.itl.nist.gov/div898/software/dataplot/refman1/auxillar/mcnemar.htm)
 
 ## Connexions
 - [[65-probabilites-sampling|Probabilités & sampling]] — la source de la variabilité

@@ -20,6 +20,8 @@ Pourquoi l'observabilité LLM diffère-t-elle de l'APM classique ? <!--anki:6678
 ?
 Parce que les sorties sont **non déterministes** et le coût est **par token** : il faut tracer prompts, réponses, tokens et qualité, pas seulement latence/erreurs.
 
+Une requête HTTP réussie peut produire une réponse fausse ou un appel d'outil inadapté. Relier la trace technique au résultat métier et à une évaluation aide à distinguer panne, coût excessif et défaut de qualité. Capturer les contenus seulement lorsque c'est nécessaire, avec masquage et droits d'accès adaptés.
+
 ---
 
 Qu'est-ce qu'une trace dans Langfuse ? <!--anki:7741552c30265d676839-->

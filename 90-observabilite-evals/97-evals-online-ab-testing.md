@@ -31,7 +31,9 @@ Une métrique qui **ne doit pas se dégrader** même si la métrique principale 
 
 Qu'est-ce que le shadow testing ? <!--anki:4a6f2b436e3958626d33-->
 ?
-Envoyer le trafic réel **aussi** à la nouvelle version **sans montrer sa réponse** à l'utilisateur, puis comparer les sorties (juge, diff, métriques). **Aucun risque utilisateur**, mais il **double le coût** d'inférence et ne mesure **pas** l'effet sur le comportement des utilisateurs ([[112-cicd-modeles|shadow deployment]]).
+Le **shadow testing** envoie une copie du trafic à une variante dont la réponse reste invisible à l'utilisateur. Il aide à comparer sorties, erreurs et latence avec la version active sans remplacer ses réponses.
+
+Isoler ou simuler les outils d'écriture et vérifier le traitement des données ainsi que la charge supplémentaire. Le coût augmente selon le volume dupliqué et les modèles, sans facteur universel. Le test ne mesure pas la satisfaction ou le comportement causés par la réponse cachée ; un test exposé reste nécessaire pour cela ([[112-cicd-modeles|shadow deployment]]).
 
 ---
 
@@ -73,7 +75,9 @@ C'est la [[153-data-flywheel-versioning|data flywheel]] appliquée aux evals.
 
 Quelles précautions de confidentialité pour les evals online ? <!--anki:483c79285a236e7d7a47-->
 ?
-Les traces contiennent des **données personnelles** : **consentement** ou base légale, **minimisation** et [[152-pii-confidentialite|masquage des PII]] avant relecture humaine, **durée de rétention** limitée, accès restreint aux annotateurs ([[154-rgpd-llm|RGPD]]).
+Définir la **finalité et la base légale appropriée**, dont le consentement peut être une option selon le contexte ; la collecte pour le service n'autorise pas automatiquement toute réutilisation. Limiter les contenus collectés, [[152-pii-confidentialite|masquer les données personnelles]] et restreindre l'accès aux annotateurs.
+
+Fixer une durée de rétention et vérifier les sous-traitants, transferts et possibilités d'effacement. La pseudonymisation ne rend pas nécessairement les traces anonymes. Documenter le protocole avant de transmettre des conversations à un juge externe ou à une équipe de relecture ([[154-rgpd-llm|RGPD]]).
 
 ---
 
@@ -104,7 +108,7 @@ Mise en situation : un chef de produit veut arrêter un A/B test au bout de deux
 Mise en situation : tu veux changer le modèle de ton assistant sans risquer de dégrader l'expérience. Quelle séquence de validation mets-tu en place ? <!--anki:49405a5e697236447a4c-->
 ?
 1. **Offline d'abord** : golden dataset rejoué, comparaison appariée, seuils de non-régression ([[94-evals-methodologie|evals]])
-2. **Shadow** : le trafic réel part aussi vers la nouvelle version, sans être montré, pour comparer les sorties. Le coût double pendant ce temps
+2. **Shadow** : le trafic réel part aussi vers la nouvelle version, sans être montré, pour comparer les sorties. Isoler les effets externes et mesurer le surcoût
 3. **Canary** : un petit pourcentage d'utilisateurs, pour détecter les pannes, la latence et les erreurs
 4. **A/B test** : décider avec une métrique principale définie à l'avance et des guardrail metrics
 5. **Boucler** : les échecs détectés en ligne alimentent le golden dataset ([[153-data-flywheel-versioning|flywheel]])
