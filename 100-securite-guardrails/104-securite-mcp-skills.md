@@ -118,6 +118,8 @@ Une fois son code analysé, quelles étapes restent avant d'autoriser un serveur
 2. **Essai en sandbox** et en préproduction
 3. **Publication dans le registre interne** avec version et empreinte épinglées ([[115-plateformes-agents-gouvernance|registre]])
 
+Tester aussi les dépendances, l'accès aux secrets et les comportements en erreur. Documenter propriétaire, usage autorisé et procédure de révocation. Une nouvelle version ou un changement de permissions demande une réévaluation : l'analyse d'une version ne vaut pas approbation permanente de tout ce que publiera ensuite le fournisseur.
+
 ---
 
 Pourquoi faire passer les outils par une gateway MCP ? <!--anki:4d6958342c3e62757767-->

@@ -14,6 +14,8 @@ Quelle part des projets agentiques Gartner prévoit-il d'annuler d'ici fin 2027,
 ?
 **Plus de 40 %**, pour trois raisons : des **coûts** qui dérapent, une **valeur métier** floue et un **contrôle des risques** insuffisant. Ce sont les sujets qu'une plateforme interne traite dès le départ.
 
+C'est une **prévision publiée**, pas une mesure d'échecs déjà observés ni une probabilité applicable à chaque projet. Le point à retenir est d'exiger une valeur mesurable, un coût par tâche réussie et un responsable des risques. Une plateforme peut aider ces contrôles, mais sa seule présence ne garantit pas la réussite d'un projet.
+
 ---
 
 À ne pas confondre : plan de contrôle et plan d'exécution d'une plateforme d'agents ? <!--anki:4b303c326a415821624f-->
@@ -40,6 +42,8 @@ Runtime : sessions isolées, harness (boucle d'agent)
 Transverse : identité, registre, observabilité (OTel), evals
 ```
 Chaque flèche est un **point de contrôle** : c'est là qu'on authentifie, filtre, trace et limite.
+
+Les composants peuvent être regroupés dans un petit système, mais leurs responsabilités doivent rester explicites. L'identité accompagne les appels jusqu'aux outils et à la mémoire. Par exemple, une autorisation de conversation ne vaut pas autorisation de remboursement : le contrôle effectif se fait aussi à la frontière de l'action métier.
 
 ---
 
@@ -115,18 +119,20 @@ Langages : **Cedar** (AgentCore Policy, disponible depuis mars 2026) ou **OPA/Re
 
 À quoi ressemble une politique Cedar pour un agent de support ? <!--anki:4b7c5f4a345a5a6a366a-->
 ?
+Exemple avec **montant entier en centimes**, identité et approbation fournies par un contexte de confiance :
 ```text
-// Cedar : remboursement autorisé sous 100 €, sinon approbation
 permit (
   principal in Group::"agents-support",
   action == Action::"rembourser",
   resource is Commande
-) when { context.montant <= 100 && resource.owner == context.utilisateur };
-
-forbid (principal, action == Action::"rembourser", resource)
-unless { context.approbation_humaine == true } when { context.montant > 100 };
+) when {
+  resource.owner == context.utilisateur &&
+  context.montant_centimes >= 0 &&
+  (context.montant_centimes <= 10000 ||
+   context.approbation_humaine == true)
+};
 ```
-Le `permit` ouvre un cas précis, le `forbid` l'emporte toujours sur un `permit`. Le refus par défaut et la journalisation de chaque décision sont ce qui rend la politique **auditable**.
+Sans `permit` applicable, Cedar refuse ; un `forbid` applicable prime sur les autorisations. Le schéma doit définir ces entités et attributs. Valider aussi le solde remboursable et l'idempotence dans le service métier. **L'agent ne renseigne pas lui-même son approbation** : la politique serait sinon contournable.
 
 ---
 
@@ -243,6 +249,8 @@ Combien de tokens un agent consomme-t-il par rapport à un chat, selon Anthropic
 ?
 Environ **4 fois plus** pour un agent seul, et environ **15 fois plus** pour un système multi-agents ([[27-agents-recherche-deep-research|agents de recherche]]).
 
+Il s'agit de consommations observées dans les workloads de recherche décrits par Anthropic, pas de constantes universelles. La taille des historiques, le nombre d'outils et la coopération changent beaucoup ce ratio. Distinguer **tokens et facture** : modèles, tarifs d'entrée/sortie et cache peuvent rendre deux consommations égales très différentes en coût.
+
 ---
 
 Quelles échéances de l'AI Act concernent une plateforme d'agents ? <!--anki:7874483852304e797a44-->
@@ -330,6 +338,10 @@ Mise en situation : le fournisseur de ta plateforme d'agents annonce l'arrêt d'
 ---
 
 ## Sources
+
+- [Cedar — syntaxe des politiques](https://docs.cedarpolicy.com/policies/syntax-policy.html)
+
+- [Anthropic — consommation observée dans son système de recherche multi-agents](https://www.anthropic.com/engineering/multi-agent-research-system)
 
 - [AWS — composants de Bedrock AgentCore](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/what-is-bedrock-agentcore.html)
 - [NIST — AI Risk Management Framework](https://www.nist.gov/itl/ai-risk-management-framework)

@@ -34,6 +34,8 @@ Où des instructions non fiables peuvent-elles se cacher dans des fichiers ? <!-
 - **Fichiers du dépôt** : README, AGENTS.md, fichiers de règles ([[106-securite-agents-code|agents de code]])
 - **Images et PDF** : texte caché, blanc sur blanc, métadonnées
 
+Elles peuvent aussi apparaître dans du texte parfaitement visible : une source prétend être une instruction système ou demande d'envoyer des données ailleurs. Le problème est le **changement de niveau de confiance**, pas seulement la dissimulation. Garder la provenance et traiter les contenus récupérés comme des données, puis contrôler les actions hors du modèle.
+
 ---
 
 Qu'est-ce que le détournement d'agent (agent hijacking) ? <!--anki:726c624a5e3953506252-->
@@ -44,7 +46,9 @@ Une **injection indirecte** qui pousse l'agent à exécuter les **objectifs de l
 
 Quel taux de détournement d'agent le NIST (CAISI) a-t-il mesuré avec de nouvelles attaques ? <!--anki:3665336565373235356365323463313539396366326437366139653335363132-->
 ?
-**81 %** de réussite avec de nouvelles attaques, contre **11 %** pour les meilleures attaques de référence. Une évaluation limitée aux attaques connues **sous-estime** donc le risque ([[103-defenses-agents|architecture défensive]]).
+Dans une évaluation publiée par le **NIST/CAISI sur AgentDojo**, la meilleure nouvelle attaque atteint **81 %** de réussite, contre **11 %** pour la meilleure attaque de référence. Ces résultats portent sur un protocole, des agents et des tâches précis ; ils ne signifient pas que 81 % de tous les agents déployés sont détournables.
+
+La leçon utile est de tester des attaques adaptées au système et d'actualiser l'évaluation : réussir un jeu d'attaques connu ne suffit pas à démontrer la robustesse ([[103-defenses-agents|architecture défensive]]).
 
 ---
 
@@ -186,6 +190,8 @@ Mise en situation : depuis une semaine, plusieurs utilisateurs rapportent que to
 ---
 
 ## Sources
+
+- [NIST — protocole et résultats des évaluations de détournement d’agents](https://www.nist.gov/news-events/news/2025/01/technical-blog-strengthening-ai-agent-hijacking-evaluations)
 
 - [OWASP — Top 10 des risques des applications LLM](https://genai.owasp.org/llm-top-10/)
 - [MITRE ATLAS — techniques d’attaque contre les systèmes IA](https://atlas.mitre.org/)

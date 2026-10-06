@@ -29,6 +29,8 @@ Quels référentiels décrivent les attaques contre l'IA et les agents ? <!--ank
 - **OWASP** : Top 10 LLM (2025), Top 10 des applications agentiques (décembre 2025), AI Exchange
 - **MITRE ATLAS** : tactiques et techniques d'attaque contre l'IA, sur le modèle d'ATT&CK
 
+Ces référentiels servent de vocabulaire et de point de départ pour les scénarios de menace, pas de preuve de sécurité. Relier chaque menace pertinente à un composant réel, une mesure et un test. Conserver la version du référentiel utilisée afin de pouvoir expliquer la couverture et les évolutions de l'analyse.
+
 ---
 
 Que propose le NIST pour la sécurité de l'IA et des agents ? <!--anki:705724283e7326467450-->
@@ -43,6 +45,8 @@ Quels cadres de management et de conformité s'appliquent à l'IA agentique ? <!
 - **ISO/IEC 42001** : système de management de l'IA, certifiable
 - **CSA MAESTRO** (threat modeling agentique) et **Google SAIF** (cadre de sécurité de l'IA)
 - **AI Act** européen ([[115-plateformes-agents-gouvernance|gouvernance]])
+
+Ils n'ont pas le même statut : norme de management, méthode d'analyse, cadre de sécurité et règlement imposent des démarches différentes. Choisir les exigences selon le rôle de l'organisation et l'usage du système. Une certification de management ne prouve pas qu'un agent particulier résiste aux injections ou satisfait toutes ses obligations légales.
 
 ---
 
@@ -71,6 +75,8 @@ Les mêmes que pour toute application :
 - **Analyse des dépendances** (SCA) et lockfiles
 - **Détection de secrets**
 - **Scan des images et de l'IaC**
+
+Ils détectent des failles du logiciel qui entoure le modèle : dépendance vulnérable, secret commité ou permissions d'infrastructure excessives. Les compléter par des tests des outils et des attaques sur le contexte. Réussir les scans classiques ne démontre pas qu'une instruction malveillante récupérée dans un document sera correctement contenue.
 
 ---
 

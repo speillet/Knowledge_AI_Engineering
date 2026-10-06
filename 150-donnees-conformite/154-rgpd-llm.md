@@ -6,7 +6,9 @@ Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou 
 
 Quand le RGPD s'applique-t-il à une application LLM ? <!--anki:75213c515379246a5375-->
 ?
-Dès qu'elle **traite des données personnelles** de personnes situées dans l'UE : prompts contenant des noms ou informations sur des personnes, documents RH ou clients indexés, logs liés à un compte utilisateur, données de fine-tuning. En pratique, **presque toujours**.
+Le RGPD concerne les **traitements de données personnelles entrant dans son champ territorial**, notamment dans le cadre d'un établissement dans l'UE, ou pour offrir des biens/services à des personnes dans l'UE ou suivre leur comportement. La nationalité seule ne décide pas de son application.
+
+Prompts, documents RAG, traces et jeux d'entraînement peuvent identifier directement ou indirectement des personnes. Vérifier les données effectivement traitées et les rôles des acteurs ; le simple recours à un LLM ne suffit pas à qualifier chaque traitement.
 
 ---
 
@@ -28,7 +30,9 @@ Quels principes du RGPD encadrent la qualité et la conservation des données d'
 
 Quelle base légale pour réutiliser des conversations afin d'améliorer le système ? <!--anki:6c753e692a2176406975-->
 ?
-Selon le contexte, l'**intérêt légitime** (avec mise en balance et droit d'opposition simple) ou le **consentement**. Il faut **informer** clairement les utilisateurs, **minimiser** (pseudonymiser, filtrer) et proposer un **opt-out**. Réutiliser des données pour entraîner un modèle est une **finalité distincte** du service rendu.
+Définir d'abord la **finalité de réutilisation** et vérifier sa compatibilité avec la collecte initiale. Selon les circonstances, une base comme l'intérêt légitime peut demander une mise en balance documentée et un droit d'opposition ; un consentement doit être valable et révocable.
+
+Informer les personnes, limiter les données et fixer leur conservation. Une option de retrait ne remplace pas une base légale, et le consentement ne se présume pas de l'usage du chatbot. Les données sensibles et les changements de finalité demandent une analyse spécifique.
 
 ---
 
@@ -40,14 +44,17 @@ En général, l'**entreprise qui déploie** l'application est **responsable de t
 
 Quels problèmes posent les transferts hors UE ? <!--anki:77264354606a562d344b-->
 ?
-Envoyer des données à un fournisseur hors UE est un **transfert** qui exige un cadre : **décision d'adéquation** (ex. Data Privacy Framework UE–États-Unis pour les entreprises certifiées), ou **clauses contractuelles types** avec analyse d'impact du transfert. Solutions pratiques : **régions de traitement UE**, modèles **hébergés en UE** ou **on-prem**.
+Un transfert de données personnelles vers un pays tiers doit respecter le **chapitre V du RGPD** : décision d'adéquation applicable, garanties appropriées comme les clauses contractuelles types, ou dérogation encadrée. Selon le mécanisme, analyser le droit local et les mesures complémentaires nécessaires.
+
+Une région d'hébergement dans l'UE ne suffit pas toujours : examiner accès d'administration depuis l'étranger et sous-traitants ultérieurs. Vérifier le statut et le périmètre de toute certification invoquée. L'auto-hébergement peut réduire certains transferts, sans supprimer les autres obligations du RGPD.
 
 ---
 
 Comment gérer le droit à l'effacement dans un système LLM ? <!--anki:6f356c3f4c75294a4d3f-->
 ?
-- **RAG, mémoire, caches, logs** : supprimables si l'on sait **où** sont les données (index par personne, métadonnées de source) → suppression propagée et **ré-indexation**.
-- **Poids d'un modèle fine-tuné** : on ne sait pas « retirer » une donnée de façon fiable (le **machine unlearning** reste immature) → ne pas fine-tuner sur des données personnelles, ou prévoir de **ré-entraîner** sans elles.
+Qualifier la demande et les **conditions ou exceptions du droit à l'effacement**, puis localiser les données : sources, index, mémoire, caches, traces, jeux d'entraînement et dérivés. Propager les suppressions nécessaires et documenter le traitement des sauvegardes et obligations de conservation.
+
+Pour les poids d'un modèle, ne pas promettre une suppression ciblée sans preuve : les techniques d'unlearning n'offrent pas une garantie générale. Évaluer les mesures adaptées avec le responsable de traitement, éventuellement le réentraînement, et vérifier le risque de restitution. Prévenir le problème par minimisation et traçabilité dès la collecte.
 
 ---
 
@@ -75,6 +82,8 @@ Quelles mesures de conformité documentaires prévoir pour une application LLM ?
 - **Information** des utilisateurs, dont l'usage d'une IA.
 - **DPA** signés et localisation des données vérifiée chez les fournisseurs.
 
+Préciser les bases légales, les destinataires, les durées et les modalités d'exercice des droits dans la documentation pertinente. Le contrat de sous-traitance doit correspondre aux traitements réellement effectués. Une localisation annoncée ne suffit pas : examiner aussi sous-traitants ultérieurs, accès distants et éventuels transferts.
+
 ---
 
 Quelles mesures techniques prévoir pour une application LLM conforme ? <!--anki:4f7d30362d3d792e4139-->
@@ -82,6 +91,8 @@ Quelles mesures techniques prévoir pour une application LLM conforme ? <!--anki
 - **Pseudonymisation** avant envoi au modèle quand c'est possible ([[152-pii-confidentialite|PII]]).
 - **Rétention** configurée sur logs, traces, caches et mémoire.
 - **Procédure d'exercice des droits** (accès, effacement) couvrant **tous** les stockages.
+
+Associer ces mesures à des contrôles d'accès, du chiffrement et une cartographie des données dérivées. Tester effectivement l'effacement d'un utilisateur dans les index, sauvegardes et caches selon les règles de conservation applicables. La pseudonymisation reste réversible ou ré-identifiable dans certains contextes : elle ne fait pas automatiquement sortir du RGPD.
 
 ---
 
@@ -98,13 +109,13 @@ Les deux se cumulent : un chatbot RH traitant des CV relève du **haut risque** 
 
 Mise en situation : un client exerce son droit à l'effacement. Tes données sont dans l'index RAG, la mémoire de l'agent, les traces, les caches et un modèle fine-tuné. Que réponds-tu ? <!--anki:782b47475664446d4a32-->
 ?
-1. **Les stockages identifiables** : index, mémoire, traces et caches se purgent si l'on sait où sont les données (métadonnées de source, index par personne)
-2. **Propager** : suppression puis ré-indexation, y compris des structures dérivées (résumés, souvenirs consolidés)
-3. **Le modèle fine-tuné** est le vrai problème : on ne sait pas retirer une donnée des poids de façon fiable
-4. **La bonne pratique** est préventive : ne pas fine-tuner sur des données personnelles, ou prévoir un ré-entraînement sans elles
-5. **Tracer** la suppression effectuée, sans conserver les données supprimées
+1. **Qualifier la demande** : identifier la personne, le périmètre et les exceptions légales éventuelles.
+2. **Cartographier les copies** : sources, index, mémoire, traces, caches, sauvegardes et données d'entraînement.
+3. **Propager l'effacement nécessaire** aux données et dérivés, en vérifiant qu'une ré-ingestion ne les recrée pas.
+4. **Évaluer le modèle fine-tuné** : risque de restitution, moyens de correction et éventuel réentraînement ; ne pas prétendre retirer un fait des poids sans validation.
+5. **Documenter et répondre** dans les délais applicables, avec une trace minimale des opérations.
 
-**Piège** : promettre un effacement complet alors que les données ont servi à entraîner un modèle en production.
+**Piège** : supprimer la source mais conserver ses résumés ou promettre un effacement des poids techniquement non démontré.
 
 ---
 
@@ -121,6 +132,10 @@ Mise en situation : le métier veut automatiser le tri des candidatures, avec re
 ---
 
 ## Sources
+
+- [CNIL — intérêt légitime pour développer un système d’IA](https://www.cnil.fr/fr/base-legale-interet-legitime-developpement-systeme)
+
+- [CNIL — mise en conformité des systèmes d’IA avec le RGPD](https://www.cnil.fr/fr/intelligence-artificielle/ia-comment-etre-en-conformite-avec-le-rgpd)
 
 - [Union européenne — règlement (UE) 2016/679, RGPD](https://eur-lex.europa.eu/eli/reg/2016/679/oj/fra)
 - [CNIL — ressources sur l’IA et les données personnelles](https://www.cnil.fr/fr/intelligence-artificielle)

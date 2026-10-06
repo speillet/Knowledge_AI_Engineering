@@ -46,6 +46,8 @@ Qu'est-ce qu'une datasheet de jeu de données ? <!--anki:68283c64423653794434-->
 ?
 La documentation d'un dataset : **motivation**, **composition** (qui est représenté, qui manque), **collecte** (consentement, sources), **prétraitements**, usages recommandés et déconseillés, **maintenance**. Elle rend visibles les biais et les **droits** attachés aux données.
 
+Elle permet à une autre équipe de décider si les données conviennent à son usage. Par exemple, un jeu recueilli dans une seule langue peut mal représenter un service multilingue. Versionner la fiche avec le dataset et documenter ses limites connues ; une documentation complète ne corrige pas en elle-même les biais constatés.
+
 ---
 
 Qu'est-ce que la sycophancy et pourquoi est-ce un problème de responsabilité ? <!--anki:4a4233782a503e797468-->

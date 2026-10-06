@@ -15,7 +15,7 @@ Quels sont les niveaux de risque de l'AI Act ? <!--anki:722d2145524261493c49-->
 1. **Inacceptable** : pratiques **interdites**.
 2. **Haut risque** : obligations lourdes (gestion des risques, données, documentation, supervision humaine, conformité).
 3. **Risque de transparence** : obligations d'**information** (chatbots, contenus générés, deepfakes).
-4. **Risque minimal** : pas d'obligation spécifique (codes de conduite volontaires).
+4. **Risque minimal** : pas de régime haut risque ; vérifier les obligations transversales et les autres textes applicables.
 
 S'y ajoute un régime propre aux **modèles d'IA à usage général** (GPAI).
 
@@ -29,10 +29,12 @@ Notamment : la **manipulation** subliminale ou l'exploitation des vulnérabilit�
 
 Qu'est-ce qu'un système à haut risque ? <!--anki:633821384664284a3071-->
 ?
-- Un système qui est un **composant de sécurité** d'un produit déjà réglementé (dispositifs médicaux, machines, jouets…).
-- Un système utilisé dans les **domaines de l'annexe III** : biométrie, infrastructures critiques, **éducation** (admission, notation), **emploi** (tri de CV, évaluation de salariés), accès aux **services essentiels** (crédit, assurance, prestations sociales), forces de l'ordre, migrations, justice et processus démocratiques.
+Deux voies principales à l'article 6 :
 
-Un chatbot RH qui **classe des candidats** est haut risque ; un assistant de rédaction interne ne l'est pas.
+- **Produits de l'annexe I** : l'IA est un produit ou composant de sécurité concerné et le produit doit subir une évaluation de conformité par un tiers.
+- **Usages de l'annexe III** : notamment certaines applications d'emploi, éducation, biométrie, crédit, justice ou services publics.
+
+La finalité et l'influence réelle sur la décision comptent ; l'article 6 prévoit des conditions et exceptions à examiner, avec un régime particulier pour le profilage. Un outil de classement de candidatures est un exemple caractéristique. La simple présence d'IA dans un secteur ne suffit pas à qualifier tous ses usages.
 
 ---
 
@@ -53,11 +55,9 @@ Attention : **modifier substantiellement** un système ou l'utiliser pour une fi
 
 Quelles obligations de transparence pour les applications LLM courantes ? <!--anki:4a2a496d2b5769366f51-->
 ?
-- Informer les personnes qu'elles **interagissent avec une IA** (chatbot), sauf si c'est évident.
-- **Marquer** les contenus synthétiques (texte, image, audio, vidéo) de façon **lisible par machine**.
-- Signaler les **deepfakes** et les textes générés publiés pour **informer le public** sur des sujets d'intérêt public.
+L'article 50 distingue les **rôles et usages** : le fournisseur d'un chatbot doit permettre d'informer l'utilisateur de l'interaction avec une IA, sauf évidence ; les fournisseurs de génération synthétique sont concernés par le marquage détectable par machine.
 
-Ces obligations s'appliquent à partir d'**août 2026** ([[144-ux-ia-human-in-the-loop|UX]]).
+Les déployeurs doivent signaler notamment certains deepfakes et textes publiés pour informer le public. Il existe des exceptions et aménagements, par exemple pour une relecture humaine assortie d'une responsabilité éditoriale dans certains cas. Les règles s'appliquent depuis le 2 août 2026, avec dispositions transitoires à vérifier pour les systèmes existants ([[144-ux-ia-human-in-the-loop|UX]]).
 
 ---
 
@@ -67,15 +67,17 @@ Applicables depuis le **2 août 2025** aux **fournisseurs de modèles** : **docu
 
 ---
 
-Quel est le calendrier d'application à connaître ? <!--anki:4c30777735412e43217c-->
+Quel calendrier d'application de l'AI Act retenir au 6 octobre 2026 ? <!--anki:4c30777735412e43217c-->
 ?
-- **Août 2024** : entrée en vigueur.
-- **Février 2025** : pratiques interdites + obligation de **maîtrise de l'IA** (AI literacy) des personnels.
-- **Août 2025** : obligations GPAI, gouvernance, sanctions.
-- **Août 2026** : la plupart des autres obligations (dont transparence et haut risque de l'annexe III, dans le calendrier initial).
-- **Août 2027** : haut risque lié aux produits réglementés.
+Calendrier vérifié au **6 octobre 2026**, tenant compte de l'AI Omnibus entré en vigueur le 27 juillet 2026 :
 
-La Commission a proposé fin 2025 (« Digital Omnibus ») de **reporter** une partie des obligations haut risque : **vérifier le calendrier en vigueur**.
+- **1er août 2024** : entrée en vigueur du règlement initial.
+- **2 février 2025** : premières interdictions et maîtrise de l'IA.
+- **2 août 2025** : gouvernance et premières obligations GPAI, avec transitions selon les modèles.
+- **2 août 2026** : application générale, notamment transparence, sous réserve des dispositions transitoires.
+- **2 décembre 2027** : règles haut risque de l'annexe III ; **2 août 2028** pour les systèmes liés aux produits réglementés.
+
+Vérifier la disposition applicable au rôle, à l'usage et à la date de mise sur le marché.
 
 ---
 
@@ -91,6 +93,8 @@ Face à l'AI Act, par quoi commence un AI Engineer ? <!--anki:66347c2e784c3d5632
 2. **Classer** chacun (interdit, haut risque, transparence, minimal) et identifier son **rôle** : fournisseur ou déployeur.
 3. Obtenir la **documentation** des fournisseurs de modèles GPAI.
 
+Décrire la finalité réelle, les personnes concernées et l'effet de la sortie sur leurs droits. Une même technologie peut soutenir une simple rédaction ou une sélection de candidats, avec des obligations différentes. Documenter la qualification avec le juridique et identifier les preuves à produire ; le nom commercial du modèle ne détermine pas la catégorie.
+
 ---
 
 Que met-on en place ensuite, selon la classification AI Act ? <!--anki:6538416e7056465a5358-->
@@ -105,7 +109,7 @@ Que met-on en place ensuite, selon la classification AI Act ? <!--anki:6538416e7
 
 Mise en situation : ton entreprise déploie trois systèmes IA : un assistant de rédaction interne, un chatbot client et un outil de présélection de candidatures. Comment les classes-tu ? <!--anki:4943714a5b34316b7d70-->
 ?
-1. **Assistant de rédaction interne** : risque minimal, pas d'obligation spécifique
+1. **Assistant de rédaction interne** : généralement hors haut risque ; vérifier usage réel, maîtrise de l'IA et autres règles applicables
 2. **Chatbot client** : obligation de **transparence**, informer qu'on parle à une IA
 3. **Présélection de candidatures** : **haut risque** (emploi, annexe III), avec gestion des risques, journalisation, supervision humaine effective, documentation
 4. **Déterminer le rôle** : déployeur d'un système acheté, ou fournisseur si vous le développez ou le modifiez substantiellement
@@ -117,7 +121,7 @@ Mise en situation : ton entreprise déploie trois systèmes IA : un assistant de
 
 Mise en situation : une équipe veut utiliser la détection d'émotions sur les appels d'un centre de contact, pour évaluer les conseillers. Que réponds-tu ? <!--anki:66633f6f37312a535b6a-->
 ?
-1. **Signal d'alerte immédiat** : la reconnaissance des émotions **sur le lieu de travail** fait partie des pratiques **interdites**, sauf raisons médicales ou de sécurité
+1. **Signal d'alerte immédiat** : l'inférence d'émotions de salariés à partir de données biométriques, par exemple la voix, relève de l'interdiction au travail, sauf exceptions médicales ou de sécurité
 2. **Interdiction applicable** depuis février 2025, avec les sanctions les plus élevées du règlement
 3. **Proposer une alternative** : analyse **agrégée et anonyme** de la satisfaction client, sans évaluation individuelle des salariés
 4. **Impliquer** juridique et représentants du personnel avant toute décision
@@ -128,6 +132,14 @@ Mise en situation : une équipe veut utiliser la détection d'émotions sur les 
 ---
 
 ## Sources
+
+Revue ciblée du 6 octobre 2026 : calendrier, qualification du haut risque et obligations de transparence confrontés aux sources institutionnelles ci-dessous.
+
+- [Commission européenne — obligations de transparence, article 50](https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-50)
+
+- [Commission européenne — classification haut risque, article 6](https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-6)
+
+- [Conseil de l’Union européenne — calendrier et évolution de l’AI Act](https://www.consilium.europa.eu/en/policies/artificial-intelligence-act/timeline-artificial-intelligence/)
 
 - [Union européenne — règlement (UE) 2024/1689, AI Act](https://eur-lex.europa.eu/eli/reg/2024/1689/oj/fra)
 - [Commission européenne — cadre réglementaire et calendrier AI Act](https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai)

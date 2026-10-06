@@ -23,12 +23,13 @@ Si les trois sont nécessaires, l'agent ne doit **pas agir en autonomie** : supe
 
 Comment appliquer la Rule of Two concrètement ? <!--anki:78347b7c494f627d713d-->
 ?
-On retire une propriété selon le cas d'usage :
-- **Sans [A]** : l'agent ne lit que des sources de confiance (ex. e-mails d'expéditeurs connus seulement)
-- **Sans [B]** : l'agent n'accède à aucune donnée sensible (ex. environnement de test)
-- **Sans [C]** : l'agent n'envoie rien seul (ex. brouillon validé par un humain, destinataires limités à une liste)
+La **Rule of Two** conseille d'éviter de réunir contenu non fiable, données sensibles et pouvoir d'action externe non supervisé. Retirer une capacité selon l'usage :
 
-On peut aussi **découper la tâche en sessions** qui respectent chacune la règle.
+- Ne traiter que des données dont la provenance et le contenu sont contrôlés.
+- Utiliser un environnement sans secrets ni données sensibles.
+- Produire un brouillon, puis faire appliquer une politique ou une validation avant l'envoi.
+
+Un e-mail d'expéditeur connu n'est pas automatiquement fiable : compte compromis, pièce jointe ou texte transféré restent possibles. Découper les sessions aide seulement si les résumés transmis ne réintroduisent pas des instructions non fiables.
 
 ---
 
@@ -56,11 +57,9 @@ Quels design patterns contre l'injection reposent sur un programme ou sur un con
 
 Comment fonctionne le pattern Dual LLM ? <!--anki:455f554841523f57545e-->
 ?
-Deux LLM séparés :
-- un **LLM en quarantaine** lit les données non fiables, mais n'a **aucun outil**
-- un **LLM privilégié** a les outils, mais ne voit **jamais** le texte non fiable : il manipule seulement des **références** (`$email1`) vers les résultats de la quarantaine
+Le pattern **Dual LLM** sépare un modèle en quarantaine, qui lit les données non fiables sans outils, d'un modèle privilégié chargé du contrôle. Ce dernier peut manipuler des références opaques aux contenus plutôt que lire directement leur texte.
 
-Une injection dans les données ne peut donc pas déclencher d'outil.
+Cette séparation réduit les occasions de transformer une injection en commande, **à condition de préserver la frontière**. Transmettre un résumé libre au modèle privilégié peut y réintroduire l'attaque. Les arguments et les flux de données vers les outils demandent encore des politiques explicites, notamment pour éviter une exfiltration.
 
 ---
 
@@ -77,7 +76,7 @@ Comment appliquer le moindre privilège aux outils d'un agent ? <!--anki:512b762
 - **Outils étroits** plutôt que génériques : `envoyer_au_support()` plutôt que `envoyer_email(destinataire, texte)`
 - **Lecture seule par défaut**, écriture activée outil par outil
 - **Jetons limités** à la tâche et à la ressource (un dépôt, un dossier), de **courte durée**
-- **Droits de l'utilisateur**, jamais un compte administrateur ou de service
+- **Droits bornés par la tâche et l'utilisateur** ; si un compte de service est nécessaire, limiter ses permissions et son périmètre
 - **Liste blanche d'outils** par agent, et identifiants de prod absents des environnements de dev
 
 ---
@@ -173,6 +172,8 @@ Quelles couches de conception et de contrôle forment la défense en profondeur 
 4. Isolation  : sandbox, réseau sortant filtré, secrets hors de portée
 ```
 
+Ces couches visent à empêcher qu'un contenu malveillant devienne une action puissante. L'identité limite les ressources accessibles ; le moteur de politiques vérifie l'action réelle ; l'isolation borne les effets si un contrôle échoue. Par exemple, un outil de lecture documentaire n'a besoin ni d'un secret de paiement ni d'un accès réseau général.
+
 ---
 
 Quelles couches humaines, de filtrage et d'exploitation complètent la défense en profondeur d'un agent ? <!--anki:446a7e7c7b735f396c25-->
@@ -185,14 +186,15 @@ Quelles couches humaines, de filtrage et d'exploitation complètent la défense 
 ```
 Les couches 6 à 8 sont détaillées dans [[105-devsecops-ia-agentique|DevSecOps]].
 
+Les validations humaines doivent porter sur une action compréhensible, les filtres sur des risques définis et les traces sur des événements exploitables. Un kill switch permet d'arrêter rapidement les exécutions ou révoquer les accès lors d'un incident. Tester ces mécanismes en exercice : un contrôle documenté mais jamais actionné peut échouer au moment critique.
+
 ---
 
 À ne pas confondre : guardrail de contenu et politique d'autorisation ? <!--anki:71735a5a2c3c6e332547-->
 ?
-- **Guardrail de contenu** : un classifieur ou un LLM qui juge si un texte est dangereux ou injecté. **Probabiliste** : il laisse passer une partie des attaques
-- **Politique d'autorisation** : une règle **déterministe** évaluée hors du modèle, avant chaque action (quel outil, quels paramètres, quelle approbation). Elle bloque à coup sûr ce qu'elle interdit
+Un **guardrail de contenu** classe un texte ou une sortie selon un risque ; s'il repose sur un modèle, il peut produire faux positifs et faux négatifs. Une **politique d'autorisation** vérifie hors du LLM une règle précise sur l'identité, l'action, la ressource et le contexte.
 
-Les guardrails réduisent le volume d'attaques ; seules les politiques et l'architecture **garantissent** qu'une action interdite n'aura pas lieu ([[115-plateformes-agents-gouvernance|moteur de politiques]]).
+La politique peut bloquer de façon déterministe une action interdite **si toutes les exécutions passent par ce contrôle**, avec données fiables et implémentation correcte. Ni sa présence ni un bon score de filtre ne prouvent une sécurité absolue. Tester les chemins de contournement et le refus par défaut ([[115-plateformes-agents-gouvernance|moteur de politiques]]).
 
 ---
 

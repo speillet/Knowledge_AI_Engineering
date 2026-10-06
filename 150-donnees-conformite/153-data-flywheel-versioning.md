@@ -15,6 +15,8 @@ Comment commence un tour de data flywheel ? <!--anki:4f4d77716748323a2d5f-->
 2. **Échantillonner** en priorité les échecs et les cas incertains.
 3. **Analyser** et catégoriser les erreurs.
 
+Les échecs révèlent les besoins d'amélioration, mais les suréchantillonner change la distribution observée. Garder aussi un échantillon représentatif pour mesurer la qualité globale. Séparer erreur du modèle, source manquante, outil défaillant et attente mal comprise avant de produire de nouveaux exemples d'entraînement.
+
 ---
 
 Comment se termine un tour de data flywheel ? <!--anki:4f217724235b63464567-->
@@ -22,6 +24,8 @@ Comment se termine un tour de data flywheel ? <!--anki:4f217724235b63464567-->
 4. **Labelliser** et ajouter au golden dataset.
 5. **Corriger**, en commençant par le levier le moins coûteux : prompt, puis retrieval, puis fine-tuning.
 6. **Valider** offline, **déployer** en canary, **mesurer** online.
+
+Choisir le levier selon la **cause** : un document absent ne se corrige pas par un prompt plus long, et un bug d'outil relève du code. Séparer les exemples utilisés pour ajuster le système d'un test indépendant. Conserver la version de la correction, mesurer les effets par segment et prévoir le retour arrière.
 
 ---
 

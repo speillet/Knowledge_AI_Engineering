@@ -15,6 +15,8 @@ Quelles dimensions de contenu vérifier sur un jeu de données ? <!--anki:473b29
 - **Couverture** : tous les cas d'usage, langues, niveaux de difficulté.
 - **Représentativité** par rapport au trafic réel.
 
+Vérifier un échantillon par segment plutôt que seulement une moyenne globale. Un corpus exact mais limité aux demandes faciles n'apprend ni ne mesure correctement les exceptions. Écrire un guide d'annotation, examiner les désaccords et conserver des exemples difficiles ; la référence peut elle-même être ambiguë ou erronée.
+
 ---
 
 Quelles dimensions d'hygiène et de conformité vérifier sur un jeu de données ? <!--anki:427675662e7457574a7c-->
@@ -22,6 +24,8 @@ Quelles dimensions d'hygiène et de conformité vérifier sur un jeu de données
 - **Absence de doublons** et de fuites entre entraînement et test.
 - **Fraîcheur** des données.
 - **Conformité** : droits d'usage, PII, consentement.
+
+Dédupliquer aussi les paraphrases et documents issus d'une même source avant de séparer entraînement et test. Tracer provenance, licence, finalité et base légale applicable ; le consentement n'est pas l'unique base possible. Définir mises à jour et effacement, car un jeu conforme et pertinent à sa création peut cesser de l'être.
 
 ---
 
