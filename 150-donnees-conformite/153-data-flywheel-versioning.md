@@ -115,4 +115,6 @@ Mise en situation : un score d'eval obtenu il y a trois mois est impossible à r
 - [[114-reproductibilite-variance|Reproductibilité]] — rejouer une eval
 - [[148-pipelines-batch-llm|Pipelines batch]] — lignage des sorties générées
 - [[98-debogage-agents|Débogage des agents]] — trouver la cause d'un échec dans une trace
+- [[157-contrats-qualite-donnees|Contrats & publication]] — rendre les versions cohérentes et contrôlables
+- [[158-ingestion-cdc-backfills|Ingestion & backfills]] — synchroniser les changements et reconstruire les index
 - [[00-moc-ai-engineering|MOC AI Engineering]]

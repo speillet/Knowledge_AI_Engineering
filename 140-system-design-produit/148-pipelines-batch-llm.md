@@ -168,4 +168,5 @@ Mise en situation : ton pipeline de classification tourne depuis trois jours. Tu
 - [[11-serveurs-inference-llm|Serveurs d'inférence]] — vLLM, SGLang, TensorRT-LLM et leur réglage
 - [[122-finops-llm|FinOps LLM]] — attribuer et piloter les dépenses IA
 - [[141-system-design-llm|System design LLM]] — la méthode de conception
+- [[158-ingestion-cdc-backfills|Ingestion & backfills]] — gérer les reprises, suppressions et rattrapages
 - [[00-moc-ai-engineering|MOC AI Engineering]]

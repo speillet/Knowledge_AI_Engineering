@@ -22,7 +22,7 @@ Progression recommandée : **comprendre les modèles → les utiliser → constr
 10. [[101-securite-llm-guardrails|Sécurité]] — tout protéger
 11. [[111-mlops-llmops-fondamentaux|MLOps & CI/CD]] — livrer en continu
 12. [[121-couts-inference|Coûts & FinOps]] — maîtriser l'économie
-13. [[151-donnees-curation-annotation|Données & conformité]] — données, RGPD, AI Act
+13. [[151-donnees-curation-annotation|Données & conformité]] — données, RGPD, AI Act ; puis [[157-contrats-qualite-donnees|contrats]], [[158-ingestion-cdc-backfills|ingestion]] et [[159-donnees-temporelles-features|variables temporelles]]
 14. [[161-modeles-vision-langage|Multimodal & edge]] — images, documents, voix, local
 15. [[141-system-design-llm|System design & produit]] — tout assembler (niveau senior)
 
@@ -192,6 +192,9 @@ Pour se concentrer sur les agents, à travers les sections :
 - [[154-rgpd-llm|RGPD appliqué aux LLM]]
 - [[155-ai-act|AI Act (règlement européen sur l'IA)]]
 - [[156-ia-responsable|IA responsable : biais, équité & transparence]]
+- [[157-contrats-qualite-donnees|Contrats, schémas & qualité des données]]
+- [[158-ingestion-cdc-backfills|Ingestion incrémentale, CDC & backfills]]
+- [[159-donnees-temporelles-features|Données temporelles & variables de production]]
 
 ## 160 — Multimodal & edge
 

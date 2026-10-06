@@ -128,4 +128,6 @@ Mise en situation : tu veux transformer les échecs de production en améliorati
 - [[97-evals-online-ab-testing|Evals online]] — signaux de production
 - [[111-mlops-llmops-fondamentaux|MLOps & LLMOps]] — cycle de vie et versioning des systèmes LLM
 - [[114-reproductibilite-variance|Reproductibilité & variance]] — non-déterminisme et statistiques d'evals
+- [[157-contrats-qualite-donnees|Qualité opérationnelle]] — distinguer incident de données et dérive réelle
+- [[159-donnees-temporelles-features|Données temporelles]] — interpréter les retards et labels incomplets
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -4,7 +4,7 @@ Un vault [Obsidian](https://obsidian.md) de **fiches de révision (flashcards) e
 
 Chaque fiche traite **un concept** en 8 à 34 cartes question/réponse, une quinzaine en moyenne, et se termine par des **mises en situation** : des cas concrets à diagnostiquer, concevoir ou arbitrer. Les fiches sont reliées entre elles par des liens, pour qu'on puisse passer d'un sujet à ses voisins, et elles se révisent en **répétition espacée**.
 
-**État au 6 octobre 2026** : 112 fiches et 1 589 cartes, réparties en 17 sections, dont 241 mises en situation et 104 cartes « à ne pas confondre ».
+**État au 6 octobre 2026** : 115 fiches et 1 631 cartes, réparties en 17 sections, dont 250 mises en situation et 108 cartes « à ne pas confondre ».
 
 ---
 
@@ -42,7 +42,7 @@ Knowledge_AI_Engineering/
 ├── 120-couts-finops/            # coûts d'inférence, FinOps, caching
 ├── 130-fondamentaux-llm/         # Transformer, tokenisation, embeddings, MoE, raisonnement
 ├── 140-system-design-produit/    # system design, fiabilité, UX, choix de modèle, leadership, batch
-├── 150-donnees-conformite/       # curation, PII, flywheel, RGPD, AI Act, IA responsable
+├── 150-donnees-conformite/       # curation, conformité, contrats, ingestion, données temporelles
 ├── 160-multimodal-edge/          # VLM, parsing de documents, voix, LLM locaux, computer use
 └── 170-ml-classique/            # choix des modèles, validation, fuites et métriques
 ```
@@ -372,6 +372,9 @@ La partie qui assemble tout le reste : concevoir, fiabiliser et piloter une appl
 - [RGPD appliqué aux LLM](150-donnees-conformite/154-rgpd-llm.md) : champ d'application, RGPD ou AI Act, principes, base légale de la réutilisation, responsable et sous-traitant, transferts hors UE, droit à l'effacement, AIPD, décisions automatisées, données dans le modèle, mesures concrètes.
 - [AI Act (règlement européen sur l'IA)](150-donnees-conformite/155-ai-act.md) : approche par les risques, pratiques interdites, haut risque et obligations, fournisseur ou déployeur, transparence, modèles à usage général, calendrier, sanctions, plan d'action.
 - [IA responsable : biais, équité & transparence](150-donnees-conformite/156-ia-responsable.md) : safety ou security, sources de biais, tests contrefactuels, métriques d'équité, model cards et system cards, datasheets, sycophancy, sécurité ou utilité, supervision humaine effective, référentiels (NIST AI RMF, ISO 42001).
+- [Contrats, schémas & qualité des données](150-donnees-conformite/157-contrats-qualite-donnees.md) : contrat producteur-consommateur, contraintes de schéma et métier, fraîcheur et complétude, compatibilité, migrations, quarantaine, dérive ou incident, publication atomique et lignage opérationnel.
+- [Ingestion incrémentale, CDC & backfills](150-donnees-conformite/158-ingestion-cdc-backfills.md) : snapshot ou incrémental, CDC, cohérence snapshot-journal, checkpoints, identités et versions, suppressions, rejeu historique, capacité de rattrapage, quarantaine, réconciliation et index RAG.
+- [Données temporelles & variables de production](150-donnees-conformite/159-donnees-temporelles-features.md) : temps événement et traitement, disponibilité historique, jointures point-in-time, corrections bitemporelles, fenêtres et watermarks, labels retardés, cohérence entraînement-serving, feature store et fraîcheur.
 
 ### 160 — Multimodal & edge
 

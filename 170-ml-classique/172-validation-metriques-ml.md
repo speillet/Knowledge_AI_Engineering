@@ -176,4 +176,5 @@ Mise en situation : après 200 essais, le meilleur modèle gagne un point sur va
 - [[171-choisir-modele-ml|Choisir un modèle ML]] — comparer les baselines et familles de modèles
 - [[94-evals-methodologie|Méthodologie d'évaluation]] — prolonger les principes d'indépendance des jeux
 - [[151-donnees-curation-annotation|Curation & annotation]] — qualité des labels et doublons
+- [[159-donnees-temporelles-features|Données temporelles]] — reconstruire les variables réellement disponibles lors de la prédiction
 - [[00-moc-ai-engineering|MOC AI Engineering]]
