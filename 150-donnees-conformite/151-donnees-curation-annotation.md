@@ -132,4 +132,6 @@ Mise en situation : tu disposes de 40 heures d'expert métier pour annoter. Comm
 - [[51-fine-tuning-adaptation|Fine-tuning]] — l'usage d'entraînement
 - [[95-llm-as-judge|LLM-as-a-judge]] — labels automatiques à valider
 - [[156-ia-responsable|IA responsable]] — biais, équité et transparence
+- [[171-choisir-modele-ml|ML classique]] — définir une cible supervisée et ses variables
+- [[172-validation-metriques-ml|Validation ML]] — éviter les fuites et choisir le découpage des données
 - [[00-moc-ai-engineering|MOC AI Engineering]]

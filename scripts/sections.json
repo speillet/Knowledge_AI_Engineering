@@ -62,5 +62,9 @@
   "160-multimodal-edge": {
     "title": "Multimodal & edge",
     "intro": ""
+  },
+  "170-ml-classique": {
+    "title": "ML classique & validation",
+    "intro": "Choisir entre règles, modèles prédictifs et LLM ; comprendre les principales familles et les comparer sans fuite de données."
   }
 }

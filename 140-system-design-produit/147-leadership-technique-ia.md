@@ -138,4 +138,5 @@ Mise en situation : un directeur te demande pourquoi l'assistant « se trompe en
 - [[115-plateformes-agents-gouvernance|Plateformes d'agents — Gouvernance]] — paved road
 - [[155-ai-act|AI Act]] — cadrage réglementaire
 - [[49-agents-de-code|Agents de code]] — utiliser et intégrer les agents de code
+- [[171-choisir-modele-ml|Choisir un modèle ML]] — justifier la complexité par la valeur métier
 - [[00-moc-ai-engineering|MOC AI Engineering]]

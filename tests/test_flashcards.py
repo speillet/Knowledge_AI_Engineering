@@ -222,7 +222,7 @@ class VaultTests(unittest.TestCase):
         self.assertEqual(notes[0].tags, ["retired"])
         self.assertTrue(all(c.suspend for c in notes[0].cards))
         self.assertEqual(sum(len(deck.notes) for deck in decks), total + 1)
-        self.assertEqual(sections, 16)
+        self.assertEqual(sections, len(json.loads((self.root / "scripts/sections.json").read_text())))
 
     def test_generated_catalog_drift(self):
         with contextlib.redirect_stdout(io.StringIO()):
@@ -300,7 +300,7 @@ class ExportTests(unittest.TestCase):
                     self.assertNotIn("&lt;!--anki:", fields)
                     self.assertNotIn("<!--anki:", fields)
                     self.assertNotIn("summary:", fields)
-            self.assertEqual(sections, 16)
+            self.assertEqual(sections, len(json.loads((ROOT / "scripts/sections.json").read_text())))
 
 
 if __name__ == "__main__":

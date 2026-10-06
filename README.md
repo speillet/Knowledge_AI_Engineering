@@ -4,7 +4,7 @@ Un vault [Obsidian](https://obsidian.md) de **fiches de révision (flashcards) e
 
 Chaque fiche traite **un concept** en 8 à 34 cartes question/réponse, une quinzaine en moyenne, et se termine par des **mises en situation** : des cas concrets à diagnostiquer, concevoir ou arbitrer. Les fiches sont reliées entre elles par des liens, pour qu'on puisse passer d'un sujet à ses voisins, et elles se révisent en **répétition espacée**.
 
-**État au 6 octobre 2026** : 110 fiches et 1 553 cartes, réparties en 16 sections, dont 235 mises en situation et 99 cartes « à ne pas confondre ».
+**État au 6 octobre 2026** : 112 fiches et 1 589 cartes, réparties en 17 sections, dont 241 mises en situation et 104 cartes « à ne pas confondre ».
 
 ---
 
@@ -43,7 +43,8 @@ Knowledge_AI_Engineering/
 ├── 130-fondamentaux-llm/         # Transformer, tokenisation, embeddings, MoE, raisonnement
 ├── 140-system-design-produit/    # system design, fiabilité, UX, choix de modèle, leadership, batch
 ├── 150-donnees-conformite/       # curation, PII, flywheel, RGPD, AI Act, IA responsable
-└── 160-multimodal-edge/          # VLM, parsing de documents, voix, LLM locaux, computer use
+├── 160-multimodal-edge/          # VLM, parsing de documents, voix, LLM locaux, computer use
+└── 170-ml-classique/            # choix des modèles, validation, fuites et métriques
 ```
 
 - Chaque **section** est un dossier numéroté par dizaine (`20-rag`, `30-agents`…).
@@ -64,7 +65,7 @@ Knowledge_AI_Engineering/
 
 ### 2. Lire et naviguer
 
-- **Suivre le parcours de lecture** du MOC, qui va dans cet ordre : fondamentaux LLM (prérequis), prompt engineering, RAG, agents, automatisation et frameworks d'agents, fine-tuning, inférence, conteneurs, API layer, observabilité, sécurité, MLOps & CI/CD, coûts & FinOps, données & conformité, multimodal & edge, puis system design & produit, qui assemble le tout. Le MOC propose aussi un **parcours AI Engineer agentique**, qui enchaîne en 8 étapes les fiches sur les agents réparties dans plusieurs sections.
+- **Suivre le parcours de lecture** du MOC, qui va dans cet ordre : ML classique et validation, fondamentaux LLM (prérequis), prompt engineering, RAG, agents, automatisation et frameworks d'agents, fine-tuning, inférence, conteneurs, API layer, observabilité, sécurité, MLOps & CI/CD, coûts & FinOps, données & conformité, multimodal & edge, puis system design & produit, qui assemble le tout. Le MOC propose aussi un **parcours AI Engineer agentique**, qui enchaîne en 8 étapes les fiches sur les agents réparties dans plusieurs sections.
 - **Rebondir entre les concepts** : chaque fiche se termine par une section `Connexions` qui explique pourquoi les fiches liées sont liées. Ces liens sont **réciproques** : si A cite B, B cite A. Des liens apparaissent aussi dans les réponses elles-mêmes.
 - **Voir l'ensemble** : la **vue graphe** d'Obsidian montre comment les concepts s'articulent, et le panneau **Backlinks** liste les fiches qui citent la fiche ouverte.
 
@@ -379,6 +380,13 @@ La partie qui assemble tout le reste : concevoir, fiabiliser et piloter une appl
 - [Voix & agents temps réel](160-multimodal-edge/163-voix-temps-reel.md) : cascade ou speech-to-speech, budget de latence, réduction de latence, détection de fin de tour, barge-in, texte pour la voix, STT, évaluation, risques.
 - [LLM locaux, on-prem & edge](160-multimodal-edge/164-llm-local-edge.md) : motivations, capacité ou bande passante mémoire, llama.cpp et GGUF, outils locaux, Ollama ou vLLM, Apple Silicon, small language models, hybride local et cloud, flotte d'appareils, rentabilité du on-prem.
 - [Computer use & agents navigateur](160-multimodal-edge/165-computer-use-agents-navigateur.md) : image ou structure (DOM, arbre d'accessibilité), grounding visuel, benchmarks (OSWorld, WebArena), coût et latence, injection par le contenu web, isolation, quand ne pas l'utiliser, computer use ou RPA, outils.
+
+### 170 — ML classique & validation
+
+Choisir entre règles, modèles prédictifs et LLM ; comprendre les principales familles et les comparer sans fuite de données.
+
+- [ML classique : choisir et comprendre les modèles](170-ml-classique/171-choisir-modele-ml.md) : règles ou ML ou LLM, formulation de la cible, baselines, régressions, régularisation, arbres, random forest et boosting, clustering, prétraitement, données manquantes et coût de possession.
+- [ML classique : validation, fuites & métriques](170-ml-classique/172-validation-metriques-ml.md) : train-validation-test, fuite de données, validation croisée et imbriquée, groupes et temps, pipelines, précision et rappel, classes rares, ROC et PR, seuil métier, MAE et RMSE, suréchantillonnage et incertitude.
 
 <!-- catalog:end -->
 

@@ -7,6 +7,8 @@ Chaque fiche se termine par des **mises en situation** : pour ne réviser qu'ell
 
 ## Parcours de lecture
 Progression recommandée : **comprendre les modèles → les utiliser → construire des architectures → adapter → servir & déployer → industrialiser → gouverner → concevoir des systèmes.**
+- **Socle prédictif** : [[171-choisir-modele-ml|ML classique]] puis [[172-validation-metriques-ml|validation et métriques]] — choisir une approche avant de construire une chaîne LLM
+
 0. [[131-transformer-architecture|Fondamentaux LLM]] — comprendre ce qu'on utilise (prérequis)
 1. [[11-prompt-engineering-avance|Prompt engineering]] — parler aux modèles
 2. [[21-rag-fondamentaux|RAG]] — les augmenter avec des connaissances
@@ -198,6 +200,11 @@ Pour se concentrer sur les agents, à travers les sections :
 - [[163-voix-temps-reel|Voix & agents temps réel]]
 - [[164-llm-local-edge|LLM locaux, on-prem & edge]]
 - [[165-computer-use-agents-navigateur|Computer use & agents navigateur]]
+
+## 170 — ML classique & validation
+
+- [[171-choisir-modele-ml|ML classique : choisir et comprendre les modèles]]
+- [[172-validation-metriques-ml|ML classique : validation, fuites & métriques]]
 
 <!-- catalog:end -->
 

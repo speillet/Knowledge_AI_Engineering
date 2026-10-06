@@ -150,4 +150,5 @@ Mise en situation : la direction impose que les données ne sortent pas de l'ent
 - [[49-agents-de-code|Agents de code]] — utiliser et intégrer les agents de code
 - [[63-guided-generation|Guided generation]] — garantir des sorties structurées valides
 - [[64-metriques-slo-inference|Métriques & SLO]] — TTFT, TPOT, débit et percentiles
+- [[171-choisir-modele-ml|ML classique]] — comparer un LLM aux règles et modèles prédictifs
 - [[00-moc-ai-engineering|MOC AI Engineering]]
