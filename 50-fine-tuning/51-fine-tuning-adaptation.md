@@ -15,6 +15,8 @@ Quand fine-tuner plutôt que prompter ou faire du RAG ? <!--anki:6758606d3f2a7e3
 ?
 Pour un **comportement constant** (format, ton, tâche spécialisée répétitive), la **distillation**, ou raccourcir les [[11-prompt-engineering-avance|prompts]] (latence/coût) — **pas** pour injecter des connaissances fraîches (→ [[21-rag-fondamentaux|RAG]]).
 
+Commencer par une baseline avec prompt et exemples, puis vérifier qu'un jeu d'entraînement représentatif existe. Le fine-tuning devient intéressant quand le même comportement doit se répéter à grande échelle. Conserver un jeu de test indépendant pour mesurer les gains et les régressions, notamment sur les cas rares et hors domaine.
+
 ---
 
 Qu'est-ce que le SFT ? <!--anki:6759363b4a296776615b-->
@@ -27,7 +29,7 @@ Qu'est-ce que le SFT ? <!--anki:6759363b4a296776615b-->
   {"role": "assistant", "content": "{\"numero\":\"A-4471\",\"total\":1240.50}"}
 ]}
 ```
-La perte n'est calculée que sur la **réponse de l'assistant**, pas sur la consigne.
+En entraînement **assistant-only**, on masque la perte sur les consignes pour apprendre les réponses. Ce masquage dépend du collator et de la configuration : le vérifier, car certains pipelines entraînent sur toute la séquence.
 
 ---
 
@@ -35,11 +37,15 @@ La perte n'est calculée que sur la **réponse de l'assistant**, pas sur la cons
 ?
 Le **full FT** met à jour tous les poids (coûteux en GPU et stockage) ; le **PEFT** (Parameter-Efficient FT) n'entraîne qu'une **petite fraction de paramètres**.
 
+Le full fine-tuning conserve une grande flexibilité, mais doit stocker gradients et états d'optimiseur pour tous les paramètres entraînés. Une méthode PEFT comme LoRA réduit fortement ces états et permet plusieurs adaptations d'une même base. Le modèle de base reste nécessaire à l'inférence ; le petit adapter ne constitue pas un modèle autonome.
+
 ---
 
 Qu'est-ce que LoRA ? <!--anki:634632767854463b7c5a-->
 ?
-**Low-Rank Adaptation** : on gèle les poids et on entraîne de **petites matrices de bas rang** ajoutées aux couches — l'adapter ne pèse que quelques Mo.
+**LoRA** gèle une matrice de poids `W` et apprend une correction de bas rang `ΔW = B × A`. Pour une matrice `d × k`, cela entraîne environ `r × (d + k)` paramètres au lieu de `d × k`, avec un rang `r` bien plus petit que les dimensions.
+
+L'adapter réduit mémoire d'entraînement et stockage des variantes, mais sa taille dépend du rang et des couches ciblées : elle peut dépasser quelques dizaines de Mo. Il faut la bonne version du modèle de base pour l'utiliser.
 
 ---
 
@@ -49,17 +55,15 @@ Qu'est-ce que QLoRA ? <!--anki:435021656c75503d585b-->
 
 ---
 
-Quels ordres de grandeur pour un fine-tuning ? <!--anki:457b75296778564c6056-->
+De quelles hypothèses dépendent les ressources nécessaires à un fine-tuning ? <!--anki:457b75296778564c6056-->
 ?
+Les ressources dépendent du **modèle, de la longueur des séquences, du batch, de l'optimiseur et des couches adaptées**.
 ```text
-Exemples nécessaires (SFT)   quelques centaines à quelques milliers de bons exemples
-Taille d'un adapter LoRA     quelques Mo à quelques dizaines de Mo
-Mémoire, full FT d'un 7B     ~112 Go → plusieurs GPU
-Mémoire, LoRA d'un 8B        tient sur 1 GPU de 24 à 48 Go
-Mémoire, QLoRA d'un 70B      tient sur 1 GPU de 48 à 80 Go
-Durée d'un LoRA              minutes à quelques heures
+Full FT : poids + gradients + états d'optimiseur + activations
+LoRA    : poids gelés + petits paramètres entraînés + activations
+QLoRA   : base quantifiée + adapters entraînés + activations
 ```
-Retenir : la **qualité des données** compte plus que leur volume, et **LoRA change l'ordre de grandeur matériel** ([[54-entrainement-distribue|entraînement distribué]]).
+À titre d'estimation, un 7B avec un budget de 16 octets par paramètre demande **112 Go hors activations**. Des configurations QLoRA rendent de grands modèles accessibles sur un GPU, sans garantir qu'un 70B tienne avec tout contexte. Mesurer la mémoire maximale et le temps sur un petit entraînement représentatif ; la qualité des exemples reste déterminante.
 
 ---
 
@@ -67,17 +71,23 @@ Qu'est-ce que le RLHF ? <!--anki:794a63615d3f7835663e-->
 ?
 **Reinforcement Learning from Human Feedback** : un reward model entraîné sur des préférences humaines guide l'optimisation (PPO) du modèle — la base de l'alignement.
 
+Dans le schéma classique, des humains comparent des réponses, un modèle de récompense apprend ces préférences, puis la politique est optimisée sous contrainte de rester proche d'une référence. La récompense est un proxy : le modèle peut apprendre à plaire au juge sans devenir plus exact. Évaluer les effets sur utilité, factualité et comportements indésirables.
+
 ---
 
 Qu'est-ce que DPO ? <!--anki:492f54413476366b5246-->
 ?
-**Direct Preference Optimization** : aligner directement sur des **paires réponse préférée / rejetée**, sans reward model ni RL — plus simple et stable que RLHF.
+**DPO** apprend à partir de paires de réponses préférée et rejetée pour un même prompt. Son objectif ajuste leurs probabilités relatives par rapport à un modèle de référence, **sans entraîner explicitement un modèle de récompense ni lancer une boucle de RL en ligne**.
+
+Cela simplifie l'entraînement, mais ne garantit pas une meilleure qualité ou stabilité dans tous les cas. Les préférences doivent être cohérentes et représentatives ; des paires biaisées peuvent apprendre la longueur ou le style du gagnant plutôt que la qualité recherchée.
 
 ---
 
 Comment obtenir un petit modèle aussi bon qu'un grand sur un domaine précis ? <!--anki:4a2c42346174694d706b-->
 ?
-Par la **distillation** : entraîner un **petit modèle sur les sorties d'un grand**. Qualité proche sur le domaine ciblé, coût d'inférence fortement réduit ([[53-donnees-synthetiques-distillation|distillation en détail]]).
+La **distillation** utilise un grand modèle comme enseignant pour produire des exemples, des distributions ou des signaux de supervision destinés à un plus petit modèle. Sur une tâche étroite, l'élève peut approcher la qualité utile de l'enseignant avec une inférence moins coûteuse.
+
+Ce résultat n'est pas garanti : sélectionner des exemples divers, vérifier les sorties de l'enseignant et tester hors du jeu d'entraînement. Mesurer les cas difficiles et les régressions générales ; les erreurs de l'enseignant peuvent être transmises à l'élève ([[53-donnees-synthetiques-distillation|distillation en détail]]).
 
 ---
 

@@ -5,11 +5,13 @@ Tags: #flashcards #ai-engineering #fondamentaux #transformer #llm
 
 Qu'est-ce qu'un LLM, mécaniquement ? <!--anki:7074663b5a51392c4f44-->
 ?
-Un réseau **Transformer decoder-only** entraîné à **prédire le token suivant**. À chaque pas, il produit une **distribution de probabilités** sur le vocabulaire ; la génération consiste à **échantillonner** un token, l'ajouter à l'entrée et recommencer ([[65-probabilites-sampling|sampling]]).
+Un **LLM** est un modèle de langage de grande taille. Dans le cas courant d'un **Transformer autorégressif decoder-only**, il estime la distribution du prochain token à partir du préfixe. La génération choisit un token, l'ajoute au contexte et répète l'opération ([[65-probabilites-sampling|sampling]]).
+
+Cette description explique les modèles génératifs étudiés ici ; elle ne définit pas toutes les architectures de modèles de langage. Encoder-decoder, modèles hybrides et autres objectifs d'entraînement existent. Les probabilités portent sur les tokens, pas directement sur la vérité des affirmations.
 
 ---
 
-Quel est le chemin d'un token dans le modèle ? <!--anki:6f2477294b6c522a233e-->
+Quel est le chemin d'un token dans un Transformer génératif decoder-only ? <!--anki:6f2477294b6c522a233e-->
 ?
 1. **Tokenisation** → identifiant ([[132-tokenisation|tokenizer]]).
 2. **Embedding** : l'id devient un vecteur de dimension d (ex. 4 096).
@@ -38,6 +40,8 @@ Pourquoi plusieurs têtes d'attention (multi-head) ? <!--anki:70495d3d7d324e5e58
 ?
 Chaque tête a ses propres projections Q/K/V et peut se spécialiser dans **un type de relation** (syntaxe, coréférence, position proche…). Les sorties des têtes sont **concaténées** puis reprojetées.
 
+Elles donnent plusieurs façons de combiner l'information d'une même séquence, au lieu d'une unique pondération. La spécialisation n'est pas imposée tête par tête ni forcément interprétable. Avec GQA ou MQA, plusieurs têtes de requête partagent des K/V pour économiser de la mémoire ; le principe de vues multiples demeure.
+
 ---
 
 Qu'est-ce que GQA et MQA, et pourquoi comptent-ils en production ? <!--anki:6a72557e65666e265368-->
@@ -51,7 +55,9 @@ Ils divisent la **taille du KV cache** (donc la mémoire par requête) avec une 
 
 Quel est le rôle du bloc MLP (feed-forward) ? <!--anki:6b6439385d5d4f3b3945-->
 ?
-Après l'attention (qui **mélange l'information entre tokens**), le MLP **transforme chaque token indépendamment**. Il contient **la majorité des paramètres** et on considère qu'il stocke une grande part des **connaissances factuelles**. C'est lui qu'on remplace par des experts dans un [[136-mixture-of-experts|MoE]].
+Le **MLP** transforme le vecteur de chaque position avec des projections et une non-linéarité, tandis que l'attention échange des informations entre positions. « Indépendamment » signifie que la même transformation s'applique à chaque position, dont le vecteur contient déjà du contexte.
+
+Les blocs MLP représentent souvent une grande part des paramètres et participent à la mémorisation, mais les connaissances ne résident pas exclusivement dans ces blocs. Dans de nombreux [[136-mixture-of-experts|MoE]], on remplace certains MLP denses par des experts sélectionnés par un routeur.
 
 ---
 
@@ -83,6 +89,8 @@ Calcul : quelle mémoire pour les poids d'un modèle 70B ? <!--anki:623b687d595d
 70B en INT4 (~0,5 octet) ≈  35-40 Go
 ```
 Il faut ajouter le **KV cache** et les activations, souvent plusieurs dizaines de Go de plus en serving ([[68-quantization|quantization]], [[61-kv-cache-attention|KV cache]]).
+
+Les valeurs sont en **Go décimaux** et constituent un budget pour les poids, pas pour tout le service. En quantification, échelles et métadonnées ajoutent un surcoût. Deux cartes de 80 Go ne constituent un minimum que pour cette classe de GPU et une répartition compatible ; contexte et concurrence peuvent imposer davantage de mémoire.
 
 ---
 

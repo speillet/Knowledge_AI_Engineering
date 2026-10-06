@@ -27,6 +27,8 @@ Qu'a montré Chinchilla ? <!--anki:706f6333723d25753c64-->
 ?
 Qu'à **budget de calcul fixe**, l'optimum est d'augmenter **paramètres et tokens à parts égales**, soit environ **20 tokens par paramètre**. Beaucoup de modèles antérieurs étaient **trop gros et sous-entraînés**.
 
+C'est un optimum empirique d'allocation du **budget de pré-entraînement** dans le régime étudié, pas une règle obligatoire pour chaque modèle. Si un modèle doit servir énormément de requêtes, le surentraîner sur davantage de tokens peut réduire son coût total en permettant une taille plus petite pour la qualité visée.
+
 ---
 
 Pourquoi les modèles actuels sont-ils entraînés bien au-delà de Chinchilla ? <!--anki:267869342439474772-->
@@ -90,6 +92,8 @@ sur 1 000 H100                    ≈ 3 semaines
 ```
 Meta a déclaré environ **1,5 million de GPU-heures** pour Llama 3.1 8B : le MFU réel, les reprises et les expériences s'ajoutent. Un AI Engineer part donc d'un modèle existant ([[51-fine-tuning-adaptation|fine-tuning]]).
 
+La formule est un ordre de grandeur pour un modèle dense et ignore plusieurs surcoûts. Les trois semaines supposent une répartition idéale sur 1 000 GPU avec l'efficacité annoncée. L'écart avec un chiffre publié ne permet pas, à lui seul, d'attribuer le temps supplémentaire aux reprises : périmètre de comptage et efficacité doivent être comparables.
+
 ---
 
 Calcul : combien de tokens d'entraînement Chinchilla recommande-t-il pour un 70B, et combien Llama 3 70B en a-t-il vu ? <!--anki:6335373737396634343762663437663162353937616338383032353765326435-->
@@ -99,6 +103,8 @@ Chinchilla  : ≈ 20 tokens par paramètre → 70e9 × 20 ≈ 1 400 milliards de
 Llama 3 70B : ≈ 15 000 milliards de tokens → ≈ 200 tokens par paramètre, 10 fois plus
 ```
 Chinchilla minimise le coût d'**entraînement** ; on va bien au-delà pour obtenir, à qualité égale, un modèle plus petit et donc moins cher à **servir**.
+
+Avec 15 000/70, le ratio est d'environ **214 tokens par paramètre** ; « 200 » est un arrondi. Plus de tokens ne garantit pas un gain proportionnel : qualité, diversité et répétitions du corpus comptent. L'arbitrage se fait sur le cycle complet entraînement puis inférence, selon le volume de requêtes attendu.
 
 ---
 

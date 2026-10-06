@@ -17,7 +17,9 @@ On part des **caractères (ou octets)** et on **fusionne itérativement la paire
 
 Pourquoi les tokenizers modernes travaillent-ils au niveau de l'octet ? <!--anki:4c39395e4c4a45662433-->
 ?
-Le **byte-level BPE** part des **256 octets** : tout texte (emoji, langue rare, binaire) est représentable, **sans token inconnu** (`<unk>`). Le coût est qu'un caractère rare peut consommer **plusieurs tokens**.
+Un tokenizer à couverture d'octets, comme le **byte-level BPE**, peut représenter les textes encodés en UTF-8 en partant de 256 valeurs d'octet, puis fusionner des séquences fréquentes. Cela évite un token inconnu pour les caractères rares, mais ceux-ci peuvent nécessiter plusieurs tokens.
+
+Tous les tokenizers ne suivent pas exactement cet algorithme ; certains utilisent un mécanisme de repli sur les octets. Cela ne signifie pas qu'une API de texte accepte n'importe quel fichier binaire brut : il faut respecter son format d'entrée.
 
 ---
 

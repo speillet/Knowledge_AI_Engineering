@@ -111,6 +111,8 @@ H100 à 40 % de MFU              ≈ 4e14 FLOP/s
 ```
 Le calcul d'un fine-tuning se compte en **GPU-heures**, pas en GPU-années. La contrainte est la **mémoire** (≈ 112 Go pour un 7B avec Adam), qui impose plusieurs GPU, ou [[51-fine-tuning-adaptation|LoRA]].
 
+C'est une estimation de calcul utile, pas un délai promis : transferts, checkpoints, padding et efficacité réelle s'ajoutent. Avec plusieurs GPU, la durée idéale diminue mais les GPU-heures ne disparaissent pas. Les 112 Go excluent notamment les activations et supposent un schéma précis de précision et d'états Adam.
+
 ---
 
 Que se passe-t-il si un GPU tombe en panne au milieu d'un entraînement distribué ? <!--anki:3236353836376335663738323437393161333434323538316365383736326463-->

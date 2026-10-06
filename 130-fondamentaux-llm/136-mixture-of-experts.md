@@ -41,6 +41,8 @@ Qu'est-ce qu'un expert partagé (shared expert) ? <!--anki:493542434e742e2c5045-
 ?
 Un expert **toujours actif** pour tous les tokens, en plus des experts routés. Il capture les **connaissances communes**, ce qui laisse les experts routés se **spécialiser** davantage (approche DeepSeekMoE).
 
+Le partage évite de demander à chaque expert routé de réapprendre toutes les régularités communes. Il ajoute toutefois du calcul systématique : même si seuls quelques experts routés sont choisis, l'expert partagé reste exécuté. Son contenu n'est pas une base de faits explicitement étiquetée ; la répartition des connaissances est apprise et imparfaitement interprétable.
+
 ---
 
 Les experts sont-ils spécialisés par domaine (maths, code, français) ? <!--anki:736f6c3572507c7c512c-->
