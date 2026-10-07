@@ -47,6 +47,16 @@ Pour relier les trois priorités transversales aux applications IA :
 - [[38-plateformes-agents|Plateformes]] → [[115-plateformes-agents-gouvernance|architecture et gouvernance]]
 - [[165-computer-use-agents-navigateur|Agents d’interface]] : complément multimodal du parcours agentique.
 
+### Parcours de mise en pratique senior
+Après les fondations, travailler ces sujets sur un même projet et produire une preuve pour chaque étape :
+1. [[99-statistiques-decisions-experimentales|Décider avec des statistiques]] — protocole, comparaison appariée, intervalle et seuil de gain utile
+2. [[173-calibration-incertitude-abstention|Calibrer et savoir s'abstenir]] — courbe de fiabilité, risque-couverture et charge humaine
+3. [[56-optimisation-diagnostic-entrainement|Diagnostiquer l'entraînement]] — micro-lot, courbes train/validation, gradients et normalisation ; approfondir si le rôle inclut l'adaptation des modèles
+4. [[116-sre-incidents-capacite-ia|Exploiter et reprendre après panne]] — SLO, file bornée, exercice de bascule et postmortem
+5. [[147-leadership-technique-ia|Rendre les décisions et l'équipe autonomes]] — ADR, transfert d'exploitation et correction vérifiée
+
+Le [bilan de pertinence et les ateliers](docs/pertinence-parcours-senior-2026-10-07.md) précisent priorités, livrables et critères de réussite. Les cartes préparent le raisonnement ; la maîtrise se démontre aussi en construisant, mesurant et expliquant les limites d'un système.
+
 <!-- catalog:begin -->
 
 ## 10 — Prompt engineering
@@ -96,6 +106,7 @@ Pour relier les trois priorités transversales aux applications IA :
 - [[53-donnees-synthetiques-distillation|Données synthétiques & distillation]]
 - [[54-entrainement-distribue|Entraînement distribué]]
 - [[55-rl-agentique|RL agentique & environnements d'entraînement]]
+- [[56-optimisation-diagnostic-entrainement|Optimisation & diagnostic d'entraînement]]
 
 ## 60 — Inférence LLM
 
@@ -144,6 +155,7 @@ Pour relier les trois priorités transversales aux applications IA :
 - [[96-evals-rag-agents|Évaluation des RAG & des agents]]
 - [[97-evals-online-ab-testing|Evals online & A/B testing]]
 - [[98-debogage-agents|Débogage & analyse d'échecs des agents]]
+- [[99-statistiques-decisions-experimentales|Statistiques pour décider en IA]]
 
 ## 100 — Sécurité & guardrails
 
@@ -161,6 +173,7 @@ Pour relier les trois priorités transversales aux applications IA :
 - [[113-monitoring-drift-feedback|Monitoring, drift & boucle de feedback]]
 - [[114-reproductibilite-variance|Reproductibilité & variance]]
 - [[115-plateformes-agents-gouvernance|Plateformes d'agents — Architecture & gouvernance]]
+- [[116-sre-incidents-capacite-ia|SRE : incidents & capacité des services IA]]
 
 ## 120 — Coûts & FinOps
 
@@ -216,6 +229,7 @@ Pour relier les trois priorités transversales aux applications IA :
 
 - [[171-choisir-modele-ml|ML classique : choisir et comprendre les modèles]]
 - [[172-validation-metriques-ml|ML classique : validation, fuites & métriques]]
+- [[173-calibration-incertitude-abstention|Calibration, incertitude & abstention]]
 
 <!-- catalog:end -->
 

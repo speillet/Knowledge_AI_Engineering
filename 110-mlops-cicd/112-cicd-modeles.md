@@ -141,4 +141,5 @@ Mise en situation : tu dois déployer une nouvelle version de modèle sur un ser
 - [[106-securite-agents-code|Sécurité des agents de code]] — risques propres aux agents de code
 - [[113-monitoring-drift-feedback|Monitoring & drift]] — qualité en production et boucle de feedback
 - [[13-prompts-production|Prompts en production]] — structure, versioning et portabilité des prompts
+- [[116-sre-incidents-capacite-ia|SRE : incidents & capacité des services IA]] — rollback et compatibilité des artefacts
 - [[00-moc-ai-engineering|MOC AI Engineering]]

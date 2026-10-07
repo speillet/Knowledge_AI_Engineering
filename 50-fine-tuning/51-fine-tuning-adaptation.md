@@ -115,13 +115,12 @@ Parades :
 
 Calcul : quelle mémoire GPU pour fine-tuner un 7B en LoRA, puis en QLoRA ? <!--anki:3337376463643866363135623439663561633937613466613932353937653533-->
 ?
+La **mémoire des poids de base** fournit seulement un point de départ, en Go décimaux :
 ```text
-LoRA  : base figée en BF16  7e9 × 2 octets    ≈ 14 Go
-QLoRA : base figée en NF4   7e9 × ~0,5 octet  ≈  4 Go
-dans les deux cas : adaptateurs (≈ 0,5 % des paramètres) et leurs états Adam < 1 Go,
-                    plus les activations, quelques Go selon la séquence et le batch
+LoRA, base BF16 : 7e9 × 2 octets = 14 Go
+QLoRA, stockage brut 4 bits : 7e9 × 0,5 octet = 3,5 Go
 ```
-À comparer aux **≈ 112 Go** d'un fine-tuning complet ([[54-entrainement-distribue|calcul complet]]). Un 7B en QLoRA tient sur un GPU de 16 à 24 Go ; un 70B en QLoRA (≈ 35 à 40 Go de poids) tient sur un seul GPU de 80 Go.
+Ajouter métadonnées de quantification, adapters, gradients et états d'optimiseur associés, activations et buffers temporaires. Leur coût dépend du rang, des couches ciblées, de la précision, du batch et des séquences. Un GPU de 16 ou 24 Go peut convenir à certaines recettes QLoRA 7B, sans garantie générale. Mesurer le pic mémoire d'un pas représentatif avant de dimensionner.
 
 ---
 
@@ -167,4 +166,5 @@ Mise en situation : ton modèle fine-tuné est excellent sur l'extraction visée
 - [[151-donnees-curation-annotation|Curation & annotation]] — données de qualité et jeux séparés
 - [[55-rl-agentique|RL agentique]] — entraîner un modèle sur des tâches d'agent
 - [[66-prefix-caching-radix-attention|Prefix caching]] — réutiliser le calcul des préfixes communs
+- [[56-optimisation-diagnostic-entrainement|Optimisation & diagnostic d'entraînement]] — diagnostiquer une adaptation avant de la complexifier
 - [[00-moc-ai-engineering|MOC AI Engineering]]

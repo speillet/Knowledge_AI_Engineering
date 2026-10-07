@@ -19,7 +19,9 @@ Quels signaux de qualité collecter en production ? <!--anki:7957626f517230716c-
 
 Qu'est-ce qu'un A/B test sur une application LLM ? <!--anki:4c3830253b43347c7138-->
 ?
-Répartir **aléatoirement** les utilisateurs entre la version **A** (contrôle) et **B** (variante : prompt, modèle, retrieval), puis comparer une **métrique principale** définie **à l'avance**, avec un test statistique. La randomisation par **utilisateur** (et non par requête) évite qu'un même utilisateur voie les deux versions.
+Un **A/B test** assigne aléatoirement des unités à un contrôle et une variante, puis compare une métrique principale définie à l'avance. La randomisation aide à isoler l'effet du changement de prompt, modèle ou retrieval.
+
+Choisir l'unité selon les interactions : utilisateur pour un historique persistant, équipe pour un travail partagé, parfois requête pour une tâche indépendante. Garder l'assignation stable et analyser au niveau approprié. Contrôler les déséquilibres d'effectifs et la télémétrie avant d'interpréter les scores : la randomisation ne corrige pas les données perdues après assignation.
 
 ---
 
@@ -52,13 +54,17 @@ Pour éviter le **peeking** : regarder le résultat tous les jours et **arrêter
 
 Qu'est-ce que l'effet de nouveauté dans un A/B test ? <!--anki:782c3c2e4b3e40457e26-->
 ?
-Les utilisateurs réagissent au **changement lui-même** (curiosité, méfiance) plutôt qu'à sa qualité ; l'effet s'estompe en quelques jours ou semaines. D'où la nécessité de faire tourner le test **assez longtemps** et de regarder l'évolution de l'écart dans le temps.
+L'**effet de nouveauté** désigne une réaction transitoire au changement, qui peut différer de l'effet durable du produit. Il peut être positif ou négatif ; sa durée n'est pas universelle.
+
+Prévoir une durée couvrant les cycles d'usage pertinents et examiner l'évolution selon le temps depuis la première exposition. Un changement quotidien du score peut aussi venir de la composition des cohortes ou de la saisonnalité. Ne pas prolonger ou arrêter opportunément l'expérience jusqu'à obtenir une courbe favorable.
 
 ---
 
 Quelles métriques produit relier aux métriques LLM ? <!--anki:6f4d4b523c2d764c7c4c-->
 ?
-Les **métriques business** que le système est censé améliorer : taux de **résolution sans humain** (support), **taux d'acceptation** des suggestions (code), **conversion**, **temps gagné**, rétention. Une métrique LLM (faithfulness) n'a de valeur que si elle **corrèle** avec l'une d'elles.
+Relier les scores techniques à la **tâche réellement accomplie** : résolution vérifiée, temps de travail net, qualité des décisions ou coût total de traitement. Une acceptation ou un clic n'est qu'un proxy si personne ne vérifie le résultat.
+
+Évaluer le lien par analyse d'erreurs et expérimentation ; une corrélation seule ne prouve pas un effet causal. Certains critères comme la sécurité ou la fidélité aux sources restent des contraintes même sans gain immédiat de conversion. Éviter d'optimiser un score isolé au détriment du service complet.
 
 ---
 
@@ -97,7 +103,7 @@ Mise en situation : un chef de produit veut arrêter un A/B test au bout de deux
 ?
 1. **Expliquer le peeking** : regarder les résultats en continu et s'arrêter dès que c'est significatif gonfle fortement les faux positifs
 2. **Rappeler le protocole** : taille d'échantillon et durée fixées **avant** le lancement, à partir de l'effet minimal à détecter
-3. **Effet de nouveauté** : les premiers jours mesurent la réaction au changement, pas la qualité
+3. **Effet de nouveauté possible** : vérifier les cycles d’usage et les cohortes ; les premiers jours ne suffisent pas toujours à estimer un effet durable
 4. **Vérifier les guardrail metrics** : latence p95, coût, taux d'erreur et de refus ne doivent pas se dégrader
 5. **Alternative si l'urgence est réelle** : utiliser un test séquentiel, conçu pour le suivi continu
 
@@ -117,6 +123,9 @@ Mise en situation : tu veux changer le modèle de ton assistant sans risquer de 
 
 ---
 
+## Sources
+- [Microsoft Research — cadrage et validité des expériences](https://www.microsoft.com/en-us/research/articles/patterns-of-trustworthy-experimentation-pre-experiment-stage/)
+
 ## Connexions
 - [[94-evals-methodologie|Méthodologie d'évaluation]] — offline vs online
 - [[112-cicd-modeles|CI/CD des modèles]] — canary, shadow, rollback
@@ -124,4 +133,5 @@ Mise en situation : tu veux changer le modèle de ton assistant sans risquer de 
 - [[93-monitoring-inference|Monitoring de l'inférence]] — signaux de qualité sans vérité terrain
 - [[114-reproductibilite-variance|Reproductibilité & variance]] — tests statistiques
 - [[144-ux-ia-human-in-the-loop|UX de l'IA]] — concevoir la collecte de feedback
+- [[99-statistiques-decisions-experimentales|Statistiques pour décider en IA]] — vérifier la validité du protocole online
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -1,11 +1,13 @@
 # Leadership technique en AI Engineering — Flashcards
 Tags: #flashcards #ai-engineering #leadership #senior #produit
-<!-- summary: ce qui fait un senior, choix des cas d'usage, ROI, échec des POC, RFC et ADR, build ou buy, go / no-go, standards d'équipe, communication avec les décideurs, veille. -->
+<!-- summary: ce qui fait un senior, choix des cas d'usage, ROI, échec des POC, RFC et ADR, build ou buy, go / no-go, standards d'équipe, mentorat, revue de conception, dette technique, communication et veille. -->
 
 
 Qu'est-ce qui distingue un AI Engineer senior d'un confirmé ? <!--anki:684c3732252364496938-->
 ?
-Moins la maîtrise d'un outil que la capacité à : **choisir le bon problème**, **cadrer le risque**, **mesurer** (evals, ROI), **arbitrer** qualité/coût/délai de façon explicite, **rendre l'équipe autonome** (standards, plateformes, revues) et **communiquer** avec le métier et la direction.
+Un senior prend en charge un **résultat de bout en bout dans l'incertitude** : cadrage, preuve de valeur, choix techniques, livraison et exploitation. Il explicite les compromis, détecte une expérience trompeuse et sait arrêter une approche insuffisante.
+
+Sa contribution se voit aussi dans l'autonomie des autres : décisions documentées, revues utiles, transmission et procédures réellement exécutables. Connaître les définitions de ce vault aide à raisonner ; démontrer ces compétences demande des réalisations, des incidents analysés et des arbitrages expliqués avec leurs limites.
 
 ---
 
@@ -103,6 +105,30 @@ Comment rester à jour sans courir après chaque nouveauté ? <!--anki:732f4a7c7
 
 ---
 
+Comment un senior développe-t-il l'autonomie d'un collègue sur un projet IA ? <!--anki:3534353366323764333364353439633739313730343038363562616362636436-->
+?
+Confier un **périmètre et un résultat vérifiable**, avec contraintes, accès et critères de réussite explicites. Faire expliquer le protocole d'évaluation et les options avant de proposer sa propre solution, puis organiser des points de revue proportionnés au risque.
+
+Sur un premier déploiement, préparer ensemble un runbook puis laisser le collègue l'exécuter dans un exercice contrôlé. Le signe de progression est sa capacité à diagnostiquer et décider sans dépendance permanente au senior. Répondre soi-même à chaque problème peut accélérer aujourd'hui tout en bloquant cette progression.
+
+---
+
+Comment conduire une revue de conception IA qui aboutit à une décision ? <!--anki:3736656232363665373136663466663661366564373835333039623061323936-->
+?
+Partir des **contraintes et preuves**, puis comparer quelques options réalistes, baseline comprise. Identifier l'hypothèse qui pourrait inverser le choix : qualité sur un segment, coût de revue humaine, quota ou délai de reprise.
+
+Transformer les désaccords testables en expériences bornées, avec responsable et critère de décision. Documenter le choix, ses limites et la condition de réexamen dans un ADR. Un consensus sur le framework ne suffit pas si personne n'a vérifié la disponibilité des données ou défini ce qui rendrait la solution inacceptable.
+
+---
+
+Comment prioriser une dette technique IA face à une nouvelle fonctionnalité ? <!--anki:6537306139656166653437613462663961346332663134316535376364653430-->
+?
+Décrire la **conséquence mesurable** de la dette : incidents récurrents, temps de migration, coût d'exploitation, erreurs non détectées ou dépendance à une personne. Comparer son coût de maintien et son risque à l'effort de correction et à la valeur de la fonctionnalité.
+
+Une dépendance non versionnée qui invalide les evals peut justifier une action immédiate ; une abstraction imparfaite sans impact peut attendre. Préférer une correction limitée et vérifiable à une refonte générale. Associer responsable, échéance et preuve d'amélioration à la décision.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ta direction veut « faire de l'IA » et te demande de lancer six projets en parallèle. Comment réponds-tu sans passer pour un frein ? <!--anki:67617e3b517835434e71-->
@@ -129,6 +155,18 @@ Mise en situation : un directeur te demande pourquoi l'assistant « se trompe en
 
 ---
 
+Mise en situation : tu es la seule personne capable de déployer et dépanner l'assistant, et chaque livraison attend ton retour. Que mets-tu en place ? <!--anki:3732376634316264343333373430393962333932396437373037376665336638-->
+?
+1. **Identifier les dépendances personnelles** : accès, commandes, décisions et connaissances implicites.
+2. **Documenter un parcours reproductible**, de l'eval au rollback, avec exemples de panne.
+3. **Automatiser les contrôles répétitifs** et attribuer les responsabilités d'exploitation.
+4. **Faire exécuter le parcours par un collègue**, puis corriger les lacunes révélées.
+5. **Mesurer l'autonomie acquise** : livraison et diagnostic réussis sans intervention indispensable.
+
+**Piège** : écrire une documentation que personne n'a jamais utilisée, puis considérer le transfert terminé.
+
+---
+
 ## Connexions
 - [[141-system-design-llm|System design LLM]] — cadrer et arbitrer
 - [[146-choix-modeles|Choix de modèle]] — décisions à documenter
@@ -139,4 +177,5 @@ Mise en situation : un directeur te demande pourquoi l'assistant « se trompe en
 - [[155-ai-act|AI Act]] — cadrage réglementaire
 - [[49-agents-de-code|Agents de code]] — utiliser et intégrer les agents de code
 - [[171-choisir-modele-ml|Choisir un modèle ML]] — justifier la complexité par la valeur métier
+- [[116-sre-incidents-capacite-ia|SRE : incidents & capacité des services IA]] — responsabilités et suivi des corrections
 - [[00-moc-ai-engineering|MOC AI Engineering]]

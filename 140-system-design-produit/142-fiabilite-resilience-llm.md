@@ -52,16 +52,17 @@ Comment gérer une sortie LLM mal formée dans une application ? <!--anki:507e47
 
 Qu'est-ce que la dégradation gracieuse d'un service LLM ? <!--anki:706e317761743a564431-->
 ?
-Continuer à rendre **un service réduit** plutôt que tomber : réponse sans RAG si l'index est indisponible (en le signalant), petit modèle si le gros sature, **désactivation** des fonctions non essentielles, **file d'attente** plutôt que refus. On définit à l'avance **quels niveaux de service** existent.
+Continuer à rendre un **service réduit mais conforme à un contrat explicite** : modèle de secours évalué, fonctions non essentielles désactivées, délai supplémentaire borné ou transfert humain. Chaque mode définit ce qu'il peut encore promettre et comment revenir à la normale.
+
+Répondre sans RAG n'est acceptable que si la tâche autorise une réponse non documentaire ; pour une procédure interne, mieux vaut souvent s'abstenir. Une file doit avoir capacité et échéance limitées. Tester aussi permissions, qualité et messages utilisateur dans chaque mode dégradé.
 
 ---
 
 Comment gérer les rate limits d'un fournisseur ? <!--anki:71434b7834454773454e-->
 ?
-- Connaître ses quotas (**requêtes/min et tokens/min**) et les **répartir** entre applications.
-- **File d'attente** avec priorités (interactif avant batch).
-- **Limiteur côté client** (token bucket) pour ne pas envoyer des requêtes vouées au 429.
-- Répartir sur **plusieurs clés, régions ou fournisseurs**, ou réserver du **débit provisionné**.
+Respecter les **quotas autorisés** de requêtes, tokens et concurrence, qui peuvent être partagés par organisation, projet, modèle ou région. Un limiteur en amont et des files bornées évitent d'envoyer une charge déjà vouée au refus.
+
+Prioriser l'interactif, tenir compte de Retry-After et borner les retries. Demander davantage de capacité ou répartir vers des déploiements autorisés et validés si nécessaire. Multiplier les clés ne crée pas forcément du quota et ne doit pas servir à contourner une limite commune. Tester la capacité du secours avant une panne.
 
 ---
 
@@ -154,6 +155,9 @@ Mise en situation : ton équipe veut « tester la résilience » avant une mise 
 
 ---
 
+## Sources
+- [Google SRE — surcharge et admission](https://sre.google/sre-book/handling-overload/)
+
 ## Connexions
 - [[141-system-design-llm|System design LLM]] — la méthode d'ensemble
 - [[81-litellm-api-layer|LiteLLM]] — retries, fallbacks, load balancing
@@ -164,4 +168,5 @@ Mise en situation : ton équipe veut « tester la résilience » avant une mise 
 - [[84-streaming-integration-applicative|Streaming & intégration]] — idempotence et tâches longues
 - [[145-cas-system-design|Cas de system design]] — des architectures types commentées
 - [[149-livraison-idempotence-concurrence|Idempotence & concurrence]] — sécuriser les retries et gérer les résultats inconnus
+- [[116-sre-incidents-capacite-ia|SRE : incidents & capacité des services IA]] — passer des mécanismes à leur exploitation
 - [[00-moc-ai-engineering|MOC AI Engineering]]

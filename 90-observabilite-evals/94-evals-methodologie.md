@@ -171,4 +171,5 @@ Mise en situation : ton eval principale affiche 99 % depuis trois mois, alors qu
 - [[49-agents-de-code|Agents de code]] — utiliser et intégrer les agents de code
 - [[53-donnees-synthetiques-distillation|Données synthétiques & distillation]] — générer des données et transférer vers un petit modèle
 - [[172-validation-metriques-ml|Validation & métriques ML]] — splits, classes rares et comparaison des prédicteurs
+- [[99-statistiques-decisions-experimentales|Statistiques pour décider en IA]] — passer d'un score à une décision justifiée
 - [[00-moc-ai-engineering|MOC AI Engineering]]

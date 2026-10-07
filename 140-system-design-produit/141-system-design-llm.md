@@ -62,7 +62,9 @@ Le **fine-tuning est un autre axe**, adapté à un comportement répétitif insu
 
 Quel est le triangle d'arbitrage central d'un système LLM ? <!--anki:772157213d79352c393c-->
 ?
-**Qualité – latence – coût.** Un modèle plus gros ou un raisonnement plus long améliorent la qualité mais dégradent latence et coût. Les leviers pour en sortir : [[82-routing-llm|routage]] par difficulté, [[123-caching-agressif|caching]], [[53-donnees-synthetiques-distillation|distillation]], parallélisation des étapes, streaming.
+**Qualité, latence et coût** doivent être mesurés ensemble sur la tâche cible. Un modèle plus gros ou un raisonnement plus long peut améliorer certains cas, mais peut aussi ajouter du délai, du coût ou des erreurs sans gain utile.
+
+Comparer des configurations complètes à contraintes explicites, avec leurs résultats par segment. [[82-routing-llm|Routage]], [[123-caching-agressif|caching]] et [[53-donnees-synthetiques-distillation|distillation]] déplacent les compromis ; ils ont eux-mêmes des coûts et des risques. Le streaming réduit parfois l'attente perçue sans réduire la durée totale.
 
 ---
 

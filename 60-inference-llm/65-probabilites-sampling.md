@@ -93,7 +93,9 @@ L'exponentielle de la **cross-entropy**, la loss minimisée à l'entraînement :
 
 Les probabilités d'un LLM sont-elles fiables (calibration) ? <!--anki:454b32677a482d2d2925-->
 ?
-Un modèle **calibré** a raison environ 80 % du temps quand il annonce 80 %. Les modèles **de base** sont plutôt bien calibrés au niveau des tokens, mais le **post-training (RLHF)** dégrade souvent cette calibration, et la confiance **verbalisée** (« je suis sûr à 90 % ») est peu fiable. On mesure donc l'exactitude réelle sur un [[92-chainforge-evals-prompts|jeu d'évaluation]].
+La **calibration dépend de l'événement et de la population évalués**. La probabilité du prochain token n'est pas directement celle qu'une réponse entière soit correcte. Une phrase fréquente mais fausse peut être très probable.
+
+Le post-training, le prompt et le domaine peuvent modifier la calibration ; la confiance verbalisée n'est pas une mesure validée par défaut. Construire un score pour une tâche précise, le confronter à des labels indépendants et vérifier ses segments. Ne pas transformer automatiquement une logprob élevée en indicateur de factualité.
 
 ---
 

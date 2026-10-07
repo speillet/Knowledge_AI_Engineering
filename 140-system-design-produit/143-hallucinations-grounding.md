@@ -54,16 +54,17 @@ Trop d'abstentions = système **inutile** ; trop peu = **réponses fausses**. On
 
 Comment détecter une hallucination après génération ? <!--anki:423a236456252a5e4e45-->
 ?
-- **Vérification contre le contexte** : découpage en affirmations + juge/NLI ([[95-llm-as-judge|LLM-as-a-judge]]).
-- **Self-consistency** : générer plusieurs réponses ; si elles **divergent**, la confiance est faible.
-- **Logprobs** : tokens à faible probabilité sur les faits clés ([[65-probabilites-sampling|calibration]]).
-- **Règles** : références, montants, dates vérifiés contre une source de vérité.
+**Vérifier les affirmations contre une source de référence** : passages récupérés, données structurées ou règles métier. Un juge ou un modèle d'inférence textuelle peut aider, mais il doit être évalué sur des annotations fiables.
+
+La divergence entre générations et les logprobs servent de signaux de triage, pas de preuves : plusieurs réponses peuvent répéter la même erreur, et une continuation probable peut être fausse. Mesurer faux positifs et faux négatifs du détecteur. En cas d'incertitude, déclencher abstention ou revue selon le risque.
 
 ---
 
 Les LLM sont-ils calibrés : leur confiance reflète-t-elle leur taux de réponses justes ? <!--anki:65443c5a7252553d7a3a-->
 ?
-Partiellement : les **logprobs** d'un modèle de base sont souvent assez bien calibrés, mais le **post-training** dégrade cette calibration, et la **confiance exprimée en mots** (« je suis sûr ») est peu fiable. On ne peut pas afficher « confiance : 95 % » sans avoir **mesuré** sur un jeu labellisé que ce score correspond à 95 % de réponses justes.
+**Pas automatiquement.** Il faut préciser l'événement mesuré : prochain token, classe prédite ou correction d'une réponse complète. Une bonne calibration sur l'un ne garantit pas celle des autres.
+
+Les logprobs et la confiance exprimée en mots sont des signaux à valider sur une tâche et une population labellisées. Entraînement, prompt et changement de domaine peuvent modifier leur relation à l'exactitude. Avant d'afficher « confiance : 95 % », mesurer courbe de fiabilité, effectifs et segments ; définir un seuil d'abstention puis le tester indépendamment.
 
 ---
 
@@ -110,6 +111,9 @@ Mise en situation : le métier exige que ton assistant réponde toujours, jamais
 
 ---
 
+## Sources
+- [Geifman & El-Yaniv — risque et couverture avec abstention](https://proceedings.neurips.cc/paper/2017/hash/4a8423d5e91fda00bb7e46540e2b0cf1-Abstract.html)
+
 ## Connexions
 - [[21-rag-fondamentaux|RAG — Fondamentaux]] — grounding et citations
 - [[96-evals-rag-agents|Evals de RAG]] — mesurer la faithfulness
@@ -121,4 +125,5 @@ Mise en situation : le métier exige que ton assistant réponde toujours, jamais
 - [[26-text-to-sql|Text-to-SQL]] — répondre aux questions chiffrées sur des tables
 - [[27-agents-recherche-deep-research|Agents de recherche]] — la recherche en plusieurs étapes, avec citations
 - [[49-agents-de-code|Agents de code]] — utiliser et intégrer les agents de code
+- [[173-calibration-incertitude-abstention|Calibration, incertitude & abstention]] — ne pas confondre confiance et véracité
 - [[00-moc-ai-engineering|MOC AI Engineering]]

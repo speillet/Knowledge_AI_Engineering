@@ -4,7 +4,7 @@ Un vault [Obsidian](https://obsidian.md) de **fiches de révision (flashcards) e
 
 Chaque fiche traite **un concept** en 8 à 34 cartes question/réponse, une quinzaine en moyenne, et se termine par des **mises en situation** : des cas concrets à diagnostiquer, concevoir ou arbitrer. Les fiches sont reliées entre elles par des liens, pour qu'on puisse passer d'un sujet à ses voisins, et elles se révisent en **répétition espacée**.
 
-**État au 6 octobre 2026** : 117 fiches et 1 663 cartes, réparties en 17 sections, dont 256 mises en situation et 113 cartes « à ne pas confondre ».
+**État au 7 octobre 2026** : 121 fiches et 1 723 cartes, réparties en 17 sections, dont 269 mises en situation et 122 cartes « à ne pas confondre ».
 
 ---
 
@@ -32,19 +32,19 @@ Knowledge_AI_Engineering/
 ├── 20-rag/                      # RAG, graphes, chunking, text-to-SQL, agents de recherche
 ├── 30-agents/                   # boucle, outils, MCP, contexte, multi-agents, plateformes, mémoire
 ├── 40-automatisation/           # workflows, LangChain, LangGraph, CrewAI, patterns, agents de code
-├── 50-fine-tuning/              # fine-tuning, alignement, distillation, distribué, RL agentique
+├── 50-fine-tuning/              # fine-tuning, alignement, distillation, distribué, RL, diagnostic
 ├── 60-inference-llm/            # KV cache, optimisations, sampling, quantization, roofline
 ├── 70-containers-infra/         # contient son propre index : 00-index.md
 ├── 80-api-layer-routing/        # gateway, routing, ingress, streaming, protocoles agentiques
-├── 90-observabilite-evals/      # traces, monitoring, evals, juges, débogage d'agents
+├── 90-observabilite-evals/      # traces, monitoring, evals, juges, débogage, statistiques
 ├── 100-securite-guardrails/     # guardrails, menaces et défenses des agents, MCP, DevSecOps
-├── 110-mlops-cicd/              # LLMOps, CI/CD, drift, variance, gouvernance des agents
+├── 110-mlops-cicd/              # LLMOps, CI/CD, drift, variance, gouvernance, SRE et incidents
 ├── 120-couts-finops/            # coûts d'inférence, FinOps, caching
 ├── 130-fondamentaux-llm/         # Transformer, tokenisation, embeddings, MoE, raisonnement
 ├── 140-system-design-produit/    # system design, fiabilité, UX, batch, idempotence, transactions
 ├── 150-donnees-conformite/       # curation, conformité, contrats, ingestion, données temporelles
 ├── 160-multimodal-edge/          # VLM, parsing de documents, voix, LLM locaux, computer use
-└── 170-ml-classique/            # choix des modèles, validation, fuites et métriques
+└── 170-ml-classique/            # modèles, validation, métriques, calibration et incertitude
 ```
 
 - Chaque **section** est un dossier numéroté par dizaine (`20-rag`, `30-agents`…).
@@ -68,6 +68,7 @@ Knowledge_AI_Engineering/
 - **Suivre le parcours de lecture** du MOC, qui va dans cet ordre : ML classique et validation, fondamentaux LLM (prérequis), prompt engineering, RAG, agents, automatisation et frameworks d'agents, fine-tuning, inférence, conteneurs, API layer, observabilité, sécurité, MLOps & CI/CD, coûts & FinOps, données & conformité, multimodal & edge, puis system design & produit, qui assemble le tout. Le MOC propose aussi un **parcours AI Engineer agentique**, qui enchaîne en 8 étapes les fiches sur les agents réparties dans plusieurs sections.
 - **Rebondir entre les concepts** : chaque fiche se termine par une section `Connexions` qui explique pourquoi les fiches liées sont liées. Ces liens sont **réciproques** : si A cite B, B cite A. Des liens apparaissent aussi dans les réponses elles-mêmes.
 - **Compléter les fondations senior** : le parcours dédié du MOC relie choix et validation des modèles, contrats et ingestion des données, puis idempotence et transactions. Le [bilan des trois priorités](docs/fondations-senior-2026-10-06.md) détaille les sept fiches ajoutées et leur validation.
+- **Mettre en pratique le niveau senior** : le [bilan de pertinence du 7 octobre](docs/pertinence-parcours-senior-2026-10-07.md) distingue socle commun et spécialisations, puis propose des ateliers avec livrables : décision expérimentale, calibration, diagnostic d’entraînement, incident et transmission. Le parcours correspondant figure dans le MOC.
 - **Voir l'ensemble** : la **vue graphe** d'Obsidian montre comment les concepts s'articulent, et le panneau **Backlinks** liste les fiches qui citent la fiche ouverte.
 
 ### 3. Réviser en répétition espacée
@@ -265,6 +266,7 @@ Automatiser des processus, soit avec des outils de workflow, soit avec des agent
 - [Données synthétiques & distillation](50-fine-tuning/53-donnees-synthetiques-distillation.md) : génération variée, filtrage, model collapse, distillation sur les sorties ou sur les logits, distillation du raisonnement, contraintes juridiques, projet de distillation, jeux d'eval synthétiques.
 - [Entraînement distribué](50-fine-tuning/54-entrainement-distribue.md) : calcul de la mémoire d'un fine-tuning 7B avec Adam, data ou model parallelism, DDP, ZeRO et FSDP, tensor et pipeline parallelism, parallélisme 3D, gradient checkpointing, accumulation de gradients, précision mixte BF16, réseau, pannes et checkpoints.
 - [RL agentique & environnements d'entraînement](50-fine-tuning/55-rl-agentique.md) : RL sur trajectoires multi-tours, RLVR ou RL agentique, environnements d'entraînement, récompense de résultat ou de processus, reward hacking des agents, SFT sur trajectoires, GRPO, curriculum de tâches, outils (verl, OpenRLHF, TRL), quand une équipe produit doit s'y lancer.
+- [Optimisation & diagnostic d'entraînement](50-fine-tuning/56-optimisation-diagnostic-entrainement.md) : perte et métrique métier, rétropropagation, learning rate, AdamW, courbes d'apprentissage, micro-lot de diagnostic, accumulation normalisée, clipping, précision mixte, modes PyTorch et masquage des labels.
 
 ### 60 — Inférence LLM
 
@@ -313,6 +315,7 @@ Automatiser des processus, soit avec des outils de workflow, soit avec des agent
 - [Évaluation des RAG & des agents](90-observabilite-evals/96-evals-rag-agents.md) : retrieval et génération, recall@k, MRR, nDCG, triade RAG, faithfulness, jeux synthétiques, résultat final ou trajectoire, environnements d'eval (τ-bench, SWE-bench), pass^k, tool calling, multi-tours, efficacité.
 - [Evals online & A/B testing](90-observabilite-evals/97-evals-online-ab-testing.md) : signaux explicites et implicites, A/B test, guardrail metrics, shadow testing, canary ou A/B, peeking, effet de nouveauté, métriques produit, boucle online-offline, confidentialité, calcul de la taille d'échantillon.
 - [Débogage & analyse d'échecs des agents](90-observabilite-evals/98-debogage-agents.md) : error analysis (open et axial coding), symptôme ou cause, catégories d'échec, taxonomie MAST, détection des boucles, reproduction par rejeu, de l'échec au cas de non-régression, signaux de production, quand ne pas accuser le modèle.
+- [Statistiques pour décider en IA](90-observabilite-evals/99-statistiques-decisions-experimentales.md) : effet utile et significativité, p-valeur, intervalle de confiance, comparaison appariée, unité indépendante, zéro échec, tests multiples, puissance, causalité, biais de sélection et sample ratio mismatch.
 
 ### 100 — Sécurité & guardrails
 
@@ -332,6 +335,7 @@ De la sécurité des LLM à celle des agents : les menaces et les incidents rée
 - [Monitoring, drift & boucle de feedback](110-mlops-cicd/113-monitoring-drift-feedback.md) : data drift et concept drift, drift d'une app LLM et d'un RAG, qualité en production, boucle de feedback, quand ré-entraîner, annotation régulière, mises à jour des modèles API, alertes sur tendance et par segment.
 - [Reproductibilité & variance](110-mlops-cicd/114-reproductibilite-variance.md) : non-déterminisme à température 0, invariance au batch, seed, appel rejouable, tests sur des sorties variables, erreur standard et intervalles de confiance, comparaison appariée, pass@k et pass^k, variance du LLM-as-judge, fine-tuning reproductible.
 - [Plateformes d'agents — Architecture & gouvernance](110-mlops-cicd/115-plateformes-agents-gouvernance.md) : plateforme interne (paved road), plan de contrôle et plan d'exécution, architecture de référence, séparation cerveau, mains et session, exécution durable, isolation multi-tenant, échange de jetons pour l'agent délégué, jetons hors du contexte, standards d'identité, moteur de politiques, human-in-the-loop, registre et cycle de vie, Top 10 OWASP agentique, rayon d'impact et kill switch, audit, SLO, evals continues, coûts, AI Act, lock-in, critères de choix.
+- [SRE : incidents & capacité des services IA](110-mlops-cicd/116-sre-incidents-capacite-ia.md) : SLI utilisateur, budgets d'erreur, burn rate, alertes multi-fenêtres, files bornées, admission, capacité de secours, propagation des délais, gestion d'incident, rollback, RTO et RPO, postmortem et reprise.
 
 ### 120 — Coûts & FinOps
 
@@ -362,7 +366,7 @@ La partie qui assemble tout le reste : concevoir, fiabiliser et piloter une appl
 - [UX de l'IA & human-in-the-loop](140-system-design-produit/144-ux-ia-human-in-the-loop.md) : copilote ou autopilote, validation humaine efficace, streaming, visibilité des agents, feedback, attentes, chat ou interface dédiée, automation bias, erreurs et refus.
 - [Cas de system design LLM](140-system-design-produit/145-cas-system-design.md) : support client, recherche documentaire, assistant de code, extraction à grande échelle, agent qui agit, chatbot grand public, assistant vocal, trame de réponse, erreurs d'entretien.
 - [Choisir un modèle](140-system-design-produit/146-choix-modeles.md) : critères, limites des leaderboards, benchmarks, fermé ou open weights, licences, coût par tâche, architecture multi-modèles, lock-in, migration, veille.
-- [Leadership technique en AI Engineering](140-system-design-produit/147-leadership-technique-ia.md) : ce qui fait un senior, choix des cas d'usage, ROI, échec des POC, RFC et ADR, build ou buy, go / no-go, standards d'équipe, communication avec les décideurs, veille.
+- [Leadership technique en AI Engineering](140-system-design-produit/147-leadership-technique-ia.md) : ce qui fait un senior, choix des cas d'usage, ROI, échec des POC, RFC et ADR, build ou buy, go / no-go, standards d'équipe, mentorat, revue de conception, dette technique, communication et veille.
 - [Pipelines batch à grande échelle](140-system-design-produit/148-pipelines-batch-llm.md) : batch ou en ligne, batch API (JSONL, `custom_id`, 24 h), batch API ou continuous batching, architecture reprenable, calculs de coût et de durée sous quota, classement des erreurs, contrôle qualité statistique, versions enregistrées avec chaque résultat, auto-hébergement hors ligne, quand ne pas utiliser de batch API.
 - [Livraison, idempotence & concurrence](140-system-design-produit/149-livraison-idempotence-concurrence.md) : garanties de livraison, limites du exactement une fois, timeout ambigu, identité des opérations, déduplication atomique, rétention, ack, ordre par entité, concurrence optimiste, isolation et fencing tokens.
 - [Transactions, outbox & sagas pour les agents](140-system-design-produit/140-010-transactions-outbox-sagas.md) : invariants métier, double écriture, outbox et inbox, périmètre transactionnel, sagas et compensation, isolation des workflows, états inconnus, checkpoints, validation humaine et tests de panne.
@@ -393,6 +397,7 @@ Choisir entre règles, modèles prédictifs et LLM ; comprendre les principales 
 
 - [ML classique : choisir et comprendre les modèles](170-ml-classique/171-choisir-modele-ml.md) : règles ou ML ou LLM, formulation de la cible, baselines, régressions, régularisation, arbres, random forest et boosting, clustering, prétraitement, données manquantes et coût de possession.
 - [ML classique : validation, fuites & métriques](170-ml-classique/172-validation-metriques-ml.md) : train-validation-test, fuite de données, validation croisée et imbriquée, groupes et temps, pipelines, précision et rappel, classes rares, ROC et PR, seuil métier, MAE et RMSE, suréchantillonnage et incertitude.
+- [Calibration, incertitude & abstention](170-ml-classique/173-calibration-incertitude-abstention.md) : discrimination et calibration, courbes de fiabilité, Brier score, calibration séparée, temperature scaling, incertitude épistémique et aléatoire, risque-couverture, prédiction conforme, prévalence et coût de la revue.
 
 <!-- catalog:end -->
 

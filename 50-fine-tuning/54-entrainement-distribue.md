@@ -157,4 +157,5 @@ Mise en situation : ton entraînement sur 32 GPU n'utilise que 20 % de leur puis
 - [[09-gpu-conteneurs|GPU en conteneur]] et [[13-apptainer-inference-hpc|Apptainer & HPC]] — l'infrastructure
 - [[114-reproductibilite-variance|Reproductibilité]] — fine-tuning reproductible
 - [[55-rl-agentique|RL agentique]] — entraîner un modèle sur des tâches d'agent
+- [[56-optimisation-diagnostic-entrainement|Optimisation & diagnostic d'entraînement]] — batch effectif et réduction des gradients
 - [[00-moc-ai-engineering|MOC AI Engineering]]

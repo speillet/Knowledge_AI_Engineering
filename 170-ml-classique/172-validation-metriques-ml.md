@@ -177,4 +177,7 @@ Mise en situation : après 200 essais, le meilleur modèle gagne un point sur va
 - [[94-evals-methodologie|Méthodologie d'évaluation]] — prolonger les principes d'indépendance des jeux
 - [[151-donnees-curation-annotation|Curation & annotation]] — qualité des labels et doublons
 - [[159-donnees-temporelles-features|Données temporelles]] — reconstruire les variables réellement disponibles lors de la prédiction
+- [[56-optimisation-diagnostic-entrainement|Optimisation & diagnostic d'entraînement]] — séparer sélection et estimation finale
+- [[173-calibration-incertitude-abstention|Calibration, incertitude & abstention]] — probabilités et seuils métier
+- [[99-statistiques-decisions-experimentales|Statistiques pour décider en IA]] — comparer les modèles sans biais de sélection
 - [[00-moc-ai-engineering|MOC AI Engineering]]

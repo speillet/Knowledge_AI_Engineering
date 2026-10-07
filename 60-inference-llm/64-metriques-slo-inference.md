@@ -179,4 +179,5 @@ Mise en situation : ton autoscaling se déclenche trop tard, et des requêtes at
 - [[84-streaming-integration-applicative|Streaming & intégration]] — SSE, annulation et tâches longues
 - [[137-long-contexte|Long contexte]] — limites et coût des longues fenêtres
 - [[146-choix-modeles|Choix de modèles]] — critères, benchmarks et migration
+- [[116-sre-incidents-capacite-ia|SRE : incidents & capacité des services IA]] — relier capacité et expérience utilisateur
 - [[00-moc-ai-engineering|MOC AI Engineering]]
