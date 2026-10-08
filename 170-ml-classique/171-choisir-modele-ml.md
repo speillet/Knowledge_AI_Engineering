@@ -172,4 +172,6 @@ Mise en situation : un modèle complexe gagne 0,3 point de qualité mais multipl
 - [[146-choix-modeles|Choix des modèles LLM]] — situer un LLM parmi les options techniques
 - [[147-leadership-technique-ia|Leadership technique]] — relier complexité et valeur métier
 - [[151-donnees-curation-annotation|Curation & annotation]] — construire les exemples supervisés
+- [[175-series-temporelles-prevision|Prévision de séries temporelles]] — construire les baselines prédictives
+- [[177-explicabilite-modeles|Explicabilité & diagnostic des modèles]] — distinguer performance et compréhension du comportement
 - [[00-moc-ai-engineering|MOC AI Engineering]]

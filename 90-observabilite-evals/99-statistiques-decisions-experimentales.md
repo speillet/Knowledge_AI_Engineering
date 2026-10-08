@@ -150,4 +150,5 @@ Mise en situation : parmi 40 prompts, un seul progresse de deux points sur le te
 - [[94-evals-methodologie|Méthodologie d'évaluation]] — passer d'un score à une décision justifiée
 - [[97-evals-online-ab-testing|A/B testing]] — vérifier la validité du protocole online
 - [[172-validation-metriques-ml|Validation ML]] — comparer les modèles sans biais de sélection
+- [[178-inference-causale-decisions|Inférence causale & décisions produit]] — distinguer estimation précise et conclusion valide
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -122,4 +122,5 @@ Mise en situation : ton corpus de 20 millions de chunks coûte cher en stockage 
 - [[162-document-parsing|Parsing de documents]] — transformer PDF et scans en texte structuré
 - [[25-chunking-contextual-retrieval|Chunking avancé]] — rendre chaque chunk trouvable
 - [[68-quantization|Quantization]] — réduire la précision pour gagner mémoire et vitesse
+- [[174-recommandation-ranking|Recommandation & learning to rank]] — représentations pour rechercher les candidats
 - [[00-moc-ai-engineering|MOC AI Engineering]]

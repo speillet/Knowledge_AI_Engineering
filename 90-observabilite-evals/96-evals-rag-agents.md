@@ -152,4 +152,5 @@ Mise en situation : tu dois évaluer un agent qui modifie des tickets et envoie 
 - [[26-text-to-sql|Text-to-SQL]] — répondre aux questions chiffrées sur des tables
 - [[49-agents-de-code|Agents de code]] — utiliser et intégrer les agents de code
 - [[55-rl-agentique|RL agentique]] — entraîner un modèle sur des tâches d'agent
+- [[174-recommandation-ranking|Recommandation & learning to rank]] — mesurer rappel et ordre des résultats
 - [[00-moc-ai-engineering|MOC AI Engineering]]

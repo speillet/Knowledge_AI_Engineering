@@ -180,4 +180,6 @@ Mise en situation : après 200 essais, le meilleur modèle gagne un point sur va
 - [[56-optimisation-diagnostic-entrainement|Optimisation & diagnostic d'entraînement]] — séparer sélection et estimation finale
 - [[173-calibration-incertitude-abstention|Calibration, incertitude & abstention]] — probabilités et seuils métier
 - [[99-statistiques-decisions-experimentales|Statistiques pour décider en IA]] — comparer les modèles sans biais de sélection
+- [[175-series-temporelles-prevision|Prévision de séries temporelles]] — comparer sans utiliser le futur
+- [[176-detection-anomalies|Détection d'anomalies]] — classes rares et coût des faux positifs
 - [[00-moc-ai-engineering|MOC AI Engineering]]

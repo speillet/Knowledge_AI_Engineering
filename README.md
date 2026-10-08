@@ -4,7 +4,7 @@ Un vault [Obsidian](https://obsidian.md) de **fiches de révision (flashcards) e
 
 Chaque fiche traite **un concept** en 8 à 34 cartes question/réponse, une quinzaine en moyenne, et se termine par des **mises en situation** : des cas concrets à diagnostiquer, concevoir ou arbitrer. Les fiches sont reliées entre elles par des liens, pour qu'on puisse passer d'un sujet à ses voisins, et elles se révisent en **répétition espacée**.
 
-**État au 7 octobre 2026** : 121 fiches et 1 723 cartes, réparties en 17 sections, dont 269 mises en situation et 122 cartes « à ne pas confondre ».
+**État au 8 octobre 2026** : 126 fiches et 1 793 cartes, réparties en 17 sections, dont 284 mises en situation et 132 cartes « à ne pas confondre ».
 
 ---
 
@@ -44,7 +44,7 @@ Knowledge_AI_Engineering/
 ├── 140-system-design-produit/    # system design, fiabilité, UX, batch, idempotence, transactions
 ├── 150-donnees-conformite/       # curation, conformité, contrats, ingestion, données temporelles
 ├── 160-multimodal-edge/          # VLM, parsing de documents, voix, LLM locaux, computer use
-└── 170-ml-classique/            # modèles, validation, métriques, calibration et incertitude
+└── 170-ml-classique/            # validation, calibration, ranking, prévision, anomalies, explicabilité, causalité
 ```
 
 - Chaque **section** est un dossier numéroté par dizaine (`20-rag`, `30-agents`…).
@@ -69,6 +69,7 @@ Knowledge_AI_Engineering/
 - **Rebondir entre les concepts** : chaque fiche se termine par une section `Connexions` qui explique pourquoi les fiches liées sont liées. Ces liens sont **réciproques** : si A cite B, B cite A. Des liens apparaissent aussi dans les réponses elles-mêmes.
 - **Compléter les fondations senior** : le parcours dédié du MOC relie choix et validation des modèles, contrats et ingestion des données, puis idempotence et transactions. Le [bilan des trois priorités](docs/fondations-senior-2026-10-06.md) détaille les sept fiches ajoutées et leur validation.
 - **Mettre en pratique le niveau senior** : le [bilan de pertinence du 7 octobre](docs/pertinence-parcours-senior-2026-10-07.md) distingue socle commun et spécialisations, puis propose des ateliers avec livrables : décision expérimentale, calibration, diagnostic d’entraînement, incident et transmission. Le parcours correspondant figure dans le MOC.
+- **Élargir les compétences prédictives** : le [bilan du 8 octobre](docs/nouvelles-competences-ia-2026-10-08.md) présente cinq nouvelles fiches sur la recommandation, la prévision temporelle, les anomalies, l’explicabilité et la causalité, avec des exercices ciblés.
 - **Voir l'ensemble** : la **vue graphe** d'Obsidian montre comment les concepts s'articulent, et le panneau **Backlinks** liste les fiches qui citent la fiche ouverte.
 
 ### 3. Réviser en répétition espacée
@@ -393,11 +394,16 @@ La partie qui assemble tout le reste : concevoir, fiabiliser et piloter une appl
 
 ### 170 — ML classique & validation
 
-Choisir entre règles, modèles prédictifs et LLM ; comprendre les principales familles et les comparer sans fuite de données.
+Choisir et valider les modèles prédictifs, calibrer leurs sorties, recommander, prévoir et détecter les anomalies ; distinguer explication du modèle et effet causal d’une action.
 
 - [ML classique : choisir et comprendre les modèles](170-ml-classique/171-choisir-modele-ml.md) : règles ou ML ou LLM, formulation de la cible, baselines, régressions, régularisation, arbres, random forest et boosting, clustering, prétraitement, données manquantes et coût de possession.
 - [ML classique : validation, fuites & métriques](170-ml-classique/172-validation-metriques-ml.md) : train-validation-test, fuite de données, validation croisée et imbriquée, groupes et temps, pipelines, précision et rappel, classes rares, ROC et PR, seuil métier, MAE et RMSE, suréchantillonnage et incertitude.
 - [Calibration, incertitude & abstention](170-ml-classique/173-calibration-incertitude-abstention.md) : discrimination et calibration, courbes de fiabilité, Brier score, calibration séparée, temperature scaling, incertitude épistémique et aléatoire, risque-couverture, prédiction conforme, prévalence et coût de la revue.
+- [Recommandation & learning to rank](170-ml-classique/174-recommandation-ranking.md) : objectif produit, génération de candidats et classement, filtrage collaboratif ou contenu, feedback implicite, modèles à deux tours, objectifs de ranking, négatifs, biais d'exposition, cold start, nDCG et diversité.
+- [Prévision de séries temporelles](170-ml-classique/175-series-temporelles-prevision.md) : horizon et cadence, baseline saisonnière, ETS ou ARIMA ou ML, backtesting à origines glissantes, variables futures, prévisions directes ou récursives, lags, MAPE et MASE, quantiles, intervalles et cohérence hiérarchique.
+- [Détection d'anomalies](170-ml-classique/176-detection-anomalies.md) : rareté et erreur métier, outlier ou nouveauté, scores non probabilistes, baseline contextuelle, Isolation Forest, LOF, autoencodeurs, capacité de revue, prévalence, évaluation par incident, labels manquants et dérive.
+- [Explicabilité & diagnostic des modèles](170-ml-classique/177-explicabilite-modeles.md) : explication locale ou globale, importance par permutation, variables corrélées, contributions SHAP, population de référence, log-odds, PDP et ICE, contrefactuels actionnables, justifications générées et fidélité de l'explication.
+- [Inférence causale & décisions produit](170-ml-classique/178-inference-causale-decisions.md) : prédiction ou intervention, ATE et CATE, graphe causal, confusion et collision, identification ou estimation, hypothèses, positivité, score de propension, différences de différences, uplift et analyses de sensibilité.
 
 <!-- catalog:end -->
 

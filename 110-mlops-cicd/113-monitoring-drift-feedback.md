@@ -131,4 +131,5 @@ Mise en situation : tu veux transformer les échecs de production en améliorati
 - [[157-contrats-qualite-donnees|Qualité opérationnelle]] — distinguer incident de données et dérive réelle
 - [[159-donnees-temporelles-features|Données temporelles]] — interpréter les retards et labels incomplets
 - [[173-calibration-incertitude-abstention|Calibration, incertitude & abstention]] — surveiller la validité des probabilités
+- [[176-detection-anomalies|Détection d'anomalies]] — distinguer incident et évolution de la référence
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -65,6 +65,6 @@
   },
   "170-ml-classique": {
     "title": "ML classique & validation",
-    "intro": "Choisir entre règles, modèles prédictifs et LLM ; comprendre les principales familles et les comparer sans fuite de données."
+    "intro": "Choisir et valider les modèles prédictifs, calibrer leurs sorties, recommander, prévoir et détecter les anomalies ; distinguer explication du modèle et effet causal d’une action."
   }
 }

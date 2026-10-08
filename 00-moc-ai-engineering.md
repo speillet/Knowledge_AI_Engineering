@@ -57,6 +57,16 @@ Après les fondations, travailler ces sujets sur un même projet et produire une
 
 Le [bilan de pertinence et les ateliers](docs/pertinence-parcours-senior-2026-10-07.md) précisent priorités, livrables et critères de réussite. Les cartes préparent le raisonnement ; la maîtrise se démontre aussi en construisant, mesurant et expliquant les limites d'un système.
 
+### Parcours prédire, recommander et décider
+Après [[171-choisir-modele-ml|le choix des modèles]], [[172-validation-metriques-ml|la validation]] et [[173-calibration-incertitude-abstention|la calibration]], choisir le sujet selon le problème :
+- [[174-recommandation-ranking|Recommandation & ranking]] — proposer et ordonner des éléments, avec biais d'exposition et cold start
+- [[175-series-temporelles-prevision|Prévision temporelle]] — prévoir aux horizons utiles avec les informations réellement disponibles
+- [[176-detection-anomalies|Détection d'anomalies]] — transformer un score atypique en alerte exploitable
+- [[177-explicabilite-modeles|Explicabilité]] — diagnostiquer une prédiction et vérifier ce que son explication signifie
+- [[178-inference-causale-decisions|Inférence causale]] — estimer ce qu'une action change, avec hypothèses et limites
+
+Le [bilan des cinq nouveaux sujets](docs/nouvelles-competences-ia-2026-10-08.md) précise leurs apports et un exercice pour chacun. Ces branches complètent le parcours LLM et agents ; elles se travaillent selon les responsabilités du poste visé.
+
 <!-- catalog:begin -->
 
 ## 10 — Prompt engineering
@@ -230,6 +240,11 @@ Le [bilan de pertinence et les ateliers](docs/pertinence-parcours-senior-2026-10
 - [[171-choisir-modele-ml|ML classique : choisir et comprendre les modèles]]
 - [[172-validation-metriques-ml|ML classique : validation, fuites & métriques]]
 - [[173-calibration-incertitude-abstention|Calibration, incertitude & abstention]]
+- [[174-recommandation-ranking|Recommandation & learning to rank]]
+- [[175-series-temporelles-prevision|Prévision de séries temporelles]]
+- [[176-detection-anomalies|Détection d'anomalies]]
+- [[177-explicabilite-modeles|Explicabilité & diagnostic des modèles]]
+- [[178-inference-causale-decisions|Inférence causale & décisions produit]]
 
 <!-- catalog:end -->
 

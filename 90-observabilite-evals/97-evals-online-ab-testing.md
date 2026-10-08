@@ -134,4 +134,6 @@ Mise en situation : tu veux changer le modèle de ton assistant sans risquer de 
 - [[114-reproductibilite-variance|Reproductibilité & variance]] — tests statistiques
 - [[144-ux-ia-human-in-the-loop|UX de l'IA]] — concevoir la collecte de feedback
 - [[99-statistiques-decisions-experimentales|Statistiques pour décider en IA]] — vérifier la validité du protocole online
+- [[174-recommandation-ranking|Recommandation & learning to rank]] — vérifier la valeur de la liste exposée
+- [[178-inference-causale-decisions|Inférence causale & décisions produit]] — concevoir une intervention randomisée
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -125,4 +125,5 @@ Mise en situation : pour éviter tout risque, la direction demande de brider for
 - [[94-evals-methodologie|Méthodologie d'évaluation]] — mesurer biais et refus
 - [[101-securite-llm-guardrails|Sécurité LLM & guardrails]] — contenu nuisible
 - [[151-donnees-curation-annotation|Curation & annotation]] — documenter les données
+- [[177-explicabilite-modeles|Explicabilité & diagnostic des modèles]] — analyser les effets et les limites d'une explication
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -135,4 +135,5 @@ Mise en situation : tu disposes de 40 heures d'expert métier pour annoter. Comm
 - [[171-choisir-modele-ml|ML classique]] — définir une cible supervisée et ses variables
 - [[172-validation-metriques-ml|Validation ML]] — éviter les fuites et choisir le découpage des données
 - [[157-contrats-qualite-donnees|Contrats & qualité des données]] — valider schéma, sens métier et couverture des lots
+- [[176-detection-anomalies|Détection d'anomalies]] — organiser la confirmation des incidents
 - [[00-moc-ai-engineering|MOC AI Engineering]]
