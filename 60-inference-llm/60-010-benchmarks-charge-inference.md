@@ -162,4 +162,5 @@ Mise en situation : une optimisation gagne 4 % de débit sur un seul essai. La d
 - [[64-metriques-slo-inference|Métriques & SLO]] — définir les résultats utiles avant de mesurer
 - [[93-monitoring-inference|Monitoring de l’inférence]] — comparer métriques client et moteur
 - [[99-statistiques-decisions-experimentales|Statistiques expérimentales]] — incertitude, appariement et décisions
+- [[60-011-capacite-ordonnancement-inference|Capacité & ordonnancement]] — relier mémoire, budgets et débit utile sous charge
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -119,4 +119,5 @@ Mise en situation : pour un service interne à faible trafic sur un seul GPU, on
 - [[62-optimisations-inference|Optimisations d'inférence]] — parallélisme en serving
 - [[12-kubernetes-gpu-inference|Kubernetes GPU & inférence]] — déployer sur plusieurs GPU
 - [[121-couts-inference|Coûts d'inférence]] — mémoire vs calcul
+- [[60-011-capacite-ordonnancement-inference|Capacité & ordonnancement]] — relier mémoire, budgets et débit utile sous charge
 - [[00-moc-ai-engineering|MOC AI Engineering]]

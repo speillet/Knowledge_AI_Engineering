@@ -5,9 +5,9 @@ Tags: #flashcards #ai-engineering #inference #kv-cache #llm
 
 Qu'est-ce que le KV cache ? <!--anki:4b502378625b2b7e6f5e-->
 ?
-Le **stockage en VRAM des clés (K) et valeurs (V) d'attention** déjà calculées pour les tokens précédents. À chaque nouveau token, le modèle n'a qu'à calculer K et V **pour ce token** et à relire le reste.
+Le **KV cache** conserve les clés et valeurs des positions déjà traitées, à chaque couche d'attention. Au decode, on calcule les nouvelles K/V et on consulte les anciennes sans refaire tout le passage avant sur le préfixe.
 
-Sans lui, chaque token généré recalculerait l'attention sur toute la séquence : le coût de génération deviendrait **quadratique**. Le prix à payer : une mémoire qui grandit avec le contexte et le nombre de requêtes.
+Il échange du calcul contre une mémoire croissante. Pour une attention dense, la lecture du passé reste proportionnelle à la longueur du contexte à chaque étape ; le coût cumulé de génération peut donc encore croître quadratiquement. Dire que le cache « supprime tout coût quadratique » confond recalcul évité et attention encore nécessaire.
 
 ---
 
@@ -25,9 +25,9 @@ Elle croît **linéairement** avec : longueur du contexte × nombre de couches �
 ```text
 octets par token = 2 (K et V) × couches × têtes_KV × dim_tête × octets
 
-Llama 3.1 8B  : 2 × 32 × 8 × 128 × 2 octets ≈ 128 Ko / token
+Llama 3.1 8B  : 2 × 32 × 8 × 128 × 2 octets ≈ 128 Kio / token
                 → 8 000 tokens de contexte ≈ 1 Go pour UNE requête
-70B (GQA)     : 2 × 80 × 8 × 128 × 2 octets ≈ 320 Ko / token
+70B (GQA)     : 2 × 80 × 8 × 128 × 2 octets ≈ 320 Kio / token
                 → 8 000 tokens ≈ 2,5 Go par requête
 ```
 D'où l'importance de **GQA** (peu de têtes KV) et de la [[68-quantization|quantization du cache]] : ce sont eux qui déterminent la concurrence tenue par GPU.
@@ -70,11 +70,11 @@ Condition : le préfixe doit être **identique au token près**, donc placé en 
 
 Peut-on quantizer le KV cache ? <!--anki:765860436e5b7274564e-->
 ?
-**Oui**, typiquement en **FP8** : le cache occupe **deux fois moins** de VRAM, donc on sert environ deux fois plus de requêtes ou des contextes deux fois plus longs.
+Un cache **FP8** utilise environ deux fois moins d'octets pour les valeurs qu'un cache BF16, hors échelles et métadonnées. Cela peut permettre davantage de tokens résidents, sous réserve du support matériel et du moteur.
 ```bash
 vllm serve mon-modele --kv-cache-dtype fp8
 ```
-Contrepartie : une légère perte de précision, à mesurer sur ses evals, surtout pour les contextes longs ([[68-quantization|quantization]]).
+Vérifier les formats et facteurs d'échelle requis pour le modèle et la version. Mesurer la qualité, notamment à long contexte, puis le goodput sous charge. Moitié moins d'octets ne garantit ni qualité inchangée, ni débit doublé : kernels, bande passante et limites du scheduler comptent aussi.
 
 ---
 
@@ -101,10 +101,10 @@ VRAM utilisable (gpu_memory_utilization 0,9)   ≈ 72 Go
 poids 8B en BF16                              ≈ 16 Go
 activations, graphes CUDA                      ≈  3 Go
 reste pour le KV cache                         ≈ 53 Go
-KV par token (Llama 3.1 8B)                    ≈ 128 Ko → 8 000 tokens ≈ 1 Go
+KV par token (Llama 3.1 8B)                    ≈ 128 Kio → 8 000 tokens ≈ 1 Go
 → environ 50 requêtes simultanées à contexte plein
 ```
-Au-delà, les requêtes **attendent en file** ou sont **préemptées** (recalcul ou swap), et la latence p99 explose. En FP8, le KV cache double la concurrence ([[64-metriques-slo-inference|concurrence]]).
+Au-delà, les requêtes **attendent en file** ou sont **préemptées** (recalcul ou swap), et la latence p99 explose. En FP8, le KV cache peut augmenter la capacité mémoire ([[64-metriques-slo-inference|concurrence]]).
 
 Ce sont des capacités mémoire approximatives, avec Go décimaux et un cache d'environ 128 Kio par token. Réserver aussi les tokens qui seront générés et les marges du moteur. **Deux fois moins d'octets par K/V ne garantit pas deux fois plus de requêtes dans le SLO** : vérifier bande passante et latence en charge.
 
@@ -118,10 +118,10 @@ poids 70B en FP8                                  ≈  70 Go
 activations, graphes CUDA                         ≈   6 Go
 reste pour le KV cache                            ≈  68 Go
 KV par token (Llama 3.1 70B : 80 couches, 8 têtes KV de 128, BF16)
-  2 × 80 × 8 × 128 × 2 octets                     ≈ 320 Ko → 8 000 tokens ≈ 2,6 Go
+  2 × 80 × 8 × 128 × 2 octets                     ≈ 320 Kio → 8 000 tokens ≈ 2,6 Go
 → environ 26 requêtes simultanées à contexte plein
 ```
-Le 70B coûte 2,5 fois plus de KV par token que le 8B (320 Ko contre 128 Ko) : sa concurrence chute vite. Un KV cache en FP8 la double ([[68-quantization|quantization]]).
+Le 70B coûte 2,5 fois plus de KV par token que le 8B (320 Kio contre 128 Kio) : sa concurrence chute vite. Un KV cache en FP8 réduit l’empreinte des valeurs ([[68-quantization|quantization]]).
 
 L'estimation suppose que les poids et le cache se répartissent correctement entre GPU ; tenir au total ne garantit pas de tenir sur chaque carte. Inclure les sorties futures et les allocations du moteur. Le FP8 peut approximativement doubler la capacité mémoire du cache, mais pas nécessairement le débit utile sous contrainte de latence.
 
@@ -151,7 +151,7 @@ Mise en situation : ton service vLLM tient 60 requêtes simultanées avec des pr
 
 Mise en situation : ton équipe veut activer la quantization FP8 du KV cache pour doubler la concurrence. Comment valides-tu la décision ? <!--anki:677257392a29685b5b40-->
 ?
-1. **Comprendre le gain** : le cache divisé par deux, donc environ deux fois plus de requêtes simultanées à VRAM égale
+1. **Comprendre le gain** : le valeurs du cache environ deux fois plus petites ; vérifier les surcoûts et le SLO avant de promettre davantage de requêtes
 2. **Mesurer la perte** : comparer les réponses avec et sans, sur tes propres evals, en portant attention aux contextes longs ([[68-quantization|validation]])
 3. **Tester en charge** : débit, TPOT et préemptions à la concurrence cible ([[64-metriques-slo-inference|SLO]])
 4. **Déployer progressivement** : canary, avec suivi de la qualité en production
@@ -160,6 +160,11 @@ Mise en situation : ton équipe veut activer la quantization FP8 du KV cache pou
 **Piège** : activer la quantization du cache et celle des poids en même temps, sans pouvoir attribuer la dégradation.
 
 ---
+
+## Sources
+
+- [PagedAttention — mémoire et attention](https://arxiv.org/abs/2309.06180)
+- [vLLM — cache KV quantifié](https://docs.vllm.ai/en/latest/features/quantization/quantized_kvcache/)
 
 ## Connexions
 - [[62-optimisations-inference|Optimisations d'inférence]] — prefill/decode, batching
@@ -177,4 +182,5 @@ Mise en situation : ton équipe veut activer la quantization FP8 du KV cache pou
 - [[164-llm-local-edge|LLM locaux & edge]] — faire tourner un modèle en local
 - [[67-speculative-decoding|Speculative decoding]] — générer plusieurs tokens par passage
 - [[84-streaming-integration-applicative|Streaming & intégration]] — SSE, annulation et tâches longues
+- [[60-011-capacite-ordonnancement-inference|Capacité & ordonnancement]] — relier mémoire, budgets et débit utile sous charge
 - [[00-moc-ai-engineering|MOC AI Engineering]]

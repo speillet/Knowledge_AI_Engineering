@@ -1,7 +1,7 @@
 # Prefix caching & RadixAttention — Flashcards
 Tags: #flashcards #ai-engineering #inference #kv-cache #caching #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: prefix caching de vLLM, arbre radix de SGLang, éviction, ordonnancement et routage cache-aware, offloading du KV cache (LMCache), limites, canal auxiliaire temporel, métriques. -->
+<!-- summary: prefix caching de vLLM, arbre radix de SGLang, éviction, ordonnancement et routage cache-aware, offloading du KV cache (LMCache), limites, canal auxiliaire temporel, métriques par requête et token, gain de TTFT réel, affinité et surcharge. -->
 
 
 Qu'est-ce que le prefix caching côté serveur ? <!--anki:703830706b2926403428-->
@@ -83,12 +83,29 @@ Une chute brutale du taux de hit signale souvent un préfixe devenu instable ([[
 
 Calcul : quel gain de TTFT quand 9 000 des 10 000 tokens d'un prompt sont déjà en cache ? <!--anki:6365333934613162646331393439376661353639326434613561303631636664-->
 ?
-Sur un 8B, le prefill coûte ≈ 2 × N FLOP par token ([[69-roofline-prefill-decode|roofline]]) :
+Supposons un prefill de 300 ms sans cache, ramené à 30 ms pour le travail non caché, et **200 ms fixes** d'attente et de transport :
 ```text
-sans cache : 10 000 tokens à calculer → ≈ 0,3 s de prefill
-avec cache :  1 000 tokens à calculer → ≈ 0,03 s, plus la lecture du cache
+TTFT sans cache = 200 + 300 = 500 ms
+TTFT avec cache = 200 + 30  = 230 ms, avant surcoûts
+accélération = 500 / 230 ≈ 2,17, et non 10
 ```
-Le TTFT est divisé par près de 10, et le GPU libère autant de capacité de prefill pour les autres requêtes. D'où l'intérêt d'un préfixe **stable**, et d'un routage qui envoie la requête au réplica qui a déjà le cache.
+Les tokens nouveaux consultent encore les K/V du préfixe ; chargement et recherche du cache ajoutent éventuellement du temps. Le facteur dix sur le prefill simplifié ne se transpose pas à la latence complète ni au decode.
+
+---
+
+Calcul : pourquoi distinguer cache hit par requête et par token ? <!--anki:3364316439313634633036333430353638346561626463623734633461366439-->
+?
+Neuf prompts de 100 tokens sont entièrement réutilisables, mais un prompt de 9 100 tokens ne l'est pas. Le taux de requêtes avec hit atteint **90 %**, tandis que la part de tokens réutilisables vaut seulement `900 / 10 000 = 9 %`.
+
+Définir l'unité du compteur : requête avec hit partiel, bloc ou token ; vérifier celle du moteur. Calculer les ratios à partir des sommes, pas de la moyenne des ratios des réplicas. Même le taux par token ne mesure pas directement les millisecondes économisées : longueur, file et transferts interviennent.
+
+---
+
+Quand faut-il renoncer à l’affinité de cache lors du routage ? <!--anki:3661383866353637343861373430323761343465633631363938343461373764-->
+?
+Quand le temps économisé par le préfixe local devient inférieur à l'attente supplémentaire du réplica chaud. Comparer **délai prédit de file + prefill restant + transferts** aux alternatives, puis vérifier la prédiction en charge.
+
+Une politique purement fondée sur le hit rate peut concentrer le trafic sur quelques instances et dégrader le p99. Prévoir un seuil d'écart de charge, l'équité entre clients et les frontières de confidentialité. Le cache améliore surtout le travail d'entrée ; il ne rend pas gratuits la lecture du contexte en decode ni les tokens de sortie.
 
 ---
 
@@ -132,6 +149,9 @@ Mise en situation : ton service multi-clients partage un même modèle, et un cl
 
 ## Sources
 
+- [vLLM — automatic prefix caching et limites](https://docs.vllm.ai/en/latest/features/automatic_prefix_caching/)
+
+
 - [vLLM — Automatic Prefix Caching](https://docs.vllm.ai/en/latest/features/automatic_prefix_caching/)
 - [SGLang — documentation du serveur et de ses optimisations](https://docs.sglang.io/)
 
@@ -145,4 +165,5 @@ Mise en situation : ton service multi-clients partage un même modèle, et un cl
 - [[137-long-contexte|Long contexte]] — limites et coût des longues fenêtres
 - [[51-fine-tuning-adaptation|Fine-tuning]] — adapter un modèle, LoRA et QLoRA
 - [[69-roofline-prefill-decode|Roofline & désagrégation]] — ce qui limite chaque phase de l'inférence
+- [[60-011-capacite-ordonnancement-inference|Capacité & ordonnancement]] — relier mémoire, budgets et débit utile sous charge
 - [[00-moc-ai-engineering|MOC AI Engineering]]
