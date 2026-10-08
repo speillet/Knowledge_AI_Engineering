@@ -67,6 +67,16 @@ Après [[171-choisir-modele-ml|le choix des modèles]], [[172-validation-metriqu
 
 Le [bilan des cinq nouveaux sujets](docs/nouvelles-competences-ia-2026-10-08.md) précise leurs apports et un exercice pour chacun. Ces branches complètent le parcours LLM et agents ; elles se travaillent selon les responsabilités du poste visé.
 
+### Parcours mesurer et optimiser l’inférence LLM
+
+1. **Définir les critères** avec [[64-metriques-slo-inference|Métriques & SLO]] puis [[93-monitoring-inference|Monitoring]] : expérience visible, conformité conjointe, erreurs et histogrammes.
+2. **Mesurer la capacité** avec [[60-010-benchmarks-charge-inference|Benchmarks de charge]] : arrivées, caches, saturation et incertitude.
+3. **Dimensionner** avec [[61-kv-cache-attention|KV cache]] et [[60-011-capacite-ordonnancement-inference|Capacité & ordonnancement]] : mémoire, budgets, équité et réserve.
+4. **Choisir les leviers** avec [[60-012-demarche-optimisation-inference|Démarche d’optimisation]], [[62-optimisations-inference|Optimisations]], [[67-speculative-decoding|Spéculation]] et [[68-quantization|Quantification]].
+5. **Valider la décision** avec [[121-couts-inference|Coûts]], [[112-cicd-modeles|CI/CD]] et [[116-sre-incidents-capacite-ia|SRE]] : qualité, coût par réussite, canary et incidents.
+
+L’[audit d’inférence du 8 octobre](docs/audit-inference-llm-2026-10-08.md) cartographie les notions couvertes et propose quatre ateliers avec livrables. Les gains se démontrent sur une charge représentative ; les calculs des cartes restent des exemples pédagogiques.
+
 <!-- catalog:begin -->
 
 ## 10 — Prompt engineering

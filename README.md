@@ -71,6 +71,7 @@ Knowledge_AI_Engineering/
 - **Mettre en pratique le niveau senior** : le [bilan de pertinence du 7 octobre](docs/pertinence-parcours-senior-2026-10-07.md) distingue socle commun et spécialisations, puis propose des ateliers avec livrables : décision expérimentale, calibration, diagnostic d’entraînement, incident et transmission. Le parcours correspondant figure dans le MOC.
 - **Élargir les compétences prédictives** : le [bilan du 8 octobre](docs/nouvelles-competences-ia-2026-10-08.md) présente cinq nouvelles fiches sur la recommandation, la prévision temporelle, les anomalies, l’explicabilité et la causalité, avec des exercices ciblés.
 - **Voir l'ensemble** : la **vue graphe** d'Obsidian montre comment les concepts s'articulent, et le panneau **Backlinks** liste les fiches qui citent la fiche ouverte.
+- **Maîtriser les performances d’inférence** : l’[audit du 8 octobre](docs/audit-inference-llm-2026-10-08.md) relie métriques, benchmarks, capacité, optimisations et coût par tâche utile, avec une matrice de couverture et quatre ateliers.
 
 ### 3. Réviser en répétition espacée
 
@@ -270,6 +271,8 @@ Automatiser des processus, soit avec des outils de workflow, soit avec des agent
 - [Optimisation & diagnostic d'entraînement](50-fine-tuning/56-optimisation-diagnostic-entrainement.md) : perte et métrique métier, rétropropagation, learning rate, AdamW, courbes d'apprentissage, micro-lot de diagnostic, accumulation normalisée, clipping, précision mixte, modes PyTorch et masquage des labels.
 
 ### 60 — Inférence LLM
+
+Comprendre les mécanismes du serving, mesurer qualité et SLO, tester la capacité sous charge et optimiser le débit utile, la mémoire et le coût.
 
 - [KV cache & attention](60-inference-llm/61-kv-cache-attention.md) : rôle et taille du cache, KV cache, prefix caching et prompt caching, calcul de la concurrence sur un H100, PagedAttention et continuous batching, KV cache en FP8, coût des contextes longs.
 - [Optimisations d'inférence](60-inference-llm/62-optimisations-inference.md) : prefill et decode, continuous batching, quantization (AWQ, GPTQ, FP8), FlashAttention, parallélisme tensor et pipeline, chunked prefill, désagrégation prefill/decode.

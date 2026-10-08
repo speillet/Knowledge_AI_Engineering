@@ -21,7 +21,7 @@
   },
   "60-inference-llm": {
     "title": "Inférence LLM",
-    "intro": ""
+    "intro": "Comprendre les mécanismes du serving, mesurer qualité et SLO, tester la capacité sous charge et optimiser le débit utile, la mémoire et le coût."
   },
   "70-containers-infra": {
     "title": "Conteneurs & Infra",
