@@ -129,6 +129,7 @@ Le [bilan des cinq nouveaux sujets](docs/nouvelles-competences-ia-2026-10-08.md)
 - [[67-speculative-decoding|Speculative decoding]]
 - [[68-quantization|Quantization]]
 - [[69-roofline-prefill-decode|Roofline, prefill/decode & désagrégation]]
+- [[60-010-benchmarks-charge-inference|Benchmarks de charge pour l’inférence LLM]]
 
 ## 70 — Conteneurs & Infra
 

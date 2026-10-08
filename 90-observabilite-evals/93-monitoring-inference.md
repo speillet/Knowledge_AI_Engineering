@@ -1,7 +1,7 @@
 # Monitoring de l'inférence & de l'usage — Flashcards
 Tags: #flashcards #ai-engineering #observability #monitoring #inference #llm
-Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: monitoring ou observabilité, couches à monitorer, métriques vLLM et GPU (DCGM), usage par équipe, finish_reason, validations de chaque réponse, signaux de qualité sans vérité terrain, erreurs et disponibilité, traces OpenTelemetry GenAI, dashboard, alertes, contrôles avant mise en production, détection de régression, journalisation des prompts. -->
+Vérifié le : 8 octobre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+<!-- summary: monitoring ou observabilité, couches à monitorer, métriques vLLM et GPU (DCGM), usage par équipe, finish_reason, validations de chaque réponse, signaux de qualité sans vérité terrain, erreurs et disponibilité, traces OpenTelemetry GenAI, dashboard, alertes, contrôles avant mise en production, détection de régression, journalisation des prompts, agrégation des histogrammes, buckets SLO, périmètres de mesure, débit global et segmentation. -->
 
 
 Quelles couches faut-il monitorer pour un service d'inférence ? <!--anki:4f41512c3177716b6679-->
@@ -21,7 +21,7 @@ Quelles métriques clés expose vLLM ? <!--anki:715b2636234f51262b58-->
 Au format Prometheus, sur `/metrics` :
 - **Charge** : `vllm:num_requests_running`, `vllm:num_requests_waiting`
 - **Mémoire** : `vllm:kv_cache_usage_perc`, `vllm:num_preemptions_total`
-- **Latence** (histogrammes) : `vllm:time_to_first_token_seconds`, `vllm:inter_token_latency_seconds`, `vllm:e2e_request_latency_seconds`, `vllm:request_queue_time_seconds`
+- **Latence** (histogrammes) : `vllm:time_to_first_token_seconds`, `vllm:inter_token_latency_seconds`, `vllm:request_time_per_output_token_seconds`, `vllm:e2e_request_latency_seconds`, `vllm:request_queue_time_seconds`
 - **Volume** : `vllm:prompt_tokens_total`, `vllm:generation_tokens_total`, `vllm:request_success_total` (label `finished_reason`)
 
 Les noms évoluent d'une version à l'autre : vérifier sur `/metrics`. Voir [[64-metriques-slo-inference|métriques & SLO]].
@@ -43,10 +43,12 @@ sum(rate(vllm:request_success_total{finished_reason="length"}[15m]))
 
 Quelles métriques GPU surveiller pour un service d'inférence ? <!--anki:672e573d287b78522835-->
 ?
-Avec le **DCGM exporter** de NVIDIA :
-- `DCGM_FI_PROF_SM_ACTIVE` et `DCGM_FI_PROF_DRAM_ACTIVE` : charge réelle du calcul et de la **bande passante mémoire** (le goulot du decode)
-- `DCGM_FI_DEV_POWER_USAGE`, `DCGM_FI_DEV_GPU_TEMP` : puissance, température, throttling
-- `DCGM_FI_DEV_XID_ERRORS` : erreurs matérielles ou driver
+Avec **DCGM**, suivre plusieurs familles :
+- **Activité** des SM et de la DRAM : `DCGM_FI_PROF_SM_ACTIVE`, `DCGM_FI_PROF_DRAM_ACTIVE`.
+- **Transferts** PCIe/NVLink, à rapprocher des collectives multi-GPU.
+- **Puissance et santé** : `DCGM_FI_DEV_POWER_USAGE`, température, fréquences, throttling et erreurs XID.
+
+Une fraction de cycles actifs ne donne directement ni FLOP/s utiles ni Go/s transférés. Corréler ces signaux au débit, aux durées de kernels et aux files avant de conclure au goulot. Les compteurs disponibles dépendent du GPU, des droits et de la configuration ; certains profils multiplexent les mesures.
 
 ---
 
@@ -58,14 +60,9 @@ Pourquoi l'utilisation GPU et la VRAM utilisée sont-elles des métriques trompe
 
 Quelles métriques d'usage du modèle faut-il suivre ? <!--anki:73494d5d7848655a2e6a-->
 ?
-Par **équipe, application, clé et modèle** :
-- **Requêtes** et **tokens d'entrée, de sortie et lus en cache**
-- **Coût** et sa tendance ([[122-finops-llm|FinOps]])
-- **Distribution des longueurs** de prompt et de réponse (p50, p95), qui dimensionne le KV cache
-- **Concurrence de pointe** et répartition horaire
-- **Top consommateurs** et usages inattendus
+Suivre requêtes, tokens d'entrée/sortie/cache, coûts, longueurs et concurrence par **modèle, route et groupe d'usage borné**. La gateway permet l'attribution à l'appelant ; les traces ou un stockage analytique portent le détail par utilisateur.
 
-On les collecte à la **gateway**, qui voit toutes les requêtes et connaît l'appelant.
+Ne pas créer une série Prometheus pour chaque clé API, requête ou conversation. Les labels multiplient la cardinalité et peuvent exposer des identifiants sensibles. Les totaux facturés peuvent différer des tokens visibles : conserver leur provenance et traiter explicitement raisonnement, cache, retries et générations interrompues.
 
 ---
 
@@ -192,6 +189,54 @@ Pour un système LLM, le monitoring détecte une chute de qualité ; ce sont les
 
 ---
 
+Pourquoi ne faut-il pas moyenner les p95 des réplicas d’inférence ? <!--anki:3834613263323836633032643462303239323335663839613065333938303433-->
+?
+Un percentile n'est pas additif. Un réplica servant 10 demandes et un autre 10 000 ne contribuent pas de la même façon ; même une moyenne pondérée de leurs p95 ne reconstitue pas le percentile global.
+
+Agréger des histogrammes **compatibles**, puis calculer le quantile. Pour des histogrammes classiques :
+```promql
+histogram_quantile(0.95,
+  sum by (le, model_name) (
+    rate(vllm:time_to_first_token_seconds_bucket[5m])
+  )
+)
+```
+Filtrer d'abord service et environnement ; vérifier les labels réels. Garder les modèles distincts et comparer des populations homogènes. Des quantiles pré-calculés dans des summaries ne s'agrègent pas ainsi.
+
+---
+
+Comment choisir les buckets d’un histogramme de latence LLM ? <!--anki:3661326262363665393537363466663062313764333030633262316165663338-->
+?
+Placer des bornes autour des seuils qui déclenchent une décision, par exemple **0,8 seconde** pour le TTFT. Avec des buckets classiques, la fraction sous une borne explicite se calcule sans interpoler un percentile.
+
+Des buckets trop larges rendent un p95 proche du seuil imprécis. Vérifier unités, volume d'observations et compatibilité entre réplicas. Le compteur d'un histogramme TTFT ne contient pas forcément les erreurs survenues avant le premier token : il ne remplace donc pas le total des demandes éligibles au SLO.
+
+---
+
+Comment réconcilier les métriques de la gateway et celles du moteur LLM ? <!--anki:6166333166666534353761633463366139626534633135383032353536356339-->
+?
+Tracer des jalons : arrivée, admission, début du prefill, premier token moteur, premier contenu client, dernier token et validation finale. Les compteurs doivent préciser couche, population et unité.
+
+Une tâche peut déclencher plusieurs appels, et un appel plusieurs tentatives. Relier ces niveaux par les traces ; ne pas ajouter leurs compteurs comme s'ils étaient indépendants. Mesurer les durées sur une horloge monotone locale ; la soustraction de timestamps de machines différentes nécessite une synchronisation et une incertitude connues. Réseau, buffering et outils expliquent souvent l'écart client–moteur.
+
+---
+
+Calcul : pourquoi la moyenne des tokens/s individuels diffère-t-elle du débit global ? <!--anki:3961323930326463383764623432363861333465306430333062356639376239-->
+?
+Deux requêtes **simultanées** produisent chacune 100 tokens : A en 1 seconde, B en 9 secondes. Leur moyenne de débits vaut `(100 + 11,1) / 2 ≈ 55,6 tokens/s`.
+
+Sur la fenêtre commune de 9 secondes, le service produit `200 / 9 ≈ 22,2 tokens/s`. Les dénominateurs diffèrent ; aucun de ces nombres ne se substitue à l'autre. Pour le débit agrégé, utiliser les tokens effectivement émis pendant une fenêtre murale commune. Préciser si l'on compte tous les tokens ou seulement ceux des réponses conformes.
+
+---
+
+Comment éviter qu’un dashboard masque la dégradation d’une catégorie de requêtes ? <!--anki:6665326135633731613237323438333338356662333064646137303162643061-->
+?
+Conserver une vue globale et des segments stables : modèle, route, classe de longueur, modalité et niveau de service. Une hausse de demandes faciles peut améliorer le p95 global alors que chaque tâche difficile ralentit.
+
+Comparer les distributions et volumes des segments avant d'attribuer un gain à une optimisation. Borner les catégories ; garder les identifiants fins dans les traces. Publier aussi refus et délais par segment pour détecter une politique d'admission qui avantage systématiquement les requêtes courtes ou un client particulier.
+
+---
+
 ## Mises en situation
 
 Mise en situation : on te signale « l'assistant est lent ce matin ». Tu n'as que cette phrase. Dans quel ordre regardes-tu ? <!--anki:7a24417a6c476d607978-->
@@ -232,6 +277,11 @@ Mise en situation : le responsable conformité demande si vous journalisez les c
 
 ## Sources
 
+- [Prometheus — histogrammes et agrégation](https://prometheus.io/docs/practices/histograms/)
+- [Prometheus — instrumentation et cardinalité](https://prometheus.io/docs/practices/instrumentation/)
+- [NVIDIA DCGM — interprétation des compteurs de profilage](https://docs.nvidia.com/datacenter/dcgm/latest/learn/modules/profiling.html)
+
+
 - [vLLM — métriques de production](https://docs.vllm.ai/en/latest/usage/metrics/)
 - [OpenTelemetry — conventions sémantiques GenAI](https://github.com/open-telemetry/semantic-conventions-genai)
 
@@ -254,4 +304,5 @@ Mise en situation : le responsable conformité demande si vous journalisez les c
 - [[61-kv-cache-attention|KV cache]] — la mémoire qui limite la concurrence
 - [[85-carte-protocoles-agentiques|Carte des protocoles]] — quel protocole à quelle frontière de l'agent
 - [[95-llm-as-judge|LLM-as-a-judge]] — noter automatiquement, et valider le juge
+- [[60-010-benchmarks-charge-inference|Benchmarks de charge LLM]] — mesurer la capacité sans masquer files et échecs
 - [[00-moc-ai-engineering|MOC AI Engineering]]

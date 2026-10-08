@@ -1,6 +1,6 @@
 # Métriques d'inférence & SLO — Flashcards
 Tags: #flashcards #ai-engineering #inference #slo #llm
-<!-- summary: TTFT, TPOT, throughput, goodput, percentiles, définition d'un SLO, calcul de concurrence par la loi de Little, signaux d'autoscaling, benchmarks. -->
+<!-- summary: TTFT, TPOT et ITL, contenu utile et raisonnement, débits offert/admis/utile, SLO conjoints, timeouts, burn rate, loi de Little, autoscaling et benchmarks. -->
 
 
 Qu'est-ce que le TTFT ? <!--anki:68355e7b7b31743d5d46-->
@@ -11,11 +11,11 @@ Préciser le point de mesure : le TTFT côté client inclut réseau et interméd
 
 ---
 
-Qu'est-ce que le TPOT (ou ITL) ? <!--anki:68424b38777e6e2a472f-->
+À ne pas confondre : TPOT et ITL ? <!--anki:68424b38777e6e2a472f-->
 ?
-Le **TPOT** est généralement le temps moyen par token après le premier : `(durée totale − TTFT) / (nombre de tokens − 1)`, pour au moins deux tokens. L'**ITL** mesure les intervalles individuels entre tokens ou émissions successives selon l'instrumentation.
+Le **TPOT** est le temps moyen par token après le premier : `(durée − TTFT) / (tokens de sortie − 1)`, pour au moins deux tokens. L'**ITL** décrit les intervalles entre émissions successives ; sa granularité dépend de l'instrumentation.
 
-À 30 ms par token en moyenne, le débit individuel approche 33 tokens/s. Cette moyenne peut cacher des pauses ; examiner aussi la distribution des ITL. Un événement réseau peut contenir plusieurs tokens, donc les timestamps de chunks ne mesurent pas exactement chaque token.
+Un TPOT de 30 ms peut cacher une longue pause. Le percentile des TPOT par requête diffère du percentile de tous les intervalles, auquel les réponses longues contribuent davantage. Un chunk réseau peut contenir plusieurs tokens. Exclure ou distinguer les sorties de zéro ou un token, et documenter la convention de l'outil.
 
 ---
 
@@ -54,9 +54,9 @@ Préciser quels tokens sont comptés : entrée, sortie ou les deux. Deux service
 
 Quel compromis entre latence et débit ? <!--anki:7a332c303b47545233-->
 ?
-Un **batch plus gros** augmente le débit (GPU mieux rempli) mais **dégrade le TPOT** de chaque requête. On règle la **concurrence maximale** pour tenir le SLO de latence.
+Un batch plus gros peut augmenter le **débit agrégé** en réutilisant les poids, mais chaque itération finit par coûter davantage et les attentes peuvent s'allonger. L'effet sur le TPOT n'est ni constant ni toujours monotone : il dépend du régime mémoire/calcul, des longueurs et du scheduler.
 
-Le gain vient de la réutilisation des poids et du travail parallèle, mais chaque pas peut durer davantage. Le compromis varie avec longueur des requêtes et matériel. Balayer plusieurs niveaux de concurrence, puis retenir le débit maximal qui respecte les percentiles de latence attendus, en incluant l'attente en file.
+Balayer les charges et les budgets de batch. Retenir le débit utile maximal qui respecte les objectifs de latence et de qualité, avec une marge pour les variations de trafic. Inclure la file d'attente ; un moteur rapide derrière une file saturée reste lent pour l'utilisateur.
 
 ---
 
@@ -98,7 +98,9 @@ Prévoir la croissance des sorties et les allocations temporaires, pas seulement
 
 Quels signaux utiliser pour l'autoscaling d'un serveur d'inférence LLM ? <!--anki:6e46644e3e766a2e4a7d-->
 ?
-La **longueur de la file d'attente** (requêtes en attente) et le **taux d'occupation du KV cache**, exposés en métriques Prometheus par le serveur ([[11-serveurs-inference-llm|vLLM]]). **Pas l'utilisation GPU**, souvent proche de 100 % et peu discriminante.
+Combiner **attente du plus ancien travail**, taille de file, tokens restant à traiter, occupation KV, préemptions et respect du SLO. Dix longs prompts ne représentent pas la même charge que dix messages courts.
+
+L'activité GPU complète le diagnostic ; seule, elle ne distingue pas les goulots. Calibrer les seuils par modèle et mix de trafic, anticiper chargement des poids et échauffement, puis vérifier la readiness réelle. Conserver une réserve adaptée aux pics et drainer les requêtes avant réduction du nombre de réplicas. Tester aussi la perte d'un réplica.
 
 ---
 
@@ -112,11 +114,53 @@ Inclure un échauffement, les erreurs, le cache froid ou chaud et les pointes de
 
 Calcul : combien de requêtes simultanées faut-il servir pour 10 requêtes/s qui durent 8 secondes ? <!--anki:44597b556d555a6b6b32-->
 ?
-**Loi de Little** : concurrence = débit × durée.
+**Loi de Little** en régime stable, avec débit et durée mesurés au même périmètre :
 ```text
 L = λ × W = 10 req/s × 8 s = 80 requêtes en vol en moyenne
 ```
-Avec 8 000 tokens de contexte par requête sur un 8B, c'est **≈ 80 Go de KV cache** : plus d'un H100 ([[61-kv-cache-attention|calcul du KV cache]]). Réduire la **durée** (moins de tokens de sortie, decode plus rapide) réduit la concurrence nécessaire autant qu'ajouter des GPU.
+Si les 8 secondes incluent l'attente, ces 80 requêtes comprennent **file et exécution**. Cela ne signifie pas 80 séquences actives en GPU, ni une réservation KV déterminée.
+
+Dimensionner séparément la mémoire des tokens effectivement résidents, leur croissance et les blocs partagés. Cette relation porte sur des moyennes ; elle ne fournit ni concurrence p99, ni marge de capacité, ni garantie de délai en surcharge.
+
+---
+
+À ne pas confondre : débit offert, admis, terminé et utile ? <!--anki:3666356538323836666565633432333239346636646538626530383234313834-->
+?
+Le **débit offert** compte les demandes arrivant au périmètre choisi ; l'**admis**, celles acceptées ; le **terminé**, celles ayant atteint un état final ; le **goodput**, les réussites satisfaisant les critères fixés.
+
+Suivre aussi refus, abandons et évolution du nombre de requêtes en vol. Un serveur peut afficher une excellente latence après avoir rejeté la moitié des demandes. Compter séparément tentatives techniques et tâches utilisateur : trois retries ne créent pas trois tâches réussies. Conserver le même périmètre et la même fenêtre pour comparer les configurations.
+
+---
+
+Calcul : deux critères respectés chacun par 95 % des requêtes garantissent-ils 95 % de conformité conjointe ? <!--anki:3766323866373230643236353432626339323037616335643366326434643963-->
+?
+Non. Sur 1 000 requêtes, 50 peuvent rater le TTFT et **50 autres** le TPOT : seules 900 respectent les deux, soit **90 %**. Si les deux groupes d'échecs coïncident, le résultat est 95 %.
+
+Mesurer l'intersection **par requête**, avec succès technique et qualité lorsque cette dernière est observable. Si ces 1 000 requêtes arrivent en 100 secondes en régime stable, et que 900 sont conformes, le goodput vaut 9 requêtes/s. Des histogrammes marginaux ne suffisent pas à reconstruire cette intersection.
+
+---
+
+Quel délai mesurer quand un modèle raisonne avant de répondre ? <!--anki:3465373330633361393930363435363139323162313330633838623137333461-->
+?
+Distinguer **premier événement**, premier token généré ou reçu, **premier contenu utile visible**, et réponse terminée. Nommer explicitement le délai au premier contenu utile, par exemple TTFU dans le contrat local : ce sigle n'est pas une convention universelle.
+
+Un événement de métadonnées ou un raisonnement masqué ne satisfait pas nécessairement l'attente de l'utilisateur. Suivre séparément tokens visibles, tokens de raisonnement exposés dans l'usage et tokens facturés ; les conventions varient. Une réponse courte à l'écran peut consommer beaucoup de calcul et arriver tard.
+
+---
+
+Comment compter les timeouts et annulations dans les métriques de latence ? <!--anki:3038353239383363653338613432633638363964326533626637666331363136-->
+?
+Un timeout est un **résultat inachevé**, pas une latence de réussite égale au seuil. Publier sa fréquence et son temps observé séparément ; la durée qu'aurait exigée une réponse complète reste inconnue.
+
+Garder ces demandes dans le dénominateur du SLO selon le contrat. Distinguer abandon volontaire, délai dépassé, rejet et déconnexion après erreur. Les percentiles des seules réussites peuvent s'améliorer quand les demandes les plus lentes échouent. Vérifier aussi que l'annulation libère réellement calcul et KV, sinon la charge continue malgré la disparition du client.
+
+---
+
+Calcul : quel burn rate pour 4 % de violations avec un SLO à 99 % ? <!--anki:3832346261303930623339333434316638626232646663323934326266663865-->
+?
+Le budget autorisé est **1 %** d'événements non conformes. Un taux observé de 4 % donne `4 / 1 = 4` : consommation quatre fois plus rapide que le rythme compatible avec l'objectif, à trafic et périmètre comparables.
+
+Ce calcul utilise les événements éligibles, y compris les erreurs prévues au contrat, pas la valeur du p95. Combiner fenêtres courte et longue pour distinguer incident rapide et dégradation persistante. Le temps jusqu'à épuisement dépend du budget restant et du trafic futur ; il ne se déduit pas du seul ratio.
 
 ---
 
@@ -124,39 +168,45 @@ Avec 8 000 tokens de contexte par requête sur un 8B, c'est **≈ 80 Go de KV ca
 
 Mise en situation : le produit demande « une réponse en moins de 2 secondes » pour un assistant qui streame des réponses de 400 tokens. Comment traduis-tu ce besoin en SLO ? <!--anki:772b352d2f4c5b694141-->
 ?
-1. **Décomposer** : en streaming, l'utilisateur perçoit d'abord le **TTFT**, puis la vitesse de lecture (**TPOT**)
-2. **Poser des cibles** : par exemple p95 TTFT < 800 ms et p95 TPOT < 50 ms, soit environ 20 tokens par seconde
-3. **Vérifier la cohérence** : 400 tokens à 50 ms font 20 s au total. Si le besoin est « tout en 2 s », il faut raccourcir la réponse, pas accélérer le GPU
-4. **Choisir les percentiles** et la fenêtre (p95 sur 30 jours), pas la moyenne
-5. **Valider par un benchmark** de charge réaliste avant de s'engager ([[93-monitoring-inference|monitoring]])
+1. **Clarifier le délai** : premier texte utile ou réponse entièrement disponible, côté utilisateur.
+2. **Calculer le budget** : avec 800 ms de TTFT et 400 tokens, finir en 2 s demande un TPOT moyen au plus égal à `(2 − 0,8) / 399 ≈ 3 ms`.
+3. **Évaluer les leviers** : sortie plus concise, modèle plus rapide, speculative decoding ou infrastructure ; valider qualité et coût.
+4. **Définir le contrat** : proportion de requêtes respectant ensemble les seuils, fenêtre, erreurs et segments.
+5. **Tester sous charge** avant de promettre ces délais.
 
-**Piège** : s'engager sur une latence totale sans fixer la longueur des réponses.
+**Piège** : additionner des percentiles comme s'ils décrivaient une même requête.
 
 ---
 
 Mise en situation : ton dashboard affiche 100 % d'utilisation GPU et l'équipe conclut qu'il faut acheter des GPU. Comment vérifies-tu ? <!--anki:4a3363746c6836453d3b-->
 ?
-1. **Se méfier de cette métrique** : elle indique qu'un kernel tourne, pas que le GPU est bien exploité
-2. **Regarder les vraies causes** : file d'attente, occupation du KV cache, préemptions ([[93-monitoring-inference|métriques vLLM]])
-3. **Tracer la courbe latence-débit** : à quel niveau de charge le SLO casse-t-il vraiment ?
-4. **Mesurer le goodput** : le débit des seules requêtes qui respectent le SLO
-5. **Chercher les gains gratuits** avant d'acheter : quantization, prefix caching, chunked prefill, limitation du contexte
+1. **Interpréter l'activité** : un kernel en cours ne signifie pas que calcul ou mémoire atteignent leur débit maximal.
+2. **Localiser le goulot** : files, KV, préemptions, temps par phase, activité mémoire et communications.
+3. **Tracer la courbe de charge** avec latences, erreurs et goodput au même mix de requêtes.
+4. **Tester un levier ciblé** : batch, cache, quantization ou contexte ; mesurer ses contreparties.
+5. **Dimensionner la réserve** selon pics attendus, démarrage, panne et politique d'admission.
 
-**Piège** : dimensionner sur le pic absolu plutôt que sur le p95 du trafic réel.
+**Piège** : traiter un percentile de trafic comme une règle universelle de capacité, ou promettre des optimisations sans coût ni risque qualité.
 
 ---
 
 Mise en situation : ton autoscaling se déclenche trop tard, et des requêtes attendent plusieurs secondes avant d'être traitées. Sur quoi le règles-tu ? <!--anki:6c6759312a4c4c493574-->
 ?
-1. **Pas sur la seule utilisation GPU**, qui peut être élevée sans saturation du calcul
-2. **Signaux utiles** : longueur de la file d'attente et taux d'occupation du KV cache, exposés en métriques par le serveur
-3. **Anticiper le temps de démarrage** : un réplica LLM met plusieurs minutes à charger ses poids ([[10-images-modeles-poids|cold start]])
-4. **Garder un coussin** : réplicas chauds ou pool préchauffé pour absorber les pics
-5. **Alerter sur le SLO** plutôt que sur la cause : burn rate du TTFT p95
+1. **Anticiper** avec âge de file, travail en tokens, occupation KV et tendance de charge.
+2. **Mesurer le démarrage réel** : chargement, compilation, échauffement, puis readiness.
+3. **Garder une réserve** cohérente avec ce délai et les pointes à absorber.
+4. **Borner la file** et appliquer une dégradation prévue si les requêtes ne peuvent plus tenir leur échéance.
+5. **Alerter sur le burn rate** : fraction de requêtes violant le SLO divisée par le budget d'erreur autorisé.
 
-**Piège** : un scale-to-zero agressif qui fait payer un cold start de plusieurs minutes au premier utilisateur.
+**Piège** : calculer un « burn rate du p95 ». Un percentile n'est pas une fraction d'événements défaillants.
 
 ---
+
+## Sources
+
+- [Google SRE — alertes et budgets d’erreur](https://sre.google/workbook/alerting-on-slos/)
+- [vLLM — définitions des métriques](https://docs.vllm.ai/en/latest/design/metrics/)
+- [DistServe — goodput et SLO conjoints](https://arxiv.org/abs/2401.09670)
 
 ## Connexions
 - [[61-kv-cache-attention|KV cache]] — la concurrence plafonnée par la VRAM
@@ -180,4 +230,5 @@ Mise en situation : ton autoscaling se déclenche trop tard, et des requêtes at
 - [[137-long-contexte|Long contexte]] — limites et coût des longues fenêtres
 - [[146-choix-modeles|Choix de modèles]] — critères, benchmarks et migration
 - [[116-sre-incidents-capacite-ia|SRE : incidents & capacité des services IA]] — relier capacité et expérience utilisateur
+- [[60-010-benchmarks-charge-inference|Benchmarks de charge LLM]] — mesurer la capacité sans masquer files et échecs
 - [[00-moc-ai-engineering|MOC AI Engineering]]
