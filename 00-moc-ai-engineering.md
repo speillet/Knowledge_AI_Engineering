@@ -131,6 +131,7 @@ Le [bilan des cinq nouveaux sujets](docs/nouvelles-competences-ia-2026-10-08.md)
 - [[69-roofline-prefill-decode|Roofline, prefill/decode & désagrégation]]
 - [[60-010-benchmarks-charge-inference|Benchmarks de charge pour l’inférence LLM]]
 - [[60-011-capacite-ordonnancement-inference|Capacité & ordonnancement de l’inférence LLM]]
+- [[60-012-demarche-optimisation-inference|Démarche d’optimisation de l’inférence LLM]]
 
 ## 70 — Conteneurs & Infra
 

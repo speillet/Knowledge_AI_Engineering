@@ -1,7 +1,7 @@
 # Speculative decoding — Flashcards
 Tags: #flashcards #ai-engineering #inference #speculative-decoding #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: brouillon et vérification en une passe, pourquoi c'est presque gratuit, règle d'acceptation sans perte, gain selon le taux d'acceptation, choix de k, types de brouillons (petit modèle, n-grammes, EAGLE, Medusa, MTP), vérification en arbre, quand ça aide ou nuit, configuration vLLM, coûts, métriques d'acceptation, validation d'un déploiement. -->
+<!-- summary: brouillon et vérification en une passe, conditions d’amortissement des lectures, règle d'acceptation sans perte, gain selon le taux d'acceptation, choix de k, types de brouillons (petit modèle, n-grammes, EAGLE, Medusa, MTP), vérification en arbre, quand ça aide ou nuit, configuration vLLM, coûts, métriques d'acceptation, validation d'un déploiement. -->
 
 
 Quel est le principe du speculative decoding ? <!--anki:735b235457367c524b6a-->
@@ -16,7 +16,9 @@ cible     : vérifie les 4 en parallèle → accepte t1 t2, corrige t3 → 3 tok
 
 Pourquoi vérifier k tokens coûte-t-il presque autant que d'en générer un ? <!--anki:643b3476537b31506257-->
 ?
-Parce que le **decode est limité par la bande passante mémoire** : à chaque pas, on relit tous les poids du modèle pour un seul token et le GPU calcule peu. Vérifier k tokens en une passe relit les poids **une seule fois**, comme un petit prefill : le calcul supplémentaire est presque gratuit ([[62-optimisations-inference|optimisations d'inférence]]).
+À petit batch, quand lire les poids domine, vérifier plusieurs positions ensemble **amortit une lecture des poids**. Le calcul supplémentaire peut rester modeste par rapport à cette lecture, ce qui rend la spéculation intéressante.
+
+Cela n'implique pas une vérification gratuite : attention, KV, calcul et brouillon ajoutent du travail. Si le GPU est déjà limité par le calcul à forte charge, ce travail peut réduire le débit. Mesurer durée du brouillon, vérification, tokens acceptés par passe et goodput, pour les longueurs et concurrences réellement visées.
 
 ---
 
@@ -31,17 +33,20 @@ Cette règle garantit que la sortie suit **exactement la distribution de la cibl
 
 Le speculative decoding dégrade-t-il la qualité ? <!--anki:47393e6c375564426d2e-->
 ?
-**Non, en théorie** : il est sans perte, la sortie suit la même distribution que la cible seule (identique en greedy). En pratique, de petits écarts restent possibles à cause de la **précision flottante** et des variations de batch, comme pour toute inférence ([[114-reproductibilite-variance|reproductibilité]]).
+Le **speculative sampling exact**, avec acceptation/rejet et distribution résiduelle correctes, préserve théoriquement la distribution de la cible ; en greedy, la vérification doit préserver son choix.
+
+Cette propriété ne couvre pas automatiquement toutes les variantes appelées « spéculatives », ni une cible elle-même quantifiée par rapport à son modèle d'origine. Vérifier l'algorithme et les modes supportés. Les arrondis et variations de batch peuvent aussi changer des sorties individuelles. Évaluer qualité et performance en pratique ; même graine ne signifie pas nécessairement même texte, malgré une distribution théorique préservée.
 
 ---
 
 De quoi dépend le gain de vitesse ? <!--anki:657749397926736d7a6f-->
 ?
-Du **taux d'acceptation** α (probabilité qu'un token proposé soit accepté) et du nombre k de tokens proposés. Nombre moyen de tokens produits par passe de la cible :
+Dans un modèle simplifié avec probabilité d'acceptation conditionnelle constante α et k propositions, on produit en moyenne :
 ```text
-E = (1 − α^(k+1)) / (1 − α)      ex. α = 0,8 et k = 4 → ≈ 3,4 tokens par passe
+E = 1 + α + … + α^k = (1 − α^(k+1)) / (1 − α)
+α = 0,8 ; k = 4 → E = 3,3616 tokens par passe
 ```
-Le gain réel est plus faible, car il faut retrancher le coût du brouillon : typiquement **×2 à ×3** sur la vitesse de génération.
+Pour α = 1, la limite vaut k + 1. Le speedup dépend aussi du temps : `E × temps_decode_standard / (temps_brouillon + temps_vérification + surcoûts)`. Un bon taux d'acceptation ne suffit pas si le brouillon coûte trop cher. Les dépendances réelles et EOS limitent ce modèle ; mesurer le gain sous charge.
 
 ---
 

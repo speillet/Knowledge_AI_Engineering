@@ -1,37 +1,36 @@
 # Coûts d'inférence — Flashcards
 Tags: #flashcards #ai-engineering #finops #couts #inference #llm
-<!-- summary: structure du coût d'un appel, calcul du coût d'un agent de 20 tours avec et sans cache, prix input et output, prompt caching, coût du self-hosting, break-even API ou self-host, batch API, leviers techniques, contexte long, unit economics, GPU idle. -->
+<!-- summary: structure du coût d'un appel, calcul du coût d'un agent de 20 tours avec et sans cache, prix input et output, prompt caching, coût du self-hosting, break-even API ou self-host, batch API, leviers techniques, contexte long, unit economics, GPU idle, coût par réponse conforme et énergie par tâche utile. -->
 
 
 Comment se structure le coût d'un appel LLM API ? <!--anki:4f444670265626663e6d-->
 ?
-**Prix par million de tokens**, différencié **input / output** (l'output est plus cher), avec surcoûts éventuels (raisonnement, contexte long).
+**Prix par million de tokens**, différencié **input / output** (prix distincts selon l’offre), avec surcoûts éventuels (raisonnement, contexte long).
 ```text
 coût = (tokens_in × prix_in + tokens_out × prix_out) / 1 000 000
 
 Exemple (prix illustratifs : 3 €/M en entrée, 15 €/M en sortie)
   3 000 tokens d'entrée + 500 de sortie
-  = (3 000 × 3 + 500 × 15) / 1e6 = 0,009 + 0,0075 ≈ 0,017 €/requête
-  × 1 million de requêtes par mois ≈ 17 000 €
+  = (3 000 × 3 + 500 × 15) / 1e6 = 0,009 + 0,0075 0,0165 €/requête
+  × 1 million de requêtes par mois 16 500 €
 ```
-Deux enseignements : l'**entrée domine** dès qu'on envoie du contexte, et un calcul au dos d'une enveloppe suffit à cadrer un projet ([[141-system-design-llm|system design]]).
+La contribution de chaque poste dépend du produit **volume × tarif**. Un premier calcul aide à cadrer le projet ([[141-system-design-llm|system design]]).
 
 ---
 
 À ne pas confondre : prix par token et coût par tâche réussie ? <!--anki:44393742637863294c-->
 ?
-- **Prix par token** : ce qu'affiche le fournisseur. Facile à comparer, mais trompeur
-- **Coût par tâche réussie** : ce que vous payez réellement, en incluant les **tokens réels** (tokenizer, verbosité, raisonnement), les **reprises**, les **escalades** et la **vérification humaine**
+Le **prix par token** décrit un tarif. Le **coût par tâche réussie** rapporte toutes les dépenses aux tâches acceptables : tokens effectivement utilisés, retries, escalades, outils et vérification.
 
-Un modèle 30 % moins cher par token qui échoue deux fois plus souvent coûte **plus cher** ([[146-choix-modeles|choix de modèle]]).
+Par exemple, un modèle à 0,007 € par tentative réussissant 70 % des tâches coûte `0,007 / 0,70 = 0,01 €` par réussite sur cette population. Un autre à 0,01 € avec 95 % de réussite coûte environ 0,0105 €. Une hausse du taux d'échec n'annule donc pas mécaniquement une remise de 30 %. Comparer aussi la couverture et la gravité des échecs.
 
 ---
 
 Pourquoi les tokens d'output coûtent-ils plus cher que l'input ? <!--anki:62606640475e324b5f71-->
 ?
-Parce que le **decode est séquentiel** (un passage du modèle par token généré), alors que le **prefill traite tout le prompt en parallèle** ([[69-roofline-prefill-decode|prefill et decode]]). Un token de sortie mobilise donc bien plus de temps GPU.
+La génération autorégressive avance séquentiellement, tandis que le prefill parallélise davantage les tokens d'entrée. Cela explique des **profils de ressources différents**, sans imposer un rapport de prix universel.
 
-Repère : la sortie coûte souvent **3 à 5 fois** plus cher que l'entrée. Limiter la verbosité (`max_tokens`, format concis) est l'un des leviers les plus directs.
+Le tarif est une politique commerciale : comparer entrées, sorties, raisonnement, cache et éventuels paliers du fournisseur retenu. Utiliser des tarifs datés dans le calcul. Une sortie concise peut économiser temps et argent, mais un `max_tokens` trop bas entraîne troncatures et reprises. Mesurer le coût par tâche réussie plutôt qu'appliquer une règle fixe « sortie trois à cinq fois plus chère ».
 
 ---
 
@@ -102,15 +101,15 @@ Par exemple, rapporter le coût total d'un dossier traité au temps effectivemen
 
 Pourquoi un GPU inutilisé coûte-t-il autant qu'un GPU actif ? <!--anki:692b24734c473647792f-->
 ?
-Un GPU **alloué est facturé pareil, utilisé ou non** : à 20 % d'utilisation, chaque token coûte en réalité cinq fois plus cher qu'à pleine charge.
+Avec une location à l'heure, le coût de réservation reste dû pendant l'inactivité ; énergie et autres frais peuvent varier. À coût horaire constant, produire **cinq fois moins de tokens utiles** multiplie leur coût unitaire par cinq.
 
-Leviers : **consolider** les modèles, partager le GPU (**MIG**, time-slicing), **autoscaling** sur la charge réelle et **scale-to-zero** pour les modèles peu utilisés, au prix d'un démarrage à froid ([[12-kubernetes-gpu-inference|K8s GPU]]).
+Ce raisonnement ne découle pas d'un indicateur GPU à 20 % : activité des kernels et production utile ne sont pas proportionnelles. Ajuster réplicas, mutualisation et horaires selon la charge mesurée, en conservant isolation et SLO. Le scale-to-zero économise la réservation uniquement si la facturation et le cycle de vie des ressources le permettent.
 
 ---
 
 Calcul : combien coûte une tâche d'agent de 20 tours, avec et sans prompt caching ? <!--anki:43757a68396e6c7c3d49-->
 ?
-Hypothèses : 5 000 tokens au départ, +2 000 par tour (résultats d'outils), 300 tokens de sortie par tour, 3 €/M en entrée, 15 €/M en sortie.
+Hypothèses : 5 000 tokens au départ, +2 000 tokens nets d’historique par tour (sortie précédente et outils inclus), 300 tokens de sortie par tour, 3 €/M en entrée, 15 €/M en sortie.
 ```text
 entrée cumulée = 20 × 5 000 + 2 000 × (0 + 1 + … + 19) = 480 000 tokens
 sans cache : 480 k × 3 €/M + 6 k × 15 €/M     ≈ 1,53 €
@@ -136,13 +135,32 @@ Entrée et sortie pèsent autant, car la sortie coûte 5 fois plus cher au token
 
 Calcul : à partir de quel volume un GPU loué devient-il moins cher qu'une API ? <!--anki:3165666632316363393062643430633161363538303761346166313231356365-->
 ?
-Hypothèses : un H100 loué 2,50 €/h, qui sert un petit modèle open weights ; une API équivalente à 0,20 € par million de tokens, entrée et sortie confondues.
+Hypothèses fictives : un H100 loué 2,50 €/h, qui sert un petit modèle open weights ; une API équivalente à 0,20 € par million de tokens, entrée et sortie confondues.
 ```text
 GPU 24 h/24 : 2,50 € × 720 h            = 1 800 € par mois
 break-even  : 1 800 € / 0,20 €/M        = 9 000 M tokens par mois
 soit        : 9e9 / (30 × 86 400 s)     ≈ 3 500 tokens/s, en continu
 ```
-Il faut une charge **soutenue jour et nuit** pour battre une API bon marché ; à 20 % d'utilisation, l'API reste gagnante. Et ce calcul oublie l'exploitation : ingénieurs, supervision, mises à jour ([[164-llm-local-edge|on-prem]]).
+Il faut une charge **soutenue jour et nuit** pour battre une API bon marché ; si le volume réalisé reste sous ce seuil, l’API est moins chère sur ce périmètre. Et ce calcul oublie l'exploitation : ingénieurs, supervision, mises à jour ([[164-llm-local-edge|on-prem]]).
+
+---
+
+Calcul : comment comparer le coût par réponse conforme de deux déploiements ? <!--anki:3933613530313832313337613439336538616165373939613865613434663562-->
+?
+A coûte **12 €/h** et délivre 20 réponses conformes/s ; B coûte **8 €/h** et en délivre 10/s, sur le même mix et avec les mêmes critères.
+```text
+A : 12 / (20 × 3 600) ≈ 0,000167 €/réponse conforme
+B :  8 / (10 × 3 600) ≈ 0,000222 €/réponse conforme
+```
+A est plus cher à l'heure mais moins cher par réussite à cette charge. Inclure dans le coût les échecs et la réserve réellement payée. Refaire le calcul au volume attendu : une capacité inutilisée ne produit pas automatiquement son goodput maximal.
+
+---
+
+Calcul : comment mesurer l’énergie par tâche utile d’un service LLM ? <!--anki:3764316232316465383563393465363338626662363766333136623261333262-->
+?
+Sur une fenêtre de 60 secondes, une puissance moyenne de **600 W** représente `600 × 60 = 36 000 J`. Si 120 tâches conformes sont livrées, cela donne **300 J par tâche utile**.
+
+Préciser le périmètre : GPU seul, serveur ou installation complète ; intégrer toute l'énergie du périmètre, y compris échecs et attente. Les watts instantanés ne suffisent pas à comparer deux variantes. Mesurer qualité et délai à charge comparable. Passer des joules au carbone nécessite en plus une intensité électrique située dans le temps et l'espace, avec hypothèses explicites.
 
 ---
 
@@ -174,6 +192,9 @@ Mise en situation : le coût de ton assistant est dominé par les tokens d'entr�
 
 ## Sources
 
+- [NVIDIA DCGM — puissance et métriques matérielles](https://docs.nvidia.com/datacenter/dcgm/latest/learn/modules/profiling.html)
+
+
 - [Anthropic — traitement batch, échecs et expiration des requêtes](https://platform.claude.com/docs/en/build-with-claude/batch-processing)
 
 ## Connexions
@@ -190,4 +211,5 @@ Mise en situation : le coût de ton assistant est dominé par les tokens d'entr�
 - [[148-pipelines-batch-llm|Pipelines batch]] — mettre la batch API en œuvre à grande échelle
 - [[136-mixture-of-experts|Mixture of Experts]] — paramètres totaux et actifs
 - [[138-modeles-raisonnement|Modèles de raisonnement]] — test-time compute et budget de réflexion
+- [[60-012-demarche-optimisation-inference|Démarche d’optimisation]] — prioriser et vérifier les gains sous contraintes de service
 - [[00-moc-ai-engineering|MOC AI Engineering]]

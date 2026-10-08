@@ -29,7 +29,7 @@ TPOT (decode)           quantization, speculative decoding, GQA, moins de
                         bande passante mémoire consommée
 Débit total             continuous batching, batch plus gros, parallélisme
 ```
-Un même changement peut **améliorer l'un et dégrader l'autre** : un gros batch augmente le débit mais allonge le TPOT ([[64-metriques-slo-inference|SLO]]).
+Un même changement peut **améliorer l'un et dégrader l'autre** : un gros batch peut augmenter le débit et allonger le TPOT ([[64-metriques-slo-inference|SLO]]).
 
 Le TTFT inclut aussi attente en file et transport ; accélérer uniquement le prefill ne résout pas une saturation du service. Le chunked prefill protège surtout les requêtes déjà en decode et peut retarder la fin d'un nouveau prefill. Comparer les percentiles à charge identique pour éviter de confondre meilleur débit et meilleure expérience.
 
@@ -37,17 +37,9 @@ Le TTFT inclut aussi attente en file et transport ; accélérer uniquement le pr
 
 Qu'est-ce que le continuous batching ? <!--anki:6f76727c477c5a746c4d-->
 ?
-Un batching **au niveau de l'itération** : les requêtes **entrent et sortent du batch à chaque pas de décodage** au lieu d'attendre la plus longue. Le GPU reste plein et le débit est multiplié.
-```text
-Batch statique : ████████████░░░░░░  4 requêtes, on attend la plus longue
-                 ████░░░░░░░░░░░░░░  les GPU tournent à vide (░)
-                 ██████████░░░░░░░░
+Le **continuous batching** ordonnance à la granularité d'une itération : une séquence terminée libère sa place, et de nouvelles séquences peuvent rejoindre les suivantes sans attendre la fin de tout un lot.
 
-Continuous     : ████████████  → une requête finit, une autre entre aussitôt
-                 ████▶▶▶▶▶▶▶▶     le batch est recomposé à chaque token
-                 ██████████▶▶
-```
-C'est la raison principale de l'écart de débit **d'un ordre de grandeur** entre un script Transformers et un serveur comme vLLM ([[11-serveurs-inference-llm|serveurs d'inférence]]).
+Cette approche réduit les places inutilisées lorsque les longueurs varient. Elle ne garantit pas un GPU plein : demande insuffisante, limite KV, CPU ou communications peuvent encore restreindre le débit. Comparer au batch statique sur un même workload, avec les mêmes SLO. L'écart entre un script et un serveur dépend aussi des kernels, du cache et de la gestion mémoire ; aucun facteur dix n'est universel.
 
 ---
 
@@ -104,27 +96,32 @@ Cette séparation réduit certaines interférences entre gros prompts et génér
 
 Mise en situation : ton service d'inférence tient le SLO de latence à faible charge, mais aux heures de pointe le TTFT explose alors que le débit stagne. Quels leviers actionnes-tu ? <!--anki:6932733f3f45586b4746-->
 ?
-1. **Diagnostiquer** : file d'attente longue et préemptions pointent vers un manque de capacité KV cache, pas de calcul ([[93-monitoring-inference|métriques]])
-2. **Chunked prefill** : les longs prompts n'interrompent plus les décodages en cours, ce qui stabilise la latence inter-token
-3. **Quantization** en FP8 : moins de VRAM, donc plus de requêtes simultanées et plus de débit ([[68-quantization|quantization]])
-4. **Prefix caching** si les prompts partagent un long préfixe ([[66-prefix-caching-radix-attention|prefix caching]])
-5. **Si la charge est structurellement trop forte** : plus de réplicas, ou désagrégation prefill/decode pour régler TTFT et TPOT séparément
+1. **Décomposer le TTFT** : attente, traitement du prompt et transport ; corréler avec longueur des entrées.
+2. **Distinguer la saturation** : préemptions et KV plein orientent vers la mémoire ; une file seule ne suffit pas.
+3. **Réduire le travail ciblé** : préfixes stables, contexte pertinent, quantification validée sur le matériel.
+4. **Régler le scheduler** : batch et chunked prefill, en surveillant aussi ITL et équité.
+5. **Adapter la capacité** si nécessaire, avec admission bornée, réplicas ou désagrégation évaluée.
 
-**Piège** : augmenter la taille de batch maximale pour « améliorer le débit », et dégrader encore le TTFT.
+**Piège** : activer plusieurs leviers simultanément puis attribuer le gain au mauvais mécanisme.
 
 ---
 
 Mise en situation : on te propose de passer de 2 GPU à 4 GPU en tensor parallelism pour accélérer un modèle 70B. Que vérifies-tu avant ? <!--anki:63652b765a21517a6169-->
 ?
-1. **L'interconnect** : le tensor parallelism échange beaucoup entre GPU. Sans NVLink, le gain s'effondre
-2. **Ce qu'on cherche** : plus de débit, ou moins de latence ? Le TP réduit la latence, mais au prix d'une efficacité par GPU plus faible
-3. **L'alternative** : deux réplicas de 2 GPU donnent souvent plus de débit total qu'un seul réplica de 4
-4. **La mémoire** : plus de GPU libère de la VRAM pour le KV cache, donc plus de concurrence
-5. **Mesurer** : benchmark de charge sur les deux configurations, à la même distribution de trafic ([[64-metriques-slo-inference|SLO]])
+1. **Mesurer la topologie** : bande passante et latence des collectives, liens intra-nœud et réseau.
+2. **Définir l'objectif** : modèle qui doit tenir en mémoire, latence individuelle ou débit utile.
+3. **Comparer à budget identique** : une instance TP4 contre deux instances TP2, si toutes tiennent en mémoire.
+4. **Examiner chaque GPU** : poids, KV réparti ou répliqué, activations et déséquilibre.
+5. **Tester sous charge** : goodput, délais, erreurs, qualité et coût.
 
-**Piège** : raisonner en FLOPS disponibles et oublier le coût des communications entre GPU.
+**Piège** : supposer que le tensor parallelism réduit forcément la latence, ou que NVLink suffit à garantir le gain.
 
 ---
+
+## Sources
+
+- [Orca — continuous batching](https://www.usenix.org/conference/osdi22/presentation/yu)
+- [vLLM — optimisation et compromis](https://docs.vllm.ai/en/latest/configuration/optimization/)
 
 ## Connexions
 - [[61-kv-cache-attention|KV cache & attention]] — la mémoire que ces techniques gèrent
@@ -142,4 +139,6 @@ Mise en situation : on te propose de passer de 2 GPU à 4 GPU en tensor parallel
 - [[69-roofline-prefill-decode|Roofline & désagrégation]] — pourquoi chaque phase a son goulot
 - [[121-couts-inference|Coûts d'inférence]] — structure du coût et unit economics
 - [[148-pipelines-batch-llm|Pipelines batch]] — traiter des millions d'items à moindre coût
+- [[60-012-demarche-optimisation-inference|Démarche d’optimisation]] — prioriser et vérifier les gains sous contraintes de service
+- [[66-prefix-caching-radix-attention|Prefix caching]] — réduire le prefill selon la réutilisation réelle
 - [[00-moc-ai-engineering|MOC AI Engineering]]

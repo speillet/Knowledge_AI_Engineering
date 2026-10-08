@@ -4,7 +4,7 @@ Un vault [Obsidian](https://obsidian.md) de **fiches de révision (flashcards) e
 
 Chaque fiche traite **un concept** en 8 à 34 cartes question/réponse, une quinzaine en moyenne, et se termine par des **mises en situation** : des cas concrets à diagnostiquer, concevoir ou arbitrer. Les fiches sont reliées entre elles par des liens, pour qu'on puisse passer d'un sujet à ses voisins, et elles se révisent en **répétition espacée**.
 
-**État au 8 octobre 2026** : 128 fiches et 1 837 cartes, réparties en 17 sections, dont 290 mises en situation et 138 cartes « à ne pas confondre ».
+**État au 8 octobre 2026** : 129 fiches et 1 856 cartes, réparties en 17 sections, dont 293 mises en situation et 139 cartes « à ne pas confondre ».
 
 ---
 
@@ -277,11 +277,12 @@ Automatiser des processus, soit avec des outils de workflow, soit avec des agent
 - [Métriques d'inférence & SLO](60-inference-llm/64-metriques-slo-inference.md) : TTFT, TPOT et ITL, contenu utile et raisonnement, débits offert/admis/utile, SLO conjoints, timeouts, burn rate, loi de Little, autoscaling et benchmarks.
 - [Probabilités & sampling](60-inference-llm/65-probabilites-sampling.md) : logits et softmax, température, greedy, top-k, top-p, température ou top-p, min-p, réglages par cas d'usage, logprobs, probabilité d'une séquence, perplexité, calibration, speculative decoding et distribution.
 - [Prefix caching & RadixAttention](60-inference-llm/66-prefix-caching-radix-attention.md) : prefix caching de vLLM, arbre radix de SGLang, éviction, ordonnancement et routage cache-aware, offloading du KV cache (LMCache), limites, canal auxiliaire temporel, métriques par requête et token, gain de TTFT réel, affinité et surcharge.
-- [Speculative decoding](60-inference-llm/67-speculative-decoding.md) : brouillon et vérification en une passe, pourquoi c'est presque gratuit, règle d'acceptation sans perte, gain selon le taux d'acceptation, choix de k, types de brouillons (petit modèle, n-grammes, EAGLE, Medusa, MTP), vérification en arbre, quand ça aide ou nuit, configuration vLLM, coûts, métriques d'acceptation, validation d'un déploiement.
+- [Speculative decoding](60-inference-llm/67-speculative-decoding.md) : brouillon et vérification en une passe, conditions d’amortissement des lectures, règle d'acceptation sans perte, gain selon le taux d'acceptation, choix de k, types de brouillons (petit modèle, n-grammes, EAGLE, Medusa, MTP), vérification en arbre, quand ça aide ou nuit, configuration vLLM, coûts, métriques d'acceptation, validation d'un déploiement.
 - [Quantization](60-inference-llm/68-quantization.md) : intérêt en mémoire et en vitesse, quantization des poids, des activations ou du KV cache, formats (FP8, INT8, INT4, NVFP4, MXFP4), weight-only ou W8A8, granularité des échelles, outliers d'activation (SmoothQuant, rotations), PTQ ou QAT, GPTQ, AWQ, GGUF, NF4, choix de la méthode selon le matériel, calibration, mesure de la perte, divergence KL et flips, validation avant déploiement, suivi en production, outils (llm-compressor, Model Optimizer, vLLM).
-- [Roofline, prefill/decode & désagrégation](60-inference-llm/69-roofline-prefill-decode.md) : intensité arithmétique, modèle roofline, memory-bound ou compute-bound, calculs de débit de decode et de durée de prefill, batch en decode, limites de l'utilisation GPU, interférence prefill/decode, chunked prefill ou désagrégation, déploiement désagrégé (Dynamo, llm-d), quand désagréger.
+- [Roofline, prefill/decode & désagrégation](60-inference-llm/69-roofline-prefill-decode.md) : intensité arithmétique, modèle roofline, memory-bound ou compute-bound, calculs de débit de decode et de durée de prefill, batch en decode, limites de l'utilisation GPU, interférence prefill/decode, chunked prefill ou désagrégation, déploiement désagrégé (Dynamo, llm-d), quand désagréger, coût et recouvrement des transferts KV.
 - [Benchmarks de charge pour l’inférence LLM](60-inference-llm/60-010-benchmarks-charge-inference.md) : protocole reproductible, boucle ouverte ou fermée, omission coordonnée, mix de requêtes, cache froid/chaud, saturation, incertitude, limites du générateur, capacité sous SLO.
 - [Capacité & ordonnancement de l’inférence LLM](60-inference-llm/60-011-capacite-ordonnancement-inference.md) : budgets de séquences et de tokens, mémoire KV réelle, GQA et sharding, préemption, admission, priorités, files, réplication et parallélismes, capacité de secours et annulation.
+- [Démarche d’optimisation de l’inférence LLM](60-inference-llm/60-012-demarche-optimisation-inference.md) : objectif sous contraintes, profilage CPU/GPU, graphes CUDA et compilation, kernels, loi d’Amdahl, interactions entre optimisations, quotas API, retries, routage, raisonnement et multimodal.
 
 ### 70 — Conteneurs & Infra
 
@@ -342,7 +343,7 @@ De la sécurité des LLM à celle des agents : les menaces et les incidents rée
 
 ### 120 — Coûts & FinOps
 
-- [Coûts d'inférence](120-couts-finops/121-couts-inference.md) : structure du coût d'un appel, calcul du coût d'un agent de 20 tours avec et sans cache, prix input et output, prompt caching, coût du self-hosting, break-even API ou self-host, batch API, leviers techniques, contexte long, unit economics, GPU idle.
+- [Coûts d'inférence](120-couts-finops/121-couts-inference.md) : structure du coût d'un appel, calcul du coût d'un agent de 20 tours avec et sans cache, prix input et output, prompt caching, coût du self-hosting, break-even API ou self-host, batch API, leviers techniques, contexte long, unit economics, GPU idle, coût par réponse conforme et énergie par tâche utile.
 - [FinOps LLM](120-couts-finops/122-finops-llm.md) : quatre temps du FinOps, visibilité des coûts, attribution aux équipes, budgets et garde-fous, routage comme premier levier, caches, pratiques GPU, arbitrage coût-qualité-latence, rôle du Lead.
 - [Caching agressif](120-couts-finops/123-caching-agressif.md) : prompt caching (TTL, prix d'écriture et de lecture), structure de prompt stable, ce qui casse le cache, contexte append-only, requêtes parallèles et pré-chauffage, caches de réponses, d'embeddings et d'outils, prompt caching, cache exact ou sémantique, invalidation, sécurité, pilotage.
 

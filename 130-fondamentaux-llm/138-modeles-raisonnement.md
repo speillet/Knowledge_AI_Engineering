@@ -131,4 +131,5 @@ Mise en situation : un auditeur veut utiliser la chaîne de pensée affichée pa
 - [[135-pretraining-scaling-laws|Pré-entraînement & scaling laws]] — du calcul d'entraînement au calcul d'inférence
 - [[55-rl-agentique|RL agentique]] — du raisonnement à l'usage d'outils
 - [[13-prompts-production|Prompts en production]] — structure, versioning et portabilité des prompts
+- [[60-012-demarche-optimisation-inference|Démarche d’optimisation]] — prioriser et vérifier les gains sous contraintes de service
 - [[00-moc-ai-engineering|MOC AI Engineering]]

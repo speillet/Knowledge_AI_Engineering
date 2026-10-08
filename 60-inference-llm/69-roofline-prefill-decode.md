@@ -1,7 +1,7 @@
 # Roofline, prefill/decode & désagrégation — Flashcards
 Tags: #flashcards #ai-engineering #inference #gpu #performance #llm
 Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: intensité arithmétique, modèle roofline, memory-bound ou compute-bound, calculs de débit de decode et de durée de prefill, batch en decode, limites de l'utilisation GPU, interférence prefill/decode, chunked prefill ou désagrégation, déploiement désagrégé (Dynamo, llm-d), quand désagréger. -->
+<!-- summary: intensité arithmétique, modèle roofline, memory-bound ou compute-bound, calculs de débit de decode et de durée de prefill, batch en decode, limites de l'utilisation GPU, interférence prefill/decode, chunked prefill ou désagrégation, déploiement désagrégé (Dynamo, llm-d), quand désagréger, coût et recouvrement des transferts KV. -->
 
 
 Qu'est-ce que l'intensité arithmétique ? <!--anki:4e682e414f26342b616d-->
@@ -34,42 +34,40 @@ Optimiser le mauvais côté ne sert à rien : quantizer les poids accélère peu
 
 Pourquoi le prefill est-il compute-bound et le decode memory-bound ? <!--anki:6d6f476d2f5178315951-->
 ?
-- **Prefill** : tous les tokens du prompt passent **en parallèle**. Chaque poids lu sert à des **milliers de tokens**, donc l'intensité est élevée
-- **Decode** : un **seul token** par séquence et par étape. Chaque poids lu ne sert qu'à **B tokens** (la taille du batch), donc l'intensité vaut à peu près **B FLOP/octet** en BF16
+Dans les couches linéaires d'un modèle dense, le **prefill** réutilise les poids pour de nombreux tokens ; le **decode à petit batch** les réutilise beaucoup moins. En BF16, le modèle simplifié donne environ `B FLOP/octet` pour un batch de B tokens.
 
-À batch 1, le decode est donc **~300 fois sous** le ridge point d'un H100 : le GPU passe son temps à lire des poids ([[62-optimisations-inference|optimisations]]).
+Cela explique un régime souvent limité par le calcul au prefill et par la mémoire au decode. L'attention longue, les kernels, les communications et les architectures MoE ou hybrides peuvent déplacer le goulot. Le rapport au ridge point décrit une intensité théorique ; ce n'est pas directement le pourcentage de FLOP réellement utilisé.
 
 ---
 
 Calcul : quelle vitesse maximale de decode pour un 70B en FP8 sur un H100, à batch 1 ? <!--anki:6e584d7a536d48573540-->
 ?
-Chaque token relit **tous les poids** :
+Modèle dense, poids FP8 lus une fois par token, batch 1 et bande passante théorique :
 ```text
-poids 70B en FP8                ≈ 70 Go
-bande passante H100 SXM         ≈ 3,35 To/s
-débit max ≈ 3 350 / 70          ≈ 48 tokens/s (plafond théorique)
+poids ≈ 70 Go ; bande passante supposée ≈ 3,35 To/s
+plafond dû aux seules lectures de poids ≈ 3 350 / 70 ≈ 48 tokens/s
 ```
-En pratique 70 à 80 % de ce plafond. Même raisonnement pour un poste local ([[164-llm-local-edge|LLM locaux]]). Pour aller plus vite par séquence : moins d'octets ([[68-quantization|quantization]]) ou plusieurs tokens par lecture ([[67-speculative-decoding|speculative decoding]]).
+Ce n'est ni une mesure ni une garantie qu'un déploiement complet tient sur la carte. Ajouter KV, échelles, activations et réserves ; attention, calcul, lancements et transferts diminuent le débit réel. Sans mesure, ne pas annoncer un pourcentage fixe du plafond. La quantification réduit les octets ; la spéculation peut amortir une lecture sur plusieurs tokens validés.
 
 ---
 
 Calcul : combien de temps prend le prefill de 10 000 tokens sur un modèle 8B ? <!--anki:7326283a603b30342373-->
 ?
-Un passage avant coûte **≈ 2 × N FLOP par token** :
+Pour les couches linéaires d'un modèle dense, utiliser l'approximation `2 × paramètres × tokens` :
 ```text
-2 × 8e9 × 10 000       = 1,6e14 FLOP
-H100 à ~50 % de MFU    ≈ 5e14 FLOP/s utiles
-temps                  ≈ 0,3 s de TTFT (hors file d'attente)
+2 × 8e9 × 10 000 = 1,6e14 FLOP
+hypothèse de débit utile : 5e14 FLOP/s
+durée estimée de cette composante = 0,32 s
 ```
-Le coût de l'attention s'ajoute et croît avec le **carré** de la longueur : à 100 000 tokens, il devient dominant ([[137-long-contexte|long contexte]]).
+Le débit utile choisi est une **hypothèse**, pas un rendement garanti du GPU. Ajouter attention, frais du moteur, attente et transport pour obtenir un TTFT. L'attention dense croît quadratiquement au prefill ; la longueur à laquelle elle domine dépend de l'architecture, du batch et des kernels, sans seuil universel à 100 000 tokens.
 
 ---
 
-Pourquoi augmenter le batch en decode est-il presque gratuit, jusqu'à un certain point ? <!--anki:42785655476759424b2d-->
+Pourquoi augmenter le batch peut-il améliorer fortement le débit du decode ? <!--anki:42785655476759424b2d-->
 ?
-En decode, lire les poids coûte le même temps pour **1 ou 64 séquences** : chaque séquence ajoutée réutilise la même lecture. Le débit total monte presque **linéairement** avec le batch, tandis que le TPOT de chaque séquence bouge peu.
+Dans un régime où la **lecture des poids domine**, plusieurs séquences réutilisent ces lectures et augmentent l'intensité arithmétique. Le débit agrégé peut alors progresser beaucoup plus vite que la durée d'une itération.
 
-La limite arrive par la **mémoire du KV cache** (chaque séquence y occupe sa place) et parce que l'**attention**, elle, relit le cache propre à chaque séquence et reste memory-bound ([[61-kv-cache-attention|KV cache]]).
+Le gain n'est pas gratuit : calcul, activations et lectures KV augmentent aussi, surtout à long contexte. Au-delà d'un certain batch, calcul, mémoire ou communications saturent et le TPOT se dégrade. Mesurer la courbe de charge sur le workload visé ; ne pas supposer qu'une itération à 64 séquences coûte autant qu'à une séquence.
 
 ---
 
@@ -89,7 +87,7 @@ Les deux phases ont des goulots différents (calcul et mémoire) mais partagent 
 
 À ne pas confondre : chunked prefill et désagrégation prefill/decode ? <!--anki:7a5e5671384259417430-->
 ?
-- **Chunked prefill** : découpe un long prefill en **morceaux** intercalés avec les decodes, **sur le même GPU**. Lisse le TPOT, sans infrastructure supplémentaire. Activé par défaut dans vLLM
+- **Chunked prefill** : découpe un long prefill en **morceaux** intercalés avec les decodes, **sur le même GPU**. Lisse le TPOT, sans infrastructure supplémentaire. Activé par défaut quand possible dans vLLM V1
 - **Désagrégation** : prefill et decode tournent sur des **pools de GPU séparés**, et le KV cache est **transféré** de l'un à l'autre. Chaque pool se dimensionne pour son goulot, au prix d'un réseau rapide et d'une orchestration plus complexe
 
 On commence par le premier ; le second se justifie à grande échelle.
@@ -109,11 +107,17 @@ Implémentations : NVIDIA Dynamo, llm-d sur Kubernetes, modes désagrégés de v
 
 Quand la désagrégation vaut-elle son coût ? <!--anki:446d467a673160625b32-->
 ?
-- **Grande échelle** : plusieurs nœuds par modèle, où le gain d'utilisation compense la complexité
-- **Prompts longs** (RAG, agents) avec des **SLO stricts à la fois** sur TTFT et TPOT
-- **Réseau rapide** entre les GPU : sans RDMA ou NVLink, le transfert du KV cache mange le gain
+Quand la séparation prefill/decode améliore suffisamment le **goodput sous SLO** pour payer transferts KV, routage et capacité réservée dans chaque pool. Les longs prompts mélangés aux streams sensibles à l'ITL sont un cas à étudier.
 
-Pour un ou deux GPU, chunked prefill et un bon réglage du batch suffisent ([[64-metriques-slo-inference|SLO]]).
+Mesurer volume transféré, bande passante effective, synchronisation, files des deux pools et déséquilibre de charge. Comparer à une configuration colocalisée bien réglée, notamment avec chunked prefill. La taille du cluster seule ne décide pas : un réseau rapide peut rester insuffisant, et une séparation peut réduire l'utilisation si un pool attend l'autre.
+
+---
+
+Calcul : quel coût minimal pour transférer 2 Gio de KV sur un lien à 25 Gio/s ? <!--anki:6236376139316165393166343439383339353764656438636464656336643633-->
+?
+Sans recouvrement ni contention, la composante de transfert vaut `2 / 25 = 0,08 s`, soit **80 ms**. Ajouter préparation, synchronisation et attente avant de comparer à un gain de calcul.
+
+Si la séparation économise seulement 50 ms sur le chemin critique, un transfert supplémentaire non masqué de 80 ms annule ce gain. Avec recouvrement, mesurer la partie réellement exposée plutôt qu'additionner aveuglément les durées. À plusieurs requêtes simultanées, la bande passante est partagée : le temps d'une requête isolée ne démontre pas le comportement sous charge.
 
 ---
 
@@ -133,7 +137,7 @@ Mise en situation : ton serveur vLLM affiche 100 % d'utilisation GPU, mais un se
 
 Mise en situation : sur ton RAG, les réponses « bégaient » : le texte s'arrête une demi-seconde en pleine génération, surtout aux heures de pointe. Le TTFT moyen est correct. Que diagnostiques-tu ? <!--anki:6e51482c402857432865-->
 ?
-1. **Relier aux métriques** : des pics de TPOT au p99 alors que la moyenne va bien ([[64-metriques-slo-inference|percentiles]])
+1. **Relier aux métriques** : des pics d’ITL au p99 alors que la moyenne va bien ([[64-metriques-slo-inference|percentiles]])
 2. **Suspecter l'interférence** : les longs prompts RAG (10 000 tokens et plus) passent en prefill et bloquent les decodes en cours
 3. **Activer ou régler le chunked prefill** : taille des morceaux, part du budget de tokens par étape
 4. **Réduire les prompts** : moins de chunks, reranking plus sélectif ([[25-chunking-contextual-retrieval|chunking]])
@@ -144,6 +148,9 @@ Mise en situation : sur ton RAG, les réponses « bégaient » : le texte s'arr�
 ---
 
 ## Sources
+
+- [DistServe — séparation et coût des transferts](https://arxiv.org/abs/2401.09670)
+
 
 - [NVIDIA — Dynamo, inférence distribuée](https://docs.nvidia.com/dynamo/latest/)
 

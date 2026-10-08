@@ -169,4 +169,5 @@ Mise en situation : deux GPU ont assez de VRAM au total, mais le serveur échoue
 - [[66-prefix-caching-radix-attention|Prefix caching]] — équilibrer localité et attente
 - [[116-sre-incidents-capacite-ia|SRE des services IA]] — réserve, incidents et politiques d’admission
 - [[136-mixture-of-experts|Mixture of Experts]] — placement des experts et communications
+- [[60-012-demarche-optimisation-inference|Démarche d’optimisation]] — prioriser et vérifier les gains sous contraintes de service
 - [[00-moc-ai-engineering|MOC AI Engineering]]
