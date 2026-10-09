@@ -304,4 +304,5 @@ Mise en situation : le responsable conformité demande si vous journalisez les c
 - [[85-carte-protocoles-agentiques|Carte des protocoles]] — quel protocole à quelle frontière de l'agent
 - [[95-llm-as-judge|LLM-as-a-judge]] — noter automatiquement, et valider le juge
 - [[60-010-benchmarks-charge-inference|Benchmarks de charge LLM]] — mesurer la capacité sans masquer files et échecs
+- [[90-010-langfuse-instrumentation-production|Langfuse — Instrumentation en production]] — relier traces et mesures agrégées
 - [[00-moc-ai-engineering|MOC AI Engineering]]

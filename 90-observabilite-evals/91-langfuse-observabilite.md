@@ -75,18 +75,17 @@ C'est le pont entre la production et les evals : les échecs observés deviennen
 
 Comment instrumenter une app avec Langfuse ? <!--anki:6b713c4c794f4b26255a-->
 ?
-Trois voies, de la plus fine à la plus globale :
+Combiner le **SDK**, une intégration du framework et, si nécessaire, la propagation OpenTelemetry :
 ```python
 from langfuse import observe
 
-@observe()          # SDK : un décorateur par étape à tracer
+@observe()
 def repondre(question: str):
     ...
 ```
-- **Intégrations natives** : callbacks LangChain ou [[81-litellm-api-layer|LiteLLM]], sans toucher au code applicatif
-- **OpenTelemetry** : les traces émises par le serveur ou la gateway remontent automatiquement ([[93-monitoring-inference|conventions GenAI]])
+Les callbacks LangChain ou l'intégration de la gateway capturent leurs propres appels ; vérifier la couverture obtenue. Les observations OpenTelemetry doivent être configurées et exportées vers la destination prévue : elles ne remontent pas automatiquement par leur seule existence.
 
-Le plus rentable en premier : brancher la **gateway**, ce qui couvre toutes les applications d'un coup.
+Relier recherche, outils, modèles et validations dans une trace applicative. Une gateway seule ne voit pas toutes ces étapes. Tester parenté des observations, masquage et absence de double comptage des tokens.
 
 ---
 
@@ -130,6 +129,8 @@ Mise en situation : ton équipe veut passer des impressions (« ça marche plut�
 
 - [Langfuse — traces, évaluations et gestion des prompts](https://langfuse.com/docs)
 
+- [Langfuse — structure des traces et instrumentation](https://langfuse.com/docs/observability/best-practices)
+
 ## Connexions
 - [[92-chainforge-evals-prompts|ChainForge & evals]] — l'évaluation hors production
 - [[64-metriques-slo-inference|Métriques & SLO]] — du système à l'application
@@ -148,4 +149,6 @@ Mise en situation : ton équipe veut passer des impressions (« ça marche plut�
 - [[114-reproductibilite-variance|Reproductibilité & variance]] — non-déterminisme et statistiques d'evals
 - [[41-automatisation-code-nocode|Automatisation code & no-code]] — workflows et outils no-code
 - [[45-langgraph-production|LangGraph — Production]] — persistance, reprise et supervision humaine
+- [[90-010-langfuse-instrumentation-production|Langfuse — Instrumentation en production]] — instrumentation des traces
+- [[90-011-langfuse-prompts-experiences|Langfuse — Prompts, datasets & expériences]] — relier prompts, traces et scores
 - [[00-moc-ai-engineering|MOC AI Engineering]]

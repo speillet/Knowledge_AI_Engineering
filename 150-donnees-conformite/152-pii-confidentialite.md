@@ -112,4 +112,5 @@ Mise en situation : un développeur demande l'accès aux traces de production po
 - [[93-monitoring-inference|Monitoring de l'inférence]] — journalisation des prompts
 - [[123-caching-agressif|Caching agressif]] — sécurité des caches
 - [[151-donnees-curation-annotation|Curation & annotation]] — données d'entraînement propres
+- [[90-010-langfuse-instrumentation-production|Langfuse — Instrumentation en production]] — minimiser les données exportées
 - [[00-moc-ai-engineering|MOC AI Engineering]]
