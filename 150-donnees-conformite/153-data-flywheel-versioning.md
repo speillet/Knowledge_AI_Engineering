@@ -31,7 +31,9 @@ Choisir le levier selon la **cause** : un document absent ne se corrige pas par 
 
 Pourquoi versionner les données ? <!--anki:695e49255e7a682b623f-->
 ?
-Pour **reproduire** une eval ou un entraînement (quelles données exactement ?), **comparer** des résultats dans le temps, **revenir en arrière** après une mauvaise modification, et prouver la **provenance** des données (audit, [[155-ai-act|AI Act]], droit d'auteur). Un score d'eval sans version du jeu de données n'a pas de sens.
+Pour identifier **les données effectivement utilisées**, comparer des expériences et retrouver l'origine d'un résultat. Une version doit désigner un contenu stable, avec manifeste ou snapshot, transformations et métadonnées de provenance.
+
+Le nom d'une version ne suffit pas si ses fichiers disparaissent ou changent. Définir rétention, accès et restauration selon les besoins ; un hash permet de vérifier une identité de contenu, pas de prouver à lui seul son origine ni ses droits d'usage. Une expérience partiellement reproductible doit expliciter ce qui manque plutôt que traiter son score comme dépourvu de toute information.
 
 ---
 
@@ -117,4 +119,5 @@ Mise en situation : un score d'eval obtenu il y a trois mois est impossible à r
 - [[98-debogage-agents|Débogage des agents]] — trouver la cause d'un échec dans une trace
 - [[157-contrats-qualite-donnees|Contrats & publication]] — rendre les versions cohérentes et contrôlables
 - [[158-ingestion-cdc-backfills|Ingestion & backfills]] — synchroniser les changements et reconstruire les index
+- [[150-012-stockage-colonnaire-lakehouse|Stockage colonnaire, partitions & lakehouse]] — préserver les versions physiques nécessaires aux expériences
 - [[00-moc-ai-engineering|MOC AI Engineering]]

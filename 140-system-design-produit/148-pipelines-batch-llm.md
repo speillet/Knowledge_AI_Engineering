@@ -170,4 +170,5 @@ Mise en situation : ton pipeline de classification tourne depuis trois jours. Tu
 - [[122-finops-llm|FinOps LLM]] — attribuer et piloter les dépenses IA
 - [[141-system-design-llm|System design LLM]] — la méthode de conception
 - [[158-ingestion-cdc-backfills|Ingestion & backfills]] — gérer les reprises, suppressions et rattrapages
+- [[150-015-calcul-distribue-performance-donnees|Calcul distribué & performance des pipelines data]] — borner les appels modèles et rendre les reprises sûres
 - [[00-moc-ai-engineering|MOC AI Engineering]]

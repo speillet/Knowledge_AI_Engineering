@@ -185,6 +185,7 @@ Mise en situation : une moyenne de satisfaction augmente après une migration SQ
 ---
 
 ## Sources
+- [PostgreSQL — CTE et matérialisation](https://www.postgresql.org/docs/current/queries-with.html)
 - [PostgreSQL — jointures, WHERE et agrégations](https://www.postgresql.org/docs/current/queries-table-expressions.html)
 - [PostgreSQL — fonctions de fenêtre](https://www.postgresql.org/docs/current/tutorial-window.html)
 - [PostgreSQL — IN, NOT IN et valeurs nulles](https://www.postgresql.org/docs/current/functions-comparisons.html)
@@ -195,4 +196,6 @@ Mise en situation : une moyenne de satisfaction augmente après une migration SQ
 - [[150-010-modelisation-donnees-analytiques|Modélisation analytique]] — préserver le grain et la cardinalité des transformations
 - [[26-text-to-sql|Text-to-SQL]] — valider le sens et les résultats du SQL
 - [[159-donnees-temporelles-features|Variables temporelles]] — empêcher les jointures qui révèlent le futur
+- [[150-012-stockage-colonnaire-lakehouse|Stockage colonnaire, partitions & lakehouse]] — relier filtres SQL et données réellement lues
+- [[150-015-calcul-distribue-performance-donnees|Calcul distribué & performance des pipelines data]] — examiner les plans et préserver le résultat
 - [[00-moc-ai-engineering|MOC AI Engineering]]
