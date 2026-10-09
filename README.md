@@ -14,6 +14,7 @@ Chaque fiche traite **un concept** en 8 à 34 cartes question/réponse, une quin
 Knowledge_AI_Engineering/
 ├── README.md
 ├── docs/                       # bilans de revue et documentation de maintenance
+├── examples/data-engineering/  # atelier SQL local avec données synthétiques
 ├── .obsidian/                   # configuration Obsidian
 ├── .claude/skills/              # skills Claude Code versionnés (grilling, grill-me)
 ├── scripts/lint_flashcards.py   # vérification des conventions + statistiques
@@ -42,7 +43,7 @@ Knowledge_AI_Engineering/
 ├── 120-couts-finops/            # coûts d'inférence, FinOps, caching
 ├── 130-fondamentaux-llm/         # Transformer, tokenisation, embeddings, MoE, raisonnement
 ├── 140-system-design-produit/    # system design, fiabilité, UX, batch, idempotence, transactions
-├── 150-donnees-conformite/       # curation, conformité, contrats, ingestion, données temporelles
+├── 150-donnees-conformite/       # SQL, modélisation, stockage, pipelines, corpus, qualité et conformité
 ├── 160-multimodal-edge/          # VLM, parsing de documents, voix, LLM locaux, computer use
 └── 170-ml-classique/            # validation, calibration, ranking, prévision, anomalies, explicabilité, causalité
 ```
@@ -73,6 +74,7 @@ Knowledge_AI_Engineering/
 - **Élargir les compétences prédictives** : le [bilan du 8 octobre](docs/nouvelles-competences-ia-2026-10-08.md) présente cinq nouvelles fiches sur la recommandation, la prévision temporelle, les anomalies, l’explicabilité et la causalité, avec des exercices ciblés.
 - **Voir l'ensemble** : la **vue graphe** d'Obsidian montre comment les concepts s'articulent, et le panneau **Backlinks** liste les fiches qui citent la fiche ouverte.
 - **Maîtriser les performances d’inférence** : l’[audit du 8 octobre](docs/audit-inference-llm-2026-10-08.md) relie métriques, benchmarks, capacité, optimisations et coût par tâche utile, avec une matrice de couverture et quatre ateliers.
+- **Maîtriser les données qui alimentent l’IA** : l’[audit data engineering](docs/audit-data-engineering-2026-10-09.md) relie les huit nouvelles fiches aux contrats, à la CDC et aux features existantes. Il distingue socle et approfondissements, avec cinq ateliers, dont un [atelier SQL exécutable](examples/data-engineering/atelier_sql.py). Le MOC propose le parcours correspondant.
 
 ### 3. Réviser en répétition espacée
 
@@ -382,6 +384,8 @@ La partie qui assemble tout le reste : concevoir, fiabiliser et piloter une appl
 - [Transactions, outbox & sagas pour les agents](140-system-design-produit/140-010-transactions-outbox-sagas.md) : invariants métier, double écriture, outbox et inbox, périmètre transactionnel, sagas et compensation, isolation des workflows, états inconnus, checkpoints, validation humaine et tests de panne.
 
 ### 150 — Données & conformité
+
+Construire les données des systèmes IA : modélisation et SQL, contrats et ingestion, temporalité et features, stockage, orchestration, streaming, calcul distribué, corpus, lignage et conformité.
 
 - [Données : curation & annotation](150-donnees-conformite/151-donnees-curation-annotation.md) : dimensions de qualité, déduplication, guide d'annotation, accord inter-annotateurs, qui annote, active learning, séparation dev et test, données de production, préparation d'un fine-tuning.
 - [PII & confidentialité des données](150-donnees-conformite/152-pii-confidentialite.md) : où passent les données, détection, masquage, pseudonymisation et anonymisation, pseudonymiser avant l'appel, engagements des fournisseurs, logs, mémorisation, fuites entre utilisateurs, secrets, privacy by design.

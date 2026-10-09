@@ -62,3 +62,5 @@ Tenir un petit journal d'erreurs : `notion | mon raisonnement erroné | correcti
 Après un bloc, produire un livrable reproductible : notebook de métriques avec données annotées, diagnostic RAG, rapport de charge ou décision d'architecture. Consigner hypothèses, protocole, résultat et limites. Une simulation est utile si elle est annoncée comme telle ; elle ne remplace pas une mesure du service réel.
 
 Le [parcours de mise en pratique senior](pertinence-parcours-senior-2026-10-07.md) et les [ateliers d'inférence](audit-inference-llm-2026-10-08.md) donnent des livrables et critères concrets. Les cartes entretiennent les connaissances nécessaires ; l'expérience de construction, de mesure, d'exploitation et de transmission complète cet apprentissage.
+
+Pour les données, suivre le [parcours data engineering et ses cinq ateliers](audit-data-engineering-2026-10-09.md). L'[atelier SQL exécutable](../examples/data-engineering/atelier_sql.py) permet de prédire puis vérifier les effets des jointures, des valeurs nulles et de la disponibilité temporelle, sans service externe.

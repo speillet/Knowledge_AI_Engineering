@@ -57,7 +57,7 @@
   },
   "150-donnees-conformite": {
     "title": "Données & conformité",
-    "intro": ""
+    "intro": "Construire les données des systèmes IA : modélisation et SQL, contrats et ingestion, temporalité et features, stockage, orchestration, streaming, calcul distribué, corpus, lignage et conformité."
   },
   "160-multimodal-edge": {
     "title": "Multimodal & edge",

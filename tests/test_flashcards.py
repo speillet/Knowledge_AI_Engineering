@@ -118,6 +118,7 @@ class VaultTests(unittest.TestCase):
             ROOT / "README.md", ROOT / f"{lint.MOC}.md", ROOT / "scripts/sections.json",
             ROOT / lint.RETIRED,
         ]
+        sources += list((ROOT / "examples").rglob("*.py"))
         for source in sources:
             target = self.root / source.relative_to(ROOT)
             target.parent.mkdir(parents=True, exist_ok=True)

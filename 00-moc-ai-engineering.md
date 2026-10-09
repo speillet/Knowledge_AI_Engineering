@@ -49,6 +49,17 @@ Pour relier les trois priorités transversales aux applications IA :
 - [[38-plateformes-agents|Plateformes]] → [[115-plateformes-agents-gouvernance|architecture et gouvernance]]
 - [[165-computer-use-agents-navigateur|Agents d’interface]] : complément multimodal du parcours agentique.
 
+### Parcours data engineering pour l’IA
+
+1. **Définir les données** avec [[150-010-modelisation-donnees-analytiques|Modélisation analytique]], [[150-011-sql-transformations-analytiques|SQL]] et [[157-contrats-qualite-donnees|Contrats]] : grain, clés, jointures, nulls et invariants.
+2. **Collecter et reconstruire** avec [[158-ingestion-cdc-backfills|Ingestion, CDC & backfills]] et [[159-donnees-temporelles-features|Variables temporelles]] : pagination, versions, suppressions et disponibilité réelle.
+3. **Stocker et publier** avec [[150-012-stockage-colonnaire-lakehouse|Stockage & lakehouse]] et [[150-013-orchestration-pipelines-donnees|Orchestration data]] : fichiers, snapshots, partitions, dépendances et reprise.
+4. **Construire les corpus** avec [[150-017-datasets-corpus-ia|Datasets & corpus IA]], [[151-donnees-curation-annotation|Curation]] et [[172-validation-metriques-ml|Validation ML]] : manifestes, familles, splits, shards et lecteurs.
+5. **Exploiter et gouverner** avec [[150-016-observabilite-lignage-donnees|Observabilité & lignage]], [[152-pii-confidentialite|Confidentialité]] et [[116-sre-incidents-capacite-ia|SRE]] : qualité, SLO, impact et réparation.
+6. **Approfondir selon le besoin** avec [[150-014-streaming-traitements-evenements|Streaming]] et [[150-015-calcul-distribue-performance-donnees|Calcul distribué]] : faible latence, état, shuffle, skew et coût.
+
+L’[audit de couverture et ses cinq ateliers](docs/audit-data-engineering-2026-10-09.md) précise le niveau attendu selon le rôle. Commencer par l’[atelier SQL local](examples/data-engineering/atelier_sql.py), puis démontrer la reprise d’un pipeline et la reconstruction d’un dataset. Les fiches avancées se travaillent lorsque les contraintes du projet les justifient.
+
 ### Parcours de mise en pratique senior
 Après les fondations, travailler ces sujets sur un même projet et produire une preuve pour chaque étape :
 1. [[99-statistiques-decisions-experimentales|Décider avec des statistiques]] — protocole, comparaison appariée, intervalle et seuil de gain utile
