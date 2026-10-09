@@ -141,4 +141,6 @@ Mise en situation : le job d'indexation réussit, mais certains documents récen
 - [[153-data-flywheel-versioning|Versioning des données]] — versions d'index et sources à rejouer
 - [[148-pipelines-batch-llm|Pipelines batch LLM]] — reprendre les traitements volumineux
 - [[149-livraison-idempotence-concurrence|Garanties de livraison]] — protéger les reprises et écritures concurrentes
+- [[150-013-orchestration-pipelines-donnees|Transformations & orchestration des pipelines data]] — coordonner reprises, partitions et publication
+- [[150-014-streaming-traitements-evenements|Streaming & traitements d’événements]] — relier positions source et effets aval
 - [[00-moc-ai-engineering|MOC AI Engineering]]

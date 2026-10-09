@@ -4,7 +4,7 @@ Un vault [Obsidian](https://obsidian.md) de **fiches de révision (flashcards) e
 
 Chaque fiche traite **un concept** en 8 à 34 cartes question/réponse, une quinzaine en moyenne, et se termine par des **mises en situation** : des cas concrets à diagnostiquer, concevoir ou arbitrer. Les fiches sont reliées entre elles par des liens, pour qu'on puisse passer d'un sujet à ses voisins, et elles se révisent en **répétition espacée**.
 
-**État au 9 octobre 2026** : 133 fiches et 1 938 cartes, réparties en 17 sections, dont 305 mises en situation et 152 cartes « à ne pas confondre ».
+**État au 9 octobre 2026** : 135 fiches et 1 972 cartes, réparties en 17 sections, dont 311 mises en situation et 157 cartes « à ne pas confondre ».
 
 ---
 
@@ -395,6 +395,8 @@ La partie qui assemble tout le reste : concevoir, fiabiliser et piloter une appl
 - [Modélisation des données analytiques](150-donnees-conformite/150-010-modelisation-donnees-analytiques.md) : grain, OLTP et OLAP, faits et dimensions, clés, normalisation, cardinalités de jointure, mesures additives, SCD, identité métier et définitions de métriques.
 - [SQL pour les pipelines et datasets IA](150-donnees-conformite/150-011-sql-transformations-analytiques.md) : jointures et filtres, NULL, agrégations, fenêtres, déduplication déterministe, anti-jointures, CTE, SQL temporel, plans de requête et contrôles de transformations.
 - [Stockage colonnaire, partitions & lakehouse](150-donnees-conformite/150-012-stockage-colonnaire-lakehouse.md) : warehouse, lake et lakehouse, stockage objet, JSONL/Avro/Parquet/Arrow, row groups, pruning, partitions, petits fichiers, formats de table, transactions, snapshots et suppressions.
+- [Transformations & orchestration des pipelines data](150-donnees-conformite/150-013-orchestration-pipelines-donnees.md) : ETL/ELT, couches de données, tâches et assets, intervalles logiques, dépendances, incrémental, retries, publication, CI, ressources et chemin critique d’un DAG.
+- [Streaming & traitements d’événements](150-donnees-conformite/150-014-streaming-traitements-evenements.md) : batch et micro-batch, partitions et ordre, groupes de consommateurs, fenêtres, triggers, watermarks, jointures de flux, changelog, état, checkpoints, backpressure et reprise.
 - [Calcul distribué & performance des pipelines data](150-donnees-conformite/150-015-calcul-distribue-performance-donnees.md) : choix local ou distribué, exécution paresseuse, partitions, shuffle, skew, broadcast, salting, mémoire driver, UDF, cache, agrégations, loi d’Amdahl et coût du traitement.
 
 ### 160 — Multimodal & edge

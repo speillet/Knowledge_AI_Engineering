@@ -198,4 +198,5 @@ Mise en situation : une moyenne de satisfaction augmente après une migration SQ
 - [[159-donnees-temporelles-features|Variables temporelles]] — empêcher les jointures qui révèlent le futur
 - [[150-012-stockage-colonnaire-lakehouse|Stockage colonnaire, partitions & lakehouse]] — relier filtres SQL et données réellement lues
 - [[150-015-calcul-distribue-performance-donnees|Calcul distribué & performance des pipelines data]] — examiner les plans et préserver le résultat
+- [[150-013-orchestration-pipelines-donnees|Transformations & orchestration des pipelines data]] — valider les transformations avant publication
 - [[00-moc-ai-engineering|MOC AI Engineering]]

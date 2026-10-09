@@ -161,4 +161,5 @@ Mise en situation : deux agents modifient la même proposition commerciale et l'
 - [[142-fiabilite-resilience-llm|Fiabilité & résilience]] — rendre les reprises sûres
 - [[84-streaming-integration-applicative|Intégration applicative]] — suivre les opérations indépendamment de la connexion
 - [[158-ingestion-cdc-backfills|Ingestion & backfills]] — appliquer déduplication, versions et checkpoints
+- [[150-014-streaming-traitements-evenements|Streaming & traitements d’événements]] — délimiter les garanties de bout en bout
 - [[00-moc-ai-engineering|MOC AI Engineering]]

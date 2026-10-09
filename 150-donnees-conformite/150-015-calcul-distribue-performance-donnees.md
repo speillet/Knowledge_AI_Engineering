@@ -169,4 +169,5 @@ Mise en situation : un job d’embeddings distribué relance certaines partition
 - [[150-012-stockage-colonnaire-lakehouse|Stockage analytique]] — relier disposition des données et coût d’exécution
 - [[150-011-sql-transformations-analytiques|SQL analytique]] — examiner les plans et préserver le résultat
 - [[148-pipelines-batch-llm|Pipelines batch LLM]] — borner les appels modèles et rendre les reprises sûres
+- [[150-013-orchestration-pipelines-donnees|Transformations & orchestration des pipelines data]] — dimensionner les ressources et le chemin critique
 - [[00-moc-ai-engineering|MOC AI Engineering]]

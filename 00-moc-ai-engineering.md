@@ -244,6 +244,8 @@ L’[audit d’inférence du 8 octobre](docs/audit-inference-llm-2026-10-08.md) 
 - [[150-010-modelisation-donnees-analytiques|Modélisation des données analytiques]]
 - [[150-011-sql-transformations-analytiques|SQL pour les pipelines et datasets IA]]
 - [[150-012-stockage-colonnaire-lakehouse|Stockage colonnaire, partitions & lakehouse]]
+- [[150-013-orchestration-pipelines-donnees|Transformations & orchestration des pipelines data]]
+- [[150-014-streaming-traitements-evenements|Streaming & traitements d’événements]]
 - [[150-015-calcul-distribue-performance-donnees|Calcul distribué & performance des pipelines data]]
 
 ## 160 — Multimodal & edge

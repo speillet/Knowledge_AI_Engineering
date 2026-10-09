@@ -60,26 +60,17 @@ Quel orchestrateur « code » pour des pipelines data planifiés, une orchestrat
 
 Pourquoi la durable execution intéresse-t-elle les agents ? <!--anki:624b5d7544713e7d2179-->
 ?
-Un agent long (minutes ou heures, avec validations humaines) doit **reprendre là où il s'est arrêté** après un crash ou une attente, sans rejouer les appels LLM et les actions déjà faites.
-```python
-# le moteur enregistre le résultat de chaque étape : au redémarrage,
-# il rejoue le code mais renvoie les résultats déjà connus
-async def traiter_dossier(id):
-    donnees   = await etape(extraire, id)         # déjà fait → résultat rejoué
-    analyse   = await etape(analyser_llm, donnees) # déjà fait → résultat rejoué
-    decision  = await attendre_humain(analyse)     # reprend ici, 2 jours plus tard
-    await etape(notifier, decision)                # exécuté une seule fois
-```
-Condition indispensable : des étapes **idempotentes**, sinon la reprise renvoie deux fois le même e-mail ([[45-langgraph-production|checkpoints]]).
+Elle permet de **reprendre un workflow à partir d'un historique durable**, sans refaire nécessairement les étapes dont le résultat a déjà été enregistré. Une attente humaine peut être représentée par un état ou un événement persistant.
+
+Une activité distante acceptée juste avant un crash peut toutefois être relancée si son résultat n'a pas été enregistré. Prévoir clés d'idempotence, vérification d'état et politique d'annulation ; un moteur ne transforme pas une API externe en transaction. Tester ces fenêtres de panne et la compatibilité du code lors des reprises. Voir les [[45-langgraph-production|checkpoints]] pour comparer les frontières de persistance.
 
 ---
 
 À ne pas confondre : orchestrateur de données et durable execution ? <!--anki:735f63646e702e615826-->
 ?
-- **Airflow, Dagster, Prefect** : pensés pour des **pipelines planifiés** (batch nocturne, ETL). Granularité : la tâche, l'exécution périodique
-- **Temporal, Restate, DBOS** : pensés pour des **processus longs et événementiels**, avec état, attentes humaines et reprise **à l'instruction près**
+L’**orchestration de données** organise dépendances, partitions et disponibilité de résultats. La **durable execution** vise la reprise de workflows en s'appuyant sur un historique persistant des étapes et événements.
 
-Un agent qui attend une validation pendant deux jours relève du second, pas du premier.
+Ces capacités se recouvrent selon les plateformes ; les traitements data ne sont pas tous périodiques, et une attente humaine n'impose pas un produit unique. Examiner granularité de reprise, délais, annulation, versioning et interactions externes. La persistance du workflow ne garantit pas qu'une activité distante s'exécute une seule fois : son idempotence ou un protocole adapté reste nécessaire.
 
 ---
 
@@ -131,4 +122,5 @@ Mise en situation : ton processus d'onboarding client dure trois jours, avec deu
 - [[81-litellm-api-layer|LiteLLM]] — point d'accès aux modèles
 - [[91-langfuse-observabilite|Langfuse]] — les traces restent centralisées
 - [[48-patterns-workflows-agentiques|Patterns de workflows]] — les patterns derrière les workflows
+- [[150-013-orchestration-pipelines-donnees|Transformations & orchestration des pipelines data]] — séparer orchestration et exécution des traitements
 - [[00-moc-ai-engineering|MOC AI Engineering]]

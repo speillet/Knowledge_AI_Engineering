@@ -145,4 +145,5 @@ Mise en situation : un modèle de churn semble s'améliorer fortement sur les se
 - [[175-series-temporelles-prevision|Prévision de séries temporelles]] — reconstruire les informations disponibles
 - [[150-010-modelisation-donnees-analytiques|Modélisation des données analytiques]] — relier histoire métier et disponibilité pour le modèle
 - [[150-011-sql-transformations-analytiques|SQL pour les pipelines et datasets IA]] — empêcher les jointures qui révèlent le futur
+- [[150-014-streaming-traitements-evenements|Streaming & traitements d’événements]] — respecter temps événement, disponibilité et retards
 - [[00-moc-ai-engineering|MOC AI Engineering]]
