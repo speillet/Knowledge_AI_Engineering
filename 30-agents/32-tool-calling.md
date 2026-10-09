@@ -184,4 +184,5 @@ Mise en situation : un agent affirme qu'un client n'a aucune facture impayée ap
 - [[37-frameworks-agents|Frameworks d'agents]] — panorama des frameworks
 - [[41-automatisation-code-nocode|Automatisation code & no-code]] — workflows et outils no-code
 - [[42-langchain-fondamentaux|LangChain]] — les briques de base du framework
+- [[40-010-langchain-outils-middleware-production|LangChain — Contrats, outils & middleware en production]] — valider demandes et résultats
 - [[00-moc-ai-engineering|MOC AI Engineering]]

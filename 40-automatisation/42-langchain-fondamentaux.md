@@ -150,4 +150,5 @@ Mise en situation : ton extraction de données renvoie parfois du JSON invalide,
 - [[37-frameworks-agents|Frameworks d'agents]] — le panorama
 - [[32-tool-calling|Tool calling]] — ce que `@tool` et `bind_tools` encapsulent
 - [[21-rag-fondamentaux|RAG]] — les briques loaders, splitters, retrievers
+- [[40-010-langchain-outils-middleware-production|LangChain — Contrats, outils & middleware en production]] — contrats des composants
 - [[00-moc-ai-engineering|MOC AI Engineering]]

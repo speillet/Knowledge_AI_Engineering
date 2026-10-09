@@ -170,4 +170,5 @@ Mise en situation : tes outils ont besoin de l'identifiant du client et de son n
 - [[34-harness-plugins|Harness & plugins]] — le middleware comme hook de harness
 - [[35-context-engineering|Context engineering]] — résumé et édition du contexte
 - [[36-orchestration-agents|Orchestration multi-agents]] — sous-agents, handoffs et A2A
+- [[40-010-langchain-outils-middleware-production|LangChain — Contrats, outils & middleware en production]] — composition des middlewares
 - [[00-moc-ai-engineering|MOC AI Engineering]]

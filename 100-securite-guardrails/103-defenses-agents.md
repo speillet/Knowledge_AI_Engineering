@@ -257,4 +257,5 @@ Mise en situation : ton agent de code tourne dans un conteneur avec les identifi
 - [[49-agents-de-code|Agents de code]] — utiliser et intégrer les agents de code
 - [[85-carte-protocoles-agentiques|Carte des protocoles]] — quel protocole à quelle frontière de l'agent
 - [[33-mcp|MCP]] — le protocole standard entre agents et outils
+- [[40-010-langchain-outils-middleware-production|LangChain — Contrats, outils & middleware en production]] — permissions appliquées par le service
 - [[00-moc-ai-engineering|MOC AI Engineering]]
