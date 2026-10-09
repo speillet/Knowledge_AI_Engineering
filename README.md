@@ -4,7 +4,7 @@ Un vault [Obsidian](https://obsidian.md) de **fiches de révision (flashcards) e
 
 Chaque fiche traite **un concept** en 8 à 34 cartes question/réponse, une quinzaine en moyenne, et se termine par des **mises en situation** : des cas concrets à diagnostiquer, concevoir ou arbitrer. Les fiches sont reliées entre elles par des liens, pour qu'on puisse passer d'un sujet à ses voisins, et elles se révisent en **répétition espacée**.
 
-**État au 9 octobre 2026** : 135 fiches et 1 972 cartes, réparties en 17 sections, dont 311 mises en situation et 157 cartes « à ne pas confondre ».
+**État au 9 octobre 2026** : 137 fiches et 2 010 cartes, réparties en 17 sections, dont 317 mises en situation et 162 cartes « à ne pas confondre ».
 
 ---
 
@@ -390,14 +390,16 @@ La partie qui assemble tout le reste : concevoir, fiabiliser et piloter une appl
 - [AI Act (règlement européen sur l'IA)](150-donnees-conformite/155-ai-act.md) : approche par les risques, pratiques interdites, haut risque et obligations, fournisseur ou déployeur, transparence, modèles à usage général, calendrier, sanctions, plan d'action.
 - [IA responsable : biais, équité & transparence](150-donnees-conformite/156-ia-responsable.md) : safety ou security, sources de biais, tests contrefactuels, métriques d'équité, model cards et system cards, datasheets, sycophancy, sécurité ou utilité, supervision humaine effective, référentiels (NIST AI RMF, ISO 42001).
 - [Contrats, schémas & qualité des données](150-donnees-conformite/157-contrats-qualite-donnees.md) : contrat producteur-consommateur, contraintes de schéma et métier, fraîcheur et complétude, compatibilité, migrations, quarantaine, dérive ou incident, publication atomique et lignage opérationnel.
-- [Ingestion incrémentale, CDC & backfills](150-donnees-conformite/158-ingestion-cdc-backfills.md) : snapshot ou incrémental, CDC, cohérence snapshot-journal, checkpoints, identités et versions, suppressions, rejeu historique, capacité de rattrapage, quarantaine, réconciliation et index RAG.
-- [Données temporelles & variables de production](150-donnees-conformite/159-donnees-temporelles-features.md) : temps événement et traitement, disponibilité historique, jointures point-in-time, corrections bitemporelles, fenêtres et watermarks, labels retardés, cohérence entraînement-serving, feature store et fraîcheur.
+- [Ingestion incrémentale, CDC & backfills](150-donnees-conformite/158-ingestion-cdc-backfills.md) : snapshot ou incrémental, CDC, cohérence snapshot-journal, checkpoints, identités et versions, suppressions, rejeu historique, capacité de rattrapage, quarantaine, réconciliation et index RAG, pagination API et cohérence des extractions.
+- [Données temporelles & variables de production](150-donnees-conformite/159-donnees-temporelles-features.md) : temps événement et traitement, disponibilité historique, jointures point-in-time, corrections bitemporelles, fenêtres et watermarks, labels retardés, cohérence entraînement-serving, feature store et fraîcheur, chemins offline/online et matérialisation sûre.
 - [Modélisation des données analytiques](150-donnees-conformite/150-010-modelisation-donnees-analytiques.md) : grain, OLTP et OLAP, faits et dimensions, clés, normalisation, cardinalités de jointure, mesures additives, SCD, identité métier et définitions de métriques.
 - [SQL pour les pipelines et datasets IA](150-donnees-conformite/150-011-sql-transformations-analytiques.md) : jointures et filtres, NULL, agrégations, fenêtres, déduplication déterministe, anti-jointures, CTE, SQL temporel, plans de requête et contrôles de transformations.
 - [Stockage colonnaire, partitions & lakehouse](150-donnees-conformite/150-012-stockage-colonnaire-lakehouse.md) : warehouse, lake et lakehouse, stockage objet, JSONL/Avro/Parquet/Arrow, row groups, pruning, partitions, petits fichiers, formats de table, transactions, snapshots et suppressions.
 - [Transformations & orchestration des pipelines data](150-donnees-conformite/150-013-orchestration-pipelines-donnees.md) : ETL/ELT, couches de données, tâches et assets, intervalles logiques, dépendances, incrémental, retries, publication, CI, ressources et chemin critique d’un DAG.
 - [Streaming & traitements d’événements](150-donnees-conformite/150-014-streaming-traitements-evenements.md) : batch et micro-batch, partitions et ordre, groupes de consommateurs, fenêtres, triggers, watermarks, jointures de flux, changelog, état, checkpoints, backpressure et reprise.
 - [Calcul distribué & performance des pipelines data](150-donnees-conformite/150-015-calcul-distribue-performance-donnees.md) : choix local ou distribué, exécution paresseuse, partitions, shuffle, skew, broadcast, salting, mémoire driver, UDF, cache, agrégations, loi d’Amdahl et coût du traitement.
+- [Observabilité, lignage & exploitation des données](150-donnees-conformite/150-016-observabilite-lignage-donnees.md) : SLO de données, fraîcheur, complétude par segment, réconciliation, couverture des tests, lignage déclaré ou exécuté, catalogue, impact, incidents et coût de surveillance.
+- [Construction de datasets & corpus IA](150-donnees-conformite/150-017-datasets-corpus-ia.md) : manifestes, identité documentaire, parsing, déduplication et splits, shards, streaming de datasets, shuffle, workers, mélange des sources, filtrage, packing et reprise d’entraînement.
 
 ### 160 — Multimodal & edge
 

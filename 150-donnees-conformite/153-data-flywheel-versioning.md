@@ -109,6 +109,9 @@ Mise en situation : un score d'eval obtenu il y a trois mois est impossible à r
 
 ---
 
+## Sources
+- [Apache Iceberg — expiration des snapshots et conservation des fichiers](https://iceberg.apache.org/docs/latest/maintenance/)
+
 ## Connexions
 - [[97-evals-online-ab-testing|Evals online]] — la collecte en production
 - [[113-monitoring-drift-feedback|Monitoring, drift & feedback]] — la boucle de feedback
@@ -120,4 +123,5 @@ Mise en situation : un score d'eval obtenu il y a trois mois est impossible à r
 - [[157-contrats-qualite-donnees|Contrats & publication]] — rendre les versions cohérentes et contrôlables
 - [[158-ingestion-cdc-backfills|Ingestion & backfills]] — synchroniser les changements et reconstruire les index
 - [[150-012-stockage-colonnaire-lakehouse|Stockage colonnaire, partitions & lakehouse]] — préserver les versions physiques nécessaires aux expériences
+- [[150-017-datasets-corpus-ia|Construction de datasets & corpus IA]] — fixer contenu, transformations et conservation
 - [[00-moc-ai-engineering|MOC AI Engineering]]

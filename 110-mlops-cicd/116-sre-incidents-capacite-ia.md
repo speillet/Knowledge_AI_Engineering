@@ -145,4 +145,5 @@ Mise en situation : le même incident de saturation revient chaque mois malgré 
 - [[112-cicd-modeles|CI/CD des modèles]] — rollback et compatibilité des artefacts
 - [[147-leadership-technique-ia|Leadership technique]] — responsabilités et suivi des corrections
 - [[60-011-capacite-ordonnancement-inference|Capacité & ordonnancement]] — relier mémoire, budgets et débit utile sous charge
+- [[150-016-observabilite-lignage-donnees|Observabilité, lignage & exploitation des données]] — réagir aux ruptures de garanties et valider les reprises
 - [[00-moc-ai-engineering|MOC AI Engineering]]

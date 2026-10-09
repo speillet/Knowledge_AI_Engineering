@@ -247,6 +247,8 @@ L’[audit d’inférence du 8 octobre](docs/audit-inference-llm-2026-10-08.md) 
 - [[150-013-orchestration-pipelines-donnees|Transformations & orchestration des pipelines data]]
 - [[150-014-streaming-traitements-evenements|Streaming & traitements d’événements]]
 - [[150-015-calcul-distribue-performance-donnees|Calcul distribué & performance des pipelines data]]
+- [[150-016-observabilite-lignage-donnees|Observabilité, lignage & exploitation des données]]
+- [[150-017-datasets-corpus-ia|Construction de datasets & corpus IA]]
 
 ## 160 — Multimodal & edge
 

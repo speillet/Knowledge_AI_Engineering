@@ -1,6 +1,6 @@
 # Ingestion incrémentale, CDC & backfills — Flashcards
 Tags: #flashcards #ai-engineering #donnees #data-engineering #ingestion
-<!-- summary: snapshot ou incrémental, CDC, cohérence snapshot-journal, checkpoints, identités et versions, suppressions, rejeu historique, capacité de rattrapage, quarantaine, réconciliation et index RAG. -->
+<!-- summary: snapshot ou incrémental, CDC, cohérence snapshot-journal, checkpoints, identités et versions, suppressions, rejeu historique, capacité de rattrapage, quarantaine, réconciliation et index RAG, pagination API et cohérence des extractions. -->
 
 
 Quand choisir une ingestion complète plutôt qu'incrémentale ? <!--anki:3366623837653530383437383462643961383764376337666362306263306237-->
@@ -93,6 +93,14 @@ Faire la comparaison sur des états compatibles dans le temps ; une source qui c
 
 ---
 
+Comment paginer une extraction API qui continue d’évoluer pendant la lecture ? <!--anki:6633313464303738383631643464336538373334383734363432346132633336-->
+?
+Utiliser le **protocole documenté** : token de continuation, curseur stable ou export de snapshot lorsqu'il existe. Une pagination par offset sur une liste mutable peut manquer ou répéter des objets si des insertions déplacent les pages.
+
+Conserver les paramètres de requête et le curseur après persistance, gérer expiration et relivraisons, puis réconcilier les identités. Une pagination par clé avec ordre total réduit certains problèmes, mais ne garantit pas à elle seule un snapshot cohérent. Un token opaque ne doit pas être reconstruit arbitrairement ; une page courte ou vide n'indique pas toujours la fin si une continuation est fournie.
+
+---
+
 ## Mises en situation
 
 Mise en situation : après un arrêt de trois jours, le journal source ne contient plus la position CDC sauvegardée. Comment reprends-tu ? <!--anki:3266343736653662663136633437326561653766643162373337393430326666-->
@@ -132,6 +140,7 @@ Mise en situation : le job d'indexation réussit, mais certains documents récen
 ---
 
 ## Sources
+- [Google AIP-158 — pagination et tokens de continuation](https://google.aip.dev/158)
 - [Debezium — connecteur PostgreSQL, snapshots et journal de changements](https://debezium.io/documentation/reference/stable/connectors/postgresql.html)
 - [Apache Kafka — garanties de livraison et traitement](https://kafka.apache.org/41/design/design/)
 

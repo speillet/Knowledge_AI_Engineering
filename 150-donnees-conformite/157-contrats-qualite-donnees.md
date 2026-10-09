@@ -141,4 +141,5 @@ Mise en situation : un producteur veut supprimer demain une colonne que plusieur
 - [[113-monitoring-drift-feedback|Drift & feedback]] — distinguer changement de population et défaut de collecte
 - [[150-010-modelisation-donnees-analytiques|Modélisation des données analytiques]] — définir grain, clés et sens des mesures
 - [[150-012-stockage-colonnaire-lakehouse|Stockage colonnaire, partitions & lakehouse]] — publier un état cohérent et lisible
+- [[150-016-observabilite-lignage-donnees|Observabilité, lignage & exploitation des données]] — mesurer les garanties publiées
 - [[00-moc-ai-engineering|MOC AI Engineering]]

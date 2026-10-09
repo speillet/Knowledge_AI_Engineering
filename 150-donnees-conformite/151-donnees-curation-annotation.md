@@ -31,7 +31,9 @@ Dédupliquer aussi les paraphrases et documents issus d'une même source avant d
 
 Pourquoi et comment dédupliquer un jeu de données d'entraînement ou d'eval ? <!--anki:733b53586434355f6835-->
 ?
-Les doublons **surpondèrent** certains exemples, **gonflent** les scores d'eval (le même cas en train et en test) et gaspillent du calcul. On déduplique en **exact** (hash du texte normalisé), en **quasi-doublon** (MinHash / LSH sur les n-grammes) et en **sémantique** (similarité d'embeddings au-dessus d'un seuil).
+Les doublons peuvent **surpondérer certaines sources**, gaspiller du calcul ou créer une fuite entre train et test. Commencer par l'identité source et les empreintes de contenus normalisés ; détecter ensuite les quasi-doublons avec une méthode et un seuil validés.
+
+Ne pas assimiler automatiquement proximité sémantique et identité : négations, chiffres et versions changent parfois la bonne réponse. Conserver la provenance des regroupements et définir l'unité de split adaptée. Certaines répétitions sont légitimes ; décider ce que l'on veut corriger, puis mesurer l'effet sur couverture et évaluation plutôt que supprimer indistinctement tout ce qui se ressemble.
 
 ---
 
@@ -136,4 +138,5 @@ Mise en situation : tu disposes de 40 heures d'expert métier pour annoter. Comm
 - [[172-validation-metriques-ml|Validation ML]] — éviter les fuites et choisir le découpage des données
 - [[157-contrats-qualite-donnees|Contrats & qualité des données]] — valider schéma, sens métier et couverture des lots
 - [[176-detection-anomalies|Détection d'anomalies]] — organiser la confirmation des incidents
+- [[150-017-datasets-corpus-ia|Construction de datasets & corpus IA]] — relier qualité éditoriale et construction du corpus
 - [[00-moc-ai-engineering|MOC AI Engineering]]

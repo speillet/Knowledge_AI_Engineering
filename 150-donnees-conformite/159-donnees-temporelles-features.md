@@ -1,6 +1,6 @@
 # Données temporelles & variables de production — Flashcards
 Tags: #flashcards #ai-engineering #donnees #data-engineering #features
-<!-- summary: temps événement et traitement, disponibilité historique, jointures point-in-time, corrections bitemporelles, fenêtres et watermarks, labels retardés, cohérence entraînement-serving, feature store et fraîcheur. -->
+<!-- summary: temps événement et traitement, disponibilité historique, jointures point-in-time, corrections bitemporelles, fenêtres et watermarks, labels retardés, cohérence entraînement-serving, feature store et fraîcheur, chemins offline/online et matérialisation sûre. -->
 
 
 À ne pas confondre : temps de l'événement et temps de traitement ? <!--anki:6530353238343566646235653466306338396630383966326238633938343537-->
@@ -94,6 +94,22 @@ Prévoir attente bornée, modèle de secours, abstention ou décision humaine se
 
 ---
 
+À ne pas confondre : stockage offline et online des features ? <!--anki:3737623337316630626462303433383962333335366533636535343039646365-->
+?
+Le **stockage offline** sert notamment à reconstruire des historiques et lots d'entraînement. Le **stockage online** vise la récupération des variables utiles à une requête avec la latence attendue, souvent par clé d'entité.
+
+Une valeur courante rapide à lire ne fournit pas automatiquement son historique ; un historique complet n'offre pas nécessairement un accès interactif rapide. Les définitions doivent rester compatibles entre chemins. Vérifier types, valeurs manquantes, fraîcheur et version des transformations. Un feature store facilite ces interfaces, mais ne garantit pas à lui seul l'identité des informations disponibles à chaque instant.
+
+---
+
+Comment matérialiser des features en ligne sans écraser une valeur récente par un backfill ancien ? <!--anki:6566643833666364333636303431363762653937316363366536636330323934-->
+?
+Associer **clé d'entité, version de feature et ordre temporel pertinent**, puis écrire selon une politique qui refuse ou isole les mises à jour obsolètes. Les garanties du stockage et de son connecteur doivent être vérifiées.
+
+Séparer reconstruction offline et publication online lorsque leurs objectifs diffèrent. Un backfill historique ne doit pas remplacer la valeur courante simplement parce qu'il termine plus tard. Tester événement tardif, correction valide, suppression et rejeu ; conserver les horodatages nécessaires. La règle « plus grand timestamp gagne » n'est correcte que si ce timestamp exprime réellement l'ordre métier attendu.
+
+---
+
 ## Mises en situation
 
 Mise en situation : un modèle historique est excellent, mais ses performances chutent dès son lancement malgré les mêmes colonnes. Que recherches-tu ? <!--anki:6131633734393433356463633438363239396262626138313536326561376135-->
@@ -133,6 +149,8 @@ Mise en situation : un modèle de churn semble s'améliorer fortement sur les se
 ---
 
 ## Sources
+- [Feast — architecture et chemins de features](https://docs.feast.dev/getting-started/architecture/overview)
+- [Feast — stockage online](https://docs.feast.dev/getting-started/components/online-store)
 - [Feast — jointures point-in-time](https://docs.feast.dev/getting-started/concepts/point-in-time-joins)
 - [Apache Beam — temps des événements, watermarks et données tardives](https://beam.apache.org/documentation/programming-guide/#watermarks-and-late-data)
 - [TensorFlow Data Validation — écarts entraînement et serving](https://www.tensorflow.org/tfx/guide/tfdv)

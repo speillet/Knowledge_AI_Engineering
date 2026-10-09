@@ -191,4 +191,5 @@ Mise en situation : deux jobs publient chacun une table cohérente, mais le mod�
 - [[157-contrats-qualite-donnees|Contrats & qualité]] — publier un état cohérent et lisible
 - [[150-011-sql-transformations-analytiques|SQL analytique]] — relier filtres SQL et données réellement lues
 - [[150-015-calcul-distribue-performance-donnees|Calcul distribué & performance des pipelines data]] — relier disposition des données et coût d’exécution
+- [[150-017-datasets-corpus-ia|Construction de datasets & corpus IA]] — organiser et lire les shards efficacement
 - [[00-moc-ai-engineering|MOC AI Engineering]]

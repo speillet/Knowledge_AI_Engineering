@@ -182,4 +182,5 @@ Mise en situation : après 200 essais, le meilleur modèle gagne un point sur va
 - [[99-statistiques-decisions-experimentales|Statistiques pour décider en IA]] — comparer les modèles sans biais de sélection
 - [[175-series-temporelles-prevision|Prévision de séries temporelles]] — comparer sans utiliser le futur
 - [[176-detection-anomalies|Détection d'anomalies]] — classes rares et coût des faux positifs
+- [[150-017-datasets-corpus-ia|Construction de datasets & corpus IA]] — protéger les splits et mesurer la généralisation
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -154,4 +154,5 @@ Mise en situation : trois équipes déploient chacune leurs modèles, avec leurs
 - [[105-devsecops-ia-agentique|DevSecOps pour l'IA agentique]] — AI-BOM et chaîne d'approvisionnement des modèles
 - [[153-data-flywheel-versioning|Data flywheel & versioning]] — versionner et boucler sur les données
 - [[147-leadership-technique-ia|Leadership technique]] — rôle du senior
+- [[150-016-observabilite-lignage-donnees|Observabilité, lignage & exploitation des données]] — tracer les données jusqu’aux versions de modèles
 - [[00-moc-ai-engineering|MOC AI Engineering]]

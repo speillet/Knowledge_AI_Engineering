@@ -170,4 +170,5 @@ Mise en situation : un DAG est vert, mais le dataset publié contient seulement 
 - [[41-automatisation-code-nocode|Automatisation]] — séparer orchestration et exécution des traitements
 - [[150-015-calcul-distribue-performance-donnees|Calcul distribué]] — dimensionner les ressources et le chemin critique
 - [[150-014-streaming-traitements-evenements|Streaming & traitements d’événements]] — coordonner traitements et reprises
+- [[150-016-observabilite-lignage-donnees|Observabilité, lignage & exploitation des données]] — relier exécution réussie et disponibilité des résultats
 - [[00-moc-ai-engineering|MOC AI Engineering]]
