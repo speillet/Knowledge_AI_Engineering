@@ -5,6 +5,8 @@ Carte racine du vault : les connaissances clés de l'**AI Engineering**, de l'us
 Chaque domaine a ses notes de flashcards reliées entre elles via `## Connexions`.
 Chaque fiche se termine par des **mises en situation** : pour ne réviser qu'elles, chercher `Mise en situation :` dans le vault.
 
+Pour démarrer, consulter le [guide d'apprentissage](docs/apprendre-avec-les-cartes.md) : huit étapes avec prérequis, critères de réponse, notation Anki et passage aux exercices pratiques. Le [bilan du 9 octobre](docs/revue-apprentissage-2026-10-09.md) explique les corrections de fond et les ajouts pédagogiques.
+
 ## Parcours de lecture
 Progression recommandée : **comprendre les modèles → les utiliser → construire des architectures → adapter → servir & déployer → industrialiser → gouverner → concevoir des systèmes.**
 - **Socle prédictif** : [[171-choisir-modele-ml|ML classique]] puis [[172-validation-metriques-ml|validation et métriques]] — choisir une approche avant de construire une chaîne LLM
