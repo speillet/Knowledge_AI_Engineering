@@ -85,7 +85,7 @@ Un **juge calibré** note couverture et citations ; l'exactitude se vérifie par
 
 ---
 
-Calcul : combien coûte un rapport de recherche ? <!--anki:7332246760345a2c3f25-->
+Calcul : 5 sous-agents lisent 15 pages de 4 000 tokens chacun ; supposer ces tokens envoyés deux fois, plus 100 000 tokens d’entrée d’orchestration. À 3 €/M, quel coût d’entrée par rapport, hors outils et sorties ? <!--anki:7332246760345a2c3f25-->
 ?
 Hypothèses : 5 sous-agents, 15 pages lues chacun, 4 000 tokens par page, plus l'orchestrateur et la rédaction.
 ```text

@@ -97,7 +97,7 @@ Vérifier la version et `vllm bench serve --help`, puis publier rythme demandé,
 
 ---
 
-Calcul : quel débit utile choisir entre deux configurations d’inférence ? <!--anki:6237643931336361636437353463356362346235393334653930363830663633-->
+Calcul : à 100 demandes/s offertes, A en termine 100 dont 70 conformes au SLO ; B en termine 90 dont 85 conformes et rejette 10. Comparer goodput et taux de satisfaction de la demande ? <!--anki:6237643931336361636437353463356362346235393334653930363830663633-->
 ?
 Sur une même charge stable de 100 demandes/s, A termine 100 demandes/s dont **70 satisfont ensemble** qualité et délais. B en termine 90 dont **85 sont conformes**, et rejette les 10 restantes.
 

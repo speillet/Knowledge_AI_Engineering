@@ -33,7 +33,7 @@ Ne pas appliquer mécaniquement cette formule aux architectures MLA, hybrides, �
 
 ---
 
-Calcul : combien de séquences de 8 192 tokens tiennent dans 40 Gio de KV ? <!--anki:3532326462613730363863393431666562613063613831666137623434363739-->
+Calcul : avec 32 couches, 8 têtes KV de dimension 128 et BF16, sans partage ni surcoût, combien de séquences de 8 192 tokens tiennent dans 40 Gio de KV, puis si chacune doit encore générer 1 024 tokens ? <!--anki:3532326462613730363863393431666562613063613831666137623434363739-->
 ?
 Hypothèses : 32 couches, 8 têtes KV, dimension 128, BF16, pas de partage ni de surcoût.
 ```text
@@ -93,7 +93,7 @@ L'expert parallelism répartit les experts et introduit des échanges de tokens 
 
 ---
 
-Calcul : combien de réplicas pour tenir 40 requêtes/s après la perte d’un réplica ? <!--anki:3230353961333839616538333432343738386665633536663137383738373763-->
+Calcul : un réplica soutient 12 requêtes/s sous SLO, avec capacité additive et équilibrage parfait. Combien en faut-il pour servir 40 requêtes/s après la perte d’un réplica ? <!--anki:3230353961333839616538333432343738386665633536663137383738373763-->
 ?
 Si chaque réplica soutient **12 requêtes/s sous les mêmes SLO et le même mix**, il faut `(n − 1) × 12 ≥ 40`, donc **n ≥ 5**. Quatre suffisent arithmétiquement sans panne, mais seulement trois resteraient après perte, soit 36 requêtes/s.
 

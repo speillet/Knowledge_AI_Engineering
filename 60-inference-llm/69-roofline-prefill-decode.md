@@ -40,7 +40,7 @@ Cela explique un régime souvent limité par le calcul au prefill et par la mém
 
 ---
 
-Calcul : quelle vitesse maximale de decode pour un 70B en FP8 sur un H100, à batch 1 ? <!--anki:6e584d7a536d48573540-->
+Calcul : à batch 1, un dense 70B FP8 relit 70 Go de poids par token, avec une bande passante théorique de 3,35 To/s. Quel plafond de tokens/s dû aux seules lectures de poids ? <!--anki:6e584d7a536d48573540-->
 ?
 Modèle dense, poids FP8 lus une fois par token, batch 1 et bande passante théorique :
 ```text
@@ -51,7 +51,7 @@ Ce n'est ni une mesure ni une garantie qu'un déploiement complet tient sur la c
 
 ---
 
-Calcul : combien de temps prend le prefill de 10 000 tokens sur un modèle 8B ? <!--anki:7326283a603b30342373-->
+Calcul : sous l’approximation 2 FLOP par paramètre et token, combien dure la composante linéaire du prefill de 10 000 tokens d’un dense 8B à 5 × 10^14 FLOP/s utiles ? <!--anki:7326283a603b30342373-->
 ?
 Pour les couches linéaires d'un modèle dense, utiliser l'approximation `2 × paramètres × tokens` :
 ```text
@@ -150,7 +150,6 @@ Mise en situation : sur ton RAG, les réponses « bégaient » : le texte s'arr�
 ## Sources
 
 - [DistServe — séparation et coût des transferts](https://arxiv.org/abs/2401.09670)
-
 
 - [NVIDIA — Dynamo, inférence distribuée](https://docs.nvidia.com/dynamo/latest/)
 

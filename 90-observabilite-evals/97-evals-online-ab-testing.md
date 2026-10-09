@@ -87,7 +87,7 @@ Fixer une durée de rétention et vérifier les sous-traitants, transferts et po
 
 ---
 
-Calcul : combien d'utilisateurs par bras pour détecter +2 points sur un taux de succès de 70 % ? <!--anki:51317d402a63415f794c-->
+Calcul : sous la règle de Lehr pour deux bras indépendants équilibrés, risque bilatéral 5 % et puissance 80 %, combien d’utilisateurs par bras pour détecter +2 points autour de 70 % de succès ? <!--anki:51317d402a63415f794c-->
 ?
 Règle de Lehr (risque α 5 %, puissance 80 %) :
 ```text

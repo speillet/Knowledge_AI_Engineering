@@ -66,7 +66,7 @@ Sans signal d'échec fiable, le modèle « réfléchit » sur des erreurs imagin
 
 ---
 
-Calcul : quelle fiabilité pour une chaîne de 10 étapes réussies chacune à 95 % ? <!--anki:51284f54214b6a7a7c36-->
+Calcul : quelle probabilité de réussite d’une chaîne de 10 étapes toutes nécessaires, chacune réussissant avec probabilité 0,95, sous indépendance et sans rattrapage ? <!--anki:51284f54214b6a7a7c36-->
 ?
 Si les échecs sont indépendants et non rattrapés :
 ```text

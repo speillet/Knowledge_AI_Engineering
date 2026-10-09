@@ -82,7 +82,7 @@ Conséquence pratique : un fine-tuning d'entreprise est du post-training. Il cha
 
 ---
 
-Calcul : combien de GPU-heures pour pré-entraîner un 8B sur 15 000 milliards de tokens ? <!--anki:6566616464316664376339343436633939366138316165646262353739633461-->
+Calcul : sous C ≈ 6ND, quel nombre de GPU-heures pour entraîner un dense 8B sur 15 000 milliards de tokens à 4 × 10^14 FLOP/s utiles par GPU, puis quelle durée idéale sur 1 000 GPU ? <!--anki:6566616464316664376339343436633939366138316165646262353739633461-->
 ?
 ```text
 C ≈ 6 × N × D = 6 × 8e9 × 15e12   = 7,2e23 FLOP
@@ -96,7 +96,7 @@ La formule est un ordre de grandeur pour un modèle dense et ignore plusieurs su
 
 ---
 
-Calcul : combien de tokens d'entraînement Chinchilla recommande-t-il pour un 70B, et combien Llama 3 70B en a-t-il vu ? <!--anki:6335373737396634343762663437663162353937616338383032353765326435-->
+Calcul : pour un modèle 70B, combien de tokens donne le repère pédagogique de 20 tokens par paramètre, comparé aux 15 000 milliards annoncés pour Llama 3 70B ? <!--anki:6335373737396634343762663437663162353937616338383032353765326435-->
 ?
 ```text
 Chinchilla  : ≈ 20 tokens par paramètre → 70e9 × 20 ≈ 1 400 milliards de tokens

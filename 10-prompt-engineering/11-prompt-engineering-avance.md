@@ -13,50 +13,44 @@ Par exemple, le système définit un assistant de support qui cite sa documentat
 
 Qu'est-ce que le few-shot prompting ? <!--anki:64397243675666243d58-->
 ?
-Fournir des **exemples entrée → sortie** dans le prompt : cela ancre format et style plus efficacement que des instructions abstraites. En pratique, **3 à 5 exemples** bien choisis suffisent, et les **cas limites** valent mieux que les cas évidents. Les exemples doivent être **cohérents** avec les consignes, sinon le modèle suit les exemples.
+Le **few-shot prompting** fournit des exemples entrée → sortie dans le contexte, sans modifier les poids. Les exemples montrent le format et les distinctions attendues, notamment les cas faciles à confondre.
+
+Choisir des exemples cohérents avec la consigne, diversifiés et distincts du test final. Leur nombre, ordre et proximité avec la requête peuvent changer le résultat : comparer au zero-shot puis mesurer le gain et le coût. « Trois à cinq exemples suffisent » n'est pas une règle universelle. Des exemples contradictoires créent une ambiguïté, sans garantir lequel le modèle suivra.
 
 ---
 
 À ne pas confondre : few-shot et fine-tuning ? <!--anki:412f6970745161503d55-->
 ?
-- **Few-shot** : les exemples sont dans le **prompt**, donc **payés à chaque appel** et limités par le contexte. Changement instantané, aucune infrastructure
-- **Fine-tuning** : les exemples sont **absorbés dans les poids**. Prompts plus courts, comportement plus constant, mais cycle d'entraînement, evals et versionnage ([[51-fine-tuning-adaptation|fine-tuning]])
+Le **few-shot** fournit les exemples à l'exécution dans le prompt ; le **fine-tuning** utilise des exemples d'entraînement pour modifier les paramètres, parfois seulement des adaptateurs.
 
-Règle pratique : commencer en few-shot, passer au fine-tuning quand les exemples deviennent **trop nombreux ou trop coûteux** à renvoyer chaque fois.
+Le premier permet une itération rapide mais consomme du contexte ; le second demande données, entraînement et validation. Il ne garantit pas, à lui seul, un comportement plus constant ou une mémorisation fiable des faits. Commencer par une baseline simple, puis comparer à qualité et coût de service équivalents. Le nombre d'exemples à renvoyer est un motif d'étude du fine-tuning, pas un critère suffisant pour basculer.
 
 ---
 
 Qu'est-ce que le chain-of-thought ? <!--anki:787a345e6d216a737677-->
 ?
-Demander un **raisonnement étape par étape** avant la réponse finale. Il améliore nettement les tâches à plusieurs étapes (calcul, logique, analyse), au prix de **plus de tokens de sortie**, donc de coût et de latence.
+Le **chain-of-thought prompting** donne ou sollicite des étapes intermédiaires avant une réponse. Il peut aider certaines tâches de raisonnement, avec davantage de tokens et sans garantie d'exactitude.
 
-Pratique : faire raisonner dans une balise dédiée (`<reflexion>`), puis extraire la réponse d'une balise `<reponse>`. Avec un modèle de raisonnement, c'est **natif** et inutile à demander ([[138-modeles-raisonnement|modèles de raisonnement]]).
+Les étapes écrites ne prouvent ni la validité du résultat ni la fidélité au calcul interne. Selon le modèle, son raisonnement peut rester interne : suivre le mode d'usage prévu et comparer des résultats vérifiables plutôt qu'exiger une trace détaillée. Pour une application, demander les preuves, calculs ou justifications utiles à la validation ; des balises ne rendent pas une conclusion correcte.
 
 ---
 
 Qu'est-ce que la self-consistency ? <!--anki:627b5e3844466e393e54-->
 ?
-Générer **plusieurs raisonnements indépendants** (température > 0, souvent 5 à 10) et retenir la réponse **majoritaire**. Les erreurs de raisonnement sont variées, les bonnes réponses convergent : le vote les fait ressortir.
+Échantillonner plusieurs solutions, **extraire des réponses finales comparables**, puis les agréger, souvent par vote. Des chemins différents peuvent aboutir à une même réponse ; le coût augmente avec les tentatives.
 
-Limites : coût multiplié par le nombre d'échantillons, et ne marche que pour des réponses **comparables** (classe, nombre, choix), pas pour un texte libre ([[65-probabilites-sampling|sampling]]).
+La majorité peut répéter une erreur commune au modèle ou au prompt. Des tirages indépendants conditionnellement au prompt n'impliquent pas des erreurs indépendantes face au monde réel. Pour du texte libre, définir d'abord une normalisation ou une comparaison fiable ; le vote textuel brut ne suffit pas. Mesurer le gain sur validation et prévoir le traitement des égalités et abstentions.
 
 ---
 
 Pourquoi structurer les prompts avec des délimiteurs (XML, Markdown) ? <!--anki:7264742c537b4b63536f-->
 ?
-Pour **séparer sans ambiguïté** instructions, données et exemples : le modèle distingue la consigne du contenu, ce qui limite aussi l'injection accidentelle.
+Les **délimiteurs** rendent les rôles des blocs plus lisibles : instruction, document, exemple ou question. Ils aident à concevoir un prompt vérifiable, mais ne créent pas une frontière de sécurité.
 ```xml
-<role>Tu es analyste support. Réponds uniquement à partir des documents.</role>
-
-<documents>
-  <doc id="7">…</doc>
-</documents>
-
-<question>Le client peut-il être remboursé ?</question>
-
-<format>JSON : { "reponse": str, "sources": [id], "certitude": "haute|basse" }</format>
+<documents><doc id="7">Données à analyser…</doc></documents>
+<question>Le document autorise-t-il ce remboursement ?</question>
 ```
-Ordre utile : **stable d'abord** (rôle, format), **variable à la fin** (documents, question), pour profiter du [[123-caching-agressif|prompt caching]].
+Un document peut lui-même contenir des instructions hostiles ou des balises. Utiliser les rôles structurés disponibles et contrôler les actions dans l'application. Placer le préfixe stable avant les données variables peut aider le cache, à condition de préserver la clarté et de mesurer la qualité.
 
 ---
 
@@ -70,9 +64,9 @@ Ce n'est pas une loi sur les négations : comparer les formulations sur des cas 
 
 Quand décomposer une tâche en plusieurs appels ? <!--anki:6b42553f48776d65447e-->
 ?
-Quand un **méga-prompt** cumule des objectifs. Signes : chaque correction casse autre chose, les consignes se contredisent, on ne sait pas quelle partie échoue.
+Décomposer quand des sous-tâches ont des **entrées, sorties et critères vérifiables distincts** : extraction, traduction, puis synthèse, par exemple. Cela facilite le diagnostic et permet d'adapter les modèles à chaque étape.
 
-Des étapes séparées (extraire → transformer → vérifier) sont plus fiables, **testables unitairement**, et chaque étape peut utiliser le modèle adapté. Le coût : plus d'appels et de latence ([[48-patterns-workflows-agentiques|prompt chaining]]).
+La décomposition n'améliore pas automatiquement la fiabilité : une erreur d'extraction peut contaminer toutes les étapes suivantes. Prévoir validation des interfaces, traitement d'échec et budget global. Comparer à une baseline en un appel sur les mêmes tâches, avec coût et latence. Conserver plusieurs appels seulement si leur contrôle ou leur gain mesuré justifie la complexité.
 
 ---
 
@@ -130,6 +124,12 @@ Mise en situation : ton classifieur de tickets a 92 % d'exactitude mais l'équip
 
 ---
 
+## Sources
+
+- [Wei et al. — chain-of-thought prompting](https://arxiv.org/abs/2201.11903)
+- [Wang et al. — self-consistency](https://arxiv.org/abs/2203.11171)
+- [Turpin et al. — limites de fidélité des explications](https://arxiv.org/abs/2305.04388)
+
 ## Connexions
 - [[92-chainforge-evals-prompts|ChainForge & evals]] — tester systématiquement
 - [[35-context-engineering|Context engineering]] — le prompt dans son budget global
@@ -141,4 +141,5 @@ Mise en situation : ton classifieur de tickets a 92 % d'exactitude mais l'équip
 - [[143-hallucinations-grounding|Hallucinations & grounding]] — abstention et citations
 - [[12-optimisation-automatique-prompts|Optimisation automatique de prompts]] — laisser une métrique choisir la formulation
 - [[13-prompts-production|Prompts en production]] — structure, versioning et portabilité
+- [[51-fine-tuning-adaptation|Fine-tuning]] — distinguer exemples dans le prompt et adaptation des poids
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -105,14 +105,14 @@ Vérifier la matrice de support du GPU, du système et de la version ROCm, ainsi
 
 ---
 
-Calcul : quel GPU pour servir un 8B à 30 utilisateurs simultanés avec 4 000 tokens de contexte ? <!--anki:6131653231643037393661613436643938623330323430663339666230626637-->
+Calcul : estimer la VRAM pour un 8B avec 30 séquences actives de 4 000 tokens chacune, 16 Go de poids BF16, 128 Kio de KV/token et 3 Go d’autres allocations, avant marge ? <!--anki:6131653231643037393661613436643938623330323430663339666230626637-->
 ?
 ```text
 poids 8B en BF16                 ≈ 16 Go
 KV : 30 × 4 000 tokens × 128 Ko  ≈ 15,7 Go
 activations, graphes CUDA        ≈  3 Go
 total                            ≈ 35 Go → 48 Go (L40S) ou 80 Go ; 24 Go ne suffit pas
-en FP8 (poids et KV cache)       ≈ 19 Go → tient sur 24 Go
+en FP8 (poids et KV cache)       ≈ 19 Go → budget nominal compatible avec 24 Go, à vérifier
 ```
 On dimensionne sur la **concurrence** et la **longueur de contexte**, pas seulement sur la taille du modèle ([[61-kv-cache-attention|KV cache]]).
 

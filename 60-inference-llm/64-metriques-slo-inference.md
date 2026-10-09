@@ -112,7 +112,7 @@ Inclure un échauffement, les erreurs, le cache froid ou chaud et les pointes de
 
 ---
 
-Calcul : combien de requêtes simultanées faut-il servir pour 10 requêtes/s qui durent 8 secondes ? <!--anki:44597b556d555a6b6b32-->
+Calcul : en régime stable, avec 10 requêtes/s terminées et 8 s de durée moyenne file incluse, combien de requêtes sont en vol en moyenne selon la loi de Little ? <!--anki:44597b556d555a6b6b32-->
 ?
 **Loi de Little** en régime stable, avec débit et durée mesurés au même périmètre :
 ```text

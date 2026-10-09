@@ -13,7 +13,9 @@ Par exemple, un assistant retrouve la procédure de remboursement avant de répo
 
 Quel problème le RAG résout-il ? <!--anki:6d5e59414b626f25585e-->
 ?
-Le modèle ne connaît ni les **données privées** ni les **faits postérieurs à son entraînement**, et il **hallucine** quand il ne sait pas : le RAG lui fournit des sources **à jour, citables et contrôlées**.
+Le **RAG** rend accessibles à l'exécution des sources choisies, notamment internes ou mises à jour, sans devoir réentraîner le modèle pour chaque modification.
+
+Il répond à un besoin d'accès et de traçabilité, pas à une garantie de vérité. Un document peut être périmé, inaccessible à cet utilisateur, mal récupéré ou mal interprété. Le modèle peut aussi déjà connaître certains faits du corpus. Vérifier fraîcheur, droits, pertinence et soutien des affirmations ; l'existence d'une base documentaire ne suffit pas à rendre toutes les réponses fiables.
 
 ---
 
@@ -104,9 +106,9 @@ Distinguer le nombre de **candidats récupérés** de celui des passages réelle
 
 Quelle est la limite principale du retrieval vectoriel seul ? <!--anki:4d2f444e6238555b4c3b-->
 ?
-Il rate les **termes exacts** (codes produits, références, noms propres, sigles) → on passe à la **[[22-rag-avance|recherche hybride]]** (BM25 + vectoriel) et au reranking.
+La proximité vectorielle peut mal distinguer des **références exactes**, nombres, sigles ou noms rares. Ce risque dépend du modèle, des données et de la requête ; tous les codes produits ne sont pas forcément ratés.
 
-Par exemple, une recherche sur `AB-123` peut remonter un produit au nom proche au lieu de la référence exacte. La branche lexicale préserve ces correspondances ; la branche vectorielle retrouve les paraphrases. Fusionner leurs candidats puis mesurer le rappel par type de requête permet de vérifier que l'hybride apporte réellement un gain.
+Comparer recherche lexicale, vectorielle et hybride sur des cas annotés. Une branche lexicale aide à préserver des correspondances comme `AB-123`, tandis que le vectoriel retrouve des paraphrases. Fusionner puis reranker peut améliorer le résultat, sans garantie automatique. Mesurer rappel des candidats et qualité des passages finalement transmis au modèle.
 
 ---
 
@@ -128,25 +130,26 @@ Ajouter des questions sans réponse dans le corpus pour tester l'abstention et d
 
 Quand ne pas faire de RAG ? <!--anki:495f6e2451306c4a7269-->
 ?
-- **Corpus petit et stable** (quelques centaines de milliers de tokens) : tout mettre en contexte avec **prompt caching** est plus simple et souvent plus fiable ([[137-long-contexte|long contexte]])
-- **Besoin de style, de format ou de comportement** : c'est un problème de prompt ou de fine-tuning, pas de connaissances
-- **Données structurées et agrégations** (« combien de commandes en mars ? ») : une requête SQL via un outil répond juste, le retrieval de chunks non ([[26-text-to-sql|text-to-SQL]])
-- **Connaissances générales** que le modèle possède déjà
+Éviter d'ajouter de la recherche si elle n'apporte rien au besoin :
+- **Corpus qui tient réellement dans le budget utile** : comparer l'injection directe, éventuellement avec cache, au retrieval.
+- **Format ou comportement** : étudier d'abord prompt, contraintes ou adaptation.
+- **Agrégation structurée** : utiliser une requête ou un outil dont schéma, filtres et résultat sont validés.
+- **Tâche sans besoin de sources externes** : mesurer une baseline sans retrieval.
 
-**Piège** : ajouter un RAG par réflexe, puis passer des semaines sur le chunking d'un corpus qui tenait dans le contexte.
+Une longue fenêtre annoncée ne garantit pas que toutes les preuves seront bien utilisées. Même une requête SQL peut être fausse ; valider le système retenu sur ses erreurs.
 
 ---
 
-Calcul : combien coûte l'indexation de 50 000 documents de 10 pages ? <!--anki:3339373433333537663864353435373962653930323631643639396438623461-->
+Calcul : 50 000 documents de 10 pages contiennent 500 tokens/page. Sans overlap, avec des chunks de 500 tokens, embeddings à 0,02 €/M et vecteurs float32 de dimension 1 024, quel coût d’embedding et stockage brut ? <!--anki:3339373433333537663864353435373962653930323631643639396438623461-->
 ?
-Hypothèses : 500 tokens par page, chunks de 500 tokens, embeddings par API à 0,02 € par million de tokens, vecteurs de 1 024 dimensions en float32.
+Sans chevauchement, chaque token est encodé une fois :
 ```text
-tokens    : 50 000 × 10 × 500    = 250 M
-embedding : 250 M × 0,02 €/M     = 5 €
-vecteurs  : 250 M / 500          = 500 000
-stockage  : 500 000 × 1 024 × 4 o ≈ 2 Go, plus l'index HNSW
+tokens : 50 000 × 10 × 500 = 250 millions
+embedding : 250 × 0,02 € = 5 €
+vecteurs : 250 millions / 500 = 500 000
+valeurs : 500 000 × 1 024 × 4 = 2 048 000 000 octets = 2,048 Go
 ```
-L'embedding est presque gratuit. Ce qui coûte : le **parsing** des documents, le **contextual retrieval** (un appel LLM par chunk) et la **ré-indexation** complète à chaque changement de modèle d'embedding ([[25-chunking-contextual-retrieval|contextual retrieval]]).
+Le tarif est fictif ; ce n'est pas le coût total d'indexation. Ajouter parsing, métadonnées, structure d'index, stockage, exploitation et réindexations éventuelles. Un chevauchement répète des tokens et augmente ces volumes ; des documents mal extraits restent inutilisables malgré des embeddings peu coûteux.
 
 ---
 
@@ -194,4 +197,5 @@ Mise en situation : le métier te demande un RAG sur 200 000 documents, dont des
 - [[23-knowledge-graphs-ontologies|Knowledge graphs]] — GraphRAG et données reliées
 - [[27-agents-recherche-deep-research|Agents de recherche]] — la recherche en plusieurs étapes, avec citations
 - [[42-langchain-fondamentaux|LangChain]] — les briques de base du framework
+- [[137-long-contexte|Long contexte]] — comparer recherche et contexte complet
 - [[00-moc-ai-engineering|MOC AI Engineering]]

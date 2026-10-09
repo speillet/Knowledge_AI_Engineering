@@ -23,16 +23,19 @@ Quel est le chemin d'un token dans un Transformer génératif decoder-only ? <!-
 
 Que fait le mécanisme d'attention ? <!--anki:4971286368426d485451-->
 ?
-Chaque token calcule une **query (Q)**, une **key (K)** et une **value (V)**. Le score entre deux tokens est **Q·K / √d** ; après softmax, ces scores pondèrent les **V**. Chaque token **agrège ainsi l'information des tokens pertinents** du contexte :
+L'attention utilise une **requête Q** pour pondérer des **valeurs V**, en comparant Q aux **clés K**. Dans l'attention à produit scalaire :
 ```text
-Attention(Q, K, V) = softmax(Q·Kᵀ / √d_k) · V
+Attention(Q, K, V) = softmax(Q·Kᵀ / √d_k + masque) · V
 ```
+Le softmax normalise les scores sur les positions autorisées. Le résultat est une somme pondérée de leurs vecteurs V, pas une sélection nécessairement unique. Les poids dépendent des représentations apprises ; une forte attention n'est pas une preuve que le passage est vrai, ni une explication causale complète de la prédiction.
 
 ---
 
 Qu'est-ce que l'attention causale ? <!--anki:46472b6d792b493b2826-->
 ?
-Un **masque** qui empêche chaque token de voir les **tokens futurs** : le token i n'attend qu'aux positions ≤ i. C'est ce qui permet d'entraîner la prédiction du token suivant **sur toutes les positions en parallèle**, et de réutiliser les K/V passés à l'inférence ([[61-kv-cache-attention|KV cache]]).
+Un **masque interdit de consulter les positions futures** : la représentation à la position i utilise les positions ≤ i pour prédire le token suivant. À l'entraînement, le texte complet est disponible, mais le masque préserve cette contrainte tout en calculant plusieurs positions en parallèle.
+
+Exemple : pour apprendre à compléter « Le chat dort », la position « chat » ne doit pas voir « dort » avant de le prédire. Cette causalité décrit l'ordre d'information dans la séquence ; elle ne signifie pas que le modèle identifie les causes des événements.
 
 ---
 
@@ -46,10 +49,9 @@ Elles donnent plusieurs façons de combiner l'information d'une même séquence,
 
 Qu'est-ce que GQA et MQA, et pourquoi comptent-ils en production ? <!--anki:6a72557e65666e265368-->
 ?
-- **MQA** (Multi-Query Attention) : toutes les têtes de query **partagent une seule paire K/V**.
-- **GQA** (Grouped-Query Attention) : les têtes sont groupées, **un K/V par groupe**.
+**GQA** partage les têtes de clés et valeurs entre groupes de têtes de requête ; **MQA** utilise une seule tête K/V pour toutes les requêtes. À dimensions et précision fixées, moins de têtes KV signifie moins de mémoire cache et de lectures pendant le decode.
 
-Ils divisent la **taille du KV cache** (donc la mémoire par requête) avec une perte de qualité faible → plus de requêtes en parallèle. La plupart des modèles récents utilisent GQA ; d'autres compressent le cache autrement (MLA chez DeepSeek).
+Le compromis de qualité dépend du modèle et de son entraînement. Ce n'est pas un réglage interchangeable sans adaptation des poids. Distinguer le nombre de têtes Q du nombre de têtes KV dans les calculs ; d'autres architectures, comme MLA, utilisent un autre stockage.
 
 ---
 
@@ -63,14 +65,17 @@ Les blocs MLP représentent souvent une grande part des paramètres et participe
 
 À quoi servent les connexions résiduelles et la normalisation ? <!--anki:7a416e26656a2b364877-->
 ?
-- **Résiduelles** : chaque bloc **ajoute** sa sortie à son entrée (x + f(x)) — le gradient traverse des dizaines de couches sans s'éteindre.
-- **Normalisation** (RMSNorm, en **pre-norm** avant chaque sous-bloc) : stabilise l'entraînement.
+Les **connexions résiduelles** ajoutent une transformation à son entrée : `y = x + f(x)`. Elles offrent un chemin direct pour l'information et les gradients, ce qui facilite l'entraînement profond sans garantir l'absence de gradients instables.
+
+La **normalisation** contrôle l'échelle des représentations, par exemple avec LayerNorm ou RMSNorm. Son placement avant ou après un sous-bloc dépend de l'architecture. Ce sont deux mécanismes complémentaires : ajouter l'entrée ne normalise pas les valeurs, et normaliser ne remplace pas la connexion résiduelle.
 
 ---
 
 Comment le modèle connaît-il la position des tokens ? <!--anki:637e3955546a4c492f2d-->
 ?
-L'attention seule est **insensible à l'ordre**. On injecte la position, aujourd'hui surtout par **RoPE** (Rotary Position Embedding) : Q et K sont **tournés d'un angle dépendant de la position**, si bien que le score dépend de la **distance relative**. RoPE est au cœur des techniques d'[[137-long-contexte|extension de contexte]].
+Sans information de position ni masque dépendant de la position, l'attention seule ne distingue pas l'ordre des éléments de la façon voulue. Le modèle reçoit donc une information **positionnelle**, par embeddings, biais ou transformations comme RoPE.
+
+**RoPE** applique des rotations aux requêtes et clés en fonction des positions ; leur produit scalaire encode alors une relation de position relative. Le masque causal fournit également une structure d'ordre, mais ne remplace pas tous ces mécanismes. Étendre les positions supportées ne garantit pas une bonne utilisation des contextes plus longs.
 
 ---
 
@@ -80,7 +85,7 @@ Le calcul des scores est **quadratique** en longueur de séquence (n² paires) p
 
 ---
 
-Calcul : quelle mémoire pour les poids d'un modèle 70B ? <!--anki:623b687d595d6121635b-->
+Calcul : quel stockage brut pour les poids de 70 milliards de paramètres en BF16, FP8 et INT4, en Go décimaux, puis quels surcoûts faut-il prévoir ? <!--anki:623b687d595d6121635b-->
 ?
 **Nombre de paramètres × octets par paramètre** :
 ```text
@@ -102,9 +107,11 @@ Les valeurs sont en **Go décimaux** et constituent un budget pour les poids, pa
 
 ---
 
-Pourquoi un modèle de base ne suit-il pas les instructions ? <!--anki:656e4e215b5455584f68-->
+Pourquoi un modèle de base n'est-il pas nécessairement un bon assistant ? <!--anki:656e4e215b5455584f68-->
 ?
-Le pré-entraînement lui apprend à **continuer du texte**, pas à **répondre** : face à une question, il peut la prolonger par d'autres questions. Le suivi d'instructions vient du **post-training** (SFT, puis alignement par préférences) — voir [[52-post-training-alignement|post-training]].
+Un **modèle de base** apprend principalement à prédire la suite de textes ; suivre une instruction n'est pas systématiquement l'objectif explicite de cet entraînement. Il peut néanmoins répondre à certaines consignes grâce aux motifs appris.
+
+Le **post-training**, notamment l'entraînement supervisé sur des échanges et parfois les préférences, vise un comportement d'assistant plus adapté. Employer le template attendu et comparer base et instruct sur la tâche. Le post-training peut modifier capacités et connaissances aussi : la séparation « pré-entraînement = savoir, adaptation = comportement » est un repère, pas une frontière absolue.
 
 ---
 
@@ -114,7 +121,7 @@ Mise en situation : on te demande combien de GPU prévoir pour servir un modèle
 ?
 1. **Les poids d'abord** : 70 milliards de paramètres × 2 octets en BF16 ≈ **140 Go**, donc deux GPU de 80 Go ne laissent presque rien
 2. **Le KV cache ensuite** : proportionnel au contexte, au nombre de couches et de têtes KV, et au **nombre de requêtes simultanées** ([[61-kv-cache-attention|KV cache]])
-3. **Réduire** : quantization FP8 ou INT4 des poids, cache en FP8, GQA déjà présent dans la plupart des modèles récents
+3. **Étudier les leviers** : quantification des poids et du cache si supportée ; compter les têtes KV réelles, notamment avec GQA
 4. **Vérifier par la mesure** : un benchmark de charge, pas seulement un calcul ([[64-metriques-slo-inference|SLO]])
 5. **Annoncer une fourchette** et les hypothèses qui la sous-tendent
 
@@ -128,11 +135,17 @@ Mise en situation : en entretien, on te demande pourquoi un modèle de base rép
 2. **Ce qui crée l'assistant** : le post-training, d'abord supervisé, puis par préférences ([[52-post-training-alignement|post-training]])
 3. **Conséquence pratique** : un modèle « base » sur Hugging Face ne s'utilise pas comme un modèle « instruct »
 4. **Chat template** : les modèles instruits attendent un format précis, sans lequel la qualité chute ([[132-tokenisation|chat template]])
-5. **Nuance** : le pré-entraînement détermine les connaissances et les capacités, le post-training le comportement
+5. **Nuance** : objectifs différents, sans frontière stricte ; le post-training peut aussi modifier connaissances et capacités
 
 **Piège** : conclure qu'un modèle est mauvais alors qu'on utilise une variante de base ou un mauvais gabarit de conversation.
 
 ---
+
+## Sources
+
+- [Vaswani et al. — architecture Transformer](https://arxiv.org/abs/1706.03762)
+- [Ainslie et al. — GQA](https://arxiv.org/abs/2305.13245)
+- [Su et al. — RoFormer et RoPE](https://arxiv.org/abs/2104.09864)
 
 ## Connexions
 - [[132-tokenisation|Tokenisation]] — l'entrée du modèle

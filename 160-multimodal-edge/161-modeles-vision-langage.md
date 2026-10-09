@@ -20,15 +20,15 @@ Certains modèles sont entraînés **nativement multimodaux** dès le pré-entra
 
 ---
 
-Calcul : combien coûte l'analyse de 10 000 captures d'écran de 1 000 × 1 000 pixels ? <!--anki:453c737c63444c4e7642-->
+Calcul : sous une règle fictive de largeur × hauteur / 750 tokens par image, à 3 €/M de tokens d’entrée, quel coût pour 10 000 images de 1 000 × 1 000 pixels, puis de 500 × 500, hors texte et sorties ? <!--anki:453c737c63444c4e7642-->
 ?
-Cela dépend du modèle : de **quelques dizaines** à **plusieurs milliers** de tokens par image, les grandes images étant **découpées en tuiles**. Repère chez Anthropic : **largeur × hauteur / 750**.
+Avec la règle pédagogique indiquée :
 ```text
-1 000 × 1 000 / 750      ≈ 1 330 tokens par image
-× 10 000 images          ≈ 13 M tokens ≈ 40 € à 3 €/M
-réduites à 500 × 500     ≈ 330 tokens → coût divisé par 4
+1 000² / 750 ≈ 1 333,33 tokens/image
+10 000 × 1 333,33 × 3 / 1e6 = 40 €
+500² / 750 ≈ 333,33 tokens/image → 10 €
 ```
-Pour maîtriser le coût : **redimensionner**, recadrer sur la zone utile, choisir le niveau de détail ([[121-couts-inference|coûts]]).
+Diviser chaque dimension par deux divise l'aire par quatre. Les vrais fournisseurs utilisent des règles propres au modèle : redimensionnement, tuiles, minimums et unités facturées peuvent changer le calcul. Ajouter texte et sorties pour le coût complet. Réduire l'image peut aussi rendre un petit texte illisible ; valider l'extraction, pas seulement la facture.
 
 ---
 

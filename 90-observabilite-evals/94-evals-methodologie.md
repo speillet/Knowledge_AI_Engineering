@@ -5,31 +5,33 @@ Tags: #flashcards #ai-engineering #evals #llm #qualite
 
 Pourquoi l'évaluation est-elle la compétence centrale d'un AI Engineer senior ? <!--anki:672b7a264c7763732b24-->
 ?
-Parce qu'un système LLM est **non déterministe et sans spécification formelle** : sans evals, on ne peut **ni comparer deux versions, ni choisir un modèle, ni prouver qu'un changement améliore** quoi que ce soit. Les evals remplacent les tests unitaires comme **filet de sécurité du développement**.
+Les **evals** permettent de comparer les comportements d'un système IA sur des tâches, populations et critères définis. Elles quantifient qualité, limites et régressions, au-delà d'une démonstration réussie.
+
+Elles **complètent les tests logiciels** : tests unitaires pour le code, contrats et intégration pour les interfaces, evals pour les comportements du modèle et du système complet. Des propriétés formelles restent possibles, comme un schéma de sortie ou une permission. Une bonne eval fournit une preuve limitée à son protocole, pas une garantie de toutes les réponses futures.
 
 ---
 
 À ne pas confondre : benchmark public et eval applicative ? <!--anki:7a433e69633c7d2f2c32-->
 ?
-Un **benchmark public** (MMLU, GPQA, SWE-bench…) mesure une **capacité générale** du modèle. Une **eval applicative** mesure **ta tâche, sur tes données, avec tes critères**. Seule la seconde prédit la qualité en production ; les benchmarks servent au **pré-tri** des modèles ([[146-choix-modeles|choix de modèle]]).
+Un **benchmark public** mesure les tâches et conditions définies par ses auteurs ; une **eval applicative** représente les usages et critères de ton service. Le premier aide au pré-tri ; la seconde aide à choisir et contrôler une solution pour ce besoin.
+
+Ni l'un ni l'autre ne prédit automatiquement la production. Vérifier contamination, représentativité, versions et protocole, puis confronter les résultats au trafic réel. Un modèle bien classé sur du code peut mal extraire les champs de tes documents. Comparer des variantes sur les mêmes cas et budgets.
 
 ---
 
 Par quoi faut-il commencer pour construire des evals ? <!--anki:45287263614956357d47-->
 ?
-Par l'**analyse d'erreurs** : lire **50 à 100 traces réelles**, noter ce qui ne va pas en texte libre (**open coding**), puis regrouper les problèmes en **catégories de défaillance** (axial coding). Les métriques viennent **après** : on mesure les défaillances observées, pas des critères génériques inventés a priori.
+Définir la **tâche et ses exigences**, puis examiner des exemples et erreurs réels ou simulés : sources manquantes, mauvais montant, action interdite, format invalide. Regrouper les défaillances pour choisir des critères qui guident une correction.
+
+Un premier échantillon aide à découvrir les problèmes, sans prétendre estimer leur fréquence réelle. Ajouter les cas limites importants même s'ils ne sont pas encore observés. Les contrats déjà connus, comme droits d'accès ou exactitude d'un calcul, n'attendent pas un incident pour devenir des critères d'évaluation.
 
 ---
 
 Qu'est-ce qu'un golden dataset et comment le constituer ? <!--anki:686a7c383d56593b4855-->
 ?
-Un **jeu d'entrées représentatives avec la réponse ou les critères attendus**. Sources :
-- **traces de production** échantillonnées (le plus fidèle) ;
-- cas **écrits par les experts métier** ;
-- **cas limites et adversariaux** ;
-- **données synthétiques** pour couvrir les trous (à relire).
+Un **jeu de référence versionné** contient entrées, contexte nécessaire et réponses ou critères attendus. Combiner trafic représentatif, cas métier, régressions connues et cas limites relus.
 
-Il doit être **versionné**, **stratifié** par type de requête et **enrichi à chaque bug** trouvé en production.
+Distinguer leurs usages : les bugs ajoutés nourrissent la non-régression ; un test final indépendant sert à estimer la qualité sans guider les réglages. Un jeu volontairement enrichi en cas difficiles ne représente plus directement la fréquence du trafic. Documenter provenance, segments, droits et qualité des annotations. « Golden » ne signifie pas que chaque référence est infaillible ou immuable.
 
 ---
 
@@ -41,24 +43,25 @@ Assez pour que **l'écart qu'on veut détecter dépasse le bruit**. Avec un taux
 
 Quelles sont les trois familles d'évaluateurs ? <!--anki:7a46426d355b3c3e386b-->
 ?
-1. **Code / règles** : exact match, regex, validité JSON, exécution de tests, appels d'outils attendus — **rapides, gratuits, fiables**.
-2. **[[95-llm-as-judge|LLM-as-a-judge]]** : pour les critères subjectifs ou sémantiques — scalable mais **biaisé, à calibrer**.
-3. **Humains** (experts, annotateurs) : la **référence**, chère et lente, qui sert à **valider les deux autres**.
+Le **code** contrôle des propriétés explicites : schéma, valeur attendue ou tests d'exécution. Un **juge LLM** apprécie des critères sémantiques définis. Les **humains** établissent et discutent des références, notamment pour les cas ambigus.
 
-Règle : utiliser le **plus simple qui marche** pour chaque critère.
+Chacun peut se tromper : assertion mal conçue, juge biaisé, annotation incohérente. Choisir le moyen le plus simple qui mesure réellement le critère, puis le valider. Le code a un coût et sa détermination ne garantit pas la pertinence du test. Une sortie JSON valide ne prouve pas que son montant est correct.
 
 ---
 
 Pourquoi préférer des critères binaires (pass/fail) aux notes de 1 à 10 ? <!--anki:796e4c44435b4b7e4e43-->
 ?
-Les échelles de 1 à 10 sont **mal calibrées** (quelle différence entre 6 et 7 ?), **instables** d'un juge à l'autre et **difficiles à agir**. Un critère **binaire et précis** (« la réponse cite-t-elle une source du contexte ? ») est plus **reproductible**, plus facile à **aligner avec un humain** et dit directement **quoi corriger**.
+Un **critère binaire explicite** facilite une décision de conformité : « toutes les affirmations chiffrées sont-elles étayées ? ». Il rend l'erreur localisable et se compare à une annotation de référence.
+
+Ce n'est pas toujours supérieur à une échelle : la qualité stylistique ou une pertinence graduée peuvent nécessiter plusieurs niveaux, décrits par des exemples d'ancrage. Une question binaire vague reste vague. Mesurer accord et erreurs des évaluateurs, et ne pas réduire plusieurs dimensions à un oui/non qui masque les régressions.
 
 ---
 
 À ne pas confondre : eval avec référence (reference-based) et eval sans référence (reference-free) ? <!--anki:4d5563343c4437657732-->
 ?
-- **Avec référence** : on compare à une **réponse attendue** (exact match, similarité, juge qui compare). Fiable mais exige des réponses de référence.
-- **Sans référence** : on vérifie des **propriétés** de la sortie (format, ton, fidélité au contexte, absence de PII). Applicable **en production**, où il n'y a pas de vérité terrain.
+Une eval **avec référence** utilise une réponse, des faits ou un résultat attendu pour comparer la sortie. Une eval **sans réponse de référence** vérifie un critère à partir des données disponibles : format, consigne ou soutien par les documents.
+
+« Sans référence » ne veut pas dire sans information fiable : juger la fidélité exige le contexte source. Une référence peut aussi contenir des erreurs ou n'illustrer qu'une formulation valable. Choisir les informations et le vérificateur selon le critère ; les expressions *reference-based* et *reference-free* doivent être définies dans le protocole.
 
 ---
 
@@ -99,7 +102,7 @@ Quels sont les anti-patterns classiques en évaluation ? <!--anki:7a58572a706e4a
 
 ---
 
-Calcul : combien de cas faut-il dans un jeu d'eval pour mesurer un taux de succès d'environ 70 % à ± 3 points ? <!--anki:3763333165623463643835383436323462346134626564643634653863326439-->
+Calcul : pour une proportion de succès proche de 70 %, combien d’observations de Bernoulli indépendantes faut-il environ pour une marge de ±3 points à 95 %, avec l’approximation normale ? <!--anki:3763333165623463643835383436323462346134626564643634653863326439-->
 ?
 On inverse la formule de l'intervalle de confiance à 95 % ([[114-reproductibilite-variance|variance]]) :
 ```text
@@ -116,13 +119,13 @@ Diviser la marge par 2 demande 4 fois plus de cas. Pour départager deux version
 
 Mise en situation : tu reprends un assistant en production qui n'a aucune eval. Que fais-tu pendant la première semaine ? <!--anki:484b26356c43544e5055-->
 ?
-1. **Lire 50 à 100 traces réelles** et noter en texte libre ce qui ne va pas, sans métrique préconçue
-2. **Regrouper** ces observations en catégories de défaillance : source manquante, format cassé, ton, hors périmètre
-3. **Constituer un golden dataset** à partir de ces cas, stratifié par type de requête et versionné
-4. **Choisir l'évaluateur le plus simple** par catégorie : code d'abord, juge seulement pour le subjectif
-5. **Brancher en CI** pour détecter les régressions dès le prochain changement ([[112-cicd-modeles|eval gate]])
+1. **Clarifier les exigences** : tâches attendues, contraintes et erreurs critiques déjà connues.
+2. **Lire des traces variées** et regrouper les défaillances observées, sans se limiter aux incidents signalés.
+3. **Séparer développement et test**, avec références vérifiées ; garder aussi un corpus de non-régression ciblé.
+4. **Choisir des critères observables** : assertions pour les contrats, juge validé ou humain pour le reste.
+5. **Brancher une évaluation en CI**, puis suivre les segments et la production ([[112-cicd-modeles|eval gate]]).
 
-**Piège** : commencer par des métriques génériques comme « utilité » ou « pertinence », qui ne disent jamais quoi corriger.
+**Piège** : prendre le taux d'erreur d'un corpus composé de bugs pour celui du trafic réel.
 
 ---
 
@@ -152,6 +155,9 @@ Mise en situation : ton eval principale affiche 99 % depuis trois mois, alors qu
 
 ## Sources
 
+- [Sculley et al. — test et dette des systèmes ML](https://papers.nips.cc/paper/5656-hidden-technical-debt-in-machine-learning-systems)
+- [Zheng et al. — juges, critères et biais](https://arxiv.org/abs/2306.05685)
+
 - [NIST — test de McNemar pour observations binaires appariées](https://www.itl.nist.gov/div898/software/dataplot/refman1/auxillar/mcnemar.htm)
 
 ## Connexions
@@ -172,4 +178,5 @@ Mise en situation : ton eval principale affiche 99 % depuis trois mois, alors qu
 - [[53-donnees-synthetiques-distillation|Données synthétiques & distillation]] — générer des données et transférer vers un petit modèle
 - [[172-validation-metriques-ml|Validation & métriques ML]] — splits, classes rares et comparaison des prédicteurs
 - [[99-statistiques-decisions-experimentales|Statistiques pour décider en IA]] — passer d'un score à une décision justifiée
+- [[146-choix-modeles|Choix de modèles]] — départager les candidats sur la tâche
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -82,7 +82,7 @@ Quels sujets d'exploitation une base vectorielle pose-t-elle ? <!--anki:75695a59
 
 ---
 
-Calcul : quelle mémoire pour un index HNSW de 10 millions de vecteurs ? <!--anki:4b382a2f6a796f4b7621-->
+Calcul : estimer la mémoire de 10 millions de vecteurs à 768 dimensions float32 et d’un graphe HNSW simplifié de 32 liens de 4 octets par vecteur. Quelle part varie si les vecteurs passent en int8 ? <!--anki:4b382a2f6a796f4b7621-->
 ?
 Ordre de grandeur : **N × (d × octets par dimension + M × 2 × 4 octets)**.
 ```text

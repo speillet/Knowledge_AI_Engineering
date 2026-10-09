@@ -79,7 +79,7 @@ Conséquence : avec un modèle de raisonnement, on décrit **l'objectif et les c
 
 ---
 
-Calcul : combien coûtent les tokens de raisonnement à 100 000 requêtes par jour ? <!--anki:6261636664353832363133613430613738386335656266613266306232393465-->
+Calcul : 100 000 requêtes/jour utilisent chacune 1 000 tokens d’entrée et 300 de sortie visible. À 3 €/M en entrée et 15 €/M en sortie, quel coût supplémentaire et total si chacune ajoute 4 000 tokens de raisonnement facturés en sortie ? <!--anki:6261636664353832363133613430613738386335656266613266306232393465-->
 ?
 Hypothèses : 1 000 tokens d'entrée, 300 tokens de réponse visible, 4 000 tokens de raisonnement facturés comme de la sortie ; 3 €/M en entrée, 15 €/M en sortie.
 ```text

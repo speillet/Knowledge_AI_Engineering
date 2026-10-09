@@ -86,7 +86,7 @@ Comment préparer des données pour un fine-tuning ? <!--anki:46607e4c3f4754636c
 
 ---
 
-Calcul : combien coûte l'annotation de 2 000 exemples par des experts ? <!--anki:3334646132633937623364663461373839383536306436313733656235646261-->
+Calcul : 2 000 exemples demandent 3 minutes chacun à 80 €/h, et 20 % sont annotés une seconde fois au même coût. Quel budget hors préparation et arbitrage ? <!--anki:3334646132633937623364663461373839383536306436313733656235646261-->
 ?
 Hypothèses : 3 minutes par exemple, expert à 80 €/h, double annotation de 20 % des exemples pour mesurer l'accord.
 ```text

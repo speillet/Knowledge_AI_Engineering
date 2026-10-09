@@ -3,16 +3,15 @@ Tags: #flashcards #conteneurs #modeles #stockage #infra
 <!-- summary: calcul du temps de chargement des poids d'un 70B, poids dans l'image ou séparés, cold start, safetensors ou pickle, safetensors ou GGUF, modèles distribués comme artefacts OCI. -->
 
 
-Calcul : combien de temps pour charger les poids d'un 70B au démarrage d'un pod ? <!--anki:4e2e2a7a3e49745e523f-->
+Calcul : quel temps minimal de transfert réseau pour 140 Go de poids BF16 d’un 70B, à 1 puis 10 Gbit/s constants, hors stockage, désérialisation et initialisation du moteur ? <!--anki:4e2e2a7a3e49745e523f-->
 ?
-Les poids pèsent **paramètres × octets par paramètre** : ≈ **140 Go** pour un 70B en BF16 ([[131-transformer-architecture|mémoire des poids]]).
+Convertir les octets en bits avant de diviser par le débit :
 ```text
 140 Go × 8 = 1 120 Gbit
-réseau à  1 Gbit/s  → ≈ 19 min
-réseau à 10 Gbit/s  → ≈  2 min
-cache local NVMe    → quelques dizaines de secondes
+à 1 Gbit/s : 1 120 s ≈ 18 min 40 s
+à 10 Gbit/s : 112 s ≈ 1 min 52 s
 ```
-D'où les poids **hors de l'image**, sur un volume partagé ou mis en cache sur le nœud, pour éviter un démarrage à froid de plusieurs minutes à chaque mise à l'échelle.
+Ces durées ne couvrent que le transfert à débit constant. Chargement en RAM/VRAM, lecture du stockage, désérialisation, compilation et échauffement peuvent encore retarder la readiness. Un cache local évite ce transfert distant, mais sa durée doit être mesurée plutôt que supposée universellement de quelques secondes.
 
 ---
 

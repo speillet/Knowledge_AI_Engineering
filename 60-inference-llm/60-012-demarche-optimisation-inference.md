@@ -71,7 +71,7 @@ Commencer par des variantes attribuables à un changement, puis tester les combi
 
 ---
 
-Calcul : quel débit maximal avec 600 RPM, 60 000 tokens d’entrée/min et 20 000 tokens de sortie/min ? <!--anki:3038643039393265373463333434353661616235366537383265306364373831-->
+Calcul : chaque requête compte 1 000 tokens d’entrée et 500 de sortie. Quel plafond moyen avec les quotas fictifs 600 requêtes/min, 60 000 tokens d’entrée/min et 20 000 tokens de sortie/min ? <!--anki:3038643039393265373463333434353661616235366537383265306364373831-->
 ?
 Supposons **1 000 tokens d'entrée et 500 de sortie par requête**, tous comptés dans ces quotas fictifs :
 ```text

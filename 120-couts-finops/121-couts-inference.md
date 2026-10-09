@@ -107,7 +107,7 @@ Ce raisonnement ne découle pas d'un indicateur GPU à 20 % : activité des kern
 
 ---
 
-Calcul : combien coûte une tâche d'agent de 20 tours, avec et sans prompt caching ? <!--anki:43757a68396e6c7c3d49-->
+Calcul : un agent fait 20 tours, avec 5 000 tokens au départ, +2 000 tokens nets d’historique par tour et 300 en sortie par tour. À 3 €/M en entrée et 15 €/M en sortie, quel coût sans cache puis avec les préfixes relus à 10 % du tarif, sans surcoût d’écriture ? <!--anki:43757a68396e6c7c3d49-->
 ?
 Hypothèses : 5 000 tokens au départ, +2 000 tokens nets d’historique par tour (sortie précédente et outils inclus), 300 tokens de sortie par tour, 3 €/M en entrée, 15 €/M en sortie.
 ```text
@@ -116,11 +116,11 @@ sans cache : 480 k × 3 €/M + 6 k × 15 €/M     ≈ 1,53 €
 avec cache : ~43 k nouveaux tokens au plein tarif
              + ~437 k relus à 10 % du prix     ≈ 0,35 €
 ```
-Le coût croît comme le **carré** du nombre de tours : 40 tours coûtent environ 3,5 fois plus que 20. D'où la **compaction** et le cache ([[123-caching-agressif|caching]]). Le surcoût d'écriture en cache est négligé ici.
+Sans cache, le volume d’entrée comporte un terme **quadratique** en nombre de tours : 40 tours coûtent environ 3,5 fois plus que 20. D'où la **compaction** et le cache ([[123-caching-agressif|caching]]). Le surcoût d'écriture en cache est négligé ici.
 
 ---
 
-Calcul : combien coûte par mois un assistant interne utilisé par 2 000 personnes ? <!--anki:6165653035666139373336363437383461383262393763386636316462633865-->
+Calcul : 2 000 personnes font 10 requêtes par jour sur 22 jours, chacune avec 2 000 tokens d’entrée et 400 de sortie. À 3 €/M en entrée et 15 €/M en sortie, quel coût mensuel ? <!--anki:6165653035666139373336363437383461383262393763386636316462633865-->
 ?
 Hypothèses : 10 requêtes par personne et par jour ouvré, 22 jours, 2 000 tokens d'entrée et 400 de sortie par requête, 3 €/M en entrée, 15 €/M en sortie.
 ```text
@@ -133,7 +133,7 @@ Entrée et sortie pèsent autant, car la sortie coûte 5 fois plus cher au token
 
 ---
 
-Calcul : à partir de quel volume un GPU loué devient-il moins cher qu'une API ? <!--anki:3165666632316363393062643430633161363538303761346166313231356365-->
+Calcul : un GPU réservé 720 h à 2,50 €/h remplace une API à 0,20 €/M de tokens comparables. Hors exploitation, quel volume mensuel et débit moyen sur 30 jours égalisent les coûts ? <!--anki:3165666632316363393062643430633161363538303761346166313231356365-->
 ?
 Hypothèses fictives : un H100 loué 2,50 €/h, qui sert un petit modèle open weights ; une API équivalente à 0,20 € par million de tokens, entrée et sortie confondues.
 ```text
@@ -145,7 +145,7 @@ Il faut une charge **soutenue jour et nuit** pour battre une API bon marché ; s
 
 ---
 
-Calcul : comment comparer le coût par réponse conforme de deux déploiements ? <!--anki:3933613530313832313337613439336538616165373939613865613434663562-->
+Calcul : A coûte 12 €/h pour 20 réponses conformes/s ; B, 8 €/h pour 10, au même mix et SLO. Quel coût par réponse conforme et lequel est le moins cher à cette charge ? <!--anki:3933613530313832313337613439336538616165373939613865613434663562-->
 ?
 A coûte **12 €/h** et délivre 20 réponses conformes/s ; B coûte **8 €/h** et en délivre 10/s, sur le même mix et avec les mêmes critères.
 ```text
@@ -156,7 +156,7 @@ A est plus cher à l'heure mais moins cher par réussite à cette charge. Inclur
 
 ---
 
-Calcul : comment mesurer l’énergie par tâche utile d’un service LLM ? <!--anki:3764316232316465383563393465363338626662363766333136623261333262-->
+Calcul : un serveur consomme en moyenne 600 W pendant 60 s et livre 120 tâches conformes. Combien de joules consomme-t-il au total et par tâche utile ? <!--anki:3764316232316465383563393465363338626662363766333136623261333262-->
 ?
 Sur une fenêtre de 60 secondes, une puissance moyenne de **600 W** représente `600 × 60 = 36 000 J`. Si 120 tâches conformes sont livrées, cela donne **300 J par tâche utile**.
 
@@ -193,7 +193,6 @@ Mise en situation : le coût de ton assistant est dominé par les tokens d'entr�
 ## Sources
 
 - [NVIDIA DCGM — puissance et métriques matérielles](https://docs.nvidia.com/datacenter/dcgm/latest/learn/modules/profiling.html)
-
 
 - [Anthropic — traitement batch, échecs et expiration des requêtes](https://platform.claude.com/docs/en/build-with-claude/batch-processing)
 

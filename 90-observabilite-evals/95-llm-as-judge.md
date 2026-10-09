@@ -9,11 +9,13 @@ Utiliser un **LLM pour évaluer les sorties** d'un autre système selon une **ru
 
 ---
 
-Quels sont les trois formats de jugement ? <!--anki:66302c23656c45342539-->
+Quels axes distinguent les formats de jugement d’un LLM-as-a-judge ? <!--anki:66302c23656c45342539-->
 ?
-1. **Pointwise** : noter une réponse seule (pass/fail ou échelle).
-2. **Pairwise** : choisir la meilleure de **deux réponses** — plus fiable pour comparer deux versions.
-3. **Avec référence** : comparer la réponse à une **réponse attendue**.
+Deux **axes distincts** :
+- **Pointwise ou pairwise** : noter une réponse seule, ou comparer deux réponses.
+- **Avec ou sans réponse de référence** : fournir ou non un résultat attendu au juge.
+
+On peut donc comparer deux réponses **avec une référence**, ou noter une seule réponse sans elle à partir d'un critère vérifiable. Le pairwise n'est pas intrinsèquement plus fiable pour toute tâche : tester biais de position et accord avec les humains. Choisir le format selon la décision, puis préciser égalités, abstentions et critères.
 
 ---
 
@@ -47,21 +49,28 @@ Comment rédiger un bon prompt de juge ? <!--anki:6939636d73502e7a64-->
 
 Comment valider un juge LLM ? <!--anki:446d7b2f5475595e5641-->
 ?
-En le **comparant à des labels humains** sur un échantillon (quelques centaines de cas) :
-- mesurer **TPR et TNR** (le juge détecte-t-il les vrais échecs ? laisse-t-il passer les vrais succès ?) plutôt qu'un simple accord global ;
-- découper en **jeu de développement** (itérer le prompt du juge) et **jeu de test** (mesure finale) pour ne pas sur-ajuster.
+Définir d'abord la **classe positive**. Si « réponse correcte » est positive, le **TPR** est la part des vraies réussites acceptées ; le **TNR** est la part des vrais échecs rejetés.
+
+Comparer aux annotations humaines sur un test distinct des exemples de développement du juge, avec matrice de confusion, volumes et incertitude. Si l'on choisit plutôt « échec » comme positif, les appellations changent : documenter cette convention. Vérifier les segments critiques et la qualité des labels humains ; un accord global élevé peut cacher un juge qui accepte tout.
 
 ---
 
 Pourquoi l'accord brut (% d'accord) est-il trompeur ? <!--anki:7935482633457b4d3c66-->
 ?
-Sur un jeu **déséquilibré** (90 % de succès), un juge qui dit toujours « pass » a **90 % d'accord** sans rien détecter. On regarde le **rappel sur les échecs**, la **précision**, ou le **kappa de Cohen**, qui corrige l'accord dû au hasard.
+Avec 90 % de réussites, répondre toujours « pass » donne **90 % d'accord** sans détecter aucun échec. Examiner la matrice de confusion et les erreurs qui comptent pour la décision.
+
+Le **kappa de Cohen** rapporte l'accord observé à un accord attendu calculé à partir des fréquences marginales des annotateurs. Il n'établit ni vérité des labels, ni équivalence au hasard réel, et varie avec la distribution des classes. Publier volumes, accord par classe et procédure de résolution des désaccords ; aucun score seul ne valide un juge.
 
 ---
 
 Comment corriger le taux de succès mesuré par un juge imparfait ? <!--anki:4c3c5f2b46467c777b54-->
 ?
-Avec le TPR et le TNR du juge : taux réel ≈ **(taux observé + TNR − 1) / (TPR + TNR − 1)**. On peut aussi donner un **intervalle de confiance** par bootstrap sur les labels humains. Sans cette correction, un juge biaisé **fausse la décision**.
+En définissant **positif = succès**, poser `q` = fraction de « pass » du juge et `p` = vrai taux de succès :
+```text
+q = TPR × p + (1 − TNR) × (1 − p)
+p = (q + TNR − 1) / (TPR + TNR − 1)
+```
+L'inversion suppose des TPR/TNR applicables à la population visée et un dénominateur suffisamment éloigné de zéro. Estimer aussi l'incertitude de ces paramètres. Un résultat hors [0,1] révèle bruit ou hypothèses incompatibles ; le borner artificiellement ne valide pas l'estimation. Une revue humaine peut être préférable à une correction instable.
 
 ---
 
@@ -96,16 +105,13 @@ Sur un **échantillon du trafic** pour suivre la qualité sans vérité terrain,
 
 Quand ne pas utiliser un LLM-as-a-judge ? <!--anki:6e5a5749643e5a6b5446-->
 ?
-- **Critère vérifiable par du code** : JSON valide, champ attendu, tests unitaires qui passent, regex, correspondance exacte. Une **assertion déterministe** est gratuite, instantanée et sans variance
-- **Exactitude factuelle sans référence** : le juge ne vérifie pas ce qu'il ignore
-- **Domaine expert** (médical, juridique) tant que le juge n'est pas **calibré sur des annotations d'experts**
-- **Décision unitaire à fort enjeu** (bloquer un utilisateur, valider un paiement) : le juge sert à mesurer des taux, pas à trancher seul un cas
+Privilégier du **code déterministe** pour un contrat explicite : syntaxe JSON, champ requis, règle de calcul ou résultat d'un test. C'est souvent plus reproductible et moins coûteux qu'un juge, mais une assertion peut être mal conçue ou couvrir un critère insuffisant.
 
-Règle : **code d'abord**, juge pour ce que le code ne sait pas mesurer ([[94-evals-methodologie|méthodologie]]).
+Un juge sans source fiable ne résout pas la vérification factuelle. Dans un domaine expert, valider ses verdicts contre des annotations spécialisées. Pour une décision individuelle à fort enjeu, prévoir contrôles et recours : un bon score agrégé ne rend pas chaque jugement sûr. Voir la [[94-evals-methodologie|méthodologie]].
 
 ---
 
-Calcul : combien coûte un LLM-as-a-judge qui note 1 000 réponses par jour ? <!--anki:3066323261623265663933613439313038393739636164303336303936303732-->
+Calcul : 1 000 jugements/jour utilisent chacun 1 500 tokens d’entrée et 200 de sortie à 3 €/M et 15 €/M. Quel coût sur 30 jours, puis pour trois critères jugés séparément ? <!--anki:3066323261623265663933613439313038393739636164303336303936303732-->
 ?
 Hypothèses : 1 500 tokens d'entrée par jugement (rubrique, question, contexte, réponse), 200 de sortie, 3 €/M en entrée, 15 €/M en sortie.
 ```text
@@ -121,27 +127,32 @@ Abordable sur un **échantillon**, cher si l'on juge 100 % d'un trafic important
 
 Mise en situation : ton juge LLM annonce 95 % d'accord avec les annotations humaines, et l'équipe veut s'en servir comme gate de déploiement. Qu'en penses-tu ? <!--anki:736e5358393f78245772-->
 ?
-1. **Se méfier de l'accord brut** : si 90 % des cas sont des succès, un juge qui dit toujours « pass » atteint 90 % sans rien détecter
-2. **Mesurer ce qui compte** : rappel sur les **échecs** (TPR), spécificité (TNR), ou kappa
-3. **Séparer les jeux** : un pour itérer sur le prompt du juge, un autre pour la mesure finale
-4. **Corriger le taux observé** à partir du TPR et du TNR, pour estimer le taux réel
-5. **Épingler la version** du modèle juge, sinon une mise à jour fera bouger tous tes scores
+1. **Fixer les labels** : positif = réponse correcte ; TPR accepte les réussites, TNR rejette les échecs.
+2. **Comparer à une baseline** : si presque tout est correct, un juge toujours positif affiche un fort accord.
+3. **Mesurer par classe et segment**, avec volumes et incertitude, sur un test humain indépendant.
+4. **Évaluer l'usage prévu** : une gate doit détecter les erreurs critiques ; corriger un taux agrégé ne sécurise pas chaque verdict.
+5. **Versionner et surveiller** le juge, sa rubrique et ses données de validation.
 
-**Piège** : faire du juge une gate sans jamais avoir mesuré sa capacité à détecter les vrais échecs.
+**Piège** : appliquer une formule de correction avec « succès » et « échec » inversés.
 
 ---
 
 Mise en situation : tu dois comparer deux versions de ton assistant sur 300 cas, avec un juge automatique. Comment organises-tu l'évaluation ? <!--anki:77484f354e39534d592d-->
 ?
-1. **Format pairwise** : demander au juge de choisir la meilleure des deux réponses, plus fiable qu'une note absolue
-2. **Neutraliser la position** : juger dans les deux ordres et ne garder que les verdicts cohérents, les désaccords comptant comme égalité
-3. **Un critère à la fois**, binaire, avec définitions précises et exemples
-4. **Raisonnement avant verdict**, et sortie structurée pour agréger ([[63-guided-generation|guided generation]])
-5. **Contrôler la verbosité** : vérifier que le juge ne préfère pas simplement la réponse la plus longue
+1. **Définir le critère** et les cas qui constituent un progrès ou une régression.
+2. **Comparer en pairwise si adapté**, en inversant ou randomisant l'ordre.
+3. **Fixer les règles d'agrégation** : égalités, désaccords entre ordres et abstentions ; publier leur fréquence.
+4. **Vérifier la rubrique** sur des annotations humaines, avec justificatifs courts et contrôlables.
+5. **Contrôler les biais** de style, longueur et famille de modèle, puis quantifier l'incertitude.
 
-**Piège** : utiliser comme juge le modèle qui a produit l'une des deux réponses.
+**Piège** : assimiler une préférence du juge à une amélioration métier démontrée, ou transformer tous les désaccords en certitudes.
 
 ---
+
+## Sources
+
+- [Zheng et al. — évaluer les juges LLM](https://arxiv.org/abs/2306.05685)
+- [scikit-learn — matrice de confusion et kappa](https://scikit-learn.org/stable/modules/model_evaluation.html)
 
 ## Connexions
 - [[94-evals-methodologie|Méthodologie d'évaluation]] — où le juge s'insère

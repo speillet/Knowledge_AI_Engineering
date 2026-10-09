@@ -96,17 +96,16 @@ Comme les chunks changent entre stratégies, on juge « passage attendu retrouv�
 
 ---
 
-Calcul : combien coûte le contextual retrieval de 10 000 documents de 8 000 tokens ? <!--anki:6336316138626364306238353434323662316364643334376639656430306536-->
+Calcul : 10 000 documents de 8 000 tokens sont découpés en 16 chunks de 500 tokens. Chaque appel reçoit document + chunk + 100 tokens de consigne et produit 75 tokens, à 1 €/M en entrée et 5 €/M en sortie. Quel coût sans cache puis avec le document écrit une fois à 1,25× et relu 15 fois à 0,1× ? <!--anki:6336316138626364306238353434323662316364643334376639656430306536-->
 ?
-Hypothèses : chunks de 500 tokens (16 par document), 100 tokens de consignes, 75 tokens de contexte générés par chunk, petit modèle à 1 €/M en entrée et 5 €/M en sortie.
+Avec les **tarifs hypothétiques** et les 160 000 appels de l'énoncé :
 ```text
-appels     : 10 000 × 16                              = 160 000
-sans cache : 160 000 × 8 600 tokens = 1 376 M × 1 €/M ≈ 1 380 €
-avec cache : document écrit 1 fois (1,25×), relu 15 fois (0,1×)
-             80 M × 2,75 = 220 M, + chunks et consignes 96 M ≈ 320 €
-sortie     : 160 000 × 75 = 12 M × 5 €/M              ≈    60 €
+entrée sans cache : 160 000 × 8 600 / 1e6 × 1 = 1 376 €
+entrée avec cache : 80 × (1,25 + 15 × 0,1) + 96 = 316 €
+sortie inchangée  : 160 000 × 75 / 1e6 × 5 = 60 €
+total sans cache  : 1 436 € ; avec cache : 376 €
 ```
-Le prompt caching divise le coût d'entrée par plus de 4. Ce coût se paie **à l'ingestion**, et de nouveau pour chaque document modifié.
+Les 80 M tokens représentent les documents ; les 96 M restants, chunks et consignes. Le gain suppose les quinze relectures réellement servies depuis le cache. Expiration, préfixes différents et tentatives supplémentaires changent la facture. C'est un coût d'ingestion, à réévaluer lors des modifications.
 
 ---
 

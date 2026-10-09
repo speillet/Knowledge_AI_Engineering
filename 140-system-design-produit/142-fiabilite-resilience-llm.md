@@ -116,7 +116,7 @@ Parades : réessayer à **une seule couche**, **budget de retries** global (ex. 
 
 ---
 
-Calcul : quelle disponibilité pour une chaîne de 3 services à 99,5 %, et avec un fallback ? <!--anki:3430313231643964333833343465356439306135343731396564333462393436-->
+Calcul : avec des disponibilités indépendantes de 99,5 % et une bascule parfaite, comparer trois services obligatoires en série à deux fournisseurs redondants. Quels temps d’indisponibilité moyens sur 30 jours ? <!--anki:3430313231643964333833343465356439306135343731396564333462393436-->
 ?
 Sous hypothèse d'**indépendance** et de bascule parfaite :
 ```text

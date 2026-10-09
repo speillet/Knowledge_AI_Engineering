@@ -81,7 +81,7 @@ Une chute brutale du taux de hit signale souvent un préfixe devenu instable ([[
 
 ---
 
-Calcul : quel gain de TTFT quand 9 000 des 10 000 tokens d'un prompt sont déjà en cache ? <!--anki:6365333934613162646331393439376661353639326434613561303631636664-->
+Calcul : pour un prompt de 10 000 tokens dont 9 000 réutilisés, supposer un prefill passant de 300 à 30 ms et 200 ms fixes d’attente/transport. Quel gain de TTFT, hors surcoûts du cache ? <!--anki:6365333934613162646331393439376661353639326434613561303631636664-->
 ?
 Supposons un prefill de 300 ms sans cache, ramené à 30 ms pour le travail non caché, et **200 ms fixes** d'attente et de transport :
 ```text
@@ -93,7 +93,7 @@ Les tokens nouveaux consultent encore les K/V du préfixe ; chargement et recher
 
 ---
 
-Calcul : pourquoi distinguer cache hit par requête et par token ? <!--anki:3364316439313634633036333430353638346561626463623734633461366439-->
+Calcul : neuf prompts de 100 tokens sont entièrement réutilisables en cache et un prompt de 9 100 tokens ne l’est pas. Quels taux de hit par requête et par token obtient-on ? <!--anki:3364316439313634633036333430353638346561626463623734633461366439-->
 ?
 Neuf prompts de 100 tokens sont entièrement réutilisables, mais un prompt de 9 100 tokens ne l'est pas. Le taux de requêtes avec hit atteint **90 %**, tandis que la part de tokens réutilisables vaut seulement `900 / 10 000 = 9 %`.
 
@@ -150,7 +150,6 @@ Mise en situation : ton service multi-clients partage un même modèle, et un cl
 ## Sources
 
 - [vLLM — automatic prefix caching et limites](https://docs.vllm.ai/en/latest/features/automatic_prefix_caching/)
-
 
 - [vLLM — Automatic Prefix Caching](https://docs.vllm.ai/en/latest/features/automatic_prefix_caching/)
 - [SGLang — documentation du serveur et de ses optimisations](https://docs.sglang.io/)

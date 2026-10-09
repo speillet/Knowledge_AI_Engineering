@@ -72,14 +72,14 @@ La [[68-quantization|quantization]] (des experts surtout) réduit l'écart de m�
 
 ---
 
-Calcul : quelle mémoire et quel calcul pour un MoE de 235B paramètres dont 22B actifs ? <!--anki:3665376632613631663333623433376161366631326166316565366464376231-->
+Calcul : pour un MoE de 235B paramètres stockés à 1 octet chacun, dont 22B actifs par token, estimer le stockage brut des poids et le calcul linéaire sous l’approximation 2 FLOP par paramètre actif ? <!--anki:3665376632613631663333623433376161366631326166316565366464376231-->
 ?
-Exemple : Qwen3-235B-A22B, servi en FP8.
+Sous les approximations de l'énoncé :
 ```text
-mémoire : tous les experts restent chargés  235e9 × 1 octet ≈ 235 Go → 4 H100 au minimum
-calcul  : seuls les 22B actifs travaillent  2 × 22e9 ≈ 44 GFLOP par token, comme un dense de 22B
+poids résidents : 235e9 × 1 octet = 235 Go décimaux
+calcul linéaire : 2 × 22e9 = 44 GFLOP par token
 ```
-Un MoE se paie en **mémoire** comme un grand modèle, mais **calcule** comme un petit : il est rentable quand un fort débit amortit la VRAM, moins sur un petit déploiement ([[121-couts-inference|coûts]]).
+Le stockage dépend des paramètres **totaux**, le calcul activé des paramètres **actifs**. Ajouter mémoire du runtime, KV cache et marge avant de dimensionner les GPU. Les 44 GFLOP excluent notamment le coût dépendant du contexte, le routage et les communications : ce n'est ni une latence, ni la garantie d'une vitesse identique à un dense 22B. Mesurer débit utile et [[121-couts-inference|coût]] sur la charge visée.
 
 ---
 

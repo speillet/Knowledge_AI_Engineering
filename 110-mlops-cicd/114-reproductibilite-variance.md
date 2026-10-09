@@ -47,9 +47,11 @@ Journaliser **tout ce qui le détermine** : identifiant **daté** du modèle, pr
 
 ---
 
-Pourquoi ne pas comparer la sortie d'un LLM à une chaîne attendue ? <!--anki:656d592d3b347921397b-->
+Quand une comparaison exacte de la sortie LLM est-elle adaptée, et quand faut-il tester des propriétés ? <!--anki:656d592d3b347921397b-->
 ?
-Parce qu'elle **varie** d'un appel à l'autre sans être fausse. On vérifie des **propriétés** (JSON valide, bonne entité extraite, aucune donnée interdite) ou on note contre un **seuil** (métrique, juge). Pour tester le code autour du LLM, on **enregistre puis rejoue** les réponses (record/replay) : tests déterministes et gratuits.
+Pour une **réponse libre**, plusieurs formulations peuvent satisfaire la tâche : un exact match pénaliserait des variantes correctes. Vérifier les faits, champs, contraintes et références utiles.
+
+Pour une classe, un identifiant ou une valeur canonique, l'égalité exacte peut au contraire être le bon test, après une normalisation explicitement admise. Tester séparément le code d'orchestration avec réponses simulées ou enregistrées, et le modèle sur des entrées représentatives. Un replay rend certains tests reproductibles ; il ne mesure pas à nouveau le comportement du modèle réel.
 
 ---
 
@@ -75,10 +77,12 @@ Comment comparer rigoureusement deux variantes (prompt, modèle) ? <!--anki:7476
 
 À ne pas confondre : pass@k et pass^k ? <!--anki:4c352d733b676a657961-->
 ?
-- **pass@k** : probabilité qu'**au moins une** des k tentatives réussisse → le **potentiel** (utile quand on peut vérifier puis relancer, ex. du code avec des tests)
-- **pass^k** : probabilité que **les k tentatives** réussissent → la **fiabilité** vécue par l'utilisateur qui repose la même question
-
-Avec 80 % de succès par tentative (tentatives indépendantes) : pass@3 ≈ 99 %, pass^3 ≈ 51 %.
+**pass@k** signifie au moins un succès parmi k essais ; **pass^k** signifie k succès. Pour une tâche de probabilité de succès constante p et des essais indépendants :
+```text
+pass@k = 1 − (1 − p)^k ; pass^k = p^k
+p = 0,8 ; k = 3 → 99,2 % et 51,2 %
+```
+Le premier n'assure pas qu'on sait identifier la bonne réponse ; le second décrit la répétabilité selon ce protocole. Sur des tâches hétérogènes, calculer les résultats par tâche avant de moyenner. Publier aussi succès initial, coût et types d'échecs selon le service.
 
 ---
 
@@ -132,13 +136,13 @@ Mise en situation : un client exige par contrat que « le même document donne t
 
 Mise en situation : ton équipe teste un agent de correction de bugs. Il réussit 4 fois sur 5 en démonstration, et le produit veut annoncer « 80 % de réussite ». Que précises-tu ? <!--anki:6376583a3e3362543e7d-->
 ?
-1. **Cinq essais ne mesurent rien** : l'intervalle de confiance est énorme sur si peu de cas
-2. **Distinguer pass@k et pass^k** : réussir au moins une fois sur k essais n'est pas réussir à chaque fois
-3. **Choisir la métrique selon l'usage** : si un humain peut relancer et vérifier, pass@k a du sens ; sinon c'est pass^k qui compte
-4. **Dimensionner le jeu de test** pour l'écart qu'on veut détecter ([[94-evals-methodologie|méthodologie]])
-5. **Rapporter une fourchette**, pas un chiffre isolé
+1. **Rapporter l'observation** : 4 succès sur 5 essais, soit 80 % sur cette petite démonstration ; l'estimation reste très incertaine.
+2. **Définir le protocole** : cinq tâches différentes ou cinq répétitions d'une seule tâche ?
+3. **Choisir les métriques** : succès au premier essai, pass@k si un vérificateur choisit une solution, pass^k pour la répétabilité.
+4. **Élargir l'évaluation** à des cas représentatifs indépendants, avec répétitions si utiles.
+5. **Rapporter incertitude et limites**, sans présenter le taux observé comme une garantie.
 
-**Piège** : communiquer un taux issu d'une poignée d'essais réussis pendant une démonstration.
+**Piège** : dire que cinq essais ne mesurent « rien », ou qu'ils suffisent à estimer précisément la production.
 
 ---
 

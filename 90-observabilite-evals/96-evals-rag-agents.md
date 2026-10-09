@@ -15,9 +15,9 @@ Un mauvais score global ne dit pas lequel corriger ; les métriques par étage, 
 
 Que mesurent recall@k, MRR et nDCG ? <!--anki:4a7e6f715833634b5574-->
 ?
-- **Recall@k** : part des passages pertinents présents dans les **k premiers** — la métrique clé, car le LLM ne voit que ceux-là.
-- **MRR** (Mean Reciprocal Rank) : **1/rang** du premier résultat pertinent, moyenné.
-- **nDCG** : qualité du **classement** avec pertinence graduée, pénalisant les bons résultats placés bas.
+Le **recall@k** mesure la fraction des éléments pertinents annotés présents dans les k premiers ; la **MRR** moyenne l'inverse du rang du premier pertinent, avec zéro si aucun n'est retrouvé dans le périmètre retenu. Le **nDCG** évalue l'ordre, avec pertinence éventuellement graduée et normalisation par un classement idéal.
+
+Préciser unité — document, passage ou preuve —, cutoff et traitement des requêtes sans pertinent. Une référence incomplète peut pénaliser un autre passage valable. Ces mesures décrivent des aspects différents : retrouver une preuve unique ne suffit pas toujours à répondre à une question qui en demande plusieurs.
 
 ---
 
@@ -33,7 +33,9 @@ C'est la base de [[22-rag-avance|RAGAS]] et des évaluateurs équivalents.
 
 Comment mesurer la faithfulness ? <!--anki:775151472b433d507b78-->
 ?
-Décomposer la réponse en **affirmations atomiques**, puis faire vérifier par un [[95-llm-as-judge|juge]] (ou un modèle NLI) que chacune est **impliquée par le contexte**. Score = affirmations soutenues / total. Une réponse **vraie mais absente du contexte** compte comme non fidèle : elle révèle une connaissance paramétrique non vérifiée.
+Décomposer la réponse en affirmations vérifiables, puis évaluer si **les sources fournies les soutiennent**. Un score possible est la fraction d'affirmations soutenues, avec règles explicites pour contradictions, déductions et réponses vides.
+
+Valider le juge ou les annotateurs. Une affirmation vraie mais non étayée peut être jugée non fidèle ; cela ne prouve pas qu'elle vient de la mémoire du modèle. À l'inverse, répéter fidèlement une source erronée ne rend pas l'affirmation vraie. La fidélité, l'exactitude et la réponse à la question sont des critères complémentaires.
 
 ---
 
@@ -64,9 +66,11 @@ Un **bac à sable reproductible** : faux services (API mockées, base de test, d
 
 ---
 
-Pourquoi pass^k est-il crucial pour un agent en production ? <!--anki:4e5e397b574e687a6f79-->
+Qu’apporte pass^k à l’évaluation de la fiabilité d’un agent ? <!--anki:4e5e397b574e687a6f79-->
 ?
-**pass@k** = au moins un succès sur k essais (capacité) ; **pass^k** = **k succès sur k** (fiabilité). Un agent à 70 % de succès par essai n'a que **≈ 34 %** de pass^3. En production, l'utilisateur subit **chaque** essai : c'est pass^k qui compte ([[114-reproductibilite-variance|pass@k et pass^k]]).
+**pass@k** mesure la présence d'au moins une réussite parmi k essais ; **pass^k** mesure la réussite de tous les essais, selon le protocole de répétition. À probabilité constante de 0,7 et avec essais indépendants, pass^3 vaut `0,7³ = 34,3 %`.
+
+Ces métriques répondent à des questions différentes. Un service en un appel doit aussi publier succès au premier essai, gravité des échecs et abstention. Le taux moyen sur des tâches de difficulté variable ne s'élève pas simplement à la puissance k. Mesurer par tâche et agréger selon l'usage.
 
 ---
 
@@ -88,14 +92,14 @@ Quelles métriques d'efficacité suivre en plus de la qualité ? <!--anki:515e38
 
 ---
 
-Calcul : un agent réussit 90 % des tâches au premier essai. Quelle probabilité de réussir la même tâche 5 fois sur 5 (pass^5) ? <!--anki:6664613061633837663230343433353462663263393038633136326162303030-->
+Calcul : sur une tâche donnée, chaque essai indépendant réussit avec probabilité constante 0,9. Quel est pass^5 ? <!--anki:6664613061633837663230343433353462663263393038633136326162303030-->
 ?
+Avec une **probabilité constante de 0,9 pour cette tâche** et des essais indépendants :
 ```text
-pass^1 = 0,90
-pass^5 = 0,90⁵ ≈ 0,59
-pass^8 = 0,90⁸ ≈ 0,43
+P(5 réussites sur 5) = 0,9^5 = 0,59049 ≈ 59 %
+P(8 réussites sur 8) = 0,9^8 ≈ 43 %
 ```
-Avec des essais indépendants, un agent « à 90 % » ne réussit les cinq essais que **6 fois sur 10**. Pour un usage répété, c'est pass^k qui décrit l'expérience de l'utilisateur, pas pass@1 ([[114-reproductibilite-variance|variance]]).
+C'est une probabilité de réussite répétée, pas celle d'obtenir au moins une bonne réponse. Si les essais sont dépendants ou les probabilités diffèrent selon les tâches, ces puissances ne décrivent plus directement le résultat observé. Un taux global de 90 % ne suffit donc pas à appliquer la formule à chaque tâche.
 
 ---
 
@@ -103,20 +107,20 @@ Avec des essais indépendants, un agent « à 90 % » ne réussit les cinq essai
 
 Mise en situation : ton RAG affiche 62 % de réponses jugées correctes, et l'équipe veut changer de modèle de génération. Comment vérifies-tu que c'est le bon levier ? <!--anki:4f663b6b4b4a55712b34-->
 ?
-1. **Découper la mesure** : recall@k du retrieval d'un côté, fidélité et pertinence de la génération de l'autre
-2. **Si le recall est faible** : le problème est en amont (chunking, parsing, recherche hybride), changer de modèle n'y fera rien
-3. **Si le recall est bon** : mesurer la **faithfulness** en décomposant les réponses en affirmations et en vérifiant chacune contre le contexte
-4. **Distinguer** les réponses vraies mais **non soutenues** par le contexte, qui révèlent une connaissance non vérifiée
-5. **Décider** avec les chiffres par étage, et prévoir le coût du changement ([[146-choix-modeles|choix de modèle]])
+1. **Séparer les étages** : rappel des passages, fidélité et exactitude de la réponse.
+2. **Examiner les échecs de retrieval** : preuve absente, mal parsée, mal classée ou filtrée.
+3. **Tester un contexte oracle** contenant les bonnes preuves, avec le même générateur et un budget comparable.
+4. **Vérifier les affirmations** : soutien par les sources et vérité sont deux critères distincts.
+5. **Choisir le levier mesuré**, puis comparer qualité, coût et latence ([[146-choix-modeles|choix de modèle]]).
 
-**Piège** : juger un RAG avec un seul score global, qui ne dit jamais quoi corriger.
+**Piège** : déduire la cause d'un mauvais score global sans isoler retrieval et génération.
 
 ---
 
 Mise en situation : ton agent de support réussit 80 % des tâches en test, mais les utilisateurs le trouvent peu fiable. Comment expliques-tu l'écart ? <!--anki:6339702b49452f682876-->
 ?
 1. **Différence entre capacité et fiabilité** : avec probabilité constante de 80 % et essais indépendants, trois réussites consécutives valent 0,8³ ≈ 51 % ; mesurer par tâche si ces hypothèses ne tiennent pas
-2. **Mesurer pass^k**, puisque l'utilisateur subit **chaque** tentative, pas la meilleure
+2. **Compléter le succès au premier essai** par pass^k, gravité des échecs et résultats par segment
 3. **Regarder la variance** : mêmes entrées rejouées plusieurs fois, pour repérer les tâches instables
 4. **Stabiliser** : outils plus étroits, validations déterministes, étapes vérifiables plutôt que libres
 5. **Prévoir l'échec** : escalade vers un humain plutôt qu'une réponse approximative ([[144-ux-ia-human-in-the-loop|UX]])
@@ -136,6 +140,12 @@ Mise en situation : tu dois évaluer un agent qui modifie des tickets et envoie 
 **Piège** : tester en production « sur de vrais tickets, mais en faisant attention ».
 
 ---
+
+## Sources
+
+- [Es et al. — dimensions de l’évaluation RAG](https://arxiv.org/abs/2309.15217)
+- [Yao et al. — τ-bench et fiabilité répétée](https://arxiv.org/abs/2406.12045)
+- [Stanford — évaluation en recherche d’information](https://nlp.stanford.edu/IR-book/html/htmledition/evaluation-of-ranked-retrieval-results-1.html)
 
 ## Connexions
 - [[94-evals-methodologie|Méthodologie d'évaluation]] — le cadre général

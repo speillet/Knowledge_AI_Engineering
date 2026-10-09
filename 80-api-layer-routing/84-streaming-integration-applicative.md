@@ -89,7 +89,7 @@ Un identifiant unique fourni par le client (`Idempotency-Key`) : si la même req
 
 ---
 
-Calcul : combien de connexions ouvertes pour 50 utilisateurs qui démarrent une conversation par seconde, streamée pendant 12 secondes ? <!--anki:725e21745a3f6a415179-->
+Calcul : à l’équilibre, 50 nouveaux flux SSE démarrent par seconde et durent 12 s en moyenne. Combien de flux sont ouverts en moyenne, puis si le taux d’arrivée triple durablement ? <!--anki:725e21745a3f6a415179-->
 ?
 **Loi de Little** : connexions simultanées = arrivées × durée.
 ```text

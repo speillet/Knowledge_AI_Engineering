@@ -113,7 +113,7 @@ Parades :
 
 ---
 
-Calcul : quelle mémoire GPU pour fine-tuner un 7B en LoRA, puis en QLoRA ? <!--anki:3337376463643866363135623439663561633937613466613932353937653533-->
+Calcul : pour une base 7B, comparer la mémoire brute des poids en LoRA avec BF16 et en QLoRA avec 4 bits. Pourquoi ces chiffres ne donnent-ils pas la mémoire totale du fine-tuning ? <!--anki:3337376463643866363135623439663561633937613466613932353937653533-->
 ?
 La **mémoire des poids de base** fournit seulement un point de départ, en Go décimaux :
 ```text

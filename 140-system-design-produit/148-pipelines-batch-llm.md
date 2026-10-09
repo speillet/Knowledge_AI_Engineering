@@ -44,7 +44,7 @@ Chaque item a un **statut** (à faire, fait, en erreur) persisté : on peut inte
 
 ---
 
-Calcul : combien coûte l'extraction de 2 millions de documents ? <!--anki:797842345d605833776e-->
+Calcul : 2 millions de documents demandent chacun 3 000 tokens d’entrée et 300 de sortie, à 3 €/M et 15 €/M. Quel coût, puis quel coût avec une remise batch fictive de 50 % sur les deux postes ? <!--anki:797842345d605833776e-->
 ?
 Hypothèses : 3 000 tokens d'entrée (dont 1 000 d'instructions communes), 300 en sortie, 3 €/M en entrée, 15 €/M en sortie.
 ```text
@@ -58,12 +58,13 @@ Le choix du **modèle** pèse plus que tout le reste : on le valide sur un écha
 
 ---
 
-Calcul : combien de temps prend ce traitement avec une limite de 2 millions de tokens par minute ? <!--anki:694f677b2d714b26386d-->
+Calcul : combien de temps au minimum pour traiter 6,6 milliards de tokens avec un quota global de 2 millions de tokens/minute, supposé entièrement utilisable et sans autre goulot ? <!--anki:694f677b2d714b26386d-->
 ?
+Le quota impose une **borne inférieure**, si les 6,6 milliards de tokens sont tous comptés dans ce même quota :
 ```text
-6,6 G tokens / 2 M tokens par minute = 3 300 minutes ≈ 55 heures
+6,6e9 / 2e6 = 3 300 minutes = 55 heures
 ```
-Les **quotas** (tokens et requêtes par minute) fixent la durée, pas la vitesse du modèle. Leviers : batch API aux quotas séparés, hausse de quota négociée, répartition sur plusieurs régions ou fournisseurs via une gateway ([[81-litellm-api-layer|LiteLLM]]), ou GPU auto-hébergés.
+La durée réelle peut être supérieure : latence des appels, concurrence, quota de requêtes, reprises, pauses et débit du fournisseur s'ajoutent. Certaines API séparent les quotas d'entrée et de sortie ; le quotient ci-dessus ne s'y applique pas tel quel. Mesurer le goulot avant de demander plus de quota ou d'augmenter les workers.
 
 ---
 

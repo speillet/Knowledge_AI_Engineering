@@ -221,7 +221,7 @@ Une tâche peut déclencher plusieurs appels, et un appel plusieurs tentatives. 
 
 ---
 
-Calcul : pourquoi la moyenne des tokens/s individuels diffère-t-elle du débit global ? <!--anki:3961323930326463383764623432363861333465306430333062356639376239-->
+Calcul : deux requêtes démarrent ensemble et produisent chacune 100 tokens, A en 1 s et B en 9 s. Comparer la moyenne des débits individuels au débit global sur les 9 s ? <!--anki:3961323930326463383764623432363861333465306430333062356639376239-->
 ?
 Deux requêtes **simultanées** produisent chacune 100 tokens : A en 1 seconde, B en 9 secondes. Leur moyenne de débits vaut `(100 + 11,1) / 2 ≈ 55,6 tokens/s`.
 
@@ -280,7 +280,6 @@ Mise en situation : le responsable conformité demande si vous journalisez les c
 - [Prometheus — histogrammes et agrégation](https://prometheus.io/docs/practices/histograms/)
 - [Prometheus — instrumentation et cardinalité](https://prometheus.io/docs/practices/instrumentation/)
 - [NVIDIA DCGM — interprétation des compteurs de profilage](https://docs.nvidia.com/datacenter/dcgm/latest/learn/modules/profiling.html)
-
 
 - [vLLM — métriques de production](https://docs.vllm.ai/en/latest/usage/metrics/)
 - [OpenTelemetry — conventions sémantiques GenAI](https://github.com/open-telemetry/semantic-conventions-genai)

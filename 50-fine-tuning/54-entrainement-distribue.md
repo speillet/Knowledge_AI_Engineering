@@ -12,7 +12,7 @@ Que faut-il stocker en mémoire GPU pendant l'entraînement ? <!--anki:4b3540475
 
 ---
 
-Calcul : combien de mémoire pour un fine-tuning complet d'un modèle 7B avec Adam ? <!--anki:4f713b3f5d38403a325b-->
+Calcul : un fine-tuning complet 7B utilise poids et gradients BF16, une copie maîtresse FP32 et deux moments Adam FP32. Quelle mémoire pour ces états, hors activations et buffers ? <!--anki:4f713b3f5d38403a325b-->
 ?
 En précision mixte, environ **16 octets par paramètre** avant activations :
 ```text
@@ -21,7 +21,7 @@ gradients BF16                     2 octets
 copie FP32 + deux moments d'Adam  12 octets
 total ≈ 16 octets × 7e9          ≈ 112 Go (+ activations)
 ```
-Plusieurs GPU sont donc nécessaires, alors que le même modèle tient sur un seul GPU pour l'inférence (≈ 14 Go). D'où l'intérêt de [[51-fine-tuning-adaptation|LoRA / QLoRA]] ou du sharding ZeRO/FSDP.
+Cette enveloppe dépasse une carte de 80 Go ; une carte plus grande, plusieurs GPU avec sharding ou une adaptation légère sont des options. Les seuls poids d’inférence occupent environ 14 Go. D'où l'intérêt de [[51-fine-tuning-adaptation|LoRA / QLoRA]] ou du sharding ZeRO/FSDP.
 
 ---
 
@@ -102,14 +102,14 @@ Le premier accélère l'entraînement d'un modèle qui tient déjà en mémoire 
 
 ---
 
-Calcul : combien de GPU-heures pour un fine-tuning complet d'un 7B sur 100 millions de tokens ? <!--anki:6264366332636363363433613463316539343266666164623039333564333938-->
+Calcul : sous C ≈ 6ND, combien de GPU-heures utiles pour une époque de fine-tuning dense 7B sur 100 millions de tokens, à 4 × 10^14 FLOP/s utiles par GPU ? <!--anki:6264366332636363363433613463316539343266666164623039333564333938-->
 ?
 ```text
 C ≈ 6 × N × D = 6 × 7e9 × 1e8   = 4,2e18 FLOP
 H100 à 40 % de MFU              ≈ 4e14 FLOP/s
 4,2e18 / 4e14                   ≈ 10 500 s ≈ 3 GPU-heures par époque
 ```
-Le calcul d'un fine-tuning se compte en **GPU-heures**, pas en GPU-années. La contrainte est la **mémoire** (≈ 112 Go pour un 7B avec Adam), qui impose plusieurs GPU, ou [[51-fine-tuning-adaptation|LoRA]].
+Le calcul d'un fine-tuning se compte en **GPU-heures**, pas en GPU-années. La contrainte est la **mémoire** (≈ 112 Go pour un 7B avec Adam), qui peut nécessiter sharding ou [[51-fine-tuning-adaptation|LoRA]].
 
 C'est une estimation de calcul utile, pas un délai promis : transferts, checkpoints, padding et efficacité réelle s'ajoutent. Avec plusieurs GPU, la durée idéale diminue mais les GPU-heures ne disparaissent pas. Les 112 Go excluent notamment les activations et supposent un schéma précis de précision et d'états Adam.
 

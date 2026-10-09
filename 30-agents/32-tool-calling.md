@@ -98,7 +98,7 @@ La validité **sémantique** reste à vérifier par l'application : un identifia
 
 ---
 
-Calcul : combien de tokens coûtent les schémas de 40 outils sur une tâche d'agent de 25 tours ? <!--anki:3232623534646231383763363464303539666437323536306133333231383237-->
+Calcul : 40 schémas d’outils de 300 tokens sont renvoyés à chacun des 25 appels d’un agent. Quel volume et coût à 3 €/M en entrée, puis quel coût si tous ces tokens sont lus à 10 % du tarif depuis un cache déjà chaud ? <!--anki:3232623534646231383763363464303539666437323536306133333231383237-->
 ?
 Hypothèses : 300 tokens par schéma d'outil, renvoyés à chaque appel, 3 €/M en entrée.
 ```text

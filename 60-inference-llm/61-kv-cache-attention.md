@@ -94,7 +94,7 @@ Pour une attention dense, chaque nouveau token consulte davantage de K/V lorsque
 
 ---
 
-Calcul : combien de requêtes de 8 000 tokens tiennent sur un H100 80 Go qui sert un modèle 8B en BF16 ? <!--anki:6a4724747a7e6e796170-->
+Calcul : pour un 8B BF16 sur 80 Go, 90 % de VRAM sont utilisables, les poids prennent 16 Go et les autres allocations 3 Go. Avec 128 Kio de KV/token, combien de requêtes de 8 000 tokens au total tiennent, hors marge ? <!--anki:6a4724747a7e6e796170-->
 ?
 ```text
 VRAM utilisable (gpu_memory_utilization 0,9)   ≈ 72 Go
@@ -110,20 +110,14 @@ Ce sont des capacités mémoire approximatives, avec Go décimaux et un cache d'
 
 ---
 
-Calcul : combien de requêtes de 8 000 tokens tiennent sur 2 H100 qui servent un 70B en FP8 ? <!--anki:6137666465353731643634663436353938383237353137393038343239396564-->
+Calcul : deux GPU de 80 Go ont 90 % de mémoire utilisable, 70 Go de poids FP8 et 6 Go d’autres allocations au total. Avec 320 Kio de KV/token et une répartition parfaite, combien de requêtes de 8 000 tokens tiennent, hors marge ? <!--anki:6137666465353731643634663436353938383237353137393038343239396564-->
 ?
+Le budget KV total vaut `2 × 80 × 0,9 − 70 − 6 = 68 Go`.
 ```text
-VRAM utilisable : 2 × 80 Go × 0,9                 ≈ 144 Go
-poids 70B en FP8                                  ≈  70 Go
-activations, graphes CUDA                         ≈   6 Go
-reste pour le KV cache                            ≈  68 Go
-KV par token (Llama 3.1 70B : 80 couches, 8 têtes KV de 128, BF16)
-  2 × 80 × 8 × 128 × 2 octets                     ≈ 320 Kio → 8 000 tokens ≈ 2,6 Go
-→ environ 26 requêtes simultanées à contexte plein
+KV/requête = 8 000 × 320 × 1 024 octets = 2,62144 Go
+68 / 2,62144 ≈ 25,94 → au plus 25 requêtes complètes
 ```
-Le 70B coûte 2,5 fois plus de KV par token que le 8B (320 Kio contre 128 Kio) : sa concurrence chute vite. Un KV cache en FP8 réduit l’empreinte des valeurs ([[68-quantization|quantization]]).
-
-L'estimation suppose que les poids et le cache se répartissent correctement entre GPU ; tenir au total ne garantit pas de tenir sur chaque carte. Inclure les sorties futures et les allocations du moteur. Le FP8 peut approximativement doubler la capacité mémoire du cache, mais pas nécessairement le débit utile sous contrainte de latence.
+Arrondir à 26 surestime la capacité sous ces hypothèses. C'est un plafond mémoire idéal, pas une concurrence sous SLO. Inclure croissance des sorties et réserves, puis vérifier chaque GPU : un total suffisant ne garantit pas une répartition compatible. Quantifier le KV peut augmenter ce plafond sans doubler le débit utile.
 
 ---
 
