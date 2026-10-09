@@ -1,0 +1,8 @@
+# Versions vérifiées avec Python 3.10 le 9 octobre 2026.
+langchain==1.4.4
+langgraph==1.2.14
+langgraph-checkpoint-sqlite==3.1.1
+langfuse==4.17.0
+fastapi==0.143.0
+httpx==0.28.1
+uvicorn==0.54.0

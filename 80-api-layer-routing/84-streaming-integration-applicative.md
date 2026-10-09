@@ -6,9 +6,9 @@ Vérifié le : 30 septembre 2026 — cette fiche cite des produits, versions ou 
 
 Pourquoi streamer les réponses d'un LLM ? <!--anki:6536416a5043402c2f28-->
 ?
-Parce que la génération est **séquentielle** : une réponse de 500 tokens à 50 tokens/s prend 10 secondes. En streaming, l'utilisateur lit dès le **premier token** (TTFT de quelques centaines de millisecondes), et la latence **perçue** s'effondre ([[64-metriques-slo-inference|TTFT]]).
+Le streaming permet d'afficher le **contenu utile progressivement**, pendant que la génération continue. Par exemple, 500 tokens produits à 50 tokens/s représentent environ 10 secondes de décodage, auxquelles s'ajoute l'attente du premier contenu.
 
-Le coût total ne change pas ; seule l'expérience change ([[144-ux-ia-human-in-the-loop|UX]]).
+Le délai initial dépend du contexte, du modèle, de la file et du réseau ; il n'est pas toujours de quelques centaines de millisecondes. À génération et tarification identiques, changer le transport ne réduit pas automatiquement le coût. Une annulation effective ou un changement de comportement utilisateur peut toutefois modifier le travail consommé.
 
 ---
 
@@ -144,4 +144,6 @@ Mise en situation : un agent d'analyse met 3 à 8 minutes à produire un rapport
 - [[61-kv-cache-attention|KV cache]] — la mémoire qui limite la concurrence
 - [[33-mcp|MCP]] — le protocole standard entre agents et outils
 - [[149-livraison-idempotence-concurrence|Livraison & idempotence]] — suivre une opération après timeout ou déconnexion
+- [[90-010-langfuse-instrumentation-production|Langfuse — Instrumentation en production]] — observer la consommation du flux
+- [[140-011-architecture-applications-agentiques|Applications agentiques — Architecture & cycle de vie]] — contrat public et reconnexions
 - [[00-moc-ai-engineering|MOC AI Engineering]]

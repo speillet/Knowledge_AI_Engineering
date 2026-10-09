@@ -118,8 +118,9 @@ class VaultTests(unittest.TestCase):
             ROOT / "README.md", ROOT / f"{lint.MOC}.md", ROOT / "scripts/sections.json",
             ROOT / lint.RETIRED,
         ]
-        sources += list((ROOT / "examples").rglob("*.py"))
-        sources += list((ROOT / "examples").rglob("*.md"))
+        sources += [p for p in (ROOT / "examples").rglob("*")
+                    if p.is_file() and p.suffix in {".py", ".md", ".txt"}
+                    and not any(part in {".venv", "__pycache__", ".lab-data"} for part in p.parts)]
         for source in sources:
             target = self.root / source.relative_to(ROOT)
             target.parent.mkdir(parents=True, exist_ok=True)

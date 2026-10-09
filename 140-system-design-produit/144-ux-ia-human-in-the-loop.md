@@ -112,4 +112,5 @@ Mise en situation : ton assistant met 12 secondes à répondre et les utilisateu
 - [[163-voix-temps-reel|Voix & agents temps réel]] — l'UX quand l'interface est la voix
 - [[84-streaming-integration-applicative|Streaming & intégration]] — la mécanique derrière le streaming
 - [[140-010-transactions-outbox-sagas|Transactions & approbations]] — lier le consentement aux paramètres effectivement exécutés
+- [[140-011-architecture-applications-agentiques|Applications agentiques — Architecture & cycle de vie]] — décisions liées aux propositions
 - [[00-moc-ai-engineering|MOC AI Engineering]]

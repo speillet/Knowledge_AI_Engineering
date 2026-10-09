@@ -201,4 +201,5 @@ Mise en situation : ton directeur technique te demande pourquoi tu as choisi le 
 - [[147-leadership-technique-ia|Leadership technique]] — standards d'équipe et décisions
 - [[148-pipelines-batch-llm|Pipelines batch]] — traiter des millions d'items à moindre coût
 - [[22-rag-avance|RAG — Avancé]] — recherche hybride, reranking et filtres
+- [[140-011-architecture-applications-agentiques|Applications agentiques — Architecture & cycle de vie]] — assembler les composants
 - [[00-moc-ai-engineering|MOC AI Engineering]]

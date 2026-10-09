@@ -245,4 +245,5 @@ Mise en situation : ton RAG fournit toujours des liens valides, mais invente enc
 - [[49-agents-de-code|Agents de code]] — utiliser et intégrer les agents de code
 - [[55-rl-agentique|RL agentique]] — entraîner un modèle sur des tâches d'agent
 - [[174-recommandation-ranking|Recommandation & learning to rank]] — mesurer rappel et ordre des résultats
+- [[90-012-tests-agents-reprises|Agents — Tests de contrats, pannes & reprises]] — mesurer les résultats métier
 - [[00-moc-ai-engineering|MOC AI Engineering]]
