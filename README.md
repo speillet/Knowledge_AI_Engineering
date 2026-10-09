@@ -4,7 +4,7 @@ Un vault [Obsidian](https://obsidian.md) de **fiches de révision (flashcards) e
 
 Chaque fiche traite **un concept** en 8 à 34 cartes question/réponse, une quinzaine en moyenne, et se termine par des **mises en situation** : des cas concrets à diagnostiquer, concevoir ou arbitrer. Les fiches sont reliées entre elles par des liens, pour qu'on puisse passer d'un sujet à ses voisins, et elles se révisent en **répétition espacée**.
 
-**État au 13 octobre 2026** : 139 fiches et 2 078 cartes, réparties en 17 sections, dont 329 mises en situation et 168 cartes « à ne pas confondre ».
+**État au 17 octobre 2026** : 146 fiches et 2 202 cartes, réparties en 17 sections, dont 350 mises en situation et 180 cartes « à ne pas confondre ».
 
 ---
 
@@ -17,6 +17,7 @@ Knowledge_AI_Engineering/
 ├── examples/data-engineering/  # atelier SQL local avec données synthétiques
 ├── examples/decisions-ia/      # métriques, revue humaine et choix de modèle en Python
 ├── examples/rag-verifiable/    # preuves, droits, versions et abstention sans LLM
+├── examples/agentic-support/    # LangChain, LangGraph, Langfuse, API et tests de reprise
 ├── .obsidian/                   # configuration Obsidian
 ├── .claude/skills/              # skills Claude Code versionnés (grilling, grill-me)
 ├── scripts/lint_flashcards.py   # vérification des conventions + statistiques
@@ -211,6 +212,14 @@ Les conventions à respecter :
 
 ---
 
+## Approfondir les applications agentiques
+
+Le [parcours agentique de production](docs/audit-stack-agentique-2026-10-09.md) relie contrats LangChain, reprise LangGraph, exécution CrewAI, instrumentation Langfuse, expériences et architecture applicative. Il ajoute des cartes de diagnostic et des mises en situation aux fiches de base.
+
+L’[atelier support exécutable](examples/agentic-support/README.md) permet de tester approbation, refus, isolation, événements et panne après effet métier. Il utilise un modèle simulé et un export Langfuse local : aucune clé API n’est nécessaire. La documentation distingue les tests techniques des évaluations à réaliser avec de vrais modèles et services.
+
+---
+
 ## Concepts couverts
 
 La stack décrite par le vault, du haut vers le bas :
@@ -262,7 +271,7 @@ Trois sujets traversent toute la stack : l'**observabilité** (traces, métrique
 
 ### 40 — Automatisation & frameworks d'agents
 
-Automatiser des processus, soit avec des outils de workflow, soit avec des agents écrits en code. Chaque framework a deux fiches : ses bases, puis son usage avancé ou en production.
+Construire des workflows et agents avec LangChain, LangGraph et CrewAI : fondamentaux, contrats d’outils, reprise, concurrence, budgets et intégration en production.
 
 - [Automatisation code & no-code](40-automatisation/41-automatisation-code-nocode.md) : n8n, triggers, Zapier et Make, Airflow, Prefect et Temporal, durable execution, limites du no-code.
 - [LangChain — Fondamentaux](40-automatisation/42-langchain-fondamentaux.md) : paquets de la v1, `init_chat_model`, messages, outils `@tool` et `bind_tools`, sorties structurées, Runnables et LCEL, briques RAG, LangSmith.
@@ -273,6 +282,9 @@ Automatiser des processus, soit avec des outils de workflow, soit avec des agent
 - [CrewAI — Flows](40-automatisation/47-crewai-flows.md) : `@start`, `@listen`, `@router`, état structuré, `@persist`, `@human_feedback`, mémoire, CLI, crew ou flow, Flows ou LangGraph.
 - [Patterns de workflows agentiques](40-automatisation/48-patterns-workflows-agentiques.md) : prompt chaining, routing, parallélisation (sectioning, voting), evaluator-optimizer, plan-and-execute ou ReAct, Reflexion, calcul de fiabilité d'une chaîne, workflow ou agent, implémentation sans framework.
 - [Agents de code : usage & intégration](40-automatisation/49-agents-de-code.md) : ACI (SWE-agent), boucle pilotée par les tests, `CLAUDE.md` et `AGENTS.md`, mode plan, worktrees et sous-agents, gestion du contexte, mode headless, SWE-bench et ses limites, tâches à déléguer, mesure de l'apport.
+- [LangChain — Contrats, outils & middleware en production](40-automatisation/40-010-langchain-outils-middleware-production.md) : contrats métier, ToolRuntime, ToolMessage, sorties structurées, erreurs, async, middleware, budgets, isolation, tests et mises à niveau.
+- [LangGraph — Reprise, concurrence & évolution](40-automatisation/40-011-langgraph-reprise-concurrence.md) : durabilité sync/async/exit, pending writes, effets externes, interruptions, concurrence par thread, reducers, sous-graphes, migrations et diagnostics de reprise.
+- [CrewAI — Exécution fiable & intégration](40-automatisation/40-012-crewai-execution-fiable.md) : contrats de tâches, dépendances, guardrails bornés, budgets, async, persistance et checkpointing, délégation, isolation, instrumentation et tests.
 
 ### 50 — Fine-tuning
 
@@ -327,6 +339,8 @@ Comprendre les mécanismes du serving, mesurer qualité et SLO, tester la capaci
 
 ### 90 — Observabilité & Evals
 
+Instrumenter les applications, relier traces et métriques, gérer prompts et expériences, évaluer la qualité et tester les contrats, pannes et reprises des agents.
+
 - [Langfuse & observabilité LLM](90-observabilite-evals/91-langfuse-observabilite.md) : périmètre et alternatives (LangSmith, Phoenix, Braintrust), traces, spans et generations, sessions, prompt management, scores, LLM-as-judge, datasets.
 - [ChainForge & évaluation de prompts](90-observabilite-evals/92-chainforge-evals-prompts.md) : comparer prompts et modèles, evals automatiques, tests de régression et cas qui basculent, evals comme prérequis au déploiement.
 - [Monitoring de l'inférence & de l'usage](90-observabilite-evals/93-monitoring-inference.md) : monitoring ou observabilité, couches à monitorer, métriques vLLM et GPU (DCGM), usage par équipe, finish_reason, validations de chaque réponse, signaux de qualité sans vérité terrain, erreurs et disponibilité, traces OpenTelemetry GenAI, dashboard, alertes, contrôles avant mise en production, détection de régression, journalisation des prompts, agrégation des histogrammes, buckets SLO, périmètres de mesure, débit global et segmentation.
@@ -337,6 +351,9 @@ Comprendre les mécanismes du serving, mesurer qualité et SLO, tester la capaci
 - [Débogage & analyse d'échecs des agents](90-observabilite-evals/98-debogage-agents.md) : error analysis (open et axial coding), symptôme ou cause, catégories d'échec, taxonomie MAST, détection des boucles, reproduction par rejeu, de l'échec au cas de non-régression, signaux de production, quand ne pas accuser le modèle.
 - [Statistiques pour décider en IA](90-observabilite-evals/99-statistiques-decisions-experimentales.md) : effet utile et significativité, p-valeur, intervalle de confiance, comparaison appariée, unité indépendante, zéro échec, tests multiples, puissance, causalité, biais de sélection et sample ratio mismatch.
 - [Évaluation des outputs & des réponses LLM](90-observabilite-evals/90-010-evaluation-reponses-llm.md) : grille par dimension, exactitude et complétude, pertinence et consignes, références multiples, normalisation, BLEU et ROUGE, BERTScore, résumés, réponses numériques, critères bloquants et agrégation par affirmation.
+- [Langfuse — Instrumentation en production](90-observabilite-evals/90-010-langfuse-instrumentation-production.md) : traces applicatives complètes, observations, corrélation distribuée, async, tokens et coûts, streaming, sampling, masquage, export, doublons et diagnostic.
+- [Langfuse — Prompts, datasets & expériences](90-observabilite-evals/90-011-langfuse-prompts-experiences.md) : labels et versions, cache de prompts, fallback, promotion, jeux d’évaluation, exécutions comparables, scores manquants, coûts par réussite et feedback.
+- [Agents — Tests de contrats, pannes & reprises](90-observabilite-evals/90-012-tests-agents-reprises.md) : pyramide de tests, modèles simulés, invariants métier, fenêtres de panne, doubles commandes, concurrence, migrations, traces, évaluations et qualification de release.
 
 ### 100 — Sécurité & guardrails
 
@@ -391,6 +408,7 @@ La partie qui assemble tout le reste : concevoir, fiabiliser et piloter une appl
 - [Pipelines batch à grande échelle](140-system-design-produit/148-pipelines-batch-llm.md) : batch ou en ligne, batch API (JSONL, `custom_id`, 24 h), batch API ou continuous batching, architecture reprenable, calculs de coût et de durée sous quota, classement des erreurs, contrôle qualité statistique, versions enregistrées avec chaque résultat, auto-hébergement hors ligne, quand ne pas utiliser de batch API.
 - [Livraison, idempotence & concurrence](140-system-design-produit/149-livraison-idempotence-concurrence.md) : garanties de livraison, limites du exactement une fois, timeout ambigu, identité des opérations, déduplication atomique, rétention, ack, ordre par entité, concurrence optimiste, isolation et fencing tokens.
 - [Transactions, outbox & sagas pour les agents](140-system-design-produit/140-010-transactions-outbox-sagas.md) : invariants métier, double écriture, outbox et inbox, périmètre transactionnel, sagas et compensation, isolation des workflows, états inconnus, checkpoints, validation humaine et tests de panne.
+- [Applications agentiques — Architecture & cycle de vie](140-system-design-produit/140-011-architecture-applications-agentiques.md) : choix des briques, contrats d’exécution, API et workers, admission, identité, approbations versionnées, annulation, événements, déploiement et capacité.
 
 ### 150 — Données & conformité
 

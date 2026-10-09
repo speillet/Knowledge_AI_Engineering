@@ -13,7 +13,7 @@
   },
   "40-automatisation": {
     "title": "Automatisation & frameworks d'agents",
-    "intro": "Automatiser des processus, soit avec des outils de workflow, soit avec des agents écrits en code. Chaque framework a deux fiches : ses bases, puis son usage avancé ou en production."
+    "intro": "Construire des workflows et agents avec LangChain, LangGraph et CrewAI : fondamentaux, contrats d’outils, reprise, concurrence, budgets et intégration en production."
   },
   "50-fine-tuning": {
     "title": "Fine-tuning",
@@ -33,7 +33,7 @@
   },
   "90-observabilite-evals": {
     "title": "Observabilité & Evals",
-    "intro": ""
+    "intro": "Instrumenter les applications, relier traces et métriques, gérer prompts et expériences, évaluer la qualité et tester les contrats, pannes et reprises des agents."
   },
   "100-securite-guardrails": {
     "title": "Sécurité & guardrails",
