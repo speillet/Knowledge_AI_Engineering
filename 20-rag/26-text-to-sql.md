@@ -132,4 +132,6 @@ Mise en situation : ton assistant text-to-SQL a 85 % d'execution accuracy en tes
 - [[101-securite-llm-guardrails|Sécurité LLM]] — la requête générée est une entrée non fiable
 - [[96-evals-rag-agents|Évaluation des RAG & des agents]] — mesurer sur ses propres questions
 - [[143-hallucinations-grounding|Hallucinations & grounding]] — clarifier plutôt qu'inventer
+- [[150-010-modelisation-donnees-analytiques|Modélisation des données analytiques]] — rendre explicites les jointures et métriques autorisées
+- [[150-011-sql-transformations-analytiques|SQL pour les pipelines et datasets IA]] — valider le sens et les résultats du SQL
 - [[00-moc-ai-engineering|MOC AI Engineering]]

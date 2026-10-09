@@ -4,7 +4,7 @@ Un vault [Obsidian](https://obsidian.md) de **fiches de révision (flashcards) e
 
 Chaque fiche traite **un concept** en 8 à 34 cartes question/réponse, une quinzaine en moyenne, et se termine par des **mises en situation** : des cas concrets à diagnostiquer, concevoir ou arbitrer. Les fiches sont reliées entre elles par des liens, pour qu'on puisse passer d'un sujet à ses voisins, et elles se révisent en **répétition espacée**.
 
-**État au 9 octobre 2026** : 129 fiches et 1 868 cartes, réparties en 17 sections, dont 293 mises en situation et 141 cartes « à ne pas confondre ».
+**État au 9 octobre 2026** : 131 fiches et 1 902 cartes, réparties en 17 sections, dont 299 mises en situation et 147 cartes « à ne pas confondre ».
 
 ---
 
@@ -392,6 +392,8 @@ La partie qui assemble tout le reste : concevoir, fiabiliser et piloter une appl
 - [Contrats, schémas & qualité des données](150-donnees-conformite/157-contrats-qualite-donnees.md) : contrat producteur-consommateur, contraintes de schéma et métier, fraîcheur et complétude, compatibilité, migrations, quarantaine, dérive ou incident, publication atomique et lignage opérationnel.
 - [Ingestion incrémentale, CDC & backfills](150-donnees-conformite/158-ingestion-cdc-backfills.md) : snapshot ou incrémental, CDC, cohérence snapshot-journal, checkpoints, identités et versions, suppressions, rejeu historique, capacité de rattrapage, quarantaine, réconciliation et index RAG.
 - [Données temporelles & variables de production](150-donnees-conformite/159-donnees-temporelles-features.md) : temps événement et traitement, disponibilité historique, jointures point-in-time, corrections bitemporelles, fenêtres et watermarks, labels retardés, cohérence entraînement-serving, feature store et fraîcheur.
+- [Modélisation des données analytiques](150-donnees-conformite/150-010-modelisation-donnees-analytiques.md) : grain, OLTP et OLAP, faits et dimensions, clés, normalisation, cardinalités de jointure, mesures additives, SCD, identité métier et définitions de métriques.
+- [SQL pour les pipelines et datasets IA](150-donnees-conformite/150-011-sql-transformations-analytiques.md) : jointures et filtres, NULL, agrégations, fenêtres, déduplication déterministe, anti-jointures, CTE, SQL temporel, plans de requête et contrôles de transformations.
 
 ### 160 — Multimodal & edge
 

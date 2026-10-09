@@ -139,4 +139,5 @@ Mise en situation : un producteur veut supprimer demain une colonne que plusieur
 - [[151-donnees-curation-annotation|Curation & annotation]] — compléter la qualité éditoriale par des garanties opérationnelles
 - [[153-data-flywheel-versioning|Versioning des données]] — publier et tracer des versions cohérentes
 - [[113-monitoring-drift-feedback|Drift & feedback]] — distinguer changement de population et défaut de collecte
+- [[150-010-modelisation-donnees-analytiques|Modélisation des données analytiques]] — définir grain, clés et sens des mesures
 - [[00-moc-ai-engineering|MOC AI Engineering]]

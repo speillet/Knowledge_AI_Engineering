@@ -241,6 +241,8 @@ L’[audit d’inférence du 8 octobre](docs/audit-inference-llm-2026-10-08.md) 
 - [[157-contrats-qualite-donnees|Contrats, schémas & qualité des données]]
 - [[158-ingestion-cdc-backfills|Ingestion incrémentale, CDC & backfills]]
 - [[159-donnees-temporelles-features|Données temporelles & variables de production]]
+- [[150-010-modelisation-donnees-analytiques|Modélisation des données analytiques]]
+- [[150-011-sql-transformations-analytiques|SQL pour les pipelines et datasets IA]]
 
 ## 160 — Multimodal & edge
 

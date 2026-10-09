@@ -143,4 +143,6 @@ Mise en situation : un modèle de churn semble s'améliorer fortement sur les se
 - [[172-validation-metriques-ml|Validation ML]] — prévenir les fuites temporelles
 - [[113-monitoring-drift-feedback|Drift & feedback]] — interpréter les labels et signaux de production
 - [[175-series-temporelles-prevision|Prévision de séries temporelles]] — reconstruire les informations disponibles
+- [[150-010-modelisation-donnees-analytiques|Modélisation des données analytiques]] — relier histoire métier et disponibilité pour le modèle
+- [[150-011-sql-transformations-analytiques|SQL pour les pipelines et datasets IA]] — empêcher les jointures qui révèlent le futur
 - [[00-moc-ai-engineering|MOC AI Engineering]]
