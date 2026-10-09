@@ -79,7 +79,9 @@ Le premier garde l'avancement d'une conversation ; le second peut conserver une 
 
 Qu'est-ce que la durable execution dans LangGraph ? <!--anki:6e5a3837745771543752-->
 ?
-La capacité d'un workflow à **reprendre après une panne** ou une longue pause **depuis le dernier checkpoint**, sans refaire le travail déjà fait. Les **effets de bord** (appels d'API, écritures) doivent être isolés dans des tâches pour ne pas être rejoués.
+La capacité d'un workflow à **reprendre à partir d'informations persistées** après une panne ou une pause. Le travail dont le résultat a été enregistré peut être réutilisé ; les portions non enregistrées peuvent être rejouées.
+
+Isoler les effets externes dans des tâches ou nœuds facilite cette reprise, mais ne garantit pas leur exécution unique. Si une API accepte une action juste avant le crash, sans sauvegarde de son résultat, la reprise peut la redemander. Prévoir identité stable d'opération, idempotence côté service et réconciliation. Le mode de durabilité et le stockage déterminent les points effectivement récupérables.
 
 ---
 
@@ -161,6 +163,8 @@ Mise en situation : ton système à quatre agents devient impossible à débogue
 
 - [LangGraph — persistance et threads](https://docs.langchain.com/oss/python/langgraph/persistence)
 
+- [LangGraph — checkpointers et durabilité](https://docs.langchain.com/oss/python/langgraph/checkpointers)
+
 ## Connexions
 - [[44-langgraph-fondamentaux|LangGraph — Fondamentaux]] — state, nodes, edges
 - [[43-langchain-agents|LangChain — Agents]] — HITL et mémoire via middleware
@@ -173,4 +177,5 @@ Mise en situation : ton système à quatre agents devient impossible à débogue
 - [[115-plateformes-agents-gouvernance|Plateformes d'agents — gouvernance]] — identité, politiques, audit et coûts d'une flotte d'agents
 - [[142-fiabilite-resilience-llm|Fiabilité & résilience]] — timeouts, retries, fallbacks et dégradation
 - [[140-010-transactions-outbox-sagas|Transactions & sagas]] — compléter les checkpoints pour les effets externes
+- [[40-011-langgraph-reprise-concurrence|LangGraph — Reprise, concurrence & évolution]] — persistance et interruptions
 - [[00-moc-ai-engineering|MOC AI Engineering]]

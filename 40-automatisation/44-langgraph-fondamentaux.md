@@ -79,7 +79,9 @@ Par exemple, router vers une correction si la validation échoue, sinon vers la 
 
 Comment LangGraph exécute-t-il un graphe ? <!--anki:50592646755542376a7c-->
 ?
-Par **super-steps** (modèle Pregel) : tous les nœuds actifs d'une étape s'exécutent (**en parallèle** s'il y en a plusieurs), leurs mises à jour sont fusionnées via les reducers, puis l'état est **checkpointé** avant l'étape suivante.
+Par **super-steps** : les nœuds actifs d'une étape peuvent s'exécuter en parallèle, puis leurs mises à jour sont appliquées selon les reducers avant la suite.
+
+Avec un **checkpointer configuré**, le runtime peut conserver les snapshots et les écritures nécessaires à la reprise. Le moment où ils deviennent durables dépend notamment du mode choisi (`sync`, `async`, `exit`) et du backend. Un graphe compilé sans persistance ne sauvegarde pas automatiquement son avancement sur disque. Vérifier séparément le parallélisme logique, la fusion d'état et la durabilité réelle.
 
 ---
 
@@ -168,4 +170,5 @@ Mise en situation : ton équipe hésite entre le graphe explicite et la Function
 - [[34-harness-plugins|Harness & plugins]] — le programme qui exécute l'agent
 - [[38-plateformes-agents|Plateformes d'agents]] — runtime, sandbox, gateway d'outils et identité
 - [[39-memoire-agents|Mémoire des agents]] — ce que l'agent retient d'une session à l'autre
+- [[40-011-langgraph-reprise-concurrence|LangGraph — Reprise, concurrence & évolution]] — reducers et super-steps
 - [[00-moc-ai-engineering|MOC AI Engineering]]

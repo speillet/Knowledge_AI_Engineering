@@ -156,4 +156,5 @@ Mise en situation : une réservation de stock réussit, le paiement échoue et l
 - [[45-langgraph-production|LangGraph en production]] — distinguer checkpoint et effet métier
 - [[115-plateformes-agents-gouvernance|Gouvernance des agents]] — permissions, approbations et compensation
 - [[144-ux-ia-human-in-the-loop|UX & validation humaine]] — approuver une demande exacte et suivre son résultat
+- [[40-011-langgraph-reprise-concurrence|LangGraph — Reprise, concurrence & évolution]] — frontières transactionnelles
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -162,4 +162,6 @@ Mise en situation : deux agents modifient la même proposition commerciale et l'
 - [[84-streaming-integration-applicative|Intégration applicative]] — suivre les opérations indépendamment de la connexion
 - [[158-ingestion-cdc-backfills|Ingestion & backfills]] — appliquer déduplication, versions et checkpoints
 - [[150-014-streaming-traitements-evenements|Streaming & traitements d’événements]] — délimiter les garanties de bout en bout
+- [[40-011-langgraph-reprise-concurrence|LangGraph — Reprise, concurrence & évolution]] — effets externes et exécutions concurrentes
+- [[140-011-architecture-applications-agentiques|Applications agentiques — Architecture & cycle de vie]] — soumissions et effets métier
 - [[00-moc-ai-engineering|MOC AI Engineering]]
