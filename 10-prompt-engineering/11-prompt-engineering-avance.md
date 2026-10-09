@@ -98,6 +98,14 @@ Ils rendent la tâche ambiguë : le modèle doit arbitrer entre des objectifs in
 
 ---
 
+Pourquoi neuf réponses identiques sur dix tirages d’un LLM ne démontrent-elles pas une exactitude de 90 % ? <!--anki:6663336562623738313739613466386438376435343663663461626362633761-->
+?
+Le chiffre mesure ici un **accord entre tirages**, sans vérité terrain. Un prompt contenant une fausse prémisse ou une lacune commune au modèle peut produire la même erreur neuf fois.
+
+Le vote majoritaire peut améliorer une tâche lorsque des erreurs se compensent, mais son gain se vérifie sur des cas annotés indépendants du réglage. Contrôler la normalisation des réponses, le coût des dix générations et les cas où le vote se trompe avec assurance. Pour annoncer une probabilité de correction, il faut valider la calibration du score d'accord.
+
+---
+
 ## Mises en situation
 
 Mise en situation : un prompt de 400 lignes gère l'extraction, la traduction et le résumé de contrats. Il marche à 70 % et chaque correction en casse une autre partie. Comment reprends-tu le sujet ? <!--anki:4e3842703a752847257c-->

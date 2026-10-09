@@ -1,6 +1,6 @@
 # Architecture Transformer — Flashcards
 Tags: #flashcards #ai-engineering #fondamentaux #transformer #llm
-<!-- summary: chemin d'un token, attention, attention causale, multi-head, GQA et MQA, bloc MLP, résiduelles et normalisation, RoPE, coût quadratique, calcul de la mémoire des poids d'un 70B, decoder-only ou encoder, modèle de base ou assistant. -->
+<!-- summary: attention et somme pondérée, masque causal, teacher forcing, multi-head, GQA/MQA et mémoire KV, MLP, résiduelles, normalisation, RoPE, coûts, poids d’un 70B, modèle de base ou assistant. -->
 
 
 Qu'est-ce qu'un LLM, mécaniquement ? <!--anki:7074663b5a51392c4f44-->
@@ -112,6 +112,34 @@ Pourquoi un modèle de base n'est-il pas nécessairement un bon assistant ? <!--
 Un **modèle de base** apprend principalement à prédire la suite de textes ; suivre une instruction n'est pas systématiquement l'objectif explicite de cet entraînement. Il peut néanmoins répondre à certaines consignes grâce aux motifs appris.
 
 Le **post-training**, notamment l'entraînement supervisé sur des échanges et parfois les préférences, vise un comportement d'assistant plus adapté. Employer le template attendu et comparer base et instruct sur la tâche. Le post-training peut modifier capacités et connaissances aussi : la séparation « pré-entraînement = savoir, adaptation = comportement » est un repère, pas une frontière absolue.
+
+---
+
+Calcul : une tête d’attention attribue les poids 0,25 et 0,75 aux valeurs V₁ = (2, 0) et V₂ = (0, 4). Quelle est sa sortie avant projection ? <!--anki:6439356533656637316461373462393262346139653361386536616264316532-->
+?
+C'est la **somme pondérée** des vecteurs de valeur :
+```text
+0,25 × (2, 0) + 0,75 × (0, 4) = (0,5, 3)
+```
+La tête combine donc les deux valeurs ; elle ne renvoie pas seulement V₂ parce que son poids est le plus élevé. Ces poids indiquent la contribution à cette combinaison, pas une probabilité que chaque source soit vraie. Dans un bloc multi-head, les sorties des têtes sont ensuite concaténées et projetées ; l'énoncé s'arrête avant cette projection.
+
+---
+
+Calcul : à contexte, couches, dimension de tête et précision identiques, passer de 32 têtes KV à 8 avec GQA change la mémoire du KV cache de quel facteur ? <!--anki:6164363761336462383365643431336262376439343561306239663130616464-->
+?
+La mémoire du KV est **proportionnelle au nombre de têtes KV** :
+```text
+nouveau KV / ancien KV = 8 / 32 = 1/4
+```
+C'est une division par quatre, soit une réduction de 75 %, hors surcoûts. Le nombre de têtes de requête Q peut rester à 32 : quatre têtes Q partagent alors une paire K/V. Cela ne divise ni tous les poids ni la latence totale par quatre. GQA est une propriété de l'architecture entraînée ; on ne remplace pas arbitrairement ce nombre au lancement du serveur.
+
+---
+
+À ne pas confondre : parallélisme à l’entraînement et dépendance séquentielle en génération autorégressive ? <!--anki:3330303732316462376330383435636438323934343564646636666464316237-->
+?
+À l'entraînement avec **teacher forcing**, les tokens de référence sont déjà connus. Le modèle peut calculer les prédictions de plusieurs positions en parallèle dans une couche, tout en masquant les positions futures : chaque cible est prédite à partir du préfixe autorisé.
+
+En génération autorégressive classique, le token suivant dépend du token réellement choisi à l'étape précédente, encore inconnu avant son calcul. Le KV cache évite de recalculer les états passés, mais ne supprime pas cette dépendance. Le prefill du prompt connu reste parallélisable ; plusieurs requêtes peuvent aussi avancer ensemble.
 
 ---
 

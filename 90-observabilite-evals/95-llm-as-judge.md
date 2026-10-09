@@ -123,6 +123,19 @@ Abordable sur un **échantillon**, cher si l'on juge 100 % d'un trafic important
 
 ---
 
+Calcul : avec succès comme classe positive, un juge accepte 76 % des réponses. Ses TPR = 0,90 et TNR = 0,80 sont supposés connus et stables sur ce trafic. Quel taux réel de succès estime-t-on ? <!--anki:6162303264663366653030653436353662653763383334326530343366373935-->
+?
+Poser `q = 0,76`, puis inverser le modèle de classification :
+```text
+p = (q + TNR − 1) / (TPR + TNR − 1)
+  = (0,76 + 0,80 − 1) / (0,90 + 0,80 − 1)
+  = 0,56 / 0,70 = 0,80
+vérification : 0,90 × 0,80 + 0,20 × 0,20 = 0,76
+```
+Le taux estimé vaut **80 %**, sous ces hypothèses. En pratique, TPR et TNR sont estimés et peuvent varier selon le segment : propager leur incertitude avant d'interpréter l'écart. Cette correction porte sur une proportion agrégée, pas sur le verdict de chaque réponse.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton juge LLM annonce 95 % d'accord avec les annotations humaines, et l'équipe veut s'en servir comme gate de déploiement. Qu'en penses-tu ? <!--anki:736e5358393f78245772-->

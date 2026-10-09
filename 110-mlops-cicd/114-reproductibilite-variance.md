@@ -120,6 +120,18 @@ Faut-il viser le déterminisme partout ? <!--anki:4e404d572d6036633c3c-->
 
 ---
 
+Calcul : deux tâches équipondérées réussissent avec probabilités constantes 1 et 0,5. Les répétitions sont indépendantes pour chacune. Quel est leur pass^2 moyen, comparé au carré du succès moyen ? <!--anki:3237306434396163383139313463656161383761666134346137363531323363-->
+?
+Calculer d'abord la réussite répétée **par tâche**, puis moyenner :
+```text
+moyenne des pass^2 = (1² + 0,5²)/2 = 0,625
+succès moyen = (1 + 0,5)/2 = 0,75
+carré du succès moyen = 0,75² = 0,5625
+```
+Les valeurs diffèrent car les difficultés diffèrent. Pour ce protocole, deux essais répètent la même tâche ; ils ne rééchantillonnent pas une tâche du mélange à chaque tentative. Un succès global moyen de 75 % ne suffit donc pas à déterminer le pass^2 moyen. Préciser tâches, répétitions et pondération avant d'agréger.
+
+---
+
 ## Mises en situation
 
 Mise en situation : un client exige par contrat que « le même document donne toujours la même extraction ». Que t'engages-tu à faire, et sur quoi refuses-tu de t'engager ? <!--anki:417a783d2b7d663c296b-->

@@ -1,6 +1,6 @@
 # Probabilités & sampling — Flashcards
 Tags: #flashcards #ai-engineering #inference #sampling #probabilites #llm
-<!-- summary: logits et softmax, température, greedy, top-k, top-p, température ou top-p, min-p, réglages par cas d'usage, logprobs, probabilité d'une séquence, perplexité, calibration, speculative decoding et distribution. -->
+<!-- summary: logits, température, greedy, top-k, top-p et min-p, probabilités conditionnelles, logprobs, perplexité, exercices de renormalisation, sampling et limites de la confiance. -->
 
 
 Que produit un LLM à chaque pas de génération ? <!--anki:7a6f51326e26623f245b-->
@@ -127,6 +127,29 @@ Que se passe-t-il si on combine une température élevée (1,5) et un top-p à 1
 T = 1,5 **aplatit la distribution** par rapport à T = 1 ; top-p = 1 ne retire aucun candidat par troncature de masse. Les tokens initialement moins probables peuvent donc être tirés plus souvent, sans que chaque sortie doive devenir incohérente.
 
 L'effet dépend du modèle et des autres traitements. Comparer diversité utile, erreurs et répétitions sur les mêmes tâches. Réduire la température ou tronquer la distribution sont des candidats à tester, pas une garantie de qualité. Une erreur précoce peut aussi influencer les continuations suivantes.
+
+---
+
+Calcul : quatre tokens ont les probabilités 0,50, 0,30, 0,15 et 0,05. Avec top-p = 0,75 appliqué seul, lesquels restent et avec quelles probabilités après renormalisation ? <!--anki:6465663762656366643837343433363162626362623533656132343239356336-->
+?
+Garder le plus petit préfixe trié dont la masse atteint **0,75** : le premier token ne suffit pas ; les deux premiers totalisent 0,80.
+```text
+P₁ après filtrage = 0,50 / 0,80 = 0,625
+P₂ après filtrage = 0,30 / 0,80 = 0,375
+P₃ = P₄ = 0
+```
+Le seuil est une masse à atteindre, pas un nombre de tokens ni une probabilité minimale par token. La masse retenue peut dépasser le seuil. On tire ensuite un token dans cette distribution ; conserver deux candidats ne signifie pas les produire tous les deux.
+
+---
+
+Calcul : deux tokens de référence ont les probabilités conditionnelles 0,5 puis 0,25. Hors EOS, quelle est la probabilité de leur séquence et sa perplexité sur ces deux tokens ? <!--anki:3831613766666264346431313433313261646537653733636530313265303561-->
+?
+Appliquer la règle de chaîne, puis normaliser le logarithme pour la perplexité :
+```text
+P(séquence) = 0,5 × 0,25 = 0,125
+PPL = exp(−(ln 0,5 + ln 0,25)/2) = √8 ≈ 2,83
+```
+Les probabilités sont déjà conditionnelles aux préfixes : leur multiplication ne suppose pas des tokens indépendants. La moyenne `(0,5 + 0,25)/2` n'est pas la probabilité de la séquence. La perplexité décrit la vraisemblance moyenne des tokens retenus pour ce calcul ; elle ne mesure pas la véracité de leur contenu.
 
 ---
 

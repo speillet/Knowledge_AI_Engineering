@@ -1,6 +1,6 @@
 # Évaluation des RAG & des agents — Flashcards
 Tags: #flashcards #ai-engineering #evals #rag #agents #llm
-<!-- summary: retrieval et génération, recall@k, MRR, nDCG, triade RAG, faithfulness, jeux synthétiques, résultat final ou trajectoire, environnements d'eval (τ-bench, SWE-bench), pass^k, tool calling, multi-tours, efficacité. -->
+<!-- summary: retrieval et génération, calculs precision/recall@k et MRR, nDCG, fidélité ou exactitude, contexte oracle, jeux synthétiques, résultat ou trajectoire, environnements d’eval, pass^k et efficacité. -->
 
 
 Comment découper l'évaluation d'un RAG ? <!--anki:486239767d48454b594b-->
@@ -100,6 +100,43 @@ P(5 réussites sur 5) = 0,9^5 = 0,59049 ≈ 59 %
 P(8 réussites sur 8) = 0,9^8 ≈ 43 %
 ```
 C'est une probabilité de réussite répétée, pas celle d'obtenir au moins une bonne réponse. Si les essais sont dépendants ou les probabilités diffèrent selon les tâches, ces puissances ne décrivent plus directement le résultat observé. Un taux global de 90 % ne suffit donc pas à appliquer la formule à chaque tâche.
+
+---
+
+Calcul : parmi quatre passages pertinents annotés pour une requête, deux figurent dans les trois résultats récupérés, tous distincts et jugés. Quels sont precision@3 et recall@3 ? <!--anki:3432393763326533356630363437366162653636643639393132396662633331-->
+?
+Les dénominateurs répondent à deux questions différentes :
+```text
+precision@3 = pertinents récupérés / récupérés = 2/3 ≈ 66,7 %
+recall@3 = pertinents récupérés / pertinents annotés = 2/4 = 50 %
+```
+La précision mesure la proportion utile dans la sélection ; le rappel, la couverture de la référence. Il manque encore deux passages pertinents, même si la majorité des résultats est utile. Ces scores supposent des jugements fiables à la même unité — ici le passage — et ne prouvent pas que le générateur a exploité les preuves.
+
+---
+
+Calcul : pour trois requêtes, le premier passage pertinent apparaît aux rangs 1, 4, puis reste absent des cinq résultats évalués. Quelle est la MRR@5 ? <!--anki:6139653836306237353537633463613761323238653363363962613130336263-->
+?
+Chaque requête contribue l'inverse du rang du premier pertinent, ou zéro s'il est absent du top 5 :
+```text
+MRR@5 = (1/1 + 1/4 + 0) / 3 = 5/12 ≈ 0,417
+```
+Le dénominateur inclut les **trois requêtes**, y compris l'échec. Diviser seulement par les deux requêtes réussies gonflerait le score. La MRR récompense l'arrivée rapide d'un premier résultat utile ; elle ignore les autres preuves pertinentes. Pour une question qui exige plusieurs documents, compléter notamment par une mesure de couverture.
+
+---
+
+À ne pas confondre : fidélité aux sources et exactitude factuelle d’une réponse RAG ? <!--anki:3438653833316233663937323464373461653464616261383963323063313461-->
+?
+La **fidélité** vérifie que les sources fournies soutiennent la réponse ; l'**exactitude** vérifie que son contenu est correct selon une référence fiable adaptée à la question.
+
+Exemple fictif : un ancien inventaire indique dix unités, mais le stock courant vaut zéro. Pour une question sur le stock actuel, répondre « dix » peut être fidèle au document et faux. Répondre « zéro » peut être exact sans être soutenu par ce document. Examiner fraîcheur et périmètre des sources, puis évaluer les deux dimensions ; une citation présente ne suffit pas.
+
+---
+
+Comment un contexte oracle aide-t-il à diagnostiquer un échec RAG ? <!--anki:6536643366363832613033393464306539373163383664653464353565323064-->
+?
+Remplacer les passages récupérés par un **contexte vérifié contenant les preuves nécessaires**, tout en gardant question, générateur et consigne comparables.
+
+Si la réponse s'améliore, la récupération ou la préparation du contexte constitue un levier probable. Si elle échoue encore, examiner compréhension, consigne, conflit entre sources et critère d'évaluation. Contrôler longueur, ordre et bruit : un contexte oracle très court change plusieurs facteurs. Utiliser des cas de diagnostic séparés du test final ; cette intervention localise un problème, elle ne prouve pas qu'un meilleur retriever suffira en production.
 
 ---
 
