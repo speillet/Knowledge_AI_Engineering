@@ -160,4 +160,5 @@ Mise en situation : un partenaire veut que ton agent de réservation dialogue av
 - [[137-long-contexte|Long contexte]] — limites et coût des longues fenêtres
 - [[34-harness-plugins|Harness & plugins]] — le programme qui exécute l'agent
 - [[43-langchain-agents|LangChain — Agents]] — agents et middleware LangChain
+- [[40-012-crewai-execution-fiable|CrewAI — Exécution fiable & intégration]] — dépendances et délégation
 - [[00-moc-ai-engineering|MOC AI Engineering]]

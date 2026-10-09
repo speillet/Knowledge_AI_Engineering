@@ -125,13 +125,13 @@ Le comportement repose sur des **prompts de rôle** : moins de contrôle fin que
 
 Mise en situation : ta crew de veille produit de bons résultats en démonstration, mais en production elle invente parfois des sources et coûte trois fois le budget prévu. Que corriges-tu ? <!--anki:654e6e2d6840715d293c-->
 ?
-1. **Contraindre les sorties** : `output_pydantic` sur les tâches, avec les champs source et date obligatoires
-2. **Guardrails de tâche** : une fonction qui vérifie que chaque source est une URL atteignable, sinon l'agent recommence
-3. **Réduire l'autonomie** : désactiver la délégation, limiter `max_iter`, préciser `expected_output`
-4. **Encadrer par un Flow** : étapes déterministes autour de la partie ouverte ([[47-crewai-flows|Flows]])
-5. **Mesurer** : coût par exécution et taux de sources valides, avant et après ([[122-finops-llm|FinOps]])
+1. **Contraindre les sorties** : `output_pydantic` avec références et dates attendues.
+2. **Vérifier les preuves** : références réellement récupérées, passages qui soutiennent les affirmations et fraîcheur ; une URL accessible ne prouve pas le contenu.
+3. **Borner les corrections** : guardrails, délégation et itérations, avec un budget global et une issue explicite en cas d'échec.
+4. **Encadrer par un Flow** : étapes déterministes autour de la recherche ouverte.
+5. **Mesurer** : coût par résultat acceptable et taux d'affirmations correctement soutenues, avant et après.
 
-**Piège** : enrichir les backstories pour « demander plus de rigueur », sans aucune vérification automatique.
+**Piège** : enrichir les backstories ou vérifier seulement HTTP 200, sans contrôler le lien entre affirmation et preuve.
 
 ---
 
@@ -160,4 +160,5 @@ Mise en situation : un collègue propose de passer ta crew en mode hiérarchique
 - [[81-litellm-api-layer|LiteLLM]] — la couche d'accès aux modèles
 - [[101-securite-llm-guardrails|Sécurité LLM]] — guardrails et outils
 - [[39-memoire-agents|Mémoire des agents]] — les concepts derrière la mémoire unifiée
+- [[40-012-crewai-execution-fiable|CrewAI — Exécution fiable & intégration]] — contrats et exécution des tâches
 - [[00-moc-ai-engineering|MOC AI Engineering]]

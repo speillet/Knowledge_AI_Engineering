@@ -139,4 +139,5 @@ Mise en situation : un utilisateur signale qu'un agent multi-agents a produit un
 - [[48-patterns-workflows-agentiques|Patterns de workflows]] — des étapes plus faciles à diagnostiquer
 - [[114-reproductibilite-variance|Reproductibilité & variance]] — rejouer et mesurer la fréquence
 - [[153-data-flywheel-versioning|Data flywheel]] — transformer les échecs en cas de test
+- [[40-012-crewai-execution-fiable|CrewAI — Exécution fiable & intégration]] — attribuer les erreurs aux étapes
 - [[00-moc-ai-engineering|MOC AI Engineering]]

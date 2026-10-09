@@ -67,7 +67,9 @@ Dans les deux cas, l'état reçoit un **`id`** unique.
 
 Comment rendre un Flow reprenable après un arrêt ? <!--anki:747a77217a394a3b7c6c-->
 ?
-Avec le décorateur **`@persist`** (sur la classe ou sur des méthodes) : l'état est sauvegardé (SQLite par défaut) et le Flow peut **reprendre** avec le même `id` d'état, ou **repartir d'un instantané** avec un nouvel `id`.
+Le décorateur **`@persist`** sauvegarde l'état du Flow aux points configurés, avec SQLite par défaut. Réutiliser son identité permet de retrouver cet état ; un fork peut réhydrater un instantané sous une nouvelle identité.
+
+Distinguer **restauration des variables et reprise de l'exécution** : vérifier quelles méthodes sont relancées. Le checkpointing des versions récentes ajoute des mécanismes de reprise d'exécution, avec un contrat distinct. Dans tous les cas, valider existence et propriétaire du dossier, pérennité du stockage et idempotence des effets. Tester un arrêt entre l'action métier et sa sauvegarde.
 
 ---
 
@@ -146,10 +148,13 @@ Mise en situation : ton Flow tourne depuis un mois, mais après chaque redéploi
 
 - [CrewAI — Flows, documentation v1.15.23](https://docs.crewai.com/v1.15.23/en/concepts/flows)
 
+- [CrewAI — checkpointing, documentation 1.15.26](https://docs.crewai.com/v1.15.26/en/concepts/checkpointing)
+
 ## Connexions
 - [[46-crewai-crews|CrewAI — Crews]] — les équipes d'agents orchestrées par le Flow
 - [[41-automatisation-code-nocode|Automatisation]] — workflow vs agent
 - [[44-langgraph-fondamentaux|LangGraph]] — l'alternative en graphe
 - [[36-orchestration-agents|Orchestration multi-agents]] — patterns de composition
 - [[31-agents-fondamentaux|Agents]] — human-in-the-loop
+- [[40-012-crewai-execution-fiable|CrewAI — Exécution fiable & intégration]] — reprise et intégration applicative
 - [[00-moc-ai-engineering|MOC AI Engineering]]
