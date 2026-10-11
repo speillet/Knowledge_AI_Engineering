@@ -1,6 +1,6 @@
 # Calibration, incertitude & abstention — Flashcards
 Tags: #flashcards #ai-engineering #ml-classique #calibration #incertitude
-<!-- summary: discrimination et calibration, courbes de fiabilité, Brier score, calibration séparée, temperature scaling, incertitude épistémique et aléatoire, risque-couverture, prédiction conforme, prévalence et coût de la revue. -->
+<!-- summary: discrimination et calibration, Brier score, calibrateur séparé, temperature scaling, incertitudes, risque-couverture, prédiction conforme, coût de décision avec revue et erreurs humaines. -->
 
 
 À ne pas confondre : discrimination et calibration d'un classifieur ? <!--anki:6337616261653836306433623432636261323934336534393832663635306633-->
@@ -69,7 +69,7 @@ Comparer les systèmes à couverture comparable et examiner qui est exclu : un b
 
 ---
 
-Calcul : quelle précision automatique et quelle charge humaine pour 600 réponses dont 18 fausses sur 1 000 demandes ? <!--anki:6339663738303634353834323431646561343636323238396335626639653264-->
+Calcul : sur 1 000 demandes, 600 réponses automatiques contiennent 18 erreurs ; les 400 abstentions sont revues en trois minutes chacune. Quelle précision automatique et quelle charge humaine ? <!--anki:6339663738303634353834323431646561343636323238396335626639653264-->
 ?
 La **couverture automatique** vaut 600 / 1 000 = 60 %. La précision parmi les réponses vaut 582 / 600 = **97 %**. Si toutes les abstentions sont revues, 400 demandes arrivent aux humains.
 
@@ -90,6 +90,46 @@ Pourquoi la calibration peut-elle se dégrader quand la prévalence change ? <!-
 Une probabilité apprise reflète la **population d'origine**. Si la fréquence des positifs change, la relation entre score et fréquence réelle peut changer aussi, même avec un classement encore utile.
 
 Contrôler les fréquences et erreurs dès que les labels arrivent, par segment. Une correction de prior suppose notamment une forme de stabilité des distributions conditionnelles par classe ; elle ne corrige pas toute dérive. Une dégradation doit donc déclencher un diagnostic avant une recalibration automatique, puis une évaluation indépendante sur la population cible.
+
+---
+
+Comment choisir entre prédiction positive, négative et revue humaine à partir d'une probabilité calibrée ? <!--anki:3133323763373130306434663437333761326135323634653538303663323932-->
+?
+Comparer les **coûts attendus** des trois décisions. Avec probabilité positive `p`, coûts constants des erreurs et décisions correctes gratuites :
+```text
+positif : (1 − p) × C_FP
+négatif : p × C_FN
+revue : C_revue + coût attendu des erreurs restantes
+```
+Choisir le minimum sous les contraintes de qualité et capacité. Si la revue est supposée parfaite, son coût se réduit à `C_revue` ; c'est une hypothèse à vérifier. Des délais, capacités limitées et coûts variables peuvent changer la politique. Une probabilité mal calibrée fausse l'arbitrage.
+
+---
+
+Calcul : p = 0,10 est supposé calibré ; un faux positif coûte 4 unités, un faux négatif 36, et une revue parfaite coûte 1. Les décisions correctes sont gratuites et la capacité de revue est suffisante. Quelle décision minimise le coût attendu ? <!--anki:3236303436626565656462313461663461656439663431366335393530666363-->
+?
+Comparer les trois coûts :
+```text
+prédire positif : (1 − 0,10) × 4 = 3,6
+prédire négatif : 0,10 × 36 = 3,6
+revue parfaite : 1
+```
+**Revoir** minimise le coût attendu sous ces hypothèses. Sans revue, positif et négatif sont à égalité ; le seuil binaire vaut 4/(4+36) = 0,10. Ajouter le coût des erreurs humaines et du délai avant d'appliquer cette règle au réel. Le meilleur choix individuel peut devenir impossible si la file de revue sature.
+
+---
+
+À ne pas confondre : couverture conforme et couverture d'automatisation ? <!--anki:6230396632636661386366613437323438656166333638343762346139643533-->
+?
+La **couverture conforme** mesure la fréquence à laquelle un ensemble ou intervalle prédictif contient la vraie cible, sous le cadre considéré. La **couverture d'automatisation** mesure la fraction des demandes traitées sans abstention.
+
+Un ensemble conforme contenant plusieurs classes peut couvrir la cible sans permettre une décision automatique. À l'inverse, un système répondant à toutes les demandes a 100 % d'automatisation, même s'il se trompe souvent. Rapporter ensemble couverture prédictive, taille des ensembles, risque des décisions et charge humaine : le même mot « couverture » désigne ici des événements différents.
+
+---
+
+Pourquoi une revue humaine ne permet-elle pas de supposer toutes les abstentions correctement résolues ? <!--anki:3762363637393136663064613465623562303431663333626136663139326237-->
+?
+La revue est **une étape du système**, avec ses propres erreurs, délais et abandons. Son lot est souvent plus difficile que les cas automatisés ; une accuracy humaine mesurée sur un autre lot ne s'y transfère pas automatiquement.
+
+Sur un même ensemble de demandes, compter séparément erreurs automatiques, erreurs après revue et demandes non résolues. Définir une échéance et mesurer le délai de résolution. Une baisse des erreurs automatiques peut coïncider avec une hausse des erreurs globales si la revue est saturée. Valider le parcours complet, pas seulement le modèle.
 
 ---
 

@@ -1,6 +1,6 @@
 # ML classique : validation, fuites & métriques — Flashcards
 Tags: #flashcards #ai-engineering #ml-classique #validation #metriques
-<!-- summary: train-validation-test, fuite de données, validation croisée et imbriquée, groupes et temps, pipelines, précision et rappel, classes rares, ROC et PR, seuil métier, MAE et RMSE, suréchantillonnage et incertitude. -->
+<!-- summary: train-validation-test, fuites, validation croisée, groupes et temps, pipelines, classes rares, ROC et PR, calcul de précision selon la prévalence, seuils et incertitude. -->
 
 
 À ne pas confondre : entraînement, validation et test final en ML supervisé ? <!--anki:6663653365326138306266653464653739373832333133616230333730393964-->
@@ -125,6 +125,21 @@ Comment comparer deux modèles dont les scores sont très proches ? <!--anki:306
 Utiliser les **mêmes observations**, examiner les différences d'erreurs et quantifier l'incertitude avec une méthode adaptée au plan d'échantillonnage. Un bootstrap apparié peut rééchantillonner les mêmes unités pour les deux modèles ; si les observations sont groupées, rééchantillonner les groupes plutôt que prétendre que chaque ligne est indépendante.
 
 Rapporter l'amplitude du gain, les segments et les coûts, pas seulement une significativité. Sur une série temporelle, préserver les dépendances demande un protocole spécifique. Un score supérieur de quelques centièmes ne constitue pas seul une preuve d'amélioration exploitable.
+
+---
+
+Calcul : sur 10 000 cas, un classifieur a TPR = 90 % et FPR = 5 %. En supposant ces taux stables, quelle précision pour des prévalences de 50 % puis 1 % ? <!--anki:3061393332623339323864383434306661356339343337376466626131366431-->
+?
+La précision dépend du nombre de vrais et faux positifs :
+```text
+prévalence 50 % : VP = 5 000 × 0,90 = 4 500
+                 FP = 5 000 × 0,05 = 250
+précision = 4 500 / 4 750 ≈ 94,7 %
+prévalence 1 % : VP = 100 × 0,90 = 90
+                FP = 9 900 × 0,05 = 495
+précision = 90 / 585 ≈ 15,4 %
+```
+Le rappel reste 90 % dans cette hypothèse. La précision d'un test rééquilibré n'est pas celle du trafic réel. Une dérive peut aussi changer TPR et FPR : les mesurer au lieu de supposer leur stabilité.
 
 ---
 

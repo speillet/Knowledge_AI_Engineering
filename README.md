@@ -4,7 +4,7 @@ Un vault [Obsidian](https://obsidian.md) de **fiches de révision (flashcards) e
 
 Chaque fiche traite **un concept** en 8 à 34 cartes question/réponse, une quinzaine en moyenne, et se termine par des **mises en situation** : des cas concrets à diagnostiquer, concevoir ou arbitrer. Les fiches sont reliées entre elles par des liens, pour qu'on puisse passer d'un sujet à ses voisins, et elles se révisent en **répétition espacée**.
 
-**État au 11 octobre 2026** : 137 fiches et 2 038 cartes, réparties en 17 sections, dont 323 mises en situation et 163 cartes « à ne pas confondre ».
+**État au 11 octobre 2026** : 137 fiches et 2 043 cartes, réparties en 17 sections, dont 323 mises en situation et 164 cartes « à ne pas confondre ».
 
 ---
 
@@ -418,8 +418,8 @@ Construire les données des systèmes IA : modélisation et SQL, contrats et ing
 Choisir et valider les modèles prédictifs, calibrer leurs sorties, recommander, prévoir et détecter les anomalies ; distinguer explication du modèle et effet causal d’une action.
 
 - [ML classique : choisir et comprendre les modèles](170-ml-classique/171-choisir-modele-ml.md) : règles ou ML ou LLM, formulation de la cible, baselines, régressions, régularisation, arbres, random forest et boosting, clustering, prétraitement, données manquantes et coût de possession.
-- [ML classique : validation, fuites & métriques](170-ml-classique/172-validation-metriques-ml.md) : train-validation-test, fuite de données, validation croisée et imbriquée, groupes et temps, pipelines, précision et rappel, classes rares, ROC et PR, seuil métier, MAE et RMSE, suréchantillonnage et incertitude.
-- [Calibration, incertitude & abstention](170-ml-classique/173-calibration-incertitude-abstention.md) : discrimination et calibration, courbes de fiabilité, Brier score, calibration séparée, temperature scaling, incertitude épistémique et aléatoire, risque-couverture, prédiction conforme, prévalence et coût de la revue.
+- [ML classique : validation, fuites & métriques](170-ml-classique/172-validation-metriques-ml.md) : train-validation-test, fuites, validation croisée, groupes et temps, pipelines, classes rares, ROC et PR, calcul de précision selon la prévalence, seuils et incertitude.
+- [Calibration, incertitude & abstention](170-ml-classique/173-calibration-incertitude-abstention.md) : discrimination et calibration, Brier score, calibrateur séparé, temperature scaling, incertitudes, risque-couverture, prédiction conforme, coût de décision avec revue et erreurs humaines.
 - [Recommandation & learning to rank](170-ml-classique/174-recommandation-ranking.md) : objectif produit, génération de candidats et classement, filtrage collaboratif ou contenu, feedback implicite, modèles à deux tours, objectifs de ranking, négatifs, biais d'exposition, cold start, nDCG et diversité.
 - [Prévision de séries temporelles](170-ml-classique/175-series-temporelles-prevision.md) : horizon et cadence, baseline saisonnière, ETS ou ARIMA ou ML, backtesting à origines glissantes, variables futures, prévisions directes ou récursives, lags, MAPE et MASE, quantiles, intervalles et cohérence hiérarchique.
 - [Détection d'anomalies](170-ml-classique/176-detection-anomalies.md) : rareté et erreur métier, outlier ou nouveauté, scores non probabilistes, baseline contextuelle, Isolation Forest, LOF, autoencodeurs, capacité de revue, prévalence, évaluation par incident, labels manquants et dérive.
