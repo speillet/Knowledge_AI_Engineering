@@ -4,7 +4,7 @@ Un vault [Obsidian](https://obsidian.md) de **fiches de révision (flashcards) e
 
 Chaque fiche traite **un concept** en 8 à 34 cartes question/réponse, une quinzaine en moyenne, et se termine par des **mises en situation** : des cas concrets à diagnostiquer, concevoir ou arbitrer. Les fiches sont reliées entre elles par des liens, pour qu'on puisse passer d'un sujet à ses voisins, et elles se révisent en **répétition espacée**.
 
-**État au 11 octobre 2026** : 137 fiches et 2 031 cartes, réparties en 17 sections, dont 321 mises en situation et 163 cartes « à ne pas confondre ».
+**État au 11 octobre 2026** : 137 fiches et 2 038 cartes, réparties en 17 sections, dont 323 mises en situation et 163 cartes « à ne pas confondre ».
 
 ---
 
@@ -407,9 +407,9 @@ Construire les données des systèmes IA : modélisation et SQL, contrats et ing
 
 ### 160 — Multimodal & edge
 
-- [Modèles vision-langage (VLM)](160-multimodal-edge/161-modeles-vision-langage.md) : encodeur visuel et projecteur, calcul du coût de 10 000 images, CLIP, faiblesses, injection visuelle, computer use, VLM ou OCR, évaluation, autres modalités.
+- [Modèles vision-langage (VLM)](160-multimodal-edge/161-modeles-vision-langage.md) : VLM génératif ou contrastif, encodeur visuel, coût des images, CLIP, limites, injection visuelle, OCR, coordonnées après transformation, qualité par champ et document complet.
 - [Parsing de documents (PDF, OCR, layout)](160-multimodal-edge/162-document-parsing.md) : PDF natif ou scanné, analyse de layout, outils (Docling, Unstructured, services cloud, VLM), tableaux, figures, ColPali, chunking structurel, évaluation, exploitation.
-- [Voix & agents temps réel](160-multimodal-edge/163-voix-temps-reel.md) : cascade ou speech-to-speech, budget de latence, réduction de latence, détection de fin de tour, barge-in, texte pour la voix, STT, évaluation, risques.
+- [Voix & agents temps réel](160-multimodal-edge/163-voix-temps-reel.md) : cascade ou speech-to-speech, latence et chemin critique, fin de tour, barge-in, STT et limites du WER, interruptions et effets métier, évaluation et risques.
 - [LLM locaux, on-prem & edge](160-multimodal-edge/164-llm-local-edge.md) : motivations, capacité ou bande passante mémoire, llama.cpp et GGUF, outils locaux, Ollama ou vLLM, Apple Silicon, small language models, hybride local et cloud, flotte d'appareils, rentabilité du on-prem.
 - [Computer use & agents navigateur](160-multimodal-edge/165-computer-use-agents-navigateur.md) : image ou structure (DOM, arbre d'accessibilité), grounding visuel, benchmarks (OSWorld, WebArena), coût et latence, injection par le contenu web, isolation, quand ne pas l'utiliser, computer use ou RPA, outils.
 
