@@ -1,7 +1,7 @@
 # Choisir un modèle — Flashcards
 Tags: #flashcards #ai-engineering #choix-modele #benchmarks #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: critères, limites des leaderboards, benchmarks, fermé ou open weights, licences, coût par tâche, architecture multi-modèles, lock-in, migration, veille. -->
+<!-- summary: critères et contraintes, benchmarks, hébergement et ouverture des poids, définition OSI, coût par succès, protocole comparable, front de Pareto, migration et lock-in. -->
 
 
 Quels critères techniques pour choisir un modèle ? <!--anki:4e76712b43634b3a5168-->
@@ -56,16 +56,17 @@ Ils explorent des capacités distinctes ; un bon score sur l'un ne prédit pas t
 
 Modèle fermé (API) ou open weights ? <!--anki:772b5b4b677551327068-->
 ?
-- **Fermé** : souvent **le meilleur niveau**, zéro infra, mises à jour continues — mais données envoyées à un tiers, dépendance, **changements** et **dépréciations** imposés.
-- **Open weights** : **contrôle** total (on-prem, souveraineté, fine-tuning complet, version figée), coût marginal bas à fort volume — mais **infra GPU** et compétences d'exploitation, et qualité souvent un cran en dessous du meilleur fermé.
+Une **API** externalise le serving mais impose des conditions de traitement des données, quotas et changements de catalogue. Un modèle **open weights** permet de gérer soi-même le déploiement si sa licence et les ressources disponibles le permettent.
 
-Beaucoup d'entreprises utilisent **les deux** derrière une [[81-litellm-api-layer|gateway]].
+Aucun choix ne garantit le meilleur niveau de qualité ni le moindre coût. Comparer tâche, exigences de données, matériel, volume, exploitation et capacité de migration. L'API peut éviter un investissement initial ; l'auto-hébergement peut apporter contrôle et économie à certaines charges. Des modèles open weights sont aussi accessibles en service managé : disponibilité des poids et mode d'hébergement sont deux décisions distinctes.
 
 ---
 
 À ne pas confondre : open weights et open source ? <!--anki:45583454626869623129-->
 ?
-**Open weights** = les **poids** sont téléchargeables, mais pas forcément les **données** ni le **code d'entraînement**, et la licence peut **restreindre** l'usage (seuil d'utilisateurs, usages interdits, obligations d'attribution). Un modèle **open source** au sens strict (OSI) publie de quoi le **reproduire** et autorise tout usage. Toujours **lire la licence**.
+**Open weights** indique que les paramètres sont accessibles ; cela ne précise pas à lui seul les libertés d'usage ni les éléments publiés.
+
+La définition **Open Source AI 1.0 de l'OSI** exige les libertés d'utiliser, étudier, modifier et partager, ainsi que paramètres, code et informations suffisamment détaillées sur les données pour construire un système substantiellement équivalent. Elle n'exige pas nécessairement la publication de toutes les données brutes ni une reproduction bit à bit. Vérifier les éléments disponibles et leurs conditions ; ne pas déduire cette qualification du seul téléchargement des poids.
 
 ---
 
@@ -77,16 +78,17 @@ Sur **le coût par tâche réussie** : un modèle moins cher par token peut cons
 
 Pourquoi ne pas chercher « le meilleur modèle » unique ? <!--anki:4c62553c676731324f2f-->
 ?
-Parce que les besoins varient **au sein d'une même application** : un petit modèle rapide pour la classification et le routage, un modèle fort pour la génération complexe, un modèle de raisonnement pour les cas difficiles, un modèle d'embedding pour le retrieval. L'architecture **multi-modèles** avec [[82-routing-llm|routage]] est la norme.
+Les sous-tâches peuvent demander des capacités différentes : classer, rechercher, extraire ou raisonner. Plusieurs modèles avec [[82-routing-llm|routage]] peuvent réduire le coût ou améliorer un segment.
+
+Cette architecture ajoute aussi des composants à valider, des seuils, du monitoring et des replis. Un modèle unique peut suffire et simplifier l'exploitation. Comparer d'abord cette baseline, puis introduire un spécialiste lorsqu'un gain utile dépasse le coût de coordination. La diversité des besoins suggère une comparaison ; elle ne prescrit pas une architecture multi-modèles universelle.
 
 ---
 
 Comment éviter le lock-in fournisseur ? <!--anki:6a3132365f365e506038-->
 ?
-- **Gateway** avec une interface unifiée (format compatible OpenAI, LiteLLM).
-- **Prompts et evals versionnés** : on peut qualifier un autre modèle en quelques heures.
-- Éviter de dépendre de fonctions **propriétaires** non essentielles, ou les **isoler** derrière une abstraction.
-- Garder un **fallback** chez un autre fournisseur, testé régulièrement.
+Isoler les dépendances dont une migration pourrait bloquer le produit : contrats d'appel, formats, outils hébergés, identifiants et données persistantes.
+
+Une **gateway** et des prompts versionnés facilitent le remplacement, mais ne garantissent pas la compatibilité des comportements. Garder evals, schémas et données exportables ; tester un autre fournisseur sur format, outils, sécurité, quotas et coût. Prévoir les fonctions sans équivalent et le temps de qualification. Un fallback non testé peut déplacer la panne plutôt que la résoudre.
 
 ---
 
@@ -103,6 +105,33 @@ Comment limiter les risques lors d'une migration vers un nouveau modèle ? <!--a
 Comment suivre un marché qui change tous les mois ? <!--anki:75334b5e4a6133343a3f-->
 ?
 Garder un **processus** plutôt qu'une opinion figée : une **eval maison automatisée** qu'on relance à chaque sortie de modèle notable, une **grille de décision** partagée, et une **revue trimestrielle** des choix de modèles face au coût et à la qualité ([[147-leadership-technique-ia|leadership technique]]).
+
+---
+
+Comment utiliser un front de Pareto pour choisir un modèle LLM ? <!--anki:3265623433663661633161393463643061393366393734343638356539643931-->
+?
+Éliminer d'abord les candidats qui violent une **contrainte obligatoire**. Parmi les autres, un candidat est dominé si un autre est au moins aussi bon sur tous les critères retenus et strictement meilleur sur l'un.
+
+Les candidats non dominés forment le **front de Pareto** : aucun ne gagne partout. Départager selon compromis produit, par exemple qualité contre coût et latence. Utiliser des mesures comparables et leur incertitude ; une différence minuscule et bruitée ne démontre pas une domination réelle. Une moyenne pondérée ne doit pas masquer une contrainte éliminatoire.
+
+---
+
+Pourquoi comparer des modèles LLM avec le même protocole et des budgets explicités ? <!--anki:3965626364333538623730393432323461636332393333376565373831626436-->
+?
+Outils, contexte, prompts, nombre d'essais et budget de génération influencent le résultat. Un candidat autorisé à chercher et à essayer dix fois n'est pas directement comparable à une réponse unique sans outil.
+
+Définir si l'on compare la **capacité du modèle** à ressources contrôlées ou le **système déployable** sous contraintes produit. Un prompt adapté à chaque modèle peut être pertinent si le budget d'optimisation est documenté. Rapporter protocole et coûts réels ; égaliser seulement `max_tokens` n'égalise ni le temps ni le calcul.
+
+---
+
+Calcul : sur le même test, A réussit 94 % à 0,010 €/requête et p95 = 0,8 s ; B, 95 % à 0,008 € et 0,7 s ; C, 97 % à 0,012 € et 1,4 s. Les exigences sont succès ≥ 94 % et p95 ≤ 1 s. En traitant les mesures comme exactes, lequel retenir ? <!--anki:6338353134376464616165373434383961373639663166333263396561616539-->
+?
+**B** respecte les deux contraintes et domine A : meilleure réussite, moindre coût et latence plus basse. C est exclu par la contrainte de latence malgré sa meilleure réussite.
+```text
+A : coût par succès = 0,010 / 0,94 ≈ 0,01064 €
+B : coût par succès = 0,008 / 0,95 ≈ 0,00842 €
+```
+Ces rapports répartissent le coût total entre les succès ; ils ne modélisent pas une politique de retries. En pratique, vérifier incertitude, segments critiques et comparabilité de charge avant de conclure. Les seuils et tarifs sont fictifs.
 
 ---
 
@@ -133,6 +162,8 @@ Mise en situation : la direction impose que les données ne sortent pas de l'ent
 ---
 
 ## Sources
+
+- [OSI — Open Source AI Definition 1.0](https://opensource.org/ai/open-source-ai-definition)
 
 - [Hugging Face — méthodologie du Open LLM Leaderboard](https://huggingface.co/docs/leaderboards/open_llm_leaderboard/about)
 - [NIST — AI Risk Management Framework](https://www.nist.gov/itl/ai-risk-management-framework)

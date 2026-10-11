@@ -4,7 +4,7 @@ Un vault [Obsidian](https://obsidian.md) de **fiches de révision (flashcards) e
 
 Chaque fiche traite **un concept** en 8 à 34 cartes question/réponse, une quinzaine en moyenne, et se termine par des **mises en situation** : des cas concrets à diagnostiquer, concevoir ou arbitrer. Les fiches sont reliées entre elles par des liens, pour qu'on puisse passer d'un sujet à ses voisins, et elles se révisent en **répétition espacée**.
 
-**État au 11 octobre 2026** : 137 fiches et 2 025 cartes, réparties en 17 sections, dont 321 mises en situation et 163 cartes « à ne pas confondre ».
+**État au 11 octobre 2026** : 137 fiches et 2 031 cartes, réparties en 17 sections, dont 321 mises en situation et 163 cartes « à ne pas confondre ».
 
 ---
 
@@ -268,7 +268,7 @@ Automatiser des processus, soit avec des outils de workflow, soit avec des agent
 
 ### 50 — Fine-tuning
 
-- [Fine-tuning & adaptation de modèles](50-fine-tuning/51-fine-tuning-adaptation.md) : quand fine-tuner, SFT, full fine-tuning ou PEFT, LoRA, QLoRA, RLHF, DPO, distillation, multi-LoRA (exemple vLLM), catastrophic forgetting et parades.
+- [Fine-tuning & adaptation de modèles](50-fine-tuning/51-fine-tuning-adaptation.md) : quand adapter, SFT, PEFT, LoRA et QLoRA, ressources, RLHF, DPO, distillation, multi-LoRA, régressions, calcul de rang et d’amortissement, versions d’un adapter.
 - [Post-training & alignement](50-fine-tuning/52-post-training-alignement.md) : étapes du RLHF, pénalité KL, reward hacking, DPO et variantes, GRPO, RLVR, RLAIF et Constitutional AI, jeux de préférences, taxe d'alignement, reward model ou vérificateur, quand faire soi-même du DPO ou du RL.
 - [Données synthétiques & distillation](50-fine-tuning/53-donnees-synthetiques-distillation.md) : génération variée, filtrage, model collapse, distillation sur les sorties ou sur les logits, distillation du raisonnement, contraintes juridiques, projet de distillation, jeux d'eval synthétiques.
 - [Entraînement distribué](50-fine-tuning/54-entrainement-distribue.md) : calcul de la mémoire d'un fine-tuning 7B avec Adam, data ou model parallelism, DDP, ZeRO et FSDP, tensor et pipeline parallelism, parallélisme 3D, gradient checkpointing, accumulation de gradients, précision mixte BF16, réseau, pannes et checkpoints.
@@ -377,7 +377,7 @@ La partie qui assemble tout le reste : concevoir, fiabiliser et piloter une appl
 - [Hallucinations, grounding & abstention](140-system-design-produit/143-hallucinations-grounding.md) : types d'hallucinations, leviers, citations vérifiées, abstention, arbitrage avec la couverture, détection, calibration, slopsquatting, communication de l'incertitude; température et factualité, conflits de sources, réponses partielles.
 - [UX de l'IA & human-in-the-loop](140-system-design-produit/144-ux-ia-human-in-the-loop.md) : copilote ou autopilote, validation humaine efficace, streaming, visibilité des agents, feedback, attentes, chat ou interface dédiée, automation bias, erreurs et refus.
 - [Cas de system design LLM](140-system-design-produit/145-cas-system-design.md) : support client, recherche documentaire, assistant de code, extraction à grande échelle, agent qui agit, chatbot grand public, assistant vocal, trame de réponse, erreurs d'entretien.
-- [Choisir un modèle](140-system-design-produit/146-choix-modeles.md) : critères, limites des leaderboards, benchmarks, fermé ou open weights, licences, coût par tâche, architecture multi-modèles, lock-in, migration, veille.
+- [Choisir un modèle](140-system-design-produit/146-choix-modeles.md) : critères et contraintes, benchmarks, hébergement et ouverture des poids, définition OSI, coût par succès, protocole comparable, front de Pareto, migration et lock-in.
 - [Leadership technique en AI Engineering](140-system-design-produit/147-leadership-technique-ia.md) : ce qui fait un senior, choix des cas d'usage, ROI, échec des POC, RFC et ADR, build ou buy, go / no-go, standards d'équipe, mentorat, revue de conception, dette technique, communication et veille.
 - [Pipelines batch à grande échelle](140-system-design-produit/148-pipelines-batch-llm.md) : batch ou en ligne, batch API (JSONL, `custom_id`, 24 h), batch API ou continuous batching, architecture reprenable, calculs de coût et de durée sous quota, classement des erreurs, contrôle qualité statistique, versions enregistrées avec chaque résultat, auto-hébergement hors ligne, quand ne pas utiliser de batch API.
 - [Livraison, idempotence & concurrence](140-system-design-produit/149-livraison-idempotence-concurrence.md) : garanties de livraison, limites du exactement une fois, timeout ambigu, identité des opérations, déduplication atomique, rétention, ack, ordre par entité, concurrence optimiste, isolation et fencing tokens.

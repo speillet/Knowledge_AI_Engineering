@@ -1,21 +1,21 @@
 # Fine-tuning & adaptation de modèles — Flashcards
 Tags: #flashcards #ai-engineering #fine-tuning #llm
-<!-- summary: quand fine-tuner, SFT, full fine-tuning ou PEFT, LoRA, QLoRA, RLHF, DPO, distillation, multi-LoRA (exemple vLLM), catastrophic forgetting et parades. -->
+<!-- summary: quand adapter, SFT, PEFT, LoRA et QLoRA, ressources, RLHF, DPO, distillation, multi-LoRA, régressions, calcul de rang et d’amortissement, versions d’un adapter. -->
 
 
 Qu'est-ce que le fine-tuning ? <!--anki:71447a6c7b502c78475d-->
 ?
-**Poursuivre l'entraînement d'un modèle pré-entraîné** sur des données spécifiques, pour adapter son **comportement**, son **format** ou son **domaine**. En pratique, pour une équipe produit : du **SFT** sur quelques centaines à quelques milliers d'exemples, le plus souvent avec **LoRA**.
+**Poursuivre l'entraînement d'un modèle pré-entraîné** pour adapter ses sorties à un objectif : comportement, format, tâche ou domaine. Le SFT sur des exemples annotés et les méthodes PEFT comme LoRA sont des options fréquentes.
 
-Il sert à changer **comment** le modèle répond, bien plus qu'à lui apprendre des faits nouveaux, qui relèvent plutôt du [[21-rag-fondamentaux|RAG]].
+Le volume nécessaire dépend de la diversité des cas et du niveau initial ; quelques centaines d'exemples ne constituent pas une recette universelle. L'adaptation peut apprendre des connaissances, mais leur restitution, mise à jour et effacement ne sont pas garantis. Pour des faits changeants à citer, comparer d'abord une recherche à l'exécution comme le [[21-rag-fondamentaux|RAG]].
 
 ---
 
 Quand fine-tuner plutôt que prompter ou faire du RAG ? <!--anki:6758606d3f2a7e395547-->
 ?
-Pour un **comportement constant** (format, ton, tâche spécialisée répétitive), la **distillation**, ou raccourcir les [[11-prompt-engineering-avance|prompts]] (latence/coût) — **pas** pour injecter des connaissances fraîches (→ [[21-rag-fondamentaux|RAG]]).
+Quand une adaptation répétée du **comportement ou de la tâche** apporte un gain mesurable : extraction spécialisée, style attendu, distillation ou réduction du contexte requis.
 
-Commencer par une baseline avec prompt et exemples, puis vérifier qu'un jeu d'entraînement représentatif existe. Le fine-tuning devient intéressant quand le même comportement doit se répéter à grande échelle. Conserver un jeu de test indépendant pour mesurer les gains et les régressions, notamment sur les cas rares et hors domaine.
+Comparer au [[11-prompt-engineering-avance|prompt]] avec exemples et au [[21-rag-fondamentaux|RAG]] si la difficulté vient de l'accès aux faits. Vérifier qu'un jeu représentatif et autorisé existe, avec un test indépendant. Mesurer gains, cas rares et régressions. Pour des connaissances fréquemment mises à jour, la recherche facilite généralement actualisation et traçabilité ; cela ne rend pas les méthodes mutuellement exclusives.
 
 ---
 
@@ -93,23 +93,20 @@ Ce résultat n'est pas garanti : sélectionner des exemples divers, vérifier le
 
 Comment servir plusieurs fine-tunings à moindre coût ? <!--anki:483c356d3755387d6c25-->
 ?
-Par le **multi-LoRA** : le serveur charge **un seul modèle de base** et, par-dessus, **plusieurs adapters** légers (quelques dizaines à centaines de Mo chacun), choisis **requête par requête** ([[11-serveurs-inference-llm|vLLM]]).
+Le **multi-LoRA** partage un modèle de base entre plusieurs adapters, sélectionnés selon la requête. Cela évite de dupliquer tous les poids pour chaque adaptation.
 ```bash
 vllm serve meta-llama/Llama-3.1-8B-Instruct --enable-lora \
   --lora-modules support=./lora-support juridique=./lora-juridique
 ```
-Cent clients avec chacun leur fine-tuning tiennent ainsi sur quelques GPU, au lieu de cent modèles complets.
+Cet exemple suppose un serveur et une architecture compatibles. Vérifier versions de base, rangs et modules ciblés, puis mesurer mémoire, chargements d'adapters et débit sous concurrence. Le nombre de clients ne suffit pas à dimensionner les GPU : adapters simultanés, séquences actives et KV cache comptent aussi.
 
 ---
 
 Quel est le principal risque du fine-tuning ? <!--anki:4a72233936695944475e-->
 ?
-Le **catastrophic forgetting** : en s'adaptant à la tâche, le modèle **perd des capacités générales** (raisonnement, suivi d'instructions, refus appropriés, autres langues).
+Un risque majeur est la **régression de capacités utiles** pendant la spécialisation : suivi d'instructions, autres langues ou tâches générales. Un jeu biaisé peut aussi apprendre des erreurs sans que la loss le révèle.
 
-Parades :
-- **LoRA** plutôt que full fine-tuning, et un taux d'apprentissage modéré
-- **Mélanger** des données générales aux données de la tâche
-- **Evals avant/après** sur la tâche **et** sur les capacités générales ([[92-chainforge-evals-prompts|evals]])
+Geler la base avec **LoRA** ne garantit pas l'absence de régression quand l'adapter est actif. Comparer base et adaptation sur la tâche cible et des capacités à préserver ; sélectionner taux d'apprentissage, durée et éventuel mélange de données selon ces mesures. Retirer l'adapter permet de retrouver la base, mais ne corrige pas le comportement de la version spécialisée.
 
 ---
 
@@ -121,6 +118,38 @@ LoRA, base BF16 : 7e9 × 2 octets = 14 Go
 QLoRA, stockage brut 4 bits : 7e9 × 0,5 octet = 3,5 Go
 ```
 Ajouter métadonnées de quantification, adapters, gradients et états d'optimiseur associés, activations et buffers temporaires. Leur coût dépend du rang, des couches ciblées, de la précision, du batch et des séquences. Un GPU de 16 ou 24 Go peut convenir à certaines recettes QLoRA 7B, sans garantie générale. Mesurer le pic mémoire d'un pas représentatif avant de dimensionner.
+
+---
+
+Calcul : LoRA adapte une matrice de 4 096 × 4 096 avec un rang 16, sans biais ni autres paramètres entraînés. Combien de paramètres sont appris et quelle fraction de la matrice complète cela représente-t-il ? <!--anki:6362383461646433373665393461356362623838643937616435383465623236-->
+?
+Les deux matrices de correction contiennent `r × (d + k)` paramètres :
+```text
+LoRA : 16 × (4 096 + 4 096) = 131 072
+matrice complète : 4 096² = 16 777 216
+fraction : 131 072 / 16 777 216 = 0,0078125 ≈ 0,78 %
+```
+Cette réduction concerne les paramètres entraînés de **cette matrice**. Elle ne divise pas toute la mémoire ni le temps de calcul par le même facteur : base, activations et autres modules restent présents. Le rang est un choix à valider sur la tâche.
+
+---
+
+Que faut-il versionner pour redéployer fidèlement un adapter LoRA ? <!--anki:3161663637373437313135313434343738373861323137353861636533393538-->
+?
+La **révision exacte de la base**, les poids et la configuration de l'adapter, le tokenizer, le template de conversation et les paramètres de serving.
+
+Le rang et les modules ciblés doivent correspondre à l'architecture chargée. Un nom de modèle seul ne suffit pas si ses fichiers ont changé. Conserver aussi références des données et résultats d'eval pour comprendre l'adaptation. Tester le chargement et quelques cas de non-régression dans l'environnement cible ; un adapter est un composant du système, pas un modèle autonome.
+
+---
+
+Calcul : une adaptation coûte 1 200 € au départ et économise 0,004 € par requête à qualité comparable, sans coût récurrent supplémentaire. À 50 000 requêtes par mois, quel volume et délai amortissent cet investissement ? <!--anki:6539343261343363333263323438643339643432396335363361366535306637-->
+?
+Avec les coûts fictifs et hypothèses du recto :
+```text
+volume d'amortissement = 1 200 / 0,004 = 300 000 requêtes
+économie mensuelle = 50 000 × 0,004 = 200 €
+délai = 1 200 / 200 = 6 mois
+```
+Ce calcul n'est valable que si qualité, volume et économie restent comparables. Ajouter réentraînements, validation, exploitation et régressions au scénario réel. Si les gains mensuels ne dépassent pas les coûts récurrents, aucun délai d'amortissement fini n'existe dans ce modèle.
 
 ---
 
@@ -140,15 +169,23 @@ Mise en situation : le métier veut fine-tuner un modèle « pour qu'il connaiss
 
 Mise en situation : ton modèle fine-tuné est excellent sur l'extraction visée, mais les utilisateurs signalent qu'il répond n'importe quoi aux questions générales. Que s'est-il passé ? <!--anki:6961533e313a76446060-->
 ?
-1. **Catastrophic forgetting** : l'entraînement spécialisé a dégradé les capacités générales
-2. **Mesurer** : evals générales avant et après, pas seulement la tâche cible ([[94-evals-methodologie|méthodologie d'évaluation]])
-3. **Réduire l'impact** : préférer **LoRA** au full fine-tuning, moins d'époques, taux d'apprentissage plus bas
-4. **Mélanger les données** : ajouter des exemples généraux au jeu d'entraînement
-5. **Router** : réserver le modèle spécialisé à sa tâche et envoyer le reste au modèle généraliste ([[82-routing-llm|routing]])
+1. **Reproduire les erreurs** sur les mêmes cas avec la base et la version adaptée.
+2. **Vérifier la chaîne** : tokenizer, template, configuration de génération et adapter chargé.
+3. **Mesurer les régressions** hors tâche et les biais des données, avant de conclure à un oubli de capacités.
+4. **Comparer des adaptations** moins agressives et un mélange de données générales ; LoRA seul ne garantit rien.
+5. **Limiter le périmètre** ou router vers une base validée, puis réévaluer l'ensemble.
 
-**Piège** : juger un fine-tuning sur sa seule métrique cible.
+**Piège** : attribuer toute régression à l'entraînement sans vérifier le modèle effectivement servi.
 
 ---
+
+## Sources
+
+- [vLLM — serving multi-LoRA et contraintes de configuration](https://docs.vllm.ai/en/stable/features/lora/)
+
+- [Hu et al. — LoRA et paramètres de bas rang](https://arxiv.org/abs/2106.09685)
+- [Hugging Face TRL — masquage, troncature et SFT](https://huggingface.co/docs/trl/sft_trainer)
+- [Hugging Face PEFT — configuration et chargement LoRA](https://huggingface.co/docs/peft/package_reference/lora)
 
 ## Connexions
 - [[21-rag-fondamentaux|RAG]] — connaissances vs comportement
