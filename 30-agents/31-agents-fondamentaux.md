@@ -21,35 +21,34 @@ Un workflow peut contenir des appels LLM tout en gardant un parcours fixé : ext
 
 Qu'est-ce que le pattern ReAct ? <!--anki:4e773142733d352f7878-->
 ?
-Une boucle **Reasoning + Acting** : le modèle alterne raisonnement, appel d'outil et observation du résultat jusqu'à la réponse finale.
+**ReAct** alterne raisonnement, action et observation pour adapter la prochaine étape au résultat obtenu.
 ```text
-Pensée      : il me faut le statut de la commande
+Besoin      : connaître le statut d'une commande
 Action      : statut_commande(commande_id="CMD-004212")
-Observation : { "statut": "expédiée", "date": "2026-09-22" }
-Pensée      : j'ai l'information, je peux répondre
-Réponse     : votre commande est partie le 22 septembre
+Observation : {"statut": "expédiée"}
+Suite       : répondre ou chercher une information manquante
 ```
-En pratique, avec le [[32-tool-calling|tool calling]] natif, ce cycle n'a plus besoin d'être écrit dans le prompt : il est porté par le **format des messages** et par la boucle du [[34-harness-plugins|harness]].
+Le [[32-tool-calling|tool calling]] fournit un format d'appel, mais ne construit pas à lui seul cette stratégie ni sa boucle. Le [[34-harness-plugins|harness]] doit exécuter les opérations autorisées et réinjecter leurs résultats. Une explication produite par le modèle aide parfois au diagnostic ; elle ne constitue pas une preuve fidèle de son raisonnement interne.
 
 ---
 
 De quoi est composé un agent minimal ? <!--anki:43784f552a2f34552f69-->
 ?
-- Un **modèle** qui décide
-- Des **[[32-tool-calling|outils]]** qui agissent
-- Une **boucle** de contrôle : tant que le modèle demande un outil, on l'exécute et on lui renvoie le résultat
-- Un **[[35-context-engineering|contexte]]** : instructions, historique, mémoire
-- Un **critère d'arrêt** : réponse finale, budget d'étapes, ou demande d'aide
+- Un **modèle** qui propose la prochaine étape.
+- Des **[[32-tool-calling|outils]]** aux contrats explicites.
+- Une **boucle de contrôle** qui valide chaque demande, exécute les opérations autorisées et transmet les résultats.
+- Un **[[35-context-engineering|contexte]]** : instructions, historique et informations utiles.
+- Des **conditions d'arrêt** : résultat vérifié, budget atteint, refus ou demande d'aide.
 
-La boucle tient en vingt lignes de code. La difficulté est ailleurs : la qualité des outils, le tri du contexte et les conditions d'arrêt.
+Un prototype peut être court ; une exécution fiable exige aussi de traiter erreurs, annulation et effets déjà produits. Une réponse finale du modèle ne remplace pas la vérification du résultat métier.
 
 ---
 
 Quand ne faut-il PAS construire un agent ? <!--anki:7330797b4f57247a213f-->
 ?
-Quand la tâche est **prévisible** : un workflow fixe est plus fiable, moins cher et plus simple à déboguer. **L'agent se justifie quand le chemin est inconnu à l'avance.**
+Quand les étapes utiles sont **connues et suffisamment stables**, commencer par un workflow explicite : il facilite le contrôle, la mesure et le diagnostic. Une boucle autonome doit apporter un gain démontré pour justifier sa complexité.
 
-Une extraction de facture suivie de contrôles comptables connus peut rester un pipeline : LLM pour lire les champs, code pour les règles, humain pour les exceptions. Comparer à cette baseline avant d'introduire une boucle autonome. Des erreurs fréquentes d'un workflow ne prouvent pas qu'il faille un agent ; elles peuvent révéler des données ou règles mal définies.
+Pour une facture, le LLM peut extraire les champs, le code appliquer les règles et un humain traiter les exceptions. Un chemin variable peut justifier un agent, sans le rendre automatiquement préférable : comparer réussite, erreurs, latence et coût à une baseline. L'agent se choisit selon le besoin d'adaptation, pas selon le nombre de composants IA.
 
 ---
 
@@ -100,7 +99,7 @@ Mise en situation : le métier veut « un agent IA » pour traiter les demandes 
 4. **Mesurer** : taux de traitement automatique, erreurs, coût par demande
 5. **Réserver l'agent** aux tâches dont les étapes varient vraiment d'un cas à l'autre
 
-**Piège** : un agent autonome sur un processus réglementé, impossible à auditer et à reproduire.
+**Piège** : ajouter de l’autonomie sans démontrer sa valeur ni prévoir les contrôles et les traces nécessaires.
 
 ---
 
@@ -117,6 +116,8 @@ Mise en situation : ton agent d'analyse tourne parfois 40 étapes, coûte cher e
 ---
 
 ## Sources
+
+- [Yao et al. — ReAct](https://arxiv.org/abs/2210.03629)
 
 - [Anthropic — consommation observée dans son système de recherche multi-agents](https://www.anthropic.com/engineering/multi-agent-research-system)
 

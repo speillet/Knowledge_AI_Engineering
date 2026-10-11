@@ -94,10 +94,9 @@ L'application doit donc valider nom, arguments, permissions et règles métier a
 
 À ne pas confondre : mode JSON et structured outputs ? <!--anki:41673b782e4245765374-->
 ?
-- **Mode JSON** : garantit une sortie en **JSON valide**, mais pas sa **forme** : champs manquants, noms inventés, types faux restent possibles
-- **Structured outputs** (schéma strict) : la génération est **contrainte par un JSON Schema** précis, champs obligatoires et types compris
+Le **mode JSON** vise un JSON parsable ; les **structured outputs** imposent en plus un schéma supporté. Un objet peut être valide tout en ayant les mauvais champs, ou contenir une valeur fausse malgré un schéma correct.
 
-Pour un traitement automatique, préférer toujours le schéma strict ; la validation **métier** reste à faire dans tous les cas.
+Choisir le schéma quand le contrat de traitement l'exige, puis vérifier statut de fin, refus et troncature avant d'exploiter l'objet. Les garanties varient selon moteur et configuration. Une branche « information absente » évite de forcer une valeur inventée ; la validation métier reste indispensable.
 
 ---
 
@@ -113,25 +112,25 @@ La réponse l'indique (`finish_reason: "length"` ou `stop_reason: "max_tokens"`)
 
 Mise en situation : depuis que tu contrains la sortie par un JSON Schema, le JSON est toujours valide mais les réponses sont devenues moins bonnes. Que corriges-tu ? <!--anki:4b54485521782c4c4a72-->
 ?
-1. **Comprendre** : la contrainte force le modèle à produire la conclusion **immédiatement**, sans place pour raisonner
-2. **Ordonner les champs** : un champ `raisonnement` **avant** le champ `reponse`, puisque le modèle génère dans l'ordre
-3. **Ou séparer en deux temps** : réponse libre d'abord, extraction structurée ensuite
-4. **Simplifier le schéma** : moins de champs obligatoires, énumérations claires, pas d'imbrication inutile
-5. **Mesurer** : exactitude métier avant et après, pas seulement le taux de JSON valide ([[94-evals-methodologie|evals]])
+1. **Rejouer les mêmes cas** avec et sans contrainte pour isoler la régression.
+2. **Chercher les contraintes fautives** : champ obligatoire sans preuve, énumération incomplète, schéma ambigu ou sortie tronquée.
+3. **Permettre l'abstention** et simplifier les champs inutiles.
+4. **Tester des variantes** de schéma ou une extraction séparée, en mesurant aussi latence et coût.
+5. **Comparer l'exactitude métier** sur un test indépendant ; un champ de justification n'est utile que si son apport est démontré.
 
-**Piège** : conclure que « la génération contrainte dégrade le modèle », alors que c'est l'ordre des champs qui est en cause.
+**Piège** : déclarer que l'ordre des champs est la cause avant de vérifier les erreurs.
 
 ---
 
 Mise en situation : ton extraction de factures renvoie toujours un JSON conforme, mais la comptabilité relève des montants faux. Comment sécurises-tu la chaîne ? <!--anki:4e243d382b5961484041-->
 ?
-1. **Rappeler la limite** : la contrainte garantit la **forme**, jamais le **fond**
-2. **Validation métier** : montants cohérents avec les lignes, TVA recalculée, dates plausibles, fournisseur connu
-3. **Champ d'abstention** : permettre « non trouvé » plutôt que d'obliger le modèle à inventer une valeur
-4. **Confiance** : logprobs ou double extraction pour repérer les cas douteux et les envoyer à un humain ([[144-ux-ia-human-in-the-loop|human-in-the-loop]])
-5. **Mesurer en production** : taux d'échec de validation par champ ([[93-monitoring-inference|validations]])
+1. **Comparer les valeurs aux preuves** : facture, page et zone associées au champ.
+2. **Appliquer les règles métier** : sommes des lignes, taxes, devise et dates cohérentes.
+3. **Permettre une valeur absente** lorsque le document ne contient pas la preuve.
+4. **Valider le tri des cas douteux** sur des labels : logprobs ou accord entre extractions sont des signaux, pas des garanties de vérité.
+5. **Mesurer par champ et document**, avec erreurs, abstentions et coût de revue.
 
-**Piège** : traiter un JSON valide comme une donnée vérifiée, et l'écrire directement en comptabilité.
+**Piège** : écrire en comptabilité un objet dont seul le format a été vérifié.
 
 ---
 

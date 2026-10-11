@@ -4,7 +4,7 @@ Un vault [Obsidian](https://obsidian.md) de **fiches de révision (flashcards) e
 
 Chaque fiche traite **un concept** en 8 à 34 cartes question/réponse, une quinzaine en moyenne, et se termine par des **mises en situation** : des cas concrets à diagnostiquer, concevoir ou arbitrer. Les fiches sont reliées entre elles par des liens, pour qu'on puisse passer d'un sujet à ses voisins, et elles se révisent en **répétition espacée**.
 
-**État au 11 octobre 2026** : 137 fiches et 2 022 cartes, réparties en 17 sections, dont 320 mises en situation et 163 cartes « à ne pas confondre ».
+**État au 11 octobre 2026** : 137 fiches et 2 025 cartes, réparties en 17 sections, dont 321 mises en situation et 163 cartes « à ne pas confondre ».
 
 ---
 
@@ -243,7 +243,7 @@ Trois sujets traversent toute la stack : l'**observabilité** (traces, métrique
 ### 30 — Agents
 
 - [Fondamentaux des agents](30-agents/31-agents-fondamentaux.md) : workflow ou agent, pattern ReAct, composants d'un agent minimal, trois formes de human-in-the-loop, risques et parades, ordres de grandeur de coût, conditions d'arrêt.
-- [Tool calling](30-agents/32-tool-calling.md) : déclaration par JSON Schema, exécution contrôlée par l'application, boucle d'appel, parallel tool calls, tool calling ou MCP, erreurs d'outil actionnables, bonne et mauvaise description d'outil, validité syntaxique et sémantique des arguments.
+- [Tool calling](30-agents/32-tool-calling.md) : définition des outils, appels parallèles contrôlés, tool calling ou MCP, validation des arguments, erreurs et timeouts, statuts d’opération, pagination et coût des schémas.
 - [MCP — Model Context Protocol](30-agents/33-mcp.md) : problème M×N, host, client et serveur, tools, resources et prompts, transports stdio et HTTP, spec sans état 2026-07-28, serveur MCP ou API REST, risques.
 - [Harness & plugins](30-agents/34-harness-plugins.md) : rôle du harness, plugins, skills, hooks, permissions, sandbox, fichiers mémoire.
 - [Context engineering](30-agents/35-context-engineering.md) : le contexte comme budget, context rot, compaction, sous-agents, prompt caching, contexte chargé au besoin (just-in-time).
