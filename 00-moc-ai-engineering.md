@@ -7,6 +7,8 @@ Chaque fiche se termine par des **mises en situation** : pour ne réviser qu'ell
 
 Pour démarrer, consulter le [guide d'apprentissage](docs/apprendre-avec-les-cartes.md) : huit étapes avec prérequis, critères de réponse, notation Anki et passage aux exercices pratiques. Le [bilan du 9 octobre](docs/revue-apprentissage-2026-10-09.md) explique les corrections de fond et les ajouts pédagogiques.
 
+Pour appliquer les métriques, l’[atelier local de décision IA](examples/decisions-ia/README.md) relie validation ML, calibration, choix de modèle et qualité documentaire ; le [bilan du 11 octobre](docs/revue-pertinence-2026-10-11.md) précise les enrichissements et leur périmètre.
+
 ## Parcours de lecture
 Progression recommandée : **comprendre les modèles → les utiliser → construire des architectures → adapter → servir & déployer → industrialiser → gouverner → concevoir des systèmes.**
 - **Socle prédictif** : [[171-choisir-modele-ml|ML classique]] puis [[172-validation-metriques-ml|validation et métriques]] — choisir une approche avant de construire une chaîne LLM

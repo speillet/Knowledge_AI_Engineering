@@ -119,6 +119,7 @@ class VaultTests(unittest.TestCase):
             ROOT / lint.RETIRED,
         ]
         sources += list((ROOT / "examples").rglob("*.py"))
+        sources += list((ROOT / "examples").rglob("*.md"))
         for source in sources:
             target = self.root / source.relative_to(ROOT)
             target.parent.mkdir(parents=True, exist_ok=True)

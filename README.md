@@ -15,6 +15,7 @@ Knowledge_AI_Engineering/
 ├── README.md
 ├── docs/                       # bilans de revue et documentation de maintenance
 ├── examples/data-engineering/  # atelier SQL local avec données synthétiques
+├── examples/decisions-ia/      # métriques, revue humaine et choix de modèle en Python
 ├── .obsidian/                   # configuration Obsidian
 ├── .claude/skills/              # skills Claude Code versionnés (grilling, grill-me)
 ├── scripts/lint_flashcards.py   # vérification des conventions + statistiques
@@ -66,6 +67,8 @@ Knowledge_AI_Engineering/
 
 ### 2. Lire et naviguer
 
+- **Appliquer les métriques aux décisions** : l’[atelier Python local](examples/decisions-ia/README.md) propose quatre exercices corrigés sur la prévalence, la revue humaine, le choix de modèle et la qualité du document complet, sans API ni GPU.
+- **Consulter la revue de pertinence** : le [bilan du 11 octobre](docs/revue-pertinence-2026-10-11.md) précise les corrections et les 33 cartes ajoutées en deux passes, ainsi que le périmètre de vérification.
 - **Apprendre avant de multiplier les révisions** : le [guide d'apprentissage](docs/apprendre-avec-les-cartes.md) propose un démarrage progressif, des critères pour se noter et des exercices pour vérifier le transfert. Le [bilan du 9 octobre](docs/revue-apprentissage-2026-10-09.md) détaille les corrections pédagogiques et les nouvelles cartes d'application.
 - **Suivre le parcours de lecture** du MOC, qui va dans cet ordre : ML classique et validation, fondamentaux LLM (prérequis), prompt engineering, RAG, agents, automatisation et frameworks d'agents, fine-tuning, inférence, conteneurs, API layer, observabilité, sécurité, MLOps & CI/CD, coûts & FinOps, données & conformité, multimodal & edge, puis system design & produit, qui assemble le tout. Le MOC propose aussi un **parcours AI Engineer agentique**, qui enchaîne en 8 étapes les fiches sur les agents réparties dans plusieurs sections.
 - **Rebondir entre les concepts** : chaque fiche se termine par une section `Connexions` qui explique pourquoi les fiches liées sont liées. Ces liens sont **réciproques** : si A cite B, B cite A. Des liens apparaissent aussi dans les réponses elles-mêmes.
