@@ -1,6 +1,6 @@
 # Hallucinations, grounding & abstention — Flashcards
 Tags: #flashcards #ai-engineering #hallucinations #grounding #qualite #llm
-<!-- summary: types d'hallucinations, leviers, citations vérifiées, abstention, arbitrage avec la couverture, détection, calibration, slopsquatting, communication de l'incertitude. -->
+<!-- summary: types d'hallucinations, leviers, citations vérifiées, abstention, arbitrage avec la couverture, détection, calibration, slopsquatting, communication de l'incertitude; température et factualité, conflits de sources, réponses partielles. -->
 
 
 Qu'est-ce qu'une hallucination ? <!--anki:43342c5e784379766728-->
@@ -22,7 +22,9 @@ Quels leviers réduisent les hallucinations avant la génération ? <!--anki:685
 ?
 1. **Grounding** : fournir les faits via [[21-rag-fondamentaux|RAG]] ou outils.
 2. **Consignes** : répondre **uniquement** à partir du contexte, sinon dire qu'on ne sait pas.
-3. **Tâche plus étroite**, sorties **structurées** et **température basse** pour les tâches factuelles.
+3. **Tâche plus étroite** et vérifications adaptées : contraindre le format aide à contrôler la sortie, mais ni JSON ni température basse ne garantissent la factualité.
+
+Mesurer séparément variabilité, respect du format et exactitude. Une source erronée ou périmée peut produire une réponse fidèle mais fausse.
 
 ---
 
@@ -85,6 +87,30 @@ Voir [[144-ux-ia-human-in-the-loop|UX de l'IA]].
 
 ---
 
+Pourquoi une température basse ne garantit-elle pas la factualité d'un LLM ? <!--anki:6436363963323235643535633431616538653434343230393137643133366330-->
+?
+La température modifie la **distribution de sélection des tokens**, pas la vérité des faits disponibles. Une réponse fausse très probable peut être reproduite avec assurance à température basse.
+
+Une sortie structurée garantit éventuellement un format conforme, pas un chiffre exact. Mesurer la factualité sur des références fiables ; fournir des preuves adaptées, vérifier les calculs avec du code et prévoir l'abstention lorsque la source manque. Réduire la variabilité peut aider certaines tâches, mais son effet sur l'exactitude doit être évalué.
+
+---
+
+Comment répondre lorsque deux sources récupérées se contredisent ? <!--anki:6535366534346465373464653433323461663564393234363562343264616666-->
+?
+Appliquer une **règle de priorité documentée** selon le besoin : source de référence, version applicable, date d'effet et périmètre. La source la plus récente n'est pas forcément celle qui s'applique au cas demandé.
+
+Si le conflit reste irrésolu, le rendre explicite et s'abstenir sur le point litigieux ou demander une clarification. Citer les passages concernés. Ne pas fusionner deux chiffres incompatibles ni laisser le modèle choisir la formulation la plus plausible. Conserver les versions utilisées pour permettre le diagnostic.
+
+---
+
+Quand une réponse partielle est-elle préférable à une abstention complète en RAG ? <!--anki:3762666538376539333832323464316138336132366665326439636237313864-->
+?
+Lorsque certaines parties sont **étayées et utiles indépendamment** des informations manquantes. Répondre à ces parties en citant leurs preuves et identifier précisément ce qui reste inconnu.
+
+Exemple : la procédure décrit le délai de retour, mais pas les frais ; donner le délai sans inventer le tarif. Si l'information manquante conditionne toute la décision, une réponse partielle peut induire en erreur : demander une précision ou escalader. Évaluer séparément utilité de la réponse et respect des limites du contexte.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton assistant documentaire cite des pages qui n'existent pas, et les utilisateurs perdent confiance. Comment traites-tu le problème ? <!--anki:437050683d4d6b72512b-->
@@ -111,7 +137,22 @@ Mise en situation : le métier exige que ton assistant réponde toujours, jamais
 
 ---
 
+Mise en situation : deux documents donnent des délais de retour de 14 et 30 jours, et l'assistant choisit systématiquement 30. Comment corriges-tu ce comportement ? <!--anki:3637613436353566316337353432316438653533326162303064343263633036-->
+?
+1. **Identifier le périmètre** de chaque document : produit, pays, version et date d'effet.
+2. **Définir la source applicable**, avec le métier, au lieu de choisir le délai le plus favorable.
+3. **Transmettre ces métadonnées** et une règle de résolution au système.
+4. **Prévoir une clarification ou une abstention** si les preuves ne permettent pas de trancher.
+5. **Tester les deux régimes et le conflit**, avec citations et vérification des affirmations.
+
+**Piège** : choisir automatiquement le document le plus récent sans vérifier son champ d'application.
+
+---
+
 ## Sources
+
+- [Liu et al. — soutien et couverture des citations](https://arxiv.org/abs/2304.09848)
+- [Niu et al. — RAGTruth, hallucinations malgré un contexte récupéré](https://arxiv.org/abs/2401.00396)
 - [Geifman & El-Yaniv — risque et couverture avec abstention](https://proceedings.neurips.cc/paper/2017/hash/4a8423d5e91fda00bb7e46540e2b0cf1-Abstract.html)
 
 ## Connexions

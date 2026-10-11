@@ -1,6 +1,6 @@
 # Évaluation des RAG & des agents — Flashcards
 Tags: #flashcards #ai-engineering #evals #rag #agents #llm
-<!-- summary: retrieval et génération, calculs precision/recall@k et MRR, nDCG, fidélité ou exactitude, contexte oracle, jeux synthétiques, résultat ou trajectoire, environnements d’eval, pass^k et efficacité. -->
+<!-- summary: retrieval et génération, calculs precision/recall@k et MRR, nDCG, fidélité ou exactitude, contexte oracle, jeux synthétiques, résultat ou trajectoire, environnements d’eval, pass^k et efficacité; couverture des citations, calcul de soutien, tests contrefactuels. -->
 
 
 Comment découper l'évaluation d'un RAG ? <!--anki:486239767d48454b594b-->
@@ -140,6 +140,34 @@ Si la réponse s'améliore, la récupération ou la préparation du contexte con
 
 ---
 
+À ne pas confondre : validité, soutien et couverture des citations RAG ? <!--anki:3339306365646439383137643466336639643336396363326662326262346235-->
+?
+La **validité** vérifie que la référence existe et est accessible ; le **soutien** vérifie que le passage cité étaye l'affirmation associée ; la **couverture** vérifie que les affirmations nécessitant une preuve en ont une suffisante.
+
+Une réponse peut citer un document réel sans que celui-ci soutienne son chiffre. Elle peut aussi citer correctement une seule phrase et laisser le reste sans preuve. Évaluer ces trois propriétés séparément, avec une règle explicite pour les affirmations qui nécessitent une citation.
+
+---
+
+Calcul : une réponse RAG contient huit affirmations nécessitant une preuve ; six sont citées et quatre de ces six sont pleinement soutenues. Quelle couverture de citation et quelle proportion d'affirmations soutenues obtient-on ? <!--anki:6431353064663736313966613438666661353363383938323830616436633336-->
+?
+Avec les unités fixées au recto :
+```text
+couverture de citation = 6 / 8 = 75 %
+proportion d'affirmations soutenues = 4 / 8 = 50 %
+soutien parmi les affirmations citées = 4 / 6 ≈ 66,7 %
+```
+Le premier score mesure la présence d'une citation, pas sa qualité. Le troisième porte sur les **affirmations citées**, pas sur chaque lien individuel : il ne faut pas le rebaptiser précision des citations sans définir cette unité. Les quatre affirmations non soutenues exigent vérification, correction ou retrait.
+
+---
+
+Comment tester qu'un RAG utilise réellement le contexte fourni ? <!--anki:3063626439353131343730653432353762356538376433376630376438353436-->
+?
+Construire des **tests contrefactuels contrôlés** : changer un fait dans un document fictif et vérifier que la réponse suit ce changement, puis retirer la preuve pour tester l'abstention.
+
+Garder question et configuration comparables ; éviter des transformations qui rendent le document incohérent. Ajouter une variante avec une source contradictoire et une règle de priorité explicite. Ces tests révèlent une dépendance au contexte sur les cas testés ; ils ne prouvent pas que toutes les réponses futures seront fidèles. Les compléter par des questions réelles.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton RAG affiche 62 % de réponses jugées correctes, et l'équipe veut changer de modèle de génération. Comment vérifies-tu que c'est le bon levier ? <!--anki:4f663b6b4b4a55712b34-->
@@ -178,7 +206,22 @@ Mise en situation : tu dois évaluer un agent qui modifie des tickets et envoie 
 
 ---
 
+Mise en situation : ton RAG fournit toujours des liens valides, mais invente encore des conditions de remboursement. Comment enrichis-tu l'évaluation ? <!--anki:6431323035623737626337343434343761393661353338343238333835373533-->
+?
+1. **Décomposer les réponses** en conditions vérifiables : délai, montant, exclusions.
+2. **Vérifier le soutien** de chaque condition par les passages effectivement cités.
+3. **Mesurer la couverture** des conditions qui nécessitent une preuve.
+4. **Ajouter des cas difficiles** : exception absente, ancienne politique, contradiction et question sans réponse.
+5. **Relire les erreurs critiques**, puis comparer les variantes sur le même test indépendant.
+
+**Piège** : confondre une URL existante avec une preuve de l'affirmation.
+
+---
+
 ## Sources
+
+- [Liu et al. — soutien et couverture des citations](https://arxiv.org/abs/2304.09848)
+- [Niu et al. — RAGTruth, hallucinations malgré un contexte récupéré](https://arxiv.org/abs/2401.00396)
 
 - [Es et al. — dimensions de l’évaluation RAG](https://arxiv.org/abs/2309.15217)
 - [Yao et al. — τ-bench et fiabilité répétée](https://arxiv.org/abs/2406.12045)
