@@ -161,6 +161,7 @@ Mise en situation : ton eval principale affiche 99 % depuis trois mois, alors qu
 - [NIST — test de McNemar pour observations binaires appariées](https://www.itl.nist.gov/div898/software/dataplot/refman1/auxillar/mcnemar.htm)
 
 ## Connexions
+- [[90-010-evaluation-reponses-llm|Évaluation des réponses]] — grille, complétude et métriques selon la tâche
 - [[95-llm-as-judge|LLM-as-a-judge]] — l'évaluateur automatique des critères subjectifs
 - [[96-evals-rag-agents|Evals de RAG & d'agents]] — évaluer par composant
 - [[97-evals-online-ab-testing|Evals online & A/B testing]] — mesurer en production

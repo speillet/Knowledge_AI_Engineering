@@ -1,0 +1,81 @@
+{
+  "snapshot": "support-fictif-v1",
+  "description": "Corpus pédagogique fictif ; dates d'effet métier, droits actuels simulés et faits structurés annotés à la main.",
+  "principals": {
+    "alice": {"tenant": "acme", "groups": ["support"]},
+    "bruno": {"tenant": "acme", "groups": ["support", "finance"]},
+    "camille": {"tenant": "orion", "groups": ["support"]}
+  },
+  "documents": [
+    {
+      "document_id": "contrat-remboursement", "version": 1, "chunk_id": "a-remboursement-v1",
+      "tenant": "acme", "groups": ["support"], "authority": 2, "state": "active",
+      "valid_from": "2026-01-01", "valid_until": "2026-10-01",
+      "text": "Acme : remboursement, délai et procédure. Le remboursement est possible sous 14 jours par email au support.",
+      "facts": {"refund_days": "14 jours", "refund_method": "email au support"}
+    },
+    {
+      "document_id": "faq-remboursement", "version": 1, "chunk_id": "b-faq-remboursement",
+      "tenant": "acme", "groups": ["support"], "authority": 1, "state": "active",
+      "valid_from": "2026-01-01", "valid_until": null,
+      "text": "Acme : remboursement, délai et procédure. Cette FAQ informative indique 14 jours et un email au support.",
+      "facts": {"refund_days": "14 jours", "refund_method": "email au support"}
+    },
+    {
+      "document_id": "contrat-remboursement", "version": 2, "chunk_id": "c-remboursement-v2",
+      "tenant": "acme", "groups": ["support"], "authority": 2, "state": "active",
+      "valid_from": "2026-10-01", "valid_until": "2026-11-01",
+      "text": "Acme : remboursement, délai et procédure. Le remboursement est possible sous 30 jours avec un formulaire client.",
+      "facts": {"refund_days": "30 jours", "refund_method": "formulaire client"}
+    },
+    {
+      "document_id": "contrat-remboursement", "version": 3, "chunk_id": "d-remboursement-v3",
+      "tenant": "acme", "groups": ["support"], "authority": 2, "state": "active",
+      "valid_from": "2026-11-01", "valid_until": null,
+      "text": "Acme : remboursement, délai et procédure. Le remboursement sera possible sous 45 jours avec un formulaire client.",
+      "facts": {"refund_days": "45 jours", "refund_method": "formulaire client"}
+    },
+    {
+      "document_id": "remise-finance", "version": 1, "chunk_id": "e-remise-finance",
+      "tenant": "acme", "groups": ["finance"], "authority": 2, "state": "active",
+      "valid_from": "2026-01-01", "valid_until": null,
+      "text": "Acme : la remise confidentielle finance est de 45 %.",
+      "facts": {"private_discount": "45 %"}
+    },
+    {
+      "document_id": "contrat-remboursement", "version": 1, "chunk_id": "f-orion-remboursement",
+      "tenant": "orion", "groups": ["support"], "authority": 2, "state": "active",
+      "valid_from": "2026-01-01", "valid_until": null,
+      "text": "Orion : remboursement, délai et procédure. Le remboursement est possible sous 90 jours.",
+      "facts": {"refund_days": "90 jours"}
+    },
+    {
+      "document_id": "contrat-delai-support-a", "version": 1, "chunk_id": "g-delai-support-a",
+      "tenant": "acme", "groups": ["support"], "authority": 2, "state": "active",
+      "valid_from": "2026-01-01", "valid_until": null,
+      "text": "Acme : délai de réponse du support pour un incident, quatre heures.",
+      "facts": {"support_delay": "4 heures"}
+    },
+    {
+      "document_id": "contrat-delai-support-b", "version": 1, "chunk_id": "h-delai-support-b",
+      "tenant": "acme", "groups": ["support"], "authority": 2, "state": "active",
+      "valid_from": "2026-01-01", "valid_until": null,
+      "text": "Acme : délai de réponse du support pour un incident, huit heures.",
+      "facts": {"support_delay": "8 heures"}
+    },
+    {
+      "document_id": "promotion", "version": 1, "chunk_id": "i-promotion-retiree",
+      "tenant": "acme", "groups": ["support"], "authority": 2, "state": "withdrawn",
+      "valid_from": "2026-01-01", "valid_until": null,
+      "text": "Acme : promotion spéciale et taux promotionnel de 50 %.",
+      "facts": {"promotion_rate": "50 %"}
+    },
+    {
+      "document_id": "horaires", "version": 1, "chunk_id": "j-horaires",
+      "tenant": "acme", "groups": ["support"], "authority": 2, "state": "active",
+      "valid_from": "2026-01-01", "valid_until": null,
+      "text": "Acme : horaires du support, du lundi au vendredi.",
+      "facts": {"support_hours": "lundi au vendredi"}
+    }
+  ]
+}

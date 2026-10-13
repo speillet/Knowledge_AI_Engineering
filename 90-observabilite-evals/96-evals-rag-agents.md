@@ -228,6 +228,8 @@ Mise en situation : ton RAG fournit toujours des liens valides, mais invente enc
 - [Stanford — évaluation en recherche d’information](https://nlp.stanford.edu/IR-book/html/htmledition/evaluation-of-ranked-retrieval-results-1.html)
 
 ## Connexions
+- [[20-010-rag-droits-versions|RAG : droits & versions]] — tester les retraits, restrictions d'accès et preuves applicables
+- [[90-010-evaluation-reponses-llm|Évaluation des réponses]] — complétude, références et agrégation par affirmation
 - [[94-evals-methodologie|Méthodologie d'évaluation]] — le cadre général
 - [[95-llm-as-judge|LLM-as-a-judge]] — les juges de faithfulness et de trajectoire
 - [[21-rag-fondamentaux|RAG — Fondamentaux]] et [[22-rag-avance|RAG avancé]] — ce qu'on évalue

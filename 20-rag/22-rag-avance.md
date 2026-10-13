@@ -138,6 +138,7 @@ Mise en situation : après un changement de modèle d'embedding, la qualité du 
 ---
 
 ## Connexions
+- [[20-010-rag-droits-versions|RAG : droits & versions]] — appliquer les permissions, dates d'effet et priorités de sources
 - [[21-rag-fondamentaux|RAG fondamentaux]] — le socle
 - [[35-context-engineering|Context engineering]] — placement et budget
 - [[101-securite-llm-guardrails|Sécurité LLM]] — injection via documents, ACL

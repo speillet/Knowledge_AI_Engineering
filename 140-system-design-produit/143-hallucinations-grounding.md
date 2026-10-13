@@ -156,6 +156,7 @@ Mise en situation : deux documents donnent des délais de retour de 14 et 30 jou
 - [Geifman & El-Yaniv — risque et couverture avec abstention](https://proceedings.neurips.cc/paper/2017/hash/4a8423d5e91fda00bb7e46540e2b0cf1-Abstract.html)
 
 ## Connexions
+- [[90-010-evaluation-reponses-llm|Évaluation des réponses]] — exactitude, complétude et traitement des informations non vérifiables
 - [[21-rag-fondamentaux|RAG — Fondamentaux]] — grounding et citations
 - [[96-evals-rag-agents|Evals de RAG]] — mesurer la faithfulness
 - [[95-llm-as-judge|LLM-as-a-judge]] — détecter après coup

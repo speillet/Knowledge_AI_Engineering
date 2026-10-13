@@ -171,6 +171,7 @@ Mise en situation : un cache de réponses te fait économiser 30 %, mais le supp
 - [vLLM — Automatic Prefix Caching](https://docs.vllm.ai/en/latest/features/automatic_prefix_caching/)
 
 ## Connexions
+- [[20-010-rag-droits-versions|RAG : droits & versions]] — invalider les réponses après mise à jour ou révocation
 - [[121-couts-inference|Coûts d'inférence]] — ce que le cache fait économiser
 - [[122-finops-llm|FinOps LLM]] — les caches comme levier FinOps
 - [[66-prefix-caching-radix-attention|Prefix caching & RadixAttention]] — le mécanisme côté serveur

@@ -206,6 +206,7 @@ Mise en situation : après une modification de format, ton juge passe de 82 % à
 - [scikit-learn — matrice de confusion et kappa](https://scikit-learn.org/stable/modules/model_evaluation.html)
 
 ## Connexions
+- [[90-010-evaluation-reponses-llm|Évaluation des réponses]] — distinguer les dimensions que le juge doit apprécier
 - [[94-evals-methodologie|Méthodologie d'évaluation]] — où le juge s'insère
 - [[96-evals-rag-agents|Evals de RAG & d'agents]] — juges de fidélité et de trajectoire
 - [[114-reproductibilite-variance|Reproductibilité & variance]] — variance du juge

@@ -1,0 +1,62 @@
+[
+  {
+    "id": "courant", "principal": "alice", "as_of": "2026-10-13",
+    "question": "Acme : quel délai de remboursement et quelle procédure ?",
+    "fields": ["refund_days", "refund_method"], "relevant_chunks": ["c-remboursement-v2"],
+    "expected_status": "complete", "expected": {"refund_days": "30 jours", "refund_method": "formulaire client"}
+  },
+  {
+    "id": "historique", "principal": "alice", "as_of": "2026-09-15",
+    "question": "Acme : quel délai de remboursement et quelle procédure à cette date ?",
+    "fields": ["refund_days", "refund_method"], "relevant_chunks": ["a-remboursement-v1"],
+    "expected_status": "complete", "expected": {"refund_days": "14 jours", "refund_method": "email au support"}
+  },
+  {
+    "id": "frontiere-date", "principal": "alice", "as_of": "2026-11-01",
+    "question": "Acme : quel délai de remboursement et quelle procédure à cette date ?",
+    "fields": ["refund_days", "refund_method"], "relevant_chunks": ["d-remboursement-v3"],
+    "expected_status": "complete", "expected": {"refund_days": "45 jours", "refund_method": "formulaire client"}
+  },
+  {
+    "id": "finance-autorisee", "principal": "bruno", "as_of": "2026-10-13",
+    "question": "Acme : quelle remise confidentielle finance ?",
+    "fields": ["private_discount"], "relevant_chunks": ["e-remise-finance"],
+    "expected_status": "complete", "expected": {"private_discount": "45 %"}
+  },
+  {
+    "id": "finance-interdite", "principal": "alice", "as_of": "2026-10-13",
+    "question": "Acme : quelle remise confidentielle finance ?",
+    "fields": ["private_discount"], "relevant_chunks": [],
+    "expected_status": "abstain", "expected": {}
+  },
+  {
+    "id": "autre-tenant", "principal": "camille", "as_of": "2026-10-13",
+    "question": "Quel délai de remboursement pour mon entreprise ?",
+    "fields": ["refund_days"], "relevant_chunks": ["f-orion-remboursement"],
+    "expected_status": "complete", "expected": {"refund_days": "90 jours"}
+  },
+  {
+    "id": "conflit", "principal": "alice", "as_of": "2026-10-13",
+    "question": "Acme : quel délai de réponse du support pour un incident ?",
+    "fields": ["support_delay"], "relevant_chunks": ["g-delai-support-a", "h-delai-support-b"],
+    "expected_status": "abstain", "expected": {}
+  },
+  {
+    "id": "sans-preuve", "principal": "alice", "as_of": "2026-10-13",
+    "question": "Acme : quelle garantie casse est proposée ?",
+    "fields": ["breakage_warranty"], "relevant_chunks": [],
+    "expected_status": "abstain", "expected": {}
+  },
+  {
+    "id": "partiel", "principal": "alice", "as_of": "2026-10-13",
+    "question": "Acme : délai de remboursement, procédure et délai d'annulation ?",
+    "fields": ["refund_days", "refund_method", "cancellation_hours"], "relevant_chunks": ["c-remboursement-v2"],
+    "expected_status": "partial", "expected": {"refund_days": "30 jours", "refund_method": "formulaire client"}
+  },
+  {
+    "id": "source-retiree", "principal": "alice", "as_of": "2026-10-13",
+    "question": "Acme : quel taux pour la promotion spéciale ?",
+    "fields": ["promotion_rate"], "relevant_chunks": [],
+    "expected_status": "abstain", "expected": {}
+  }
+]

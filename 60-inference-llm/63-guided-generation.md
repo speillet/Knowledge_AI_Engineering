@@ -135,6 +135,7 @@ Mise en situation : ton extraction de factures renvoie toujours un JSON conforme
 ---
 
 ## Connexions
+- [[90-010-evaluation-reponses-llm|Évaluation des réponses]] — vérifier le contenu au-delà du format et du schéma
 - [[11-prompt-engineering-avance|Prompt engineering]] — garantir plutôt que demander
 - [[32-tool-calling|Tool calling]] — arguments contraints par le schéma
 - [[92-chainforge-evals-prompts|Evals]] — des sorties structurées plus faciles à évaluer

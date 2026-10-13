@@ -9,6 +9,8 @@ Pour démarrer, consulter le [guide d'apprentissage](docs/apprendre-avec-les-car
 
 Pour appliquer les métriques, l’[atelier local de décision IA](examples/decisions-ia/README.md) relie validation ML, calibration, choix de modèle et qualité documentaire ; le [bilan du 11 octobre](docs/revue-pertinence-2026-10-11.md) précise les enrichissements et leur périmètre.
 
+Pour construire des preuves vérifiables, l’[atelier RAG local](examples/rag-verifiable/README.md) compare deux politiques sur dix cas fictifs : droits, dates d'effet, conflits, retrait et abstention. Étudier [[22-rag-avance|la recherche avancée]], [[20-010-rag-droits-versions|les droits et versions]], puis [[96-evals-rag-agents|l'évaluation RAG]] ; produire un tableau affirmation/preuve et un rapport reproductible.
+
 ## Parcours de lecture
 Progression recommandée : **comprendre les modèles → les utiliser → construire des architectures → adapter → servir & déployer → industrialiser → gouverner → concevoir des systèmes.**
 - **Socle prédictif** : [[171-choisir-modele-ml|ML classique]] puis [[172-validation-metriques-ml|validation et métriques]] — choisir une approche avant de construire une chaîne LLM
@@ -40,6 +42,19 @@ Pour se concentrer sur les agents, à travers les sections :
 6. [[102-menaces-agents|Menaces]] et [[103-defenses-agents|défenses]] — sécuriser
 7. [[84-streaming-integration-applicative|Intégration applicative]] et [[38-plateformes-agents|plateformes]] — mettre en production
 8. [[115-plateformes-agents-gouvernance|Gouvernance]] et [[55-rl-agentique|RL agentique]] — niveau senior
+
+### Parcours implémenter et valider une plateforme d’agents
+
+Suivre le [guide pratique complet](docs/parcours-plateforme-agents-inference.md) sur un même agent de support. Les étapes se valident par des livrables et des résultats observables :
+
+1. **Définir la réussite** avec [[141-system-design-llm|System design]] et [[94-evals-methodologie|Méthodologie d’évaluation]] : tâche, baseline, contraintes et critères d’acceptation.
+2. **Attribuer les responsabilités** avec [[38-plateformes-agents|Plateformes]] et [[115-plateformes-agents-gouvernance|Architecture et gouvernance]] : API, runtime, état, gateway LLM et outils.
+3. **Qualifier les contrats API et modèle** avec [[81-litellm-api-layer|Gateway LLM]], [[84-streaming-integration-applicative|Streaming]] et [[63-guided-generation|Sorties structurées]] : capacités réelles, erreurs et secours.
+4. **Fiabiliser l’exécution** avec [[32-tool-calling|Tool calling]], [[103-defenses-agents|Architecture défensive]] et [[149-livraison-idempotence-concurrence|Idempotence]] : permissions, budgets, concurrence et reprises.
+5. **Vérifier les réponses et le résultat métier** avec [[90-010-evaluation-reponses-llm|Évaluation des réponses]], [[96-evals-rag-agents|Évaluation des agents]] et [[114-reproductibilite-variance|Reproductibilité]] : grille, complétude, état final et variance.
+6. **Observer de bout en bout** avec [[93-monitoring-inference|Monitoring]] et [[64-metriques-slo-inference|Métriques et SLO]] : traces, populations, délais et coût par tâche conforme.
+7. **Mesurer et dimensionner** avec [[60-010-benchmarks-charge-inference|Benchmarks]], [[60-011-capacite-ordonnancement-inference|Capacité]] et [[60-012-demarche-optimisation-inference|Optimisation]] : appels par tâche, charge réelle, files et réserve.
+8. **Déployer et reprendre** avec [[142-fiabilite-resilience-llm|Résilience]], [[112-cicd-modeles|CI/CD]] et [[116-sre-incidents-capacite-ia|SRE]] : essais de panne, canary, rollback et runbook.
 
 ### Parcours fondations senior
 Pour relier les trois priorités transversales aux applications IA :
@@ -109,6 +124,7 @@ L’[audit d’inférence du 8 octobre](docs/audit-inference-llm-2026-10-08.md) 
 - [[25-chunking-contextual-retrieval|Chunking avancé & contextual retrieval]]
 - [[26-text-to-sql|Text-to-SQL & données structurées]]
 - [[27-agents-recherche-deep-research|Agents de recherche (deep research)]]
+- [[20-010-rag-droits-versions|RAG en production : droits, versions & abstention]]
 
 ## 30 — Agents
 
@@ -194,6 +210,7 @@ L’[audit d’inférence du 8 octobre](docs/audit-inference-llm-2026-10-08.md) 
 - [[97-evals-online-ab-testing|Evals online & A/B testing]]
 - [[98-debogage-agents|Débogage & analyse d'échecs des agents]]
 - [[99-statistiques-decisions-experimentales|Statistiques pour décider en IA]]
+- [[90-010-evaluation-reponses-llm|Évaluation des outputs & des réponses LLM]]
 
 ## 100 — Sécurité & guardrails
 

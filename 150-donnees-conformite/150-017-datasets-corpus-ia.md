@@ -173,6 +173,7 @@ Mise en situation : le score d’évaluation augmente fortement après ingestion
 - [Apache Arrow — représentation colonnaire et échanges](https://arrow.apache.org/docs/format/Columnar.html)
 
 ## Connexions
+- [[20-010-rag-droits-versions|RAG : droits & versions]] — appliquer le cycle de vie du corpus aux preuves servies
 - [[151-donnees-curation-annotation|Curation & annotation]] — relier qualité éditoriale et construction du corpus
 - [[153-data-flywheel-versioning|Versioning des données]] — fixer contenu, transformations et conservation
 - [[162-document-parsing|Parsing documentaire]] — contrôler les représentations dérivées

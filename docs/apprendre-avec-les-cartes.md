@@ -61,8 +61,12 @@ Tenir un petit journal d'erreurs : `notion | mon raisonnement erroné | correcti
 
 Après un bloc, produire un livrable reproductible : notebook de métriques avec données annotées, diagnostic RAG, rapport de charge ou décision d'architecture. Consigner hypothèses, protocole, résultat et limites. Une simulation est utile si elle est annoncée comme telle ; elle ne remplace pas une mesure du service réel.
 
+Pour assembler une plateforme, suivre le [parcours implémenter et valider une plateforme d’agents](parcours-plateforme-agents-inference.md) : huit étapes sur un agent de support, avec architecture, contrats API, qualité, observabilité, capacité et reprise. Chaque étape indique les cartes à étudier, un livrable et un critère de passage ; les preuves pratiques complètent les révisions.
+
 Le [parcours de mise en pratique senior](pertinence-parcours-senior-2026-10-07.md) et les [ateliers d'inférence](audit-inference-llm-2026-10-08.md) donnent des livrables et critères concrets. Les cartes entretiennent les connaissances nécessaires ; l'expérience de construction, de mesure, d'exploitation et de transmission complète cet apprentissage.
 
 Pour les données, suivre le [parcours data engineering et ses cinq ateliers](audit-data-engineering-2026-10-09.md). L'[atelier SQL exécutable](../examples/data-engineering/atelier_sql.py) permet de prédire puis vérifier les effets des jointures, des valeurs nulles et de la disponibilité temporelle, sans service externe.
 
 Pour les décisions IA, l’[atelier Python local](../examples/decisions-ia/README.md) propose des énoncés avant affichage des solutions, puis des variantes sur brouillon. Il fait comparer coût attendu et revue, distinguer précision et prévalence, choisir sous contraintes et mesurer les documents complets. Les données sont fictives ; expliquer les hypothèses compte autant que retrouver les chiffres.
+
+Pour le RAG, l’[atelier vérifiable](../examples/rag-verifiable/README.md) fait prédire les preuves autorisées et les réponses avant de comparer deux politiques. Modifier ensuite un fait, retirer une preuve et réduire le budget de recherche : le résultat doit suivre les données ou révéler la limite rencontrée. Le livrable attendu relie chaque affirmation à un passage versionné et explique les abstentions ; les métriques de cette simulation ne constituent pas un benchmark de LLM.

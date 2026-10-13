@@ -4,7 +4,7 @@ Un vault [Obsidian](https://obsidian.md) de **fiches de révision (flashcards) e
 
 Chaque fiche traite **un concept** en 8 à 34 cartes question/réponse, une quinzaine en moyenne, et se termine par des **mises en situation** : des cas concrets à diagnostiquer, concevoir ou arbitrer. Les fiches sont reliées entre elles par des liens, pour qu'on puisse passer d'un sujet à ses voisins, et elles se révisent en **répétition espacée**.
 
-**État au 11 octobre 2026** : 137 fiches et 2 043 cartes, réparties en 17 sections, dont 323 mises en situation et 164 cartes « à ne pas confondre ».
+**État au 13 octobre 2026** : 139 fiches et 2 078 cartes, réparties en 17 sections, dont 329 mises en situation et 168 cartes « à ne pas confondre ».
 
 ---
 
@@ -13,9 +13,10 @@ Chaque fiche traite **un concept** en 8 à 34 cartes question/réponse, une quin
 ```text
 Knowledge_AI_Engineering/
 ├── README.md
-├── docs/                       # bilans de revue et documentation de maintenance
+├── docs/                       # parcours pratiques, bilans de revue et maintenance
 ├── examples/data-engineering/  # atelier SQL local avec données synthétiques
 ├── examples/decisions-ia/      # métriques, revue humaine et choix de modèle en Python
+├── examples/rag-verifiable/    # preuves, droits, versions et abstention sans LLM
 ├── .obsidian/                   # configuration Obsidian
 ├── .claude/skills/              # skills Claude Code versionnés (grilling, grill-me)
 ├── scripts/lint_flashcards.py   # vérification des conventions + statistiques
@@ -67,7 +68,10 @@ Knowledge_AI_Engineering/
 
 ### 2. Lire et naviguer
 
+- **Implémenter et valider une plateforme d’agents** : le [parcours en huit étapes](docs/parcours-plateforme-agents-inference.md) suit un agent de support, de l’architecture et des contrats API aux tests de qualité, de charge et de reprise. Chaque étape relie les fiches utiles à un livrable et à un critère de passage.
+- **Évaluer les outputs et les réponses** : la [fiche dédiée](90-observabilite-evals/90-010-evaluation-reponses-llm.md) rassemble exactitude, complétude, consignes, références et métriques selon la tâche. L'étape 5 du parcours de plateforme applique une grille à des réponses de support complètes, partielles et fausses.
 - **Appliquer les métriques aux décisions** : l’[atelier Python local](examples/decisions-ia/README.md) propose quatre exercices corrigés sur la prévalence, la revue humaine, le choix de modèle et la qualité du document complet, sans API ni GPU.
+- **Construire un RAG vérifiable** : l’[atelier local en dix cas](examples/rag-verifiable/README.md) compare recherche naïve et filtrée, avec corpus versionné, droits d’accès, contradictions, citations et réponses partielles. La [fiche droits et versions](20-rag/20-010-rag-droits-versions.md) apporte les règles de production ; le [bilan du 13 octobre](docs/enrichissement-rag-2026-10-13.md) précise les ajouts et les prochaines priorités.
 - **Consulter la revue de pertinence** : le [bilan du 11 octobre](docs/revue-pertinence-2026-10-11.md) précise les corrections et les 33 cartes ajoutées en deux passes, ainsi que le périmètre de vérification.
 - **Apprendre avant de multiplier les révisions** : le [guide d'apprentissage](docs/apprendre-avec-les-cartes.md) propose un démarrage progressif, des critères pour se noter et des exercices pour vérifier le transfert. Le [bilan du 9 octobre](docs/revue-apprentissage-2026-10-09.md) détaille les corrections pédagogiques et les nouvelles cartes d'application.
 - **Suivre le parcours de lecture** du MOC, qui va dans cet ordre : ML classique et validation, fondamentaux LLM (prérequis), prompt engineering, RAG, agents, automatisation et frameworks d'agents, fine-tuning, inférence, conteneurs, API layer, observabilité, sécurité, MLOps & CI/CD, coûts & FinOps, données & conformité, multimodal & edge, puis system design & produit, qui assemble le tout. Le MOC propose aussi un **parcours AI Engineer agentique**, qui enchaîne en 8 étapes les fiches sur les agents réparties dans plusieurs sections.
@@ -242,6 +246,7 @@ Trois sujets traversent toute la stack : l'**observabilité** (traces, métrique
 - [Chunking avancé & contextual retrieval](20-rag/25-chunking-contextual-retrieval.md) : chunks sans contexte, contextual retrieval (gain, coût, prompt caching), late chunking, taille des chunks, small-to-big, chunking sémantique et par propositions, fil d'Ariane et métadonnées, comparaison de stratégies au recall@k.
 - [Text-to-SQL & données structurées](20-rag/26-text-to-sql.md) : text-to-SQL ou RAG, contenu du prompt, schema linking, couche sémantique, sécurisation de l'exécution, boucle de correction, exact match ou execution accuracy, benchmarks (Spider, BIRD, Spider 2.0), questions ambiguës.
 - [Agents de recherche (deep research)](20-rag/27-agents-recherche-deep-research.md) : RAG ou agent de recherche, boucle de recherche, sous-agents parallèles, outils de recherche, citations fiables, risques (sources, injection, biais), évaluation (couverture, BrowseComp), calcul du coût d'un rapport, quand ne pas l'utiliser.
+- [RAG en production : droits, versions & abstention](20-rag/20-010-rag-droits-versions.md) : identité et permissions, filtrage avant exposition, rappel sous filtres, validité temporelle, priorité des sources, suppressions et caches, citations versionnées, abstention et tests de régression.
 
 ### 30 — Agents
 
@@ -331,6 +336,7 @@ Comprendre les mécanismes du serving, mesurer qualité et SLO, tester la capaci
 - [Evals online & A/B testing](90-observabilite-evals/97-evals-online-ab-testing.md) : signaux explicites et implicites, A/B test, guardrail metrics, shadow testing, canary ou A/B, peeking, effet de nouveauté, métriques produit, boucle online-offline, confidentialité, calcul de la taille d'échantillon.
 - [Débogage & analyse d'échecs des agents](90-observabilite-evals/98-debogage-agents.md) : error analysis (open et axial coding), symptôme ou cause, catégories d'échec, taxonomie MAST, détection des boucles, reproduction par rejeu, de l'échec au cas de non-régression, signaux de production, quand ne pas accuser le modèle.
 - [Statistiques pour décider en IA](90-observabilite-evals/99-statistiques-decisions-experimentales.md) : effet utile et significativité, p-valeur, intervalle de confiance, comparaison appariée, unité indépendante, zéro échec, tests multiples, puissance, causalité, biais de sélection et sample ratio mismatch.
+- [Évaluation des outputs & des réponses LLM](90-observabilite-evals/90-010-evaluation-reponses-llm.md) : grille par dimension, exactitude et complétude, pertinence et consignes, références multiples, normalisation, BLEU et ROUGE, BERTScore, résumés, réponses numériques, critères bloquants et agrégation par affirmation.
 
 ### 100 — Sécurité & guardrails
 

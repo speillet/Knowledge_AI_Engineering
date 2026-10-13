@@ -34,13 +34,15 @@ Quelles évaluations automatiques simples appliquer aux réponses d'un LLM ? <!-
 ?
 **Exact match, regex, contains, validité JSON, tests de code** — rapides, gratuites et déterministes quand la tâche s'y prête.
 ```python
+import json
+
 def evaluer(sortie, attendu):
-    assert json.loads(sortie)                    # forme
-    d = json.loads(sortie)
+    d = json.loads(sortie)                       # syntaxe : erreur si JSON invalide
+    assert isinstance(d, dict)                   # structure requise ici : un objet
     assert d["montant"] == attendu["montant"]    # fond
-    assert d["devise"] in {"EUR", "USD"}         # domaine
+    assert d["devise"] == attendu["devise"]      # la bonne devise, pas seulement une devise autorisée
 ```
-Règle : **le plus simple qui marche**. On ne sort le juge LLM que pour ce que le code ne sait pas vérifier ([[94-evals-methodologie|familles d'évaluateurs]]).
+Un JSON parsable n'est pas forcément un objet ni un résultat correct. Ces assertions illustrent une comparaison à la référence ; les types, unités et règles d'arrondi se définissent selon le contrat. Règle : **le plus simple qui marche** ([[94-evals-methodologie|familles d'évaluateurs]]).
 
 ---
 
@@ -91,6 +93,7 @@ Mise en situation : une modification de prompt améliore visiblement les répons
 - [NIST — test de McNemar pour observations binaires appariées](https://www.itl.nist.gov/div898/software/dataplot/refman1/auxillar/mcnemar.htm)
 
 ## Connexions
+- [[90-010-evaluation-reponses-llm|Évaluation des réponses]] — choisir les critères et les équivalences admissibles
 - [[91-langfuse-observabilite|Langfuse]] — evals en production (scores, datasets)
 - [[11-prompt-engineering-avance|Prompt engineering avancé]] — ce qu'on évalue
 - [[82-routing-llm|Routing LLM]] — décision fondée sur les evals
