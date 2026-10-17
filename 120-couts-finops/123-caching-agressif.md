@@ -1,6 +1,6 @@
 # Caching agressif — Flashcards
 Tags: #flashcards #ai-engineering #finops #caching #couts #llm
-Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+Vérifié le : 17 octobre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
 <!-- summary: prompt caching (TTL, prix d'écriture et de lecture), structure de prompt stable, ce qui casse le cache, contexte append-only, requêtes parallèles et pré-chauffage, caches de réponses, d'embeddings et d'outils, prompt caching, cache exact ou sémantique, invalidation, sécurité, pilotage. -->
 
 
@@ -22,7 +22,7 @@ Comment fonctionne le prompt caching chez Anthropic ? <!--anki:653e3c6151316b285
 ?
 - Points de cache `cache_control` (**4 maximum**) ou cache automatique
 - **TTL de 5 minutes** par défaut, rafraîchi à chaque lecture ; **1 heure** en option
-- Écriture : **1,25×** le prix d'entrée (TTL 5 min) ou **2×** (1 h) ; lecture : **≈ 0,1×**
+- Écriture : **1,25×** le prix d'entrée (TTL 5 min) ou **2×** (1 h) ; lecture : **0,1×** en général, moins encore sur certains modèles récents
 - Rentable **dès la 2e requête** avec le TTL de 5 minutes
 
 D'autres fournisseurs cachent automatiquement les longs préfixes (ex. OpenAI).

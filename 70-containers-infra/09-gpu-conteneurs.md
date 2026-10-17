@@ -74,6 +74,7 @@ A100               40 ou 80 Go  génération précédente, pas de FP8
 H100               80 Go       FP8 natif, NVLink
 H200              141 Go       idéal pour les contextes longs
 B200              ~180 Go      Blackwell, FP4 natif
+B300              ~288 Go      Blackwell Ultra, mémoire HBM3e accrue
 ```
 Ces capacités sont des repères de variantes matérielles ; vérifier la fiche exacte du GPU. Comparer **poids + KV cache + allocations du moteur** à la mémoire réellement utilisable, avec des unités cohérentes. Les seuls poids d'un 70B en BF16 représentent environ 140 Go : cela ne garantit pas un serving exploitable sur un H200 de 141 Go, faute de marge suffisante selon la configuration.
 
@@ -149,6 +150,7 @@ Mise en situation : deux équipes se partagent un GPU pour leurs services d'inf�
 ## Sources
 
 - [NVIDIA — capacités mémoire des systèmes HGX H100, H200 et B200](https://docs.nvidia.com/enterprise-reference-architectures/hgx-ai-factory-h100-h200-b200/latest/components.html)
+- [NVIDIA — GB300 NVL72 et mémoire des GPU Blackwell Ultra](https://www.nvidia.com/en-us/data-center/gb300-nvl72/)
 
 - [Apptainer — accès aux périphériques et bibliothèques GPU](https://apptainer.org/docs/user/main/gpu.html)
 

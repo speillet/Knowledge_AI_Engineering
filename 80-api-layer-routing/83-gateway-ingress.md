@@ -1,6 +1,7 @@
 # Ingress & API gateway — Flashcards
 Tags: #flashcards #ai-engineering #kubernetes #ingress #networking
-<!-- summary: Ingress controller, Ingress ou API gateway, TLS, Gateway API, rate limiting, streaming SSE. -->
+Vérifié le : 17 octobre 2026 — retrait d'ingress-nginx confronté aux annonces du projet Kubernetes.
+<!-- summary: Ingress controller, retrait d'ingress-nginx, Ingress, API gateway et gateway LLM, TLS, Gateway API, rate limiting, streaming SSE, migration d'un controller. -->
 
 
 Qu'est-ce qu'un Ingress dans Kubernetes ? <!--anki:49586e334f397c2c6740-->
@@ -13,7 +14,7 @@ Un objet Ingress décrit des règles ; un **Ingress controller** doit les implé
 
 Un Ingress fonctionne-t-il seul ? <!--anki:45497c54723d663e553e-->
 ?
-**Non.** L'objet Ingress n'est qu'une **déclaration** ; il faut un **Ingress controller** (ingress-nginx, Traefik, HAProxy, Envoy Gateway) qui l'observe et configure réellement un proxy. Sans controller installé, l'objet est accepté par l'API et **rien ne se passe** : c'est une cause classique de « mon Ingress ne répond pas ».
+**Non.** L'objet Ingress n'est qu'une **déclaration** ; il faut un **Ingress controller** (Traefik, HAProxy, Cilium…) qui l'observe et configure réellement un proxy. ingress-nginx, longtemps le plus répandu, n'est plus maintenu depuis mars 2026. Sans controller installé, l'objet est accepté par l'API et **rien ne se passe** : c'est une cause classique de « mon Ingress ne répond pas ».
 
 ---
 
@@ -34,16 +35,7 @@ GatewayClass → l'implémentation (choisie par la plateforme)
 Gateway      → le point d'entrée : ports, TLS (équipe infra)
 HTTPRoute    → le routage vers les Services (équipe applicative)
 ```
-Apports : **délégation par équipe** sans annotations propriétaires, découpage du trafic **par poids** (canary), et prise en charge d'autres protocoles (gRPC, TCP). Les projets de gateway pour agents s'appuient dessus ([[38-plateformes-agents|agentgateway]]).
-
----
-
-À ne pas confondre : Ingress et API gateway ? <!--anki:443d4d6b453641476b78-->
-?
-- **Ingress** : du **routage HTTP** (L7) vers les Services du cluster, par hôte et par chemin, avec terminaison TLS
-- **API gateway** : ajoute la **logique d'API** : authentification, rate limiting, quotas, transformation de requêtes, analytics
-
-Pour une stack LLM, on ajoute souvent une **gateway LLM** (LiteLLM) derrière, qui connaît les modèles, les tokens et les budgets ([[81-litellm-api-layer|LiteLLM]]).
+Apports : **délégation par équipe** sans annotations propriétaires, découpage du trafic **par poids** (canary), et prise en charge d'autres protocoles (gRPC, TCP). C'est la voie recommandée par Kubernetes pour remplacer ingress-nginx. Les projets de gateway pour agents s'appuient dessus ([[38-plateformes-agents|agentgateway]]).
 
 ---
 
@@ -87,7 +79,7 @@ annotations:                       # ingress-nginx
   nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
   nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
 ```
-Penser aussi aux **load balancers cloud** en amont, avec leur propre délai d'inactivité, et à la **compression**, à désactiver sur ces routes.
+Penser aussi aux **load balancers cloud** en amont, avec leur propre délai d'inactivité, et à la **compression**, à désactiver sur ces routes. Ces annotations sont propres à ingress-nginx, qui n'est plus maintenu depuis mars 2026 : avec un autre controller ou la Gateway API, chercher les réglages équivalents.
 
 ---
 
@@ -107,15 +99,15 @@ Distinguer délai de connexion, délai entre lectures et durée totale. Tester u
 
 ## Mises en situation
 
-Mise en situation : en production, les réponses longues de ton assistant sont coupées au bout de 60 secondes, alors qu'elles fonctionnent en local. Que vérifies-tu ? <!--anki:716b504c607369232b6a-->
+Mise en situation : ton assistant est exposé par ingress-nginx, qui n'est plus maintenu depuis mars 2026, avec des annotations qui désactivent le buffering et allongent les timeouts du streaming. Comment prépares-tu la migration ? <!--anki:6566363336623132396438643438623062396438343933313137363037623561-->
 ?
-1. **Les timeouts de l'Ingress** et de tout proxy intermédiaire, souvent à 60 s par défaut
-2. **Le buffering** : un proxy qui met la réponse en tampon casse le streaming, à désactiver pour ces routes
-3. **La chaîne complète** : load balancer cloud, Ingress, gateway applicative, serveur d'inférence, chacun avec ses délais
-4. **Les timeouts côté client** et les reconnexions automatiques
-5. **Réduire le besoin** : limiter `max_tokens`, streamer dès le premier token pour que l'utilisateur voie la réponse arriver
+1. **Inventorier** les objets Ingress et leurs annotations : timeouts, buffering, TLS, taille des requêtes, réécritures
+2. **Choisir la cible** : une implémentation de la Gateway API ou un autre controller maintenu, selon les fonctions réellement utilisées ([[04-kubernetes-kubelet-cri|Kubernetes]])
+3. **Traduire chaque réglage** : aucun remplaçant n'accepte ces annotations telles quelles, les équivalents se configurent autrement
+4. **Tester le streaming de bout en bout** : réponse longue, pause sans émission, déconnexion du client ([[84-streaming-integration-applicative|streaming]])
+5. **Basculer progressivement** : deux points d'entrée en parallèle, trafic déplacé par étapes, retour arrière prêt
 
-**Piège** : augmenter seulement le timeout du serveur d'inférence, alors que la coupure vient du proxy.
+**Piège** : recopier les routes sans leurs annotations, et retrouver en production des réponses tamponnées ou coupées.
 
 ---
 
@@ -130,6 +122,11 @@ Mise en situation : un client unique sature ton service d'inférence en lançant
 **Piège** : limiter uniquement le nombre de requêtes, alors qu'une seule requête à 100 000 tokens coûte bien plus cher.
 
 ---
+
+## Sources
+
+- [Kubernetes — retrait d'Ingress NGINX](https://kubernetes.io/blog/2025/11/11/ingress-nginx-retirement/)
+- [Kubernetes — Gateway API](https://gateway-api.sigs.k8s.io/)
 
 ## Connexions
 - [[04-kubernetes-kubelet-cri|Kubernetes]] — le socle

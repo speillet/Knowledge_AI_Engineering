@@ -148,5 +148,15 @@
     "id": "7230625557696a456f63",
     "question": "Comment distinguer namespaces et cgroups ?",
     "raison": "doublon de 08-linux-primitives-docker-fondamentaux"
+  },
+  {
+    "id": "716b504c607369232b6a",
+    "question": "Mise en situation : en production, les réponses longues de ton assistant sont coupées au bout de 60 secondes, alors qu'elles fonctionnent en local. Que vérifies-tu ?",
+    "raison": "doublon de la mise en situation de 84-streaming-integration-applicative, remplacée par une migration hors d'ingress-nginx"
+  },
+  {
+    "id": "443d4d6b453641476b78",
+    "question": "À ne pas confondre : Ingress et API gateway ?",
+    "raison": "incluse dans « À ne pas confondre : Ingress, API gateway et gateway LLM » de 83-gateway-ingress"
   }
 ]

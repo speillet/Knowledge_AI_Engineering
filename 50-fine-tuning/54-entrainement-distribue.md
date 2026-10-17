@@ -86,7 +86,7 @@ Par exemple, 4 exemples par micro-batch, 8 accumulations et 2 répliques de donn
 
 Qu'est-ce que la précision mixte et pourquoi BF16 plutôt que FP16 ? <!--anki:665a7a642e456235383a-->
 ?
-Calculer en **16 bits** (plus rapide, moins de mémoire) tout en gardant une copie **FP32** des poids pour les mises à jour. **BF16** a la même **plage de valeurs** que FP32 (8 bits d'exposant) : pas de débordement, donc pas besoin de **loss scaling** comme en FP16. Les GPU récents entraînent aussi en **FP8**.
+Calculer en **16 bits** (plus rapide, moins de mémoire) tout en gardant une copie **FP32** des poids pour les mises à jour. **BF16** a la même **plage de valeurs** que FP32 (8 bits d'exposant) : les débordements sont bien plus rares qu'en FP16 et le **loss scaling** n'est généralement pas nécessaire, au prix d'une mantisse moins précise. Les GPU récents entraînent aussi en **FP8**.
 
 ---
 

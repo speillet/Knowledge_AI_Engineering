@@ -4,7 +4,7 @@ Un vault [Obsidian](https://obsidian.md) de **fiches de révision (flashcards) e
 
 Chaque fiche traite **un concept** en 8 à 34 cartes question/réponse, une quinzaine en moyenne, et se termine par des **mises en situation** : des cas concrets à diagnostiquer, concevoir ou arbitrer. Les fiches sont reliées entre elles par des liens, pour qu'on puisse passer d'un sujet à ses voisins, et elles se révisent en **répétition espacée**.
 
-**État au 17 octobre 2026** : 146 fiches et 2 202 cartes, réparties en 17 sections, dont 350 mises en situation et 180 cartes « à ne pas confondre ».
+**État au 17 octobre 2026** : 146 fiches et 2 201 cartes, réparties en 17 sections, dont 350 mises en situation et 179 cartes « à ne pas confondre ».
 
 ---
 
@@ -333,7 +333,7 @@ Comprendre les mécanismes du serving, mesurer qualité et SLO, tester la capaci
 
 - [LiteLLM (API layer)](80-api-layer-routing/81-litellm-api-layer.md) : SDK ou proxy, virtual keys, budgets, rate limits, fallbacks, load balancing, callbacks d'observabilité, alternatives (gateways auto-hébergées, services des clouds, agrégateurs).
 - [Routing LLM](80-api-layer-routing/82-routing-llm.md) : routage statique, par règles ou sémantique, RouteLLM, cascade, routage selon la charge, cache sémantique.
-- [Ingress & API gateway](80-api-layer-routing/83-gateway-ingress.md) : Ingress controller, Ingress ou API gateway, TLS, Gateway API, rate limiting, streaming SSE.
+- [Ingress & API gateway](80-api-layer-routing/83-gateway-ingress.md) : Ingress controller, retrait d'ingress-nginx, Ingress, API gateway et gateway LLM, TLS, Gateway API, rate limiting, streaming SSE, migration d'un controller.
 - [Streaming & intégration applicative](80-api-layer-routing/84-streaming-integration-applicative.md) : intérêt du streaming, SSE ou WebSocket, tampons des proxys, annulation côté serveur, JSON en streaming, événements d'un agent (AG-UI), tâches longues asynchrones, reprise d'un flux, clé d'idempotence, calcul des connexions ouvertes.
 - [Carte des protocoles agentiques](80-api-layer-routing/85-carte-protocoles-agentiques.md) : protocoles par frontière, MCP, A2A et AG-UI, Agent Card, cycle d'une tâche A2A, API compatible OpenAI, conventions OpenTelemetry GenAI, `AGENTS.md` et skills, paiements par agents (AP2, ACP), gouvernance des standards, quand ne pas exposer un agent en A2A, frontières de confiance.
 

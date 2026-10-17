@@ -1,5 +1,6 @@
 # Harness & plugins — Flashcards
 Tags: #flashcards #ai-engineering #agents #harness #llm
+Vérifié le : 17 octobre 2026 — comportement des hooks de Claude Code confronté à la documentation officielle.
 <!-- summary: rôle du harness, plugins, skills, hooks, permissions, sandbox, fichiers mémoire. -->
 
 
@@ -73,7 +74,7 @@ Un **script exécuté par le harness** à un moment précis du cycle (avant ou a
   }
 }
 ```
-Un code de sortie non nul **bloque** l'action : c'est la différence entre une consigne et un contrôle ([[106-securite-agents-code|agents de code]]).
+Dans Claude Code, seul le **code de sortie 2** **bloque** l'appel d'outil ; un autre code non nul signale une erreur **non bloquante**, sauf configuration contraire. Un script de politique sort donc en 2 ou renvoie une décision JSON de refus : c'est la différence entre une consigne et un contrôle ([[106-securite-agents-code|agents de code]]).
 
 ---
 
@@ -136,6 +137,10 @@ Mise en situation : tu veux garantir qu'aucun agent de ton équipe ne puisse lan
 **Piège** : mettre la règle dans le fichier de conventions du projet, que le modèle peut ignorer.
 
 ---
+
+## Sources
+
+- [Claude Code — hooks et codes de sortie](https://code.claude.com/docs/en/hooks)
 
 ## Connexions
 - [[31-agents-fondamentaux|Agents]] — la boucle que le harness exécute
