@@ -101,7 +101,7 @@ Tracer aussi tokenizer, chat template, adapter, quantification et configuration 
 
 ---
 
-Quelle tendance pour distribuer les modèles ? <!--anki:426c59524537246c475d-->
+Quelle tendance émerge pour distribuer les poids de modèles avec l'outillage des conteneurs ? <!--anki:426c59524537246c475d-->
 ?
 Distribuer les poids comme **artefacts OCI** dans un registry, puis les monter comme volumes (volumes d'image Kubernetes, KitOps) : même outillage que les images (versioning, cache, signature).
 

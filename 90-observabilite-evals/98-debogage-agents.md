@@ -30,7 +30,7 @@ On corrige la **première erreur** de la trace : les suivantes en découlent sou
 
 ---
 
-Quelles catégories d'échec rencontre-t-on le plus souvent ? <!--anki:727553234b4d6c736937-->
+Quelles catégories d'échec d'agent rencontre-t-on le plus souvent ? <!--anki:727553234b4d6c736937-->
 ?
 - **Spécification** : consigne ambiguë ou contradictoire, critère de fin absent
 - **Outils** : mauvais choix d'outil, arguments invalides, résultat mal interprété ([[32-tool-calling|tool calling]])
@@ -74,7 +74,7 @@ Un échec vu une fois sur dix n'est pas corrigé tant qu'on ne mesure pas cette 
 
 ---
 
-Que faire d'un échec une fois compris ? <!--anki:69374a72434a62663952-->
+Que faire d'un échec d'agent une fois sa cause comprise ? <!--anki:69374a72434a62663952-->
 ?
 1. **Corriger** au bon endroit : prompt, description d'outil, retrieval, garde-fou en code
 2. **Ajouter le cas** au jeu de non-régression, avec le critère de réussite ([[153-data-flywheel-versioning|flywheel]])
@@ -97,7 +97,7 @@ Lire chaque semaine un lot de traces reste l'activité la plus rentable pour am�
 
 ---
 
-Quand ne pas accuser le modèle ? <!--anki:7574796a2a7975773c63-->
+Quand un échec d'agent ne doit-il pas être attribué au modèle ? <!--anki:7574796a2a7975773c63-->
 ?
 Tant que la trace montre un problème **en amont** : l'information n'était pas dans le contexte, l'outil a renvoyé une erreur illisible, deux consignes se contredisaient, ou le critère de fin n'existait pas. Changer de modèle masque parfois ces défauts, sans les corriger.
 

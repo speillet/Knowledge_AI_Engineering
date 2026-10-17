@@ -60,7 +60,7 @@ Le résultat est un programme figé, sauvegardé et versionné comme un artefact
 
 ---
 
-Quels autres travaux ont fondé l'optimisation de prompts ? <!--anki:42375e6b5e4274323c29-->
+Comment APE, OPRO et TextGrad guident-ils chacun la recherche d'un meilleur prompt ? <!--anki:42375e6b5e4274323c29-->
 ?
 - **APE** (Automatic Prompt Engineer, 2022) : un LLM génère des instructions candidates, on garde la meilleure sur un jeu de validation
 - **OPRO** (Google DeepMind, 2023) : le LLM joue l'**optimiseur**, en voyant l'historique des prompts et de leurs scores

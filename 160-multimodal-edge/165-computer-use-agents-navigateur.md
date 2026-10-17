@@ -31,7 +31,7 @@ Parades : réduire la résolution de façon maîtrisée, **set-of-mark** (numér
 
 ---
 
-Quels benchmarks évaluent les agents d'interface ? <!--anki:495a51606677213a5664-->
+Que mesurent des benchmarks d'agents d'interface comme OSWorld et WebArena, et pourquoi le meilleur essai ne suffit-il pas ? <!--anki:495a51606677213a5664-->
 ?
 - **OSWorld** : tâches réelles sur un bureau complet (Ubuntu, Windows), applications de bureautique et de fichiers
 - **WebArena** : sites web autohébergés réalistes (e-commerce, forum, GitLab), tâches vérifiables

@@ -28,11 +28,11 @@ Que met-on dans le prompt d'un système text-to-SQL ? <!--anki:7145587c263171674
 - Des **exemples question → SQL** validés, proches de la question (sélectionnés par similarité)
 - Le **dialecte** (PostgreSQL, BigQuery, Snowflake) et les règles : lecture seule, `LIMIT`, fuseau horaire
 
-Le schéma brut sans descriptions est la cause d'erreur la plus fréquente.
+Un schéma brut sans descriptions est une cause d'erreur fréquente.
 
 ---
 
-Comment faire avec un schéma de 500 tables ? <!--anki:744e306277797e296e65-->
+Comment un système text-to-SQL peut-il gérer un schéma de 500 tables ? <!--anki:744e306277797e296e65-->
 ?
 Par **schema linking** : une première étape sélectionne les **tables et colonnes utiles** à la question (recherche sur les descriptions, ou LLM), puis on ne met que ce sous-schéma dans le prompt de génération. Sans cela, le schéma sature le contexte et le modèle **confond des colonnes homonymes**.
 
@@ -76,7 +76,7 @@ Limite de la seconde : deux requêtes peuvent coïncider sur les données de tes
 
 ---
 
-Quels benchmarks de text-to-SQL connaître ? <!--anki:6976465b5b7c3160683e-->
+Pourquoi un bon score sur Spider ne prédit-il pas la réussite d'un text-to-SQL sur un entrepôt d'entreprise ? <!--anki:6976465b5b7c3160683e-->
 ?
 - **Spider** (2018) : bases variées mais simples, aujourd'hui saturé
 - **BIRD** (2023) : bases plus grandes et **sales**, connaissances métier nécessaires

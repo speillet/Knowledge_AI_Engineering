@@ -12,7 +12,7 @@ La plateforme est utile si elle réduit réellement le délai de livraison et le
 
 ---
 
-Quelle part des projets agentiques Gartner prévoit-il d'annuler d'ici fin 2027, et pour quelles raisons ? <!--anki:6233353432366564333864353439316662376461306137396636323031326531-->
+Pour quelles raisons Gartner prévoit-il l'annulation de nombreux projets agentiques d'ici fin 2027, et qu'en retenir ? <!--anki:6233353432366564333864353439316662376461306137396636323031326531-->
 ?
 **Plus de 40 %**, pour trois raisons : des **coûts** qui dérapent, une **valeur métier** floue et un **contrôle des risques** insuffisant. Ce sont les sujets qu'une plateforme interne traite dès le départ.
 
@@ -272,7 +272,7 @@ Que préparer pour l'AI Act sur une plateforme d'agents ? <!--anki:764d316c7c554
 - **Supervision humaine** effective sur les actions à risque
 - **Journaux** et **documentation** technique
 
-Cadre de management utile : **ISO/IEC 42001**.
+Cadre de management utile : **ISO/IEC 42001** ; calendrier et obligations dans la [[155-ai-act|fiche AI Act]].
 
 La qualification dépend de la **finalité du système et du rôle de l'organisation**, pas du seul usage d'un agent. Relier chaque cas d'usage aux responsables, aux preuves disponibles et aux obligations effectivement applicables. Un registre ou une certification de management ne démontre pas à lui seul la conformité de chaque application ; faire valider le périmètre et les échéances.
 

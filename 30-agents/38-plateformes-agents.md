@@ -47,16 +47,18 @@ Du plus flexible au plus clé en main :
 
 Quel produit sert de plateforme d'agents chez AWS, Google et Microsoft ? <!--anki:6c2e232f513e5d4f3246-->
 ?
-- **AWS** : **Bedrock AgentCore** (Harness, Runtime, Memory, Gateway, Identity, Code Interpreter, Browser, Observability, Evaluations, Policy, Registry)
-- **Google** : **Gemini Enterprise Agent Platform**, nouveau nom de Vertex AI depuis avril 2026 (ADK, Agent Studio, runtime managé, Memory Bank, Agent Registry, Agent Identity, Agent Gateway)
-- **Microsoft** : **Foundry Agent Service** (hosted agents, une identité Entra par agent), gouverné par **Agent 365**
+- **AWS** : **Bedrock AgentCore**
+- **Google** : **Gemini Enterprise Agent Platform**, nouveau nom de Vertex AI depuis avril 2026
+- **Microsoft** : **Foundry Agent Service** pour construire et exécuter, **Agent 365** pour gouverner
 - **Éditeurs de données et de SaaS** : Databricks, Snowflake, Salesforce Agentforce, ServiceNow
+
+Les trois clouds couvrent les mêmes briques : runtime, mémoire, gateway d'outils, identité, observabilité, evals et politiques. Retenir la correspondance avec son écosystème, pas la liste des composants, qui change vite.
 
 ---
 
 Au-delà de leurs SDK, quelles offres d'agents proposent OpenAI et Anthropic ? <!--anki:4824477c257e78733d3a-->
 ?
-- **OpenAI** : **Agents SDK** pour le code, **Frontier** (février 2026) pour gérer des agents en entreprise, y compris ceux d'autres éditeurs, et les **Workspace Agents** de ChatGPT pour les non-développeurs. Le builder visuel **Agent Builder** ferme le **30 novembre 2026**
+- **OpenAI** : **Agents SDK** pour le code, **Frontier** (février 2026) pour gérer des agents en entreprise, y compris ceux d'autres éditeurs, et les **Workspace Agents** de ChatGPT pour les non-développeurs ; le builder visuel **Agent Builder** est en fin de vie ([[115-plateformes-agents-gouvernance|lock-in]])
 - **Anthropic** : **Claude Agent SDK** pour le code, **Claude Managed Agents** (bêta depuis avril 2026) : un harness hébergé autour de 4 concepts, **agent**, **environment** (sandbox cloud ou auto-hébergée), **session** et **events**
 
 ---
@@ -107,7 +109,7 @@ Le code, les commandes et la navigation web générés par le modèle sont du **
 
 ---
 
-Quels services de sandbox pour agents connaître ? <!--anki:493231677a3150776559-->
+Quel type de service de sandbox choisir pour un agent : offre de son cloud, service spécialisé ou sandbox sur son propre cluster ? <!--anki:493231677a3150776559-->
 ?
 - **Managés chez un cloud** : AgentCore Code Interpreter (AWS), Cloudflare Sandboxes
 - **Spécialisés** : E2B, Daytona, Modal

@@ -11,9 +11,9 @@ Utile en **phase d'exploration** : choisir un modèle, tester des variantes de p
 
 ---
 
-Quel problème ChainForge adresse-t-il ? <!--anki:6521623b3457727e2555-->
+Pourquoi comparer des variantes de prompt sur une grille commune d'entrées et de modèles plutôt qu'au feeling ? <!--anki:6521623b3457727e2555-->
 ?
-Le prompt engineering « au feeling » : il permet de **tester un prompt sur N variantes × M modèles × K inputs** en une passe.
+Parce qu'un jugement « au feeling » sur quelques exemples ne permet pas de comparer : une grille **N variantes × M modèles × K entrées**, comme dans ChainForge, montre les écarts en une passe.
 
 La comparaison repose sur les mêmes entrées, des variantes identifiées et des critères d'évaluation explicites. Répéter les essais si les sorties varient et regarder les erreurs par catégorie. L'interface facilite l'expérience ; elle ne choisit pas automatiquement un jeu représentatif et ne transforme pas un score subjectif en mesure fiable.
 

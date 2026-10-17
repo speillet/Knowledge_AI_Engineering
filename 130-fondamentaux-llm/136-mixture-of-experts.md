@@ -21,7 +21,7 @@ Exemple type : un modèle de ~**670 B paramètres totaux** mais ~**37 B actifs**
 
 ---
 
-Pourquoi le MoE est-il devenu dominant pour les grands modèles ? <!--anki:427b4855503445695067-->
+Pourquoi le MoE est-il attractif pour les grands modèles ? <!--anki:427b4855503445695067-->
 ?
 Le MoE est attractif parce qu'il augmente la **capacité totale du modèle** sans activer tous ses paramètres pour chaque token. Cette activation sparse peut offrir un meilleur compromis qualité/calcul que certaines architectures denses, selon les données, l'entraînement et le budget comparés.
 

@@ -65,7 +65,7 @@ Quelles sont les limites du prefix caching ? <!--anki:7a28604f3a4f7871363e-->
 
 ---
 
-Quel risque de sécurité en multi-tenant ? <!--anki:6b45506d623c422f4b4a-->
+Quel risque de sécurité pose un prefix cache partagé entre plusieurs clients ? <!--anki:6b45506d623c422f4b4a-->
 ?
 Un **canal auxiliaire temporel** : un TTFT plus court révèle qu'un préfixe est déjà en cache, ce qui permet de deviner le prompt d'un autre utilisateur morceau par morceau. Parades : **isoler le cache par tenant** (ex. `cache_salt` dans vLLM) ; les fournisseurs d'API isolent le cache par organisation ou par workspace.
 
@@ -150,8 +150,6 @@ Mise en situation : ton service multi-clients partage un même modèle, et un cl
 ## Sources
 
 - [vLLM — automatic prefix caching et limites](https://docs.vllm.ai/en/latest/features/automatic_prefix_caching/)
-
-- [vLLM — Automatic Prefix Caching](https://docs.vllm.ai/en/latest/features/automatic_prefix_caching/)
 - [SGLang — documentation du serveur et de ses optimisations](https://docs.sglang.io/)
 
 ## Connexions

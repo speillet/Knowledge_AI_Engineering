@@ -39,7 +39,7 @@ Cette propriété ne couvre pas automatiquement toutes les variantes appelées �
 
 ---
 
-De quoi dépend le gain de vitesse ? <!--anki:657749397926736d7a6f-->
+De quoi dépend le gain de vitesse du speculative decoding ? <!--anki:657749397926736d7a6f-->
 ?
 Dans un modèle simplifié avec probabilité d'acceptation conditionnelle constante α et k propositions, on produit en moyenne :
 ```text
@@ -50,13 +50,13 @@ Pour α = 1, la limite vaut k + 1. Le speedup dépend aussi du temps : `E × tem
 
 ---
 
-Comment choisir le nombre de tokens proposés (k) ? <!--anki:46282560713f4b67613d-->
+Comment choisir le nombre de tokens proposés (k) en speculative decoding ? <!--anki:46282560713f4b67613d-->
 ?
 Trop **grand** : on gaspille du travail de brouillon, car un rejet précoce jette toute la suite. Trop **petit** : peu de gain. On règle k selon le taux d'acceptation mesuré (souvent **3 à 5**), ou on laisse le moteur l'**adapter dynamiquement**.
 
 ---
 
-Quelles sont les façons de produire le brouillon ? <!--anki:507674457b374c6c452c-->
+Quelles sont les façons de produire le brouillon d'un speculative decoding ? <!--anki:507674457b374c6c452c-->
 ?
 - **Petit modèle de la même famille**, avec le même tokenizer (ex. un 1B pour un 70B)
 - **N-grammes / prompt lookup** : recopier des passages du prompt, sans aucun modèle
@@ -72,7 +72,7 @@ Quand la sortie **recopie beaucoup l'entrée** : RAG avec citations, résumé, e
 
 ---
 
-Qu'est-ce que la vérification en arbre ? <!--anki:7548316562267e3a7176-->
+Qu'est-ce que la vérification en arbre en speculative decoding ? <!--anki:7548316562267e3a7176-->
 ?
 Au lieu d'une seule suite de tokens, le brouillon propose **plusieurs continuations possibles organisées en arbre**, que la cible vérifie **en une passe** grâce à un masque d'attention en arbre. On augmente ainsi la longueur acceptée : c'est ce qu'utilisent Medusa et EAGLE.
 
@@ -105,7 +105,7 @@ La commande est un exemple à adapter à la version installée ; vérifier les m
 
 ---
 
-Quels coûts et quelles contraintes faut-il prévoir ? <!--anki:4d413c2a2c4a61556e39-->
+Quels coûts et quelles contraintes le speculative decoding impose-t-il ? <!--anki:4d413c2a2c4a61556e39-->
 ?
 - **VRAM** pour le brouillon et son propre KV cache (sauf n-grammes)
 - **Tokenizer compatible** entre brouillon et cible
@@ -174,8 +174,6 @@ Mise en situation : un responsable qualité s'inquiète que le speculative decod
 ## Sources
 
 - [vLLM — speculative decoding et limites de reproductibilité numérique](https://docs.vllm.ai/en/latest/features/speculative_decoding/index.html)
-
-- [vLLM — Speculative Decoding](https://docs.vllm.ai/en/latest/features/speculative_decoding/)
 
 ## Connexions
 - [[62-optimisations-inference|Optimisations d'inférence]] — prefill, decode et bande passante mémoire

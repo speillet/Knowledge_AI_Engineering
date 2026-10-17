@@ -34,7 +34,7 @@ Ils servent à faire une **liste courte**, que l'on départage avec son eval.
 
 ---
 
-Quels benchmarks mesurent les connaissances et le raisonnement ? <!--anki:6e2958374a2d3a4e4d34-->
+Quel benchmark public consulter pour présélectionner un modèle en connaissances générales, en sciences, en maths ou sur des questions expertes ? <!--anki:6e2958374a2d3a4e4d34-->
 ?
 - **MMLU / MMLU-Pro** : connaissances générales en QCM (saturé pour les meilleurs modèles).
 - **GPQA** : questions scientifiques de niveau doctorat.
@@ -43,7 +43,7 @@ Quels benchmarks mesurent les connaissances et le raisonnement ? <!--anki:6e2958
 
 ---
 
-Quels benchmarks mesurent les capacités utiles en application ? <!--anki:515e6c40486e6f5e6030-->
+Quel benchmark public consulter pour présélectionner un modèle en code, en agent avec outils, en respect d'instructions ou en long contexte ? <!--anki:515e6c40486e6f5e6030-->
 ?
 - **SWE-bench (Verified)** : résolution de vrais tickets GitHub.
 - **τ-bench** : agents de support avec outils et utilisateur simulé.

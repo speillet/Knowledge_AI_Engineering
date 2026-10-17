@@ -25,7 +25,7 @@ Ajouter échelles, métadonnées et tenseurs conservés en précision supérieur
 
 ---
 
-Quels formats numériques rencontre-t-on ? <!--anki:4b245f5862716c2a7e75-->
+Quels formats numériques rencontre-t-on en quantization des LLM ? <!--anki:4b245f5862716c2a7e75-->
 ?
 - **BF16/FP16** : formats 16 bits, souvent utilisés comme références ; ils arrondissent eux aussi les valeurs.
 - **FP8** : formats comme E4M3 et E5M2, avec compromis plage/précision.

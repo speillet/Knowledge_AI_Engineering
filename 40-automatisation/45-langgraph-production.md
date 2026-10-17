@@ -68,7 +68,7 @@ Un rejeu peut refaire des appels LLM ou des outils et produire des résultats di
 
 ---
 
-Checkpointer ou Store : quelle différence ? <!--anki:4b5042685f574b50716d-->
+À ne pas confondre : checkpointer et Store dans LangGraph ? <!--anki:4b5042685f574b50716d-->
 ?
 - **Checkpointer** : mémoire **court terme**, propre à **un thread**
 - **Store** (ex. `InMemoryStore`) : mémoire **long terme, partagée entre threads**, organisée en **namespaces** (ex. `("user-123", "preferences")`), avec recherche sémantique possible

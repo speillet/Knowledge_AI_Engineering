@@ -63,7 +63,7 @@ La leçon : une place de marché **sans revue** est un canal de diffusion de mal
 
 ---
 
-Que révèle l'étude ToxicSkills (Snyk, février 2026) ? <!--anki:4740796d64556125283e-->
+Pourquoi l'étude ToxicSkills (Snyk, février 2026) invite-t-elle à analyser un skill comme du code et comme des instructions ? <!--anki:4740796d64556125283e-->
 ?
 Sur **3 984 skills** analysés : **37 %** ont au moins une faille, **76 charges malveillantes** sont confirmées, et **91 %** des skills malveillants **combinent code malveillant et prompt injection**.
 

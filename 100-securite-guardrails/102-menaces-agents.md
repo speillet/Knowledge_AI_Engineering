@@ -50,7 +50,7 @@ La différence avec une simple réponse fausse tient aux **actions exécutées a
 
 ---
 
-Quel taux de détournement d'agent le NIST (CAISI) a-t-il mesuré avec de nouvelles attaques ? <!--anki:3665336565373235356365323463313539396366326437366139653335363132-->
+Que montre l'évaluation du NIST (CAISI) sur le détournement d'agents par de nouvelles attaques, et quelle leçon en tirer ? <!--anki:3665336565373235356365323463313539396366326437366139653335363132-->
 ?
 Dans une évaluation publiée par le **NIST/CAISI sur AgentDojo**, la meilleure nouvelle attaque atteint **81 %** de réussite, contre **11 %** pour la meilleure attaque de référence. Ces résultats portent sur un protocole, des agents et des tâches précis ; ils ne signifient pas que 81 % de tous les agents déployés sont détournables.
 

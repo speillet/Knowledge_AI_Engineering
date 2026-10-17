@@ -100,7 +100,7 @@ Comparer ces approches sur un même scénario : apprendre une préférence, la c
 
 ---
 
-Quelles mémoires sont intégrées aux frameworks, aux fournisseurs et aux plateformes ? <!--anki:6473553378783f6d733a-->
+Avant de construire une mémoire d'agent, quelles offres intégrées examiner selon qu'on utilise un framework, l'API d'un fournisseur ou une plateforme ? <!--anki:6473553378783f6d733a-->
 ?
 - **Frameworks** : **LangMem** et le **Store** de LangGraph, la mémoire de [[46-crewai-crews|CrewAI]]
 - **Fournisseurs de modèles** : le **memory tool** d'Anthropic (fichiers)

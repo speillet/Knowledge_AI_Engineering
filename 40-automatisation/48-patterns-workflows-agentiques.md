@@ -32,7 +32,7 @@ Il évite un prompt fourre-tout qui dégrade toutes les catégories, et permet d
 
 ---
 
-Quelles sont les deux formes de parallélisation ? <!--anki:47335a5b4c435a6f5958-->
+Quelles sont les deux formes de parallélisation des appels LLM dans un workflow ? <!--anki:47335a5b4c435a6f5958-->
 ?
 - **Sectioning** : découper une tâche en **sous-tâches indépendantes** traitées en parallèle. Exemple : un appel répond, un autre vérifie en même temps les garde-fous
 - **Voting** : lancer **la même tâche plusieurs fois** et agréger les réponses. Exemple : trois revues de sécurité d'un code, alerte si au moins une trouve un problème

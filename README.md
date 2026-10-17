@@ -4,7 +4,7 @@ Un vault [Obsidian](https://obsidian.md) de **fiches de révision (flashcards) e
 
 Chaque fiche traite **un concept** en 8 à 34 cartes question/réponse, une quinzaine en moyenne, et se termine par des **mises en situation** : des cas concrets à diagnostiquer, concevoir ou arbitrer. Les fiches sont reliées entre elles par des liens, pour qu'on puisse passer d'un sujet à ses voisins, et elles se révisent en **répétition espacée**.
 
-**État au 17 octobre 2026** : 146 fiches et 2 201 cartes, réparties en 17 sections, dont 350 mises en situation et 179 cartes « à ne pas confondre ».
+**État au 17 octobre 2026** : 146 fiches et 2 201 cartes, réparties en 17 sections, dont 350 mises en situation et 180 cartes « à ne pas confondre ».
 
 ---
 
@@ -419,7 +419,7 @@ Construire les données des systèmes IA : modélisation et SQL, contrats et ing
 - [Data flywheel & versioning des données](150-donnees-conformite/153-data-flywheel-versioning.md) : boucle d'amélioration, étapes, versioning des données, outils (DVC, lakeFS, Iceberg), lineage d'une eval, versioning d'un index, signaux implicites, pièges, priorisation.
 - [RGPD appliqué aux LLM](150-donnees-conformite/154-rgpd-llm.md) : champ d'application, RGPD ou AI Act, principes, base légale de la réutilisation, responsable et sous-traitant, transferts hors UE, droit à l'effacement, AIPD, décisions automatisées, données dans le modèle, mesures concrètes.
 - [AI Act (règlement européen sur l'IA)](150-donnees-conformite/155-ai-act.md) : approche par les risques, pratiques interdites, haut risque et obligations, fournisseur ou déployeur, transparence, modèles à usage général, calendrier, sanctions, plan d'action.
-- [IA responsable : biais, équité & transparence](150-donnees-conformite/156-ia-responsable.md) : safety ou security, sources de biais, tests contrefactuels, métriques d'équité, model cards et system cards, datasheets, sycophancy, sécurité ou utilité, supervision humaine effective, référentiels (NIST AI RMF, ISO 42001).
+- [IA responsable : biais, équité & transparence](150-donnees-conformite/156-ia-responsable.md) : safety ou security, sources de biais, tests contrefactuels, métriques d'équité, model cards et system cards, datasheets, sycophancy, sécurité ou utilité, supervision humaine effective.
 - [Contrats, schémas & qualité des données](150-donnees-conformite/157-contrats-qualite-donnees.md) : contrat producteur-consommateur, contraintes de schéma et métier, fraîcheur et complétude, compatibilité, migrations, quarantaine, dérive ou incident, publication atomique et lignage opérationnel.
 - [Ingestion incrémentale, CDC & backfills](150-donnees-conformite/158-ingestion-cdc-backfills.md) : snapshot ou incrémental, CDC, cohérence snapshot-journal, checkpoints, identités et versions, suppressions, rejeu historique, capacité de rattrapage, quarantaine, réconciliation et index RAG, pagination API et cohérence des extractions.
 - [Données temporelles & variables de production](150-donnees-conformite/159-donnees-temporelles-features.md) : temps événement et traitement, disponibilité historique, jointures point-in-time, corrections bitemporelles, fenêtres et watermarks, labels retardés, cohérence entraînement-serving, feature store et fraîcheur, chemins offline/online et matérialisation sûre.

@@ -91,7 +91,7 @@ Ce hook observe l'état sans le modifier. Pour router avec `jump_to`, déclarer 
 
 ---
 
-Quels middlewares prêts à l'emploi LangChain fournit-il ? <!--anki:4a5532617776615f543e-->
+Quel middleware LangChain prêt à l'emploi utiliser pour une approbation humaine, la compaction, une bascule de modèle ou le plafonnement des appels ? <!--anki:4a5532617776615f543e-->
 ?
 - **HumanInTheLoopMiddleware** : approbation humaine avant certains outils
 - **SummarizationMiddleware** : résume l'historique près de la limite ([[35-context-engineering|compaction]])

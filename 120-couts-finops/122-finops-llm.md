@@ -59,7 +59,7 @@ Exemple fictif : si une dépense d'entrée représente 60 % du total et baisse d
 
 ---
 
-Quel est souvent le premier levier d'économie ? <!--anki:6a712b5f4f6e30675d6e-->
+Quel est souvent le premier levier d'économie sur une facture LLM ? <!--anki:6a712b5f4f6e30675d6e-->
 ?
 Commencer par le **poste dominant mesuré**. Si beaucoup de tâches simples utilisent un grand modèle, le [[82-routing-llm|routing]] vers un modèle moins cher est un bon candidat. Si la dépense vient de contextes répétés ou de boucles, cache, réduction du contexte ou limites d'appels peuvent être plus efficaces.
 

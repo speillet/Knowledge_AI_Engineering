@@ -1,7 +1,7 @@
 # IA responsable : biais, équité & transparence — Flashcards
 Tags: #flashcards #ai-engineering #ia-responsable #biais #gouvernance
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: safety ou security, sources de biais, tests contrefactuels, métriques d'équité, model cards et system cards, datasheets, sycophancy, sécurité ou utilité, supervision humaine effective, référentiels (NIST AI RMF, ISO 42001). -->
+<!-- summary: safety ou security, sources de biais, tests contrefactuels, métriques d'équité, model cards et system cards, datasheets, sycophancy, sécurité ou utilité, supervision humaine effective. -->
 
 
 Qu'est-ce que l'IA responsable, concrètement pour un AI Engineer ? <!--anki:4771215a794054786b55-->
@@ -26,7 +26,7 @@ Par des **tests contrefactuels** : mêmes entrées où l'on ne change que l'**at
 
 ---
 
-Quelles métriques d'équité connaître ? <!--anki:725d787d6d4b4c4c6c58-->
+Quelles métriques d'équité comparent les décisions entre groupes, et pourquoi faut-il en choisir une ? <!--anki:725d787d6d4b4c4c6c58-->
 ?
 - **Parité démographique** : même taux de décision favorable entre groupes.
 - **Égalité des chances** (equal opportunity) : même **taux de vrais positifs** entre groupes.
