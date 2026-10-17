@@ -107,7 +107,7 @@ Mise en situation : une équipe sert un modèle 8B avec un script Transformers d
 ?
 1. **Diagnostiquer** : traitement requête par requête, GPU sous-utilisé, pas de gestion du KV cache
 2. **Passer à un serveur d'inférence** : vLLM ou SGLang, avec continuous batching et PagedAttention
-3. **Annoncer un ordre de grandeur**, pas une promesse : un facteur 10 à 20 sur le débit est courant, à mesurer sur la charge réelle
+3. **Annoncer une hypothèse**, pas une promesse : le gain de débit peut atteindre un ordre de grandeur, mais dépend du script de départ et de la charge ; le mesurer avant de s'engager
 4. **Garder l'API compatible OpenAI**, pour ne pas toucher au code client ([[81-litellm-api-layer|gateway]])
 5. **Mesurer avant et après** : TTFT, TPOT, débit et concurrence tenue ([[64-metriques-slo-inference|SLO]])
 

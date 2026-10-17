@@ -30,10 +30,11 @@ Comparer candidat et référence sur les mêmes cas, avec des critères définis
 
 Que contient l'artefact déployé d'une app LLM ? <!--anki:695e35574c713148795a-->
 ?
-Trois versions distinctes, à tracer **ensemble** :
+Quatre références distinctes, à tracer **ensemble** :
 - L'**image conteneur** de l'application
 - La **référence du modèle** (identifiant daté chez un fournisseur, ou poids et adapter dans un registry)
 - Les **prompts et la config** de génération
+- L'**index RAG** ou les données de retrieval, avec leur modèle d'embedding
 
 Un manifeste de release qui les regroupe permet de redéployer ou d'annuler l'ensemble d'un coup.
 

@@ -80,7 +80,7 @@ Qu'est-ce que l'accumulation de gradients ? <!--anki:4132692b52472140715d-->
 ?
 Additionner les gradients de **plusieurs petits batchs** avant de faire une mise à jour : on simule un **grand batch effectif** sans la mémoire correspondante. Batch effectif = micro-batch × pas d'accumulation × nombre de GPU.
 
-Par exemple, 4 exemples par micro-batch, 8 accumulations et 2 répliques de données donnent **64 exemples par mise à jour**. Le multiplicateur GPU concerne les répliques de données, pas les GPU de tensor parallelism. Normaliser correctement la loss et n'avancer l'optimiseur qu'au moment prévu ; l'équivalence avec un grand batch dépend aussi des opérations du modèle.
+Le multiplicateur GPU concerne les répliques de données, pas les GPU de tensor parallelism. Normaliser correctement la loss et n'avancer l'optimiseur qu'au moment prévu ; l'équivalence avec un grand batch dépend aussi des opérations du modèle.
 
 ---
 

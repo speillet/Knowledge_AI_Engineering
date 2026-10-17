@@ -109,7 +109,7 @@ Mise en situation : ton RAG juridique retrouve bien les documents pertinents (re
 ?
 1. **Constater** : le retrieval fait son travail, le problème est en aval, dans le **classement** et le **contexte**
 2. **Reranking** : un cross-encoder re-score les 20 passages pour n'en garder que 3 à 5 vraiment pertinents
-3. **Ordre** : placer les meilleurs chunks **en début et en fin** de contexte, à cause du « lost in the middle »
+3. **Ordre** : tester la position des meilleurs chunks, par exemple en début ou en fin de contexte, si le modèle est sensible au « lost in the middle »
 4. **Grounding** : citations obligatoires et consigne d'abstention si le contexte ne suffit pas ([[143-hallucinations-grounding|hallucinations]])
 5. **Mesurer** la triade : faithfulness, pertinence de la réponse, pertinence du contexte ([[96-evals-rag-agents|evals de RAG]])
 

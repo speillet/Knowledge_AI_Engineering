@@ -39,7 +39,7 @@ Le problème vient de l'écart entre **mesure optimisée et résultat souhaité*
 
 Qu'apporte DPO par rapport au RLHF classique ? <!--anki:506a3b4d5e7d4e4b737a-->
 ?
-**Direct Preference Optimization** optimise **directement** le modèle sur les paires (préférée, rejetée) avec une loss de classification, **sans reward model séparé ni boucle RL**. Plus **simple, stable et bon marché** — c'est l'option par défaut pour aligner un modèle open source sur ses propres préférences. Variantes : IPO, KTO (préférences non appariées, simple pouce haut/bas), ORPO, SimPO.
+**Direct Preference Optimization** optimise **directement** le modèle sur les paires (préférée, rejetée) avec une loss de classification, **sans reward model séparé ni boucle RL**. Souvent plus **simple et moins coûteux** à mettre en œuvre, c'est une option fréquente pour aligner un modèle open source sur ses préférences. Gain et stabilité restent à mesurer : des paires biaisées apprennent la longueur ou le style du gagnant. Variantes : IPO, KTO (préférences non appariées, simple pouce haut/bas), ORPO, SimPO.
 
 ---
 

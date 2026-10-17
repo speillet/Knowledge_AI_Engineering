@@ -96,7 +96,7 @@ Ces briques répondent à des besoins précis et ne sont pas toutes obligatoires
 Comment réduire la latence perçue d'une application LLM, côté interface ? <!--anki:697a3f7d53485e56495f-->
 ?
 - **Streaming** des tokens : le TTFT compte plus que la durée totale.
-- **Paralléliser** les étapes indépendantes (retrieval et classification d'intention en même temps).
+- **Travail en arrière-plan** avec notification pour les tâches longues, plutôt qu'une attente bloquante.
 - Afficher la **progression** d'un agent plutôt qu'un spinner ([[144-ux-ia-human-in-the-loop|UX]]).
 
 ---

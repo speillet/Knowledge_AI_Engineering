@@ -136,7 +136,7 @@ Mise en situation : pendant un pic, ton application renvoie massivement des 429 
 1. **Arrêter l'amplification** : backoff exponentiel avec jitter, respect de l'en-tête de reprise, budget global de retries
 2. **Limiteur côté client** : ne pas envoyer des requêtes vouées au refus, avec des priorités (interactif avant batch)
 3. **Circuit breaker** : couper vers le fournisseur en difficulté et basculer directement sur le fallback
-4. **Répartir** : plusieurs clés, régions ou fournisseurs, ou débit réservé ([[81-litellm-api-layer|gateway]])
+4. **Répartir dans les limites autorisées** : régions ou fournisseurs validés, débit réservé ou quota supplémentaire demandé ([[81-litellm-api-layer|gateway]])
 5. **Dégrader** : petit modèle, file d'attente, message explicite, plutôt qu'une page d'erreur
 
 **Piège** : retenter aveuglément une action non idempotente, comme un envoi d'e-mail ou un paiement.

@@ -76,7 +76,7 @@ Si les échecs sont indépendants et non rattrapés :
 ```
 D'où trois leviers : **moins d'étapes**, des **portes de vérification** qui rattrapent les erreurs, et des étapes plus fiables. C'est aussi pourquoi les agents longs sont difficiles à fiabiliser ([[114-reproductibilite-variance|pass^k]]).
 
-La probabilité d'au moins un échec est **1 − 0,95¹⁰ ≈ 40,1 %**. Les étapes réelles peuvent partager une cause d'échec, comme un document erroné ; l'indépendance est donc une hypothèse de calcul, pas une propriété des agents. Un retry n'améliore la chaîne que s'il peut corriger l'erreur sans reproduire ses effets indésirables.
+Les étapes réelles peuvent partager une cause d'échec, comme un document erroné ; l'indépendance est donc une hypothèse de calcul, pas une propriété des agents. Un retry n'améliore la chaîne que s'il peut corriger l'erreur sans reproduire ses effets indésirables.
 
 ---
 

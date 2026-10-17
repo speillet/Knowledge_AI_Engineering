@@ -66,7 +66,7 @@ Les bases modernes font du **filtrage intégré** à la traversée ; à tester a
 
 Comment mesurer la qualité d'un index ANN ? <!--anki:632f2b3f4d4d244e3332-->
 ?
-Par le **recall@k de l'index** par rapport à la **recherche exacte** sur un échantillon de requêtes (quelle part des vrais k plus proches voisins est retrouvée), mis en regard de la **latence p95** et du **QPS**. À distinguer du rappel **métier** du RAG ([[96-evals-rag-agents|evals de RAG]]), qui dépend surtout du modèle d'embedding et du chunking.
+Par le **recall@k de l'index** par rapport à la **recherche exacte** sur un échantillon de requêtes (quelle part des vrais k plus proches voisins est retrouvée), mis en regard de la **latence p95** et du **QPS**.
 
 ---
 

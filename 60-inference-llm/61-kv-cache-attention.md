@@ -48,7 +48,7 @@ Pourquoi le KV cache limite-t-il le nombre de requêtes simultanées ? <!--anki:
 ?
 Parce que chaque requête occupe de la **VRAM proportionnelle à son contexte** : la mémoire GPU devient le goulot d'étranglement, pas le calcul.
 
-Le budget restant après les poids et les autres allocations doit couvrir tous les tokens actifs, entrée et sortie. Une requête longue peut prendre la place de plusieurs courtes. La mémoire n'est pas toujours le seul goulot : calcul, bande passante et SLO peuvent imposer une concurrence inférieure au maximum qui tient en VRAM.
+Le budget restant après les poids et les autres allocations doit couvrir tous les tokens actifs, entrée et sortie. Une requête longue peut prendre la place de plusieurs courtes. La mémoire n'est pas toujours le seul goulot : calcul, bande passante et SLO peuvent imposer une concurrence inférieure au maximum qui tient en VRAM. Une limite de concurrence et une file bornée évitent d'accepter un travail impossible à terminer dans le délai.
 
 ---
 
@@ -145,7 +145,7 @@ Mise en situation : ton service vLLM tient 60 requêtes simultanées avec des pr
 
 Mise en situation : ton équipe veut activer la quantization FP8 du KV cache pour doubler la concurrence. Comment valides-tu la décision ? <!--anki:677257392a29685b5b40-->
 ?
-1. **Comprendre le gain** : le valeurs du cache environ deux fois plus petites ; vérifier les surcoûts et le SLO avant de promettre davantage de requêtes
+1. **Comprendre le gain** : les valeurs du cache sont environ deux fois plus petites ; vérifier les surcoûts et le SLO avant de promettre davantage de requêtes
 2. **Mesurer la perte** : comparer les réponses avec et sans, sur tes propres evals, en portant attention aux contextes longs ([[68-quantization|validation]])
 3. **Tester en charge** : débit, TPOT et préemptions à la concurrence cible ([[64-metriques-slo-inference|SLO]])
 4. **Déployer progressivement** : canary, avec suivi de la qualité en production

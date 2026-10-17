@@ -162,7 +162,7 @@ Mise en situation : ton taux d'acceptation plafonne à 45 % avec un petit modèl
 Mise en situation : un responsable qualité s'inquiète que le speculative decoding change les réponses du modèle. Comment le rassures-tu, preuve à l'appui ? <!--anki:6f23684542583862703a-->
 ?
 1. **Expliquer la garantie** : la règle d'acceptation préserve **exactement la distribution** de la cible ([[65-probabilites-sampling|probabilités & sampling]])
-2. **Le démontrer** : en greedy, comparer les sorties avec et sans, sur un jeu de prompts. Elles doivent être identiques
+2. **Le démontrer** : en greedy, comparer les sorties avec et sans, sur un jeu de prompts. Elles doivent coïncider, aux écarts numériques près
 3. **Nuancer honnêtement** : de petits écarts numériques restent possibles, comme pour toute inférence ([[114-reproductibilite-variance|reproductibilité]])
 4. **En sampling** : comparer les evals plutôt que les chaînes de caractères
 5. **Surveiller** en production : taux d'acceptation et qualité, par type de trafic

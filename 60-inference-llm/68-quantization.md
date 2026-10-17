@@ -216,11 +216,11 @@ Vérifier la compatibilité entre checkpoint, GPU et kernels avant lancement. Le
 
 À ne pas confondre : quantization des poids, des activations et du KV cache ? <!--anki:472f61333a5d544d7225-->
 ?
-- **Poids** (W4A16, W8) : réduit la **mémoire du modèle** et accélère le **decode** memory-bound
-- **Activations** (W8A8, FP8) : permet les calculs en basse précision sur les unités dédiées, et accélère aussi le **prefill** compute-bound
+- **Poids** (W4A16, W8) : réduit la **mémoire du modèle** et peut accélérer le **decode** memory-bound
+- **Activations** (W8A8, FP8) : permet les calculs en basse précision sur les unités dédiées, et peut accélérer aussi le **prefill** compute-bound
 - **KV cache** (FP8) : réduit la mémoire **par requête**, donc augmente la **concurrence** et la longueur de contexte servable ([[61-kv-cache-attention|KV cache]])
 
-Trois réglages indépendants, à valider séparément ([[69-roofline-prefill-decode|roofline]]).
+Trois réglages indépendants, à valider séparément : aucun nom de schéma ne garantit une accélération sans kernels adaptés au matériel ([[69-roofline-prefill-decode|roofline]]).
 
 ---
 

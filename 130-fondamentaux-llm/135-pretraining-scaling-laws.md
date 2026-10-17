@@ -29,7 +29,7 @@ Qu'a montré Chinchilla ? <!--anki:706f6333723d25753c64-->
 ?
 Qu'à **budget de calcul fixe**, l'optimum est d'augmenter **paramètres et tokens à parts égales**, soit environ **20 tokens par paramètre**. Beaucoup de modèles antérieurs étaient **trop gros et sous-entraînés**.
 
-C'est un optimum empirique d'allocation du **budget de pré-entraînement** dans le régime étudié, pas une règle obligatoire pour chaque modèle. Si un modèle doit servir énormément de requêtes, le surentraîner sur davantage de tokens peut réduire son coût total en permettant une taille plus petite pour la qualité visée.
+C'est un optimum empirique d'allocation du **budget de pré-entraînement** dans le régime étudié, pas une règle obligatoire pour chaque modèle.
 
 ---
 
@@ -41,7 +41,7 @@ Chinchilla optimise le **coût d'entraînement**, pas le **coût total**. Un mod
 
 Qu'est-ce que la loi « 6ND » et à quoi sert-elle ? <!--anki:795034647b6b31645263-->
 ?
-Le calcul d'entraînement d'un Transformer dense ≈ **6 × paramètres × tokens** FLOPs (2 pour la passe avant, 4 pour la passe arrière). Exemple : 8 B paramètres sur 15 T tokens ≈ **7,2·10²³ FLOPs**. Divisé par le débit réel du cluster (FLOPs/s × **MFU**), on obtient les **GPU-heures** nécessaires.
+Le calcul d'entraînement d'un Transformer dense ≈ **6 × paramètres × tokens** FLOPs (2 pour la passe avant, 4 pour la passe arrière). Exemple : 1 B paramètres sur 20 B tokens ≈ **1,2·10²⁰ FLOPs**. Divisé par le débit réel du cluster (FLOPs/s × **MFU**), on obtient les **GPU-heures** nécessaires.
 
 ---
 

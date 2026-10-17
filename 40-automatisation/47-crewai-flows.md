@@ -59,7 +59,7 @@ SupportFlow().kickoff(inputs={"message": "L'export PDF plante"})
 
 `@start` lance la classification ; `@router` émet une étiquette ; `@listen` exécute le traitement correspondant. `classifier` et `crew_support` sont des dépendances à définir. Cet extrait illustre uniquement la branche technique : ajouter un listener commercial et une gestion des catégories inconnues pour couvrir tous les chemins d'un vrai service.
 
-Pour rendre le diagnostic reproductible, conserver la catégorie obtenue et l'identifiant du ticket dans l'état. Une catégorie inconnue devrait mener à une branche explicite de revue, plutôt qu'être assimilée au commercial. Vérifier chaque route avec un classifieur simulé avant de mesurer les erreurs de classification d'un vrai modèle.
+Pour rendre le diagnostic reproductible, conserver la catégorie obtenue et l'identifiant du ticket dans l'état. Vérifier chaque route avec un classifieur simulé avant de mesurer les erreurs de classification d'un vrai modèle.
 
 ---
 

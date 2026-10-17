@@ -186,7 +186,7 @@ Mise en situation : ton dashboard affiche 100 % d'utilisation GPU et l'équipe c
 4. **Tester un levier ciblé** : batch, cache, quantization ou contexte ; mesurer ses contreparties.
 5. **Dimensionner la réserve** selon pics attendus, démarrage, panne et politique d'admission.
 
-**Piège** : traiter un percentile de trafic comme une règle universelle de capacité, ou promettre des optimisations sans coût ni risque qualité.
+**Piège** : acheter du calcul sur la foi de l'utilisation GPU, qui mesure l'occupation des kernels et non la saturation du calcul ou de la mémoire.
 
 ---
 

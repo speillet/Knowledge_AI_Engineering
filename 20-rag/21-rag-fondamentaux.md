@@ -60,7 +60,7 @@ Le choix dépend de l'**unité de sens à retrouver**. Couper une procédure ent
 Quels réglages de départ pour un RAG ? <!--anki:755f707256696747215b-->
 ?
 ```text
-Taille de chunk      512 à 1 024 tokens   (structurel de préférence)
+Taille de chunk      300 à 800 tokens     (structurel de préférence)
 Chevauchement        10 à 20 % de la taille du chunk
 top-k récupéré       20 à 50 avant reranking
 top-k final          3 à 8 chunks dans le contexte

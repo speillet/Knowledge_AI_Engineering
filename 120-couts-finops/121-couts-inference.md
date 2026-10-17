@@ -11,8 +11,8 @@ coût = (tokens_in × prix_in + tokens_out × prix_out) / 1 000 000
 
 Exemple (prix illustratifs : 3 €/M en entrée, 15 €/M en sortie)
   3 000 tokens d'entrée + 500 de sortie
-  = (3 000 × 3 + 500 × 15) / 1e6 = 0,009 + 0,0075 0,0165 €/requête
-  × 1 million de requêtes par mois 16 500 €
+  = (3 000 × 3 + 500 × 15) / 1e6 = 0,009 + 0,0075 = 0,0165 €/requête
+  × 1 million de requêtes par mois ≈ 16 500 €
 ```
 La contribution de chaque poste dépend du produit **volume × tarif**. Un premier calcul aide à cadrer le projet ([[141-system-design-llm|system design]]).
 
