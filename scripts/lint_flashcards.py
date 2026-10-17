@@ -42,7 +42,10 @@ VERIFIE_RE = re.compile(r"^Vérifié le : (\d{1,2}) (\w+) (\d{4})", re.M)
 HORS_CONTEXTE_RE = re.compile(r"^(Et\b|Comment \w+-t-(il|elle) ?\w* \?$|Que fait \w+ \?$)")
 # liste de noms à réciter : préférer « Quel outil pour tel besoin ? »
 LISTE_PRODUITS_RE = re.compile(
-    r"^(Citez|Donnez des exemples|Quel(le)?s (outils|produits|alternatives|frameworks|serveurs|solutions|plateformes|bibliothèques)\b)")
+    r"^(Citez|Donnez des exemples|Quel(le)?s (outils|produits|alternatives|frameworks|serveurs|solutions|plateformes"
+    r"|bibliothèques|benchmarks|services|offres)\b|.*\bconnaître \?$)")
+# « Quelle différence entre X et Y ? » ou « X ou Y : quelle différence ? » : préférer « À ne pas confondre »
+DIFFERENCE_RE = re.compile(r"^Quelles? (est la )?différences?|:\s*quelles? (est la )?différences?", re.I)
 
 Card = collections.namedtuple("Card", "question answer line guid", defaults=[None])
 ID_RE = re.compile(r"<!--anki:([0-9a-f]+)-->")
@@ -274,7 +277,7 @@ def lint(stale_months):
             max_items = MAX_STEPS if c in situations else MAX_ITEMS
             if list_items(c.answer) > max_items:
                 warnings.append(f"{rel}:{c.line} liste de {list_items(c.answer)} éléments (> {max_items}) : {c.question[:60]}")
-            if re.match(r"Quelles? (est la )?différences?", c.question):
+            if DIFFERENCE_RE.search(c.question):
                 warnings.append(f"{rel}:{c.line} préférer « À ne pas confondre : X et Y ? » : {c.question[:60]}")
             if LISTE_PRODUITS_RE.match(c.question):
                 warnings.append(f"{rel}:{c.line} liste de produits, préférer « Quel outil pour tel besoin ? » : {c.question[:60]}")

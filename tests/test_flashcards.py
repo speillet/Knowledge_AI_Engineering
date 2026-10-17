@@ -189,8 +189,19 @@ class VaultTests(unittest.TestCase):
                 self.rag.write_text(self.rag.read_text().replace(question, "Qu'est-ce que le RAG ?", 1))
 
     def test_product_list_warns(self):
-        self.rag.write_text(self.rag.read_text().replace("Qu'est-ce que le RAG ?", "Quels outils de RAG connaître ?", 1))
-        self.assertTrue(any("liste de produits" in w for w in lint.lint(0)[1]))
+        for question in ("Quels outils de RAG connaître ?", "Quels benchmarks de RAG existent ?",
+                         "Quelles métriques de RAG connaître ?"):
+            with self.subTest(question=question):
+                self.rag.write_text(self.rag.read_text().replace("Qu'est-ce que le RAG ?", question, 1))
+                self.assertTrue(any("liste de produits" in w for w in lint.lint(0)[1]))
+                self.rag.write_text(self.rag.read_text().replace(question, "Qu'est-ce que le RAG ?", 1))
+
+    def test_difference_wording_warns(self):
+        for question in ("Quelle différence entre RAG et fine-tuning ?", "RAG ou fine-tuning : quelle différence ?"):
+            with self.subTest(question=question):
+                self.rag.write_text(self.rag.read_text().replace("Qu'est-ce que le RAG ?", question, 1))
+                self.assertTrue(any("À ne pas confondre" in w for w in lint.lint(0)[1]))
+                self.rag.write_text(self.rag.read_text().replace(question, "Qu'est-ce que le RAG ?", 1))
 
     def test_missing_id_fails(self):
         self.rag.write_text(lint.ID_RE.sub("", self.rag.read_text(), count=1))
