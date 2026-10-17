@@ -83,6 +83,8 @@ Pourquoi l'attention coûte-t-elle cher sur les contextes longs ? <!--anki:76402
 ?
 Le calcul des scores est **quadratique** en longueur de séquence (n² paires) pendant le **prefill**, et le **KV cache** grandit **linéairement** avec le contexte. FlashAttention réduit le coût **mémoire** et les accès HBM, pas la complexité ([[62-optimisations-inference|optimisations]]).
 
+Avec une **attention dense**, doubler la longueur multiplie approximativement par quatre le travail des paires d'attention du prefill, à architecture fixée. Cela ne multiplie pas nécessairement par quatre le temps total, qui comprend d'autres opérations. Pendant le decode, chaque nouveau token consulte le contexte déjà stocké : le coût par pas augmente avec sa longueur.
+
 ---
 
 Calcul : quel stockage brut pour les poids de 70 milliards de paramètres en BF16, FP8 et INT4, en Go décimaux, puis quels surcoûts faut-il prévoir ? <!--anki:623b687d595d6121635b-->
@@ -104,6 +106,8 @@ Les valeurs sont en **Go décimaux** et constituent un budget pour les poids, pa
 - **Decoder-only** (GPT, Llama, Claude) : attention causale, **génération** — le standard des LLM.
 - **Encoder-only** (BERT) : attention **bidirectionnelle**, pas de génération — utilisé pour la **classification**, les **embeddings** et les **rerankers**.
 - **Encoder-decoder** (T5) : un encodeur lit l'entrée, un décodeur génère — traduction, résumé.
+
+L'encodeur produit des représentations qui utilisent les deux côtés du texte ; le décodeur causal prédit une suite sans voir les tokens futurs. Dans un encodeur-décodeur, la génération consulte les représentations de l'entrée. « Pas de génération » décrit ici l'usage habituel de BERT comme encodeur ; il peut néanmoins prédire des tokens masqués.
 
 ---
 

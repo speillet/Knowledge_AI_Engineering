@@ -8,6 +8,8 @@ Qu'est-ce que le text-to-SQL ? <!--anki:797b6930743e52773076-->
 ?
 Un LLM **traduit une question en langage naturel en requête SQL**, qu'on exécute sur la base ; le résultat est ensuite présenté ou résumé. C'est le moyen de répondre aux questions **chiffrées et agrégées** (« combien », « quelle évolution », « top 10 ») sur des données tabulaires.
 
+La difficulté est aussi **sémantique** : « chiffre d'affaires » exige une définition, une période, une devise et une gestion des annulations. Une requête SQL valide peut calculer le mauvais indicateur. Fournir le schéma utile, contrôler les droits et le coût d'exécution, puis vérifier le résultat sur des cas dont le calcul métier est connu.
+
 ---
 
 À ne pas confondre : text-to-SQL et RAG ? <!--anki:49415b3c493c4d7148-->

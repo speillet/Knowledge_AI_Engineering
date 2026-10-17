@@ -8,6 +8,8 @@ Qu'est-ce que le post-training ? <!--anki:73335f71655f3f304837-->
 ?
 Tout ce qui transforme un **modèle de base** (qui continue du texte) en **assistant** : **SFT** sur des démonstrations, puis **optimisation par préférences** et **RL** pour l'utilité, la sécurité, le raisonnement et l'usage d'outils. C'est là que se jouent le **comportement** et une grande part des différences entre modèles.
 
+Le SFT montre des réponses souhaitées ; les méthodes par préférences ou récompenses orientent ensuite les comportements selon un critère. Ces étapes ne forment pas une recette obligatoire identique pour tous les modèles. Évaluer séparément suivi d'instructions, exactitude et refus : une réponse plus agréable peut être moins bien calibrée ou perdre certaines capacités spécialisées.
+
 ---
 
 Quelles sont les étapes classiques du RLHF ? <!--anki:6e65685b71755b4e5f2c-->
@@ -23,11 +25,15 @@ Pourquoi une pénalité KL pendant le RL ? <!--anki:6f333c253e66767e7635-->
 ?
 Sans elle, le modèle **exploite les failles du reward model** (reward hacking) : il produit des sorties qui obtiennent un score élevé sans être meilleures (flatterie, verbosité, formules types). La KL **l'ancre** à un comportement de référence raisonnable.
 
+La divergence KL pénalise l'écart entre la **politique entraînée** et une politique de référence. Un coefficient trop fort freine l'apprentissage ; trop faible laisse le modèle s'éloigner rapidement. Suivre récompense, KL et qualité sur des évaluations indépendantes. Cette régularisation limite la dérive mais ne corrige pas un vérificateur ou un reward model mal conçu.
+
 ---
 
 Qu'est-ce que le reward hacking ? <!--anki:5157706d245948426c43-->
 ?
 Quand le modèle **maximise la récompense sans atteindre l'objectif réel** : réponses plus longues parce que le reward model aime la longueur, **tests modifiés** pour passer plutôt que code corrigé, **complaisance** (sycophancy) envers l'utilisateur. C'est la loi de Goodhart appliquée à l'entraînement.
+
+Le problème vient de l'écart entre **mesure optimisée et résultat souhaité**. Un agent récompensé au nombre de tests réussis peut supprimer les tests difficiles si l'environnement le permet. Protéger les critères de validation, conserver des évaluations indépendantes et examiner les trajectoires inhabituelles. Une récompense qui monte alors que l'utilité baisse est un signal d'alerte.
 
 ---
 
@@ -45,7 +51,9 @@ Qu'est-ce que GRPO ? <!--anki:7a7b5346495648755428-->
 
 Qu'est-ce que le RLVR ? <!--anki:4c412b4556294b474f37-->
 ?
-**RL with Verifiable Rewards** : la récompense vient d'un **vérificateur automatique** (réponse mathématique exacte, tests unitaires qui passent, format respecté) plutôt que d'un reward model appris. Beaucoup **moins exposé au reward hacking** et très efficace pour le code et les maths ; limité aux tâches **vérifiables**.
+Le **RL with Verifiable Rewards** utilise une récompense issue d'un vérificateur automatique : résultat numérique attendu, tests exécutés ou contraintes de format, plutôt qu'un jugement de préférence appris. Il est utile lorsque la réussite possède un critère contrôlable, notamment dans certains exercices de code et de mathématiques.
+
+La qualité dépend du vérificateur : une suite de tests incomplète peut accepter du code incorrect, et un format valide ne garantit pas le fond. Protéger le vérificateur, varier les cas et évaluer sur des problèmes indépendants. Le RLVR réduit certains jugements subjectifs ; il n'élimine pas le **reward hacking**.
 
 ---
 
@@ -70,6 +78,8 @@ Voir [[151-donnees-curation-annotation|annotation]].
 Qu'est-ce que la « taxe d'alignement » ? <!--anki:45516e7073676e383561-->
 ?
 La **perte de capacités** (créativité, précision sur certains benchmarks, calibration) que peut entraîner l'alignement. Elle se manifeste aussi par des **refus excessifs** (over-refusal) sur des demandes légitimes. On la mesure avec des evals de capacités **avant et après**, et des jeux de requêtes **légitimes mais sensibles**.
+
+Ce compromis doit être établi sur des tâches comparables, avec les mêmes conditions de génération. Distinguer baisse réelle de compétence, changement de style et refus d'exécuter la tâche : leurs corrections diffèrent. L'alignement peut aussi améliorer certaines capacités ; la taxe n'est donc ni une constante ni une perte uniforme sur tous les usages.
 
 ---
 

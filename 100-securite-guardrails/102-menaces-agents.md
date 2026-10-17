@@ -17,6 +17,8 @@ Tout ce qui ne vient pas du développeur, à commencer par :
 - **Résultats d'outils** et messages d'erreur
 - **Messages de l'utilisateur** lui-même (injection directe)
 
+La question utile est **qui peut modifier ce contenu**, pas seulement son emplacement. Un document interne peut contenir une pièce jointe externe ou des champs saisis par un client. Conserver la provenance jusqu'au prompt et empêcher qu'un texte récupéré redéfinisse les permissions, les destinataires ou l'objectif autorisé de la tâche.
+
 ---
 
 Quelles sources d'entrée non fiables viennent de l'intérieur du système ? <!--anki:66347060482c43325a34-->
@@ -26,6 +28,8 @@ Quelles sources d'entrée non fiables viennent de l'intérieur du système ? <!-
 - **Autres agents** : messages A2A, sorties de sous-agents
 
 On les oublie parce qu'elles semblent faire partie du système, alors qu'un tiers a pu les écrire.
+
+Un sous-agent peut recopier une instruction malveillante trouvée dans une page ; sa présence dans un message interne ne la rend pas fiable. Propager provenance et niveau de confiance avec les résultats, contrôler les écritures en mémoire et limiter les outils disponibles à chaque étape. Éviter de promouvoir automatiquement une observation en consigne système.
 
 ---
 
@@ -41,6 +45,8 @@ Elles peuvent aussi apparaître dans du texte parfaitement visible : une source 
 Qu'est-ce que le détournement d'agent (agent hijacking) ? <!--anki:726c624a5e3953506252-->
 ?
 Une **injection indirecte** qui pousse l'agent à exécuter les **objectifs de l'attaquant** avec les droits de l'utilisateur : exfiltrer des données, envoyer des messages, lancer du code, modifier des configurations. C'est le premier risque du Top 10 OWASP agentique (**détournement de l'objectif**).
+
+La différence avec une simple réponse fausse tient aux **actions exécutées avec des droits réels**. Pour tester la résistance, placer une instruction parasite dans un document contrôlé et observer les appels d'outils, pas seulement la réponse finale. Une réponse rassurante peut masquer un effet externe déjà produit ; les contrôles doivent agir avant cet effet.
 
 ---
 
@@ -132,6 +138,8 @@ Voir [[36-orchestration-agents|orchestration]].
 Qu'est-ce que le denial of wallet ? <!--anki:487c3243723e433f5546-->
 ?
 Faire **exploser le coût** d'un agent : boucles infinies, agents récursifs, documents énormes à traiter, appels d'outils coûteux déclenchés par une injection. C'est la **consommation non bornée** du Top 10 OWASP LLM. Parades : **budgets par run**, nombre maximal d'étapes et d'appels, rate limits par utilisateur ([[81-litellm-api-layer|gateway]], [[115-plateformes-agents-gouvernance|kill switch]]).
+
+Compter aussi les retries, les sous-agents et les services facturés par appel. Un quota de tokens sur le modèle principal ne couvre pas forcément l'ensemble du run. Réserver un budget avant les opérations coûteuses, suivre la dépense cumulée et propager l'annulation aux travaux enfants pour éviter qu'ils continuent après l'arrêt de l'orchestrateur.
 
 ---
 

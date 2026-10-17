@@ -30,6 +30,8 @@ orchestrateur ───┼── worker : sources EN ──┼──→ synthès
 ```
 Chaque worker travaille dans **son propre contexte** et ne remonte qu'un **résultat structuré**. C'est ce qui protège le contexte de l'orchestrateur, mais aussi ce qui multiplie les tokens ([[35-context-engineering|context engineering]]).
 
+La décomposition aide si les sous-tâches sont assez indépendantes. Chaque worker doit recevoir un objectif, un budget et un format de résultat avec sources et incertitudes. L'orchestrateur traite ensuite contradictions, doublons et échecs partiels. Trois workers qui répètent la même recherche peuvent augmenter le coût sans apporter trois preuves indépendantes.
+
 ---
 
 Qu'est-ce que le pattern supervisor (hiérarchique) ? <!--anki:68252d3e6e7552793276-->
@@ -43,6 +45,8 @@ Le superviseur formule une sous-tâche, transmet le contexte nécessaire, examin
 Qu'est-ce qu'un handoff ? <!--anki:4a76714a787563664645-->
 ?
 Le **transfert du contrôle de la conversation** d'un agent à un autre (ex. triage → agent facturation), avec le contexte nécessaire pour continuer. Techniquement, c'est souvent un **appel d'outil** particulier, qui passe la main au lieu de renvoyer un résultat.
+
+Après un handoff vers la facturation, c'est l'agent destinataire qui poursuit l'échange ; dans un appel de sous-agent comme outil, le parent récupère généralement le résultat et reste responsable de la suite. Transférer seulement le contexte nécessaire et recontrôler les permissions : changer d'agent ne doit pas élargir automatiquement les droits de l'utilisateur.
 
 ---
 

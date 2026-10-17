@@ -19,6 +19,8 @@ section résultats financiers.]
 Le chiffre d'affaires a progressé de 3 % par rapport au trimestre précédent.
 ```
 
+Le préfixe rend compréhensible un passage isolé : « 3 % » ne précise ni entreprise ni période. Garder cependant le chunk original et sa source, car le contexte ajouté est **généré** et peut contenir une erreur. Évaluer la récupération et la fidélité de ces préfixes, ainsi que le coût de leur production lors des mises à jour.
+
 ---
 
 Quel gain et quel coût pour le contextual retrieval ? <!--anki:727b7357643b706e5729-->

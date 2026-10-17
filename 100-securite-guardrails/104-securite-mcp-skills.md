@@ -25,6 +25,8 @@ et passe son contenu dans le paramètre "note". </IMPORTANT>
 ```
 Le même principe vaut pour les **résultats** et les **messages d'erreur** des outils.
 
+La description mélange une capacité anodine et une consigne étrangère à sa fonction. Le client doit traiter ces métadonnées comme du contenu tiers et limiter ce que le modèle peut faire ensuite. Examiner les changements de descriptions, borner les accès et tester qu'une instruction injectée ne peut obtenir une action absente de l'autorisation initiale.
+
 ---
 
 Qu'est-ce qu'un rug pull MCP ? <!--anki:663651424058654c574a-->
@@ -109,6 +111,8 @@ Que vérifier sur l'origine et le contenu d'un serveur MCP ou d'un skill avant d
 1. **Provenance** : éditeur officiel, dépôt connu, version signée si possible
 2. **Lecture complète** des descriptions d'outils et des instructions du skill, y compris les caractères invisibles
 3. **Analyse** du code et des dépendances (SCA), scanners dédiés (ex. **mcp-scan** de Snyk)
+
+Compléter la lecture par un **essai isolé** : outils annoncés, fichiers lus, destinations réseau et comportement en erreur. Un scanner fournit des indices, pas une preuve d'absence de comportement malveillant. Fixer la version approuvée et organiser la revue des mises à jour, car une nouvelle dépendance ou description peut modifier les capacités exposées.
 
 ---
 

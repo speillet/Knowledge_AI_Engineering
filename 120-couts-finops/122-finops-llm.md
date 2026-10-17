@@ -47,6 +47,8 @@ models: [chat-petit, chat-fort]
 ```
 Les deux limites comptent : **requêtes** contre les rafales, **tokens** contre une seule requête à 200 000 tokens ([[81-litellm-api-layer|LiteLLM]]).
 
+Associer ces limites à une **identité attribuable** : projet, équipe et environnement. Une alerte informe sans forcément bloquer ; un plafond strict doit être appliqué avant l'appel, en tenant compte des requêtes concurrentes. Le YAML est illustratif : devise, fenêtre de budget et clés de configuration doivent correspondre à la gateway réellement déployée.
+
 ---
 
 Quels gains attendre des principaux leviers FinOps ? <!--anki:73443a342f707e49655b-->

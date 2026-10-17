@@ -8,6 +8,8 @@ Qu'est-ce que MCP ? <!--anki:516d532139606b765240-->
 ?
 Le **Model Context Protocol** : un **standard ouvert** (initié par Anthropic, hébergé depuis décembre 2025 par l'**Agentic AI Foundation** de la Linux Foundation) pour connecter les applications IA à des outils et sources de données via une architecture client-serveur.
 
+Par exemple, plusieurs assistants peuvent utiliser le même serveur documentaire sans chacun réimplémenter son API métier. MCP normalise les échanges et la découverte des capacités ; le **host** conserve la décision d'exposer et d'appeler ces capacités. La compatibilité protocolaire ne garantit ni la fiabilité du serveur ni l'autorisation d'accéder à toutes ses données.
+
 ---
 
 Quel problème MCP résout-il ? <!--anki:6c3b47315f4c6e566d3b-->
@@ -50,6 +52,8 @@ Quels transports MCP existent ? <!--anki:683c4f6b67296425664d-->
 
 Depuis la spec **2026-07-28**, le protocole est **sans état** (plus de session ni de handshake) : un serveur distant passe derrière un simple load balancer. L'ancien transport HTTP+SSE est déprécié.
 
+Le transport détermine surtout **où tourne le serveur et comment l'atteindre**. Avec stdio, maîtriser le binaire lancé, son environnement et ses accès locaux ; avec HTTP, gérer identité, réseau et délais. Fixer la version du protocole et vérifier sa compatibilité côté client et serveur : les garanties de session ne se déduisent pas du seul mot HTTP.
+
 ---
 
 À ne pas confondre : serveur MCP et API REST ? <!--anki:6a476f7b5b3434754e73-->
@@ -73,6 +77,8 @@ Quels risques de sécurité MCP introduit-il ? <!--anki:6b5735663b3e5b48284d-->
 ?
 **Serveurs tiers non audités, [[101-securite-llm-guardrails|prompt injection]] via les résultats et les descriptions d'outils, permissions trop larges** — d'où sandboxing et validation humaine des actions sensibles. Détail des attaques (tool poisoning, rug pull…) : [[104-securite-mcp-skills|sécurité de MCP & des skills]].
 
+Une description d'outil peut prétendre qu'il faut envoyer un secret pour terminer la tâche ; elle reste une donnée tierce, pas une autorisation. Limiter les jetons et sorties réseau, filtrer l'accès par utilisateur et journaliser les actions. La validation humaine doit montrer la destination et les arguments réels pour permettre un contrôle utile.
+
 ---
 
 Comment un host MCP déclare-t-il un serveur local et un serveur distant ? <!--anki:3861633963323633363765663437353461356231323532633438386235333338-->
@@ -87,6 +93,8 @@ Un serveur **local** est un processus que le host lance (`command`, transport **
 }
 ```
 Bonne pratique : **version épinglée** plutôt que `@latest`, et serveurs internes derrière une gateway ([[104-securite-mcp-skills|sécurité MCP]]).
+
+Cet exemple illustre une **convention de configuration du host**, pas un format imposé universellement par MCP. Vérifier les clés supportées et fournir les secrets par le mécanisme prévu, sans les versionner. Pour le processus local, une version épinglée améliore la reproductibilité mais ne dispense pas de vérifier le paquet et les permissions accordées.
 
 ---
 

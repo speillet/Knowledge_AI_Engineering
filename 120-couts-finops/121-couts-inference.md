@@ -16,6 +16,8 @@ Exemple (prix illustratifs : 3 €/M en entrée, 15 €/M en sortie)
 ```
 La contribution de chaque poste dépend du produit **volume × tarif**. Un premier calcul aide à cadrer le projet ([[141-system-design-llm|system design]]).
 
+Compter les **appels effectivement exécutés**, y compris tentatives échouées et nouvelles tentatives selon les règles de facturation. Distinguer entrée ordinaire, entrée cachée et éventuels postes supplémentaires dans les données d'usage. Le coût d'une conversation est la somme de ses appels ; la même instruction renvoyée à dix tours peut être comptée plusieurs fois.
+
 ---
 
 À ne pas confondre : prix par token et coût par tâche réussie ? <!--anki:44393742637863294c-->
@@ -51,6 +53,8 @@ coût/token = coût total par heure / tokens utiles par heure
 Exemple fictif : 3,60 €/h et 100 tokens/s → 0,00001 €/token
 ```
 Inclure GPU, CPU, stockage, réseau, exploitation et périodes d'inactivité. Le débit retenu doit correspondre à la charge réelle et aux [[64-metriques-slo-inference|SLO]], pas au pic théorique. Comparer ensuite le coût par tâche réussie, car un token peu cher ne garantit pas une réponse utile.
+
+Dans l'exemple, cela correspond à **10 € par million de tokens utiles**. Si la machine ne sert qu'à moitié de ce débit moyen tout en restant facturée, ce coût unitaire double. Préciser si les tokens comptés sont des sorties ou un mélange entrée/sortie, afin de ne pas comparer des unités différentes à un tarif API.
 
 ---
 

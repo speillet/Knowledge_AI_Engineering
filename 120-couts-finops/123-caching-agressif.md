@@ -14,6 +14,8 @@ Pourquoi les agents profitent-ils autant du prompt caching ? <!--anki:7a26753c6f
 ?
 Leur ratio **entrée / sortie** est énorme : à chaque tour, tout l'historique est renvoyé pour quelques centaines de tokens générés. Avec un préfixe stable, **presque tout l'input** est lu depuis le cache, facturé une fraction du prix normal et sans prefill.
 
+Le gain dépend du **préfixe réellement identique**, de sa durée de vie et des règles de facturation. Les nouveaux résultats d'outils et la sortie restent à traiter ; le cache n'efface donc pas toute la latence. Mesurer tokens lus et écrits en cache ainsi que le TTFT, notamment au premier tour et après une compaction.
+
 ---
 
 Comment fonctionne le prompt caching chez Anthropic ? <!--anki:653e3c6151316b285f40-->
@@ -71,17 +73,23 @@ Pourquoi le contexte d'un agent doit-il être append-only ? <!--anki:73484b26525
 ?
 Toute modification d'un message passé **invalide le cache de tout ce qui suit**. On **ajoute** au lieu de réécrire. Pour restreindre les outils disponibles, on les **masque au décodage** plutôt que de retirer leur définition, ou on passe le « mode » dans un message.
 
+Il s'agit d'une optimisation de réutilisation, pas d'une règle qui prime sur la correction. Une donnée obsolète, un secret ou une permission retirée doit être traité même si cela invalide le cache. Le masquage des outils dépend des capacités du serveur ; dans tous les cas, l'application doit refuser une action désormais interdite.
+
 ---
 
 Quel piège les requêtes parallèles posent-elles pour le prompt caching Anthropic ? <!--anki:652c325f3b695271513b-->
 ?
 Une entrée de cache n'est lisible qu'**une fois que la première réponse commence à streamer**. N requêtes lancées au même instant avec le même préfixe paient donc **toutes l'écriture**. Parade : **pré-chauffer** le cache (chez Anthropic, un appel avec `max_tokens: 0`), ou lancer une requête avant les autres.
 
+Observer séparément **cache froid et cache chaud** dans un test de charge : un benchmark préchauffé masque le coût du démarrage simultané. Le préchauffage ajoute lui-même un appel et une écriture ; il se justifie si les lectures suivantes les amortissent. Vérifier les compteurs d'usage et les capacités du modèle avant de généraliser la stratégie.
+
 ---
 
 Quand choisir un TTL d'une heure pour le prompt caching Anthropic ? <!--anki:6f6f646f25692c73362f-->
 ?
 Quand l'écart entre deux requêtes qui partagent le préfixe est **entre 5 et 60 minutes** (un utilisateur qui répond après 20 minutes). En dessous de 5 minutes, chaque lecture rafraîchit le TTL de 5 minutes : il reste chaud tout seul et coûte moins cher à écrire.
+
+Le choix se fait sur la **distribution des intervalles de réutilisation**, pas seulement sur leur moyenne. Un long TTL coûte plus à écrire et peut ne jamais être relu ; un TTL court peut provoquer des réécritures répétées. Comparer le coût attendu des deux options sur les sessions réelles, avec les tarifs et règles applicables au modèle.
 
 ---
 
@@ -108,6 +116,8 @@ Quels risques de sécurité et de confidentialité pose le caching des réponses
 - **Fuite entre utilisateurs** si la clé de cache n'inclut pas le tenant
 - **Canal auxiliaire temporel** sur un [[66-prefix-caching-radix-attention|prefix cache]] partagé
 - **Données sensibles** stockées dans le cache : chiffrement, durée de rétention, droit à l'oubli
+
+Une clé doit refléter aussi les **droits, la version des données et le périmètre de la réponse**. Deux utilisateurs du même tenant peuvent avoir des accès différents. Après un changement de permission ou une suppression, invalider les entrées concernées ; le chiffrement protège le stockage mais n'empêche pas de servir une réponse au mauvais destinataire.
 
 ---
 

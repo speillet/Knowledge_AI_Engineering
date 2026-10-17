@@ -16,11 +16,15 @@ Qu'est-ce que LangChain ? <!--anki:43603633354a63316478-->
 ?
 Une bibliothèque de **composants LLM** (modèles, prompts, retrievers, outils) et d'**intégrations** avec des centaines de fournisseurs. Depuis la v1, elle fournit aussi un agent haut niveau, `create_agent`, extensible par **middlewares** et bâti sur LangGraph. Détails : [[42-langchain-fondamentaux|fondamentaux]] et [[43-langchain-agents|agents]].
 
+Pour un assistant de support, ces composants relient messages, modèle et outil de consultation de commandes. Leur intérêt est l'intégration commune ; la validation métier reste dans l'application. Inspecter les messages effectivement envoyés et tester les erreurs d'outil, car une interface uniforme ne rend pas les comportements des fournisseurs identiques.
+
 ---
 
 Que propose LangGraph dans l'écosystème LangChain ? <!--anki:7a6145323a375a645e41-->
 ?
 Un framework qui modélise l'agent comme un **graphe d'états** : nœuds (étapes), arêtes conditionnelles, **cycles**, **checkpoints** persistés. Il permet la reprise après erreur, le **human-in-the-loop** et le « time travel » dans l'exécution. Détails : [[44-langgraph-fondamentaux|fondamentaux]] et [[45-langgraph-production|production]].
+
+Par exemple, un graphe peut rechercher un dossier, demander une approbation puis exécuter une action. Le checkpoint conserve l'avancement ; il ne garantit pas qu'un effet externe ne sera exécuté qu'une fois. Lors d'une reprise, les nœuds rejoués doivent utiliser des opérations idempotentes ou un mécanisme de réconciliation avec le système métier.
 
 ---
 
@@ -28,11 +32,15 @@ Qu'apporte CrewAI par rapport aux autres frameworks d'agents ? <!--anki:6a6e5763
 ?
 Une approche **multi-agents par rôles** : on définit des agents (rôle, objectif, backstory) et des **tâches**, qu'une « crew » exécute en séquence ou de façon hiérarchique. Très rapide à prototyper ; les **Flows** encadrent les crews en production. Détails : [[46-crewai-crews|crews]] et [[47-crewai-flows|flows]].
 
+Une équipe « chercheur puis rédacteur » rend explicites les responsabilités attendues et les livrables échangés. Les rôles restent toutefois des instructions au modèle : ils n'assurent ni expertise réelle ni contrôle d'accès. Définir des critères de sortie, borner les échanges et comparer la crew à une solution plus simple sur les mêmes tâches.
+
 ---
 
 Qu'est-ce que Google ADK ? <!--anki:7036305b5b3a4f7a6e36-->
 ?
 L'**Agent Development Kit** de Google : framework open source (Python, Java…) pour construire des agents et des hiérarchies d'agents, optimisé pour Gemini et la Gemini Enterprise Agent Platform (ex-Vertex AI) mais multi-modèles, avec support de **[[33-mcp|MCP]]** et du protocole **A2A**.
+
+Pour juger son intérêt, réaliser un petit flux avec un outil, une session persistée et un échec simulé. Vérifier les capacités de la version et du langage retenus, ainsi que les dépendances au déploiement choisi. **Multi-modèles** ne signifie pas que chaque fournisseur expose exactement les mêmes formats, outils ou fonctions de streaming.
 
 ---
 
@@ -52,11 +60,15 @@ Quel framework d'agents pour un agent centré sur les données, pour des sorties
 
 Pour un flux à états avec checkpoints et interruptions : [[44-langgraph-fondamentaux|LangGraph]].
 
+Ces correspondances sont des **points de départ**, car les périmètres se recouvrent. Un assistant documentaire peut aussi exiger des sorties typées et une reprise durable. Faire traverser au prototype une erreur de parsing, un refus d'accès et un redémarrage ; retenir l'outil dont les garanties nécessaires sont compréhensibles et vérifiables par l'équipe.
+
 ---
 
 Framework ou code maison ? <!--anki:6d577d2f41337e3d4953-->
 ?
 Une boucle d'agent tient en **quelques dizaines de lignes** : le code maison garde un **contrôle total** et un débogage simple. Un framework se justifie pour la **persistance, le multi-agent, le human-in-the-loop** ou quand l'équipe en maîtrise déjà un.
+
+La boucle minimale masque souvent le travail de production : annulation, budgets, retries, événements et compatibilité des messages. À l'inverse, adopter un framework ajoute des dépendances et des migrations. Comparer le coût de maintenance sur un incident concret et vérifier qu'on peut inspecter l'état, plutôt que compter seulement les lignes du prototype.
 
 ---
 
@@ -86,6 +98,8 @@ LangSmith   → la plateforme : traces, evals, datasets, et le déploiement
               (LangSmith Deployment, ex-LangGraph Platform)
 ```
 Autrement dit : **avec quoi** on écrit, **quoi** exécute le flux, **où** on l'observe et le déploie. Les trois sont indépendants : on peut utiliser LangGraph sans LangChain, ou tracer une application maison dans LangSmith.
+
+Une application peut ainsi assembler ses outils dans LangChain, reprendre son exécution grâce à LangGraph et analyser ses traces dans LangSmith. Ne pas confondre présence d'un graphe avec hébergement managé, ni instrumentation avec évaluation automatique de qualité. Le choix de chaque couche dépend d'un besoin distinct : intégration, exécution ou exploitation.
 
 ---
 

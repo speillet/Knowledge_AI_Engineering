@@ -60,6 +60,8 @@ Qu'est-ce qu'un middleware dans LangChain ? <!--anki:704e5b615d724d26394b-->
 ?
 Un composant qui **s'insère dans la boucle de l'agent** pour observer ou modifier son comportement (contexte, appels au modèle, appels d'outils) sans réécrire la boucle. C'est le principal point d'extension de la v1, comparable aux hooks d'un [[34-harness-plugins|harness]].
 
+Un middleware peut limiter le nombre d'appels, adapter les outils visibles ou intercepter une erreur. Son emplacement et l'ordre d'empilement comptent : un retry peut répéter une opération qu'un autre composant comptabilise. Tester les chemins d'échec et garder les règles métier critiques dans des contrôles exécutables, pas seulement dans une modification du prompt.
+
 ---
 
 Quels hooks un middleware d'agent LangChain peut-il implémenter ? <!--anki:623b496e31414c772f60-->
@@ -104,6 +106,8 @@ Choisir les middlewares en fonction du problème observé : boucle trop longue, 
 Comment fonctionne l'approbation humaine avec `create_agent` ? <!--anki:494756303d597a3c6960-->
 ?
 Le **HumanInTheLoopMiddleware** interrompt l'agent avant les outils sensibles (ex. `send_email`) ; l'état est sauvegardé par le checkpointer. On reprend ensuite avec un **`Command(resume=...)`** qui contient la décision : approuver, modifier ou rejeter l'appel ([[45-langgraph-production|interrupts LangGraph]]).
+
+Présenter à l'humain le **nom de l'outil, ses arguments et ses effets**. Reprendre le même thread avec la décision correspondant à l'interruption, puis valider à nouveau les arguments modifiés et les droits courants. Un stockage uniquement en mémoire ne suffit pas à survivre au redémarrage du processus ; prévoir un checkpointer durable en production.
 
 ---
 

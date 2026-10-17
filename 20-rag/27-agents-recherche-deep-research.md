@@ -87,14 +87,14 @@ Un **juge calibré** note couverture et citations ; l'exactitude se vérifie par
 
 Calcul : 5 sous-agents lisent 15 pages de 4 000 tokens chacun ; supposer ces tokens envoyés deux fois, plus 100 000 tokens d’entrée d’orchestration. À 3 €/M, quel coût d’entrée par rapport, hors outils et sorties ? <!--anki:7332246760345a2c3f25-->
 ?
-Hypothèses : 5 sous-agents, 15 pages lues chacun, 4 000 tokens par page, plus l'orchestrateur et la rédaction.
+Le volume facturé inclut les pages réenvoyées et l'orchestration :
 ```text
-lecture : 5 × 15 × 4 000         = 300 000 tokens d'entrée
-contexte re-envoyé entre les tours ≈ ×2      → ~600 000
-orchestrateur + rédaction          ≈ 100 000
-à 3 €/M en entrée                  ≈ 2 € par rapport, hors sortie
+lecture initiale = 5 × 15 × 4 000 = 300 000 tokens
+lecture envoyée deux fois = 600 000 tokens
+entrée totale = 600 000 + 100 000 = 700 000 tokens
+coût d'entrée = 700 000 / 1 000 000 × 3 € = 2,10 €
 ```
-Raisonnable pour une note d'analyse, prohibitif pour une question de support. D'où le **routage** entre RAG et recherche approfondie ([[82-routing-llm|routing]]).
+Ce tarif est **fictif** ; le résultat exclut sorties, outils et éventuels coûts d'écriture du cache. Il ne suppose aucune remise de cache. Pour comparer recherche approfondie et RAG, rapporter le coût à une réponse utile : un rapport plus cher peut être pertinent si sa couverture supplémentaire répond au besoin.
 
 ---
 

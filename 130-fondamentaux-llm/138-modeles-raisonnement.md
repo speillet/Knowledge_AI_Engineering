@@ -8,6 +8,8 @@ Qu'est-ce qu'un modèle de raisonnement ? <!--anki:44457a7a766655556330-->
 ?
 Un LLM entraîné à **produire une longue réflexion interne** (chaîne de pensée : exploration, vérification, retours en arrière) **avant sa réponse finale**. Il est nettement meilleur en **maths, code, planification et problèmes à plusieurs étapes**, au prix de **plus de tokens et de latence**.
 
+L'intérêt est d'allouer davantage de calcul avant la réponse, notamment pour explorer ou vérifier des pistes. Le gain dépend de la tâche et du modèle : une longue réflexion peut rester fausse ou inutile. Évaluer la réponse finale et les résultats vérifiables, puis comparer coût et latence à une baseline avec moins d'effort.
+
 ---
 
 Qu'est-ce que le test-time compute ? <!--anki:68657a773f6c3b31424f-->
@@ -16,11 +18,15 @@ Dépenser **plus de calcul au moment de l'inférence** pour améliorer la répon
 - **séquentielle** : raisonner plus longtemps (plus de tokens de réflexion) ;
 - **parallèle** : générer **plusieurs réponses** et choisir (vote majoritaire, vérificateur, best-of-n).
 
+Le calcul supplémentaire n'aide que si l'exploration apporte de nouvelles pistes et si la **sélection** reconnaît les meilleures. Générer dix variantes du même raisonnement erroné ne crée pas dix preuves indépendantes. Comparer les stratégies à budget égal et examiner le taux de réussite, les erreurs persistantes et le temps avant une réponse utilisable.
+
 ---
 
 Comment entraîne-t-on un modèle à raisonner ? <!--anki:452d33327c713c6e6424-->
 ?
 Par **RL avec récompenses vérifiables** (RLVR) : on pose des problèmes dont la réponse est **vérifiable automatiquement** (résultat mathématique, tests unitaires), on récompense les réponses **correctes**, et le modèle apprend **de lui-même** des stratégies (vérifier, reprendre, décomposer). Algorithmes typiques : **PPO**, **GRPO** ([[52-post-training-alignement|post-training]]).
+
+Le RLVR est une voie importante, souvent combinée à des démonstrations, de la distillation ou d'autres étapes de post-training. Le vérificateur doit distinguer une solution correcte d'un contournement du score. Tester ensuite sur des problèmes nouveaux et des difficultés variées ; apprendre à réussir les exercices d'entraînement ne prouve pas une généralisation illimitée du raisonnement.
 
 ---
 
@@ -28,21 +34,23 @@ Qu'est-ce qu'un budget de réflexion (thinking budget / reasoning effort) ? <!--
 ?
 Un paramètre d'API qui borne ou oriente **la quantité de tokens de raisonnement** (niveau faible/moyen/élevé, ou nombre max de tokens). C'est le **curseur qualité / latence / coût** : un effort élevé pour un problème difficile, faible pour une tâche simple ou interactive.
 
+Un niveau d'effort est souvent une **orientation**, pas la promesse d'un nombre exact de tokens ni d'une meilleure réponse. Le budget peut aussi partager la limite de sortie selon l'API. Tester plusieurs niveaux sur des tâches classées par difficulté, puis choisir selon le gain marginal de réussite et le délai acceptable pour l'utilisateur.
+
 ---
 
 Comment les tokens de raisonnement sont-ils facturés ? <!--anki:75577c53737b3a2f4b71-->
 ?
 Comme des **tokens de sortie**, même s'ils ne sont pas tous visibles (certains fournisseurs n'en renvoient qu'un **résumé**). Une réponse courte peut donc coûter **des milliers de tokens**. À suivre dans les métriques d'usage et dans le calcul du **coût par tâche** ([[121-couts-inference|coûts]]).
 
+Lire les compteurs d'usage du service plutôt qu'estimer la facture à partir du texte affiché. Vérifier si le total de sortie **inclut déjà** les tokens de raisonnement, afin de ne pas les compter deux fois. Les règles varient selon l'offre ; suivre aussi les tentatives abandonnées et rapporter le coût au nombre de tâches correctement terminées.
+
 ---
 
 Quand ne pas utiliser un modèle de raisonnement ? <!--anki:51502558695d4271762f-->
 ?
-- Tâches **simples** (classification, extraction, reformulation) : aucun gain, coût et latence multipliés.
-- Interfaces **temps réel** (voix, autocomplétion) où le TTFT prime.
-- Tâches de **style ou de créativité**, où réfléchir plus n'aide pas.
+Éviter de payer un effort de raisonnement élevé lorsque **le gain mesuré ne justifie pas son coût et sa latence**. C'est souvent le cas pour une extraction simple, une reformulation courte ou une interaction dont le délai de réponse est très contraint.
 
-Le [[82-routing-llm|routage]] par difficulté est la réponse naturelle.
+Ce sont des hypothèses à tester, pas des exclusions absolues : une classification ambiguë peut demander un raisonnement utile, et certains modèles ajustent leur effort. Comparer plusieurs budgets sur des exemples représentatifs, puis router les demandes difficiles vers davantage de calcul. Conserver une possibilité d'escalade lorsque la solution rapide ne satisfait pas les contrôles.
 
 ---
 
@@ -50,11 +58,15 @@ Faut-il encore écrire « réfléchis étape par étape » ? <!--anki:4c503b7432
 ?
 Pour un modèle de raisonnement, **non** : il raisonne déjà, et imposer une méthode détaillée peut **nuire**. Mieux vaut décrire **clairement l'objectif, les contraintes et le format** de sortie, et laisser le modèle organiser sa réflexion. Le chain-of-thought explicite reste utile pour les modèles **sans raisonnement natif** ([[11-prompt-engineering-avance|prompt engineering]]).
 
+Si une procédure est nécessaire au métier, la préciser reste pertinent : unités à utiliser, sources autorisées et contrôles attendus. Distinguer cette contrainte d'une demande de narration de la réflexion interne. On peut demander une justification courte, des calculs ou des preuves contrôlables sans supposer que le texte affiché révèle fidèlement tout le processus.
+
 ---
 
 Peut-on faire confiance à la chaîne de pensée affichée ? <!--anki:4339773d41252f6d6749-->
 ?
 **Pas entièrement.** Des travaux montrent que la réflexion affichée n'est **pas toujours fidèle** au processus réel : le modèle peut utiliser un indice sans le mentionner. Elle est utile pour **déboguer** et **surveiller**, mais ce n'est pas une **explication garantie** ni une preuve de correction.
+
+Pour une réponse numérique, refaire le calcul ; pour du code, exécuter les tests ; pour un fait, consulter la source. Une explication convaincante peut rationaliser une conclusion erronée, et l'absence d'un indice dans le texte ne prouve pas qu'il n'a pas influencé le modèle. Traiter la réflexion comme un signal parmi d'autres, jamais comme une certification.
 
 ---
 

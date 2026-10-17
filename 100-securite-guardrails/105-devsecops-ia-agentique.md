@@ -98,6 +98,8 @@ jobs:
 ```
 Voir [[112-cicd-modeles|CI/CD des modèles]].
 
+Ce YAML est un **schéma pédagogique**, à adapter aux commandes et modules réellement disponibles dans le projet. Définir les jeux d'attaque, les dénominateurs et les seuils avant d'en faire un gate. Zéro exfiltration observée sur quelques essais ne prouve pas un risque nul ; conserver les résultats et les versions testées pour suivre les régressions.
+
 ---
 
 Comment automatiser les tests adversariaux d'un agent ? <!--anki:516a3b58562466217c52-->

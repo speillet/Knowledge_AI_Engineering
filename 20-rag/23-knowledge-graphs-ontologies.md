@@ -36,6 +36,8 @@ Pourquoi une ontologie quand un LLM construit le graphe ? <!--anki:66354d4240287
 ?
 Sans schéma, l'extraction **dérive** : doublons (« Paris », « Ville de Paris »), relations synonymes (TRAVAILLE_POUR, EMPLOYÉ_DE), types inventés, et le graphe devient impossible à interroger. L'ontologie **contraint l'extraction** (types d'entités et de relations autorisés, en [[63-guided-generation|sortie structurée]]) et ramène les entités à des **termes canoniques**.
 
+Par exemple, imposer une relation `EMPLOYE_PAR` évite trois noms pour le même lien. Cela ne prouve toutefois ni que l'emploi existe ni que deux personnes homonymes sont identiques. Conserver la source de chaque relation et contrôler séparément **validité du schéma, résolution d'identité et exactitude factuelle**.
+
 ---
 
 Comment construire un knowledge graph avec un LLM ? <!--anki:7645732d313e6c377d63-->
@@ -53,6 +55,8 @@ Vérifier contraintes, doublons et relations douteuses avant chargement. Des emb
 Qu'est-ce que la résolution d'entités ? <!--anki:70586539675d5f58613a-->
 ?
 Reconnaître que plusieurs mentions désignent **la même entité réelle** et les **fusionner** : normalisation, similarité d'embeddings, règles métier (même SIREN), puis un LLM pour trancher les cas ambigus. Trop timide, le graphe est **fragmenté** ; trop agressive, elle **fusionne à tort** des entités distinctes.
+
+Deux établissements portant le même nom ne doivent pas être fusionnés sur la seule ressemblance textuelle. Préférer un identifiant stable lorsqu'il existe, conserver les mentions et la provenance, puis prévoir une revue des cas incertains. Une fusion erronée propage des attributs et relations à la mauvaise entité ; elle doit pouvoir être annulée.
 
 ---
 

@@ -53,6 +53,8 @@ Quelles stratégies de chunking existent ? <!--anki:5062235d2c4f48603f28-->
 - **Sémantique** : couper là où le sujet change
 - **Parent-child** : indexer de petits chunks, renvoyer le bloc parent
 
+Le choix dépend de l'**unité de sens à retrouver**. Couper une procédure entre une condition et son exception peut rendre le passage trompeur. Le chevauchement préserve du contexte mais ajoute des doublons ; le parent-child restitue davantage d'explications mais consomme plus de tokens. Comparer les stratégies sur des questions annotées, à budget de contexte comparable.
+
 ---
 
 Quels réglages de départ pour un RAG ? <!--anki:755f707256696747215b-->

@@ -29,6 +29,8 @@ Qu'est-ce que le data parallelism (DDP) ? <!--anki:7a643e4b316b7a3a7526-->
 ?
 Chaque GPU a une **copie complète du modèle** et traite **une partie du batch** ; les gradients sont **moyennés entre GPU** (all-reduce) avant chaque mise à jour. Simple et efficace, mais le modèle doit **tenir entièrement** sur un GPU.
 
+Il faut aussi répartir les **données** : DDP synchronise les gradients mais ne garantit pas à lui seul des exemples distincts sur chaque rang. Avec quatre GPU et huit exemples par GPU, un pas couvre normalement 32 exemples. Le modèle, ses gradients et les états d'optimiseur restent répliqués dans le DDP classique, ce qui limite le gain mémoire.
+
 ---
 
 Qu'est-ce que ZeRO et FSDP ? <!--anki:45643a7d4866595d5b4e-->
@@ -44,7 +46,9 @@ La mémoire par GPU est divisée par le **nombre de GPU**, au prix de **plus de 
 
 Qu'est-ce que le tensor parallelism ? <!--anki:755a7e2d324d60357763-->
 ?
-Découper **chaque matrice** d'une couche entre plusieurs GPU, qui calculent chacun une partie puis s'échangent les résultats **à chaque couche**. Très gourmand en communication → réservé aux GPU d'un **même nœud** reliés en **NVLink** ([[62-optimisations-inference|aussi utilisé en inférence]]).
+Le **tensor parallelism** répartit les opérations de certaines couches, notamment leurs matrices, sur plusieurs GPU. Chacun calcule une partie du résultat ; des communications réunissent les contributions nécessaires à la suite du réseau. Cela permet de distribuer des poids et des calculs trop volumineux pour un seul GPU.
+
+Comme les échanges sont fréquents, une interconnexion rapide, souvent à l'intérieur d'un nœud, est particulièrement utile. Le multi-nœud reste possible selon le matériel et l'implémentation. Augmenter le degré de parallélisme réduit le travail local, mais peut augmenter la part de temps consacrée aux communications.
 
 ---
 
@@ -52,11 +56,15 @@ Qu'est-ce que le pipeline parallelism ? <!--anki:68393a736c62713e4645-->
 ?
 Répartir **les couches** entre GPU (couches 1-20 sur le GPU 1, 21-40 sur le GPU 2…). Le batch est découpé en **micro-batchs** qui avancent en chaîne pour limiter les **bulles** (GPU inactifs en attente). Communications modérées → utilisable **entre nœuds**.
 
+Pendant qu'un GPU traite un micro-batch, le suivant peut travailler sur un micro-batch précédent. Il reste des phases de remplissage et de vidage, ainsi que des déséquilibres si une étape est plus lente. Découper selon le **coût mesuré des couches**, pas uniquement leur nombre, et mesurer mémoire d'activations et temps perdu dans les bulles.
+
 ---
 
 Qu'est-ce que le parallélisme 3D ? <!--anki:62293e267d6e7d3a7a4d-->
 ?
 La **combinaison** des trois : tensor parallelism **dans le nœud**, pipeline parallelism **entre nœuds**, data parallelism (FSDP/ZeRO) **par-dessus**, plus parfois le **context** parallelism (séquences longues) et l'**expert** parallelism ([[136-mixture-of-experts|MoE]]). C'est la configuration des grands pré-entraînements (Megatron-LM, TorchTitan).
+
+Par exemple, 8 GPU en tensor parallelism, 4 étages de pipeline et 2 répliques de données mobilisent **8 × 4 × 2 = 64 GPU**, dans cette décomposition. Chaque axe répond à une limite différente : taille d'une couche, profondeur du modèle ou débit. Leur combinaison doit respecter mémoire, topologie réseau et taille du batch global.
 
 ---
 
@@ -64,11 +72,15 @@ Qu'est-ce que le gradient checkpointing ? <!--anki:4b623d76394a25253056-->
 ?
 Ne garder qu'**une partie des activations** pendant la passe avant et **recalculer** les autres pendant la passe arrière. On échange environ **30 % de calcul en plus** contre une **forte réduction de mémoire** d'activations — indispensable pour les longues séquences.
 
+Le surcoût exact dépend des segments recalculés ; 30 % est un repère, pas une constante. Cette technique réduit surtout les **activations sauvegardées**, pas les poids ni tous les états de l'optimiseur. Si ceux-ci saturent déjà la mémoire, il faut agir sur un autre poste. Mesurer le compromis entre mémoire économisée et temps par pas.
+
 ---
 
 Qu'est-ce que l'accumulation de gradients ? <!--anki:4132692b52472140715d-->
 ?
 Additionner les gradients de **plusieurs petits batchs** avant de faire une mise à jour : on simule un **grand batch effectif** sans la mémoire correspondante. Batch effectif = micro-batch × pas d'accumulation × nombre de GPU.
+
+Par exemple, 4 exemples par micro-batch, 8 accumulations et 2 répliques de données donnent **64 exemples par mise à jour**. Le multiplicateur GPU concerne les répliques de données, pas les GPU de tensor parallelism. Normaliser correctement la loss et n'avancer l'optimiseur qu'au moment prévu ; l'équivalence avec un grand batch dépend aussi des opérations du modèle.
 
 ---
 
@@ -82,6 +94,8 @@ Pourquoi le réseau compte-t-il autant en entraînement distribué ? <!--anki:44
 ?
 Chaque pas exige des **all-reduce / all-gather** de gigaoctets entre GPU. Sans **NVLink** dans le nœud et **InfiniBand / RoCE** entre nœuds, les GPU **attendent** et le [[135-pretraining-scaling-laws|MFU]] s'effondre. La topologie du cluster conditionne le choix de parallélisme.
 
+Le volume échangé dépend de la stratégie : DDP agrège des gradients, tandis que FSDP doit aussi rassembler des paramètres. Examiner bande passante effective, latence des collectives et chevauchement avec le calcul. Ajouter des GPU n'accélère pas forcément le pas si les communications ou un lien lent deviennent la nouvelle limite.
+
 ---
 
 Quels problèmes d'exploitation pose un entraînement sur beaucoup de GPU ? <!--anki:6545723a4169537c663f-->
@@ -90,6 +104,8 @@ Quels problèmes d'exploitation pose un entraînement sur beaucoup de GPU ? <!--
 - **Pics de loss** (loss spikes) → surveillance et retour au checkpoint précédent.
 - **Stragglers** : un GPU lent ralentit tous les autres.
 - **Ordonnancement** du cluster (Slurm, Kubernetes avec Kueue/Volcano) — voir [[13-apptainer-inference-hpc|HPC & Slurm]].
+
+Un checkpoint exploitable conserve aussi optimiseur, scheduler et état nécessaire à la lecture des données. Tester sa restauration avant un long entraînement et choisir la fréquence selon le coût d'écriture et le travail perdu acceptable. Pour un ralentissement, distinguer GPU défaillant, réseau saturé et alimentation en données insuffisante avant de relancer tout le job.
 
 ---
 

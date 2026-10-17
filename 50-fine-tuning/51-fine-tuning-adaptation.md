@@ -53,6 +53,8 @@ Qu'est-ce que QLoRA ? <!--anki:435021656c75503d585b-->
 ?
 **LoRA sur un modèle quantizé en 4-bit** : fine-tuner un gros modèle sur un GPU modeste. Les poids de base restent figés en 4 bits (format NF4), seuls les adapters s'entraînent en précision plus haute ([[68-quantization|NF4]]).
 
+Pendant le calcul, les poids quantifiés sont exploités avec une précision de calcul adaptée ; « 4 bits » décrit leur stockage, pas toutes les opérations. Il faut encore de la mémoire pour les activations, les adapters et leur optimiseur. Le gain rend certains entraînements possibles, sans garantir qu'un contexte long ou un grand batch tienne sur le même GPU.
+
 ---
 
 De quelles hypothèses dépendent les ressources nécessaires à un fine-tuning ? <!--anki:457b75296778564c6056-->

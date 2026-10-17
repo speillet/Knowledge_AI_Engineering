@@ -27,6 +27,8 @@ Pourquoi dit-on que le harness compte autant que le modèle ? <!--anki:497628454
 ?
 À modèle égal, la **qualité des outils, du contexte fourni et de la boucle** change radicalement les résultats : un agent de code dépend autant de ses outils de recherche et d'édition que du LLM.
 
+Un modèle peut savoir corriger un bug et échouer si la recherche ne retrouve pas le bon fichier, si l'outil tronque l'erreur ou si l'édition casse le format. Le harness décide aussi du contexte conservé, des reprises et des limites. Pour comparer deux modèles, fixer ces éléments ; sinon, on mesure plusieurs changements à la fois.
+
 ---
 
 Harness prêt à l'emploi ou harness construit avec un SDK : quand choisir chacun ? <!--anki:6363323232356361663464393438333438616337616636336438343536663533-->

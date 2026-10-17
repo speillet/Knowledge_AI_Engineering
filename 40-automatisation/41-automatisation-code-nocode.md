@@ -8,6 +8,8 @@ Workflow ou agent : quelle différence ? <!--anki:633a44664441747c2432-->
 ?
 Un **workflow** enchaîne des étapes **définies à l'avance** (déterministe, prévisible, testable) ; un **[[31-agents-fondamentaux|agent]]** décide lui-même de ses étapes. Beaucoup de besoins « IA » sont en fait des **workflows avec un appel LLM au milieu**.
 
+Par exemple, réceptionner une facture, extraire ses champs et demander une validation suit un parcours connu. Une enquête documentaire peut nécessiter des recherches choisies au fil des résultats. Le workflow fixe l'ordre et les branches, mais un appel LLM reste variable : **contrôle du parcours** et **déterminisme des sorties** sont deux propriétés différentes.
+
 ---
 
 Qu'est-ce que n8n ? <!--anki:5074357b48742c717130-->
@@ -55,6 +57,8 @@ Quel orchestrateur « code » pour des pipelines data planifiés, une orchestrat
 - **Pipelines batch planifiés** (DAG de traitements data) : **Airflow**
 - **Orchestration Python plus moderne**, centrée sur les tâches ou les assets : **Prefect**, **Dagster**
 - **Workflows longs qui doivent survivre aux pannes** (attentes humaines, agents) : **Temporal** et sa **durable execution**
+
+Partir du besoin de reprise : recalculer une partition de données n'est pas équivalent à reprendre une attente d'approbation après trois jours. Tester les délais, retries et effets externes avec l'orchestrateur retenu. Une exécution durable conserve l'avancement, mais les activités rejouables doivent toujours gérer l'idempotence des écritures métier.
 
 ---
 

@@ -14,6 +14,8 @@ doc B : rang 3 en BM25, rang 2 en vectoriel → 1/63 + 1/62 = 0,0320  ← meille
 ```
 L'intérêt du RRF : il ne travaille que sur les **rangs**, donc aucune calibration de scores hétérogènes n'est nécessaire.
 
+Par exemple, une référence `AB-204` bénéficie du lexical, tandis qu'une reformulation du problème peut bénéficier des embeddings. RRF ne prouve pas qu'un document est pertinent : il combine les classements disponibles. Le paramètre `k` de sa formule est une constante de lissage, distincte du nombre de résultats finalement récupérés.
+
 ---
 
 Qu'est-ce que le reranking ? <!--anki:72403c653b3e44335232-->
@@ -25,6 +27,8 @@ reranking        : on garde les 5 meilleurs  (~50 à 200 ms)
 génération       : 5 chunks dans le contexte au lieu de 50
 ```
 Double bénéfice : **plus de précision** et **moins de tokens** envoyés au modèle ([[121-couts-inference|coûts]]).
+
+Le reranker ne peut sélectionner qu'un passage **déjà présent parmi les candidats** : il ne corrige pas un document absent de l'index ou exclu par le premier retrieval. Les latences ci-dessus sont illustratives. Mesurer le gain de classement et la qualité finale, car un passage bien classé peut rester obsolète ou insuffisant pour répondre.
 
 ---
 

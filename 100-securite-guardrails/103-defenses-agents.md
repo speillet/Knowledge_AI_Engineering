@@ -127,6 +127,8 @@ Comment rendre l'approbation humaine fiable ? <!--anki:6f3e4a6448252d235d50-->
 - Confirmation **hors bande** (notification, second canal) pour les plus sensibles
 - Un agent ne doit **jamais** pouvoir déclencher ou simuler l'approbation lui-même
 
+L'approbation doit être liée à **une action précise et à ses arguments** : montant, destination, ressource et identité. Si ces éléments changent, l'ancien accord ne suffit plus. Enregistrer qui a décidé et quand, vérifier les droits à l'exécution et traiter explicitement expiration, refus et absence de réponse pour éviter les validations implicites.
+
 ---
 
 Quel rôle pour les guardrails et classifieurs d'injection ? <!--anki:4b62765f336d40467950-->

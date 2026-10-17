@@ -37,6 +37,8 @@ Par une définition comprenant **nom, description et schéma des paramètres**, 
 ```
 Les contraintes supportées (types, motifs, énumérations) décrivent les arguments attendus ; leur application dépend du mode utilisé ([[63-guided-generation|guided generation]]). Ces définitions occupent du contexte à chaque appel : 40 outils, c'est des milliers de tokens à chaque tour ([[123-caching-agressif|caching]]).
 
+Le schéma décrit les **arguments acceptables**, pas les droits du demandeur. Même avec un identifiant bien formé, l'application doit vérifier que la commande appartient au client connecté. L'identité vient de la session authentifiée, jamais d'un argument libre fourni par le modèle. Tester aussi valeurs manquantes, champs inattendus et erreurs de validation.
+
 ---
 
 À quoi ressemble la boucle de tool calling ? <!--anki:474750306946343634-->

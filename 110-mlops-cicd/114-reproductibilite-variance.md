@@ -45,6 +45,8 @@ Comment rendre un appel LLM rejouable ? <!--anki:693e60316b3025562574-->
 ?
 Journaliser **tout ce qui le détermine** : identifiant **daté** du modèle, prompt **rendu** (après templating) et sa version, paramètres de sampling, seed, schémas d'outils, **documents injectés**, et la **réponse obtenue**. Les [[91-langfuse-observabilite|traces]] servent de journal pour rejouer et déboguer.
 
+Distinguer **rejouer la même entrée** et obtenir exactement la même sortie. Une API peut évoluer, un outil peut lire des données différentes et certains calculs rester non déterministes. Pour isoler le modèle, figer les observations d'outils ; pour tester le système réel, conserver leurs versions et accepter une comparaison statistique plutôt qu'une identité octet par octet.
+
 ---
 
 Quand une comparaison exacte de la sortie LLM est-elle adaptée, et quand faut-il tester des propriétés ? <!--anki:656d592d3b347921397b-->
@@ -72,6 +74,8 @@ Comment comparer rigoureusement deux variantes (prompt, modèle) ? <!--anki:7476
 - **Même dataset** et analyse **appariée** (différence exemple par exemple) : bien moins de variance qu'en comparant deux moyennes
 - **Plusieurs runs** par exemple, pour lisser le bruit du sampling
 - Rapporter **moyenne ± intervalle de confiance**, et **agrandir le dataset** quand l'écart recherché est petit
+
+L'appariement permet de voir quelles tâches gagnent ou perdent, au lieu de masquer les compensations dans la moyenne. Si plusieurs runs viennent du même exemple, tenir compte de cette dépendance dans l'incertitude. Garder un test final séparé : sélectionner le meilleur prompt après de nombreux essais sur le même jeu finit par exploiter son bruit.
 
 ---
 
@@ -102,6 +106,8 @@ Pourquoi un LLM-as-judge ajoute-t-il de la variance ? <!--anki:6d765b41246831436
 ?
 Le juge est lui-même un LLM **non déterministe** et **biaisé** (ordre de présentation, longueur, style). On le fait tourner à **température basse**, on **permute l'ordre** des réponses comparées, on **moyenne plusieurs passes**, et on le calibre sur des annotations humaines.
 
+Répéter le jugement réduit une partie de l'aléa, mais **pas un biais systématique** : un juge qui préfère toujours les réponses longues peut rester très stable et se tromper. Mesurer l'accord avec des références humaines par type de cas, conserver la version du juge et inspecter les désaccords avant d'utiliser son score comme décision de déploiement.
+
 ---
 
 Comment rendre un fine-tuning reproductible ? <!--anki:74213c39574676285476-->
@@ -117,6 +123,8 @@ Changer de matériel ou de nombre de GPU modifie quand même les résultats au b
 Faut-il viser le déterminisme partout ? <!--anki:4e404d572d6036633c3c-->
 ?
 **Non.** Il sert là où l'on compare ou enquête : **tests, audits, débogage, evals comparatives**. En production, on **conçoit pour la variabilité** : validation des sorties, [[63-guided-generation|sorties contraintes]], retries et evals sur plusieurs runs. Un système fiable ne dépend pas d'un tirage chanceux.
+
+Rendre déterministes les règles métier, l'autorisation et les calculs quand c'est possible, puis mesurer la variabilité des parties génératives. Pour une même demande, plusieurs formulations peuvent être acceptables alors qu'un montant doit rester exact. Définir des invariants de résultat et d'effet externe permet d'être fiable sans imposer un texte identique à chaque exécution.
 
 ---
 

@@ -35,6 +35,8 @@ Budget d'un tour d'agent (exemple) :
 ```
 Le poste qui grossit tout seul est l'**historique** : c'est lui qu'on compacte en premier.
 
+Réserver aussi de la place pour la **réponse et les prochains résultats d'outils**. La part effectivement cachée dépend d'un préfixe compatible avec le mécanisme du fournisseur : « réutilisable » n'implique pas « cache hit ». Compacter l'historique en conservant décisions, contraintes et références ; perdre une autorisation ou un résultat critique peut coûter plus qu'économiser quelques tokens.
+
 ---
 
 Qu'est-ce que le context rot ? <!--anki:493a7c686b5f307c324d-->

@@ -24,6 +24,8 @@ eval_gate:
 ```
 On bloque sur la **régression** par rapport à la version en production, pas seulement sur un seuil absolu.
 
+Comparer candidat et référence sur les mêmes cas, avec des critères définis avant l'essai. Une baisse minime peut venir du bruit ; une moyenne stable peut cacher une régression sur un segment critique. Prévoir seuils par segment, répétitions utiles et revue des cas limites. Le YAML représente ici une politique à implémenter, pas un outil universel.
+
 ---
 
 Que contient l'artefact déployé d'une app LLM ? <!--anki:695e35574c713148795a-->

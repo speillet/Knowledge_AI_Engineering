@@ -19,6 +19,8 @@ Comment sont organisés les paquets LangChain ? <!--anki:6a7e44294e70317a3d68-->
 - **Intégrations** : `langchain-openai`, `langchain-anthropic`… (un paquet par fournisseur)
 - **`langchain-classic`** : les anciennes chains et fonctionnalités de la v0, pour la rétrocompatibilité
 
+Installer seulement les intégrations nécessaires limite les dépendances et rend les mises à jour plus lisibles. Une erreur d'import peut venir d'un décalage entre le paquet principal, le cœur et le fournisseur. Épingler un ensemble compatible et vérifier un appel minimal avant de migrer les agents ; un ancien exemple peut viser une autre génération d'API.
+
 ---
 
 Comment instancier un modèle via LangChain indépendamment du fournisseur ? <!--anki:4e6c666e705f3a35383f-->
@@ -39,6 +41,8 @@ Installer l'intégration du fournisseur et configurer ses identifiants restent n
 Quels types de messages manipule LangChain ? <!--anki:6e25772567323b58302f-->
 ?
 `SystemMessage`, `HumanMessage`, `AIMessage` (qui peut contenir des `tool_calls`) et `ToolMessage` (résultat d'un outil) — ou de simples dicts `{"role": ..., "content": ...}`. La v1 ajoute des **content blocks standardisés** (texte, raisonnement, appels d'outils) communs à tous les fournisseurs.
+
+Lorsqu'un `AIMessage` demande un outil, le `ToolMessage` doit être associé à l'**identifiant de cet appel**. Confondre les rôles ou perdre cette association casse la conversation attendue par le fournisseur. Les blocs standardisés facilitent l'inspection, mais leurs capacités varient : ne pas supposer que chaque modèle expose un raisonnement ou les mêmes modalités.
 
 ---
 

@@ -8,6 +8,8 @@ Qu'est-ce qu'un Flow CrewAI ? <!--anki:48705b4d433b4b7c7339-->
 ?
 Un **workflow événementiel** écrit en Python : des méthodes décorées qui se déclenchent les unes après les autres, avec un **état partagé**. Un Flow peut appeler du code, un simple appel LLM, un agent ou une **crew** entière.
 
+Par exemple, un Flow valide un ticket, appelle une crew pour l'analyse puis transmet le résultat à un contrôle déterministe. Les méthodes décrivent le parcours ; l'état transporte les données nécessaires entre étapes. La présence d'un état partagé ne suffit pas à garantir reprise après panne ou absence de courses entre branches : ces propriétés doivent être vérifiées.
+
 ---
 
 Pourquoi CrewAI recommande-t-il les Flows pour la production ? <!--anki:493f4033257a2c434034-->
@@ -24,6 +26,8 @@ Quels décorateurs structurent un Flow CrewAI ? <!--anki:7a2571382c507c776739-->
 - **`@listen(methode)`** : s'exécute quand `methode` se termine, et reçoit sa sortie
 - **`@router(methode)`** : renvoie un **label** qui choisit la branche suivante
 - **`or_()` / `and_()`** : écouter la fin de **l'une** ou de **toutes** les méthodes
+
+Les dépendances décrivent **quand** une méthode devient éligible, tandis que l'état et les sorties portent les données. Avec plusieurs branches, préciser lesquelles peuvent modifier le même champ et comment leurs résultats sont réunis. Tester aussi une branche qui échoue ou ne s'exécute pas, afin de comprendre le comportement de la jonction attendue.
 
 ---
 
@@ -55,6 +59,8 @@ SupportFlow().kickoff(inputs={"message": "L'export PDF plante"})
 
 `@start` lance la classification ; `@router` émet une étiquette ; `@listen` exécute le traitement correspondant. `classifier` et `crew_support` sont des dépendances à définir. Cet extrait illustre uniquement la branche technique : ajouter un listener commercial et une gestion des catégories inconnues pour couvrir tous les chemins d'un vrai service.
 
+Pour rendre le diagnostic reproductible, conserver la catégorie obtenue et l'identifiant du ticket dans l'état. Une catégorie inconnue devrait mener à une branche explicite de revue, plutôt qu'être assimilée au commercial. Vérifier chaque route avec un classifieur simulé avant de mesurer les erreurs de classification d'un vrai modèle.
+
 ---
 
 Dans un Flow CrewAI, état structuré ou non structuré ? <!--anki:7a3c687e3b4823246c6c-->
@@ -62,6 +68,8 @@ Dans un Flow CrewAI, état structuré ou non structuré ? <!--anki:7a3c687e3b482
 - **Non structuré** : `self.state` est un dict libre — rapide pour prototyper
 - **Structuré** : un modèle **Pydantic** (`Flow[MonEtat]`) — typé et validé, recommandé en production
 Dans les deux cas, l'état reçoit un **`id`** unique.
+
+Avec un état typé, une catégorie ou un montant possède un contrat lisible par les étapes suivantes. La validation de structure ne prouve toutefois ni exactitude métier ni autorisation ; certaines contraintes exigent des validateurs explicites. Prévoir aussi l'évolution du schéma si des états persistés doivent être relus après un déploiement.
 
 ---
 
@@ -108,11 +116,15 @@ Crew ou Flow : quand utiliser quoi ? <!--anki:44575b3c377b7a313348-->
 - **Crew** : une tâche **ouverte** où plusieurs rôles doivent collaborer de façon autonome (recherche, rédaction)
 - **Flow** : un **processus métier** avec des étapes, des conditions et un état — qui appelle des crews pour les parties ouvertes
 
+Pour traiter une réclamation, le Flow peut imposer identification, contrôle des droits et approbation ; une crew analyse les pièces et propose une réponse. Le résultat de cette partie ouverte devient une entrée à valider avant l'action métier. Cette composition localise l'autonomie et facilite l'explication d'un échec à partir de l'étape concernée.
+
 ---
 
 Flows CrewAI ou LangGraph ? <!--anki:632943237e5a313c346d-->
 ?
 Les deux orchestrent des étapes avec état. **Flows** : méthodes Python décorées, très lisibles, intégrées aux crews. **[[45-langgraph-production|LangGraph]]** : graphe explicite plus bas niveau, avec un écosystème plus riche de checkpointers, time travel et outils de déploiement.
+
+Comparer surtout un cas de reprise réel : interruption avant écriture, panne après écriture et redémarrage avec le même état. Examiner ensuite la gestion des branches concurrentes et la facilité d'inspection. Le style de déclaration ne suffit pas à décider ; les garanties nécessaires dépendent des versions, du stockage et de l'architecture autour du framework.
 
 ---
 

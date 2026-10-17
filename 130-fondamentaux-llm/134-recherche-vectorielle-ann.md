@@ -27,6 +27,8 @@ Comment fonctionne un index IVF ? <!--anki:72553a316c3773444028-->
 ?
 **Inverted File** : on partitionne l'espace en **k clusters** (k-means). À la requête, on ne cherche que dans les **nprobe clusters** les plus proches. Moins de mémoire que HNSW et construction rapide ; rappel réglé par **nprobe**, qui chute si un voisin tombe dans un cluster non visité.
 
+Augmenter **nprobe** explore davantage de listes : le rappel peut monter, mais le travail de recherche aussi. Si les données changent fortement, les centroïdes appris peuvent mal représenter le nouvel espace. Comparer les voisins trouvés à une recherche exacte sur un échantillon et mesurer latence et rappel ensemble, avec les mêmes filtres métier.
+
 ---
 
 Qu'est-ce que la Product Quantization (PQ) ? <!--anki:484430554d377855643f-->
@@ -41,11 +43,15 @@ Quelles autres techniques de compression de vecteurs existent ? <!--anki:7328294
 - **Binary quantization** : 1 bit par dimension (÷32), recherche par **distance de Hamming** très rapide, puis **re-scoring** des meilleurs candidats en précision pleine.
 - **Troncature** des embeddings [[133-embeddings-representations|Matryoshka]].
 
+Les facteurs de réduction portent sur les **valeurs des vecteurs**, pas sur les métadonnées, le graphe ou une copie conservée pour le reclassement. La perte de qualité dépend du modèle et des données ; elle n'est pas toujours minime. Évaluer chaque compression avec une référence exacte et vérifier le coût du re-scoring des candidats.
+
 ---
 
 Qu'est-ce que DiskANN et quand l'utiliser ? <!--anki:242e5d653b58264e72-->
 ?
 Un index en graphe (famille **Vamana**) conçu pour vivre **sur SSD**, avec seulement des vecteurs compressés en RAM. Il permet de servir des **milliards de vecteurs** sur une machine à coût raisonnable, là où HNSW exigerait une RAM énorme.
+
+Le compromis déplace une partie de la contrainte de la RAM vers les **lectures SSD et leur latence**. Il faut encore de la mémoire pour les structures chaudes et une stratégie de cache. Tester une charge froide puis concurrente : un bon résultat sur quelques requêtes ne garantit pas le même p99 lorsque beaucoup de recherches sollicitent le disque.
 
 ---
 
@@ -80,18 +86,21 @@ Quels sujets d'exploitation une base vectorielle pose-t-elle ? <!--anki:75695a59
 - **Multi-tenant** : une collection par client ou un filtre de tenant.
 - **Sauvegardes**, réplication, **mémoire** (dimensionnement RAM), et **droit à l'effacement** ([[154-rgpd-llm|RGPD]]).
 
+Vérifier la **fraîcheur observable** après insertion, mise à jour et suppression, y compris dans les réplicas et caches. Une sauvegarde doit pouvoir restaurer index et métadonnées compatibles. Les stratégies de suppression varient selon l'implémentation ; tester accumulation de suppressions et reconstruction au lieu de supposer qu'un index fonctionnel restera performant sans maintenance.
+
 ---
 
 Calcul : estimer la mémoire de 10 millions de vecteurs à 768 dimensions float32 et d’un graphe HNSW simplifié de 32 liens de 4 octets par vecteur. Quelle part varie si les vecteurs passent en int8 ? <!--anki:4b382a2f6a796f4b7621-->
 ?
-Ordre de grandeur : **N × (d × octets par dimension + M × 2 × 4 octets)**.
+Avec les hypothèses simplifiées de l'énoncé, en **Go décimaux** :
 ```text
-vecteurs : 10 M × 768 dim × 4 octets (float32) ≈ 31 Go
-graphe   : 10 M × 16 voisins × 2 × 4 octets    ≈ 1,3 Go
-int8     : part vecteurs ÷ 4                   ≈ 8 Go
-binaire  : part vecteurs ÷ 32                  ≈ 1 Go (+ reranking)
+vecteurs float32 = 10 000 000 × 768 × 4 = 30,72 Go
+graphe = 10 000 000 × 32 × 4 = 1,28 Go
+total simplifié float32 = 32,00 Go
+vecteurs int8 = 10 000 000 × 768 × 1 = 7,68 Go
+total simplifié int8 = 7,68 + 1,28 = 8,96 Go
 ```
-HNSW veut tout en **RAM** : au-delà, on quantize, ou on passe à un index sur disque comme DiskANN.
+Seule la part des vecteurs est divisée par quatre : le total diminue d'environ **3,57 fois**. Ajouter métadonnées, structures d'allocation, niveaux du graphe, buffers et éventuelle copie pleine précision. Ce calcul donne un plancher pédagogique, pas la RAM exacte d'une implémentation HNSW.
 
 ---
 

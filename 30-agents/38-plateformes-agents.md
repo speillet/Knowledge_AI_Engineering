@@ -8,14 +8,19 @@ Qu'est-ce qu'une plateforme d'agents, par rapport à un framework ? <!--anki:666
 ?
 Le **[[37-frameworks-agents|framework]]** sert à **écrire** l'agent (bibliothèque) ; la **plateforme** sert à l'**exécuter et le gouverner en production** : runtime managé, sandbox, mémoire, accès aux outils, identité, politiques d'accès, observabilité, evals. La suite senior de cette fiche : [[115-plateformes-agents-gouvernance|architecture & gouvernance]].
 
+Une bibliothèque exécutée sur un ordinateur ne devient pas une plateforme parce qu'elle sait appeler des outils. Il faut aussi organiser les déploiements, les identités, les limites de ressources et la récupération après panne. Clarifier qui exploite chaque brique : adopter une offre managée déplace certaines responsabilités sans supprimer les contrôles métier.
+
 ---
 
 Quelles briques d'exécution fournit une plateforme d'agents ? <!--anki:737d4d4e712a33605833-->
 ?
-- **Runtime** : exécute les sessions d'agent, isolées et longues
-- **Sandbox** : exécute le code et le navigateur de l'agent sans risque
-- **Mémoire** : court terme (session) et long terme
-- **Gateway d'outils** : expose les API comme outils [[33-mcp|MCP]]
+Une plateforme peut fournir quatre briques complémentaires :
+- **Runtime** : exécuter les sessions et suivre leur cycle de vie.
+- **Sandbox** : isoler le code ou le navigateur et limiter leurs ressources.
+- **Mémoire** : conserver puis rappeler l'état de session et les informations durables.
+- **Gateway d'outils** : exposer des API sous contrôle, éventuellement via [[33-mcp|MCP]].
+
+Par exemple, un agent analyse un fichier dans une sandbox puis appelle un outil métier via la gateway. L'isolation réduit les effets possibles ; elle ne rend pas l'exécution sans risque. Contrôler aussi réseau, secrets, volumes montés et séparation entre utilisateurs.
 
 ---
 
@@ -26,6 +31,8 @@ Quelles briques de gouvernance fournit une plateforme d'agents ? <!--anki:526249
 - **Observabilité, evals, coûts**
 
 En 2026, AWS, Google et Microsoft proposent toutes ces briques, souvent **utilisables séparément**.
+
+Le registre permet de savoir **quelle version est autorisée**, tandis que les politiques déterminent qui peut l'exécuter et avec quels outils. Associer chaque déploiement à un propriétaire, un budget et une procédure de retrait. Vérifier l'intégration réelle des briques : un catalogue sans contrôle au moment de l'appel n'empêche pas une action interdite.
 
 ---
 
@@ -164,6 +171,8 @@ Quel rôle joue l'observabilité dans une plateforme ? <!--anki:7751412e48372c7b
 ?
 **Tracer chaque étape** de l'agent (appels LLM, outils, décisions, approbations), mesurer coûts et latence, et rattacher des **scores de qualité**. Les plateformes émettent des traces **OpenTelemetry** (conventions GenAI), lisibles dans Langfuse, Datadog, CloudWatch… ([[91-langfuse-observabilite|Langfuse]], [[93-monitoring-inference|monitoring]]).
 
+Une trace utile relie la demande utilisateur aux appels du modèle et aux effets métier, avec un identifiant commun. Elle permet de distinguer outil lent, boucle répétitive et mauvaise décision. Masquer les données sensibles et prévoir rétention et échantillonnage ; une trace techniquement complète peut être coûteuse ou exposer inutilement le contenu des conversations.
+
 ---
 
 À quels moments évalue-t-on un agent sur une plateforme ? <!--anki:4e706774217c234e5623-->
@@ -183,6 +192,8 @@ Que mesure-t-on quand on évalue un agent ? <!--anki:514c36507e6b23627d33-->
 - **Sécurité** et respect des règles
 
 AgentCore Evaluations propose une dizaine d'évaluateurs prêts à l'emploi.
+
+Un agent qui affirme « remboursement effectué » échoue si aucun remboursement n'existe dans le système métier. Vérifier donc l'**état final observable**, puis les contraintes de parcours, de coût et de sécurité. Plusieurs trajectoires peuvent être valides : imposer une séquence unique sans justification risque de pénaliser une solution correcte plus efficace.
 
 ---
 

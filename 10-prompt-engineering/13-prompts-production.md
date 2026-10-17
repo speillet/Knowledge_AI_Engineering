@@ -25,7 +25,9 @@ C'est aussi l'ordre compatible avec le cache : **stable en tête**, variable à 
 
 Pourquoi expliquer le **pourquoi** d'une consigne ? <!--anki:443d7560577e47674929-->
 ?
-Une consigne motivée se **généralise** : « réponds en phrases courtes, car la réponse sera lue par une synthèse vocale » amène aussi le modèle à éviter listes et symboles, que la consigne seule n'interdisait pas. Une règle nue est appliquée **à la lettre**, et seulement aux cas prévus.
+Expliquer l'objectif aide le modèle à **adapter la consigne à des cas non explicitement listés**. Par exemple, « la réponse sera lue par une synthèse vocale » donne une raison de préférer des phrases simples et d'éviter tableaux ou symboles difficiles à prononcer.
+
+Cette motivation ne garantit pas le respect du format. Associer le pourquoi à des contraintes observables, comme l'absence de tableau, puis tester des entrées représentatives. Si une exigence est impérative, la valider dans l'application : le modèle peut mal interpréter une justification ou privilégier une autre instruction.
 
 ---
 

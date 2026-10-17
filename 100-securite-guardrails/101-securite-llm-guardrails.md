@@ -8,11 +8,15 @@ Qu'est-ce que l'OWASP Top 10 pour les applications LLM ? <!--anki:632c333a387a52
 ?
 La liste de référence des **risques de sécurité propres aux LLM** : prompt injection, fuite de données sensibles, supply chain, empoisonnement de données, mauvaise gestion des sorties, **excessive agency**, fuite du system prompt, faiblesses des embeddings, désinformation, consommation non bornée.
 
+C'est une **grille de revue**, pas un certificat de sécurité ni un classement adapté automatiquement à chaque produit. Pour chaque risque, identifier l'entrée contrôlée par un attaquant, l'actif exposé et un contrôle testable. Une application de résumé sans outils n'a pas la même surface d'attaque qu'un agent autorisé à modifier des comptes.
+
 ---
 
 Qu'est-ce que la prompt injection ? <!--anki:78626b675874437c263f-->
 ?
 Un texte qui **détourne les instructions du modèle** (« ignore les consignes précédentes et… »). Le modèle ne sépare pas de façon fiable **instructions** et **données** : tout texte dans le contexte peut agir comme une instruction.
+
+Elle est **directe** dans une demande utilisateur ou **indirecte** dans une page, un document ou un résultat d'outil. Par exemple, un document à résumer tente d'imposer une nouvelle tâche à l'assistant. Les délimiteurs aident à signaler les données, mais les protections décisives limitent les permissions et contrôlent les actions exécutées.
 
 ---
 
@@ -38,6 +42,8 @@ Qu'est-ce que la « lethal trifecta » ? <!--anki:4e762977794d6b4f2638-->
 ?
 La combinaison dangereuse (Simon Willison) : un agent qui a **accès à des données privées**, qui **lit du contenu non fiable** et qui peut **communiquer vers l'extérieur**. Une injection peut alors **exfiltrer** les données. Il faut casser au moins une des trois.
 
+Par exemple, un assistant lit une page hostile tout en ayant accès à un dossier interne et à un outil d'envoi. La page peut tenter de faire transférer ce dossier. Réduire les accès, séparer les contextes et contrôler les destinations diminue ce risque ; bloquer un domaine connu ne neutralise pas tous les canaux d'exfiltration.
+
 ---
 
 Comment une exfiltration peut-elle se produire sans outil explicite ? <!--anki:7441303f5d7636263565-->
@@ -60,6 +66,8 @@ Pourquoi traiter la sortie du LLM comme une entrée non fiable ? <!--anki:65306e
 ?
 Parce qu'elle peut contenir du **SQL, du HTML/JS ou des commandes shell** injectés : on la **valide et on l'échappe** avant de l'exécuter ou de l'afficher, et on valide les arguments d'un [[32-tool-calling|appel d'outil]] **avant** exécution.
 
+Adapter le contrôle au **consommateur de la sortie** : requêtes paramétrées pour les valeurs SQL, rendu HTML sûr pour l'affichage, fonctions métier bornées pour les actions. Un JSON valide peut demander un montant interdit ou un objet appartenant à un autre client. Valider donc structure, sens métier et autorisation, pas seulement la syntaxe.
+
 ---
 
 Qu'est-ce qu'un guardrail ? <!--anki:46597a4e606731357673-->
@@ -67,6 +75,8 @@ Qu'est-ce qu'un guardrail ? <!--anki:46597a4e606731357673-->
 Un **contrôle placé autour du modèle** :
 - **En entrée** : détection d'injection, de jailbreak, de PII, de sujets interdits
 - **En sortie** : toxicité, fuite de données, conformité du format, ancrage dans les sources
+
+Un contrôle peut être déterministe, comme une limite de montant, ou probabiliste, comme un détecteur de contenu. Il faut définir son taux d'erreur et le comportement en cas de doute : bloquer, reformuler ou faire revoir. Combiner plusieurs couches et tester leurs contournements ; un guardrail ne remplace pas les permissions appliquées par l'outil.
 
 ---
 

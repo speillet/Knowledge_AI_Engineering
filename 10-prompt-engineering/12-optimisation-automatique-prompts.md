@@ -36,6 +36,8 @@ class Classer(dspy.Signature):
 classer = dspy.ChainOfThought(Classer)
 ```
 
+La signature décrit le **contrat d'entrée et de sortie** ; le module choisit une manière de résoudre la tâche. Cet extrait ne lance encore aucune optimisation : il faut fournir exemples, métrique et budget à un optimiseur. Évaluer ensuite le programme compilé sur des cas séparés pour détecter un surapprentissage du prompt.
+
 ---
 
 Que sont les signatures et les modules de DSPy ? <!--anki:41376d40793c6c616c4f-->

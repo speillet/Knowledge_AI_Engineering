@@ -7,11 +7,15 @@ Qu'est-ce qu'un token ? <!--anki:3f72253a587d60376a-->
 ?
 L'**unité de texte** que le modèle lit et produit : un mot fréquent, un morceau de mot, un signe de ponctuation ou un octet. En anglais, **1 token ≈ 4 caractères ≈ 0,75 mot** ; c'est l'unité de **facturation**, de **limite de contexte** et de **vitesse** de génération.
 
+Le découpage dépend du **tokenizer du modèle**, de la langue et du type de contenu. Un identifiant rare, du code ou des caractères inhabituels peuvent coûter davantage de tokens qu'une phrase courante de même longueur. Pour un budget précis, compter le texte avec le bon tokenizer plutôt que convertir systématiquement caractères ou mots.
+
 ---
 
 Comment fonctionne le BPE (Byte Pair Encoding) ? <!--anki:483e336061385047454a-->
 ?
 On part des **caractères (ou octets)** et on **fusionne itérativement la paire la plus fréquente** du corpus d'entraînement en un nouveau symbole, jusqu'à atteindre la taille de vocabulaire voulue. Les séquences fréquentes deviennent un seul token, les rares se découpent en morceaux.
+
+Une fois le tokenizer appris, les fusions et le vocabulaire sont fixés : encoder un nouveau texte n'entraîne pas à nouveau BPE. Un mot inconnu peut être composé d'unités déjà disponibles. Le découpage fréquent reflète le corpus d'apprentissage ; il n'est donc pas nécessairement aligné sur les syllabes, la morphologie ou les mots d'une autre langue.
 
 ---
 
@@ -27,6 +31,8 @@ Quelle est la taille typique d'un vocabulaire et quel est le compromis ? <!--ank
 ?
 De **32 k à plus de 200 k** tokens. Un gros vocabulaire **compresse mieux** le texte (moins de tokens par phrase, donc moins de coût et plus de contenu par contexte) mais agrandit la **matrice d'embedding** et la couche de sortie, et chaque token rare est moins bien appris.
 
+La taille de la table d'embedding est approximativement **vocabulaire × dimension cachée × octets par valeur**. Augmenter le vocabulaire peut raccourcir les séquences tout en augmentant cette table et le travail de la projection finale. Le compromis dépend des langues et du corpus ; comparer le nombre de tokens sur des données représentatives, pas seulement la taille annoncée.
+
 ---
 
 Pourquoi le français coûte-t-il plus cher que l'anglais ? <!--anki:77302b52755f516a7d50-->
@@ -39,11 +45,15 @@ Pourquoi les LLM échouent-ils à compter les lettres d'un mot ? <!--anki:71382c
 ?
 Le modèle ne voit **pas les caractères** mais des **identifiants de tokens** : « strawberry » peut être 2 ou 3 tokens opaques. Les tâches au niveau du caractère (épeler, inverser, compter) et une partie de l'**arithmétique** (nombres découpés de façon irrégulière) en souffrent.
 
+Le découpage exact varie selon le tokenizer et n'empêche pas absolument le comptage : le modèle peut apprendre des régularités ou décomposer le mot. Pour une réponse exacte, utiliser un outil qui compte les caractères selon la définition voulue. Attention aux accents combinés : caractère affiché, point de code Unicode et octet sont des unités différentes.
+
 ---
 
 Qu'est-ce que les tokens spéciaux ? <!--anki:43234c5d264c6c23753d-->
 ?
 Des tokens réservés pour la **structure** : début et fin de séquence, **délimiteurs de rôles** (system, user, assistant), début d'appel d'outil, etc. Ils sont insérés par le **chat template** et ne devraient **jamais** pouvoir être produits par du texte utilisateur (sinon injection de rôle).
+
+Il faut distinguer la **chaîne visible** représentant un marqueur de son identifiant réservé dans le tokenizer. L'application doit assembler les rôles par l'interface prévue et éviter de concaténer des messages bruts comme s'ils étaient déjà structurés. Même sans injection de token spécial, une instruction malveillante en langage naturel reste possible.
 
 ---
 
@@ -51,11 +61,15 @@ Qu'est-ce qu'un chat template et pourquoi est-il critique en self-hosting ? <!--
 ?
 Le **gabarit** (souvent Jinja, fourni avec le modèle) qui transforme la liste de messages en **séquence de tokens** avec les bons tokens spéciaux. Un template **erroné** (serveur mal configuré, mauvais format d'outils) dégrade silencieusement la qualité : le modèle voit un format **qu'il n'a pas appris** ([[11-serveurs-inference-llm|serveurs d'inférence]]).
 
+Le même historique peut devenir une séquence différente selon les séparateurs, la fin de tour et le préfixe de génération. Vérifier le template livré avec le checkpoint et tester un échange avec outil si le service en utilise. Conserver modèle, tokenizer et template ensemble pour qu'une mise à jour ne change pas silencieusement les entrées.
+
 ---
 
 Pourquoi un espace de fin dans le prompt peut-il dégrader la sortie ? <!--anki:65762c3e4d4b3d582425-->
 ?
-Les tokenizers intègrent souvent **l'espace au début du token** (« ▁chat »). Terminer le prompt par un espace force le modèle à produire un token **sans espace initial**, une configuration rare à l'entraînement → sorties étranges. Plus généralement, la **frontière de tokens** entre prompt et réponse compte.
+Un espace final peut **changer la tokenisation à la frontière entre prompt et continuation**. Certains tokenizers représentent un mot avec son espace initial dans un seul token ; déplacer cet espace dans le prompt modifie donc les continuations possibles et leurs probabilités.
+
+L'effet dépend du tokenizer, du modèle et du chat template : ce n'est pas une cause universelle de mauvaise réponse. En cas de sortie étrange, inspecter les tokens réellement produits et comparer avec ou sans espace dans le même format de conversation. Éviter de modifier arbitrairement les marqueurs attendus par le modèle.
 
 ---
 
@@ -70,6 +84,8 @@ Quel lien entre tokenisation et sécurité ? <!--anki:463f243f397a232c5732-->
 - **Tokens « glitch »** sous-entraînés qui provoquent des comportements anormaux.
 - **Contournement de filtres** par variantes de découpage (espaces, homoglyphes, Unicode invisible) — voir [[102-menaces-agents|injection invisible]].
 - **Injection de tokens spéciaux** si l'entrée utilisateur n'est pas échappée.
+
+Inspecter à la fois **texte rendu et représentation réelle** lorsqu'un filtre et le modèle interprètent différemment une entrée. Une normalisation Unicode peut aider certains contrôles, mais doit préserver le sens et les identifiants utiles. Les limites d'action restent nécessaires : aucun découpage de tokens ne doit permettre de contourner une autorisation vérifiée dans le code.
 
 ---
 

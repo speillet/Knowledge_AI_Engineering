@@ -15,6 +15,8 @@ Sur quelles données pré-entraîne-t-on un LLM ? <!--anki:4124396750642f6d357d-
 ?
 Du **web filtré** (Common Crawl nettoyé), du **code**, des **livres**, des articles scientifiques, des données multilingues et, de plus en plus, des **données synthétiques**. La qualité prime : **déduplication**, filtres de qualité (souvent par classifieur), retrait des contenus toxiques et des PII, **décontamination** des benchmarks ([[151-donnees-curation-annotation|curation]]).
 
+Le **mélange** compte autant que la quantité : une source longue peut dominer le budget de tokens même si elle contient peu de documents. Suivre langues, domaines, licences et cas rares, puis mesurer l'effet des filtres par segment. Retirer tous les textes atypiques peut améliorer une apparence de propreté tout en appauvrissant les capacités recherchées.
+
 ---
 
 Que disent les scaling laws ? <!--anki:6725533c2f733155372f-->
@@ -47,17 +49,23 @@ Qu'est-ce que le MFU ? <!--anki:42584d7a597735794763-->
 ?
 **Model FLOPs Utilization** : la part de la puissance de calcul **théorique** des GPU réellement utilisée pour l'entraînement. Typiquement **30 à 50 %** sur de gros clusters ; le reste est perdu en communications, attentes mémoire et pannes ([[54-entrainement-distribue|entraînement distribué]]).
 
+Le numérateur estime les FLOPs utiles au modèle par unité de temps ; le dénominateur dépend du **pic matériel et de la précision retenue**. Préciser ces conventions avant de comparer deux MFU. Une faible valeur peut venir des données, de la mémoire ou des communications ; elle ne désigne pas à elle seule le composant à optimiser.
+
 ---
 
 Qu'est-ce que la contamination des benchmarks ? <!--anki:79216e4b4d4532747c44-->
 ?
 La présence des **questions (et réponses) d'un benchmark dans les données d'entraînement**. Le modèle les a « vues » : son score **surestime** sa capacité réelle. D'où les benchmarks **récents ou privés**, les tests sur des variantes reformulées, et la prudence face aux leaderboards ([[146-choix-modeles|choix de modèle]]).
 
+La fuite peut être exacte ou prendre la forme d'une paraphrase, d'une solution publiée ou d'un exemple presque identique. Un score contaminé mesure alors en partie la familiarité avec le test. Rechercher les recouvrements et renouveler les cas ; reformuler seulement la question ne supprime pas forcément la connaissance de sa réponse.
+
 ---
 
 Qu'est-ce que la date de coupure (knowledge cutoff) ? <!--anki:67494854747530244668-->
 ?
-La date après laquelle **aucune donnée** n'a été vue en entraînement. Le modèle ignore les événements, versions d'API ou bibliothèques postérieurs, et peut **affirmer avec assurance** des informations périmées → [[21-rag-fondamentaux|RAG]] ou outils de recherche pour tout ce qui change.
+La **date de coupure des connaissances** est un repère annoncé sur la fraîcheur des données ayant servi au modèle. Elle ne garantit ni qu'il connaît tous les faits antérieurs, ni que toutes ses étapes d'entraînement partagent une frontière temporelle unique.
+
+Un modèle peut répondre avec assurance à partir d'une information ancienne, même si sa formulation paraît actuelle. Pour une version d'API, un prix ou une règle susceptible d'évoluer, consulter une source datée via recherche ou RAG et vérifier sa pertinence. Séparer ainsi connaissances apprises et informations effectivement consultées pendant la réponse.
 
 ---
 
@@ -65,11 +73,15 @@ Qu'appelle-t-on capacités émergentes, et pourquoi sont-elles débattues ? <!--
 ?
 Des capacités qui semblent **apparaître brusquement** au-delà d'une certaine taille. Une partie de cet effet vient du **choix de la métrique** (exact match, tout ou rien) : avec une métrique continue, le progrès est souvent **graduel**. Moralité : **mesurer sur sa tâche** plutôt que supposer un seuil.
 
+Une tâche notée correcte seulement si dix sous-réponses sont justes peut sembler soudainement réussir quand chaque sous-réponse s'améliore progressivement. Cela n'exclut pas l'apparition de comportements nouveaux ; cela impose d'examiner le protocole. Varier métriques, difficultés et tailles de modèles avant d'attribuer un changement de score à un seuil universel de capacité.
+
 ---
 
 Pourquoi parle-t-on de « mur des données » ? <!--anki:443379637077604b2458-->
 ?
 Le stock de **texte humain de qualité** disponible sur le web est fini et en voie d'épuisement au rythme actuel. Les réponses : **données synthétiques**, **multimodal**, entraînement sur **plusieurs époques** des meilleures données, et déplacement du calcul vers le **post-training par RL** et le **test-time compute** ([[138-modeles-raisonnement|modèles de raisonnement]]).
+
+Il s'agit d'une contrainte sur les données **utiles, accessibles et exploitables**, pas de la disparition de tout texte sur Internet. Répéter des données ou en générer davantage ne remplace pas automatiquement diversité et qualité. Les projections dépendent des hypothèses de collecte et d'efficacité ; éviter d'en déduire une date certaine de fin du progrès.
 
 ---
 

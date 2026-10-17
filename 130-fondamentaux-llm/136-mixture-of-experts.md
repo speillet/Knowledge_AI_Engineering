@@ -8,6 +8,8 @@ Qu'est-ce qu'un modèle Mixture of Experts ? <!--anki:6a3348243e4677414e52-->
 ?
 Un Transformer dont le **bloc MLP** est remplacé par **plusieurs MLP (« experts »)** et un **routeur** qui choisit, **pour chaque token**, quelques experts seulement (top-k, souvent 1 à 8 parmi des dizaines ou centaines). Seule une fraction des paramètres **travaille** à chaque token.
 
+L'activation est **sparse**, mais les experts restent des poids à stocker quelque part. Deux tokens d'une même phrase peuvent solliciter des experts différents, et un batch peut en mobiliser beaucoup au total. Distinguer donc calcul par token, mémoire du modèle et communications de routage pour comprendre l'intérêt et le coût du MoE.
+
 ---
 
 À ne pas confondre : paramètres totaux et paramètres actifs ? <!--anki:744144745570536d772c-->
@@ -21,7 +23,9 @@ Exemple type : un modèle de ~**670 B paramètres totaux** mais ~**37 B actifs**
 
 Pourquoi le MoE est-il devenu dominant pour les grands modèles ? <!--anki:427b4855503445695067-->
 ?
-Il découple **capacité** et **coût de calcul** : on obtient la qualité d'un modèle bien plus gros pour le coût de calcul d'un petit, à l'entraînement comme à l'inférence. À calcul égal, un MoE atteint une **loss plus basse** qu'un modèle dense.
+Le MoE est attractif parce qu'il augmente la **capacité totale du modèle** sans activer tous ses paramètres pour chaque token. Cette activation sparse peut offrir un meilleur compromis qualité/calcul que certaines architectures denses, selon les données, l'entraînement et le budget comparés.
+
+Ce n'est pas une garantie universelle de qualité ni de vitesse. Les experts occupent de la mémoire, le routage ajoute des communications et la charge peut être déséquilibrée. Pour un déploiement, comparer des modèles sur les mêmes tâches et SLO, avec le coût des GPU et du réseau, plutôt que seulement les paramètres actifs.
 
 ---
 
@@ -34,6 +38,8 @@ Une petite couche linéaire calcule un **score par expert** pour le token ; on g
 Qu'est-ce que le load balancing et pourquoi est-il nécessaire ? <!--anki:6b65265a7c4f75487231-->
 ?
 Sans contrainte, le routeur **s'effondre** sur quelques experts (les autres ne sont jamais entraînés) et certains GPU sont surchargés. On ajoute une **loss auxiliaire d'équilibrage**, ou un **biais ajustable** par expert, et une **capacité maximale** de tokens par expert (les tokens en trop sont redirigés ou ignorés).
+
+Le but est d'éviter à la fois des experts sous-entraînés et des files d'attente concentrées sur quelques GPU. Les mécanismes précis varient selon l'architecture, notamment le traitement d'un dépassement de capacité. Surveiller la distribution des tokens et les temps par expert ; un bon équilibre moyen peut masquer un batch temporairement très déséquilibré.
 
 ---
 
@@ -49,6 +55,8 @@ Les experts sont-ils spécialisés par domaine (maths, code, français) ? <!--an
 ?
 **Pas vraiment.** L'analyse montre une spécialisation surtout **syntaxique ou lexicale** (ponctuation, types de tokens) plutôt que thématique. « Expert » est un nom trompeur : ce sont des **sous-réseaux appris** sans rôle humainement interprétable garanti.
 
+La spécialisation observée dépend du modèle, de la couche et des données étudiées ; il ne faut pas généraliser un résultat à tous les MoE. Le routage peut suivre des régularités locales plutôt qu'une expertise métier. On ne peut donc pas désactiver un « expert juridique » supposé pour retirer proprement toutes les connaissances juridiques.
+
 ---
 
 Quel est le coût caché d'un MoE en inférence ? <!--anki:706d666f3345467d2f48-->
@@ -61,6 +69,8 @@ Qu'est-ce que l'expert parallelism ? <!--anki:4c6f3a3e59624f4b3a62-->
 ?
 Répartir **les experts sur différents GPU** : chaque token est **envoyé** (all-to-all) vers le GPU qui porte ses experts, puis le résultat revient. Il s'ajoute au tensor et au pipeline parallelism ; ses **communications all-to-all** exigent des interconnexions rapides (NVLink, InfiniBand) ([[62-optimisations-inference|parallélisme]], [[54-entrainement-distribue|entraînement distribué]]).
 
+Un GPU peut héberger plusieurs experts, et un expert peut lui-même être réparti selon l'architecture. L'enjeu est d'équilibrer tokens reçus, calcul et communications. Un expert populaire crée une attente pour les autres ; mesurer le débit global et les échanges réseau, car l'ajout de GPU peut augmenter la communication sans accélérer le traitement.
+
 ---
 
 MoE ou dense : quoi choisir en self-hosting ? <!--anki:6b30347c33712d463774-->
@@ -69,6 +79,8 @@ MoE ou dense : quoi choisir en self-hosting ? <!--anki:6b30347c33712d463774-->
 - **MoE** : meilleur rapport qualité/calcul à **fort trafic** si l'on dispose de la **mémoire** (plusieurs GPU) et d'un serveur bien optimisé.
 
 La [[68-quantization|quantization]] (des experts surtout) réduit l'écart de mémoire.
+
+Ces tendances ne remplacent pas une mesure : certains MoE compacts tiennent sur une seule machine, et un dense peut aussi exiger plusieurs GPU. Fixer mémoire disponible, qualité minimale et distribution de charge, puis comparer démarrage, débit et latence. La quantification des poids réduit le stockage mais ne supprime pas les communications ni le KV cache.
 
 ---
 

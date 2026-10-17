@@ -39,6 +39,8 @@ Comment extraire et consolider les souvenirs ? <!--anki:6f2351266f6a21365b2a-->
 ?
 Un LLM extrait des **faits candidats**, puis compare chacun aux souvenirs proches déjà stockés et choisit : **ajouter**, **mettre à jour**, **supprimer** ou **ignorer** (les opérations ADD, UPDATE, DELETE, NOOP de Mem0). Sans cette consolidation, la mémoire accumule **doublons et contradictions**.
 
+Une correction explicite de l'utilisateur doit pouvoir remplacer une ancienne préférence, tandis qu'une déduction incertaine reste un candidat. Stocker source, date et niveau de confiance, puis rendre les opérations auditables. La consolidation ne doit pas fusionner des souvenirs appartenant à deux utilisateurs ni propager automatiquement une erreur issue d'une conversation isolée.
+
 ---
 
 Comment choisir les souvenirs à rappeler ? <!--anki:6f7862213e5e592d556b-->
@@ -50,17 +52,23 @@ Par un **score combiné** (popularisé par les Generative Agents, 2023) :
 
 Plus des **filtres** (utilisateur, type de souvenir). Mieux vaut **peu de souvenirs bien choisis** que tout l'historique.
 
+Appliquer d'abord les **filtres d'accès**, puis classer les souvenirs autorisés. Un souvenir récent mais hors sujet ne doit pas évincer une contrainte stable et importante. Vérifier aussi contradictions et dates de validité. Évaluer le rappel sur des questions où le bon souvenir est connu, en comptant les informations inutiles ajoutées au prompt.
+
 ---
 
 En mémoire d'agent, qu'est-ce que la réflexion (reflection) ? <!--anki:747d5b5b70284a2c677b-->
 ?
 L'agent **synthétise périodiquement** ses souvenirs bruts en conclusions de plus haut niveau (« l'utilisateur préfère des réponses courtes avec du code »), ou tire des **leçons** de ses échecs. Il transforme ainsi l'épisodique en sémantique ou en procédural.
 
+La conclusion produite reste une **hypothèse dérivée**, pas une déclaration de l'utilisateur. Après un échec de requête SQL, une leçon utile peut être « vérifier le nom des colonnes avant l'exécution », avec lien vers l'incident. Valider cette règle sur d'autres cas avant de la généraliser ; une réflexion erronée peut entretenir les mêmes erreurs.
+
 ---
 
 Comment gérer les faits qui changent dans le temps ? <!--anki:4e5d6777774e4f2e3b52-->
 ?
 **Invalider plutôt qu'écraser** : chaque fait porte une **fenêtre de validité** (depuis quand, jusqu'à quand) et l'historique est conservé. Les graphes temporels comme Graphiti le font automatiquement. Sans cela, l'agent mélange l'ancienne adresse et la nouvelle, ou perd la trace de ce qui était vrai à une date donnée.
+
+Distinguer la date où le fait est **valable** de celle où le système l'a appris. Une adresse corrigée aujourd'hui peut être valable depuis la semaine dernière. Les requêtes doivent préciser si elles visent l'état actuel ou passé. Conserver un historique seulement dans les limites de la politique de conservation et des droits applicables.
 
 ---
 
@@ -77,6 +85,8 @@ Comment fonctionne la mémoire de Letta (ex-MemGPT) ? <!--anki:65302b6a764f7b402
 ?
 Une approche inspirée des **systèmes d'exploitation** : des **blocs de mémoire « core »** restent dans le contexte et l'agent les **modifie lui-même** avec des outils ; la mémoire d'**archives** (recherche vectorielle) et de **rappel** (historique) reste hors contexte et y est chargée à la demande, comme une pagination.
 
+Le contenu en mémoire core coûte du contexte à chaque appel ; les archives demandent une recherche pour devenir visibles. Cette séparation impose de choisir ce qui mérite de rester toujours présent, comme une contrainte durable. Contrôler les modifications proposées par l'agent et conserver leur provenance pour éviter qu'une inférence incorrecte devienne une préférence permanente.
+
 ---
 
 Quelle bibliothèque de mémoire d'agent pour une couche d'extraction simple, une mémoire auto-éditée, des faits qui changent, un graphe avec ontologie ? <!--anki:3931613663613465373863633435633661313165373434653566323234346263-->
@@ -85,6 +95,8 @@ Quelle bibliothèque de mémoire d'agent pour une couche d'extraction simple, un
 - **Mémoire auto-éditée** par l'agent lui-même : **Letta**
 - **Faits qui changent dans le temps** (validité, historique) : **Zep / Graphiti**, un graphe temporel
 - **Knowledge graph structuré par une ontologie** : **[[24-cognee|Cognee]]**
+
+Comparer ces approches sur un même scénario : apprendre une préférence, la corriger, la rappeler dans une autre session puis la supprimer. Vérifier provenance, isolation et comportement en présence de contradictions. Le choix dépend du cycle de vie des informations ; un graphe plus riche ne garantit pas un meilleur rappel pour des préférences simples.
 
 ---
 

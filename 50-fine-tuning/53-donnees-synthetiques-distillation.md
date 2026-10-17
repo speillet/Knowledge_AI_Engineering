@@ -8,6 +8,8 @@ Qu'est-ce que les données synthétiques en AI Engineering ? <!--anki:4a7e713448
 ?
 Des données **générées par un LLM** (questions, réponses, conversations, cas de test, préférences) plutôt que collectées ou écrites par des humains. Usages : **fine-tuning**, **distillation**, **jeux d'eval** ([[94-evals-methodologie|golden dataset]]), **tests adversariaux**, entraînement de **modèles d'embedding**.
 
+Par exemple, générer des variantes de tickets rares élargit un jeu d'entraînement, à condition de vérifier labels et diversité. Le générateur peut reproduire les mêmes formulations ou inventer des cas impossibles. Conserver la provenance et la recette de génération, puis mesurer l'effet sur un test indépendant contenant des exemples représentatifs du trafic réel.
+
 ---
 
 Comment générer des données synthétiques variées ? <!--anki:686f5943344f63512c69-->
@@ -24,17 +26,23 @@ Pourquoi le filtrage est-il l'étape la plus importante ? <!--anki:415b725136517
 ?
 Un LLM génère avec aplomb des exemples **faux, triviaux ou dupliqués**. On filtre par : **validation automatique** (exécution du code, schéma, réponse vérifiable), **juge** de qualité, **déduplication** (exacte et sémantique), et **relecture humaine** d'un échantillon. Mieux vaut **1 000 bons exemples que 50 000 médiocres**.
 
+Commencer par définir ce qu'est un exemple utile : réponse correcte, difficulté adaptée et couverture d'un besoin réel. Auditer aussi les rejets, car un filtre peut éliminer les cas rares qu'on voulait apprendre. Comparer ensuite le modèle entraîné à budget comparable ; ni le volume retenu ni le score du filtre ne prouvent seuls un gain.
+
 ---
 
 Qu'est-ce que le model collapse ? <!--anki:7a373c34476839424d67-->
 ?
 La **dégradation** d'un modèle entraîné de façon répétée sur les **sorties de modèles** : la diversité s'effondre, les **queues de distribution** (cas rares) disparaissent et les erreurs s'amplifient. Parade : **mélanger avec des données réelles**, conserver les données humaines d'origine, filtrer fortement.
 
+Le risque augmente lorsque les nouvelles générations **remplacent** les données originales et oublient les événements peu probables. Ce n'est pas une conséquence inévitable de tout exemple synthétique. Suivre diversité, erreurs et couverture des cas rares au fil des générations ; une moyenne stable peut masquer l'effacement progressif de segments importants.
+
 ---
 
 Qu'est-ce que la distillation ? <!--anki:765861753b4b257a6172-->
 ?
 Entraîner un **modèle élève** (petit) à reproduire le comportement d'un **modèle enseignant** (grand). Objectif : garder l'essentiel de la qualité **sur un périmètre ciblé** avec un modèle **bien moins cher et plus rapide** à servir ([[121-couts-inference|coûts]]).
+
+L'élève peut apprendre à partir des réponses de l'enseignant ou de ses distributions de probabilités lorsqu'elles sont disponibles. Il apprend aussi ses erreurs et ses limites : générer puis filtrer les exemples compte autant que choisir les tailles. Mesurer qualité, latence et coût sur la tâche cible ; le transfert de toutes les capacités générales n'est pas garanti.
 
 ---
 
@@ -55,6 +63,8 @@ Quelles contraintes juridiques pèsent sur la distillation ? <!--anki:446e5a335b
 ?
 Les **conditions d'utilisation** de nombreux fournisseurs interdisent d'utiliser leurs sorties pour **entraîner un modèle concurrent**. Il faut vérifier la **licence** de l'enseignant (y compris des modèles open weights, dont certaines licences imposent des conditions sur les modèles dérivés) et tracer la **provenance** des données ([[155-ai-act|AI Act]], [[105-devsecops-ia-agentique|AI-BOM]]).
 
+Distinguer le droit d'utiliser le modèle, celui d'exploiter ses sorties et les droits sur les contenus reproduits. Vérifier les conditions applicables **au service, au contrat et à la date de génération**, puis conserver cette version avec le dataset. Un accès public ou gratuit ne constitue pas, à lui seul, une autorisation de réentraînement commercial.
+
 ---
 
 Comment mener un projet de distillation en pratique ? <!--anki:507e7979303d77246724-->
@@ -73,6 +83,8 @@ Comment générer des données synthétiques pour les evals sans biaiser le rés
 - Faire **relire** les cas par un expert, et garder une part de **données réelles**.
 - Surveiller le **recouvrement lexical** (questions trop proches des documents, trop faciles).
 - Ne jamais **ré-entraîner** sur le jeu d'eval lui-même (contamination).
+
+Un générateur différent peut partager les mêmes biais ou avoir vu les mêmes données : cette séparation ne suffit pas. Fixer les compétences à tester avant génération, vérifier les références et réserver le jeu final. Examiner les performances par difficulté et par source pour repérer un benchmark artificiellement proche du style du générateur.
 
 ---
 

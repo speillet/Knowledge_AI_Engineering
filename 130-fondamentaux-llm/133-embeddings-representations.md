@@ -13,6 +13,8 @@ Comment un modèle d'embedding est-il entraîné ? <!--anki:756445307677664a4864
 ?
 Par **apprentissage contrastif** : on rapproche les paires **positives** (question ↔ passage qui y répond, paraphrases) et on éloigne les **négatives**, en général les autres exemples du batch (**in-batch negatives**) plus des **hard negatives** (passages proches mais faux). La loss typique est **InfoNCE**.
 
+Un bon négatif est plausible mais ne répond pas à la question, par exemple une procédure concernant un autre produit. Un passage réellement pertinent traité comme négatif envoie un signal contradictoire. Soigner les paires et les faux négatifs ; optimiser uniquement la loss d'entraînement ne suffit pas à garantir un meilleur retrieval sur de nouvelles questions.
+
 ---
 
 Quelles mesures de similarité utiliser entre embeddings ? <!--anki:716c647e42323e3f283e-->
@@ -36,17 +38,23 @@ Qu'est-ce que le late interaction (ColBERT) ? <!--anki:4b736c5829233b5b7e76-->
 ?
 Un compromis : on garde **un vecteur par token** du document, et le score est la somme, pour chaque token de la requête, de sa **similarité maximale** avec un token du document (**MaxSim**). Plus précis qu'un vecteur unique, pré-calculable, mais **bien plus lourd** à stocker.
 
+Cela préserve plusieurs indices d'un document au lieu de tout condenser dans un seul vecteur. Par exemple, deux mots précis d'une question peuvent correspondre à deux endroits distincts du passage. Les vecteurs documentaires sont calculés à l'avance, mais leur agrégation dépend de la requête ; prévoir le coût de stockage et de recherche des représentations multiples.
+
 ---
 
 Qu'est-ce que les embeddings Matryoshka ? <!--anki:4a757a636a5735704d36-->
 ?
 Des embeddings entraînés pour que **les premières dimensions** portent l'essentiel de l'information : on peut **tronquer** le vecteur (ex. 3 072 → 256 dimensions) avec une perte faible. Utile pour **réduire le stockage** et faire une **recherche en deux temps** (petit vecteur pour présélectionner, grand pour reclasser).
 
+La propriété doit être **apprise par le modèle** : couper arbitrairement un embedding ordinaire n'offre pas la même garantie. Après troncature, appliquer la normalisation attendue et mesurer le rappel à chaque dimension candidate. Une présélection trop courte peut perdre le bon document avant le reclassement, même si le vecteur complet serait capable de le retrouver.
+
 ---
 
 Pourquoi certains modèles demandent-ils un préfixe (instruction) ? <!--anki:753d3929536a2937733e-->
 ?
 Les modèles **asymétriques** distinguent **requête** et **document** (ex. préfixes « query: » et « passage: », ou une instruction de tâche). Oublier le préfixe, ou mettre le mauvais, **dégrade nettement le rappel** : la documentation du modèle fait foi.
+
+Le préfixe indique au modèle le **rôle du texte à encoder**, conformément à son entraînement. Par exemple, une question courte et le paragraphe qui y répond n'ont pas la même forme, mais doivent devenir proches. Versionner cette préparation avec l'index et éviter de comparer un nouveau préfixe de requête à un corpus encodé selon une convention incompatible.
 
 ---
 
@@ -56,11 +64,15 @@ Comment choisir un modèle d'embedding ? <!--anki:4f7c267c5168495d2b74-->
 - **Test sur son propre jeu** (recall@k), seul critère fiable.
 - **Longueur max** d'entrée, **dimension** (coût de stockage), **multilingue**, **licence**, **API ou self-hosted**, latence.
 
+Conserver corpus, questions et méthode d'indexation comparables pour isoler l'effet du modèle. Examiner aussi les segments difficiles : références exactes, requêtes courtes et documents longs. Un bon score moyen peut masquer un échec métier récurrent. Le choix final combine pertinence et contraintes d'exploitation ; gagner un point de rappel peut coûter beaucoup de mémoire ou de latence.
+
 ---
 
 Quand fine-tuner un modèle d'embedding ? <!--anki:4a67347976475d723761-->
 ?
 Quand le domaine a un **vocabulaire spécifique** (juridique, médical, code interne) et que les modèles génériques ratent des correspondances évidentes pour un expert. Avec **quelques milliers de paires** (question, passage), souvent **générées synthétiquement** puis filtrées, et des hard negatives, les gains de recall sont fréquemment de **plusieurs points**.
+
+Avant l'entraînement, vérifier parsing, chunking, préfixes et qualité des labels : un défaut d'ingestion ne se corrige pas forcément dans les poids. Séparer entraînement et test par familles de documents pour éviter les quasi-doublons. Le volume nécessaire et le gain ne sont pas garantis ; comparer au modèle initial et surveiller les régressions hors du domaine spécialisé.
 
 ---
 
@@ -68,11 +80,15 @@ Que se passe-t-il quand on change de modèle d'embedding ? <!--anki:467e29694e62
 ?
 Les vecteurs de deux modèles **ne sont pas comparables** : il faut **ré-encoder tout le corpus** et reconstruire l'index. D'où l'intérêt de **versionner** le modèle d'embedding avec l'index, et de prévoir la **ré-indexation** (coût, temps, double index pendant la bascule).
 
+Deux vecteurs de même dimension peuvent représenter des **espaces différents** ; la taille identique ne suffit pas à les mélanger. Pendant la migration, router chaque requête vers l'encodeur correspondant à son index, tester le rappel et conserver un retour arrière. Inclure aussi prétraitement, préfixes et normalisation dans la version, car ils influencent les représentations.
+
 ---
 
 Qu'est-ce que les embeddings sparse (SPLADE) ? <!--anki:6d6f7272495a6b473372-->
 ?
 Des représentations **creuses** sur le vocabulaire, apprises par un modèle : chaque dimension correspond à un **terme**, avec expansion vers des termes voisins. Elles combinent **l'exactitude lexicale** de BM25 (noms propres, codes, références) avec une part de **sémantique**, et se combinent bien avec les embeddings denses en **recherche hybride**.
+
+La représentation attribue des poids à un petit nombre de dimensions lexicales et peut activer des termes absents du texte initial. Elle s'exploite avec un index inversé adapté. Cette expansion rapproche certaines reformulations, mais peut introduire du bruit ; mesurer l'effet sur références rares et vocabulaire métier au lieu d'assimiler toute expansion à une amélioration.
 
 ---
 

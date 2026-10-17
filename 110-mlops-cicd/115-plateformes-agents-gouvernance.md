@@ -8,6 +8,8 @@ Pourquoi construire une plateforme d'agents interne plutôt que laisser chaque �
 ?
 Sans plateforme, chaque équipe réimplémente runtime, identité, accès aux outils, observabilité et contrôles, chacune à sa manière. L'équipe plateforme fournit un **chemin balisé** (paved road) : templates, outils approuvés, mémoire, authentification, traces et evals prêts à l'emploi. Les équipes produit se concentrent sur la logique métier.
 
+La plateforme est utile si elle réduit réellement le délai de livraison et les erreurs répétées. Commencer par les besoins communs observés, avec contrats et responsabilités clairs, puis mesurer adoption, incidents et coût d'exploitation. Un socle trop rigide peut pousser les équipes à le contourner ; prévoir une procédure d'extension et des exceptions tracées.
+
 ---
 
 Quelle part des projets agentiques Gartner prévoit-il d'annuler d'ici fin 2027, et pour quelles raisons ? <!--anki:6233353432366564333864353439316662376461306137396636323031326531-->
@@ -52,6 +54,8 @@ Dans l'architecture de Claude Managed Agents, que sont le cerveau, les mains et 
 - **Cerveau** : le modèle et son harness, **sans état**
 - **Mains** : sandboxes et outils, **provisionnés seulement quand un outil en a besoin**
 - **Session** : un **journal d'événements en ajout seul**, stocké hors de la fenêtre de contexte
+
+Cette séparation permet de recréer un processus de calcul à partir d'un historique durable, et de n'allouer un environnement d'exécution qu'au moment utile. Elle ne rend pas les effets externes réversibles. Si une écriture métier réussit avant une panne, la reprise doit consulter une preuve de cette écriture ou utiliser une clé d'idempotence.
 
 ---
 
@@ -270,6 +274,8 @@ Que préparer pour l'AI Act sur une plateforme d'agents ? <!--anki:764d316c7c554
 
 Cadre de management utile : **ISO/IEC 42001**.
 
+La qualification dépend de la **finalité du système et du rôle de l'organisation**, pas du seul usage d'un agent. Relier chaque cas d'usage aux responsables, aux preuves disponibles et aux obligations effectivement applicables. Un registre ou une certification de management ne démontre pas à lui seul la conformité de chaque application ; faire valider le périmètre et les échéances.
+
 ---
 
 Comment limiter le verrouillage par un fournisseur ? <!--anki:754262562e752d547735-->
@@ -296,6 +302,8 @@ Quels critères pour choisir sa plateforme d'agents ? <!--anki:7a642525262b4e577
 Quelle architecture de plateforme d'agents est la plus fréquente ? <!--anki:7a6664363e28693c4c29-->
 ?
 Une architecture **hybride** : services managés **modulaires** pour le runtime et les sandboxes, plan de contrôle (registre, politiques, observabilité) aligné sur des **standards ouverts** (MCP, A2A, OpenTelemetry). On profite du managé là où il fait gagner du temps, sans y enfermer ce qui coûte cher à migrer.
+
+Cette combinaison est un choix d'architecture, pas une obligation. Décrire les contrats exportables : événements, identité, état et définitions d'outils, puis tester une sortie du service managé. Employer un protocole ouvert facilite certaines intégrations mais ne rend pas automatiquement portables les checkpoints, politiques ou fonctions spécifiques du fournisseur.
 
 ---
 

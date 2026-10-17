@@ -20,6 +20,8 @@ Par trois champs en langage naturel qui forment son prompt :
 - **backstory** : son contexte et son style
 Plus ses `tools`, son `llm` et des réglages (`max_iter`, `reasoning`, `verbose`…).
 
+Le rôle décrit une compétence attendue ; il n'accorde pas une permission réelle. Un agent « comptable » n'accède aux écritures que par les outils effectivement exposés. Rendre son objectif vérifiable, limiter son catalogue d'outils et définir une condition d'arrêt. Une backstory longue et flatteuse ne remplace ni contrat de sortie ni évaluation.
+
 ---
 
 Comment définit-on une tâche CrewAI ? <!--anki:412a4645332e30695766-->
@@ -87,11 +89,15 @@ Une **validation de la sortie avant de passer à la suite** :
 - **Texte** décrivant la règle, vérifié par un LLM
 En cas d'échec, l'agent **recommence** avec le message d'erreur.
 
+Une fonction convient à une contrainte exacte, comme un champ obligatoire ; un juge LLM peut apprécier une qualité textuelle plus subjective. Borner les nouvelles tentatives et fournir une erreur exploitable. Le guardrail valide le résultat de la tâche : il ne protège pas rétroactivement contre une écriture externe déjà réalisée pendant son exécution.
+
 ---
 
 Comment CrewAI se connecte-t-il aux LLM ? <!--anki:79632352695739716b3a-->
 ?
 Par la classe **`LLM`** et des chaînes `fournisseur/modèle` (ex. `"openai/gpt-4o"`, `"ollama/llama3:70b"`). SDK natifs pour les grands fournisseurs (OpenAI, Anthropic, Gemini, Azure, Bedrock), **LiteLLM** pour les autres — on peut donc aussi viser un [[81-litellm-api-layer|proxy LiteLLM]].
+
+L'identifiant du modèle ne suffit pas à assurer la compatibilité : vérifier authentification, URL de base, formats d'outils et sorties structurées. Un proxy centralise certains contrôles, mais ajoute un intermédiaire à diagnostiquer. Tester un appel simple puis un appel d'outil, et conserver dans les traces le modèle réellement servi après un éventuel routage.
 
 ---
 
@@ -107,17 +113,23 @@ Comment fonctionne la mémoire dans CrewAI ? <!--anki:4e7d6e76596a3b63702c-->
 ?
 Une classe **`Memory` unifiée** (qui remplace les anciennes mémoires court terme, long terme et entités) : `memory=True` sur la crew suffit. Les souvenirs sont retrouvés par **score combiné** (similarité sémantique, récence, importance), stockés par défaut en local (LanceDB).
 
+Activer la mémoire modifie le contexte des exécutions suivantes : un test peut dépendre de souvenirs créés auparavant. Isoler stockage de test et de production, contrôler le périmètre utilisateur et prévoir l'effacement. Vérifier sur une séquence connue qu'une correction remplace bien l'ancien souvenir ; un score de similarité élevé ne prouve pas sa validité actuelle.
+
 ---
 
 Comment est organisé un projet CrewAI ? <!--anki:432d2c4b733677595a61-->
 ?
 La CLI (`crewai create`, `crewai install`, `crewai run`) génère un projet. Les versions récentes décrivent agents et crew en **JSONC** (`crew.jsonc`, dossier `agents/`) ; beaucoup d'exemples utilisent encore l'ancienne forme **YAML** (`agents.yaml`, `tasks.yaml`) avec les décorateurs `@CrewBase`, `@agent`, `@task`, `@crew`.
 
+Utiliser la structure générée par la **version installée**, puis versionner configuration, dépendances et logique métier. Séparer les secrets des fichiers de rôles et de tâches. Lors d'une migration, comparer le prompt et les outils réellement chargés : un fichier accepté par le parseur peut encore décrire une crew différente de celle attendue.
+
 ---
 
 Quelles sont les limites des crews de CrewAI ? <!--anki:4b30352368505d537624-->
 ?
 Le comportement repose sur des **prompts de rôle** : moins de contrôle fin que [[44-langgraph-fondamentaux|LangGraph]], exécution **moins prévisible** en mode hiérarchique, et **coût en tokens** élevé. D'où l'usage de **Flows** pour encadrer les crews en production.
+
+Un manager peut déléguer plusieurs fois, reformuler une tâche ou accepter un résultat insuffisant, ce qui rend coût et durée variables. Un Flow fixe des étapes et des contrôles autour de cette autonomie. Mesurer les appels réels, borner les tentatives et prévoir un état d'échec explicite lorsque la crew n'atteint pas le résultat attendu.
 
 ---
 
