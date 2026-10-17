@@ -11,14 +11,6 @@ L'initiative sépare les contrats d'interopérabilité des produits qui les impl
 
 ---
 
-Quel est le rôle d'OCI ? <!--anki:43286e50532924447e3c-->
-?
-OCI définit des **spécifications ouvertes** pour l'image, sa distribution et l'exécution du conteneur. Elles permettent de construire une image avec un outil, de la publier dans un registry et de l'exécuter avec un autre moteur compatible.
-
-Cette portabilité n'est pas universelle : architecture CPU, système d'exploitation, fonctionnalités et dépendances de l'hôte doivent convenir. **Kubernetes orchestre** le déploiement et délègue l'exécution à un runtime ; il n'est pas lui-même un runtime OCI.
-
----
-
 OCI est-il un logiciel ? <!--anki:633b584966716644446b-->
 ?
 **Non**, c'est un **organisme de normalisation** : il publie des **spécifications**, c'est-à-dire des documents. Les logiciels les **implémentent** : [[03-containerd-runc|runc]] pour le runtime (donné par Docker comme implémentation de référence), containerd, Podman, CRI-O.

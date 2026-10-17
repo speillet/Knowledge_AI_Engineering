@@ -46,12 +46,6 @@ Quel outil pour versionner quelles données : fichiers à côté du code, data l
 
 ---
 
-Que faut-il versionner ensemble pour qu'une eval soit reproductible ? <!--anki:645344583a7e797b6d2a-->
-?
-La **version du jeu de données**, du **prompt**, du **modèle** (identifiant daté), de la **configuration** (température, outils), de l'**index** RAG et du **modèle d'embedding**, du **code** des évaluateurs et du **prompt du juge**. C'est le **lineage** ([[111-mlops-llmops-fondamentaux|MLOps]], [[114-reproductibilite-variance|reproductibilité]]).
-
----
-
 Comment versionner un index RAG ? <!--anki:5b24386779354f4f48-->
 ?
 En enregistrant pour chaque index : la **liste des documents et leurs versions** (hash), les paramètres de **chunking**, le **modèle d'embedding**, la date de construction. Les mises à jour incrémentales gardent un **journal** ; une reconstruction complète crée une **nouvelle version** qu'on peut comparer à l'ancienne sur l'eval de retrieval avant de basculer.

@@ -128,6 +128,7 @@ Mise en situation : ton assistant text-to-SQL a 85 % d'execution accuracy en tes
 - [Spider 2.0 — benchmark des auteurs](https://spider2-sql.github.io/)
 
 ## Connexions
+- [[145-cas-system-design|Cas de system design]] — l'assistant d'analyse de données comme cas d'architecture
 - [[21-rag-fondamentaux|RAG — Fondamentaux]] — le texte, quand le SQL ne convient pas
 - [[23-knowledge-graphs-ontologies|Knowledge graphs]] — Text2Cypher, le même problème sur un graphe
 - [[32-tool-calling|Tool calling]] — exposer l'exécution SQL comme un outil

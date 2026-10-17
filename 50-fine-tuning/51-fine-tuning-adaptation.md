@@ -1,6 +1,6 @@
 # Fine-tuning & adaptation de modèles — Flashcards
 Tags: #flashcards #ai-engineering #fine-tuning #llm
-<!-- summary: quand adapter, SFT, PEFT, LoRA et QLoRA, ressources, RLHF, DPO, distillation, multi-LoRA, régressions, calcul de rang et d’amortissement, versions d’un adapter. -->
+<!-- summary: quand adapter, SFT, PEFT, LoRA et QLoRA, ressources, distillation, multi-LoRA, régressions, calcul de rang et d’amortissement, versions d’un adapter. -->
 
 
 Qu'est-ce que le fine-tuning ? <!--anki:71447a6c7b502c78475d-->
@@ -66,22 +66,6 @@ LoRA    : poids gelés + petits paramètres entraînés + activations
 QLoRA   : base quantifiée + adapters entraînés + activations
 ```
 À titre d'estimation, un 7B avec un budget de 16 octets par paramètre demande **112 Go hors activations**. Des configurations QLoRA rendent de grands modèles accessibles sur un GPU, sans garantir qu'un 70B tienne avec tout contexte. Mesurer la mémoire maximale et le temps sur un petit entraînement représentatif ; la qualité des exemples reste déterminante.
-
----
-
-Qu'est-ce que le RLHF ? <!--anki:794a63615d3f7835663e-->
-?
-**Reinforcement Learning from Human Feedback** : un reward model entraîné sur des préférences humaines guide l'optimisation (PPO) du modèle — la base de l'alignement.
-
-Dans le schéma classique, des humains comparent des réponses, un modèle de récompense apprend ces préférences, puis la politique est optimisée sous contrainte de rester proche d'une référence. La récompense est un proxy : le modèle peut apprendre à plaire au juge sans devenir plus exact. Évaluer les effets sur utilité, factualité et comportements indésirables.
-
----
-
-Qu'est-ce que DPO ? <!--anki:492f54413476366b5246-->
-?
-**DPO** apprend à partir de paires de réponses préférée et rejetée pour un même prompt. Son objectif ajuste leurs probabilités relatives par rapport à un modèle de référence, **sans entraîner explicitement un modèle de récompense ni lancer une boucle de RL en ligne**.
-
-Cela simplifie l'entraînement, mais ne garantit pas une meilleure qualité ou stabilité dans tous les cas. Les préférences doivent être cohérentes et représentatives ; des paires biaisées peuvent apprendre la longueur ou le style du gagnant plutôt que la qualité recherchée.
 
 ---
 

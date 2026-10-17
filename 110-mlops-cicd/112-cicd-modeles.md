@@ -84,14 +84,6 @@ Les mocks rendent les tests rapides et reproductibles, mais ne vérifient pas le
 
 ---
 
-Pourquoi les prompts passent-ils par la CI ? <!--anki:6e4f4a30597944562b70-->
-?
-Un prompt modifié **change le comportement en production** autant qu'un changement de code, et souvent de façon moins prévisible : une consigne ajoutée pour un cas peut en dégrader dix autres.
-
-Chaque modification déclenche donc les **tests de régression** sur le golden dataset ([[92-chainforge-evals-prompts|golden datasets]]), et le diff du prompt est relu comme du code.
-
----
-
 Quelles étapes composent un pipeline CI/CD d'application LLM ? <!--anki:633b61656533535d3e3f-->
 ?
 ```text

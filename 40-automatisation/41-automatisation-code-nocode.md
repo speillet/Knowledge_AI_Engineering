@@ -4,14 +4,6 @@ Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou 
 <!-- summary: n8n, triggers, Zapier et Make, Airflow, Prefect et Temporal, durable execution, limites du no-code. -->
 
 
-Workflow ou agent : quelle différence ? <!--anki:633a44664441747c2432-->
-?
-Un **workflow** enchaîne des étapes **définies à l'avance** (déterministe, prévisible, testable) ; un **[[31-agents-fondamentaux|agent]]** décide lui-même de ses étapes. Beaucoup de besoins « IA » sont en fait des **workflows avec un appel LLM au milieu**.
-
-Par exemple, réceptionner une facture, extraire ses champs et demander une validation suit un parcours connu. Une enquête documentaire peut nécessiter des recherches choisies au fil des résultats. Le workflow fixe l'ordre et les branches, mais un appel LLM reste variable : **contrôle du parcours** et **déterminisme des sorties** sont deux propriétés différentes.
-
----
-
 Qu'est-ce que n8n ? <!--anki:5074357b48742c717130-->
 ?
 Un outil d'**automatisation de workflows** visuel, **self-hostable** (licence fair-code) : des **nœuds** reliés (API, bases, LLM) déclenchés par des **triggers**, avec la possibilité d'insérer du code JavaScript ou Python.

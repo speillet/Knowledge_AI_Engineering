@@ -35,12 +35,6 @@ Distinguer leurs usages : les bugs ajoutés nourrissent la non-régression ; un 
 
 ---
 
-Combien d'exemples faut-il dans un jeu d'eval ? <!--anki:4a7c3664572c6c572a38-->
-?
-Assez pour que **l'écart qu'on veut détecter dépasse le bruit**. Avec un taux de succès ~80 %, l'erreur standard sur 100 exemples est ≈ **4 points** ; sur 400, ≈ **2 points**. En pratique : **quelques dizaines** pour itérer vite, **plusieurs centaines** pour une décision de mise en production ([[114-reproductibilite-variance|intervalles de confiance]]).
-
----
-
 Quelles sont les trois familles d'évaluateurs ? <!--anki:7a46426d355b3c3e386b-->
 ?
 Le **code** contrôle des propriétés explicites : schéma, valeur attendue ou tests d'exécution. Un **juge LLM** apprécie des critères sémantiques définis. Les **humains** établissent et discutent des références, notamment pour les cas ambigus.

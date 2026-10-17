@@ -158,5 +158,200 @@
     "id": "443d4d6b453641476b78",
     "question": "À ne pas confondre : Ingress et API gateway ?",
     "raison": "incluse dans « À ne pas confondre : Ingress, API gateway et gateway LLM » de 83-gateway-ingress"
+  },
+  {
+    "id": "6872644c3d3f746a303b",
+    "question": "Cas 4 — Extraction de données de millions de documents : quel design ?",
+    "raison": "doublon de la mise en situation « extraction sur 20 millions de documents » de 145-cas-system-design, remplacée par un cas d'analyse de données"
+  },
+  {
+    "id": "633a44664441747c2432",
+    "question": "Workflow ou agent : quelle différence ?",
+    "raison": "doublon de « À ne pas confondre : workflow et agent » de 31-agents-fondamentaux, formulation « quelle différence » proscrite"
+  },
+  {
+    "id": "4c52586b37256f59494e",
+    "question": "Quel est l'intérêt principal des sous-agents ?",
+    "raison": "doublon de « Comment les sous-agents aident-ils à gérer le contexte ? » de 35-context-engineering"
+  },
+  {
+    "id": "514c36507e6b23627d33",
+    "question": "Que mesure-t-on quand on évalue un agent ?",
+    "raison": "doublon de « Qu'évalue-t-on dans un agent ? » de 96-evals-rag-agents"
+  },
+  {
+    "id": "794a63615d3f7835663e",
+    "question": "Qu'est-ce que le RLHF ?",
+    "raison": "doublon de « Quelles sont les étapes classiques du RLHF ? » de 52-post-training-alignement"
+  },
+  {
+    "id": "492f54413476366b5246",
+    "question": "Qu'est-ce que DPO ?",
+    "raison": "doublon de « Qu'apporte DPO par rapport au RLHF classique ? » de 52-post-training-alignement"
+  },
+  {
+    "id": "507e7979303d77246724",
+    "question": "Comment mener un projet de distillation en pratique ?",
+    "raison": "doublon de la mise en situation « classification à 8 000 € par mois » de 53-donnees-synthetiques-distillation"
+  },
+  {
+    "id": "426d336e30672d4b5324",
+    "question": "Pourquoi le KV cache est-il indispensable ?",
+    "raison": "doublon de « Qu'est-ce que le KV cache ? » de 61-kv-cache-attention"
+  },
+  {
+    "id": "43725f666b753b3d2d2e",
+    "question": "Qu'est-ce que le prefix caching ?",
+    "raison": "doublon de « Qu'est-ce que le prefix caching côté serveur ? » de 66-prefix-caching-radix-attention"
+  },
+  {
+    "id": "712b5a5a4e2d6f442a35",
+    "question": "Qu'est-ce que la quantization ?",
+    "raison": "doublon des cartes de définition de 68-quantization"
+  },
+  {
+    "id": "423164672b2b78664256",
+    "question": "Pourquoi prefill et decode ont-ils des goulots différents ?",
+    "raison": "doublon de « Pourquoi le prefill est-il compute-bound et le decode memory-bound ? » de 69-roofline-prefill-decode"
+  },
+  {
+    "id": "4e7d7c3d6a4c3c4f5f3b",
+    "question": "Qu'est-ce qui limite la concurrence d'un serveur ?",
+    "raison": "doublon de « Pourquoi le KV cache limite-t-il le nombre de requêtes simultanées ? » de 61-kv-cache-attention"
+  },
+  {
+    "id": "745b47483e2155344a39",
+    "question": "Le speculative decoding modifie-t-il la distribution des sorties ?",
+    "raison": "doublon de « Le speculative decoding dégrade-t-il la qualité ? » de 67-speculative-decoding"
+  },
+  {
+    "id": "6b39775e3a7726676030",
+    "question": "Weight-only (W4A16) ou poids + activations (W8A8) : quelle différence ?",
+    "raison": "doublon de « À ne pas confondre : quantization des poids, des activations et du KV cache ? » de 68-quantization, formulation « quelle différence » proscrite"
+  },
+  {
+    "id": "48423f5d56613037636e",
+    "question": "Pourquoi l'utilisation GPU de `nvidia-smi` est-elle trompeuse ?",
+    "raison": "doublon de « Pourquoi l'utilisation GPU et la VRAM utilisée sont-elles des métriques trompeuses ? » de 93-monitoring-inference"
+  },
+  {
+    "id": "43286e50532924447e3c",
+    "question": "Quel est le rôle d'OCI ?",
+    "raison": "doublon de « Que signifie OCI ? » et « Quelles sont les trois grandes spécifications OCI ? » de 01-oci"
+  },
+  {
+    "id": "4c2f4d4a6863677c5f39",
+    "question": "Docker Engine est-il nécessaire pour exécuter dans Kubernetes une image construite avec Docker ?",
+    "raison": "doublon de 02-docker-images-registries et de la carte « à ne pas confondre » de 05-docker-kubernetes"
+  },
+  {
+    "id": "77556b3d6648472f756b",
+    "question": "Comment utilise-t-on le GPU avec Apptainer ?",
+    "raison": "doublon de « À quoi sert `--nv` avec Apptainer ? » de 06-apptainer-singularity"
+  },
+  {
+    "id": "62453d6048415f292569",
+    "question": "Que fait précisément l'option `--nv` d'Apptainer ?",
+    "raison": "doublon de « À quoi sert `--nv` avec Apptainer ? » de 06-apptainer-singularity"
+  },
+  {
+    "id": "6957347b4c5a59334768",
+    "question": "Quel est le modèle de sécurité d'Apptainer ?",
+    "raison": "doublon de « À ne pas confondre : Apptainer et Docker sur le plan de la sécurité ? » de 06-apptainer-singularity"
+  },
+  {
+    "id": "796a74462e3c2d7e774b",
+    "question": "Pourquoi le format SIF (fichier unique) est-il pratique en HPC ?",
+    "raison": "doublon de la carte sur le format SIF de 06-apptainer-singularity"
+  },
+  {
+    "id": "484b513771565d286c7b",
+    "question": "Pourquoi l'API compatible OpenAI est-elle importante ?",
+    "raison": "doublon de « Pourquoi l'API « compatible OpenAI » est-elle un standard de fait ? » de 85-carte-protocoles-agentiques"
+  },
+  {
+    "id": "4a7c3664572c6c572a38",
+    "question": "Combien d'exemples faut-il dans un jeu d'eval ?",
+    "raison": "doublon de « Quels ordres de grandeur pour un jeu d'évaluation ? » de 92-chainforge-evals-prompts"
+  },
+  {
+    "id": "4e5e397b574e687a6f79",
+    "question": "Qu’apporte pass^k à l’évaluation de la fiabilité d’un agent ?",
+    "raison": "doublon de « À ne pas confondre : pass@k et pass^k ? » de 114-reproductibilite-variance"
+  },
+  {
+    "id": "4a6f2b436e3958626d33",
+    "question": "Qu'est-ce que le shadow testing ?",
+    "raison": "doublon de « Qu'est-ce que le shadow deployment ? » de 112-cicd-modeles"
+  },
+  {
+    "id": "6e4f4a30597944562b70",
+    "question": "Pourquoi les prompts passent-ils par la CI ?",
+    "raison": "doublon de « Pourquoi traiter les prompts comme du code ? » de 11-prompt-engineering-avance"
+  },
+  {
+    "id": "6165373738373233373436643438306262336238663763393132633938666631",
+    "question": "Combien de tokens un agent consomme-t-il par rapport à un chat, selon Anthropic ?",
+    "raison": "doublon de « Quels ordres de grandeur pour le coût d'un agent ? » de 31-agents-fondamentaux"
+  },
+  {
+    "id": "7874483852304e797a44",
+    "question": "Quelles échéances de l'AI Act concernent une plateforme d'agents ?",
+    "raison": "doublon du calendrier de 155-ai-act, source unique pour éviter les divergences"
+  },
+  {
+    "id": "492b6e722363457c3733",
+    "question": "Quels caches actionner côté FinOps ?",
+    "raison": "doublon des cartes sur les niveaux de cache de 123-caching-agressif"
+  },
+  {
+    "id": "7a6f47267b447c417071",
+    "question": "Pourquoi la qualité se dégrade-t-elle avant même d'atteindre la limite de la fenêtre ?",
+    "raison": "doublon de « Qu'est-ce que le context rot ? » de 35-context-engineering"
+  },
+  {
+    "id": "4c503b7432776c5b584d",
+    "question": "Faut-il encore écrire « réfléchis étape par étape » ?",
+    "raison": "doublon de « Comment prompter un modèle de raisonnement ? » de 13-prompts-production et de la carte « à ne pas confondre » de 138"
+  },
+  {
+    "id": "3635396366633138316430363438613962306666303362323137373862646338",
+    "question": "Comment empêcher qu'une approbation humaine valide des paramètres ensuite modifiés ?",
+    "raison": "doublon de « Que doit contenir une proposition d'action soumise à approbation humaine ? » de 140-011-architecture-applications-agentiques"
+  },
+  {
+    "id": "7255287c6d622c66262a",
+    "question": "Comment rendre les citations fiables ?",
+    "raison": "doublon de « Comment rendre une réponse RAG vérifiable ? » de 21-rag-fondamentaux"
+  },
+  {
+    "id": "65443c5a7252553d7a3a",
+    "question": "Les LLM sont-ils calibrés : leur confiance reflète-t-elle leur taux de réponses justes ?",
+    "raison": "doublon de « Les probabilités d'un LLM sont-elles fiables (calibration) ? » de 65-probabilites-sampling"
+  },
+  {
+    "id": "4e43495d553d6e306131",
+    "question": "Pourquoi les hallucinations de code sont-elles un risque de sécurité ?",
+    "raison": "doublon de « Qu'est-ce que le slopsquatting ? » de 106-securite-agents-code"
+  },
+  {
+    "id": "645344583a7e797b6d2a",
+    "question": "Que faut-il versionner ensemble pour qu'une eval soit reproductible ?",
+    "raison": "doublon de la mise en situation « score impossible à reproduire » de 153 et du lineage de 111-mlops-llmops-fondamentaux"
+  },
+  {
+    "id": "4932627d6f6b4c7a6f51",
+    "question": "Quels référentiels de gouvernance de l'IA connaître ?",
+    "raison": "liste de référentiels à réciter, couverte par 105-devsecops-ia-agentique"
+  },
+  {
+    "id": "6d5a443662786d4f5177",
+    "question": "Quels autres modèles multimodaux existent en génération ?",
+    "raison": "catalogue de modalités sans critère de réponse évaluable"
+  },
+  {
+    "id": "45635b4b45313f3a3278",
+    "question": "Ollama ou vLLM en entreprise ?",
+    "raison": "doublon de la carte de choix des outils locaux et de la mise en situation Ollama de 164-llm-local-edge"
   }
 ]

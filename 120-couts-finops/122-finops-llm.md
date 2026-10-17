@@ -67,18 +67,6 @@ Comparer coût par tâche réussie et qualité avant/après, en incluant le prix
 
 ---
 
-Quels caches actionner côté FinOps ? <!--anki:492b6e722363457c3733-->
-?
-Quatre niveaux, du plus rentable au plus spécifique :
-- **Prompt caching** des préfixes : effet massif sur les agents, dont l'entrée domine le coût
-- **Cache de réponses** pour les requêtes identiques : gain égal au taux de hit
-- **Cache d'embeddings** : on ne ré-embedde jamais deux fois le même chunk
-- **Cache des résultats d'outils et de retrieval**, avec un TTL adapté à leur fraîcheur
-
-Chacun a son risque : réponses périmées, fuite entre clients si la clé oublie le tenant ([[123-caching-agressif|caching agressif]]).
-
----
-
 Quelles pratiques FinOps côté GPU ? <!--anki:75432b70652f39746a70-->
 ?
 - **Droit-dimensionnement** : le plus petit GPU ou la plus petite tranche **MIG** qui tient la charge

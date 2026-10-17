@@ -39,14 +39,6 @@ C'est la confusion la plus fréquente sur le sujet : elle porte sur le **runtime
 
 ---
 
-Docker Engine est-il nécessaire pour exécuter dans Kubernetes une image construite avec Docker ? <!--anki:4c2f4d4a6863677c5f39-->
-?
-**Non.** Une image compatible [[01-oci|OCI]] peut être exécutée via [[03-containerd-runc|containerd]] et un runtime OCI.
-
-Le Dockerfile et le build produisent une image ; ils ne décident pas du moteur utilisé plus tard. Kubernetes demande au runtime via la CRI de récupérer et lancer cette image. Vérifier les dépendances de l'hôte, notamment driver GPU et architecture, ainsi que les volumes et variables nécessaires au démarrage.
-
----
-
 Qu'est-ce que cri-dockerd ? <!--anki:45314f337346634d2a34-->
 ?
 Un **adaptateur externe**, maintenu par Mirantis, qui reprend le rôle de dockershim **hors de Kubernetes** : il traduit la CRI en appels à Docker Engine. Il permet de garder Docker Engine sur les nodes après Kubernetes 1.24, par exemple pour un outil qui dépend du socket Docker. C'est une **solution de transition**, pas une architecture cible.

@@ -249,23 +249,6 @@ La métrique qui décide : le **coût par tâche réussie**, comparé au coût d
 
 ---
 
-Combien de tokens un agent consomme-t-il par rapport à un chat, selon Anthropic ? <!--anki:6165373738373233373436643438306262336238663763393132633938666631-->
-?
-Environ **4 fois plus** pour un agent seul, et environ **15 fois plus** pour un système multi-agents ([[27-agents-recherche-deep-research|agents de recherche]]).
-
-Il s'agit de consommations observées dans les workloads de recherche décrits par Anthropic, pas de constantes universelles. La taille des historiques, le nombre d'outils et la coopération changent beaucoup ce ratio. Distinguer **tokens et facture** : modèles, tarifs d'entrée/sortie et cache peuvent rendre deux consommations égales très différentes en coût.
-
----
-
-Quelles échéances de l'AI Act concernent une plateforme d'agents ? <!--anki:7874483852304e797a44-->
-?
-- **Depuis le 2 août 2026** : obligations de **transparence**. Informer l'utilisateur qu'il échange avec une IA, marquer les contenus générés (délai jusqu'au 2 décembre 2026 pour le marquage des systèmes déjà sur le marché)
-- **Systèmes à haut risque** (recrutement, crédit, etc.) : reportés au **2 décembre 2027** par le Digital Omnibus, entré en vigueur le 27 juillet 2026
-
-Voir [[155-ai-act|AI Act]].
-
----
-
 Que préparer pour l'AI Act sur une plateforme d'agents ? <!--anki:764d316c7c5548246a50-->
 ?
 - **Inventaire** et **classification du risque** de chaque agent : le registre de la plateforme sert de base

@@ -12,14 +12,6 @@ Donner l'accès à Docker sur un cluster partagé équivaudrait à donner **root
 
 ---
 
-Quel est le modèle de sécurité d'Apptainer ? <!--anki:6957347b4c5a59334768-->
-?
-Le conteneur s'exécute **avec les droits de l'utilisateur** qui le lance, sans démon privilégié en arrière-plan.
-
-Cela facilite le respect des permissions sur les fichiers partagés et l'intégration à l'ordonnanceur. Certaines installations utilisent néanmoins des mécanismes privilégiés encadrés pour préparer l'environnement. Un processus conserve l'accès aux fichiers que l'utilisateur peut lire ou écrire via les montages : ne pas assimiler exécution sans démon root et sandbox hermétique.
-
----
-
 Comment Apptainer s'intègre-t-il avec Slurm ? <!--anki:4e31232b53236e642f30-->
 ?
 La commande Apptainer est **lancée à l'intérieur d'un job Slurm**, en héritant des ressources allouées (GPU, CPU, mémoire) : il n'y a **rien à installer côté ordonnanceur**, puisqu'il n'existe pas de démon.
@@ -34,16 +26,6 @@ Les variables `SLURM_*` et `CUDA_VISIBLE_DEVICES` sont **héritées** par le con
 
 ---
 
-Que fait précisément l'option `--nv` d'Apptainer ? <!--anki:62453d6048415f292569-->
-?
-`--nv` rend accessibles les **devices NVIDIA** et les **bibliothèques utilisateur du driver** nécessaires à l'application. Le module noyau reste celui de l'hôte ; il n'est pas chargé par l'image.
-```bash
-apptainer exec --nv model.sif python inference.py
-```
-Vérifier compatibilité entre ces bibliothèques et l'environnement du conteneur. L'option expose l'[[09-gpu-conteneurs|accès GPU]] mais ne réserve pas de ressources sur le cluster : l'allocation Slurm et les restrictions du site restent nécessaires.
-
----
-
 Comment fournir les poids d'un modèle à un conteneur Apptainer ? <!--anki:4a423c78424443567254-->
 ?
 En **montant le système de fichiers partagé** avec `--bind`.
@@ -53,14 +35,6 @@ apptainer exec --nv --bind /data/models:/models model.sif python serve.py
 ```
 
 Le chemin de gauche désigne le stockage visible sur l'hôte, celui de droite son emplacement dans le conteneur. Utiliser une révision précise des poids et un montage en lecture seule si aucune modification n'est nécessaire. Vérifier droits, débit du stockage partagé et présence de tous les fichiers attendus avant de lancer le serveur.
-
----
-
-Pourquoi le format SIF (fichier unique) est-il pratique en HPC ? <!--anki:796a74462e3c2d7e774b-->
-?
-Parce que l'image est **un seul fichier**, facile à stocker, copier et partager sur un **système de fichiers partagé**.
-
-Un fichier unique simplifie le transfert, le calcul d'empreinte et la distribution entre nœuds, tout en évitant de manipuler des milliers de fichiers d'image séparés. Garder données et résultats dans des montages dédiés. Le SIF ne supprime pas les coûts d'accès au stockage partagé ni les dépendances au driver et au matériel hôtes.
 
 ---
 

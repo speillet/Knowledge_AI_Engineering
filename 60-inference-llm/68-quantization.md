@@ -37,14 +37,6 @@ Le nom du format ne garantit ni support des kernels, ni précision des accumulat
 
 ---
 
-Weight-only (W4A16) ou poids + activations (W8A8) : quelle différence ? <!--anki:6b39775e3a7726676030-->
-?
-**WxAy** décrit la précision des poids et activations. **W4A16** réduit surtout le stockage et les lectures des poids ; les kernels déquantifient ou traitent ces représentations avec activations 16 bits. Cela peut aider le decode à petit batch.
-
-**W8A8** réduit aussi les activations et peut exploiter des opérations matricielles en basse précision, utiles au prefill ou à batch élevé. Le détail des accumulations et conversions dépend du kernel. Aucun de ces noms ne garantit une accélération : mesurer par phase sur le matériel cible, avec la qualité comme contrainte.
-
----
-
 Qu'est-ce que la granularité de quantization ? <!--anki:715b716529555e2f695a-->
 ?
 Le nombre de valeurs qui **partagent un même facteur d'échelle** :

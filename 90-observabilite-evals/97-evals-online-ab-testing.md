@@ -31,14 +31,6 @@ Une métrique qui **ne doit pas se dégrader** même si la métrique principale 
 
 ---
 
-Qu'est-ce que le shadow testing ? <!--anki:4a6f2b436e3958626d33-->
-?
-Le **shadow testing** envoie une copie du trafic à une variante dont la réponse reste invisible à l'utilisateur. Il aide à comparer sorties, erreurs et latence avec la version active sans remplacer ses réponses.
-
-Isoler ou simuler les outils d'écriture et vérifier le traitement des données ainsi que la charge supplémentaire. Le coût augmente selon le volume dupliqué et les modèles, sans facteur universel. Le test ne mesure pas la satisfaction ou le comportement causés par la réponse cachée ; un test exposé reste nécessaire pour cela ([[112-cicd-modeles|shadow deployment]]).
-
----
-
 À ne pas confondre : canary et A/B test ? <!--anki:703c247d5246697c554a-->
 ?
 - **Canary** : exposer la nouvelle version à **un petit % du trafic** pour détecter **les pannes** (erreurs, latence) avant d'élargir — objectif **sécurité du déploiement**.

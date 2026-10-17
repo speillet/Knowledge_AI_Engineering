@@ -106,14 +106,6 @@ Le post-training, le prompt et le domaine peuvent modifier la calibration ; la c
 
 ---
 
-Le speculative decoding modifie-t-il la distribution des sorties ? <!--anki:745b47483e2155344a39-->
-?
-Le **speculative sampling exact** préserve mathématiquement la distribution de la cible grâce à une règle d'acceptation/rejet et à un tirage corrigé en cas de rejet. En greedy, la vérification vise les mêmes choix que le modèle cible seul.
-
-Cette propriété concerne l'algorithme et ses hypothèses, pas toutes les variantes approximatives ni une égalité bit à bit de toute implémentation. Les arrondis, kernels et modes de vérification peuvent produire des écarts. Valider la méthode activée et tester la qualité sur la charge réelle ([[62-optimisations-inference|optimisations d'inférence]]).
-
----
-
 À ne pas confondre : température et top-p ? <!--anki:70332c3a5d2f2c2b6961-->
 ?
 La **température** modifie les probabilités relatives via les logits ; **top-p** sélectionne, dans l'ordre décroissant, le plus petit préfixe de tokens atteignant la masse cumulée p, puis renormalise.

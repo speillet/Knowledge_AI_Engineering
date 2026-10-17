@@ -67,16 +67,6 @@ Distinguer le droit d'utiliser le modèle, celui d'exploiter ses sorties et les 
 
 ---
 
-Comment mener un projet de distillation en pratique ? <!--anki:507e7979303d77246724-->
-?
-1. **Eval** de référence sur la tâche avec l'enseignant (plafond) et l'élève de base (plancher).
-2. Collecter des **entrées réelles** (logs de production) et les faire traiter par l'enseignant.
-3. **Filtrer** (juge, validation, humains).
-4. **Fine-tuner** l'élève (souvent [[51-fine-tuning-adaptation|LoRA]]).
-5. Comparer sur l'eval, puis déployer derrière un [[82-routing-llm|routeur]] avec l'enseignant en **fallback**.
-
----
-
 Comment générer des données synthétiques pour les evals sans biaiser le résultat ? <!--anki:637960387b2f456f246f-->
 ?
 - Utiliser un **modèle différent** de celui qu'on évalue.

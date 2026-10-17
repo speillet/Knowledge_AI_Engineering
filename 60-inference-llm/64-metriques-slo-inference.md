@@ -88,14 +88,6 @@ Préciser quelles requêtes entrent dans le calcul, comment traiter erreurs et a
 
 ---
 
-Qu'est-ce qui limite la concurrence d'un serveur ? <!--anki:4e7d7c3d6a4c3c4f5f3b-->
-?
-Surtout la **VRAM disponible pour le [[61-kv-cache-attention|KV cache]]** : chaque requête active y occupe une place proportionnelle à son contexte. Quand le cache est plein, les requêtes **attendent en file** ou sont préemptées.
-
-Prévoir la croissance des sorties et les allocations temporaires, pas seulement les prompts déjà présents. Un serveur peut aussi manquer de bande passante ou dépasser le SLO avant de remplir la VRAM. Une limite de concurrence associée à une file bornée évite d'accepter une quantité de travail impossible à terminer dans le délai attendu.
-
----
-
 Quels signaux utiliser pour l'autoscaling d'un serveur d'inférence LLM ? <!--anki:6e46644e3e766a2e4a7d-->
 ?
 Combiner **attente du plus ancien travail**, taille de file, tokens restant à traiter, occupation KV, préemptions et respect du SLO. Dix longs prompts ne représentent pas la même charge que dix messages courts.

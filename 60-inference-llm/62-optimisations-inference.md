@@ -12,14 +12,6 @@ Le prefill prépare les représentations de tous les tokens d'entrée ; le decod
 
 ---
 
-Pourquoi prefill et decode ont-ils des goulots différents ? <!--anki:423164672b2b78664256-->
-?
-Le **prefill** expose beaucoup d'opérations matricielles parallèles et devient souvent limité par le calcul pour des prompts assez longs. Le **decode à petit batch** effectue peu de calcul par poids chargé et est souvent limité par la bande passante mémoire.
-
-Ce sont des régimes typiques, pas des propriétés absolues : batch élevé, long contexte, architecture MoE ou communication entre GPU peuvent déplacer le goulot. Profiler le workload avant de choisir quantization, batching ou parallélisme.
-
----
-
 À ne pas confondre : les leviers qui agissent sur le TTFT et ceux qui agissent sur le TPOT ? <!--anki:477c572b3f2d422a736d-->
 ?
 ```text
@@ -40,14 +32,6 @@ Qu'est-ce que le continuous batching ? <!--anki:6f76727c477c5a746c4d-->
 Le **continuous batching** ordonnance à la granularité d'une itération : une séquence terminée libère sa place, et de nouvelles séquences peuvent rejoindre les suivantes sans attendre la fin de tout un lot.
 
 Cette approche réduit les places inutilisées lorsque les longueurs varient. Elle ne garantit pas un GPU plein : demande insuffisante, limite KV, CPU ou communications peuvent encore restreindre le débit. Comparer au batch statique sur un même workload, avec les mêmes SLO. L'écart entre un script et un serveur dépend aussi des kernels, du cache et de la gestion mémoire ; aucun facteur dix n'est universel.
-
----
-
-Qu'est-ce que la quantization ? <!--anki:712b5a5a4e2d6f442a35-->
-?
-La **quantization** représente les poids et parfois les activations ou le KV cache avec moins de bits : FP8, INT8 ou INT4, par exemple. Elle réduit l'empreinte mémoire et peut diminuer les transferts, ce qui accélère certains workloads.
-
-Le gain dépend des kernels et du matériel ; déquantifier peut coûter du temps. La perte de qualité n'est pas toujours légère, notamment sur les valeurs extrêmes et certaines tâches. Mesurer qualité, mémoire et latence sur le modèle et la charge visés ([[68-quantization|quantization]]).
 
 ---
 

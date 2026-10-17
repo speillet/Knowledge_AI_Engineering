@@ -78,16 +78,6 @@ Comme pour le texte : **jeu d'images représentatif** (qualités de scan, angles
 
 ---
 
-Quels autres modèles multimodaux existent en génération ? <!--anki:6d5a443662786d4f5177-->
-?
-- **Génération d'images** (diffusion) et de **vidéo**.
-- **Text-to-speech** et **speech-to-speech** ([[163-voix-temps-reel|voix]]).
-- Modèles **omni** qui prennent et produisent texte, image et audio dans un seul modèle.
-
-Pour certains systèmes et usages, l’article 50 de l’[[155-ai-act|AI Act]] prévoit des obligations de marquage technique ou d’information. Distinguer fournisseur et déployeur, champ d’application et exceptions : une étiquette visible sur chaque sortie n’est pas une règle universelle.
-
----
-
 Pourquoi conserver les transformations de coordonnées lors d'un recadrage pour un VLM ? <!--anki:3433633530323630623837393436633762613761666165346632623365616537-->
 ?
 Un point ou une boîte détectés sur une image transformée doivent être **ramenés au repère de l'original**. Redimensionnement, recadrage et rotation changent l'origine ou l'échelle.

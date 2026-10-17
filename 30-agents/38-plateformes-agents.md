@@ -186,19 +186,6 @@ L'évaluation avant déploiement sert à bloquer les régressions sur des cas co
 
 ---
 
-Que mesure-t-on quand on évalue un agent ? <!--anki:514c36507e6b23627d33-->
-?
-- **Réussite de la tâche**
-- **Trajectoire** : les bons outils, dans le bon ordre, avec des arguments corrects
-- **Coût et nombre d'étapes**
-- **Sécurité** et respect des règles
-
-AgentCore Evaluations propose une dizaine d'évaluateurs prêts à l'emploi.
-
-Un agent qui affirme « remboursement effectué » échoue si aucun remboursement n'existe dans le système métier. Vérifier donc l'**état final observable**, puis les contraintes de parcours, de coût et de sécurité. Plusieurs trajectoires peuvent être valides : imposer une séquence unique sans justification risque de pénaliser une solution correcte plus efficace.
-
----
-
 Quels protocoles rendent une plateforme interopérable ? <!--anki:742e4e7131465e7c6163-->
 ?
 - **MCP** : agent ↔ outils et données ([[33-mcp|MCP]]). Depuis la spec **2026-07-28**, il est **sans état** : il passe derrière un simple load balancer

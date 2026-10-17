@@ -35,15 +35,6 @@ Quel outil pour servir un LLM en local : développeur seul, Mac, interface graph
 
 ---
 
-Ollama ou vLLM en entreprise ? <!--anki:45635b4b45313f3a3278-->
-?
-- **Ollama / llama.cpp** : un utilisateur ou quelques-uns, poste de développement, prototypage, matériel hétérogène.
-- **vLLM / SGLang** : **beaucoup d'utilisateurs simultanés** grâce au continuous batching et au PagedAttention — débit total très supérieur sur GPU.
-
-Erreur fréquente : mettre Ollama en production pour une équipe entière et constater l'**effondrement** du débit.
-
----
-
 Pourquoi les Mac Apple Silicon sont-ils populaires pour les LLM locaux ? <!--anki:797c71366d393945402f-->
 ?
 La **mémoire unifiée** partagée CPU/GPU permet de charger des modèles de **plusieurs dizaines à centaines de Go** sur une seule machine, avec une bande passante élevée. Le **débit** reste inférieur à un GPU serveur, et le **prefill** (long prompt) est lent, mais c'est une solution compacte pour le développement et les petits déploiements.

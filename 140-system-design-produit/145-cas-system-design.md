@@ -1,6 +1,6 @@
 # Cas de system design LLM — Flashcards
 Tags: #flashcards #ai-engineering #system-design #entretien #llm
-<!-- summary: support client, recherche documentaire, assistant de code, extraction à grande échelle, agent qui agit, chatbot grand public, assistant vocal, trame de réponse, erreurs d'entretien. -->
+<!-- summary: support client, recherche documentaire, assistant de code, analyse de données en langage naturel, extraction à grande échelle, agent qui agit, chatbot grand public, assistant vocal, trame de réponse, erreurs d'entretien. -->
 
 
 Cas 1 — Assistant de support client : par quoi passe la requête ? <!--anki:765e30282f603b217430-->
@@ -48,13 +48,13 @@ Cas 3 — Assistant de code intégré à l'IDE : quelles contraintes ? <!--anki:
 
 ---
 
-Cas 4 — Extraction de données de millions de documents : quel design ? <!--anki:6872644c3d3f746a303b-->
+Cas 4 — Assistant d'analyse de données en langage naturel : quels choix de conception ? <!--anki:3136636634613865343265393435373439393461316439346434396237646536-->
 ?
-- Traitement **asynchrone en batch** (batch API ou GPU self-hosted à pleine charge) — la latence ne compte pas, le **coût** oui.
-- **Structured outputs** + validation par schéma et règles.
-- **Petit modèle** fine-tuné ou distillé si le volume le justifie ([[53-donnees-synthetiques-distillation|distillation]]).
-- **Échantillonnage** et relecture humaine pour mesurer la précision, **file d'exceptions** pour les cas à faible confiance.
-- Idempotence et reprise sur erreur.
+- **Interroger des vues métier** ou une **couche sémantique**, pas les tables brutes : les chiffres doivent coïncider avec les tableaux de bord ([[26-text-to-sql|text-to-SQL]]).
+- **Schema linking** : ne fournir que les tables utiles, avec descriptions et exemples question → SQL validés.
+- **Exécution sécurisée** : compte en lecture seule, sécurité au niveau des lignes, timeouts et budget par requête.
+- **Réponse vérifiable** : afficher la requête, les filtres et les conventions appliquées.
+- **Evals en execution accuracy** sur des questions réelles du métier, ambiguës comprises.
 
 ---
 

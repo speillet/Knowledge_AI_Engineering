@@ -11,14 +11,6 @@ Il échange du calcul contre une mémoire croissante. Pour une attention dense, 
 
 ---
 
-Pourquoi le KV cache est-il indispensable ? <!--anki:426d336e30672d4b5324-->
-?
-Le KV cache conserve les **clés et valeurs des tokens déjà traités** à chaque couche. Pour le prochain token, on calcule ses nouvelles représentations puis son attention sur les K/V passés, sans recalculer ceux-ci à chaque tour.
-
-Le passé n'est donc pas gratuit : le nouveau token doit encore consulter le cache, ce qui consomme de la bande passante. Sans cache, une implémentation autorégressive répète beaucoup de calculs sur le préfixe ; avec cache, elle échange ce calcul contre de la mémoire.
-
----
-
 De quoi dépend la taille du KV cache ? <!--anki:772d3f6b3d4e527d4575-->
 ?
 Elle croît **linéairement** avec : longueur du contexte × nombre de couches × têtes KV × dimension × précision (dtype) × taille du batch.
@@ -57,14 +49,6 @@ Qu'est-ce que PagedAttention ? <!--anki:6b4d433358527e784d24-->
 **PagedAttention** organise le KV cache en blocs physiques qui peuvent être non contigus, associés aux positions logiques d'une séquence. Le serveur alloue les blocs à mesure que celle-ci grandit, sans réserver un grand espace contigu pour sa longueur maximale.
 
 Cette organisation **réduit fortement le gaspillage et la fragmentation** ; il peut rester un bloc partiellement rempli par séquence et des métadonnées. Elle facilite aussi certains partages de blocs. Elle ne réduit pas la quantité de K/V nécessaire pour des tokens distincts ([[11-serveurs-inference-llm|vLLM]]).
-
----
-
-Qu'est-ce que le prefix caching ? <!--anki:43725f666b753b3d2d2e-->
-?
-La **réutilisation du KV cache d'un préfixe partagé** entre plusieurs requêtes : system prompt commun, documents identiques, historique d'une conversation. Le prefill de ce préfixe n'est calculé **qu'une fois**, d'où un TTFT et un coût bien plus faibles pour les requêtes suivantes.
-
-Condition : le préfixe doit être **identique au token près**, donc placé en tête et stable ([[66-prefix-caching-radix-attention|prefix caching & RadixAttention]]).
 
 ---
 

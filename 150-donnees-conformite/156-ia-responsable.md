@@ -68,17 +68,6 @@ Une supervision où l'humain **comprend** ce que fait le système, **dispose du 
 
 ---
 
-Quels référentiels de gouvernance de l'IA connaître ? <!--anki:4932627d6f6b4c7a6f51-->
-?
-- **NIST AI RMF** : cadre de gestion des risques (Govern, Map, Measure, Manage).
-- **ISO/IEC 42001** : système de management de l'IA, certifiable.
-- **AI Act** pour l'UE ([[155-ai-act|AI Act]]).
-- Principes de l'**OCDE**.
-
-Ils structurent l'inventaire des systèmes, l'évaluation des risques et les rôles.
-
----
-
 À ne pas confondre : safety et security ? <!--anki:4f462d3828282f2f755e-->
 ?
 - **Safety** : éviter que le système **cause du tort** en fonctionnement normal : contenu dangereux, biais, conseils erronés, sycophancy

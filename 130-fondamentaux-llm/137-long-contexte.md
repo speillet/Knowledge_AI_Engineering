@@ -33,14 +33,6 @@ Cacher une **phrase précise** dans un long texte et demander de la retrouver. L
 
 ---
 
-Pourquoi la qualité se dégrade-t-elle avant même d'atteindre la limite de la fenêtre ? <!--anki:7a6f47267b447c417071-->
-?
-C'est le **context rot** : la **dégradation progressive** de la qualité quand le contexte grossit : attention diluée, distracteurs, instructions oubliées. Elle apparaît **bien avant** la limite de la fenêtre. D'où la compaction, les sous-agents et le chargement **au besoin** en [[35-context-engineering|context engineering]].
-
-Une fenêtre plus grande augmente la quantité de contenu admissible, pas forcément la capacité à sélectionner les éléments pertinents. Pour diagnostiquer, garder les preuves utiles constantes et ajouter progressivement des distracteurs. Distinguer surcharge de contenu, contradiction entre sources et mauvaise position des preuves ; chaque cause peut appeler un ajustement différent du contexte.
-
----
-
 Long contexte ou RAG ? <!--anki:4f3c556b3e682f4e3b40-->
 ?
 - **Long contexte** : corpus **petit et stable** (un contrat, un dépôt de code), questions qui demandent une **vue d'ensemble**, prototype rapide. Avec le [[123-caching-agressif|prompt caching]], le coût peut rester raisonnable.

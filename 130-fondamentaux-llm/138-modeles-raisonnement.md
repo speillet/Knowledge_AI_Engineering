@@ -54,14 +54,6 @@ Ce sont des hypothèses à tester, pas des exclusions absolues : une classificat
 
 ---
 
-Faut-il encore écrire « réfléchis étape par étape » ? <!--anki:4c503b7432776c5b584d-->
-?
-Pour un modèle de raisonnement, **non** : il raisonne déjà, et imposer une méthode détaillée peut **nuire**. Mieux vaut décrire **clairement l'objectif, les contraintes et le format** de sortie, et laisser le modèle organiser sa réflexion. Le chain-of-thought explicite reste utile pour les modèles **sans raisonnement natif** ([[11-prompt-engineering-avance|prompt engineering]]).
-
-Si une procédure est nécessaire au métier, la préciser reste pertinent : unités à utiliser, sources autorisées et contrôles attendus. Distinguer cette contrainte d'une demande de narration de la réflexion interne. On peut demander une justification courte, des calculs ou des preuves contrôlables sans supposer que le texte affiché révèle fidèlement tout le processus.
-
----
-
 Peut-on faire confiance à la chaîne de pensée affichée ? <!--anki:4339773d41252f6d6749-->
 ?
 **Pas entièrement.** Des travaux montrent que la réflexion affichée n'est **pas toujours fidèle** au processus réel : le modèle peut utiliser un indice sans le mentionner. Elle est utile pour **déboguer** et **surveiller**, mais ce n'est pas une **explication garantie** ni une preuve de correction.

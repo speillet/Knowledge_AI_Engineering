@@ -91,14 +91,6 @@ Qu'est-ce que le protocole A2A ? <!--anki:752355255f5525695870-->
 
 ---
 
-Quel est l'intérêt principal des sous-agents ? <!--anki:4c52586b37256f59494e-->
-?
-L'**isolation du contexte** : chaque sous-agent explore dans son propre contexte et ne remonte que l'essentiel ([[35-context-engineering|context engineering]]).
-
-C'est utile pour explorer plusieurs documents sans remplir l'historique principal de toutes les lectures. Un bon retour précise le résultat, ses sources et les limites de l'analyse. Le principal garde la responsabilité d'intégrer et vérifier ces retours ; un résumé peut omettre une exception ou transmettre une erreur avec assurance.
-
----
-
 ## Mises en situation
 
 Mise en situation : une équipe propose une architecture à sept agents (recherche, rédaction, relecture, SEO, traduction, publication, supervision) pour produire des articles. Qu'en penses-tu ? <!--anki:4a3d52637c423274602b-->

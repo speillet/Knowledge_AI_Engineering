@@ -71,12 +71,6 @@ Le gain n'est pas gratuit : calcul, activations et lectures KV augmentent aussi,
 
 ---
 
-Pourquoi l'utilisation GPU de `nvidia-smi` est-elle trompeuse ? <!--anki:48423f5d56613037636e-->
-?
-Elle mesure la **part du temps où un kernel tourne**, pas la part de la puissance utilisée. Un decode memory-bound affiche **100 %** d'utilisation en exploitant quelques pourcents des FLOP disponibles. Pour juger l'efficacité : **débit en tokens/s**, **MFU** (FLOP utiles / FLOP théoriques) ou bande passante atteinte, via DCGM ou un profileur ([[93-monitoring-inference|monitoring]]).
-
----
-
 Pourquoi prefill et decode se gênent-ils sur le même GPU ? <!--anki:4d7676625e503c7a2859-->
 ?
 Un gros prefill **monopolise le GPU** pendant des centaines de millisecondes : les séquences en decode du même batch **attendent**, d'où des **pics de TPOT** visibles par les utilisateurs en cours de génération. Inversement, beaucoup de decodes ralentissent l'admission des nouveaux prompts et dégradent le **TTFT**.

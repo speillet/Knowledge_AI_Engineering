@@ -88,16 +88,6 @@ Il automatise le déploiement et la maintenance de composants compatibles, dont 
 
 ---
 
-Comment utilise-t-on le GPU avec Apptainer ? <!--anki:77556b3d6648472f756b-->
-?
-L'option **`--nv`** expose les périphériques NVIDIA et les bibliothèques utilisateur nécessaires dans le conteneur :
-```bash
-apptainer exec --nv image.sif python train.py
-```
-Le module noyau du driver reste chargé sur l'hôte. Cette option ne réserve pas de GPU auprès de Slurm et n'assure pas toute compatibilité CUDA. Utiliser les GPU alloués par le cluster, puis vérifier leur visibilité et un calcul réel avec le framework de l'image.
-
----
-
 Comment donner accès à un GPU AMD à un conteneur ? <!--anki:507e28233f496e5a7523-->
 ?
 Avec **ROCm** : on expose les devices `/dev/kfd` et `/dev/dri` au conteneur et on utilise des images ROCm. vLLM et PyTorch supportent ROCm.

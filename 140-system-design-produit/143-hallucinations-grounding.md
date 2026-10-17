@@ -1,6 +1,6 @@
 # Hallucinations, grounding & abstention — Flashcards
 Tags: #flashcards #ai-engineering #hallucinations #grounding #qualite #llm
-<!-- summary: types d'hallucinations, leviers, citations vérifiées, abstention, arbitrage avec la couverture, détection, calibration, slopsquatting, communication de l'incertitude; température et factualité, conflits de sources, réponses partielles. -->
+<!-- summary: types d'hallucinations, leviers, citations vérifiées, abstention, arbitrage avec la couverture, détection, communication de l'incertitude; température et factualité, conflits de sources, réponses partielles. -->
 
 
 Qu'est-ce qu'une hallucination ? <!--anki:43342c5e784379766728-->
@@ -36,12 +36,6 @@ Quels leviers réduisent les hallucinations après la génération ? <!--anki:77
 
 ---
 
-Comment rendre les citations fiables ? <!--anki:7255287c6d622c66262a-->
-?
-Demander au modèle de citer des **identifiants de passages** (et non des URL ou titres qu'il pourrait inventer), puis **vérifier côté code** que chaque identifiant existe dans le contexte fourni, et idéalement que le passage **soutient** la phrase (juge ou NLI). Une citation inventée est **pire** que pas de citation : elle crée une fausse confiance.
-
----
-
 Qu'est-ce que l'abstention et pourquoi est-elle difficile ? <!--anki:6d23262a5e6d66256b7c-->
 ?
 La capacité à répondre **« je ne sais pas »** ou **« ce n'est pas dans les documents »**. Difficile car les modèles sont biaisés vers **répondre** ; il faut l'**exiger explicitement**, fournir des **exemples** d'abstention, et l'**évaluer** avec des questions **sans réponse** dans le jeu de test (sinon on optimise un système qui ne s'abstient jamais).
@@ -59,20 +53,6 @@ Comment détecter une hallucination après génération ? <!--anki:423a236456252
 **Vérifier les affirmations contre une source de référence** : passages récupérés, données structurées ou règles métier. Un juge ou un modèle d'inférence textuelle peut aider, mais il doit être évalué sur des annotations fiables.
 
 La divergence entre générations et les logprobs servent de signaux de triage, pas de preuves : plusieurs réponses peuvent répéter la même erreur, et une continuation probable peut être fausse. Mesurer faux positifs et faux négatifs du détecteur. En cas d'incertitude, déclencher abstention ou revue selon le risque.
-
----
-
-Les LLM sont-ils calibrés : leur confiance reflète-t-elle leur taux de réponses justes ? <!--anki:65443c5a7252553d7a3a-->
-?
-**Pas automatiquement.** Il faut préciser l'événement mesuré : prochain token, classe prédite ou correction d'une réponse complète. Une bonne calibration sur l'un ne garantit pas celle des autres.
-
-Les logprobs et la confiance exprimée en mots sont des signaux à valider sur une tâche et une population labellisées. Entraînement, prompt et changement de domaine peuvent modifier leur relation à l'exactitude. Avant d'afficher « confiance : 95 % », mesurer courbe de fiabilité, effectifs et segments ; définir un seuil d'abstention puis le tester indépendamment.
-
----
-
-Pourquoi les hallucinations de code sont-elles un risque de sécurité ? <!--anki:4e43495d553d6e306131-->
-?
-Le modèle invente des **noms de paquets** qui n'existent pas ; des attaquants **enregistrent** ces noms avec du code malveillant (**slopsquatting**). Parade : vérifier l'existence et la réputation des dépendances, lockfiles, registres internes ([[106-securite-agents-code|agents de code]]).
 
 ---
 

@@ -41,14 +41,6 @@ Le moteur mutualise les calculs entre requêtes et gère la mémoire des séquen
 
 ---
 
-Pourquoi l'API compatible OpenAI est-elle importante ? <!--anki:484b513771565d286c7b-->
-?
-Elle permet de **changer de backend sans modifier le code client** : SDK OpenAI, [[81-litellm-api-layer|LiteLLM]] et frameworks d'agents parlent au serveur auto-hébergé comme à une API cloud.
-
-Cette compatibilité réduit les adaptations de transport et de format, mais n'assure pas une équivalence complète. Vérifier endpoints, paramètres, erreurs, streaming, outils et sorties structurées réellement supportés. Changer `base_url` peut suffire pour un appel simple ; une application avancée demande des tests de contrat et de qualité.
-
----
-
 Qu'est-ce que le multi-LoRA en serving ? <!--anki:46362e6e346d5f39534d-->
 ?
 Charger **plusieurs adapters [[51-fine-tuning-adaptation|LoRA]]** au-dessus d'un **seul modèle de base** en VRAM : chaque requête choisit son adapter, et on sert des dizaines de variantes fine-tunées pour le prix d'un modèle.

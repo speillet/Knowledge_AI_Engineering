@@ -66,14 +66,6 @@ Un **bac à sable reproductible** : faux services (API mockées, base de test, d
 
 ---
 
-Qu’apporte pass^k à l’évaluation de la fiabilité d’un agent ? <!--anki:4e5e397b574e687a6f79-->
-?
-**pass@k** mesure la présence d'au moins une réussite parmi k essais ; **pass^k** mesure la réussite de tous les essais, selon le protocole de répétition. À probabilité constante de 0,7 et avec essais indépendants, pass^3 vaut `0,7³ = 34,3 %`.
-
-Ces métriques répondent à des questions différentes. Un service en un appel doit aussi publier succès au premier essai, gravité des échecs et abstention. Le taux moyen sur des tâches de difficulté variable ne s'élève pas simplement à la puissance k. Mesurer par tâche et agréger selon l'usage.
-
----
-
 Comment évaluer l'appel d'outils (tool calling) isolément ? <!--anki:4e634e67316076667936-->
 ?
 Sur des cas unitaires : pour une requête donnée, vérifier **le choix de l'outil**, la **validité des arguments** (schéma, valeurs), les cas où **aucun outil** ne doit être appelé, et les **appels parallèles**. Évaluations **par règles**, rapides et déterministes → idéales en [[112-cicd-modeles|CI]].

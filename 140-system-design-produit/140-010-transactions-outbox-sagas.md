@@ -91,14 +91,6 @@ Enregistrer son identité avant l'appel et réutiliser cette identité à la rep
 
 ---
 
-Comment empêcher qu'une approbation humaine valide des paramètres ensuite modifiés ? <!--anki:3635396366633138316430363438613962306666303362323137373862646338-->
-?
-Lier l'approbation à une **version ou empreinte de la demande exacte** : bénéficiaire, montant, ressource et conditions pertinentes. Au moment d'exécuter, vérifier que les paramètres correspondent toujours et que l'autorisation reste applicable.
-
-Si l'agent modifie la proposition après approbation, il faut une nouvelle validation selon la politique. Éviter une permission vague attachée seulement à la conversation. Le contrôle doit être effectué au point d'exécution avec une identité fiable, car le modèle peut reformuler ou reconstruire les arguments entre deux tours.
-
----
-
 Comment tester les garanties d'un workflow distribué au-delà du chemin heureux ? <!--anki:3632653736656631316438653439633738323635343439386630376137396362-->
 ?
 Injecter des pannes **aux frontières entre effet, persistance et acquittement**. Rejouer le même événement, perdre une réponse, arrêter un worker après un commit, désordonner les messages et exécuter deux tentatives simultanées.
