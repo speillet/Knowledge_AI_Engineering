@@ -162,5 +162,5 @@ Mise en situation : un fallback LangChain renvoie du texte libre là où l'appli
 - [[43-langchain-agents|LangChain — Agents]] — composition des middlewares
 - [[32-tool-calling|Tool calling]] — valider demandes et résultats
 - [[103-defenses-agents|Défenses des agents]] — permissions appliquées par le service
-- [[90-012-tests-agents-reprises|Agents — Tests de contrats, pannes & reprises]] — tester outils et contrats
+- [[90-013-tests-agents-reprises|Agents — Tests de contrats, pannes & reprises]] — tester outils et contrats
 - [[00-moc-ai-engineering|MOC AI Engineering]]

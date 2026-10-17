@@ -136,5 +136,5 @@ Mise en situation : ton assistant, qui résume des comptes rendus de 80 pages, o
 - [[137-long-contexte|Long contexte]] — placement des documents
 - [[138-modeles-raisonnement|Modèles de raisonnement]] — prompter l'objectif, pas les étapes
 - [[101-securite-llm-guardrails|Sécurité LLM]] — données utilisateur dans les templates
-- [[90-011-langfuse-prompts-experiences|Langfuse — Prompts, datasets & expériences]] — versionner et promouvoir les contrats
+- [[90-012-langfuse-prompts-experiences|Langfuse — Prompts, datasets & expériences]] — versionner et promouvoir les contrats
 - [[00-moc-ai-engineering|MOC AI Engineering]]

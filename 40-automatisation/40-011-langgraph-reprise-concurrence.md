@@ -201,5 +201,5 @@ Mise en situation : un déploiement renomme le nœud LangGraph d'approbation alo
 - [[149-livraison-idempotence-concurrence|Livraison & idempotence]] — effets externes et exécutions concurrentes
 - [[140-010-transactions-outbox-sagas|Transactions & sagas]] — frontières transactionnelles
 - [[140-011-architecture-applications-agentiques|Applications agentiques — Architecture & cycle de vie]] — exploiter les états persistés
-- [[90-012-tests-agents-reprises|Agents — Tests de contrats, pannes & reprises]] — injecter des pannes
+- [[90-013-tests-agents-reprises|Agents — Tests de contrats, pannes & reprises]] — injecter des pannes
 - [[00-moc-ai-engineering|MOC AI Engineering]]

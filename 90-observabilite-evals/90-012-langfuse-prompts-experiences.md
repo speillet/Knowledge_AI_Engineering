@@ -159,7 +159,7 @@ Mise en situation : le prompt s'améliore sur les incidents historiques mais dé
 
 ## Connexions
 - [[91-langfuse-observabilite|Langfuse — Fondamentaux]] — relier prompts, traces et scores
-- [[90-010-langfuse-instrumentation-production|Langfuse — Instrumentation]] — provenance et couverture des observations
+- [[90-011-langfuse-instrumentation-production|Langfuse — Instrumentation]] — provenance et couverture des observations
 - [[13-prompts-production|Prompts en production]] — versionner et promouvoir les contrats
 - [[99-statistiques-decisions-experimentales|Statistiques]] — décider à partir des expériences
 - [[95-llm-as-judge|LLM-as-judge]] — calibrer les évaluateurs

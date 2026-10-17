@@ -164,5 +164,5 @@ Mise en situation : une crew hiérarchique produit de meilleurs rapports mais d�
 - [[36-orchestration-agents|Orchestration multi-agents]] — dépendances et délégation
 - [[98-debogage-agents|Débogage des agents]] — attribuer les erreurs aux étapes
 - [[140-011-architecture-applications-agentiques|Applications agentiques — Architecture & cycle de vie]] — placer les crews dans le service
-- [[90-012-tests-agents-reprises|Agents — Tests de contrats, pannes & reprises]] — tester tâches et reprises
+- [[90-013-tests-agents-reprises|Agents — Tests de contrats, pannes & reprises]] — tester tâches et reprises
 - [[00-moc-ai-engineering|MOC AI Engineering]]

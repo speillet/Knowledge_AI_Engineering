@@ -144,6 +144,6 @@ Mise en situation : un agent d'analyse met 3 à 8 minutes à produire un rapport
 - [[61-kv-cache-attention|KV cache]] — la mémoire qui limite la concurrence
 - [[33-mcp|MCP]] — le protocole standard entre agents et outils
 - [[149-livraison-idempotence-concurrence|Livraison & idempotence]] — suivre une opération après timeout ou déconnexion
-- [[90-010-langfuse-instrumentation-production|Langfuse — Instrumentation en production]] — observer la consommation du flux
+- [[90-011-langfuse-instrumentation-production|Langfuse — Instrumentation en production]] — observer la consommation du flux
 - [[140-011-architecture-applications-agentiques|Applications agentiques — Architecture & cycle de vie]] — contrat public et reconnexions
 - [[00-moc-ai-engineering|MOC AI Engineering]]

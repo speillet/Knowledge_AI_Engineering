@@ -149,6 +149,6 @@ Mise en situation : ton équipe veut passer des impressions (« ça marche plut�
 - [[114-reproductibilite-variance|Reproductibilité & variance]] — non-déterminisme et statistiques d'evals
 - [[41-automatisation-code-nocode|Automatisation code & no-code]] — workflows et outils no-code
 - [[45-langgraph-production|LangGraph — Production]] — persistance, reprise et supervision humaine
-- [[90-010-langfuse-instrumentation-production|Langfuse — Instrumentation en production]] — instrumentation des traces
-- [[90-011-langfuse-prompts-experiences|Langfuse — Prompts, datasets & expériences]] — relier prompts, traces et scores
+- [[90-011-langfuse-instrumentation-production|Langfuse — Instrumentation en production]] — instrumentation des traces
+- [[90-012-langfuse-prompts-experiences|Langfuse — Prompts, datasets & expériences]] — relier prompts, traces et scores
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -172,5 +172,5 @@ Mise en situation : le coût affiché dans Langfuse a doublé après activation 
 - [[93-monitoring-inference|Monitoring]] — relier traces et mesures agrégées
 - [[84-streaming-integration-applicative|Streaming]] — observer la consommation du flux
 - [[152-pii-confidentialite|Confidentialité]] — minimiser les données exportées
-- [[90-011-langfuse-prompts-experiences|Langfuse — Prompts, datasets & expériences]] — provenance et couverture des observations
+- [[90-012-langfuse-prompts-experiences|Langfuse — Prompts, datasets & expériences]] — provenance et couverture des observations
 - [[00-moc-ai-engineering|MOC AI Engineering]]

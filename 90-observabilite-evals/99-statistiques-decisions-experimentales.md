@@ -152,5 +152,5 @@ Mise en situation : parmi 40 prompts, un seul progresse de deux points sur le te
 - [[172-validation-metriques-ml|Validation ML]] — comparer les modèles sans biais de sélection
 - [[178-inference-causale-decisions|Inférence causale & décisions produit]] — distinguer estimation précise et conclusion valide
 - [[60-010-benchmarks-charge-inference|Benchmarks de charge LLM]] — mesurer la capacité sans masquer files et échecs
-- [[90-011-langfuse-prompts-experiences|Langfuse — Prompts, datasets & expériences]] — décider à partir des expériences
+- [[90-012-langfuse-prompts-experiences|Langfuse — Prompts, datasets & expériences]] — décider à partir des expériences
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -62,9 +62,9 @@ Après les bases du parcours agentique :
 1. [[140-011-architecture-applications-agentiques|Définir le cycle de vie]] — API, identité, statuts, approbations et annulation.
 2. [[40-010-langchain-outils-middleware-production|Fiabiliser les contrats LangChain]] — outils, middleware, erreurs et budgets.
 3. [[40-011-langgraph-reprise-concurrence|Approfondir LangGraph]] ou [[40-012-crewai-execution-fiable|CrewAI]] — reprise, dépendances, concurrence et évolution.
-4. [[90-010-langfuse-instrumentation-production|Instrumenter avec Langfuse]] — événements métier, modèles, outils et propagation.
-5. [[90-011-langfuse-prompts-experiences|Comparer les prompts et expériences]] — versions, jeux, scores et promotion.
-6. [[90-012-tests-agents-reprises|Démontrer les invariants]] — tests d'outils, crash, décisions obsolètes et migrations.
+4. [[90-011-langfuse-instrumentation-production|Instrumenter avec Langfuse]] — événements métier, modèles, outils et propagation.
+5. [[90-012-langfuse-prompts-experiences|Comparer les prompts et expériences]] — versions, jeux, scores et promotion.
+6. [[90-013-tests-agents-reprises|Démontrer les invariants]] — tests d'outils, crash, décisions obsolètes et migrations.
 
 L’[audit de couverture](docs/audit-stack-agentique-2026-10-09.md) précise les apports et les limites. L’[atelier support](examples/agentic-support/README.md) fournit un projet local avec tests de reprise ; la variante CrewAI et les intégrations distantes constituent des exercices complémentaires.
 
@@ -226,9 +226,9 @@ L’[audit d’inférence du 8 octobre](docs/audit-inference-llm-2026-10-08.md) 
 - [[98-debogage-agents|Débogage & analyse d'échecs des agents]]
 - [[99-statistiques-decisions-experimentales|Statistiques pour décider en IA]]
 - [[90-010-evaluation-reponses-llm|Évaluation des outputs & des réponses LLM]]
-- [[90-010-langfuse-instrumentation-production|Langfuse — Instrumentation en production]]
-- [[90-011-langfuse-prompts-experiences|Langfuse — Prompts, datasets & expériences]]
-- [[90-012-tests-agents-reprises|Agents — Tests de contrats, pannes & reprises]]
+- [[90-011-langfuse-instrumentation-production|Langfuse — Instrumentation en production]]
+- [[90-012-langfuse-prompts-experiences|Langfuse — Prompts, datasets & expériences]]
+- [[90-013-tests-agents-reprises|Agents — Tests de contrats, pannes & reprises]]
 
 ## 100 — Sécurité & guardrails
 

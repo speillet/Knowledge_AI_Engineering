@@ -11,10 +11,10 @@ Cet enrichissement ajoute **124 cartes dans sept nouvelles fiches**, dont **21 m
 | Contrats LangChain | [Outils & middleware](../40-automatisation/40-010-langchain-outils-middleware-production.md) | 17 | Expliquer identité injectée, contrat de sortie, ordre des middlewares et budget de retry |
 | État LangGraph | [Reprise & concurrence](../40-automatisation/40-011-langgraph-reprise-concurrence.md) | 19 | Reprendre après panne sans dupliquer un effet ; traiter concurrence et anciens états |
 | Exécution CrewAI | [Exécution fiable](../40-automatisation/40-012-crewai-execution-fiable.md) | 17 | Définir dépendances, guardrails bornés, budgets et granularité de reprise |
-| Traces Langfuse | [Instrumentation en production](../90-observabilite-evals/90-010-langfuse-instrumentation-production.md) | 18 | Retrouver appels, outils, reprises et coûts sans parent perdu ni double comptage |
-| Expériences Langfuse | [Prompts, datasets & expériences](../90-observabilite-evals/90-011-langfuse-prompts-experiences.md) | 17 | Promouvoir une version avec un jeu comparable, des scores interprétables et un rollback observable |
+| Traces Langfuse | [Instrumentation en production](../90-observabilite-evals/90-011-langfuse-instrumentation-production.md) | 18 | Retrouver appels, outils, reprises et coûts sans parent perdu ni double comptage |
+| Expériences Langfuse | [Prompts, datasets & expériences](../90-observabilite-evals/90-012-langfuse-prompts-experiences.md) | 17 | Promouvoir une version avec un jeu comparable, des scores interprétables et un rollback observable |
 | Application complète | [Architecture & cycle de vie](../140-system-design-produit/140-011-architecture-applications-agentiques.md) | 19 | Définir les contrats API, décisions humaines, droits, événements et transitions de statut |
-| Validation | [Tests de contrats, pannes & reprises](../90-observabilite-evals/90-012-tests-agents-reprises.md) | 17 | Distinguer tests techniques, invariants métier et évaluation de qualité d'un vrai modèle |
+| Validation | [Tests de contrats, pannes & reprises](../90-observabilite-evals/90-013-tests-agents-reprises.md) | 17 | Distinguer tests techniques, invariants métier et évaluation de qualité d'un vrai modèle |
 
 Après les fiches de base, commencer par l'architecture applicative, choisir le runtime adapté au besoin, puis travailler instrumentation et tests ensemble. LangChain et LangGraph peuvent se combiner ; CrewAI offre une autre organisation des tâches ; Langfuse observe et évalue. Connaître les quatre n'impose pas de les empiler dans chaque application.
 

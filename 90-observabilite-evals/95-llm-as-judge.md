@@ -220,5 +220,5 @@ Mise en situation : après une modification de format, ton juge passe de 82 % à
 - [[38-plateformes-agents|Plateformes d'agents]] — runtime, sandbox, gateway d'outils et identité
 - [[68-quantization|Quantization]] — réduire la précision pour gagner mémoire et vitesse
 - [[93-monitoring-inference|Monitoring de l'inférence]] — métriques, validations et signaux de production
-- [[90-011-langfuse-prompts-experiences|Langfuse — Prompts, datasets & expériences]] — calibrer les évaluateurs
+- [[90-012-langfuse-prompts-experiences|Langfuse — Prompts, datasets & expériences]] — calibrer les évaluateurs
 - [[00-moc-ai-engineering|MOC AI Engineering]]

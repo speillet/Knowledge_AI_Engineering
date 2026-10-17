@@ -180,5 +180,5 @@ Mise en situation : après une reconnexion SSE, le client reçoit de nouveau l'�
 - [[149-livraison-idempotence-concurrence|Livraison & idempotence]] — soumissions et effets métier
 - [[40-011-langgraph-reprise-concurrence|LangGraph — Reprise]] — exploiter les états persistés
 - [[40-012-crewai-execution-fiable|CrewAI — Production]] — placer les crews dans le service
-- [[90-012-tests-agents-reprises|Agents — Tests de contrats, pannes & reprises]] — valider le cycle de vie
+- [[90-013-tests-agents-reprises|Agents — Tests de contrats, pannes & reprises]] — valider le cycle de vie
 - [[00-moc-ai-engineering|MOC AI Engineering]]
