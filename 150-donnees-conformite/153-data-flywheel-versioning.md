@@ -75,6 +75,8 @@ Comment prioriser les améliorations issues de la flywheel ? <!--anki:7649423b5a
 ?
 Par **fréquence × gravité** de chaque catégorie d'échec, rapportées au **coût** de la correction. Une erreur rare mais grave (engagement financier) peut passer avant une erreur fréquente mais bénigne (ton). Tenir un **tableau des modes de défaillance** mis à jour à chaque tour.
 
+Exemple : un ton inapproprié touche 8 % des réponses, avec une gravité de 1 ; des montants erronés en touchent 0,5 %, avec une gravité de 50 car ils engagent l'entreprise. Scores : 8 contre 25. Les montants passent d'abord, bien que seize fois moins fréquents. Les poids de gravité se fixent avec le métier, et le coût de correction départage les cas proches.
+
 ---
 
 ## Mises en situation

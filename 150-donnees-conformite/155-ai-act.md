@@ -103,6 +103,8 @@ Que met-on en place ensuite, selon la classification AI Act ? <!--anki:6538416e7
 2. Pour le haut risque : gestion des risques, **journalisation**, **supervision humaine**, documentation et evals **dès la conception**.
 3. Articuler avec le [[154-rgpd-llm|RGPD]] et les normes comme ISO 42001 ([[105-devsecops-ia-agentique|référentiels]]).
 
+Pour un système à haut risque, les journaux doivent permettre de retracer le fonctionnement : version du modèle, entrée, résultat et intervention humaine. Revoir la classification à chaque changement d'usage : un assistant interne qui se met à évaluer les salariés relève de l'emploi, un domaine à haut risque, sans qu'une ligne de code ait changé.
+
 ---
 
 ## Mises en situation

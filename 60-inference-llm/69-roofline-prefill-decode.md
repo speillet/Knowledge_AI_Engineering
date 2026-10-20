@@ -21,6 +21,8 @@ en dessous de ~300 FLOP/octet : memory-bound
 au-dessus                     : compute-bound
 ```
 
+Lecture : performance atteignable = min(plafond de calcul, intensité × bande passante). Un noyau à 1 FLOP/octet sur ce H100 plafonne à 1 × 3,35 To/s ≈ 3,35 TFLOP/s, soit environ 0,3 % du pic de calcul. Le roofline donne une borne, pas une prévision : caches, kernels et communications réduisent la performance réelle.
+
 ---
 
 À ne pas confondre : memory-bound et compute-bound ? <!--anki:6a6f7d6d386152727063-->

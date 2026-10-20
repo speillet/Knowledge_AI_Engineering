@@ -39,6 +39,8 @@ couches     → archives tar compressées du système de fichiers
 ```
 Chaque élément est identifié par son **digest**, ce qui rend l'image **vérifiable** et **déduplicable** ([[08-linux-primitives-docker-fondamentaux|layers]]).
 
+Au-dessus du manifest, un **index d'image** peut pointer vers un manifest par plateforme, par exemple `linux/amd64` et `linux/arm64` : le client choisit celui de sa machine. Une image publiée seulement pour amd64 échoue donc sur un nœud ARM avec `exec format error`, même si le tag existe. Construire et publier les variantes ensemble évite ce piège.
+
 ---
 
 À quoi sert l'OCI Runtime Specification ? <!--anki:74435b21594f332f3126-->

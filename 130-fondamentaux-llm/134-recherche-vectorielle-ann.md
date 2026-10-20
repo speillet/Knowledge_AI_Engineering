@@ -68,6 +68,8 @@ Comment mesurer la qualité d'un index ANN ? <!--anki:632f2b3f4d4d244e3332-->
 ?
 Par le **recall@k de l'index** par rapport à la **recherche exacte** sur un échantillon de requêtes (quelle part des vrais k plus proches voisins est retrouvée), mis en regard de la **latence p95** et du **QPS**.
 
+Procédure : tirer quelques centaines à milliers de requêtes réelles, calculer leurs k vrais voisins par force brute hors ligne, puis comparer chaque réglage candidat. Refaire la mesure quand le corpus grossit ou après une reconstruction : à réglage constant, le rappel d'un index de graphe peut baisser avec la taille. Mesurer aussi sous les filtres de métadonnées utilisés en production.
+
 ---
 
 Base vectorielle dédiée ou extension d'une base existante ? <!--anki:68674461647c78563b3c-->

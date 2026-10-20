@@ -78,6 +78,8 @@ Qu'est-ce que l'« eval-driven development » ? <!--anki:774521632879232f4d3b-->
 ?
 Écrire **l'eval avant le changement**, comme en TDD : définir le cas qui échoue, modifier prompt, retrieval ou modèle, puis vérifier que **le cas passe sans régresser ailleurs**. Chaque itération est **mesurée**, pas jugée « au feeling ».
 
+Exemple : un utilisateur signale que l'assistant invente un délai de remboursement. On ajoute d'abord ce cas au jeu, constaté en échec, avec un critère binaire : « cite la politique en vigueur ou s'abstient ». Puis on modifie le prompt et on rejoue tout le jeu ; le cas reste ensuite en non-régression. Limite : optimiser sans cesse les cas ajoutés surapprend le jeu.
+
 ---
 
 Qu'est-ce que la saturation d'une eval et que faire ? <!--anki:4730412c2d44506c2d2f-->
@@ -106,6 +108,8 @@ n ≈ 1,96² × p(1 − p) / marge²
 ± 10 points :                           ≈  80 cas
 ```
 Diviser la marge par 2 demande 4 fois plus de cas. Pour départager deux versions à 2 ou 3 points d'écart, une comparaison **appariée** sur les mêmes cas est plus sensible.
+
+La formule suppose des cas **indépendants**. 900 questions tirées de 60 conversations d'un même client ne valent pas 900 observations : les réponses d'une même conversation se ressemblent, et l'incertitude réelle est plus large que la marge calculée.
 
 ---
 

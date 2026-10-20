@@ -76,6 +76,8 @@ Comment évaluer un VLM sur sa tâche ? <!--anki:70543e63557a7d3e6b5b-->
 ?
 Comme pour le texte : **jeu d'images représentatif** (qualités de scan, angles, langues), **réponses de référence**, métriques par champ (exact match sur les valeurs extraites), et analyse d'erreurs par **type d'image**. Tester aussi la **robustesse** : rotation, flou, faible résolution ([[94-evals-methodologie|méthodologie]]).
 
+Constituer le jeu à partir des flux réels, pas d'images propres : par exemple 300 documents tirés au hasard, stratifiés par source (scan, photo, PDF natif). Comparer aussi le VLM à une chaîne OCR puis LLM texte sur le même jeu : sur de longs documents denses, la seconde peut être meilleure ou moins chère.
+
 ---
 
 Pourquoi conserver les transformations de coordonnées lors d'un recadrage pour un VLM ? <!--anki:3433633530323630623837393436633762613761666165346632623365616537-->

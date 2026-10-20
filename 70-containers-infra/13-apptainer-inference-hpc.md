@@ -24,6 +24,8 @@ apptainer exec --nv \
 ```
 Les variables `SLURM_*` et `CUDA_VISIBLE_DEVICES` sont **héritées** par le conteneur.
 
+Le conteneur hérite aussi des **limites** du job. Si le cluster applique les cgroups de Slurm, un chargement de poids qui dépasse les 64 Go demandés est tué pour manque de mémoire, même sur un nœud de 512 Go. De même, `--cpus-per-task` borne les threads de chargement et de tokenisation : dimensionner la demande sur le pic de démarrage, pas seulement sur le régime établi.
+
 ---
 
 Comment fournir les poids d'un modèle à un conteneur Apptainer ? <!--anki:4a423c78424443567254-->

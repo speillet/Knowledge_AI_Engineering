@@ -50,6 +50,8 @@ On monte d'un cran **seulement si le précédent ne suffit pas**, et **on le pro
 2. **Workflow** : chaîne d'appels déterministe, routage.
 3. **RAG** ou outils en lecture.
 
+Exemple : pour classer des tickets en douze catégories, un appel bien prompté avec quelques exemples peut suffire. On ne passe au workflow que si l'eval montre des confusions qu'un routage ou une seconde étape corrige. Chaque barreau ajoute un composant à tester, surveiller et sécuriser : le coût d'exploitation compte autant que le coût des appels.
+
 ---
 
 Quels sont les derniers barreaux de l'échelle de complexité, et à quel prix ? <!--anki:64486d53634b69783433-->
@@ -81,6 +83,8 @@ Quels composants une requête traverse-t-elle dans une architecture LLM de produ
 - **Guardrails** en entrée et en sortie.
 - **Gateway LLM** : routage, fallbacks, budgets ([[81-litellm-api-layer|LiteLLM]]), puis les **modèles** (API ou self-hosted).
 
+Chaque composant ajoute de la latence et un point de défaillance : un guardrail d'entrée qui appelle un modèle retarde le premier token de toute sa durée. Propager un **identifiant de requête** à travers toutes les couches, jusqu'aux modèles et aux outils, pour relier logs, traces et coûts. Décider aussi, composant par composant, si une panne le contourne ou bloque la requête.
+
 ---
 
 Quelles briques de support complètent une architecture LLM de production ? <!--anki:74727b49455b7442742c-->
@@ -98,6 +102,8 @@ Comment réduire la latence perçue d'une application LLM, côté interface ? <!
 - **Streaming** des tokens : le TTFT compte plus que la durée totale.
 - **Travail en arrière-plan** avec notification pour les tâches longues, plutôt qu'une attente bloquante.
 - Afficher la **progression** d'un agent plutôt qu'un spinner ([[144-ux-ia-human-in-the-loop|UX]]).
+
+Autres leviers : afficher d'abord ce qui ne demande pas de LLM, comme le statut d'une commande, puis l'explication générée ; pré-calculer ce qui est prévisible, comme le résumé d'un document à son ouverture. Mesurer l'effet sur l'usage, par exemple l'abandon avant la première lecture, et pas seulement sur la latence serveur.
 
 ---
 
@@ -132,6 +138,8 @@ Comment isoler les clients d'une application LLM multi-tenant ? <!--anki:45785b5
 Quels modes de défaillance anticiper dès la conception ? <!--anki:656575326e2975292b3d-->
 ?
 Panne ou **rate limit** du fournisseur, **latence** dégradée, **sortie invalide** (format), **hallucination**, **prompt injection**, **boucle d'agent**, **dérive de coût**, **mise à jour silencieuse** du modèle, **retrieval vide**. Pour chacun : **détection** + **réponse** (retry, fallback, abstention, escalade humaine).
+
+Méthode : une table **mode → signal → réponse → test**. Exemple : rate limit du fournisseur → taux de 429 et latence p95 → retry borné puis modèle de secours → exercice de bascule en préproduction. Prioriser selon probabilité et impact. Un mode sans signal de détection reste un risque non couvert, même si la parade existe dans le code.
 
 ---
 

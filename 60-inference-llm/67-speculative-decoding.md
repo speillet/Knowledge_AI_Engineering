@@ -12,6 +12,8 @@ brouillon : propose t1 t2 t3 t4
 cible     : vérifie les 4 en parallèle → accepte t1 t2, corrige t3 → 3 tokens en une passe
 ```
 
+Après un rejet, les propositions qui suivaient sont jetées, et leurs entrées de KV cache, chez le brouillon comme chez la cible, sont annulées ; le brouillon repart du token corrigé. Le moteur doit donc savoir revenir en arrière dans son cache, une contrainte absente du décodage classique.
+
 ---
 
 Pourquoi vérifier k tokens coûte-t-il presque autant que d'en générer un ? <!--anki:643b3476537b31506257-->
@@ -54,6 +56,8 @@ Comment choisir le nombre de tokens proposés (k) en speculative decoding ? <!--
 ?
 Trop **grand** : on gaspille du travail de brouillon, car un rejet précoce jette toute la suite. Trop **petit** : peu de gain. On règle k selon le taux d'acceptation mesuré (souvent **3 à 5**), ou on laisse le moteur l'**adapter dynamiquement**.
 
+Le bon k dépend du type de sortie : une édition de code qui recopie le fichier accepte de longues séquences, une réponse rédigée beaucoup moins. Mesurer la longueur acceptée **par catégorie de requêtes** plutôt qu'en moyenne globale : un k unique réglé sur la moyenne est trop grand pour les unes et trop petit pour les autres.
+
 ---
 
 Quelles sont les façons de produire le brouillon d'un speculative decoding ? <!--anki:507674457b374c6c452c-->
@@ -70,11 +74,15 @@ Quand le prompt lookup (n-grammes) est-il efficace ? <!--anki:75357b292e2173597c
 ?
 Quand la sortie **recopie beaucoup l'entrée** : RAG avec citations, résumé, extraction, **édition de code** (le fichier modifié reprend l'original). Il n'y a ni modèle ni VRAM supplémentaires, mais le gain est faible sur du texte vraiment nouveau.
 
+Mécanisme : on cherche dans le contexte la dernière occurrence des derniers tokens générés, puis on propose ce qui la suivait. En éditant une fonction, si le modèle vient d'écrire `return total /` et que le fichier d'origine contient `return total / len(items)`, la suite est proposée telle quelle. Dès que la sortie s'écarte de l'original, les propositions sont rejetées.
+
 ---
 
 Qu'est-ce que la vérification en arbre en speculative decoding ? <!--anki:7548316562267e3a7176-->
 ?
 Au lieu d'une seule suite de tokens, le brouillon propose **plusieurs continuations possibles organisées en arbre**, que la cible vérifie **en une passe** grâce à un masque d'attention en arbre. On augmente ainsi la longueur acceptée : c'est ce qu'utilisent Medusa et EAGLE.
+
+Exemple : si le brouillon hésite entre « de » et « du » au premier token, l'arbre garde les deux branches et leurs suites ; la cible retient la plus longue branche acceptée. Le prix : davantage de tokens vérifiés à chaque passe, donc plus de calcul. Cela convient aux petits batchs, mais pèse quand le GPU est déjà saturé.
 
 ---
 
@@ -88,6 +96,8 @@ Quand le speculative decoding aide-t-il et quand nuit-il ? <!--anki:515b7d72714b
 Quelles métriques d'inférence le speculative decoding améliore-t-il ? <!--anki:503836423d712d492f3d-->
 ?
 Le **TPOT** (temps par token généré) et donc la **latence totale** des réponses longues. Pas le **TTFT** : le prefill n'est pas accéléré, et le brouillon ajoute même un peu de travail au départ ([[64-metriques-slo-inference|métriques & SLO]]).
+
+Le bénéfice dépend donc de la longueur de sortie. Avec un TTFT de 400 ms et un TPOT de 20 ms, diviser le TPOT par deux fait passer une réponse de 20 tokens de 800 à 600 ms, mais une réponse de 500 tokens de 10,4 à 5,4 s. Sur des réponses courtes, le TTFT domine et le gain perçu reste modeste.
 
 ---
 

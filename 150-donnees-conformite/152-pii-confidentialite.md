@@ -7,6 +7,8 @@ Où passent les données personnelles dans une application LLM ? <!--anki:75613b
 ?
 Partout : **prompts** des utilisateurs, **documents** indexés, **contexte** envoyé au fournisseur, **sorties**, **logs et traces**, **caches**, **mémoire** des agents, jeux d'**eval** et de **fine-tuning**, outils d'**annotation**. Chaque copie est une surface de fuite et une obligation de **suppression** potentielle.
 
+Méthode : dresser une **carte des flux** qui indique, pour chaque copie, son lieu de stockage, sa durée de conservation, qui y accède et comment la supprimer. Les copies oubliées sont souvent hors production : un jeu d'eval exporté sur le poste d'un annotateur ou dans un notebook partagé échappe à toute procédure d'effacement.
+
 ---
 
 Comment détecter les PII ? <!--anki:4f4c4432325f3e343633-->
@@ -56,6 +58,8 @@ Pourquoi un LLM peut-il « régurgiter » des données d'entraînement ? <!--ank
 ?
 Les modèles **mémorisent** une partie de leurs données, surtout les séquences **répétées** ou rares. Un modèle **fine-tuné sur des données clients** peut ressortir un e-mail ou un numéro à un autre utilisateur. D'où : **retirer les PII avant fine-tuning**, dédupliquer, et tester l'extraction.
 
+Pour tester, insérer dans les données de fine-tuning des **canaris** : des chaînes uniques et fictives, comme un faux numéro de compte. On vérifie ensuite si le modèle les complète à partir de leur début. Le risque croît avec les répétitions et le nombre d'epochs : une signature d'e-mail répétée mille fois est bien plus exposée qu'un exemple vu une fois.
+
 ---
 
 Quels risques de fuite entre utilisateurs spécifiques aux LLM ? <!--anki:46376c33395556583063-->
@@ -71,11 +75,15 @@ Comment gérer les secrets (clés API, mots de passe) dans le contexte ? <!--ank
 ?
 Ils ne doivent **jamais** entrer dans le contexte du modèle : les outils s'authentifient **côté serveur** et le modèle ne manipule que des **références**. Scanner les documents indexés et les entrées pour détecter les secrets, et les **retirer** ([[103-defenses-agents|secrets]]).
 
+Pour la détection, combiner motifs connus, comme les préfixes `AKIA` des clés AWS ou `ghp_` des jetons GitHub, et chaînes à forte entropie, avec des outils comme gitleaks ou detect-secrets. Une clé trouvée dans un document indexé doit être **révoquée**, pas seulement retirée : elle a pu être lue, mise en cache ou journalisée.
+
 ---
 
 Qu'est-ce que le privacy by design pour une application LLM ? <!--anki:4c4f677e4b4325622f2f-->
 ?
 Intégrer la protection **dès la conception** : **minimisation** (n'envoyer au modèle que le nécessaire), **finalité** limitée, pseudonymisation par défaut, **rétention** minimale, cloisonnement par utilisateur, **analyse d'impact** (AIPD) quand le traitement est à risque, et capacité à **supprimer** sur demande ([[154-rgpd-llm|RGPD]]).
+
+Exemple : un assistant RH reçoit l'identifiant de l'employé plutôt que son nom, ne récupère que les documents applicables à son pays, conserve les conversations un temps limité et n'envoie au fournisseur qu'un texte pseudonymisé. Chaque choix se vérifie par un test : la requête d'un autre employé ne doit retrouver aucun de ses documents.
 
 ---
 

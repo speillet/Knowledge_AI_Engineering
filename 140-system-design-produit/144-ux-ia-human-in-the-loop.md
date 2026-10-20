@@ -7,6 +7,8 @@ Pourquoi l'UX est-elle un sujet d'AI Engineer et pas seulement de designer ? <!-
 ?
 Parce que les choix d'interface **compensent les limites du modèle** (erreurs, latence, incertitude) et **produisent les données** d'amélioration (feedback, corrections). Un modèle moyen avec une bonne UX de vérification peut battre un meilleur modèle présenté comme infaillible.
 
+Exemple : afficher la source à côté d'un montant permet de le vérifier en deux secondes ; sans elle, l'utilisateur recontrôle tout ou fait une confiance aveugle. L'AI Engineer sait où le modèle se trompe, donc où l'interface doit ralentir l'utilisateur. Ces choix se mesurent : temps de vérification, taux de correction, abandons.
+
 ---
 
 À ne pas confondre : IA qui assiste (copilote) et IA qui agit (autopilote) ? <!--anki:7a327b7b494e59375778-->
@@ -36,6 +38,8 @@ Un temps de réponse de 10 s est **inacceptable en attente muette**, mais **tol�
 Comment rendre visible le travail d'un agent ? <!--anki:5040712a5e662864245e-->
 ?
 Afficher les **étapes** en cours (« recherche dans les documents », « exécution des tests »), les **outils appelés**, et permettre d'**interrompre** ou de **réorienter**. L'utilisateur tolère une longue durée s'il **voit la progression** et garde le contrôle.
+
+Montrer des étapes compréhensibles, pas le raisonnement brut ni chaque appel technique. Pour un agent qui modifie des données, afficher avant exécution ce qui va changer, par exemple « 3 tickets fermés, 1 e-mail envoyé », puis ce qui a effectivement changé. Ce récapitulatif sert aussi de trace quand il faut corriger une erreur.
 
 ---
 
@@ -73,6 +77,8 @@ La tendance des humains à **faire trop confiance** à une suggestion automatiqu
 Comment gérer les erreurs et refus dans l'interface ? <!--anki:67445f4276753a4d3569-->
 ?
 Des messages **actionnables** : dire **pourquoi** (hors périmètre, information absente, contenu bloqué) et **quoi faire** (reformuler, contacter un humain). Éviter les refus secs sans explication, et prévoir une **escalade vers un humain** pour les cas bloquants.
+
+Exemple : « Je ne trouve pas cette information dans les conditions générales 2026 ; vous pouvez reformuler ou ouvrir une demande » plutôt que « Je ne peux pas répondre ». Distinguer aussi dans les métriques refus de sécurité, information absente et erreur technique : leurs causes diffèrent. Un taux de refus qui monte peut signaler un index vide plutôt qu'un modèle trop prudent.
 
 ---
 

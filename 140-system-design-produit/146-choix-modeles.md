@@ -11,6 +11,8 @@ Quels critères techniques pour choisir un modèle ? <!--anki:4e76712b43634b3a51
 3. **Latence** : TTFT et débit.
 4. **Capacités** : fenêtre de contexte utile, multimodalité, tool calling, structured outputs.
 
+Commencer par les **seuils éliminatoires**, puis comparer les modèles restants. Pour un assistant streamé, un TTFT de 2 s peut être rédhibitoire malgré la meilleure qualité ; pour une extraction batch de nuit, seuls qualité et coût comptent. Vérifier les capacités en conditions réelles : une fenêtre annoncée d'un million de tokens ne garantit pas une bonne exploitation de ce contexte.
+
 ---
 
 Quels critères non techniques pèsent sur le choix d'un modèle ? <!--anki:693e6d41763d4f6b3363-->
@@ -40,6 +42,8 @@ Quel benchmark public consulter pour présélectionner un modèle en connaissanc
 - **GPQA** : questions scientifiques de niveau doctorat.
 - **AIME et autres benchmarks de maths** : raisonnement.
 - **Humanity's Last Exam** : questions expertes très difficiles.
+
+Lecture utile : GPQA et Humanity's Last Exam indiquent une capacité de raisonnement expert, pertinente pour l'analyse ou la recherche. Ils renseignent peu sur un assistant de support, où respect des consignes et usage des outils comptent davantage. Ces scores servent à éliminer des candidats ; la décision se prend sur une eval maison.
 
 ---
 
@@ -105,6 +109,8 @@ Comment limiter les risques lors d'une migration vers un nouveau modèle ? <!--a
 Comment suivre un marché qui change tous les mois ? <!--anki:75334b5e4a6133343a3f-->
 ?
 Garder un **processus** plutôt qu'une opinion figée : une **eval maison automatisée** qu'on relance à chaque sortie de modèle notable, une **grille de décision** partagée, et une **revue trimestrielle** des choix de modèles face au coût et à la qualité ([[147-leadership-technique-ia|leadership technique]]).
+
+Concrètement : quelques centaines de cas représentatifs, versionnés, exécutables en une commande sur tout modèle accessible via la gateway, avec coût et latence mesurés. Une migration se déclenche sur un écart supérieur à un seuil fixé à l'avance, par exemple 20 % de coût en moins à qualité égale, pas sur une annonce.
 
 ---
 

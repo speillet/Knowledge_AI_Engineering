@@ -8,6 +8,8 @@ Qu'est-ce que l'IA responsable, concrètement pour un AI Engineer ? <!--anki:477
 ?
 Un ensemble de **pratiques mesurables**, pas une déclaration de valeurs : **évaluer les biais** du système sur ses cas d'usage, **documenter** modèles et données, garantir une **supervision humaine** adaptée, être **transparent** avec les utilisateurs, et prévoir des **recours** en cas d'erreur.
 
+Exemple pour un assistant client bancaire : comparer la qualité des réponses par langue et par région, documenter les données et leurs lacunes, escalader les demandes sensibles vers un conseiller, indiquer qu'il s'agit d'une IA et offrir une voie de recours. Chaque pratique produit une preuve, comme un rapport d'évaluation ou une procédure ; sans preuve, l'engagement n'est pas vérifiable.
+
 ---
 
 D'où viennent les biais d'un système LLM ? <!--anki:42403a7e3d6e7a7a2129-->
@@ -39,6 +41,8 @@ Ces critères sont **mathématiquement incompatibles** en général : il faut **
 Qu'est-ce qu'une model card ? <!--anki:466933485e7a4251656f-->
 ?
 Une **fiche de documentation** d'un modèle : usages prévus et **hors périmètre**, données d'entraînement, **performances** (y compris par sous-groupe), limites connues, risques, évaluations de sécurité. Pour une application, on rédige l'équivalent : **system card** décrivant le système complet (modèles, données, garde-fous, supervision).
+
+Exemple d'usage : la model card d'un modèle ouvert indique des évaluations surtout en anglais ; avant de l'utiliser pour du support en français, une eval maison s'impose. Une system card se met à jour à chaque changement de modèle, de données ou de garde-fou : une fiche figée devient fausse sans que personne ne s'en aperçoive.
 
 ---
 

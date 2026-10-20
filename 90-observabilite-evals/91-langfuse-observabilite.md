@@ -36,6 +36,8 @@ trace : "question support #4212"          1,8 s   0,004 €
 ```
 C'est cette granularité qui permet de dire **où** le temps et l'argent partent, et de rejouer un cas précis ([[93-monitoring-inference|métriques agrégées]]).
 
+Lecture de l'exemple : la génération finale prend 1,2 s sur 1,8 s, et ses 3 400 tokens d'entrée pèsent dans le coût ; réduire les passages injectés agit sur les deux. Encore faut-il pouvoir filtrer : sans attributs comme la version du prompt, l'environnement ou un identifiant d'utilisateur pseudonymisé, on sait qu'une requête a été lente, pas quelle version l'a produite.
+
 ---
 
 Que permet le suivi des sessions et des users ? <!--anki:63492c7126682c43374f-->

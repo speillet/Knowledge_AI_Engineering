@@ -18,6 +18,8 @@ Quels principes du RGPD encadrent la collecte et l'usage des données d'un syst�
 - **Limitation des finalités** : les données collectées pour le support ne servent pas d'office à l'entraînement.
 - **Minimisation** : n'envoyer au modèle que le nécessaire.
 
+Concrètement, la minimisation se traduit dans le code : sélectionner les champs du dossier utiles à la question plutôt que d'injecter tout l'historique du client, et ne pas transmettre les pièces jointes sans nécessité. Chaque finalité, comme répondre, améliorer le système ou produire des statistiques, se documente avec sa base légale dans le registre des traitements.
+
 ---
 
 Quels principes du RGPD encadrent la qualité et la conservation des données d'un système LLM ? <!--anki:753340264b2d61287d4a-->
@@ -25,6 +27,8 @@ Quels principes du RGPD encadrent la qualité et la conservation des données d'
 - **Exactitude** : un modèle qui **hallucine** des informations sur une personne pose problème.
 - **Limitation de la conservation** : rétention des logs, caches et mémoire.
 - **Sécurité** et **responsabilité** : pouvoir démontrer sa conformité.
+
+Exemples : traces complètes conservées quelques semaines pour le débogage, métadonnées agrégées plus longtemps, mémoire d'agent supprimée à la clôture du compte, chaque durée étant justifiée. Pour l'exactitude, une personne peut demander la rectification d'une information fausse produite à son sujet : il faut pouvoir corriger la source ou bloquer la réponse, puisqu'on ne corrige pas un poids du modèle.
 
 ---
 

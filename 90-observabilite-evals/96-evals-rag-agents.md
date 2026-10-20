@@ -58,17 +58,23 @@ Pourquoi préférer vérifier l'état final plutôt que la trajectoire exacte ? 
 ?
 Parce qu'il existe **plusieurs chemins valides** : imposer une séquence exacte d'appels pénalise des solutions correctes et rend l'eval **fragile**. On vérifie le **résultat** dans un environnement contrôlé, et on n'impose sur la trajectoire que des **contraintes** (outil interdit, étape obligatoire, budget max).
 
+Exemple : pour « annule la commande 42 et préviens le client », le vérificateur contrôle que la commande est annulée, qu'un seul e-mail est parti au bon destinataire et qu'aucune autre commande n'a changé. Que l'agent ait d'abord consulté le statut importe peu. Limite : un état final correct peut cacher une trajectoire dangereuse, comme une suppression suivie d'une recréation ; d'où les contraintes explicites.
+
 ---
 
 Qu'est-ce qu'un environnement d'eval pour agents ? <!--anki:77776f6c5d3a242e7325-->
 ?
 Un **bac à sable reproductible** : faux services (API mockées, base de test, dépôt git figé), **utilisateur simulé** par un LLM pour les conversations multi-tours, et **vérificateur automatique** de l'état final. Exemples publics : **τ-bench** (support client), **SWE-bench** (correction de bugs), **WebArena**, **OSWorld**.
 
+La reproductibilité exige de **réinitialiser** l'état avant chaque essai et de figer ce qui varie : date simulée, données, réponses des API externes. Sinon, un essai qui a modifié la base fausse le suivant et deux runs ne se comparent plus. L'utilisateur simulé ajoute sa propre variance : répéter les essais plutôt que juger sur un seul passage.
+
 ---
 
 Comment évaluer l'appel d'outils (tool calling) isolément ? <!--anki:4e634e67316076667936-->
 ?
 Sur des cas unitaires : pour une requête donnée, vérifier **le choix de l'outil**, la **validité des arguments** (schéma, valeurs), les cas où **aucun outil** ne doit être appelé, et les **appels parallèles**. Évaluations **par règles**, rapides et déterministes → idéales en [[112-cicd-modeles|CI]].
+
+Exemple de cas : « Où en est ma commande 4212 ? » attend l'outil `statut_commande` avec `{"id": "4212"}`, et aucun autre appel. Mesurer séparément le choix de l'outil, la validité des arguments et les faux appels sur les cas sans outil : un agent qui appelle un outil à chaque message obtient un excellent rappel, mais une précision médiocre.
 
 ---
 
@@ -81,6 +87,8 @@ Avec un **simulateur d'utilisateur** (LLM avec un persona et un objectif) qui di
 Quelles métriques d'efficacité suivre en plus de la qualité ? <!--anki:515e3872755f6a3b5d67-->
 ?
 **Tokens et coût par tâche réussie**, **nombre d'étapes**, **latence de bout en bout**, taux de **boucles** ou d'abandons. Un agent plus précis mais trois fois plus cher n'est pas forcément meilleur : on compare sur un **front qualité / coût** ([[122-finops-llm|FinOps]]).
+
+Exemple : l'agent A réussit 80 % des tâches à 0,05 € la tentative, B 88 % à 0,15 €. Si chaque échec coûte une escalade à 2 €, 100 tâches coûtent 45 € avec A et 39 € avec B : le coût d'un échec fait partie de la comparaison.
 
 ---
 

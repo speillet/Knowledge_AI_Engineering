@@ -39,6 +39,8 @@ Qu'est-ce qu'un circuit breaker et pourquoi l'utiliser ? <!--anki:424258362c2624
 ?
 Un composant qui, après un **taux d'échec** élevé vers un fournisseur, **coupe** les appels vers lui pendant un moment et bascule directement sur le fallback. Il évite d'**attendre des timeouts** à chaque requête et de **surcharger** un service déjà en difficulté.
 
+Il a trois états : **fermé**, les appels passent ; **ouvert**, ils sont coupés pendant une durée, par exemple 30 s ; **semi-ouvert**, quelques requêtes test passent et le circuit se referme si elles réussissent. Le seuil se calcule sur une fenêtre glissante avec un minimum d'appels, par exemple 50 % d'échecs sur au moins 20 requêtes, pour ne pas couper sur deux erreurs isolées.
+
 ---
 
 Comment gérer une sortie LLM mal formée dans une application ? <!--anki:507e476873755e536655-->

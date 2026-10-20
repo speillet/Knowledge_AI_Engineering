@@ -7,6 +7,8 @@ Qu'est-ce que le LLM-as-a-judge ? <!--anki:68706a2847612b4c514c-->
 ?
 Utiliser un **LLM pour évaluer les sorties** d'un autre système selon une **rubrique** : pertinence, fidélité au contexte, ton, respect d'une consigne. Il rend évaluables à grande échelle des critères **que le code ne sait pas vérifier**.
 
+Il reproduit à grande échelle le jugement d'annotateurs humains : sa valeur dépend donc de la rubrique et des annotations qui servent à le valider. Un juge ne crée pas de vérité terrain ; il en propage une, avec ses propres erreurs, qu'il faut mesurer avant de l'utiliser pour décider. Les contrôles vérifiables par du code, comme un format ou une valeur, restent du code.
+
 ---
 
 Quels axes distinguent les formats de jugement d’un LLM-as-a-judge ? <!--anki:66302c23656c45342539-->
@@ -100,6 +102,8 @@ Quelles sont les limites du LLM-as-a-judge ? <!--anki:70352b21524a7a6e7031-->
 Où utiliser le juge en production ? <!--anki:4630707a3f4a6a656f73-->
 ?
 Sur un **échantillon du trafic** pour suivre la qualité sans vérité terrain, pour **trier** les traces à relire par un humain, et comme **[[143-hallucinations-grounding|guardrail]] en ligne** quand la latence le permet. Les scores remontent dans l'outil d'[[91-langfuse-observabilite|observabilité]].
+
+En ligne, le juge ajoute un appel LLM au chemin critique, de quelques centaines de millisecondes à plusieurs secondes. Il lui faut un **délai maximal** et un comportement défini en cas de non-réponse : laisser passer, bloquer ou basculer vers une réponse prudente. Hors du chemin critique, les scores s'attachent à la trace après coup, sans ralentir l'utilisateur.
 
 ---
 

@@ -48,11 +48,15 @@ Pourquoi le texte destiné à la voix doit-il être écrit différemment ? <!--a
 ?
 Pas de **markdown**, de listes, de tableaux ni d'URL ; des phrases **courtes** ; les nombres, dates, sigles et unités **écrits pour être prononcés** (« trois cent vingt euros »). On le précise dans le prompt et on normalise le texte avant le TTS.
 
+Exemple : « RDV le 03/04 à 14h30, réf. FR-2219 » devient « rendez-vous le trois avril à quatorze heures trente, référence F R deux deux un neuf » ; sinon le TTS risque de lire « zéro trois barre zéro quatre ». L'auditeur ne peut pas relire : proposer peu d'options à la fois et répéter l'information clé en fin de phrase.
+
 ---
 
 Quelles difficultés propres au STT ? <!--anki:4560567a56343c463437-->
 ?
 **Noms propres**, termes métier, **accents**, bruit de fond, téléphonie à bande étroite (8 kHz), chevauchement de voix. Leviers : **vocabulaire personnalisé** (mots-clés, contexte), modèles adaptés au domaine, et confirmation orale des informations critiques (numéro de dossier, montant).
+
+Exemple de confirmation : « J'ai noté le dossier quatre, sept, deux, un, c'est bien ça ? ». Énoncer chiffre par chiffre limite les confusions entre nombres proches, comme « six » et « dix » sur une ligne bruitée. Tester sur des enregistrements réels du canal : un modèle évalué sur de l'audio 16 kHz perd en précision sur la téléphonie à 8 kHz.
 
 ---
 
@@ -92,6 +96,8 @@ délai modifié = 200 + 100 + 250 + 150 + 100 = 800 ms
 gain = 200 ms, soit 20 %
 ```
 Une détection plus rapide peut couper une pause qui appartenait encore au tour utilisateur. Mesurer donc délai et interruptions involontaires ensemble. En streaming réel, identifier les intervalles qui se chevauchent avant d'additionner leurs durées.
+
+Le poste le plus lourd n'est pas forcément le plus sûr à réduire : la détection pèse ici 40 % du délai, mais la raccourcir augmente les coupures. Réduire le temps jusqu'au premier texte, avec un modèle plus petit ou un prompt plus court, ne présente pas ce risque.
 
 ---
 

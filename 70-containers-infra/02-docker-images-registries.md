@@ -7,6 +7,8 @@ Docker et OCI sont-ils la même chose ? <!--anki:473c39416b3845714e37-->
 ?
 **Non.** Docker est un écosystème/outillage de conteneurisation, l'outil de référence en développement : il **construit** les images (`Dockerfile`, `docker build`), les **distribue** (push/pull vers un registry) et les **exécute** (via [[03-containerd-runc|containerd et runc]]). [[01-oci|OCI]] définit des standards ouverts.
 
+Côté format, deux types de manifest coexistent : `application/vnd.docker.distribution.manifest.v2+json` et `application/vnd.oci.image.manifest.v1+json`. Ils sont presque équivalents, et les registries et runtimes courants acceptent les deux. Docker est donc **une implémentation**, dont le format historique a servi de base à la spécification ; OCI est **le contrat**.
+
 ---
 
 Une image construite avec Docker peut-elle être utilisée sans Docker Engine ? <!--anki:4c543262645e38635a65-->
@@ -52,11 +54,15 @@ Une même image peut-elle créer plusieurs conteneurs ? <!--anki:654344583059492
 ?
 **Oui**, autant qu'on veut. Les couches de l'image sont en **lecture seule et partagées** ; chaque conteneur n'ajoute qu'une **couche inscriptible** par-dessus. Dix conteneurs de la même image ne dupliquent donc **pas** ses couches sur le disque, et démarrent en quelques centaines de millisecondes.
 
+Le partage repose sur le **copy-on-write** d'overlayfs : modifier un fichier venu de l'image le copie d'abord entièrement dans la couche du conteneur. Ouvrir en écriture un fichier de 10 Go embarqué dans l'image en recopie 10 Go, pour chaque conteneur. Les données qui changent vont donc dans un volume, pas dans l'image.
+
 ---
 
 Qu'est-ce qu'un container registry ? <!--anki:4b706936536a6b482f4e-->
 ?
 Un service qui **stocke et distribue des images**, selon l'API de l'[[01-oci|OCI Distribution Specification]] : il conserve les **manifests** et les **couches**, adressées par digest, et les sert sur pull. Exemples : Docker Hub, GitHub Container Registry, Harbor, Amazon ECR, Google Artifact Registry.
+
+Un `pull` télécharge d'abord le manifest, puis seulement les couches absentes du nœud : deux images bâties sur la même base CUDA ne la transfèrent qu'une fois. Le `push` fonctionne de même, en n'envoyant que les couches inconnues du registry. Partager des couches de base lourdes et stables réduit donc à la fois le stockage et le temps de déploiement.
 
 ---
 
@@ -65,6 +71,8 @@ Quel rôle le registry joue-t-il en entreprise, et que se passe-t-il s'il tombe 
 Il porte le **contrôle d'accès**, l'**analyse de vulnérabilités**, la **signature** et la rétention des images.
 
 C'est un composant critique : s'il est indisponible, plus aucun Pod ne démarre sur une image qui n'est pas déjà présente sur le node.
+
+Parades : un registry répliqué ou un **cache pull-through** proche du cluster, des images épinglées par digest avec `imagePullPolicy: IfNotPresent`, et un pré-chargement des images critiques sur les nœuds. Tester le scénario en drainant un nœud pendant une panne simulée du registry : on voit quels services ne repartent pas.
 
 ---
 

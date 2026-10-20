@@ -43,6 +43,8 @@ Quelle contrainte de compatibilité entre driver et CUDA ? <!--anki:6f476a253b51
 ?
 Le **driver de l'hôte doit être assez récent** pour la version de CUDA de l'image. Une image CUDA 12.x sur un hôte au driver trop ancien échoue au démarrage : on aligne les versions de CUDA des images sur le parc de drivers.
 
+Repère : la ligne `CUDA Version` de `nvidia-smi` indique la version **maximale** que le driver supporte, pas une installation de CUDA. Sous Linux, les images CUDA 12.x demandent au minimum la branche de driver 525 ; certaines fonctions, comme la compilation JIT de PTX récent, exigent un driver plus neuf. Sur GPU datacenter, le paquet `cuda-compat` permet d'exécuter un CUDA plus récent que le driver.
+
 ---
 
 Quelles images de base NVIDIA existent ? <!--anki:4c6f73773453635d4e79-->

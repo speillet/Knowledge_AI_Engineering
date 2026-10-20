@@ -34,6 +34,8 @@ Quels leviers réduisent les hallucinations après la génération ? <!--anki:77
 2. **Vérification** de la réponse : juge, NLI, ou règles métier sur les montants, dates et références.
 3. **Escalade** vers un humain quand la vérification échoue, plutôt qu'une réponse non étayée.
 
+Exemple de règle métier : extraire chaque montant de la réponse et vérifier qu'il figure dans un passage cité ; sinon, la phrase est retirée ou la réponse part en revue. Ces contrôles coûtent un calcul ou un appel de plus par réponse : les concentrer sur les affirmations à risque, comme les montants, dates, délais et engagements.
+
 ---
 
 Qu'est-ce que l'abstention et pourquoi est-elle difficile ? <!--anki:6d23262a5e6d66256b7c-->
