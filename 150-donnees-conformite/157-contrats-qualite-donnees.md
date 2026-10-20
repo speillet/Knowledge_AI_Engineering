@@ -142,4 +142,5 @@ Mise en situation : un producteur veut supprimer demain une colonne que plusieur
 - [[150-010-modelisation-donnees-analytiques|Modélisation des données analytiques]] — définir grain, clés et sens des mesures
 - [[150-012-stockage-colonnaire-lakehouse|Stockage colonnaire, partitions & lakehouse]] — publier un état cohérent et lisible
 - [[150-016-observabilite-lignage-donnees|Observabilité, lignage & exploitation des données]] — mesurer les garanties publiées
+- [[117-pipelines-entrainement-continu|Pipelines d'entraînement]] — arrêter un réentraînement sur données invalides
 - [[00-moc-ai-engineering|MOC AI Engineering]]

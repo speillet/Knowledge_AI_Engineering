@@ -198,4 +198,5 @@ Mise en situation : après 200 essais, le meilleur modèle gagne un point sur va
 - [[175-series-temporelles-prevision|Prévision de séries temporelles]] — comparer sans utiliser le futur
 - [[176-detection-anomalies|Détection d'anomalies]] — classes rares et coût des faux positifs
 - [[150-017-datasets-corpus-ia|Construction de datasets & corpus IA]] — protéger les splits et mesurer la généralisation
+- [[117-pipelines-entrainement-continu|Pipelines d'entraînement]] — fenêtres de réentraînement et contrôle de promotion
 - [[00-moc-ai-engineering|MOC AI Engineering]]

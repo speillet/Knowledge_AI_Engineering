@@ -70,6 +70,15 @@ Qu'est-ce que le GitOps appliqué aux modèles ? <!--anki:423a6e24507a51415361--
 L'**état désiré** (version du modèle, config du serveur d'inférence, prompts) est déclaré **dans Git** ; un opérateur comme **Argo CD** ou **Flux** réconcilie le cluster en continu avec cet état.
 
 Avantages : chaque changement passe par une **pull request** revue, l'historique Git sert d'audit, et le rollback est un `git revert` ([[12-kubernetes-gpu-inference|Kubernetes GPU]]).
+```yaml
+# InferenceService KServe versionné dans Git, appliqué par Argo CD
+spec:
+  predictor:
+    model:
+      modelFormat: { name: sklearn }
+      storageUri: s3://modeles/fraude/v8   # passer de v7 à v8 = une pull request
+```
+Git décrit la configuration, pas les poids : l'URI doit désigner un artefact **immuable**. Si `v8` peut être réécrit dans le bucket, un même commit sert deux modèles et le `git revert` ne restaure rien. Avec `selfHeal` dans Argo CD, une modification manuelle du cluster est annulée : les correctifs d'urgence passent aussi par Git.
 
 ---
 
@@ -92,6 +101,8 @@ PR → tests + evals → build image → push registry
 ```
 
 Chaque passage doit avoir un critère : tests déterministes valides, seuils d'evals atteints, artefact identifié, puis observation du canary. Conserver le manifeste reliant code, modèle, prompt et données à cette validation. Une régression de qualité ou de SLO bloque la promotion et peut déclencher le rollback ; une simple réponse HTTP 200 ne suffit pas.
+
+Pour un modèle réentraîné régulièrement, on sépare deux chaînes : la **CI du pipeline**, qui teste les transformations et lance un entraînement de fumée sur quelques milliers de lignes, et l'**entraînement continu**, qui produit les candidats ([[117-pipelines-entrainement-continu|pipelines d'entraînement]]).
 
 ---
 
@@ -137,4 +148,5 @@ Mise en situation : tu dois déployer une nouvelle version de modèle sur un ser
 - [[113-monitoring-drift-feedback|Monitoring & drift]] — qualité en production et boucle de feedback
 - [[13-prompts-production|Prompts en production]] — structure, versioning et portabilité des prompts
 - [[116-sre-incidents-capacite-ia|SRE : incidents & capacité des services IA]] — rollback et compatibilité des artefacts
+- [[117-pipelines-entrainement-continu|Pipelines d'entraînement & entraînement continu]] — le pipeline qui produit les candidats à promouvoir
 - [[00-moc-ai-engineering|MOC AI Engineering]]

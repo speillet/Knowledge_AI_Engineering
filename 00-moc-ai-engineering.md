@@ -109,6 +109,13 @@ Après [[171-choisir-modele-ml|le choix des modèles]], [[172-validation-metriqu
 
 Le [bilan des cinq nouveaux sujets](docs/nouvelles-competences-ia-2026-10-08.md) précise leurs apports et un exercice pour chacun. Ces branches complètent le parcours LLM et agents ; elles se travaillent selon les responsabilités du poste visé.
 
+### Parcours MLOps : entraîner, livrer et surveiller un modèle
+1. [[111-mlops-llmops-fondamentaux|Versionner et tracer]] — artefacts, registre, lineage et environnements
+2. [[117-pipelines-entrainement-continu|Automatiser l'entraînement]] — pipeline, validation des données et du modèle, alias champion et labels sélectifs
+3. [[112-cicd-modeles|Livrer progressivement]] — eval gates, shadow, canary, GitOps et rollback
+4. [[113-monitoring-drift-feedback|Surveiller la dérive]] — PSI, tests sur gros volumes, dérive multivariée, distribution des scores et boucle de feedback
+5. [[114-reproductibilite-variance|Comparer sans se tromper]] puis [[116-sre-incidents-capacite-ia|exploiter]] — variance, SLO et incidents
+
 ### Parcours mesurer et optimiser l’inférence LLM
 
 1. **Définir les critères** avec [[64-metriques-slo-inference|Métriques & SLO]] puis [[93-monitoring-inference|Monitoring]] : expérience visible, conformité conjointe, erreurs et histogrammes.
@@ -247,6 +254,7 @@ L’[audit d’inférence du 8 octobre](docs/audit-inference-llm-2026-10-08.md) 
 - [[114-reproductibilite-variance|Reproductibilité & variance]]
 - [[115-plateformes-agents-gouvernance|Plateformes d'agents — Architecture & gouvernance]]
 - [[116-sre-incidents-capacite-ia|SRE : incidents & capacité des services IA]]
+- [[117-pipelines-entrainement-continu|Pipelines d'entraînement, registre & entraînement continu]]
 
 ## 120 — Coûts & FinOps
 
