@@ -23,6 +23,8 @@ Qu'est-ce que l'analyse de layout ? <!--anki:752b69687c7e7867775a-->
 ?
 Détecter les **zones** d'une page — titres, paragraphes, tableaux, figures, légendes, en-têtes, notes — et l'**ordre de lecture**. Elle permet de reconstruire la **structure** (hiérarchie des sections) et de traiter chaque zone avec le bon outil (OCR, extraction de tableau, description de figure).
 
+Exemple : sur une page à deux colonnes, une extraction ligne par ligne mélange les deux textes ; l'ordre de lecture remet la colonne de gauche avant celle de droite. Les en-têtes et pieds de page répétés sont aussi repérés et retirés : sinon, ils polluent chaque chunk et faussent la recherche.
+
 ---
 
 Quel outil de parsing selon le document : PDF natif simple, mise en page complexe, scans en volume, données confidentielles ? <!--anki:3963656532376466656136373464373061363131353338666435663437353963-->
@@ -45,6 +47,8 @@ Les extraire en **structure** (markdown, HTML ou JSON), pas en texte aplati. Pou
 Comment traiter les images et graphiques d'un document ? <!--anki:62734f492d5f7a4c7026-->
 ?
 Les faire **décrire par un VLM** (description + données lisibles du graphique) et indexer cette description, en gardant un **lien vers l'image** pour pouvoir la fournir au modèle au moment de la réponse. Alternative : **retrieval multimodal** direct sur les images de pages ([[161-modeles-vision-langage|VLM]]).
+
+Exemple : un graphique de chiffre d'affaires décrit comme « courbe en hausse » ne répond pas à « quel CA au troisième trimestre ? ». Demander au VLM les valeurs lisibles sous forme de tableau, avec une mention d'incertitude, et garder la page source pour vérification. Chaque figure coûte un appel VLM à l'ingestion : filtrer d'abord logos et éléments décoratifs.
 
 ---
 

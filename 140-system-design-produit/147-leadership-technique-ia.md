@@ -68,6 +68,8 @@ Comment piloter un projet IA dont la faisabilité est incertaine ? <!--anki:446a
 ?
 Par **étapes à décision** : prototype jetable (jours) → eval sur données réelles → pilote avec utilisateurs → production. À chaque étape, un **critère go / no-go chiffré** défini à l'avance. On accepte d'**arrêter** : un no-go rapide est un bon résultat.
 
+Exemple : extraction de clauses de contrats. Prototype de trois jours sur 50 documents, go si au moins 85 % des champs sont corrects ; sinon on arrête ou on reformule le besoin. Pilote d'un mois avec dix juristes, go si le temps de traitement baisse de 30 % sans hausse des erreurs. Les seuils viennent du métier, pas de l'équipe technique seule.
+
 ---
 
 Quels standards de développement un lead met-il en place pour l'équipe ? <!--anki:77473558776e6c7b3028-->

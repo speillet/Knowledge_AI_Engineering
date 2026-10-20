@@ -34,6 +34,8 @@ location /api/chat {
 ```
 Vérifier aussi les **timeouts d'inactivité** des load balancers : envoyer un commentaire SSE régulier (`: ping`) les évite ([[83-gateway-ingress|gateway]]).
 
+Diagnostic : `curl -N` sur le backend direct, puis à travers chaque intermédiaire ; la première couche où les événements arrivent groupés est la coupable. Côté serveur, envoyer `Content-Type: text/event-stream` et `Cache-Control: no-cache` : certains proxys ne désactivent leur tampon qu'en reconnaissant ce type.
+
 ---
 
 Pourquoi gérer l'annulation côté serveur ? <!--anki:4c74432f2e24316a6b77-->
@@ -97,6 +99,8 @@ Calcul : à l’équilibre, 50 nouveaux flux SSE démarrent par seconde et duren
 pic ×3          ≈ 1 800
 ```
 Chaque flux tient une connexion et souvent une tâche asynchrone : il faut un serveur **asynchrone** (pas un thread par requête) et vérifier les **limites de connexions** du proxy et du fournisseur ([[64-metriques-slo-inference|concurrence]]).
+
+Ces chiffres sont des **moyennes** : la loi de Little ne dit rien des pointes à la minute ni des flux anormalement longs. Dimensionner sur un percentile haut du nombre de flux observés, avec une marge, plutôt que sur 600.
 
 ---
 

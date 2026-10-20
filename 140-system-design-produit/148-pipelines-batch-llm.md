@@ -42,6 +42,8 @@ source → découpage en items (id stable) → file de travail
 ```
 Chaque item a un **statut** (à faire, fait, en erreur) persisté : on peut interrompre, reprendre et relancer seulement ce qui a échoué. Orchestration : Airflow, Dagster, Prefect, ou Ray Data et Spark pour le gros volume.
 
+Le nombre de workers se règle sur le **quota du fournisseur**, pas sur la taille du cluster. Au-delà, les workers reçoivent des 429 et leurs retries gaspillent du quota. Un limiteur de débit partagé, en tokens par minute, protège le pipeline et les autres applications qui utilisent la même clé.
+
 ---
 
 Calcul : 2 millions de documents demandent chacun 3 000 tokens d’entrée et 300 de sortie, à 3 €/M et 15 €/M. Quel coût, puis quel coût avec une remise batch fictive de 50 % sur les deux postes ? <!--anki:797842345d605833776e-->

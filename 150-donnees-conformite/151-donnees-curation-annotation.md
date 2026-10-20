@@ -7,6 +7,8 @@ Pourquoi les données restent-elles décisives à l'ère des LLM pré-entraîné
 ?
 Parce que la **différenciation** d'une application vient de ses données : documents du RAG, **jeux d'eval**, exemples few-shot, données de **fine-tuning**, feedback utilisateurs. Un modèle de pointe sur des documents mal parsés ou des evals mal labellisées donne un **mauvais système**.
 
+Exemple : si les tableaux des contrats sont aplatis au parsing, aucun modèle ne retrouvera le bon montant ; changer de modèle n'y fera rien, réparer le parsing si. Avant d'accuser le modèle, vérifier sur quelques échecs si la bonne information figurait, lisible, dans ce qu'il a reçu.
+
 ---
 
 Quelles dimensions de contenu vérifier sur un jeu de données ? <!--anki:473b29623d24767e4a36-->
@@ -65,6 +67,8 @@ Qu'est-ce que l'active learning appliqué aux LLM ? <!--anki:797d785a307d35426a6
 ?
 Faire annoter en priorité les exemples **les plus informatifs** : ceux où le système est **incertain**, où les juges **divergent**, où l'utilisateur a donné un **feedback négatif**, ou qui sont **sous-représentés**. On obtient plus de valeur par heure d'annotation qu'avec un échantillon aléatoire.
 
+Pour un LLM, l'incertitude se repère par le désaccord entre plusieurs générations, des logprobs faibles sur les champs extraits ou un juge qui hésite. Limite : un jeu construit ainsi surreprésente les cas difficiles ; il sert à améliorer le système, pas à estimer sa qualité moyenne ([[95-llm-as-judge|biais d'échantillonnage]]). Réserver une part des heures, par exemple 30 %, à un tirage aléatoire.
+
 ---
 
 Pourquoi faut-il séparer strictement les jeux de développement et de test ? <!--anki:622f5d2e6a734231353e-->
@@ -76,6 +80,8 @@ Si l'on ajuste prompts, few-shot ou fine-tuning en regardant le jeu de test, cel
 Quelles données de production faut-il collecter dès le lancement ? <!--anki:77423d7b6a6a503e387d-->
 ?
 Les **traces complètes** (entrées, contexte récupéré, appels d'outils, sorties, versions de prompt et de modèle), les **feedbacks** et les **corrections**, avec **identifiant de trace** commun — dans le respect de la [[152-pii-confidentialite|confidentialité]]. Sans elles, impossible de construire les evals et la [[153-data-flywheel-versioning|flywheel]].
+
+Fixer dès le départ **durée de conservation et droits d'accès**, et vérifier la base légale qui permet de réutiliser ces traces pour améliorer le système ([[154-rgpd-llm|RGPD]]). Rattraper ces décisions après coup oblige souvent à purger des mois de données, donc à perdre la matière des futures evals.
 
 ---
 

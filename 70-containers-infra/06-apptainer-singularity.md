@@ -21,6 +21,8 @@ Quel est le format d'image historiquement natif d'Apptainer/Singularity ? <!--an
 ?
 **SIF — Singularity Image Format** : un **fichier unique**, contrairement aux couches empilées d'une image OCI. Il peut être **signé** et exécuté directement, ce qui le rend facile à copier, archiver et partager sur un système de fichiers de cluster.
 
+Un SIF est monté **en lecture seule** : pour écrire, on monte un répertoire de l'hôte avec `--bind` ou une couche temporaire avec `--writable-tmpfs`. Sur un système de fichiers parallèle comme Lustre, lire un seul gros fichier coûte bien moins cher que d'ouvrir des milliers de petits fichiers de couches : c'est un atout décisif en HPC.
+
 ---
 
 Une image SIF est-elle simplement une image OCI ? <!--anki:4d7c436a753d627a6e3c-->
@@ -44,6 +46,8 @@ apptainer shell image.sif                    # un shell interactif
 apptainer run image.sif                      # le runscript de l'image
 ```
 Par défaut, le **répertoire courant et le dossier personnel sont montés** et les variables d'environnement sont héritées : un script peut donc marcher chez vous et échouer ailleurs. Pour isoler, on utilise `--cleanenv` et `--no-home`.
+
+Aucun démon ne garde de conteneur actif : chaque `exec` démarre un conteneur pour la durée de la commande. Pour un service durable, comme un serveur d'inférence, `apptainer instance start image.sif nom` lance une instance en arrière-plan, que l'on arrête avec `apptainer instance stop nom`.
 
 ---
 

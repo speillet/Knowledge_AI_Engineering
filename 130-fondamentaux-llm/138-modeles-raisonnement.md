@@ -66,11 +66,15 @@ Qu'est-ce que le interleaved thinking dans un agent ? <!--anki:482670287673403f3
 ?
 Le modèle **raisonne entre deux appels d'outils** : il analyse le résultat d'un outil avant de décider du suivant. Cela améliore la qualité des **trajectoires d'agent** ; il faut en général **renvoyer les blocs de raisonnement** précédents dans l'historique pour garder la cohérence ([[31-agents-fondamentaux|agents]]).
 
+Exemple : l'agent cherche une commande, reçoit « 3 résultats, dont 2 annulés », et raisonne qu'il doit demander laquelle est concernée au lieu d'agir sur la première. Coût : chaque tour ajoute des tokens de raisonnement facturés et de la latence, qui se cumulent sur 20 appels d'outils. Le budget de réflexion se règle selon l'enjeu des décisions.
+
 ---
 
 Qu'est-ce que le best-of-n avec vérificateur ? <!--anki:674758746a32554c483a-->
 ?
 Générer **n réponses** puis choisir la meilleure grâce à un **vérificateur** : tests unitaires (code), vérification formelle, [[95-llm-as-judge|juge]] ou reward model. Le gain dépend surtout de la **qualité du vérificateur** : un vérificateur exécutable (tests) est bien plus fiable qu'un juge LLM.
+
+Le coût croît linéairement avec n, le gain beaucoup moins : les premiers essais supplémentaires aident souvent nettement, les suivants de moins en moins. Avec un juge imparfait, augmenter n peut même dégrader le résultat : plus il y a de candidats, plus le juge risque d'en préférer un faux qui exploite ses biais.
 
 ---
 

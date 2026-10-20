@@ -7,6 +7,8 @@ Pourquoi les evals offline ne suffisent-elles pas ? <!--anki:6b62287a2a6d53773a7
 ?
 Le jeu offline est **figé et incomplet** : il ne capture ni la **distribution réelle** des requêtes, ni leur **évolution**, ni l'effet sur les **utilisateurs** (satisfaction, rétention). Seule la mesure **en production** dit si le changement crée de la valeur.
 
+Exemple : un jeu construit avant le lancement ne contient aucune question sur une offre apparue le mois suivant ; il affiche toujours 92 % pendant que ce nouveau segment échoue. Inversement, une variante meilleure offline peut allonger les réponses et faire baisser l'usage. L'offline reste le filtre rapide et sans risque ; l'online tranche sur la valeur.
+
 ---
 
 Quels signaux de qualité collecter en production ? <!--anki:7957626f517230716c-->
@@ -29,12 +31,16 @@ Qu'est-ce qu'une guardrail metric dans un A/B test ? <!--anki:6f6666764a35515925
 ?
 Une métrique qui **ne doit pas se dégrader** même si la métrique principale progresse : **latence p95, coût par requête, taux d'erreur, taux de refus, signalements de sécurité**. Une variante qui gagne 2 % de satisfaction mais double le coût peut être **rejetée**.
 
+Fixer pour chacune une **marge de non-infériorité** avant le test, par exemple « latence p95 + 10 % au plus ». Le test conclut alors deux fois : gain sur la métrique principale, et absence de dégradation au-delà de la marge sur chaque garde-fou. Plusieurs garde-fous multiplient les tests : en tenir compte dans l'analyse ([[99-statistiques-decisions-experimentales|tests multiples]]).
+
 ---
 
 À ne pas confondre : canary et A/B test ? <!--anki:703c247d5246697c554a-->
 ?
 - **Canary** : exposer la nouvelle version à **un petit % du trafic** pour détecter **les pannes** (erreurs, latence) avant d'élargir — objectif **sécurité du déploiement**.
 - **A/B test** : mesurer **statistiquement** laquelle des versions est **meilleure** — objectif **décision produit**.
+
+Conséquences pratiques : un canary dure des heures, avec des critères d'arrêt sur erreurs et latence ; un A/B dure souvent des semaines, avec une taille d'échantillon calculée à l'avance. Un canary réussi ne prouve pas que la version est meilleure, et un A/B n'est pas conçu pour détecter vite une panne : on enchaîne souvent les deux.
 
 ---
 
@@ -68,6 +74,8 @@ Comment boucler entre online et offline ? <!--anki:4f572f26404b2e515241-->
 4. Corriger, valider offline, redéployer en canary puis A/B.
 
 C'est la [[153-data-flywheel-versioning|data flywheel]] appliquée aux evals.
+
+Fixer un rythme, par exemple 30 échecs analysés par semaine, et les regrouper par cause avant d'en verser des représentants au jeu. Ajouter cent variantes du même échec surpondère une seule cause dans le score : garder quelques exemples par catégorie et suivre l'effectif de chacune.
 
 ---
 

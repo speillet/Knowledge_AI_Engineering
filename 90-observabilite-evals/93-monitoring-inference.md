@@ -56,6 +56,8 @@ Pourquoi l'utilisation GPU et la VRAM utilisée sont-elles des métriques trompe
 ?
 `DCGM_FI_DEV_GPU_UTIL` dit seulement qu'un kernel tourne : il reste proche de 100 % même quand le GPU est sous-exploité. La **VRAM utilisée** (`DCGM_FI_DEV_FB_USED`) est aussi peu parlante, car vLLM **préalloue** la mémoire (`--gpu-memory-utilization`) : c'est le **taux d'occupation du KV cache** qu'il faut suivre.
 
+Ainsi, 95 % de VRAM occupée au démarrage, sans aucune requête, est normal. Ces deux métriques servent à détecter un GPU inactif, absent ou occupé par un autre processus ; elles ne mesurent pas une marge de capacité. Pour savoir si l'on peut ajouter de la charge, regarder la file d'attente et la latence sous SLO ([[60-010-benchmarks-charge-inference|benchmarks de charge]]).
+
 ---
 
 Quelles métriques d'usage du modèle faut-il suivre ? <!--anki:73494d5d7848655a2e6a-->

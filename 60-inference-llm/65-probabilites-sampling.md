@@ -10,6 +10,8 @@ Un **vecteur de logits** (un score par token du vocabulaire), transformé en **d
 contexte → logits → softmax → P(token) → choix → contexte + token → …
 ```
 
+Ordre de grandeur : avec un vocabulaire d'environ 128 000 tokens, chaque pas produit 128 000 logits, calculés à partir du seul dernier état caché ; les positions précédentes sont reprises du [[61-kv-cache-attention|KV cache]]. La boucle reste séquentielle : une réponse de 500 tokens exige 500 passes du modèle, d'où le poids de la longueur de sortie dans la latence.
+
 ---
 
 Pourquoi deux appels identiques donnent-ils des réponses différentes ? <!--anki:494e50217049554b3f66-->
@@ -43,6 +45,8 @@ Le choix est local : le token préféré maintenant peut conduire à une suite g
 Qu'est-ce que le top-k sampling ? <!--anki:74476e34764847357059-->
 ?
 Ne garder que les **k tokens les plus probables**, **renormaliser** leurs probabilités, puis échantillonner. Limite : k est **fixe**, que le modèle soit sûr de lui (un seul bon candidat) ou qu'il hésite (des dizaines).
+
+Exemple : si le modèle donne 0,90 au premier token, k = 40 conserve 39 candidats improbables qui gardent ensemble environ 10 % de chances d'être tirés. S'il hésite entre 200 tokens plausibles, k = 40 en coupe la plupart. C'est pourquoi on le combine souvent avec top-p ou min-p, qui s'adaptent à la forme de la distribution. Cas limite : k = 1 équivaut au décodage greedy.
 
 ---
 

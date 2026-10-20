@@ -8,6 +8,8 @@ Qu'est-ce que le prefix caching côté serveur ? <!--anki:703830706b2926403428--
 ?
 La **réutilisation du [[61-kv-cache-attention|KV cache]]** d'un préfixe déjà calculé par une requête précédente : le serveur saute le prefill de ces tokens. Résultat : **TTFT plus court** et **débit plus élevé**. Il faut une correspondance **exacte, token par token, depuis le début** du prompt.
 
+Exemple : avec un system prompt commun de 3 000 tokens resté en cache, une requête de 3 200 tokens ne calcule plus que 200 tokens en prefill. Le gain ne porte que sur le prefill : le decode, souvent dominant pour les longues réponses, ne change pas.
+
 ---
 
 Comment vLLM implémente-t-il l'automatic prefix caching ? <!--anki:4e4853344a45633c4345-->
@@ -26,11 +28,15 @@ Comment SGLang évince-t-il les entrées de l'arbre radix ? <!--anki:746d6a686e7
 ?
 En **LRU sur les feuilles** : on retire d'abord les branches les moins récemment utilisées. Un **compteur de références** protège les nœuds utilisés par des requêtes en cours, et la mémoire libérée retourne au pool commun.
 
+Conséquence : un préfixe partagé par de nombreuses requêtes, comme le system prompt, reste près de la racine et survit, alors que les fins de conversation propres à chaque utilisateur partent en premier. Sous forte pression mémoire, une conversation reprise après quelques minutes peut ne retrouver que le system prompt et repayer le prefill de tout son historique.
+
 ---
 
 Qu'est-ce que l'ordonnancement cache-aware ? <!--anki:736e6973636b5e717b7b-->
 ?
 Servir en priorité les requêtes dont le **préfixe en cache est le plus long** : cela maximise les hits avant que ces préfixes soient évincés. Le risque est de **faire attendre** les autres requêtes : on l'équilibre avec une règle d'équité.
+
+Dans SGLang, la politique *longest prefix match* trie la file selon la longueur du préfixe déjà en cache. Exemple : 50 requêtes portent sur le même document de 8 000 tokens. Les servir ensemble ne calcule ce préfixe qu'une fois ; les intercaler avec d'autres peut le faire évincer, puis recalculer. Sous faible charge, la file est courte et l'ordre change peu de chose.
 
 ---
 
@@ -53,6 +59,8 @@ Chaque réplica a **son propre cache** : un load balancer round-robin disperse l
 Qu'est-ce que l'offloading du KV cache ? <!--anki:482b3a513b2b5b7e2545-->
 ?
 Étendre le cache **au-delà de la VRAM** : RAM CPU, SSD, stockage distant, voire un cache **partagé entre instances** (LMCache, gestionnaire de blocs de Dynamo). On conserve ainsi beaucoup plus de préfixes, et pour un long préfixe, **recharger** coûte moins cher que **recalculer**.
+
+Le gain dépend du rapport entre bande passante de transfert et coût du prefill. Il est fort pour les longs préfixes d'un gros modèle, faible pour quelques centaines de tokens, où lire depuis un SSD ou le réseau peut coûter plus que recalculer. Les transferts doivent aussi se recouvrir avec le calcul : sinon ils ajoutent leur durée au TTFT.
 
 ---
 

@@ -9,6 +9,8 @@ Cas 1 — Assistant de support client : par quoi passe la requête ? <!--anki:76
 2. **RAG** sur la base de connaissances (hybride + reranker), filtré par produit et langue.
 3. **Outils en lecture** (statut de commande) via API authentifiée **au nom du client**.
 
+Le classifieur d'intention en tête réduit coût et latence : les questions simples ne déclenchent ni outils ni gros modèle, et les réclamations peuvent partir directement vers un humain. Les outils restent en **lecture** : dès qu'une action modifie le compte du client, on bascule dans le cas d'un agent qui agit, avec ses garde-fous.
+
 ---
 
 Cas 1 — Assistant de support client : comment encadre-t-on la réponse ? <!--anki:44453a5b504657536c68-->
@@ -65,6 +67,8 @@ Cas 5 — Agent qui effectue des actions (réservations, tickets, opérations) :
 - **Limites** : étapes, budget, montant maximal.
 - **Journal d'audit** complet et **kill switch**.
 - Environnement d'**eval en sandbox** avant production ([[115-plateformes-agents-gouvernance|gouvernance]], [[103-defenses-agents|défenses]]).
+
+Ordres de grandeur à fixer : par exemple 15 étapes, 0,50 € de modèle et 100 € de remboursement par tâche sans validation. La confirmation porte sur l'effet concret, « réserver le vol AF123 du 4 mai pour 412 € », pas sur un intitulé vague. L'outil doit être idempotent pour qu'une reprise ne réserve pas deux fois ([[149-livraison-idempotence-concurrence|idempotence]]).
 
 ---
 

@@ -7,6 +7,8 @@ Pourquoi router les requêtes entre plusieurs modèles ? <!--anki:6a5b33407a5a31
 ?
 Parce qu'**aucun modèle n'est optimal partout** : la majorité des requêtes sont simples et peuvent aller vers un **modèle petit, rapide et bon marché**, en réservant le **modèle puissant** aux cas difficiles. On optimise le triangle **coût / qualité / latence**.
 
+Ordre de grandeur : si 70 % des requêtes vont vers un modèle dix fois moins cher, le coût moyen devient 0,7 × 0,1 + 0,3 × 1 = 0,37 du coût initial, soit −63 %, à condition que la qualité tienne sur ces 70 %. Le routeur coûte aussi : quelques millisecondes pour des règles ou un embedding, un appel complet s'il utilise un LLM.
+
 ---
 
 Qu'est-ce que le routage statique ? <!--anki:44773775513569557677-->
@@ -28,6 +30,8 @@ Exemple : envoyer une entrée trop longue vers un modèle disposant d'un context
 Qu'est-ce que le routage sémantique ? <!--anki:416e31782d254b435577-->
 ?
 On compare l'**embedding de la requête** à des exemples de référence pour chaque route (ex. « support », « code », « hors sujet ») et on choisit la route la plus proche. Rapide et sans appel LLM.
+
+En pratique : quelques dizaines de phrases d'exemple par route, et un **seuil de similarité** sous lequel la requête part vers une route par défaut. Le seuil se règle sur un jeu étiqueté : trop haut, tout tombe dans la route par défaut ; trop bas, des requêtes hors sujet sont captées. Limite : la proximité capte le sujet, pas la difficulté.
 
 ---
 
@@ -71,6 +75,8 @@ Une affinité de cache économise du prefill mais peut surcharger un réplica po
 Sur quoi fonder une décision de routage ? <!--anki:673d62522f6f49603563-->
 ?
 Sur des **[[92-chainforge-evals-prompts|evals]] par segment de requêtes** (qualité de chaque modèle par type de tâche) et sur les **données de production** ([[91-langfuse-observabilite|Langfuse]] : coût, latence, feedback). Sans mesure, le routeur économise en dégradant la qualité sans le savoir.
+
+Exemple : l'eval montre que le petit modèle égale le grand sur les questions de statut, 98 % contre 99 %, mais chute sur les litiges, 61 % contre 88 %. On route par catégorie, puis on vérifie en production que la répartition réelle ressemble à celle de l'eval : un glissement vers les litiges dégrade la qualité sans aucune alerte.
 
 ---
 

@@ -13,6 +13,8 @@ x ≈ scale × (q − z)      q sur 8 ou 4 bits (entier ou petit flottant)
 ```
 On peut quantizer les **poids**, les **activations** et le [[61-kv-cache-attention|KV cache]].
 
+Exemple en INT8 symétrique : si le plus grand poids d'un groupe vaut 0,8, scale = 0,8 / 127 ≈ 0,0063. Le poids 0,5 devient q = round(0,5 / 0,0063) = 79, relu 79 × 0,0063 ≈ 0,498. L'erreur est bornée par une demi-marche ; mais une seule valeur extrême élargit la marche pour tout le groupe, d'où l'importance de la granularité.
+
 ---
 
 Pourquoi quantizer un LLM ? <!--anki:703678237b5b54653950-->
@@ -126,6 +128,8 @@ Quelle méthode de quantization choisir selon le contexte ? <!--anki:66505d4d542
 Que garde-t-on généralement en haute précision ? <!--anki:652a504b395d47797b63-->
 ?
 Les parties petites mais sensibles : **embeddings**, **lm_head** (la couche de sortie), **normalisations**, et dans les **MoE** le **routeur**, souvent l'attention aussi. On quantize d'abord les **couches linéaires**, et en priorité les **experts des MoE**, qui représentent l'essentiel des poids.
+
+Leur poids n'est pas toujours négligeable. Sur un 8B au vocabulaire de 128 000 tokens et de dimension 4 096, embedding et lm_head comptent environ 2 × 128 000 × 4 096 ≈ 1 milliard de paramètres, soit 13 % du modèle : les garder en BF16 coûte réellement de la mémoire sur un petit modèle. Le lm_head reste sensible, car son erreur décale les logits de chaque token produit.
 
 ---
 

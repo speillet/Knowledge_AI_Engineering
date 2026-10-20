@@ -32,6 +32,8 @@ ctr -n k8s.io containers list   # côté containerd
 crictl ps                       # ce que voit le kubelet via la CRI
 ```
 
+runc ne reste pas en mémoire : il lit le `config.json` du bundle OCI, crée namespaces et cgroups, lance le processus puis se termine. Une erreur `OCI runtime create failed` vient de cette étape : chercher du côté des montages, des limites cgroup ou des devices GPU déclarés, plutôt que dans containerd.
+
 ---
 
 Quelle phrase permet de retenir la différence entre containerd et runc ? <!--anki:6d7c4b326064574e6644-->
@@ -39,6 +41,8 @@ Quelle phrase permet de retenir la différence entre containerd et runc ? <!--an
 **containerd gère ; runc exécute.**
 
 Corollaire utile : on remplace **runc** pour changer d'isolation (gVisor, Kata Containers via une RuntimeClass), et on garde containerd. C'est ainsi qu'on durcit l'exécution du code généré par un agent ([[103-defenses-agents|isolation]]).
+
+« Gérer » couvre tout ce qui dure : télécharger et dépaqueter les images, préparer les snapshots du système de fichiers, superviser chaque conteneur via son shim et exposer la CRI au kubelet. « Exécuter » est un acte ponctuel : créer une fois le processus isolé selon la spécification runtime de l'OCI.
 
 ---
 

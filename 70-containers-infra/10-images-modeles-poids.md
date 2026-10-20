@@ -20,6 +20,8 @@ Faut-il mettre les poids dans l'image du conteneur ? <!--anki:707d512f4d72702149
 - **Dans l'image** : artefact **autonome et immuable**, mais image énorme, pull lent et rebuild à chaque version de modèle
 - **Séparés** (recommandé pour les gros modèles) : image légère avec le runtime, poids chargés depuis un stockage
 
+Critère : taille et rythme de changement. Un classifieur de 300 Mo qui évolue avec le code gagne à être dans l'image, versionné avec elle. Un LLM de plusieurs dizaines de gigaoctets, qui change indépendamment du serveur, se charge depuis un stockage. Épingler alors une révision ou un digest des poids, pour garder l'immutabilité que l'image apportait.
+
 ---
 
 Où stocker les poids quand ils sont séparés de l'image ? <!--anki:6d5d53393124313f7072-->
@@ -73,6 +75,8 @@ Mesurer séparément attente de nœud, pull d'image, transfert des poids, charge
 Pourquoi préférer le format safetensors ? <!--anki:6a617730764d4a24792f-->
 ?
 Parce qu'il ne contient **que des tenseurs** : pas de code exécuté au chargement, contrairement aux fichiers **pickle** PyTorch (`.bin`, `.pt`) qui peuvent **exécuter du code arbitraire**. Il est aussi plus rapide à charger (mmap).
+
+Le **mmap** projette le fichier en mémoire sans copie intermédiaire : les processus d'un même nœud partagent les pages déjà lues, et un tenseur n'est lu qu'à son premier accès. Limite : safetensors supprime le code au chargement des poids, pas celui du dépôt. Un `trust_remote_code=True` exécute toujours le Python fourni avec le modèle.
 
 ---
 

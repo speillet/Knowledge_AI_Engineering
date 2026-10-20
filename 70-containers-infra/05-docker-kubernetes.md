@@ -28,6 +28,8 @@ Sans dockershim, quelle chaîne d'exécution est aujourd'hui courante sur un nod
 
 Conséquence pratique : sur un node, on débogue avec **`crictl`** et non `docker ps`, et il n'y a **pas de démon Docker** à interroger.
 
+Pour savoir ce qui tourne réellement, `kubectl get nodes -o wide` affiche dans la colonne `CONTAINER-RUNTIME` le runtime de chaque nœud et sa version, comme `containerd://…` ou `cri-o://…`. Les journaux se lisent avec `crictl logs` ou dans `/var/log/pods/`, et non plus avec `docker logs`.
+
 ---
 
 À ne pas confondre : « Kubernetes ne supporte plus Docker » et « les images Docker ne marchent plus » ? <!--anki:6b3f563246555e212c79-->

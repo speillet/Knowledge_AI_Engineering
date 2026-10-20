@@ -24,6 +24,8 @@ Qu'est-ce que llama.cpp et le format GGUF ? <!--anki:647e555f4a2a7a723579-->
 ?
 **llama.cpp** : moteur d'inférence en C/C++ très portable (CPU, GPU NVIDIA/AMD, Apple Metal), référence du local. **GGUF** : son format de fichier, qui contient **poids quantizés + tokenizer + métadonnées** en un seul fichier, avec de nombreux niveaux de quantization (Q4_K_M, Q5_K_M, Q8_0…) ([[68-quantization|quantization]]).
 
+Le fichier embarque aussi le **chat template** : pratique, mais un template erroné dans le GGUF dégrade toutes les réponses sans erreur visible ; le comparer au template officiel du modèle. Lancement typique : `llama-server -m modele.gguf -c 8192 -ngl 99`, qui place toutes les couches sur le GPU et expose une API compatible OpenAI.
+
 ---
 
 Quel outil pour servir un LLM en local : développeur seul, Mac, interface graphique, équipe ? <!--anki:3462633762323030326236333435653361303765663234343061626430623137-->
@@ -50,6 +52,8 @@ Les **small language models** (≈ 1 à 8 B paramètres), souvent **distillés**
 Qu'est-ce qu'une architecture hybride local / cloud ? <!--anki:6c64257577297726536d-->
 ?
 Traiter **localement** ce qui est simple, fréquent ou sensible (PII, classification, pré-filtrage), et **escalader vers le cloud** les requêtes difficiles, après **pseudonymisation** si nécessaire. Le routeur décide selon la **difficulté**, la **sensibilité** et la **connectivité** ([[82-routing-llm|routing]]).
+
+Exemple : un assistant d'e-mails sur poste de travail classe et résume localement avec un petit modèle. Pour rédiger une réponse complexe, il envoie au cloud un texte où noms et adresses sont remplacés par des jetons, puis réinsère les valeurs localement. Prévoir le mode hors ligne : sans réseau, la fonction cloud se dégrade explicitement au lieu d'échouer.
 
 ---
 

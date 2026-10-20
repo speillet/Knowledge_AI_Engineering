@@ -49,11 +49,15 @@ Un conteneur est-il une machine virtuelle ? <!--anki:46582f686d7b712e5b5b-->
 ?
 **Non.** Un conteneur **partage le kernel de l'hôte** et n'isole que des processus ; il n'émule pas de matériel ni de système d'exploitation complet, et démarre en secondes. Une **VM** embarque **son propre noyau** sur un hyperviseur : isolation plus forte, mais plus lourde.
 
+Conséquences du noyau partagé : un conteneur Linux ne tourne pas nativement sur Windows ou macOS, où Docker Desktop démarre une VM Linux. Une faille du noyau concerne tous les conteneurs de l'hôte. Et un module noyau, comme le driver GPU, se trouve sur l'hôte : on ne peut pas en embarquer une version différente par conteneur.
+
 ---
 
 Qu'est-ce qu'un layer d'image ? <!--anki:735f7a393c5b29347d70-->
 ?
 Une **couche en lecture seule** ; les layers sont empilés via un **union/overlay filesystem** pour former l'image finale. L'image est décrite par un **manifest** et identifiée par un **digest** (hash) ; les couches communes à plusieurs images sont **partagées et mises en cache**.
+
+Chaque instruction `RUN`, `COPY` ou `ADD` crée une couche. Supprimer un fichier dans une couche ultérieure le **masque** sans réduire l'image : un `RUN wget modele.bin` suivi d'un `RUN rm modele.bin` laisse le fichier dans la couche précédente, téléchargé à chaque pull. Nettoyer dans la même instruction `RUN`, ou ne copier que le résultat final.
 
 ---
 
