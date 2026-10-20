@@ -184,4 +184,5 @@ Mise en situation : un intervalle conforme calibré sur les clients historiques 
 - [[172-validation-metriques-ml|Validation ML]] — probabilités et seuils métier
 - [[143-hallucinations-grounding|Hallucinations & abstention]] — ne pas confondre confiance et véracité
 - [[113-monitoring-drift-feedback|Monitoring & drift]] — surveiller la validité des probabilités
+- [[117-pipelines-entrainement-continu|Pipelines d'entraînement]] — estimer précision et rappel avant les labels
 - [[00-moc-ai-engineering|MOC AI Engineering]]

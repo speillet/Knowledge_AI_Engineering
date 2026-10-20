@@ -4,7 +4,7 @@ Un vault [Obsidian](https://obsidian.md) de **fiches de révision (flashcards) e
 
 Chaque fiche traite **un concept** en 8 à 34 cartes question/réponse, une quinzaine en moyenne, et se termine par des **mises en situation** : des cas concrets à diagnostiquer, concevoir ou arbitrer. Les fiches sont reliées entre elles par des liens, pour qu'on puisse passer d'un sujet à ses voisins, et elles se révisent en **répétition espacée**.
 
-**État au 17 octobre 2026** : 146 fiches et 2 163 cartes, réparties en 17 sections, dont 350 mises en situation et 180 cartes « à ne pas confondre ».
+**État au 20 octobre 2026** : 147 fiches et 2 186 cartes, réparties en 17 sections, dont 354 mises en situation et 182 cartes « à ne pas confondre ».
 
 ---
 
@@ -42,7 +42,7 @@ Knowledge_AI_Engineering/
 ├── 80-api-layer-routing/        # gateway, routing, ingress, streaming, protocoles agentiques
 ├── 90-observabilite-evals/      # traces, monitoring, evals, juges, débogage, statistiques
 ├── 100-securite-guardrails/     # guardrails, menaces et défenses des agents, MCP, DevSecOps
-├── 110-mlops-cicd/              # LLMOps, CI/CD, drift, variance, gouvernance, SRE et incidents
+├── 110-mlops-cicd/              # LLMOps, CI/CD, entraînement continu, drift, variance, gouvernance, SRE
 ├── 120-couts-finops/            # coûts d'inférence, FinOps, caching
 ├── 130-fondamentaux-llm/         # Transformer, tokenisation, embeddings, MoE, raisonnement
 ├── 140-system-design-produit/    # system design, fiabilité, UX, batch, idempotence, transactions
@@ -371,10 +371,11 @@ De la sécurité des LLM à celle des agents : les menaces et les incidents rée
 
 - [MLOps & LLMOps — Fondamentaux](110-mlops-cicd/111-mlops-llmops-fondamentaux.md) : DevOps ou MLOps, spécificités du LLMOps, ce qu'il faut versionner (code et config, modèles et données), model registry, lineage, reproductibilité, environnements dev/staging/prod, rôle du Lead.
 - [CI/CD des modèles](110-mlops-cicd/112-cicd-modeles.md) : evals statistiques et tests déterministes, eval gates (exemple de seuils), artefact déployé, blue/green et canary, shadow deployment, rollback, GitOps, tests d'une app LLM, prompts en CI, pipeline complet.
-- [Monitoring, drift & boucle de feedback](110-mlops-cicd/113-monitoring-drift-feedback.md) : data drift et concept drift, drift d'une app LLM et d'un RAG, qualité en production, boucle de feedback, quand ré-entraîner, annotation régulière, mises à jour des modèles API, alertes sur tendance et par segment.
+- [Monitoring, drift & boucle de feedback](110-mlops-cicd/113-monitoring-drift-feedback.md) : data drift et concept drift, PSI et calcul, test KS sur gros volumes, dérive multivariée, distribution des scores, drift d'une app LLM et d'un RAG, qualité en production, boucle de feedback, quand ré-entraîner, annotation régulière, mises à jour des modèles API, alertes sur tendance et par segment.
 - [Reproductibilité & variance](110-mlops-cicd/114-reproductibilite-variance.md) : non-déterminisme à température 0, invariance au batch, seed, appel rejouable, tests sur des sorties variables, erreur standard et intervalles de confiance, comparaison appariée, pass@k et pass^k, variance du LLM-as-judge, fine-tuning reproductible.
 - [Plateformes d'agents — Architecture & gouvernance](110-mlops-cicd/115-plateformes-agents-gouvernance.md) : plateforme interne (paved road), plan de contrôle et plan d'exécution, architecture de référence, séparation cerveau, mains et session, exécution durable, isolation multi-tenant, échange de jetons pour l'agent délégué, jetons hors du contexte, standards d'identité, moteur de politiques, human-in-the-loop, registre et cycle de vie, Top 10 OWASP agentique, rayon d'impact et kill switch, audit, SLO, evals continues, coûts, AI Act, lock-in, critères de choix.
 - [SRE : incidents & capacité des services IA](110-mlops-cicd/116-sre-incidents-capacite-ia.md) : SLI utilisateur, budgets d'erreur, burn rate, alertes multi-fenêtres, files bornées, admission, capacité de secours, propagation des délais, gestion d'incident, rollback, RTO et RPO, postmortem et reprise.
+- [Pipelines d'entraînement, registre & entraînement continu](110-mlops-cicd/117-pipelines-entrainement-continu.md) : niveaux de maturité MLOps, pipeline déployé plutôt que modèle, réentraînement planifié ou déclenché, validation des données et du modèle, suivi d'expériences MLflow, signature, alias champion et challenger, alias de registre ou de fournisseur, cache des étapes, fenêtre d'entraînement, scoring batch ou en ligne, labels censurés par le modèle, calcul de performance attendue sans labels.
 
 ### 120 — Coûts & FinOps
 

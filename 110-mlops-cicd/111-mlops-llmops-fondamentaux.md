@@ -155,4 +155,5 @@ Mise en situation : trois équipes déploient chacune leurs modèles, avec leurs
 - [[153-data-flywheel-versioning|Data flywheel & versioning]] — versionner et boucler sur les données
 - [[147-leadership-technique-ia|Leadership technique]] — rôle du senior
 - [[150-016-observabilite-lignage-donnees|Observabilité, lignage & exploitation des données]] — tracer les données jusqu’aux versions de modèles
+- [[117-pipelines-entrainement-continu|Pipelines d'entraînement & registre]] — alias champion, suivi d'expériences et entraînement continu
 - [[00-moc-ai-engineering|MOC AI Engineering]]

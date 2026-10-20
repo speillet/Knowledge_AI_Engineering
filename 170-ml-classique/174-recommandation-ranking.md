@@ -146,4 +146,5 @@ Mise en situation : un recommender propose dix variantes presque identiques du m
 - [[96-evals-rag-agents|Évaluation du retrieval]] — mesurer rappel et ordre des résultats
 - [[97-evals-online-ab-testing|A/B testing]] — vérifier la valeur de la liste exposée
 - [[178-inference-causale-decisions|Inférence causale]] — distinguer exposition et effet de la recommandation
+- [[117-pipelines-entrainement-continu|Pipelines d'entraînement]] — labels sélectifs d'un modèle qui décide
 - [[00-moc-ai-engineering|MOC AI Engineering]]

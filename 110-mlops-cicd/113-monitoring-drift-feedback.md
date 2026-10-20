@@ -1,6 +1,6 @@
 # Monitoring, drift & boucle de feedback — Flashcards
 Tags: #flashcards #ai-engineering #mlops #monitoring #drift #llm
-<!-- summary: data drift et concept drift, drift d'une app LLM et d'un RAG, qualité en production, boucle de feedback, quand ré-entraîner, annotation régulière, mises à jour des modèles API, alertes sur tendance et par segment. -->
+<!-- summary: data drift et concept drift, PSI et calcul, test KS sur gros volumes, dérive multivariée, distribution des scores, drift d'une app LLM et d'un RAG, qualité en production, boucle de feedback, quand ré-entraîner, annotation régulière, mises à jour des modèles API, alertes sur tendance et par segment. -->
 
 
 À ne pas confondre : data drift et concept drift ? <!--anki:693a4558422d7246257a-->
@@ -9,6 +9,59 @@ Tags: #flashcards #ai-engineering #mlops #monitoring #drift #llm
 - **Concept drift** : la **relation entrée → sortie attendue** change (le « bon » comportement évolue)
 
 Exemple de data drift : davantage de demandes dans une nouvelle langue. Exemple de concept drift : une règle commerciale change et une ancienne réponse correcte devient fausse. Une distribution d'entrée stable n'exclut donc pas une baisse de qualité. Mesurer les deux séparément et rechercher la cause avant de modifier ou réentraîner le modèle.
+
+---
+
+Comment le Population Stability Index (PSI) mesure-t-il la dérive d'une variable ? <!--anki:3839353839393939643139353462396362656138386437353365636534333832-->
+?
+On découpe la variable en classes, souvent les déciles de la période de référence, puis on compare la proportion de référence *e* et la proportion actuelle *a* de chaque classe :
+```text
+PSI = Σ (a_i − e_i) × ln(a_i / e_i)
+```
+Repères usuels, hérités du scoring crédit : sous 0,1, population stable ; de 0,1 à 0,25, à surveiller ; au-delà de 0,25, dérive marquée. Ce sont des conventions, pas un test statistique.
+
+Le résultat dépend du découpage. Une classe vide rend le logarithme infini : lisser les proportions par une petite constante. Le PSI est univarié : il ne voit ni un changement de corrélation entre variables, ni une baisse de performance.
+
+---
+
+Calcul : avec PSI = Σ (a − e) × ln(a / e), quel indice pour une variable dont les trois classes passent de 50 / 30 / 20 % à 40 / 30 / 30 % ? La population est-elle stable ? <!--anki:3938656564616631313236303437343839646338666166616664333161326363-->
+?
+```text
+(0,40 − 0,50) × ln(0,40 / 0,50) = −0,10 × −0,223 ≈ 0,022
+(0,30 − 0,30) × ln(1)            = 0
+(0,30 − 0,20) × ln(0,30 / 0,20) =  0,10 ×  0,405 ≈ 0,041
+PSI ≈ 0,063
+```
+Sous le repère de 0,1, on parlerait de population **stable**. Pourtant la dernière classe a gagné la moitié de son poids, de 20 à 30 %. Si elle regroupe les gros montants, où le modèle se trompe le plus, l'effet métier peut être important.
+
+Un indice global se complète donc par l'examen des classes qui bougent et de leur part dans les erreurs du modèle.
+
+---
+
+Calcul : avec 100 000 observations dans chaque fenêtre, quel écart de Kolmogorov-Smirnov devient significatif à 5 %, si D_crit ≈ 1,36 × √((n + m) / (n × m)) ? Qu'en conclure ? <!--anki:3761623161306136393831653465323938323161346461613065613732366361-->
+?
+```text
+D_crit ≈ 1,36 × √(200 000 / 10¹⁰) = 1,36 × 0,0045 ≈ 0,006
+```
+Un écart maximal de **0,6 point** entre les deux fonctions de répartition suffit à rejeter l'égalité. Sur de gros volumes, presque chaque variable « dérive » au sens du test, même quand l'écart n'a aucun effet.
+
+À l'inverse, avec 50 observations par fenêtre, le seuil monte à 1,36 × √(100 / 2 500) ≈ 0,27 : une dérive importante passe inaperçue. La p-valeur dit si les distributions diffèrent, pas si l'écart compte. Suivre plutôt une taille d'effet, comme D, le PSI ou la distance de Wasserstein, avec un seuil métier.
+
+---
+
+Comment détecter une dérive multivariée que les contrôles variable par variable ne voient pas ? <!--anki:3963393735306536386535613433613239383466366437643030343639303937-->
+?
+Entraîner un **classifieur de domaine** : étiqueter 0 les exemples de la période de référence et 1 ceux de la période récente, puis mesurer son AUC en validation croisée. Une AUC proche de 0,5 signifie que les deux périodes sont indiscernables. Une AUC nettement supérieure signale un changement, et les importances de variables indiquent lesquelles le portent.
+
+Exemple : l'âge et le revenu gardent chacun leur distribution, mais la combinaison « jeune et revenu élevé » triple. Exclure identifiants, horodatages et compteurs, qui séparent trivialement les périodes. L'AUC mesure la détectabilité du changement, pas son effet sur la performance.
+
+---
+
+Pourquoi surveiller la distribution des scores d'un modèle en plus de ses variables d'entrée ? <!--anki:3731316566643535353330663439373962336264626566383836366234356634-->
+?
+La **distribution des scores** résume les dérives qui comptent pour ce modèle : une variable peu utilisée peut bouger sans effet, alors qu'un déplacement des scores touche directement les décisions. Elle est disponible tout de suite, sans attendre les labels.
+
+Suivre en particulier la **part au-dessus du seuil de décision** : si elle passe de 2 à 5 %, la file de revue humaine est multipliée par 2,5, même si la qualité reste correcte. Limite : des scores stables n'excluent pas une dérive de concept, où les mêmes scores correspondent à d'autres issues. Seuls les labels, même tardifs, la révèlent.
 
 ---
 
@@ -21,6 +74,8 @@ Par une **dégradation silencieuse** : aucune erreur technique, mais des répons
 
 Invisible sans **evals continues** sur des échantillons de production.
 
+Pour repérer les nouveaux sujets avant la baisse des scores, suivre la **part des questions éloignées de tous les groupes connus** dans l'espace des embeddings : de 3 à 12 % après un lancement, le périmètre a changé. Un changement de modèle chez le fournisseur se voit plutôt dans la forme : longueur, JSON invalide, refus.
+
 ---
 
 Comment monitorer la qualité d'une application LLM en production ? <!--anki:786d2e5876493b586624-->
@@ -31,6 +86,8 @@ Comment monitorer la qualité d'une application LLM en production ? <!--anki:786
 - **Validations automatiques** : format, citations présentes
 
 Tout est rattaché aux [[91-langfuse-observabilite|traces]], et **segmenté** (par sujet, langue, client) : une moyenne stable peut cacher un segment qui s'effondre.
+
+Dimensionner l'échantillon jugé **par segment**, pas globalement. 1 000 jugements par semaine répartis sur 20 segments n'en laissent que 50 chacun : sur un taux de 80 %, l'incertitude atteint environ ±11 points ([[114-reproductibilite-variance|variance]]). Concentrer les jugements sur les segments à fort risque, et compléter par les validations automatiques, qui couvrent tout le trafic.
 
 ---
 
@@ -48,13 +105,15 @@ La **curation** transforme un signal brut en exemple exploitable : vérifier l'e
 
 Quand réentraîner ou fine-tuner à nouveau un modèle en production ? <!--anki:69216450773565735339-->
 ?
-**Sur signal**, pas sur calendrier :
+**Sur signal**, ou à un rythme justifié par l'arrivée régulière de labels ([[117-pipelines-entrainement-continu|planifié ou déclenché]]) :
 - Chute des scores sur un segment
 - Drift des entrées détecté
 - Nouveaux cas d'usage ou nouvelles catégories
 - Nouveau modèle de base plus performant
 
 Avant de ré-entraîner, vérifier que le problème ne se règle pas plus simplement : prompt, retrieval ou fraîcheur de l'index ([[51-fine-tuning-adaptation|fine-tuning]]).
+
+Vérifier aussi que le signal ne vient pas d'un incident de données : réentraîner sur une source cassée fait apprendre l'erreur au modèle. Le réentraînement produit un **candidat** ; sa mise en production reste soumise à la comparaison avec la version en place.
 
 ---
 
@@ -116,6 +175,18 @@ Mise en situation : tu veux transformer les échecs de production en améliorati
 
 ---
 
+Mise en situation : ton tableau de bord de dérive affiche quarante variables en rouge chaque lundi, et l'équipe a cessé de le regarder. Comment le rends-tu utile ? <!--anki:3732316464366435656539343430386639376433366131613165306561653466-->
+?
+1. **Remplacer les p-valeurs** par des tailles d'effet, avec des seuils fixés selon l'impact métier.
+2. **Prioriser selon le modèle** : variables importantes, distribution des scores, part au-dessus du seuil de décision.
+3. **Choisir une référence comparable** : même jour de la semaine ou même saison, pour ne pas alerter sur un rythme normal.
+4. **Vérifier d'abord le pipeline** : schéma, volume, unités, avant de conclure à une évolution réelle ([[157-contrats-qualite-donnees|dérive ou incident]]).
+5. **Relier chaque alerte** à un propriétaire, à une estimation d'impact et à une action prévue.
+
+**Piège** : relever tous les seuils jusqu'au silence, et manquer la vraie dérive.
+
+---
+
 ## Connexions
 - [[91-langfuse-observabilite|Langfuse]] — traces, scores et datasets de prod
 - [[92-chainforge-evals-prompts|Evals]] — les instruments de mesure
@@ -132,4 +203,5 @@ Mise en situation : tu veux transformer les échecs de production en améliorati
 - [[159-donnees-temporelles-features|Données temporelles]] — interpréter les retards et labels incomplets
 - [[173-calibration-incertitude-abstention|Calibration, incertitude & abstention]] — surveiller la validité des probabilités
 - [[176-detection-anomalies|Détection d'anomalies]] — distinguer incident et évolution de la référence
+- [[117-pipelines-entrainement-continu|Pipelines d'entraînement & entraînement continu]] — du signal de dérive au réentraînement contrôlé
 - [[00-moc-ai-engineering|MOC AI Engineering]]
