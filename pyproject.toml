@@ -1,0 +1,37 @@
+# Configuration des outils de qualité du code (scripts/, tests/, examples/).
+# Le dépôt n'est pas un paquet installable : pas de section [project].
+# Lancer `make check` pour reproduire la CI en local.
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+extend-exclude = [".kilo", ".obsidian"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF"]
+# "a au aux ce…".split() reste plus lisible qu'une longue liste de mots vides.
+ignore = ["SIM905"]
+
+[tool.ruff.lint.isort]
+force-sort-within-sections = true
+known-first-party = [
+    "assign_card_ids", "export_anki", "lint_flashcards", "sr_plugin", "sync_catalog",
+    "api", "demo", "engine", "storage",
+]
+
+[tool.ruff.lint.flake8-bugbear]
+# Idiome FastAPI : la dépendance se déclare en valeur par défaut.
+extend-immutable-calls = ["fastapi.Depends"]
+
+[tool.mypy]
+python_version = "3.10"
+files = ["scripts"]
+check_untyped_defs = true
+disallow_untyped_defs = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_return_any = true
+
+[[tool.mypy.overrides]]
+module = ["genanki"]
+ignore_missing_imports = true

@@ -1,12 +1,11 @@
 """Vrai graphe LangGraph, modèle LangChain simulé et traces Langfuse locales."""
 import json
 import os
+from pathlib import Path
 import sqlite3
 import threading
 import time
 import uuid
-from pathlib import Path
-from typing_extensions import TypedDict
 
 from langchain.tools import tool
 from langchain_core.language_models.fake_chat_models import GenericFakeChatModel
@@ -18,6 +17,7 @@ from langgraph.types import Command, interrupt
 from langsmith import tracing_context
 from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
 from pydantic import BaseModel, ConfigDict, Field
+from typing_extensions import TypedDict
 
 from storage import Conflict, Store, fingerprint
 
@@ -91,7 +91,8 @@ class Engine:
         with self.telemetry.start_as_current_observation(name="retrieve-policy", as_type="retriever",
                                                         input={"policy_id": "support-v1"}) as span:
             # Retrieval exact sur une source synthétique versionnée, sans moteur vectoriel.
-            policy = {"version": "support-v1", "text": "Toute création d'avoir exige une approbation humaine et un solde suffisant."}
+            policy = {"version": "support-v1",
+                      "text": "Toute création d'avoir exige une approbation humaine et un solde suffisant."}
             span.update(output=policy)
         # Réponse contrôlée : teste l'intégration, pas la qualité d'un fournisseur.
         model = GenericFakeChatModel(messages=iter([json.dumps(state["request"])]))
@@ -107,7 +108,8 @@ class Engine:
                             expires_at=time.time() + 3600.0,
                             policy_version=policy["version"]).model_dump()
         # Validation indépendante de la réponse du modèle.
-        if proposal["order_id"] != state["request"]["order_id"] or proposal["amount_cents"] != state["request"]["amount_cents"]:
+        request = state["request"]
+        if proposal["order_id"] != request["order_id"] or proposal["amount_cents"] != request["amount_cents"]:
             raise Conflict("Le modèle a changé la demande")
         if proposal["amount_cents"] > order["remaining"]:
             raise Conflict("Solde insuffisant")
@@ -121,8 +123,9 @@ class Engine:
         return {"approved": decision["approved"], "status": "approved" if decision["approved"] else "rejected"}
 
     def execute(self, state):
-        with self.telemetry.start_as_current_observation(name="commit-refund", as_type="tool",
-                                                        input={"proposal_hash": fingerprint(state["proposal"])}) as span:
+        with self.telemetry.start_as_current_observation(
+                name="commit-refund", as_type="tool",
+                input={"proposal_hash": fingerprint(state["proposal"])}) as span:
             receipt = self.store.refund(state["run_id"], state["tenant"], state["proposal"])
             span.update(output={"receipt": receipt})
         # La transaction métier est déjà validée ; le checkpoint suivant ne l'est pas.

@@ -18,7 +18,6 @@ from pathlib import Path
 import re
 import unicodedata
 
-
 HERE = Path(__file__).resolve().parent
 STOPWORDS = set("a au aux ce cette de des du en est et la le les mon pour quel quelle "
                 "quelles quels un une a cette date par avec d l".split())

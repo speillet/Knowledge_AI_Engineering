@@ -29,8 +29,12 @@ Knowledge_AI_Engineering/
 ├── scripts/sections.json        # titres et introductions des sections
 ├── tests/                       # tests du parseur, du lint, des sommaires et de l’export
 ├── scripts/requirements.txt     # dépendances de l'export Anki
-├── .githooks/pre-commit         # lance le lint avant chaque commit
-├── .github/workflows/           # lint en CI, et export Anki publié en release
+├── requirements-dev.txt         # dépendances de développement : export Anki, ruff, mypy
+├── Makefile                     # commandes du vault : make check reproduit la CI
+├── pyproject.toml               # configuration de ruff et mypy
+├── .githooks/pre-commit         # lance make pre-commit avant chaque commit
+├── .github/workflows/           # vérifications en CI, puis paquet Anki publié en release
+├── .github/dependabot.yml       # mises à jour mensuelles des actions et dépendances Python
 ├── 00-moc-ai-engineering.md     # carte racine : parcours de lecture, parcours agentique, sommaire
 ├── 10-prompt-engineering/        # techniques, optimisation automatique (DSPy), prompts en production
 ├── 20-rag/                      # RAG, graphes, chunking, text-to-SQL, agents de recherche
@@ -468,26 +472,31 @@ L'écosystème LLM change vite : noms de produits, versions et outils recommand�
 Le script `scripts/lint_flashcards.py` vérifie les conventions et calcule les statistiques :
 
 ```bash
-python3 scripts/lint_flashcards.py                  # erreurs et avertissements
-python3 scripts/lint_flashcards.py --stats          # statistiques par fiche
-python3 scripts/lint_flashcards.py --update-readme  # met à jour la ligne « État au … »
-python3 scripts/lint_flashcards.py --stale-months 6 # fiches à revérifier (défaut : 6 mois)
-python3 scripts/assign_card_ids.py                 # identifiants des nouvelles cartes
-python3 scripts/sync_catalog.py                    # régénérer les deux catalogues
-python3 scripts/sync_catalog.py --check            # vérifier sans écrire
-python3 -m unittest discover -s tests -v           # tests (dépendances Anki requises)
+make install   # dépendances de développement : export Anki, ruff, mypy
+make check     # tout ce que vérifie la CI : fiches, catalogues, ruff, mypy, tests, ateliers
+make lint      # erreurs et avertissements des fiches
+make stats     # statistiques par fiche, et fiches à revérifier (6 mois)
+make readme    # met à jour la ligne « État au … »
+make ids       # identifiants des nouvelles cartes
+make catalog   # régénère les deux catalogues
+make export    # paquet Anki dans dist/
+make help      # toutes les cibles
 ```
+
+Chaque cible appelle un script de `scripts/`, utilisable seul pour les options fines : `python3 scripts/lint_flashcards.py --help`, par exemple `--stale-months 12`.
 
 - **Erreurs** (bloquent le commit et la CI) : lien mort, nom de fichier en double, tags absents de la ligne 2, séparateur `?` absent ou multiple, question ou réponse vide, carte que le plugin Spaced Repetition lirait autrement que l'export Anki, identifiant Anki absent/invalide/dupliqué, identifiant retiré encore présent dans le vault ou entrée mal formée dans `retired_cards.json`, section `Mises en situation` ou `Connexions` manquante, dernier lien qui n'est pas le MOC, fiche absente du MOC, date `Vérifié le` illisible ou future, fiche datée sans source. Les liens sont contrôlés aussi dans le MOC et le README (hors exemples de code).
 - **Avertissements** : réponse trop longue (110 mots hors code, 140 pour une mise en situation), liste de plus de 5 éléments (6 étapes pour une mise en situation), « Quelle différence… » ou « X ou Y : quelle différence ? » au lieu de « À ne pas confondre », question qui suppose la carte précédente, liste de produits à réciter (« Citez… », « Quels outils… », « Quels benchmarks… », « … connaître ? »), question en double, Connexion sans lien en retour, fiche citée par moins de 2 autres, fiche absente du README, `Vérifié le` trop ancien.
 
 Le lint contrôle la structure, les liens et les conventions ; il ne juge pas l'exactitude ou la profondeur pédagogique. Lors d'une revue, vérifier que la réponse traite toute la question, explique les termes nécessaires, précise les hypothèses des chiffres et donne un exemple ou une limite lorsque cela aide à comprendre. Une réponse courte peut être suffisante ; une réponse longue peut rester vague. Consigner dans `docs/` le périmètre de la revue et les validations réalisées.
 
-Les pull requests vérifient le lint, la synchronisation des catalogues, les tests et la génération d’un paquet Anki téléchargeable comme artefact CI. La publication en release reste réservée à `main` ou au déclenchement manuel.
+Les pull requests passent `make check` sous Python 3.10 et 3.12, puis génèrent un paquet Anki téléchargeable comme artefact CI. Sur `main`, la release n'est publiée qu'après ces vérifications, à chaque push ou au déclenchement manuel.
+
+Le code Python de `scripts/`, `tests/` et `examples/` suit ruff (configuration dans `pyproject.toml`). `scripts/` est annoté et vérifié par mypy. Toute lecture ou écriture de fichier précise `encoding="utf-8"` : le contenu est en français, et `make lint` échoue sur un encodage implicite. Le [bilan du 31 octobre](docs/outillage-code-2026-10-31.md) détaille ces choix et leurs validations.
 
 Le paquet Anki se régénère seul à chaque push sur `main` (voir [Réviser sur Android avec Anki](#4-réviser-sur-android-avec-anki)). Changer `MODEL_ID` dans `scripts/export_anki.py` casserait la mise à jour des cartes déjà importées : ne pas y toucher.
 
-Pour activer le hook pre-commit, une fois par clone : `git config core.hooksPath .githooks`.
+Pour activer le hook pre-commit, une fois par clone : `git config core.hooksPath .githooks`. Il lance `make pre-commit` : lint des fiches, catalogues, et ruff s'il est installé.
 
 Les fiches qui citent des produits, des versions ou des textes réglementaires portent une ligne `Vérifié le`. Le lint les signale au bout de 6 mois : on les relit, on corrige ce qui a changé, puis on met la date à jour.
 

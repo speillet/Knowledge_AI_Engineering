@@ -11,7 +11,6 @@ n'est entraîné et aucune mesure de production n'est réalisée.
 import argparse
 import math
 
-
 QUESTIONS = """1. Prévalence : sur 10 000 cas, TPR = 90 % et FPR = 5 %, supposés
 stables. Calculer VP, FP et précision avec 50 % puis 1 % de positifs.
 
@@ -48,7 +47,7 @@ def precision_selon_prevalence():
 
 def decisions_avec_revue():
     expected = ("négatif", "revue", "revue", "positif")
-    for p, expected_decision in zip((0.02, 0.10, 0.60, 0.99), expected):
+    for p, expected_decision in zip((0.02, 0.10, 0.60, 0.99), expected, strict=True):
         costs = {"positif": (1 - p) * 4, "négatif": p * 36, "revue": 1.0}
         decision = min(costs, key=costs.get)
         assert decision == expected_decision

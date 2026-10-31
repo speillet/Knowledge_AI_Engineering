@@ -14,15 +14,14 @@ Les commentaires <!--SR:...--> du plugin Obsidian sont ignorés.
 """
 import argparse
 import hashlib
+from pathlib import Path
 import re
 import sys
-from pathlib import Path
 
 import genanki
 from markdown_it import MarkdownIt
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from lint_flashcards import MOC, ROOT, decode_guid, fiche_files, lint, parse_cards, retired_cards  # noqa: E402
+from lint_flashcards import MOC, ROOT, decode_guid, fiche_files, fiche_title, lint, parse_cards, retired_cards
 
 RACINE = "AI Engineering"
 RETIREES = "999 — Cartes retirées"
@@ -31,6 +30,7 @@ MODEL_ID = 1718293041  # fixe : changer cet identifiant dupliquerait toutes les 
 SR_RE = re.compile(r"<!--SR:.*?-->", re.S)
 WIKILINK_RE = re.compile(r"\[\[([^\]|#]+)(?:#[^\]|]*)?(?:\|([^\]]+))?\]\]")
 SECTION_RE = re.compile(r"^## (\d+) — (.+)$", re.M)
+FICHE_NUMBER_RE = re.compile(r"\d+(?:-\d+)?")  # 21-rag… → 21, 30-010-… → 30-010
 
 CSS = """
 .card {
@@ -82,26 +82,24 @@ MODEL = genanki.Model(
 md = MarkdownIt("commonmark", {"html": False})
 
 
-def titre(path):
-    first = path.read_text().split("\n", 1)[0]
-    return first.lstrip("# ").replace(" — Flashcards", "").strip()
-
-
-def stable_id(text):
+def stable_id(text: str) -> int:
+    """Identifiant de deck stable d'un export à l'autre, dérivé de son nom."""
     return int(hashlib.sha1(text.encode()).hexdigest()[:8], 16) % (1 << 30) + (1 << 30)
 
 
-def to_html(markdown, titres):
+def to_html(markdown: str, titres: dict[str, str]) -> str:
+    """Markdown → HTML Anki ; les wikiliens deviennent le titre de la fiche citée."""
     html = md.render(SR_RE.sub("", markdown).strip())
 
-    def lien(m):
+    def lien(m: re.Match[str]) -> str:
         cible, alias = m.group(1).strip(), m.group(2)
         return f'<span class="lien">{alias or titres.get(cible, cible)}</span>'
 
     return WIKILINK_RE.sub(lien, html)
 
 
-def type_tag(question):
+def type_tag(question: str) -> str:
+    """Tag Anki du type de carte, déduit du préfixe de la question."""
     for prefix, tag in (("Mise en situation :", "situation"),
                         ("À ne pas confondre", "confusion"),
                         ("Calcul :", "calcul")):
@@ -110,22 +108,28 @@ def type_tag(question):
     return "type::question"
 
 
-def build():
-    moc = (ROOT / f"{MOC}.md").read_text()
+def build() -> tuple[list[genanki.Deck], int, int]:
+    """Decks par fiche, nombre de cartes du vault et nombre de sections."""
+    moc = (ROOT / f"{MOC}.md").read_text(encoding="utf-8")
     sections = {num: nom.strip() for num, nom in SECTION_RE.findall(moc)}
     files = fiche_files()
-    titres = {p.stem: titre(p) for p in files + [ROOT / f"{MOC}.md"]}
+    texts = {p: p.read_text(encoding="utf-8") for p in files}
+    titres = {p.stem: fiche_title(text) for p, text in texts.items()} | {MOC: fiche_title(moc)}
 
-    decks, guids, total = {}, set(), 0
+    decks: dict[str, genanki.Deck] = {}
+    guids: set[str] = set()
+    total = 0
     for p in files:
         num_section = p.parent.name.split("-", 1)[0]
         section = f"{int(num_section):03d} — {sections[num_section]}"  # 3 chiffres : Anki trie par ordre alphabétique
         fiche = titres[p.stem]
-        num_fiche = re.match(r"\d+(?:-\d+)?", p.stem)[0]
-        deck_name = f"{RACINE}::{section}::{num_fiche} {fiche}"
+        num_fiche = FICHE_NUMBER_RE.match(p.stem)
+        if not num_fiche:
+            raise ValueError(f"{p.name} : nom de fiche sans numéro")
+        deck_name = f"{RACINE}::{section}::{num_fiche[0]} {fiche}"
         deck = decks.setdefault(deck_name, genanki.Deck(stable_id(deck_name), deck_name))
 
-        text = p.read_text()
+        text = texts[p]
         tags = [f"section::{p.parent.name}", f"fiche::{p.stem}"]
         if "\nVérifié le" in text:
             tags.append("verifie")
@@ -143,7 +147,7 @@ def build():
             deck.add_note(genanki.Note(
                 model=MODEL,
                 fields=[to_html(c.question, titres), to_html(c.answer, titres), fiche, section],
-                tags=tags + [type_tag(c.question)],
+                tags=[*tags, type_tag(c.question)],
                 guid=guid,
             ))
             total += 1
@@ -173,7 +177,7 @@ def build():
     return list(decks.values()), total, n_sections
 
 
-def main():
+def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--output", default=str(ROOT / "dist" / "ai-engineering.apkg"), help="fichier .apkg à écrire")
     args = ap.parse_args()

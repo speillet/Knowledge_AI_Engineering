@@ -4,15 +4,17 @@
 Usage : python3 scripts/assign_card_ids.py
 Ne jamais retirer un identifiant pour reformuler ou déplacer une carte existante.
 """
+from pathlib import Path
 import sys
 import uuid
 
 from lint_flashcards import fiche_files, parse_cards
 
 
-def assign(text):
+def assign(text: str) -> tuple[str, int]:
     """Ajoute l'identifiant en fin de question : sur sa propre ligne, le plugin
-    Spaced Repetition sauterait aussi la ligne suivante (voir sr_plugin.py)."""
+    Spaced Repetition sauterait aussi la ligne suivante (voir sr_plugin.py).
+    Renvoie le texte et le nombre d'identifiants ajoutés."""
     cards, malformed = parse_cards(text)
     if malformed or any(not c.question or not c.answer for c in cards):
         raise ValueError(f"cartes mal formées ou vides (lignes {malformed})")
@@ -29,18 +31,18 @@ def assign(text):
     return "".join(lines), len(missing)
 
 
-def main():
+def main() -> None:
     # Préparer toutes les modifications avant d'écrire : aucun fichier partiellement migré.
-    updates = []
+    updates: list[tuple[Path, str, int]] = []
     for path in fiche_files():
         try:
-            text, count = assign(path.read_text())
+            text, count = assign(path.read_text(encoding="utf-8"))
         except ValueError as exc:
             sys.exit(f"{path.name} : {exc}")
         if count:
             updates.append((path, text, count))
     for path, text, _ in updates:
-        path.write_text(text)
+        path.write_text(text, encoding="utf-8", newline="\n")
     print(f"{sum(count for _, _, count in updates)} identifiant(s) ajouté(s).")
 
 
