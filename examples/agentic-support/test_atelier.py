@@ -16,7 +16,6 @@ from api import create_app
 from engine import Engine
 from storage import Conflict
 
-
 REQUEST = {"order_id": "commande-1", "amount_cents": 2000}
 
 
@@ -80,7 +79,7 @@ class EngineTests(unittest.TestCase):
         self.assertEqual(self.count_effects(), 0)
 
     def test_changed_proposal_hash_is_rejected(self):
-        run_id, digest = self.pending()
+        run_id, _ = self.pending()
         with self.assertRaises(Conflict):
             self.engine.decide("alice", run_id, "0" * 64, True)
         self.assertEqual(self.count_effects(), 0)
@@ -123,7 +122,8 @@ class EngineTests(unittest.TestCase):
         run_id, digest = self.pending()
         self.engine.close()
         # Le processus fils meurt après COMMIT métier et avant checkpoint.
-        code = "from engine import Engine; import sys; e=Engine(sys.argv[1],fault='exit_after_effect'); e.decide('alice',sys.argv[2],sys.argv[3],True)"
+        code = ("from engine import Engine; import sys; e=Engine(sys.argv[1],fault='exit_after_effect'); "
+                "e.decide('alice',sys.argv[2],sys.argv[3],True)")
         result = subprocess.run([sys.executable, "-c", code, self.directory.name, run_id, digest],
                                 cwd=Path(__file__).parent, capture_output=True, text=True, timeout=30)
         self.engine = Engine(self.directory.name)
@@ -145,7 +145,7 @@ class EngineTests(unittest.TestCase):
         self.assertEqual(self.count_effects(), 1)
 
     def test_business_service_rejects_unapproved_direct_call(self):
-        run_id, digest = self.pending()
+        run_id, _ = self.pending()
         proposal = self.engine.view("alice", run_id)["proposal"]
         with self.assertRaises(Conflict):
             self.engine.store.refund(run_id, "alice", proposal)
@@ -153,9 +153,9 @@ class EngineTests(unittest.TestCase):
 
     def test_invalid_model_output_never_reaches_approval_or_effect(self):
         run_id = self.engine.create("alice", "invalid-output", REQUEST)
-        with patch("engine.GenericFakeChatModel.invoke", return_value=AIMessage(content='{"amount_cents": -1}')):
-            with self.assertRaises(ValidationError):
-                self.engine.drive("alice", run_id)
+        invalid = AIMessage(content='{"amount_cents": -1}')
+        with patch("engine.GenericFakeChatModel.invoke", return_value=invalid), self.assertRaises(ValidationError):
+            self.engine.drive("alice", run_id)
         self.assertEqual(self.engine.view("alice", run_id)["status"], "failed")
         self.assertEqual(self.count_effects(), 0)
         self.assertNotIn("proposal", self.engine.view("alice", run_id))
@@ -191,7 +191,8 @@ class EngineTests(unittest.TestCase):
         self.assertEqual(len(roots), 2)
         root_ids = {span.context.span_id for span in roots}
         children = [span for span in spans if span.name != "support-run"]
-        self.assertEqual({s.name for s in children}, {"read-order", "retrieve-policy", "propose-refund", "commit-refund"})
+        self.assertEqual({s.name for s in children},
+                         {"read-order", "retrieve-policy", "propose-refund", "commit-refund"})
         self.assertTrue(all(s.parent and s.parent.span_id in root_ids for s in children))
         self.assertTrue(all(s.attributes.get("langfuse.observation.metadata.run_id") == run_id for s in roots))
 
@@ -218,7 +219,8 @@ class ApiTests(unittest.TestCase):
         self.assertEqual(first.status_code, 200)
         cursor = max(int(line[4:]) for line in first.text.splitlines() if line.startswith("id: "))
         decision = {"proposal_hash": run["proposal_hash"], "approved": True}
-        self.assertEqual(self.client.post(prefix + "/decision", json=decision, headers=self.headers).json()["status"], "completed")
+        decided = self.client.post(prefix + "/decision", json=decision, headers=self.headers)
+        self.assertEqual(decided.json()["status"], "completed")
         second = self.client.get(prefix + "/events", headers={**self.headers, "Last-Event-ID": str(cursor)})
         self.assertIn("effect_committed", second.text)
         self.assertTrue(all(int(line[4:]) > cursor for line in second.text.splitlines() if line.startswith("id: ")))
@@ -226,11 +228,14 @@ class ApiTests(unittest.TestCase):
         self.assertEqual(self.client.post(prefix + "/decision", json=decision, headers=self.headers).status_code, 200)
 
     def test_api_rejects_missing_identity_bad_input_and_key_conflict(self):
+        def post(body):
+            return self.client.post("/runs", json=body, headers=self.headers).status_code
+
         self.assertEqual(self.client.post("/runs", json=REQUEST).status_code, 401)
-        self.assertEqual(self.client.post("/runs", json={**REQUEST, "tenant": "bob"}, headers=self.headers).status_code, 422)
-        self.assertEqual(self.client.post("/runs", json={**REQUEST, "amount_cents": True}, headers=self.headers).status_code, 422)
-        self.assertEqual(self.client.post("/runs", json=REQUEST, headers=self.headers).status_code, 200)
-        self.assertEqual(self.client.post("/runs", json={**REQUEST, "amount_cents": 3000}, headers=self.headers).status_code, 409)
+        self.assertEqual(post({**REQUEST, "tenant": "bob"}), 422)
+        self.assertEqual(post({**REQUEST, "amount_cents": True}), 422)
+        self.assertEqual(post(REQUEST), 200)
+        self.assertEqual(post({**REQUEST, "amount_cents": 3000}), 409)
 
 
 if __name__ == "__main__":

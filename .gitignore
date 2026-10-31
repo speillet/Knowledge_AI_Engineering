@@ -17,3 +17,7 @@ __pycache__/
 
 # Environnement Python local
 .venv/
+
+# Caches des outils de qualité (make ruff, make typecheck)
+.ruff_cache/
+.mypy_cache/

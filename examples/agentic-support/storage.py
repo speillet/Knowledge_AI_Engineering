@@ -65,7 +65,8 @@ class Store:
                     raise Conflict("Même clé avec un contenu différent")
                 return previous["id"]
             run_id = str(uuid.uuid4())
-            self.db.execute("INSERT INTO runs(id,tenant,request_key,request,status) VALUES (?,?,?,?,?)", (run_id, tenant, key, encoded, "queued"))
+            self.db.execute("INSERT INTO runs(id,tenant,request_key,request,status) VALUES (?,?,?,?,?)",
+                            (run_id, tenant, key, encoded, "queued"))
             self.event(run_id, "accepted", {"status": "queued"})
             return run_id
 
@@ -91,7 +92,8 @@ class Store:
             self.event(run_id, "decision", {"approved": approved, "proposal_hash": digest})
 
     def order(self, tenant, order_id):
-        row = self.db.execute("SELECT remaining,version FROM orders WHERE tenant=? AND id=?", (tenant, order_id)).fetchone()
+        row = self.db.execute("SELECT remaining,version FROM orders WHERE tenant=? AND id=?",
+                              (tenant, order_id)).fetchone()
         if row is None:
             raise ValueError("Commande introuvable")
         return dict(row)
@@ -122,11 +124,14 @@ class Store:
             if order["version"] != proposal["order_version"]:
                 raise Conflict("Commande modifiée depuis la proposition")
             receipt = "avoir-" + run_id
-            self.db.execute("UPDATE orders SET remaining=remaining-?,version=version+1 WHERE tenant=? AND id=?", (amount, tenant, proposal["order_id"]))
+            self.db.execute("UPDATE orders SET remaining=remaining-?,version=version+1 WHERE tenant=? AND id=?",
+                            (amount, tenant, proposal["order_id"]))
             self.db.execute("INSERT INTO refunds VALUES (?,?,?,?)", (run_id, tenant, encoded, receipt))
             self.event(run_id, "effect_committed", {"receipt": receipt, "amount_cents": amount})
             return receipt
 
     def events(self, run_id, tenant, after=0):
         self.owned(run_id, tenant)
-        return [dict(row) for row in self.db.execute("SELECT seq,kind,payload FROM events WHERE run_id=? AND seq>? ORDER BY seq", (run_id, after))]
+        rows = self.db.execute("SELECT seq,kind,payload FROM events WHERE run_id=? AND seq>? ORDER BY seq",
+                               (run_id, after))
+        return [dict(row) for row in rows]

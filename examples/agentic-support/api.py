@@ -78,7 +78,7 @@ def create_app(directory=None):
             if after < 0:
                 raise ValueError()
         except ValueError:
-            raise HTTPException(400, "Curseur entier positif ou nul attendu")
+            raise HTTPException(400, "Curseur entier positif ou nul attendu") from None
         with engine.lock:
             rows = engine.store.events(run_id, tenant, after)
         # Rejeu fini du journal, PAS un abonnement temps réel ni un flux de tokens.

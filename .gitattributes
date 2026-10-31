@@ -1,0 +1,3 @@
+# Fins de ligne LF partout : le parseur des cartes et le plugin Spaced Repetition comptent les lignes.
+* text=auto eol=lf
+*.apkg binary

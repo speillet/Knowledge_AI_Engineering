@@ -1,0 +1,4 @@
+# Outillage de développement : `make install`, puis `make check`.
+-r scripts/requirements.txt
+ruff==0.17.3
+mypy==2.4.1

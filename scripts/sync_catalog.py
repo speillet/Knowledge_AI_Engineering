@@ -6,15 +6,16 @@ python3 scripts/sync_catalog.py --check  # échoue si une mise à jour est néce
 """
 import argparse
 import json
+from pathlib import Path
 import re
 
-from lint_flashcards import ROOT, MOC
+from lint_flashcards import MOC, ROOT, fiche_title
 
 BEGIN = "<!-- catalog:begin -->"
 END = "<!-- catalog:end -->"
 
 
-def fiche_order(path):
+def fiche_order(path: Path) -> tuple[int, str]:
     """Compatibilité avec 31-… et extension 30-010-… sans renommer l'existant."""
     section = int(path.parent.name.split("-", 1)[0])
     parts = path.stem.split("-")
@@ -25,8 +26,9 @@ def fiche_order(path):
     return number, path.name
 
 
-def render(root, moc=False):
-    sections = json.loads((root / "scripts/sections.json").read_text())
+def render(root: Path, moc: bool = False) -> str:
+    """Sommaire des sections : wikiliens pour le MOC, liens Markdown et résumés pour le README."""
+    sections = json.loads((root / "scripts/sections.json").read_text(encoding="utf-8"))
     unknown = {p.name for p in root.glob("[0-9]*") if p.is_dir()} - sections.keys()
     if unknown:
         raise ValueError(f"sections absentes de scripts/sections.json : {sorted(unknown)}")
@@ -39,8 +41,8 @@ def render(root, moc=False):
         if not moc and info.get("intro"):
             output += [info["intro"], ""]
         for path in files:
-            text = path.read_text()
-            title = text.splitlines()[0].removeprefix("# ").removesuffix(" — Flashcards")
+            text = path.read_text(encoding="utf-8")
+            title = fiche_title(text)
             match = re.search(r"^<!-- summary: (.+) -->$", text, re.M)
             if not match:
                 raise ValueError(f"{path.name} : commentaire summary manquant")
@@ -52,7 +54,8 @@ def render(root, moc=False):
     return "\n".join(output).rstrip()
 
 
-def replace_block(text, body):
+def replace_block(text: str, body: str) -> str:
+    """Remplace le contenu entre les délimiteurs catalog."""
     if text.count(BEGIN) != 1 or text.count(END) != 1 or text.index(BEGIN) > text.index(END):
         raise ValueError("délimiteurs catalog absents, dupliqués ou inversés")
     before, rest = text.split(BEGIN)
@@ -60,22 +63,23 @@ def replace_block(text, body):
     return before + BEGIN + "\n\n" + body + "\n\n" + END + after
 
 
-def sync(root=ROOT, check=False):
-    updates = []
+def sync(root: Path = ROOT, check: bool = False) -> bool:
+    """Met à jour les deux sommaires ; avec check, renvoie False s'ils sont à régénérer, sans écrire."""
+    updates: list[tuple[Path, str]] = []
     for name, moc in (("README.md", False), (f"{MOC}.md", True)):
         path = root / name
-        original = path.read_text()
+        original = path.read_text(encoding="utf-8")
         updated = replace_block(original, render(root, moc=moc))
         if updated != original:
             updates.append((path, updated))
     for path, updated in updates:
         if not check:
-            path.write_text(updated)
+            path.write_text(updated, encoding="utf-8", newline="\n")
         print(f"{path.name} : {'à régénérer' if check else 'mis à jour'}")
     return not updates if check else True
 
 
-def main():
+def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()

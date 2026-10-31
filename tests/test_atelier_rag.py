@@ -10,7 +10,6 @@ import sys
 import tempfile
 import unittest
 
-
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "examples/rag-verifiable/atelier_rag.py"
 spec = importlib.util.spec_from_file_location("atelier_rag", SCRIPT)
@@ -76,7 +75,7 @@ class RagWorkshopTests(unittest.TestCase):
             denied.append(doc)
         allowed = deepcopy(self.docs["c-remboursement-v2"])
         allowed["text"] = "remboursement"
-        documents = denied + [allowed]
+        documents = [*denied, allowed]
         query = "remboursement delai procedure"
         post_filtered = [doc for doc in rag.retrieve(documents, query, 3)
                          if rag.exclusion(doc, self.alice, self.today) is None]
@@ -187,7 +186,7 @@ class RagWorkshopTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             def run(*args):
                 return subprocess.run([sys.executable, str(SCRIPT), *args], cwd=tmp,
-                                      capture_output=True, text=True)
+                                      capture_output=True, encoding="utf-8", check=False)
             questions = run("--questions")
             self.assertEqual(questions.returncode, 0, questions.stderr)
             self.assertNotIn("30 jours", questions.stdout)
@@ -195,7 +194,7 @@ class RagWorkshopTests(unittest.TestCase):
             path = Path(tmp) / "report.json"
             execution = run("--case", "courant", "--json", str(path))
             self.assertEqual(execution.returncode, 0, execution.stderr)
-            report = json.loads(path.read_text())
+            report = json.loads(path.read_text(encoding="utf-8"))
             self.assertEqual(report["snapshot"], self.corpus["snapshot"])
             self.assertEqual(report["summary"]["filtered"]["passed"], 1)
             for arguments in (("--k", "0"), ("--case", "inconnu"),

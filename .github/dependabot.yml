@@ -1,0 +1,20 @@
+# Mises à jour groupées et mensuelles, pour limiter le bruit des PR.
+# examples/agentic-support est exclu : ses versions sont verrouillées et vérifiées à la main
+# (voir son requirements.txt).
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      actions:
+        patterns: ["*"]
+
+  - package-ecosystem: pip
+    directories: [/, /scripts]
+    schedule:
+      interval: monthly
+    groups:
+      python:
+        patterns: ["*"]

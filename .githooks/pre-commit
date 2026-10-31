@@ -1,5 +1,5 @@
 #!/bin/sh
-# Bloque le commit si une fiche casse la révision ou la navigation.
+# Bloque le commit si une fiche casse la révision ou la navigation, ou si le code Python
+# ne passe pas ruff. Les cibles sont définies dans le Makefile (make pre-commit).
 # Activation (une fois par clone) : git config core.hooksPath .githooks
-python3 scripts/lint_flashcards.py --quiet || exit 1
-exec python3 scripts/sync_catalog.py --check
+exec make --no-print-directory pre-commit
