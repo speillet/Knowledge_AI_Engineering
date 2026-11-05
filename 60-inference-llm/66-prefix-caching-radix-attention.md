@@ -48,6 +48,8 @@ Quels workloads profitent le plus du prefix caching ? <!--anki:4c337b29762e50327
 - **RAG** répété sur les mêmes documents
 - Beaucoup d'utilisateurs sur un **même assistant**
 
+Le gain dépend des tokens effectivement réutilisés, pas seulement du nombre de hits. Une requête avec 100 tokens partagés sur 10 000 profite peu du cache. Mesurer longueur du préfixe réutilisé et TTFT, avec l'isolation d'accès prévue.
+
 ---
 
 Pourquoi le routage entre réplicas doit-il tenir compte du cache ? <!--anki:723d5362493f5e2c4929-->
@@ -70,6 +72,8 @@ Quelles sont les limites du prefix caching ? <!--anki:7a28604f3a4f7871363e-->
 - **Granularité par bloc** (vLLM ne cache que les blocs pleins)
 - Cache **borné** par la mémoire et évincé sous forte charge
 - N'accélère que le **prefill**, pas la génération (decode)
+
+Un horodatage placé avant les instructions stables peut invalider tout le préfixe à chaque appel. Déplacer les données variables après ce préfixe si la sémantique le permet, puis vérifier le gain sous la même charge et le même routage.
 
 ---
 

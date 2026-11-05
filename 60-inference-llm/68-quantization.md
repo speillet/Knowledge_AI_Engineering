@@ -111,7 +111,9 @@ Les **K-quants** gardent certains tenseurs en plus haute précision, et une **im
 
 Qu'est-ce que NF4 et quand l'utiliser ? <!--anki:79393c4d63614f3a6148-->
 ?
-**NormalFloat 4 bits**, le format de **bitsandbytes** : ses 16 niveaux sont placés selon une **loi normale**, la distribution typique des poids. C'est la base de **QLoRA** ([[51-fine-tuning-adaptation|fine-tuning]]) : charger un gros modèle en 4 bits pour l'adapter sur un petit GPU. Pour le **serving**, on préfère FP8, AWQ ou GPTQ, qui ont des noyaux bien plus rapides.
+**NormalFloat 4 bits**, utilisé par **bitsandbytes**, place ses 16 niveaux pour représenter efficacement des poids approximativement normaux. **QLoRA** conserve la base quantifiée et entraîne des adapters ([[51-fine-tuning-adaptation|fine-tuning]]).
+
+Quatre bits décrivent le stockage, pas nécessairement le dtype des multiplications : les poids sont déquantifiés pour le calcul. Ajouter mémoire des échelles, activations et adapters au budget. Pour le serving, comparer aux formats pris en charge par les kernels du matériel cible, notamment FP8, AWQ ou GPTQ ; aucun format n'est toujours le plus rapide.
 
 ---
 
@@ -136,6 +138,8 @@ Leur poids n'est pas toujours négligeable. Sur un 8B au vocabulaire de 128 000 
 Pourquoi le jeu de calibration compte-t-il ? <!--anki:486856647e3f6424266b-->
 ?
 GPTQ, AWQ, SmoothQuant ou le FP8 statique fixent leurs échelles à partir de **quelques centaines d'exemples**. S'ils ne ressemblent pas au trafic réel (autre langue, code, contexte long, format de chat), la qualité baisse **précisément sur ce trafic**. Il faut des exemples **représentatifs du domaine**, formatés avec le **chat template** du modèle.
+
+Séparer calibration et test final. Inclure les langues et longueurs rares mais importantes, puis mesurer leurs erreurs individuellement : une moyenne stable peut cacher une dégradation forte du code ou des nombres.
 
 ---
 

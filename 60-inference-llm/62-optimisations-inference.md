@@ -31,7 +31,7 @@ Qu'est-ce que le continuous batching ? <!--anki:6f76727c477c5a746c4d-->
 ?
 Le **continuous batching** ordonnance à la granularité d'une itération : une séquence terminée libère sa place, et de nouvelles séquences peuvent rejoindre les suivantes sans attendre la fin de tout un lot.
 
-Cette approche réduit les places inutilisées lorsque les longueurs varient. Elle ne garantit pas un GPU plein : demande insuffisante, limite KV, CPU ou communications peuvent encore restreindre le débit. Comparer au batch statique sur un même workload, avec les mêmes SLO. L'écart entre un script et un serveur dépend aussi des kernels, du cache et de la gestion mémoire ; aucun facteur dix n'est universel.
+Exemple : dans un lot statique, une réponse de 20 tokens garde sa place jusqu'à la fin de la plus longue, 500 itérations plus tard ; ici, une nouvelle requête la reprend dès la 21e. Cela ne garantit pas un GPU plein : demande, limite KV, CPU ou communications peuvent restreindre le débit. L'écart entre un script et un serveur dépend aussi des kernels, du cache et de la gestion mémoire ; aucun facteur dix n'est universel.
 
 ---
 
@@ -47,7 +47,7 @@ Qu'est-ce que FlashAttention ? <!--anki:4b232642746c452f422f-->
 ?
 Une implémentation de l'attention **consciente de la hiérarchie mémoire du GPU** (calcul par tuiles en SRAM) : **résultat exact**, beaucoup moins d'accès à la HBM, donc plus rapide et moins gourmande en mémoire.
 
-L'algorithme évite de matérialiser toute la matrice d'attention en mémoire externe. « Exact » signifie ici qu'il calcule la même opération, à l'arrondi numérique près, contrairement à une approximation de l'attention. Pour une attention dense, le nombre d'opérations reste quadratique avec la longueur au prefill ; les gains concernent surtout les accès mémoire et l'exécution.
+L'algorithme évite de matérialiser toute la matrice d'attention en mémoire externe : pour 32 000 tokens, elle compterait 32 000² valeurs, soit environ 2 Go en BF16 par tête et par séquence. « Exact » signifie ici qu'il calcule la même opération, à l'arrondi numérique près, contrairement à une approximation de l'attention. Pour une attention dense, le nombre d'opérations reste quadratique avec la longueur au prefill ; les gains concernent surtout les accès mémoire et l'exécution.
 
 ---
 
@@ -56,7 +56,7 @@ Tensor parallelism ou pipeline parallelism ? <!--anki:514f686c4c5338235550-->
 - **Tensor parallelism** : chaque couche est **découpée entre plusieurs GPU** (demande un interconnect rapide type **NVLink**)
 - **Pipeline parallelism** : les **couches sont réparties** par étages sur plusieurs GPU ou nœuds
 
-Le tensor parallelism échange des résultats intermédiaires fréquemment et souffre d'un réseau lent. Le pipeline parallelism transmet des activations entre étages et peut laisser des GPU inactifs si le pipeline est mal rempli. Choisir selon la mémoire nécessaire, les interconnexions et la charge ; ajouter des GPU n'accélère pas automatiquement une requête isolée.
+Le tensor parallelism échange des résultats intermédiaires fréquemment et souffre d'un réseau lent. Le pipeline parallelism transmet des activations entre étages et peut laisser des GPU inactifs si le pipeline est mal rempli. D'où une configuration courante avec vLLM : `--tensor-parallel-size 8` à l'intérieur d'un nœud relié par NVLink, et `--pipeline-parallel-size 2` entre deux nœuds. Ajouter des GPU n'accélère pas automatiquement une requête isolée.
 
 ---
 
@@ -64,7 +64,7 @@ Qu'est-ce que le chunked prefill ? <!--anki:674f44515326767c7e37-->
 ?
 Découper un long prefill **en morceaux mélangés aux decodes** en cours : un gros prompt n'**interrompt plus** la génération des autres requêtes (latence inter-token plus stable).
 
-Le scheduler attribue un budget de tokens au prefill puis intercale les autres travaux. Cela limite les longues pauses de streaming, sans faire disparaître le coût total du prompt. Des morceaux trop petits ajoutent des frais d'ordonnancement ; trop gros peuvent encore pénaliser les decodes. Mesurer TTFT et latence inter-token ensemble.
+Le scheduler attribue un budget de tokens au prefill puis intercale les autres travaux : avec `--max-num-batched-tokens 2048`, decodes compris, un prompt de 16 000 tokens s'étale sur au moins huit itérations. Cela limite les longues pauses de streaming, sans faire disparaître le coût total du prompt. Des morceaux trop petits ajoutent des frais d'ordonnancement ; trop gros peuvent encore pénaliser les decodes. Mesurer TTFT et latence inter-token ensemble.
 
 ---
 
@@ -72,7 +72,7 @@ Qu'est-ce que la désagrégation prefill/decode ? <!--anki:51242a2437253078482b-
 ?
 Exécuter prefill et decode sur des **pools de GPU séparés**, avec transfert du KV cache entre eux : chaque pool est dimensionné pour son goulot et on optimise **TTFT et TPOT** indépendamment.
 
-Cette séparation réduit certaines interférences entre gros prompts et générations en cours. Son coût est le transfert du cache et la coordination des pools, qui peuvent annuler le gain si le réseau est insuffisant. Évaluer la taille des K/V, le taux d'arrivée et les déséquilibres de charge avant de complexifier le déploiement.
+Cette séparation réduit certaines interférences entre gros prompts et générations en cours : les résumés de longs documents occupent le pool de prefill, dimensionné en calcul, tandis que les générations longues restent sur le pool de decode, dimensionné en mémoire et en bande passante. Son coût est le transfert du cache et la coordination des pools, qui peuvent annuler le gain si le réseau est insuffisant. Évaluer taille des K/V, arrivées et déséquilibres avant de complexifier le déploiement.
 
 ---
 

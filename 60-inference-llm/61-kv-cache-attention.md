@@ -24,6 +24,8 @@ Llama 3.1 8B  : 2 × 32 × 8 × 128 × 2 octets ≈ 128 Kio / token
 ```
 D'où l'importance de **GQA** (peu de têtes KV) et de la [[68-quantization|quantization du cache]] : ce sont eux qui déterminent la concurrence tenue par GPU.
 
+La longueur inclut prompt et tokens déjà générés. Pour des requêtes de tailles différentes, sommer leurs longueurs plutôt que multiplier par une moyenne optimiste. La formule suppose que toutes les couches conservent les positions considérées ; fenêtres glissantes, partage de préfixe et allocation par blocs changent l'occupation réelle.
+
 ---
 
 À ne pas confondre : KV cache, prefix caching et prompt caching ? <!--anki:42435b332d6730765774-->
@@ -67,6 +69,8 @@ Quel lien entre KV cache et continuous batching ? <!--anki:7536444f685b6a7a327a-
 Le continuous batching fait **entrer et sortir** les requêtes du batch à chaque étape. Il faut donc **allouer et libérer** le KV cache de chaque requête en continu, sans fragmenter la mémoire.
 
 C'est ce que permet **PagedAttention** : le cache est découpé en **blocs** de taille fixe, comme la mémoire virtuelle d'un système d'exploitation, ce qui maximise le nombre de requêtes servies ([[62-optimisations-inference|continuous batching]]).
+
+Une requête terminée libère ses blocs pour la suivante ; les séquences longues continuent de croître. Le scheduler doit donc réserver de la capacité pour leur decode, pas seulement vérifier que les nouveaux prompts tiennent à l'admission.
 
 ---
 

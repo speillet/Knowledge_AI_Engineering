@@ -6,9 +6,9 @@ Vérifié le : 8 octobre 2026
 
 Quel contrat fixer avant un benchmark d’inférence LLM ? <!--anki:3464663735636264643633333437376238393536656231303262323632633333-->
 ?
-Fixer **tâche, qualité minimale, charge cible, latences et coût acceptable** avant de comparer les moteurs. Définir ce qui constitue une réussite : format valide, réponse utile, délais au premier contenu et à la fin, selon l'usage.
+Fixer **tâche, qualité minimale, charge cible, latences et coût acceptable** avant de comparer les moteurs. Exemple pour un assistant de support : 20 demandes/s en pointe, 95 % de réponses conformes à la grille, premier contenu sous 1 s et réponse complète sous 8 s au p95, au plus 0,5 centime par réponse.
 
-Préciser unité des tokens, périmètre client/moteur et traitement des rejets, retries et annulations. Un benchmark de génération synthétique mesure un système ; il ne démontre pas la qualité métier. Associer une évaluation représentative à la mesure de performance et conserver la baseline comme point de comparaison.
+Préciser unité des tokens, périmètre client/moteur et traitement des rejets, retries et annulations. Un benchmark de génération synthétique mesure un système ; il ne démontre pas la qualité métier. Conserver la baseline comme point de comparaison.
 
 ---
 
@@ -16,7 +16,7 @@ Préciser unité des tokens, périmètre client/moteur et traitement des rejets,
 ?
 En **boucle ouverte**, les arrivées suivent un calendrier indépendant des réponses. Cela permet d'observer la croissance d'une file lorsque la demande dépasse la capacité.
 
-En **boucle fermée**, un nombre fixé de clients attend la fin d'une requête avant d'en envoyer une autre : une réponse lente ralentit les arrivées. Ce modèle convient aux sessions avec cette dépendance, mais ne simule pas une demande extérieure imposée. Déclarer le modèle d'arrivée, les temps de réflexion et toute limite de concurrence ; utiliser les deux approches pour des questions distinctes.
+En **boucle fermée**, un nombre fixé de clients attend la fin d'une requête avant d'en envoyer une autre : une réponse lente ralentit les arrivées. Avec 50 clients sans temps de réflexion, des réponses de 2 s donnent 25 demandes/s ; à 10 s, la charge tombe à 5 demandes/s, alors qu'une demande extérieure continuerait d'arriver. Ce modèle convient aux sessions avec cette dépendance. Déclarer le modèle d'arrivée, les temps de réflexion et toute limite de concurrence.
 
 ---
 
@@ -24,7 +24,7 @@ Qu’est-ce que l’omission coordonnée dans un test de charge ? <!--anki:63646
 ?
 Le générateur cesse ou retarde ses envois quand le système ralentit, puis mesure seulement les demandes qu'il a effectivement envoyées. Il omet ainsi des attentes qu'auraient subies des arrivées indépendantes : la queue de latence paraît meilleure.
 
-Comparer heure prévue et heure réelle d'émission, enregistrer le retard du générateur et utiliser un calendrier d'arrivée approprié. Une correction statistique ne recrée pas le travail que le serveur n'a jamais reçu. Une boucle fermée n'est pas erronée en soi ; le biais vient d'une conclusion incompatible avec ce modèle.
+Exemple : un client prévu toutes les 100 ms reste bloqué 2 s sur une réponse. Les 19 envois prévus pendant ce blocage auraient attendu de 0,1 à 1,9 s de plus ; l'histogramme n'en compte aucun. Comparer heure prévue et heure réelle d'émission. Une correction statistique ne recrée pas le travail que le serveur n'a jamais reçu.
 
 ---
 
@@ -32,7 +32,7 @@ Comment construire un mix de requêtes représentatif pour un LLM ? <!--anki:363
 ?
 Préserver la **distribution conjointe** des longueurs d'entrée et de sortie, les pointes d'arrivée, les préfixes communs et les tours d'une conversation. Ajouter les proportions de langues, outils, formats contraints, images ou raisonnement pertinentes.
 
-Deux jeux ayant les mêmes moyennes peuvent solliciter très différemment prefill, decode et KV. Séparer les segments critiques et inclure les longues traînes. Utiliser des traces autorisées et minimisées, ou un générateur documenté ; des prompts aléatoires ne reproduisent ni la qualité ni la structure réelle du cache.
+Des requêtes toutes à 1 000 tokens d'entrée et 500 de sortie ont les mêmes moyennes qu'un mélange de résumés (1 900 en entrée, 100 en sortie) et de rédactions (100 et 900) ; le second alterne prefill lourd et longs decodes. Séparer les segments critiques et inclure les longues traînes. Des prompts aléatoires ne reproduisent pas la structure réelle du cache.
 
 ---
 
@@ -40,7 +40,7 @@ Pourquoi séparer échauffement du moteur et échauffement du cache de préfixes
 ?
 Le moteur peut payer au démarrage chargement, compilation, capture de graphes et initialisation des kernels. Le cache de préfixes devient chaud en réutilisant du contenu ; c'est un autre phénomène.
 
-Mesurer démarrage, régime établi avec cache froid, puis trafic avec réutilisation réaliste. Faire l'échauffement technique avec des données distinctes ou expliciter ce qui est préchargé. Réinitialiser ou contrôler le cache entre variantes : rejouer toujours les mêmes prompts peut favoriser artificiellement la seconde. Conserver aussi un scénario de redémarrage ou d'arrivée d'un nouveau réplica.
+Mesurer démarrage, régime établi avec cache froid, puis trafic avec réutilisation réaliste. Faire l'échauffement technique avec des données distinctes. Réinitialiser ou contrôler le cache entre variantes : avec un system prompt commun de 3 000 tokens, la variante testée en second le trouve en cache et économise ce prefill sur chaque requête, sans être meilleure. Conserver aussi un scénario de redémarrage ou d'arrivée d'un nouveau réplica.
 
 ---
 
@@ -53,7 +53,7 @@ Archiver cinq ensembles :
 - **Trafic** : jeu versionné, ordre, graines, arrivées, longueurs réelles et état initial.
 - **Mesure** : outil/version, périmètre, durée, timeouts, résultats détaillés et critères de qualité.
 
-Un nom de modèle et un nombre de GPU ne suffisent pas. Conserver les commandes exactes et les écarts au protocole pour expliquer une différence ultérieure.
+Un nom de modèle et un nombre de GPU ne suffisent pas : deux runs du même modèle sur 8 GPU divergent si l'un ignore EOS et produit 512 tokens fixes, l'autre des longueurs réelles. Conserver les commandes exactes et les écarts au protocole.
 
 ---
 
@@ -61,7 +61,7 @@ Comment trouver la capacité soutenable sous SLO ? <!--anki:63363334343430346631
 ?
 Balayer plusieurs taux d'arrivée, puis raffiner près de la zone où latences ou files augmentent fortement. À chaque palier, mesurer débit offert, terminé, utile, refus, longueurs et pente de la file.
 
-La capacité soutenable exige un régime suffisamment stable et le respect des critères sur chaque segment requis. Une file qui grossit n'est pas un état stable, même si le débit semble constant. Répéter autour de la frontière et retenir une marge justifiée par variabilité, démarrage et panne ; le meilleur point d'un essai court n'est pas une garantie de production.
+Exemple : jusqu'à 12 demandes/s, chaque segment respecte son SLO et la file reste stable ; à 14, elle croît sans cesse, même si le débit terminé semble constant. Raffiner entre 12 et 14, répéter près de la frontière, puis retenir une marge justifiée par variabilité, démarrage et panne. Le meilleur point d'un essai court n'est pas une garantie de production.
 
 ---
 
@@ -69,7 +69,7 @@ Comment comptabiliser le début et la fin d’un benchmark ? <!--anki:3062313036
 ?
 Définir une phase de mesure après échauffement, puis une **vidange** des requêtes encore en vol. Distinguer débit sur une fenêtre stable et résultat d'une cohorte d'arrivées suivie jusqu'à résolution.
 
-Ne pas supprimer les demandes qui débordent la fin du test : comptabiliser leur fin, timeout ou statut inachevé. Si la durée inclut la vidange, le dire. Archiver arrivées et départs pour réconcilier les volumes. Un test arrêté avant les réponses les plus lentes sous-estime les délais et favorise les configurations qui accumulent du travail.
+Ne pas supprimer les demandes qui débordent la fin du test : comptabiliser leur fin, timeout ou statut inachevé. Si la durée inclut la vidange, le dire. Archiver arrivées et départs pour réconcilier les volumes. Exemple : un test de 10 minutes s'arrête avec 40 réponses longues encore en vol ; les exclure retire précisément les plus lentes et favorise la configuration qui accumule du travail.
 
 ---
 
@@ -85,7 +85,7 @@ Comment vérifier que le générateur de charge ne limite pas le benchmark ? <!-
 ?
 Surveiller CPU, boucle événementielle, connexions, bande passante et retards d'émission du client. Vérifier que les arrivées réelles correspondent au calendrier prévu et que les tokens sont comptés avec le tokenizer attendu.
 
-Un plafond côté client peut laisser le serveur sous-chargé tout en donnant l'impression d'une saturation. Répartir si nécessaire la génération et mesurer son coût, sans perdre la cohérence temporelle. Tester également le proxy et le streaming : regroupement des chunks, TLS et réseau font partie du parcours lorsqu'on annonce une performance côté utilisateur.
+Un plafond côté client peut laisser le serveur sous-chargé tout en donnant l'impression d'une saturation. Signe typique : deux moteurs très différents plafonnent au même débit, le cœur CPU du générateur est à 100 % et le retard d'émission croît. Répartir alors la génération, sans perdre la cohérence temporelle. Tester également le proxy et le streaming : regroupement des chunks, TLS et réseau font partie du parcours lorsqu'on annonce une performance côté utilisateur.
 
 ---
 
@@ -107,7 +107,7 @@ A fournit 70 réussites utiles/s, B 85. B a un meilleur goodput, mais son taux d
 
 À ne pas confondre : benchmark synthétique et replay applicatif ? <!--anki:3136393261613361666439333431646162313531343664333132343731313532-->
 ?
-Le **synthétique** contrôle longueurs, arrivées et paramètres ; il isole un effet et révèle les limites du moteur. Forcer une sortie fixe ou ignorer EOS peut faciliter cette expérience, tout en changeant la tâche.
+Le **synthétique** contrôle longueurs, arrivées et paramètres ; il isole un effet et révèle les limites du moteur. Avec `--ignore-eos`, chaque requête produit exactement son `max_tokens`, par exemple 256 : le decode devient comparable entre variantes, mais la tâche n'est plus celle du produit.
 
 Le **replay applicatif** garde davantage de distributions, préfixes et dépendances, mais doit être sécurisé et versionné. Réévaluer la qualité si modèle ou génération changent : le nombre de tokens réellement produits peut varier. Utiliser les deux ; ni débit à longueur forcée ni replay isolé ne prouvent à eux seuls la capacité d'un agent complet.
 

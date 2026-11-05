@@ -31,6 +31,8 @@ batch               échéance de traitement, débit et coût prioritaires
 ```
 Mesurer côté client, sous charge et en percentiles. La vitesse de lecture varie selon langue et contenu. Même en batch, la latence compte si le traitement doit finir avant une heure limite ([[144-ux-ia-human-in-the-loop|UX]]).
 
+Préciser ce qui compte comme premier contenu utile : un heartbeat ou « je réfléchis » rapide ne respecte pas nécessairement la promesse produit. Suivre aussi les abandons et les réponses incomplètes.
+
 ---
 
 Comment se décompose la latence end-to-end ? <!--anki:797160634d527b2e5e4d-->
@@ -41,6 +43,8 @@ latence E2E ≈ TTFT + TPOT × (nb tokens de sortie − 1)
 Une réponse longue est donc dominée par le TPOT, une réponse courte sur un long prompt par le TTFT.
 
 Avec un TTFT de 0,5 s, 101 tokens et un TPOT moyen de 0,03 s, la génération dure environ **3,5 s**. Cette formule suppose une mesure cohérente du premier au dernier token ; outils, rendu et traitements après génération s'ajoutent pour mesurer toute l'expérience applicative.
+
+Ne pas additionner p95 du TTFT et p95 du TPOT pour obtenir un p95 global : ces quantiles peuvent concerner des requêtes différentes. Calculer d'abord la durée de chaque requête.
 
 ---
 

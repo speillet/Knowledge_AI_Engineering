@@ -90,6 +90,8 @@ P(t1,…,tn | contexte) = produit_i P(ti | contexte,t1,…,t{i−1})
 ```
 Pour une séquence complète terminée, préciser si EOS entre dans l'événement. La moyenne des logprobs par token sert à comparer des scores normalisés, mais **n'est plus la log-probabilité de la séquence entière**. Choisir le score selon l'objectif : la normalisation change le classement possible et ne transforme pas la vraisemblance en exactitude métier.
 
+Exemple : deux probabilités conditionnelles 0,5 puis 0,2 donnent 0,1, pas 0,35. Calculer en logarithmes évite les sous-flux numériques sur de longues séquences.
+
 ---
 
 Qu'est-ce que la perplexité ? <!--anki:447e6435633669525170-->
@@ -99,6 +101,8 @@ La **perplexité** est l'exponentielle de la moyenne des log-probabilités néga
 PPL = exp(− somme_i log P(ti | préfixe) / N)
 ```
 Elle mesure la prédictibilité d'un texte sous le modèle. Pour comparer, garder corpus, tokenisation, masque des positions évaluées et politique de contexte comparables. Une tokenisation différente peut changer l'échelle sans progrès utile. La perplexité n'évalue directement ni factualité, ni respect d'instructions, ni qualité d'une réponse isolée ; compléter par des critères de tâche.
+
+Une distribution uniforme sur quatre tokens a une perplexité de 4. Ce repère ne signifie pas que le modèle possède quatre réponses plausibles ni une exactitude de 25 %.
 
 ---
 

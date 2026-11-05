@@ -19,6 +19,8 @@ Quel est le chemin d'un token dans un Transformer génératif decoder-only ? <!-
 4. **Normalisation finale** puis **projection** vers le vocabulaire → **logits**.
 5. **Softmax** → probabilités du token suivant.
 
+À l'inférence autorégressive, la position finale prédit le prochain token ; une règle de décodage le choisit puis le réinjecte. Le modèle ne produit donc pas toute la réponse en un seul passage. Les représentations intermédiaires sont contextuelles, contrairement à la table d'embeddings d'entrée.
+
 ---
 
 Que fait le mécanisme d'attention ? <!--anki:4971286368426d485451-->
@@ -28,6 +30,8 @@ L'attention utilise une **requête Q** pour pondérer des **valeurs V**, en comp
 Attention(Q, K, V) = softmax(Q·Kᵀ / √d_k + masque) · V
 ```
 Le softmax normalise les scores sur les positions autorisées. Le résultat est une somme pondérée de leurs vecteurs V, pas une sélection nécessairement unique. Les poids dépendent des représentations apprises ; une forte attention n'est pas une preuve que le passage est vrai, ni une explication causale complète de la prédiction.
+
+Dans un decoder causal, le masque interdit les tokens futurs. Sans lui pendant l'entraînement, le modèle pourrait utiliser la réponse qu'il doit prédire.
 
 ---
 

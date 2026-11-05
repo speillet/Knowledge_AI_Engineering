@@ -10,6 +10,8 @@ Que faut-il stocker en mémoire GPU pendant l'entraînement ? <!--anki:4b3540475
 3. **États de l'optimiseur** : Adam garde **deux moments** par paramètre, souvent en FP32, plus une copie FP32 des poids.
 4. **Activations** conservées pour la passe arrière — elles croissent avec la **taille du batch et la longueur des séquences**.
 
+Ajouter buffers temporaires, communications et fragmentation. Les gradients ont la même forme que les paramètres entraînables, pas forcément le même dtype ; en LoRA, les poids gelés n'ont pas tous de gradient. Mesurer le pic après un pas complet, car certains états d'optimiseur sont alloués tardivement.
+
 ---
 
 Calcul : un fine-tuning complet 7B utilise poids et gradients BF16, une copie maîtresse FP32 et deux moments Adam FP32. Quelle mémoire pour ces états, hors activations et buffers ? <!--anki:4f713b3f5d38403a325b-->
@@ -86,7 +88,9 @@ Le multiplicateur GPU concerne les répliques de données, pas les GPU de tensor
 
 Qu'est-ce que la précision mixte et pourquoi BF16 plutôt que FP16 ? <!--anki:665a7a642e456235383a-->
 ?
-Calculer en **16 bits** (plus rapide, moins de mémoire) tout en gardant une copie **FP32** des poids pour les mises à jour. **BF16** a la même **plage de valeurs** que FP32 (8 bits d'exposant) : les débordements sont bien plus rares qu'en FP16 et le **loss scaling** n'est généralement pas nécessaire, au prix d'une mantisse moins précise. Les GPU récents entraînent aussi en **FP8**.
+Combiner calculs en **16 bits** et opérations ou états sensibles en **FP32**, selon le framework. **BF16** partage les 8 bits d'exposant de FP32 : plage comparable, mais moins de précision ; les débordements sont moins fréquents qu'en FP16 et le **loss scaling** est généralement inutile.
+
+Cela ne supprime pas les NaN dus aux données ou à un learning rate excessif. Comparer perte et gradients sur quelques pas à une référence FP32. Vérifier le support matériel : un dtype disponible n'implique pas des kernels rapides. Une copie maîtresse FP32 dépend de l'optimiseur et de la configuration.
 
 ---
 

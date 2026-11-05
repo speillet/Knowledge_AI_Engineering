@@ -5,13 +5,17 @@ Tags: #flashcards #ai-engineering #fondamentaux #vector-search #rag
 
 Pourquoi ne pas faire une recherche exacte (brute force) des plus proches voisins ? <!--anki:434b37366f67544e55-->
 ?
-La recherche exacte compare la requête à **tous les vecteurs** : coût **linéaire** en taille du corpus. Elle reste raisonnable jusqu'à **quelques centaines de milliers** de vecteurs (surtout sur GPU), mais au-delà on utilise un index **ANN** (Approximate Nearest Neighbors) qui sacrifie un peu de **rappel** pour une recherche **sous-linéaire**.
+La recherche exacte compare la requête à **tous les vecteurs admissibles** : coût linéaire en leur nombre et leur dimension. Elle fournit une référence utile pour mesurer le rappel d'un index **ANN**, qui échange de l'exactitude contre moins de travail.
+
+Il n'existe pas de seuil universel de taille : GPU, batch, dimension, filtres et débit cible comptent. Un corpus global énorme peut devenir petit après un filtre sélectif. Comparer temps et mémoire au SLO, puis mesurer `recall@k` de l'ANN contre cette référence exacte, avec les mêmes filtres.
 
 ---
 
 Comment fonctionne HNSW ? <!--anki:4a582545506f752e5a6e-->
 ?
 **Hierarchical Navigable Small World** : un **graphe multi-niveaux** où chaque vecteur est relié à ses voisins proches. Les niveaux supérieurs, clairsemés, servent d'**autoroutes** ; la recherche descend de niveau en niveau en suivant **gloutonnement** le voisin le plus proche. Rappel élevé et latence faible, mais **gourmand en mémoire** (vecteurs + graphe en RAM).
+
+Au niveau fin, élargir le nombre de candidats explorés augmente généralement rappel et latence. Mesurer la courbe plutôt que chercher une valeur magique ; un index mal construit ne se corrige pas toujours par un budget de recherche plus grand.
 
 ---
 

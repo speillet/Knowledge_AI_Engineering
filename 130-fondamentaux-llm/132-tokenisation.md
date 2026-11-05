@@ -39,6 +39,8 @@ Pourquoi le français coûte-t-il plus cher que l'anglais ? <!--anki:77302b52755
 ?
 Les tokenizers sont entraînés sur des corpus **majoritairement anglais** : le français se découpe en **plus de tokens** pour le même sens (souvent +20 à +50 % selon le tokenizer), et certaines langues bien davantage (×2 à ×4). Conséquences : **coût**, **latence** et **contexte utile** dégradés — à mesurer sur ses propres données ([[121-couts-inference|coûts]]).
 
+Ce n'est pas une propriété intrinsèque du français : le vocabulaire appris et le domaine changent le ratio. Comparer des tâches équivalentes, avec accents, nombres et terminologie réelle ; traduire artificiellement en anglais peut perdre du sens et ajouter un appel.
+
 ---
 
 Pourquoi les LLM échouent-ils à compter les lettres d'un mot ? <!--anki:71382c39575d78735952-->
@@ -76,6 +78,8 @@ L'effet dépend du tokenizer, du modèle et du chat template : ce n'est pas une 
 Comment compter les tokens correctement ? <!--anki:6c4a7138347c4535453c-->
 ?
 Avec **le tokenizer du modèle cible** (la bibliothèque du fournisseur ou son endpoint de comptage, ou le tokenizer Hugging Face du modèle) — jamais avec l'estimation « 4 caractères » pour du budget précis. Deux modèles différents donnent des **comptes différents** pour le même texte, ce qui change le coût d'une migration.
+
+Compter la requête rendue complète : chat template, messages, schémas d'outils et contexte, puis réserver la sortie. Comparer à l'usage retourné par l'API sur un échantillon ; compter uniquement le texte utilisateur sous-estime le coût d'un agent.
 
 ---
 

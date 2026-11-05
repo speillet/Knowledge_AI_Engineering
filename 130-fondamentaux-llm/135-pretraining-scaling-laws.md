@@ -31,6 +31,8 @@ Qu'à **budget de calcul fixe**, l'optimum est d'augmenter **paramètres et toke
 
 C'est un optimum empirique d'allocation du **budget de pré-entraînement** dans le régime étudié, pas une règle obligatoire pour chaque modèle.
 
+Si l'inférence représente l'essentiel du coût de vie, entraîner plus longtemps un modèle plus petit peut être préférable. Le ratio empirique ne garantit pas non plus que répéter des données médiocres équivaut à ajouter des tokens informatifs.
+
 ---
 
 Pourquoi les modèles actuels sont-ils entraînés bien au-delà de Chinchilla ? <!--anki:267869342439474772-->
@@ -41,7 +43,9 @@ Chinchilla optimise le **coût d'entraînement**, pas le **coût total**. Un mod
 
 Qu'est-ce que la loi « 6ND » et à quoi sert-elle ? <!--anki:795034647b6b31645263-->
 ?
-Le calcul d'entraînement d'un Transformer dense ≈ **6 × paramètres × tokens** FLOPs (2 pour la passe avant, 4 pour la passe arrière). Exemple : 1 B paramètres sur 20 B tokens ≈ **1,2·10²⁰ FLOPs**. Divisé par le débit réel du cluster (FLOPs/s × **MFU**), on obtient les **GPU-heures** nécessaires.
+Le calcul d'entraînement d'un Transformer dense ≈ **6 × paramètres × tokens** FLOPs (2 pour l'avant, 4 pour l'arrière). Exemple : 1 B paramètres sur 20 B tokens ≈ **1,2·10²⁰ FLOPs**.
+
+Diviser par le débit effectif du cluster donne des **secondes**, pas des GPU-heures. Avec 8 GPU à 100 TFLOP/s effectifs chacun : environ 150 000 s, soit 41,7 h écoulées et **333 GPU-heures**. Si le débit est théorique, appliquer la **MFU** ; ne pas la compter deux fois. L'approximation néglige certains coûts, notamment l'attention aux très longs contextes.
 
 ---
 

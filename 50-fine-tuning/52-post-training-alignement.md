@@ -23,9 +23,13 @@ Quelles sont les étapes classiques du RLHF ? <!--anki:6e65685b71755b4e5f2c-->
 
 Pourquoi une pénalité KL pendant le RL ? <!--anki:6f333c253e66767e7635-->
 ?
-Sans elle, le modèle **exploite les failles du reward model** (reward hacking) : il produit des sorties qui obtiennent un score élevé sans être meilleures (flatterie, verbosité, formules types). La KL **l'ancre** à un comportement de référence raisonnable.
+Sans elle, le modèle **exploite les failles du reward model** (reward hacking) : il produit des sorties qui obtiennent un score élevé sans être meilleures (flatterie, verbosité, formules types).
 
-La divergence KL pénalise l'écart entre la **politique entraînée** et une politique de référence. Un coefficient trop fort freine l'apprentissage ; trop faible laisse le modèle s'éloigner rapidement. Suivre récompense, KL et qualité sur des évaluations indépendantes. Cette régularisation limite la dérive mais ne corrige pas un vérificateur ou un reward model mal conçu.
+La divergence KL **ancre** le modèle en pénalisant l'écart entre la **politique entraînée** et une politique de référence :
+```text
+récompense optimisée = r(x, y) − β × [log π(y|x) − log π_ref(y|x)]
+```
+Avec β = 0,05, une réponse notée 2,0 dont la log-vraisemblance dépasse de 10 nats celle de la référence ne vaut plus que 1,5. Un β trop fort freine l'apprentissage ; trop faible laisse le modèle dériver. Cette régularisation ne corrige pas un reward model mal conçu.
 
 ---
 
@@ -40,6 +44,11 @@ Le problème vient de l'écart entre **mesure optimisée et résultat souhaité*
 Qu'apporte DPO par rapport au RLHF classique ? <!--anki:506a3b4d5e7d4e4b737a-->
 ?
 **Direct Preference Optimization** optimise **directement** le modèle sur les paires (préférée, rejetée) avec une loss de classification, **sans reward model séparé ni boucle RL**. Souvent plus **simple et moins coûteux** à mettre en œuvre, c'est une option fréquente pour aligner un modèle open source sur ses préférences. Gain et stabilité restent à mesurer : des paires biaisées apprennent la longueur ou le style du gagnant. Variantes : IPO, KTO (préférences non appariées, simple pouce haut/bas), ORPO, SimPO.
+```python
+paire = {"prompt": "Résume ce ticket…", "chosen": "Paiement refusé deux fois…", "rejected": "Le client a un souci."}
+DPOTrainer(model=model, args=DPOConfig(beta=0.1), train_dataset=paires,
+           processing_class=tokenizer).train()     # TRL ; référence figée par défaut
+```
 
 ---
 
@@ -53,7 +62,14 @@ Qu'est-ce que le RLVR ? <!--anki:4c412b4556294b474f37-->
 ?
 Le **RL with Verifiable Rewards** utilise une récompense issue d'un vérificateur automatique : résultat numérique attendu, tests exécutés ou contraintes de format, plutôt qu'un jugement de préférence appris. Il est utile lorsque la réussite possède un critère contrôlable, notamment dans certains exercices de code et de mathématiques.
 
-La qualité dépend du vérificateur : une suite de tests incomplète peut accepter du code incorrect, et un format valide ne garantit pas le fond. Protéger le vérificateur, varier les cas et évaluer sur des problèmes indépendants. Le RLVR réduit certains jugements subjectifs ; il n'élimine pas le **reward hacking**.
+La qualité dépend du vérificateur. Pour du text-to-SQL :
+```python
+def recompense(sql_genere, sql_reference, base_test):
+    attendu = executer(sql_reference, base_test)
+    obtenu = executer(sql_genere, base_test)
+    return float(obtenu == attendu)
+```
+Cet extrait suppose des requêtes validées, une exécution isolée en lecture seule et des résultats comparables. Une panne du vérificateur invalide l'essai, pas la réponse. Une requête fausse peut réussir sur une petite base : varier les cas. Le RLVR n'élimine pas le **reward hacking**.
 
 ---
 
@@ -61,6 +77,8 @@ Qu'est-ce que le RLAIF et la Constitutional AI ? <!--anki:672962255f7837583554--
 ?
 - **RLAIF** : les préférences sont produites par **un modèle** plutôt que par des humains → beaucoup moins cher et plus rapide.
 - **Constitutional AI** (Anthropic) : le modèle **critique et révise** ses propres réponses selon une **liste de principes écrits** (la constitution), et ces jugements servent de données de préférence.
+
+Exemple de principe : « choisir la réponse la plus utile qui ne fournit pas d'instructions dangereuses ». Un modèle juge compare deux réponses selon ce principe, et son choix forme une paire. Les préférences héritent alors des biais de ce juge : vérifier un échantillon par des humains.
 
 ---
 
@@ -79,7 +97,7 @@ Qu'est-ce que la « taxe d'alignement » ? <!--anki:45516e7073676e383561-->
 ?
 La **perte de capacités** (créativité, précision sur certains benchmarks, calibration) que peut entraîner l'alignement. Elle se manifeste aussi par des **refus excessifs** (over-refusal) sur des demandes légitimes. On la mesure avec des evals de capacités **avant et après**, et des jeux de requêtes **légitimes mais sensibles**.
 
-Ce compromis doit être établi sur des tâches comparables, avec les mêmes conditions de génération. Distinguer baisse réelle de compétence, changement de style et refus d'exécuter la tâche : leurs corrections diffèrent. L'alignement peut aussi améliorer certaines capacités ; la taxe n'est donc ni une constante ni une perte uniforme sur tous les usages.
+Exemple : après un DPO maison, les bonnes réponses passent de 71 % à 70 % sur le jeu métier, mais les refus sur 200 questions médicales légitimes de 3 % à 12 % : la taxe tient au sur-refus. Distinguer baisse réelle de compétence, changement de style et refus : leurs corrections diffèrent. La taxe n'est ni constante ni uniforme selon les usages.
 
 ---
 
@@ -91,6 +109,8 @@ Rarement pour l'alignement général (déjà fait par le fournisseur). Mais c'es
 - entraîner un modèle spécialisé sur une tâche **vérifiable** (RLVR : SQL, extraction, code interne).
 
 Outils : TRL, OpenRLHF, verl, Unsloth, ou les API de fine-tuning par préférences.
+
+Exemple : des paires « réponse corrigée par un conseiller / réponse initiale » rapprochent le ton d'un modèle de 8B de la charte de l'entreprise ; elles n'apprennent pas une procédure absente des données, qui relève du RAG ou du SFT.
 
 ---
 

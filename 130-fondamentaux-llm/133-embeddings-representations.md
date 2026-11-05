@@ -7,6 +7,8 @@ Qu'est-ce qu'un modèle d'embedding ? <!--anki:6b565249636a404c3878-->
 ?
 Un modèle (souvent un **encodeur** type BERT, ou un LLM adapté) qui transforme un texte en **vecteur dense de taille fixe** (384 à 4 096 dimensions) tel que des textes **sémantiquement proches** aient des vecteurs **proches**. C'est la base de la recherche sémantique, du [[21-rag-fondamentaux|RAG]], du clustering et de la déduplication.
 
+Ces dimensions sont des exemples, pas des limites universelles. Deux modèles produisant chacun 1 024 dimensions n'ont pas nécessairement un espace compatible : après migration, réencoder documents et requêtes avec le couple prévu, puis mesurer le rappel.
+
 ---
 
 Comment un modèle d'embedding est-il entraîné ? <!--anki:756445307677664a4864-->
@@ -31,6 +33,8 @@ Il faut utiliser **la mesure pour laquelle le modèle a été entraîné**.
 ?
 - **Bi-encoder** : encode requête et document **séparément** → les documents sont indexés à l'avance, la recherche est rapide. C'est le modèle d'embedding.
 - **Cross-encoder** : lit **requête et document ensemble** → bien plus précis mais un passage par paire, donc réservé au **reranking** de quelques dizaines de candidats ([[22-rag-avance|reranking]]).
+
+Le gain de précision doit être mesuré sur le domaine. Le cross-encoder ne peut pas retrouver une preuve absente des candidats : si le bon document n'entre jamais dans le top-50, améliorer seulement le reranker ne corrigera pas cet échec.
 
 ---
 

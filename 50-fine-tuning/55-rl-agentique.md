@@ -60,6 +60,8 @@ Une alternative plus simple au RL : faire tourner un modèle (souvent plus fort)
 
 Moins efficace que le RL pour dépasser le modèle d'origine, mais **stable** et accessible, c'est souvent la première étape d'une équipe produit ([[53-donnees-synthetiques-distillation|distillation]]).
 
+Par exemple, conserver uniquement les trajectoires dont les tests métier passent, en retirant secrets et doublons. Contrôler aussi les étapes : un résultat obtenu par fuite de réponse ou action interdite ne constitue pas un bon exemple d'apprentissage.
+
 ---
 
 Pourquoi GRPO est-il populaire pour le RL agentique ? <!--anki:762d3d71285d59625760-->
@@ -75,6 +77,8 @@ Pourquoi le choix des tâches d'entraînement est-il décisif ? <!--anki:4a4e643
 Le signal d'apprentissage vient des tâches **à la limite des capacités** du modèle : réussies parfois, pas toujours. On construit donc un **curriculum** : filtrer les tâches toujours réussies ou toujours ratées, et augmenter la difficulté au fil de l'entraînement.
 
 La **diversité** compte autant : un modèle entraîné sur un seul type de dépôt ou d'API généralise mal.
+
+Avec une récompense binaire, un groupe où toutes les tentatives échouent donne peu de contraste relatif. Examiner d'abord si la tâche est réalisable et si le vérificateur fonctionne, avant de la rendre plus facile ou de l'exclure.
 
 ---
 

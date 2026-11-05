@@ -19,6 +19,8 @@ L'activation est **sparse**, mais les experts restent des poids à stocker quelq
 
 Exemple type : un modèle de ~**670 B paramètres totaux** mais ~**37 B actifs** (ordre de grandeur de DeepSeek-V3).
 
+Peu de paramètres actifs ne signifie donc pas « tient sur le GPU d'un modèle dense de 37 B ». Les experts inactifs doivent rester disponibles, éventuellement répartis ou déchargés ; ajouter KV cache, buffers et communications au dimensionnement.
+
 ---
 
 Pourquoi le MoE est-il attractif pour les grands modèles ? <!--anki:427b4855503445695067-->
@@ -32,6 +34,8 @@ Ce n'est pas une garantie universelle de qualité ni de vitesse. Les experts occ
 Comment fonctionne le routeur d'un modèle MoE ? <!--anki:68243021393e6371397e-->
 ?
 Une petite couche linéaire calcule un **score par expert** pour le token ; on garde les **top-k** et on combine leurs sorties **pondérées** par ces scores (après softmax). Le routage se fait **par token et par couche** : un même mot peut aller vers des experts différents à chaque couche.
+
+Les variantes peuvent utiliser d'autres normalisations ou des experts partagés. Surveiller la charge : si la majorité des tokens choisit les mêmes experts, certains GPU deviennent le goulot. Un score de routage n'est pas une étiquette métier interprétable.
 
 ---
 
