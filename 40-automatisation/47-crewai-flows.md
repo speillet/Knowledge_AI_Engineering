@@ -87,6 +87,8 @@ Avec le décorateur **`@human_feedback`** (CrewAI 1.8+) : le Flow **se met en pa
 
 Présenter le résultat à valider, les conséquences et les options de refus ou correction. Le mécanisme d'attente et de reprise dépend de l'intégration utilisée ; vérifier sa persistance sur redémarrage. Une approbation doit porter sur l'action et les arguments effectifs, sans autoriser implicitement toutes les actions suivantes.
 
+Si le montant passe de 30 à 300 euros après présentation, invalider l'accord précédent. Lier la décision à une version de proposition et à l'identité du valideur.
+
 ---
 
 Comment un Flow CrewAI utilise-t-il la mémoire ? <!--anki:4836683e74747c21725f-->
@@ -108,6 +110,8 @@ crewai run
 Le projet généré contient le Flow et un dossier `crews/` pour les crews qu'il orchestre.
 
 Le générateur fournit une structure de projet, pas un workflow métier achevé. Configurer les modèles et leurs identifiants, implémenter les étapes, puis tester les branches et les erreurs avant lancement. Épingler les dépendances et garder les secrets hors du dépôt pour rendre l'installation reproductible et partageable.
+
+Un premier test peut remplacer les outils externes par des doubles déterministes. Vérifier les chemins succès, refus et erreur avant de payer des appels réels ; le démarrage du projet ne valide pas ses décisions.
 
 ---
 

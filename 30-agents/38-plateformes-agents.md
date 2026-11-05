@@ -69,6 +69,8 @@ Existe-t-il des plateformes d'agents open source, et à quels niveaux ? <!--anki
 - **Builders visuels** auto-hébergeables : **Dify** (suite complète : workflows, base de connaissances, publication d'apps), **Langflow**, **Flowise**, **n8n** (automatisation avec des nœuds d'agent)
 - **Briques d'infrastructure** : **kagent** (agents déclarés comme ressources Kubernetes et déployés en GitOps), **Agent Sandbox** (sandboxes sur Kubernetes), **agentgateway** (gateway pour MCP, A2A et LLM)
 
+**Auto-hébergeable ne signifie pas toujours open source** : vérifier la licence de chaque composant, notamment les restrictions d'usage commercial. Comparer aussi les fonctions réservées aux offres payantes et l'effort d'exploitation.
+
 ---
 
 Qu'apporte un runtime d'agents par rapport à un déploiement web classique ? <!--anki:423134626b627b623839-->
@@ -166,6 +168,8 @@ Quelle mémoire fournit une plateforme d'agents ? <!--anki:484a632f5562363b4a5d-
 - **Stores partagés** entre agents, **cloisonnés** par utilisateur ou par client
 
 Voir [[39-memoire-agents|mémoire des agents]].
+
+Exemple : une préférence de langue peut traverser les sessions, contrairement à un jeton temporaire d'accès. Définir provenance, durée de conservation et suppression ; tester qu'un changement de client ne rappelle jamais les souvenirs du précédent.
 
 ---
 

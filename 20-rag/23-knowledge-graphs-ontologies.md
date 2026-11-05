@@ -79,6 +79,8 @@ Comment combiner graphe et vecteurs ? <!--anki:5268263e733e2e3f7d6a-->
 
 C'est le principe du GraphRAG « local », utile quand la réponse est répartie entre plusieurs documents liés.
 
+Exemple : retrouver un composant par sa description, puis suivre les liens vers ses fournisseurs. Borner profondeur et nombre de voisins : un nœud très connecté peut remplir le contexte de relations inutiles. Conserver la provenance des relations pour vérifier la réponse.
+
 ---
 
 Comment fonctionne GraphRAG de Microsoft ? <!--anki:7a516429687c6a513b6d-->
@@ -94,6 +96,8 @@ L'indexation est **coûteuse** ; LazyGraphRAG repousse le travail LLM au moment 
 Qu'est-ce que Text2Cypher et quels sont ses risques ? <!--anki:4450547e3f4856545139-->
 ?
 Le LLM **traduit la question en requête Cypher**, avec le schéma du graphe dans le prompt. Risques : requête fausse, labels inventés, requête coûteuse ou **destructrice** (injection). Parades : utilisateur de base **en lecture seule**, validation de la requête, timeouts et limites de résultats, requêtes **paramétrées** pour les cas fréquents.
+
+Une requête syntaxiquement valide peut traverser le mauvais type de relation. Tester sur un petit graphe dont la réponse est connue, puis contrôler le plan d'exécution. Un `LIMIT` borne les lignes retournées, pas nécessairement le travail effectué avant ce retour.
 
 ---
 

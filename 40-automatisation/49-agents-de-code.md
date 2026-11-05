@@ -10,6 +10,8 @@ Un agent qui **lit le dépôt, édite des fichiers, lance des commandes** (tests
 
 Exemples de harness : Claude Code, Codex CLI, Cursor, Aider ([[34-harness-plugins|harness]]).
 
+La boucle utile relie hypothèse, modification et preuve : reproduire un défaut, appliquer une correction, puis vérifier le test concerné et les régressions proches. Des commandes toutes réussies ne prouvent rien si elles ne couvrent pas le comportement demandé.
+
 ---
 
 Qu'est-ce que l'ACI (Agent-Computer Interface) ? <!--anki:7a485e43794a50796e35-->
@@ -44,6 +46,8 @@ Pourquoi demander un plan avant l'implémentation ? <!--anki:413f5465585d37213e6
 Sur une tâche non triviale, un agent qui code tout de suite part souvent dans une **mauvaise direction** et produit un gros diff à jeter. Un **mode plan** (lecture seule) lui fait explorer le code et proposer une approche que l'humain **corrige en quelques lignes**, avant tout changement.
 
 C'est le pattern plan-and-execute appliqué au code ([[48-patterns-workflows-agentiques|patterns]]).
+
+Le plan doit nommer fichiers concernés, invariants à préserver et tests de réussite. Pour une correction locale évidente, un long plan peut coûter plus que l'implémentation ; adapter sa profondeur au risque et à l'incertitude.
 
 ---
 

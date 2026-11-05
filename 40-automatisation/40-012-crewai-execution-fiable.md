@@ -18,6 +18,8 @@ Utiliser le **`context`** de la tâche pour sélectionner les sorties amont néc
 
 Dessiner le graphe des dépendances et repérer les étapes indépendantes. Une synthèse doit attendre toutes les analyses requises, ou annoncer explicitement les analyses manquantes. Tester une tâche amont lente, échouée ou ignorée pour vérifier le comportement réel.
 
+Exemple : `context=[analyse_financiere, analyse_juridique]` rend ces deux sorties attendues explicites. Une tâche simplement déclarée avant la synthèse n'est pas une preuve que ses données sont disponibles ou valides.
+
 ---
 
 À ne pas confondre : sortie brute, sortie structurée et preuve métier dans CrewAI ? <!--anki:3039373438323265646230353465353738326632396164386438663139366333-->
@@ -97,6 +99,8 @@ Comment isoler deux clients qui utilisent la même configuration CrewAI ? <!--an
 Séparer leurs **états, mémoires, accès aux sources et destinations d'artefacts**. Les objets mutables et caches réutilisés entre requêtes demandent une attention particulière.
 
 Injecter les identités depuis le service authentifié et contrôler les droits dans les outils. Une préférence mémorisée pour un client ne doit pas être rappelée chez un autre. Tester deux dossiers intercalés, avec une même formulation de question, puis vérifier résultats, stockage et traces.
+
+Utiliser par exemple `tenant/run_id/rapport.json`, avec un tenant issu de l'identité authentifiée. Un nom unique par exécution évite l'écrasement ; les permissions restent nécessaires pour empêcher la lecture croisée.
 
 ---
 

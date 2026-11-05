@@ -37,7 +37,7 @@ Harness prêt à l'emploi ou harness construit avec un SDK : quand choisir chacu
 - **Prêt à l'emploi** (Claude Code, Cursor, Codex CLI, Aider) : pour **coder** avec un agent ; on l'adapte par fichiers mémoire, skills, hooks et permissions
 - **Construit avec un SDK** (Claude Agent SDK, OpenAI Agents SDK) : pour **intégrer** la boucle d'agent dans son produit, avec ses propres outils et ses propres règles
 
-Le SDK fournit la boucle et les outils de base : on n'écrit que ce qui est propre au produit.
+Le SDK fournit des briques, pas le contrat métier. Pour un support client, vérifier qu'il permet identité par requête, arrêt budgétaire et reprise après panne. Un outil de code prêt à l'emploi peut suffire pour une tâche interne, sans devenir le runtime du produit.
 
 ---
 
@@ -90,7 +90,7 @@ Pourquoi exécuter un agent dans une sandbox ? <!--anki:497a51314634782d6450-->
 ?
 Pour **limiter le rayon d'impact** d'une erreur ou d'une [[101-securite-llm-guardrails|prompt injection]] : système de fichiers restreint, réseau filtré, conteneur ou VM jetable.
 
-Par exemple, limiter les écritures à un répertoire de travail et bloquer les sorties réseau inutiles réduit les conséquences d'un script malveillant. La sandbox doit aussi borner durée, mémoire et CPU. Elle ne suffit pas si un secret est accessible ou si un service externe autorise une action excessive : isolation et permissions se complètent.
+Par exemple, autoriser seulement un répertoire temporaire, deux minutes de calcul et les domaines nécessaires. Tester qu'une écriture hors périmètre et une connexion non autorisée échouent réellement. La sandbox doit aussi borner mémoire et CPU. Elle ne suffit pas si un secret reste accessible ou si un service externe autorise une action excessive : isolation et permissions se complètent.
 
 ---
 

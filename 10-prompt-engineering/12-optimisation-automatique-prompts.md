@@ -8,7 +8,7 @@ Qu'est-ce que l'optimisation automatique de prompts ? <!--anki:4e78672b25565b492
 ?
 Traiter le prompt comme un **paramètre à optimiser** : un algorithme propose des variantes (instructions, exemples few-shot), les **évalue sur un jeu de données avec une métrique**, et garde les meilleures. L'humain écrit la **métrique et les données**, pas la formulation.
 
-Prérequis non négociable : une **métrique automatique fiable** et quelques dizaines à centaines d'exemples ([[94-evals-methodologie|evals]]).
+Prérequis : une **évaluation suffisamment fiable** et des exemples représentatifs ([[94-evals-methodologie|evals]]). Optimiser seulement le JSON valide peut sélectionner un prompt qui renvoie toujours des champs vides. Mesurer aussi l'exactitude et la couverture ; réserver un test final indépendant des essais. Le volume nécessaire dépend de la diversité et de la rareté des erreurs, pas d'un seuil universel.
 
 ---
 
@@ -102,7 +102,9 @@ Parades : séparer **entraînement, validation et test**, relire les prompts gé
 
 Un prompt optimisé pour un modèle se transfère-t-il à un autre ? <!--anki:4b547b706e6741336725-->
 ?
-**Mal.** Les instructions et exemples retenus sont ceux qui marchaient **pour ce modèle** : changer de modèle ou même de version peut annuler le gain. C'est l'argument central de DSPy : on versionne le **programme, la métrique et les données**, et on **recompile** à chaque changement de modèle ([[146-choix-modeles|migration de modèle]]).
+**Pas nécessairement.** Les instructions et exemples retenus sont ceux qui marchaient **pour le modèle évalué** ; changer de version peut annuler le gain. Versionner le **programme, la métrique et les données**, puis comparer le prompt existant à une nouvelle optimisation sur le modèle cible ([[146-choix-modeles|migration de modèle]]).
+
+Par exemple, une formulation qui réduit les omissions chez A peut augmenter les faux positifs chez B. Mesurer les deux sur les mêmes cas et conserver un test indépendant. Recompiler avec DSPy est une option à évaluer, pas la preuve qu'un transfert direct échouera.
 
 ---
 

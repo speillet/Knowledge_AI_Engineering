@@ -9,6 +9,8 @@ Un **LLM doté d'outils et d'une boucle d'exécution** (percevoir → raisonner 
 
 Le modèle choisit une action ; le programme qui l'entoure vérifie les droits, exécute l'outil et renvoie l'observation. Par exemple, il cherche une commande avant d'en expliquer le statut. Son autonomie reste bornée par les outils disponibles, le budget et les critères d'arrêt : **le modèle ne s'accorde pas lui-même des permissions**.
 
+Le critère distinctif n'est pas le nombre d'outils : c'est la décision sur la prochaine étape. Un script qui appelle toujours les mêmes fonctions reste un workflow.
+
 ---
 
 À ne pas confondre : workflow et agent ? <!--anki:712b5a28436a7b683047-->
@@ -29,6 +31,8 @@ Observation : {"statut": "expédiée"}
 Suite       : répondre ou chercher une information manquante
 ```
 Le [[32-tool-calling|tool calling]] fournit un format d'appel, mais ne construit pas à lui seul cette stratégie ni sa boucle. Le [[34-harness-plugins|harness]] doit exécuter les opérations autorisées et réinjecter leurs résultats. Une explication produite par le modèle aide parfois au diagnostic ; elle ne constitue pas une preuve fidèle de son raisonnement interne.
+
+Si l'observation indique « commande inconnue », la suite doit demander une précision ou chercher autrement, pas présenter le statut attendu comme un fait.
 
 ---
 

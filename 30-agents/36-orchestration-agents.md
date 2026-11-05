@@ -65,7 +65,7 @@ Quels patterns séquentiels, parallèles ou de critique permettent de composer d
 - **Parallèle** : sections indépendantes ou votes
 - **Evaluator-optimizer** : un agent produit, un autre critique, on itère
 
-Choisir selon la structure de la tâche : dépendances fortes pour le pipeline, sous-problèmes indépendants pour le parallèle, critère de correction explicite pour la critique. L'evaluator-optimizer doit avoir un nombre d'itérations maximal et une condition d'amélioration mesurable ; deux agents qui échangent des avis ne constituent pas une validation fiable.
+Choisir selon la structure de la tâche : dépendances fortes pour le pipeline, sous-problèmes indépendants pour le parallèle, critère de correction explicite pour la critique. L'evaluator-optimizer doit avoir un nombre d'itérations maximal et une condition d'amélioration mesurable : pour un résumé, au plus trois tours, arrêt dès que chaque affirmation est rattachée à une source. Deux agents qui échangent des avis ne constituent pas une validation fiable.
 
 ---
 
@@ -73,7 +73,7 @@ Quel est le coût du multi-agent ? <!--anki:4f3e644c6456264e4e2e-->
 ?
 Le coût total comprend les **appels de tous les agents**, les contextes répétés, les outils et la synthèse. La latence dépend du **chemin critique** : elle s'additionne pour des étapes séquentielles, mais des branches indépendantes peuvent s'exécuter en parallèle.
 
-Ajouter un agent peut donc réduire le temps écoulé tout en augmentant la facture. Mesurer coût par tâche réussie, délai et qualité face à un agent unique. Les dépendances et erreurs de transmission ajoutent aussi une difficulté de débogage.
+Exemple : trois workers de 2 minutes lancés en parallèle, puis une synthèse d'une minute, donnent 3 minutes de délai contre 7 en séquence ; les tokens des quatre appels s'additionnent dans les deux cas. Les ordres de grandeur mesurés figurent dans la fiche [[31-agents-fondamentaux|Agents]]. Mesurer coût par tâche réussie, délai et qualité face à un agent unique. Les dépendances et erreurs de transmission ajoutent aussi une difficulté de débogage.
 
 ---
 
@@ -81,7 +81,7 @@ Comment les agents d'un système multi-agents partagent-ils l'information ? <!--
 ?
 Par des **messages** (résumés renvoyés à l'orchestrateur), un **état partagé** (graphe d'état, tableau blanc) ou des **artefacts externes** (fichiers, base) — ce qui évite de tout faire passer par le contexte.
 
-Définir qui peut lire et écrire chaque information, sous quelle version et avec quel format. Deux agents modifiant le même artefact peuvent écraser leurs résultats ; utiliser partitions de travail ou contrôle de concurrence. Transmettre les preuves et les incertitudes avec la synthèse, afin qu'une conclusion provisoire ne devienne pas un fait acquis.
+Définir qui peut lire et écrire chaque information, sous quelle version et avec quel format. Deux agents modifiant le même artefact peuvent écraser leurs résultats ; utiliser partitions de travail ou contrôle de concurrence. Exemple : chaque worker écrit seulement `resultats/<worker>.json`, et l'orchestrateur est le seul à produire la synthèse. Transmettre les preuves et les incertitudes avec la synthèse, afin qu'une conclusion provisoire ne devienne pas un fait acquis.
 
 ---
 

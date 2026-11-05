@@ -8,6 +8,8 @@ Pourquoi un chunk isolé est-il souvent introuvable ? <!--anki:7a544f517c5831297
 ?
 Parce qu'il a **perdu son contexte** en étant découpé. « Le chiffre d'affaires a progressé de 3 % » ne dit ni **quelle entreprise** ni **quel trimestre** : ni son embedding ni ses mots-clés ne correspondent à la question « CA d'ACME au T2 2025 ». Le problème n'est pas l'index, c'est **ce qu'on a indexé**.
 
+Rattacher au passage son titre, sa période et son document parent avant indexation. Vérifier ces informations dans la source : inventer le contexte manquant rendrait le passage plus facile à retrouver, mais moins fiable.
+
 ---
 
 Qu'est-ce que le contextual retrieval ? <!--anki:5052216e2d52403b2b54-->
@@ -68,6 +70,8 @@ Il découple deux besoins contradictoires : la **précision** de la recherche et
 Le chunking sémantique vaut-il son coût ? <!--anki:67377e70797147715e59-->
 ?
 **Pas systématiquement.** Couper là où les embeddings de phrases consécutives divergent semble plus intelligent, mais des évaluations publiées (2024) ne montrent **pas de gain constant** sur un découpage récursif bien réglé, pour un coût d'ingestion supérieur. La **structure du document** (titres, sections) est souvent un meilleur signal que la similarité ([[162-document-parsing|chunking structurel]]).
+
+Comparer à budget de contexte similaire, pas seulement à nombre de chunks égal. Vérifier les questions qui exigent deux phrases voisines : une rupture sémantique peut séparer une règle de son exception.
 
 ---
 

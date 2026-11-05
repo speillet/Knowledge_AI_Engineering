@@ -63,7 +63,9 @@ Qu'est-ce que la compaction du contexte d'un agent ? <!--anki:6e5f505d713a4b7b56
 ?
 **Résumer l'historique** quand on approche de la limite, pour repartir avec un contexte plus court qui garde décisions, état et tâches en cours. Variante légère : **effacer les vieux résultats d'outils**.
 
-Deux effets de bord à connaître : la compaction **casse le cache de préfixe** (tout ce qui suit change), et elle **perd des détails** — d'où l'intérêt d'écrire l'essentiel dans un fichier ou une mémoire **avant** de compacter ([[39-memoire-agents|mémoire]]).
+Deux effets de bord : elle **invalide le cache à partir du premier token modifié** et **perd des détails**. Le préfixe antérieur inchangé peut rester réutilisable. Conserver les faits critiques hors contexte ([[39-memoire-agents|mémoire]]).
+
+Exemple de résumé utile : objectif, décisions validées, références des preuves, travail restant et erreurs non résolues. Vérifier qu'une hypothèse n'est pas devenue un fait au passage.
 
 ---
 
@@ -103,9 +105,9 @@ Par exemple, fournir l'index d'un dépôt puis lire seulement les fichiers conce
 
 Que se passe-t-il si le contexte d'un agent dépasse la fenêtre du modèle ? <!--anki:6435353066396565386132663436363262613562303131313639303632356336-->
 ?
-L'API **rejette** la requête (prompt trop long) : la tâche s'arrête net si le harness n'a rien prévu. Une troncature naïve par le début ferait perdre les consignes et l'objectif.
+Selon l'API et sa configuration, la requête est **rejetée ou tronquée**. Ne pas dépendre d'une suppression implicite qui pourrait retirer consignes ou preuves.
 
-Le harness doit donc **compacter avant la limite** : résumer l'historique, retirer les vieux résultats d'outils, garder consignes et objectif. En pratique, on compacte bien avant, car la qualité se dégrade avant la limite ([[137-long-contexte|long contexte]]).
+Le harness doit **réserver la sortie et compacter avant la limite**. Exemple fictif : une fenêtre totale de 32 000 tokens, avec 4 000 réservés à la génération, laisse au plus 28 000 pour toutes les entrées, outils compris. Ajouter une marge et mesurer le comptage réel. La qualité peut se dégrader avant la saturation : conserver objectif, décisions et sources utiles, pas seulement faire tenir le texte ([[137-long-contexte|long contexte]]).
 
 ---
 

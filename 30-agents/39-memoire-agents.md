@@ -8,6 +8,8 @@ Pourquoi un agent a-t-il besoin d'une mémoire externe ? <!--anki:4771475b312e63
 ?
 Un LLM est **sans état** : il ne sait que ce qui est dans sa fenêtre de contexte, limitée et coûteuse. Pour retenir d'une session à l'autre (préférences, faits, leçons tirées d'erreurs), on **écrit hors du contexte** puis on **réinjecte sélectivement** ce qui sert à la tâche en cours ([[35-context-engineering|context engineering]]).
 
+Enregistrer « préfère les réponses en français » avec sa source et sa portée utilisateur évite de relire toute la conversation. La mémoire n'actualise pas les poids du modèle ; un souvenir non récupéré ne participe pas à la réponse.
+
 ---
 
 Quels types de mémoire distingue-t-on pour un agent ? <!--anki:234b3f24393a6b7661-->
@@ -129,6 +131,8 @@ Des benchmarks de conversations longues (**LoCoMo**, **LongMemEval**) et des tes
 - **S'abstenir** quand l'information n'a jamais été donnée
 
 Mesurer aussi la **latence** et le **coût** ajoutés par l'écriture et la recherche.
+
+Tester une séquence : préférence A, remplacement explicite par B, nouvelle session, puis suppression. Vérifier rappel de B, absence de A et abstention après retrait. Comparer à une version sans mémoire pour distinguer gain réel et information déjà devinable.
 
 ---
 

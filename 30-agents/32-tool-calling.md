@@ -17,6 +17,8 @@ Le modèle exécute-t-il lui-même les outils ? <!--anki:672f7363513542412f2f-->
 
 Conséquence essentielle : c'est **dans l'application** qu'on contrôle ce qui s'exécute vraiment. Validation des arguments, permissions, approbation humaine et journalisation se placent entre l'intention du modèle et l'exécution ([[34-harness-plugins|harness]]).
 
+Par exemple, `rembourser(commande="C7", montant=50)` peut être bien formé mais dépasser le solde remboursable. L'application doit refuser avant l'effet métier, puis transmettre ce refus au modèle sans le transformer en succès.
+
 ---
 
 Comment déclare-t-on un outil au modèle ? <!--anki:745d3a6878654160442b-->
@@ -50,6 +52,8 @@ prompt → le modèle émet tool_call(name, args)
 ```
 
 À chaque tour, l'application **valide le nom et les arguments**, contrôle les permissions, exécute avec un timeout et renvoie un résultat ou une erreur structurée. Le modèle peut alors corriger sa demande ou répondre. Conserver les identifiants d'appels et limiter les itérations. Pour une action avec effet externe, prévoir l'idempotence afin qu'une reprise ne crée pas de doublon.
+
+Avec deux appels simultanés, rattacher chaque observation à son identifiant, pas à son ordre d'arrivée. Sinon le modèle peut attribuer le résultat d'une commande à une autre.
 
 ---
 

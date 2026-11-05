@@ -45,6 +45,8 @@ Mémoire permanente ou mémoire de session ? <!--anki:6b6b4778485f7935575a-->
 - **Permanente** (sans `session_id`) : le pipeline complet, plus lent et plus coûteux, qui produit graphe et embeddings
 - **Session** (avec `session_id`) : le **chemin rapide**, écrit dans un cache et disponible aussitôt pour la session. Elle ne rejoint la mémoire permanente que par un **transfert** explicite ou automatique (`improve`)
 
+Par exemple, une hypothèse provisoire de réunion doit rester en session tant qu'elle n'est pas validée. Tester expiration, redémarrage et transfert : « disponible maintenant » ne signifie pas « durable », et le transfert ne doit pas élargir les droits d'accès.
+
 ---
 
 Comment l'opération recall de Cognee choisit-elle sa stratégie de recherche ? <!--anki:636d76242e427a3c316e-->
@@ -90,6 +92,8 @@ Quelles limites de Cognee garder en tête ? <!--anki:4a404e6c463832774659-->
 - L'extraction par LLM a un **coût** et produit du **bruit** : la qualité dépend du modèle et de l'ontologie
 - Une stack à opérer : base graphe, index vectoriel, cache de session
 - Une API **jeune** qui évolue vite : la 1.0 a renommé les opérations, à revérifier avant chaque mise à jour
+
+Sur un corpus témoin, mesurer faits correctement extraits, relations inventées et réponses effectivement soutenues. Un graphe plus dense n'est pas automatiquement meilleur. Inclure une modification de fait et une suppression dans le test de mise à niveau.
 
 ---
 

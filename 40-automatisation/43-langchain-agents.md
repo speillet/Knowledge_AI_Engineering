@@ -54,6 +54,8 @@ Avec `response_format=MonModelePydantic` : l'agent termine par une sortie valid�
 
 Le modèle Pydantic décrit les champs, types et contraintes attendus, par exemple `categorie` et `priorite` pour un ticket. La stratégie utilisée dépend du support du fournisseur. Traiter explicitement validation impossible, refus et budget épuisé. Vérifier ensuite le contenu : une priorité autorisée par le schéma peut rester inadaptée au problème décrit.
 
+Une absence de `structured_response` ne doit pas devenir un objet rempli de valeurs par défaut. Exposer un échec explicite au consommateur et conserver la cause pour le diagnostic.
+
 ---
 
 Qu'est-ce qu'un middleware dans LangChain ? <!--anki:704e5b615d724d26394b-->
@@ -88,6 +90,8 @@ def log_before_model(state: AgentState, runtime: Runtime):
 Un hook peut aussi renvoyer **`jump_to`** (`"end"`, `"tools"`, `"model"`) pour court-circuiter la boucle.
 
 Ce hook observe l'état sans le modifier. Pour router avec `jump_to`, déclarer les destinations permises via la configuration `can_jump_to` du middleware ; renvoyer une destination arbitraire ne suffit pas. Les logs doivent rester sobres : compter les messages peut être utile sans enregistrer leur contenu confidentiel.
+
+Le hook peut être appelé plusieurs fois dans une boucle. Ne pas y placer une facturation ou une notification supposée unique ; mesurer son nombre d'invocations dans un test à plusieurs tours.
 
 ---
 
