@@ -8,7 +8,12 @@ Vérifié le : 9 octobre 2026 — API citées confrontées aux documentations of
 ?
 Une **version** identifie un contenu enregistré ; un **label** sélectionne une version et peut être déplacé. `production` est donc une référence mutable, utile pour promouvoir ou retirer un prompt.
 
-Tracer la version effectivement récupérée, pas seulement le label demandé. Pour reproduire une expérience, fixer la version et les variables rendues. Un retour du label vers une ancienne version ne garantit pas que tous les processus ont déjà renouvelé leur cache.
+Tracer la version effectivement récupérée, pas seulement le label demandé :
+```python
+prompt = langfuse.get_prompt("support-reponse", label="production")
+prompt.version          # par exemple 14 ; la passer à la generation avec prompt=prompt
+```
+Pour reproduire une expérience, fixer la version et les variables rendues. Un retour du label vers une ancienne version ne garantit pas que tous les processus ont déjà renouvelé leur cache.
 
 ---
 
@@ -16,13 +21,13 @@ Pourquoi versionner le contrat de variables d'un prompt Langfuse ? <!--anki:3837
 ?
 Le template et le code qui le remplit partagent un **contrat** : noms, types et sens des variables. Renommer `question` en `demande` peut casser l'application même si le texte du prompt semble meilleur.
 
-Tester compilation, variables manquantes et contenu rendu avant promotion. Relier le changement aux schémas d'outils et de sortie attendus. Si les anciennes versions du code restent déployées, conserver leur compatibilité ou coordonner la bascule.
+Tester compilation, variables manquantes et contenu rendu avant promotion : avec le SDK Python, `prompt.compile(demande=...)` sur un template qui attend `{{question}}` ne lève aucune erreur et envoie `{{question}}` tel quel au modèle. Relier le changement aux schémas d'outils et de sortie attendus. Si les anciennes versions du code restent déployées, conserver leur compatibilité ou coordonner la bascule.
 
 ---
 
 À ne pas confondre : cache du registre de prompts Langfuse et prefix caching du modèle ? <!--anki:6230643233623462626432323465363938666431663531653366353463666333-->
 ?
-Le **cache du registre** évite de télécharger le template à chaque appel. Le **prefix caching** réutilise des calculs d'inférence sur un préfixe compatible côté fournisseur ou serveur de modèle.
+Le **cache du registre** évite de télécharger le template à chaque appel ; le SDK Python le garde 60 s par défaut. Le **prefix caching** réutilise des calculs d'inférence sur un préfixe compatible côté fournisseur ou serveur de modèle.
 
 Le premier réduit la dépendance au registre et peut retarder une mise à jour ; le second peut réduire temps de préremplissage ou coût des entrées. Ils ont des clés, durées de vie et mesures différentes. Un cache hit Langfuse ne prouve aucun gain de calcul GPU.
 
@@ -30,7 +35,7 @@ Le premier réduit la dépendance au registre et peut retarder une mise à jour 
 
 Comment rendre un rollback de prompt observable malgré les caches Langfuse ? <!--anki:3231333264666633376632303436326462623938353034303438633465636239-->
 ?
-Suivre la **version effectivement utilisée** par les requêtes après déplacement du label. Le cache du SDK peut encore servir une version antérieure pendant son renouvellement.
+Suivre la **version effectivement utilisée** par les requêtes après déplacement du label. Le SDK Python sert une version expirée pendant qu'il la rafraîchit en arrière-plan : chaque réplica peut répondre avec l'ancienne version au-delà de son délai de cache.
 
 Définir le délai acceptable de propagation, précharger ou invalider selon les capacités retenues et vérifier plusieurs réplicas. Pour une correction urgente, prévoir un mécanisme de désactivation applicatif indépendant du registre. Une modification visible dans l'interface ne signifie pas une bascule instantanée de tout le trafic.
 
@@ -38,7 +43,13 @@ Définir le délai acceptable de propagation, précharger ou invalider selon les
 
 Quel contrat imposer à un prompt de secours si Langfuse est indisponible ? <!--anki:3863356565376662666561653463373538663138643464646536393436356135-->
 ?
-Le fallback doit être **prévalidé**, compatible avec les variables, outils et schémas attendus, puis identifié dans les traces. Tester un démarrage à cache vide et une indisponibilité après remplissage du cache.
+Le fallback doit être **prévalidé**, compatible avec les variables, outils et schémas attendus, puis identifié dans les traces.
+```python
+prompt = langfuse.get_prompt("support-reponse", label="production",
+                             fallback="Réponds uniquement à partir des sources fournies : {{question}}")
+prompt.is_fallback      # True si le registre était injoignable et le cache vide
+```
+Tester un démarrage à cache vide et une indisponibilité après remplissage du cache.
 
 Pour une tâche sensible, refuser proprement peut être préférable à une consigne générique improvisée. Le fallback protège la disponibilité technique ; il ne garantit pas une qualité équivalente. Mesurer son taux d'utilisation et la qualité des résultats obtenus.
 
@@ -46,7 +57,7 @@ Pour une tâche sensible, refuser proprement peut être préférable à une cons
 
 Pourquoi une expérience Langfuse doit-elle fixer plus que le prompt ? <!--anki:3035313633663562333364343465366338363566343438383064313730313635-->
 ?
-La sortie dépend aussi du **modèle**, des outils, du corpus, de la configuration et de l'état initial. Enregistrer leurs versions avec l'identité du dataset et de l'évaluateur.
+La sortie dépend aussi du **modèle**, des outils, du corpus, de la configuration et de l'état initial. Enregistrer leurs versions avec l'identité du dataset et de l'évaluateur, par exemple dans `run_experiment(..., metadata={"modele": "modele-x", "corpus": "snap-2026-10-20", "outils": "v7"})`.
 
 Si deux candidats n'accèdent pas aux mêmes documents ou si le second profite d'une mémoire créée par le premier, la comparaison est biaisée. Construire une fixture indépendante pour chaque essai, tout en conservant des conditions comparables. Les traces aident ensuite à expliquer les écarts observés.
 
@@ -55,6 +66,11 @@ Si deux candidats n'accèdent pas aux mêmes documents ou si le second profite d
 Comment transformer une trace d'échec en item de dataset utile ? <!--anki:6531633130623330376339383462366661643635333535343161386465366533-->
 ?
 Extraire une **entrée reproductible**, les données nécessaires et le résultat ou invariant attendu. Retirer les secrets, vérifier les droits de réutilisation et documenter ce qui manque pour rejouer les outils.
+```python
+langfuse.create_dataset_item(dataset_name="regressions-support", source_trace_id=trace_id,
+    input={"demande": demande_nettoyee},
+    expected_output={"invariant": "aucun avoir sans approbation"})
+```
 
 Une conversation brute ne suffit pas si elle dépend d'une commande aujourd'hui modifiée. Remplacer l'environnement mutable par une fixture lorsque c'est possible. Garder le lien de provenance dans un espace autorisé, et empêcher que la réponse attendue soit injectée dans le contexte du candidat.
 
@@ -64,13 +80,13 @@ Pourquoi garder un dataset de régression et un dataset représentatif pour les 
 ?
 Le premier contient des **échecs importants connus** ; le second reflète une distribution cible de demandes. Ils répondent à des questions différentes : ne pas réintroduire un bug et estimer la performance attendue.
 
-Accumuler uniquement les incidents produit un jeu utile mais déséquilibré. Présenter les résultats séparément et segmenter les cas critiques. Réserver aussi des cas non utilisés pendant l'optimisation pour éviter de choisir un prompt qui mémorise les exemples de révision.
+Accumuler uniquement les incidents produit un jeu utile mais déséquilibré. Le jeu représentatif se renouvelle, par exemple 300 demandes tirées chaque mois au hasard, stratifiées par segment, puis figées dans une version. Présenter les résultats séparément. Réserver aussi des cas non utilisés pendant l'optimisation pour éviter de choisir un prompt qui mémorise les exemples de révision.
 
 ---
 
 Comment rattacher un score Langfuse au bon niveau ? <!--anki:3135646161666634343433313438653162656433646461666463323965663337-->
 ?
-Choisir l'objet correspondant au **critère mesuré** : observation pour un outil, trace pour une exécution, session pour une conversation complète. Un score global ne permet pas toujours d'identifier l'étape fautive.
+Choisir l'objet correspondant au **critère mesuré** : observation pour un outil, trace pour une exécution, session pour une conversation complète. Par exemple, `create_score(name="outil_correct", value=0, trace_id=t, observation_id=o)` désigne l'appel fautif, qu'un score global ne permettrait pas d'identifier.
 
 Définir nom, type, sens et version du barème. Une correction humaine tardive doit référencer l'objet original, pas simplement la dernière requête de l'utilisateur. Prévenir les doublons si le producteur de scores renvoie le même événement après une erreur réseau.
 
@@ -80,7 +96,7 @@ Pourquoi distinguer score nul, score absent et erreur d'évaluateur dans Langfus
 ?
 **Zéro** peut être un verdict d'échec ; **absent** signifie non évalué ; une **erreur d'évaluateur** signifie que le jugement n'a pas pu être calculé. Les confondre fausse les comparaisons.
 
-Publier la couverture d'évaluation et les erreurs avec les scores. Si un candidat produit des réponses qui font échouer le juge, les exclure silencieusement peut le favoriser. Fixer à l'avance le traitement des exécutions invalides et analyser leur fréquence par candidat.
+Publier la couverture d'évaluation et les erreurs avec les scores : « 0,8 de moyenne sur 150 cas évalués sur 200, soit 75 % de couverture, et 10 erreurs du juge ». Si un candidat produit des réponses qui font échouer le juge, les exclure silencieusement peut le favoriser. Fixer à l'avance le traitement des exécutions invalides et analyser leur fréquence par candidat.
 
 ---
 
@@ -94,7 +110,7 @@ Un score `qualite=0,8` ne conserve pas le même sens si le rubric change. Sépar
 
 Comment décider de promouvoir un prompt avec les expériences Langfuse ? <!--anki:6431653166646365363338383431613562316462363535626438383864346566-->
 ?
-Fixer avant comparaison des **critères d'acceptation** : réussite métier, absence de régression critique, coût et latence. Comparer les mêmes cas, inspecter les régressions et considérer l'incertitude.
+Fixer avant comparaison des **critères d'acceptation** : par exemple, aucune baisse de plus d'un point sur un segment critique, zéro régression d'autorisation, coût par réussite sous 0,10 € et p95 inchangé. Comparer les mêmes cas, inspecter les régressions et considérer l'incertitude.
 
 Le meilleur score moyen peut masquer un échec sur les autorisations ou une hausse des abandons. Après validation hors ligne, déployer progressivement et relier les mesures en production à la version réellement servie. L'outil d'expérimentation apporte les données ; la règle de décision reste à définir.
 
@@ -110,7 +126,7 @@ B réussit davantage mais son coût par réussite est plus élevé. Le choisir d
 
 Comment éviter que le feedback utilisateur manipule les scores d'une application agentique ? <!--anki:6435663531316637316162343438373938336638396566373964393037303862-->
 ?
-Rattacher le feedback à une **exécution appartenant à l'utilisateur authentifié**, borner la fréquence et définir une règle de remplacement ou de déduplication. Ne pas accepter librement un `trace_id` externe comme preuve de propriété.
+Rattacher le feedback à une **exécution appartenant à l'utilisateur authentifié**, borner la fréquence et définir une règle de remplacement ou de déduplication. Ne pas accepter librement un `trace_id` externe comme preuve de propriété : `POST /feedback` n'enregistre une note que si la trace appartient à l'utilisateur du jeton, une note par trace, la dernière remplaçant la précédente.
 
 Séparer satisfaction, correction factuelle et réussite métier. Le silence ne vaut pas approbation, et certains utilisateurs répondent plus souvent que d'autres. Garder ce feedback comme un signal à croiser avec des contrôles objectifs et des annotations ciblées.
 

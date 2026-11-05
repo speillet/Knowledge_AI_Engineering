@@ -7,6 +7,8 @@ Une température à 0 garantit-elle des sorties identiques ? <!--anki:6354476e2a
 ?
 **Non.** Les calculs GPU en **virgule flottante** ne sont pas associatifs : (a + b) + c ≠ a + (b + c). Un infime écart sur les logits suffit à changer le token choisi quand deux candidats sont presque à égalité, et toute la suite de la réponse diverge.
 
+Le batching, les kernels ou une révision du backend peuvent changer l'ordre des calculs. Pour un test, distinguer invariants métier stables et égalité textuelle exacte ; répéter les essais sensibles et archiver la configuration effective.
+
 ---
 
 D'où vient principalement le non-déterminisme d'un serveur d'inférence ? <!--anki:42575a626e2f243e7b46-->
@@ -38,6 +40,8 @@ Distinguer prompt utilisateur identique et **entrée complète du modèle identi
 À quoi sert le paramètre seed ? <!--anki:4b30415a706a76365a43-->
 ?
 À **fixer le générateur aléatoire** du sampling pour rejouer le même tirage. vLLM l'accepte par requête ; côté API, c'est au mieux un **« best effort »** (OpenAI l'accompagne d'un `system_fingerprint` qui change quand le backend change). Le seed ne neutralise **ni les écarts numériques ni les changements de version**.
+
+Utiliser plusieurs graines pour estimer la variabilité, tout en comparant les variantes sur les mêmes cas. Une amélioration observée avec une seule graine favorable ne démontre pas un gain robuste ; conserver aussi versions, paramètres et données.
 
 ---
 

@@ -8,7 +8,7 @@ Comment répartir les tests d'une application agentique ? <!--anki:3039663565653
 ?
 Tester **services et outils isolés**, orchestration avec modèle contrôlé, puis intégrations et qualité avec les vrais modèles. Chaque niveau répond à une question différente.
 
-Un test métier vérifie permissions et calculs ; un test de graphe vérifie transitions et reprise ; une évaluation mesure la réussite sur des demandes représentatives. La validation de l'ensemble demande ces preuves complémentaires. Garder beaucoup de tests locaux rapides et un ensemble ciblé d'expériences plus coûteuses.
+Un test métier vérifie permissions et calculs ; un test de graphe vérifie transitions et reprise ; une évaluation mesure la réussite sur des demandes représentatives. Exemple : l'atelier `examples/agentic-support` exécute 18 tests sans clé API, puis déclare explicitement la qualité du vrai modèle `not_evaluated`. Garder beaucoup de tests locaux rapides et un ensemble ciblé d'expériences plus coûteuses.
 
 ---
 
@@ -16,7 +16,7 @@ Un test métier vérifie permissions et calculs ; un test de graphe vérifie tra
 ?
 Un **modèle simulé** renvoie des réponses contrôlées pour provoquer un chemin précis. Il vérifie le code qui traite ces réponses, sans prouver qu'un vrai modèle saurait les produire.
 
-Utiliser des réponses invalides, des appels d'outils multiples et des refus pour tester l'orchestration. Mesurer séparément la qualité avec un fournisseur réel et un jeu de cas figé. Un atelier sans clé API peut démontrer la reprise et l'isolation, pas une performance linguistique.
+Utiliser des réponses invalides, des appels d'outils multiples et des refus pour tester l'orchestration. Exemple : un `GenericFakeChatModel` de LangChain renvoie `{"amount_cents": -1}` ; le test vérifie que la validation arrête ce montant avant toute approbation. Mesurer séparément la qualité avec un fournisseur réel et un jeu de cas figé. Un atelier sans clé API peut démontrer la reprise et l'isolation, pas une performance linguistique.
 
 ---
 
@@ -24,7 +24,7 @@ Quels invariants vérifier après une exécution agentique avec effet métier ? 
 ?
 Vérifier **l'état du système concerné** : opération autorisée, bonne cible, bon montant et absence de doublon. Les messages de l'agent ne constituent pas une preuve d'exécution.
 
-Par exemple, consulter le registre des avoirs et le solde de la commande après une reprise. Tester également l'invariant négatif : aucun effet avant approbation ni après refus. Définir les preuves attendues avant d'écrire les scénarios pour éviter des assertions qui répètent seulement le code.
+Par exemple, après une reprise, `SELECT count(*) FROM refunds` doit valoir 1 pour ce dossier, et le solde de la commande baisser du seul montant approuvé. Tester également l'invariant négatif : aucun effet avant approbation ni après refus. Définir les preuves attendues avant d'écrire les scénarios pour éviter des assertions qui répètent seulement le code.
 
 ---
 
@@ -32,7 +32,7 @@ Où injecter des pannes pour tester la reprise d'un agent ? <!--anki:62393232363
 ?
 Aux **frontières de validation** : avant l'effet, après son acceptation mais avant réception de la réponse, puis après la réponse mais avant le checkpoint. Ajouter le redémarrage pendant une attente humaine.
 
-Ces emplacements distinguent absence d'effet, résultat ambigu et travail accompli non mémorisé. Compter les effets persistés après reprise avec la même identité d'opération. Un test qui ne plante qu'avant tout appel externe ne couvre pas la fenêtre la plus dangereuse.
+Pour un remboursement, chaque fenêtre a son résultat attendu : panne avant l'appel, zéro avoir ; après acceptation mais avant la réponse, un état inconnu à réconcilier ; après la réponse mais avant le checkpoint, un avoir que la reprise ne doit pas dupliquer. Compter les effets persistés avec la même identité d'opération. Un test qui ne plante qu'avant tout appel externe ne couvre pas la fenêtre la plus dangereuse.
 
 ---
 
@@ -40,13 +40,13 @@ Pourquoi fermer puis rouvrir le stockage dans un test de reprise LangGraph ? <!-
 ?
 Pour vérifier que la reprise dépend des **données persistées**, et non d'objets restés en mémoire. Reconstruire graphe, clients et connexions avant de continuer le même thread.
 
-Un test encore plus fort lance un nouveau processus. Documenter ce que démontre le test : une exception Python n'est pas exactement une coupure de courant, et rouvrir SQLite ne valide pas une panne réseau PostgreSQL. Choisir les pannes en fonction des garanties visées.
+Un test encore plus fort lance un nouveau processus. Dans l'atelier support, un processus fils quitte avec le code 73 juste après le COMMIT métier ; le test reconstruit le moteur depuis les fichiers SQLite et exige un seul avoir. Documenter ce que démontre le test : rouvrir SQLite ne valide pas une panne réseau PostgreSQL.
 
 ---
 
 Comment tester l'authentification et l'isolation d'un run d'agent ? <!--anki:3164303962656361306130663465313762613036393930393963613032393630-->
 ?
-Créer deux identités et tenter **lecture, reprise, approbation, annulation et accès aux artefacts** du dossier de l'autre. Vérifier refus et absence de fuite dans le message d'erreur.
+Créer deux identités et tenter **lecture, reprise, approbation, annulation et accès aux artefacts** du dossier de l'autre. Vérifier refus et absence de fuite : avec le jeton de Bob, `GET /runs/{id}` sur un dossier d'Alice renvoie la même réponse 404 qu'un identifiant inexistant.
 
 Ajouter un cas où un droit est révoqué entre création et approbation. Tester aussi les outils directement : l'API ne doit pas être le seul lieu de contrôle si le moteur possède un autre chemin d'accès. Utiliser uniquement des données et identités de test.
 
@@ -55,7 +55,12 @@ Ajouter un cas où un droit est révoqué entre création et approbation. Tester
 Comment tester deux approbations concurrentes pour une même action d'agent ? <!--anki:3736633738653664386331653438356161623564653863346136303033623862-->
 ?
 Faire partir les requêtes ensemble avec une **barrière de synchronisation**, puis observer réponses et effet métier final. Répéter avec deux décisions identiques et deux décisions contradictoires.
-
+```python
+barrier = threading.Barrier(2)
+def approve():
+    barrier.wait(timeout=5)          # les deux threads partent ensemble
+    return engine.decide("alice", run_id, digest, True)
+```
 L'application doit appliquer sa règle explicite : une seule transition acceptée, ou réutilisation sûre du résultat déjà fixé. Vérifier l'absence de doublon dans le registre métier. Un test séquentiel de double clic ne couvre pas la course entre lecture du statut et écriture de la décision.
 
 ---
@@ -64,7 +69,7 @@ Comment tester une approbation devenue obsolète ? <!--anki:35376537326537663631
 ?
 Créer une proposition, conserver sa référence, puis modifier une **précondition métier** ou produire une nouvelle proposition avant de soumettre l'ancienne décision.
 
-L'exécution doit refuser l'action devenue incompatible ou demander une nouvelle validation, selon la règle définie. Contrôler la cible et le montant réellement écrits. Tester aussi expiration et changement de droits. Un simple test « oui/non » ne valide pas que l'approbation porte sur la bonne version.
+L'exécution doit refuser l'action devenue incompatible ou demander une nouvelle validation, selon la règle définie. Exemple : la décision porte l'empreinte de la proposition calculée sur la version 3 de la commande ; si la commande passe en version 4 avant l'exécution, aucun avoir ne doit être écrit. Tester aussi expiration et changement de droits. Un simple test « oui/non » ne valide pas que l'approbation porte sur la bonne version.
 
 ---
 
@@ -72,7 +77,7 @@ Comment tester l'annulation sans masquer un effet externe déjà réalisé ? <!-
 ?
 Injecter la demande d'annulation **avant**, **pendant** et **après** l'effet. Vérifier ce que le client apprend et si une réconciliation ou une compensation est nécessaire.
 
-Un moteur peut interrompre les étapes futures sans annuler un paiement accepté. Le statut final doit refléter cette réalité. Dans les tests, utiliser un service simulé qui distingue réception, validation et réponse afin d'exposer la course temporelle.
+Un moteur peut interrompre les étapes futures sans annuler un paiement accepté. Exemple : l'annulation arrive 200 ms après l'acceptation du remboursement par le prestataire ; le statut final doit indiquer « remboursé, annulation trop tardive », pas « annulé ». Dans les tests, utiliser un service simulé qui distingue réception, validation et réponse afin d'exposer la course temporelle.
 
 ---
 
@@ -80,7 +85,7 @@ Comment tester un consommateur d'événements agentiques ? <!--anki:333536323061
 ?
 Lui fournir des événements **dupliqués, retardés, interrompus et repris** selon le contrat du transport. Vérifier que son affichage converge vers le snapshot public courant.
 
-Une rediffusion ne doit pas déclencher d'action métier. Tester un curseur expiré et un schéma d'événement inconnu après déploiement. Les garanties d'ordre doivent être celles du système utilisé, pas une hypothèse implicite de l'interface.
+Exemple : le consommateur reçoit les événements 41, 42, 42, 44 puis 43. Il ignore le doublon, comble le trou avant d'afficher 44 ou recharge le snapshot, et n'envoie jamais un second e-mail. Tester un curseur expiré et un schéma d'événement inconnu après déploiement. Les garanties d'ordre doivent être celles du système utilisé, pas une hypothèse implicite de l'interface.
 
 ---
 
@@ -88,14 +93,20 @@ Pourquoi conserver des checkpoints historiques comme fixtures de migration ? <!-
 ?
 Ils représentent les **états réellement repris** après une mise à jour : champs manquants, ancien nom de nœud, proposition en attente et erreurs partielles.
 
-Nettoyer les données sensibles et conserver la version du code qui les a produits. Tester la reprise avec le candidat, puis le rollback prévu. Une fixture fabriquée uniquement selon le nouveau schéma peut masquer précisément l'incompatibilité qu'on cherche à détecter.
+Exemple : un checkpoint de la v1, en attente d'approbation, ne contient pas le champ `policy_version` ajouté en v2. Repris par le candidat, il doit obtenir une valeur explicite ou un refus clair, pas un `KeyError` en production. Nettoyer les données sensibles et tester aussi le rollback prévu. Une fixture fabriquée uniquement selon le nouveau schéma peut masquer précisément l'incompatibilité qu'on cherche à détecter.
 
 ---
 
 Comment vérifier automatiquement les traces d'un atelier agentique sans service distant ? <!--anki:3430393663363633303339633434613461376435393833343935343432306638-->
 ?
 Brancher un **exporteur local en mémoire** sur le SDK ou collecteur de test, puis vérifier noms, parents, attributs et absence de secrets synthétiques.
-
+```python
+spans = exporter.get_finished_spans()     # InMemorySpanExporter d'OpenTelemetry
+roots = {s.context.span_id for s in spans if s.name == "support-run"}
+commits = [s for s in spans if s.name == "commit-refund"]
+assert roots and commits
+assert all(s.parent is not None and s.parent.span_id in roots for s in commits)
+```
 Cela valide l'instrumentation et les payloads exportés. Cela ne valide pas l'authentification, l'ingestion ou l'affichage d'une instance distante. Ajouter un test d'intégration distinct sur l'environnement cible lorsque celui-ci est disponible, avec un jeu de données autorisé et une rétention définie.
 
 ---
@@ -104,7 +115,7 @@ Comment organiser une évaluation d'agent qui modifie son environnement ? <!--an
 ?
 Réinitialiser une **fixture indépendante par essai** : base, fichiers, mémoire et outils. Vérifier le résultat final depuis une source indépendante des déclarations de l'agent.
 
-L'essai suivant ne doit pas profiter du travail du précédent ni échouer parce que sa commande est déjà traitée. Conserver aussi des scénarios explicitement consacrés à la continuité multi-tours. Un environnement réaliste mais incontrôlé rend les comparaisons difficiles à interpréter.
+Sinon, l'essai 2 trouve la commande déjà remboursée par l'essai 1 et répond « déjà traité » : un succès apparent pour une mauvaise raison. Copier une base de référence dans un répertoire temporaire avant chaque essai évite ce biais. Conserver aussi des scénarios explicitement consacrés à la continuité multi-tours. Un environnement réaliste mais incontrôlé rend les comparaisons difficiles à interpréter.
 
 ---
 

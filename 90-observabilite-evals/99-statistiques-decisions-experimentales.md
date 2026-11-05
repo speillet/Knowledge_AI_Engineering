@@ -41,6 +41,8 @@ Les messages d'un utilisateur partagent préférences, contexte et parfois mémo
 
 Choisir une métrique et une analyse compatibles avec l'unité d'assignation : agrégation par utilisateur, méthode tenant compte des groupes ou rééchantillonnage des utilisateurs. Préciser aussi la pondération : l'utilisateur moyen et le message moyen ne représentent pas la même cible. Un utilisateur très actif ne doit pas dominer le résultat par accident.
 
+Dans un bootstrap par utilisateur, tirer les utilisateurs puis conserver ensemble leurs messages : rééchantillonner les messages isolément casserait cette dépendance.
+
 ---
 
 Calcul : zéro échec sur 300 essais permet-il d'annoncer un risque inférieur à 0,1 % ? <!--anki:3137303038393761333632613462623439663963373835316539313636323331-->
@@ -84,6 +86,8 @@ Qu'est-ce qu'un sample ratio mismatch dans un A/B test ? <!--anki:34613137363938
 Un **SRM** est un écart statistiquement suspect entre les effectifs observés par variante et le ratio d'assignation prévu. Un test conçu à 50/50 ne doit pas être interprété naïvement si la collecte fait disparaître davantage d'utilisateurs d'un bras.
 
 Examiner randomisation, éligibilité, exposition, télémétrie et filtres avant de comparer les résultats métier. Un écart brut minuscule est normal ; l'évaluer selon les effectifs. Corriger les volumes par pondération sans comprendre leur origine peut laisser intact un biais de sélection.
+
+Exemple : si les erreurs du bras B empêchent l'envoi de télémétrie, ses utilisateurs restants paraissent artificiellement plus satisfaits. Le SRM peut révéler ce défaut de collecte.
 
 ---
 

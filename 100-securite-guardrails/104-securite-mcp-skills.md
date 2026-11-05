@@ -69,6 +69,8 @@ Sur **3 984 skills** analysés : **37 %** ont au moins une faille, **76 charges 
 
 La leçon : un skill, c'est **du code et des instructions**. On le traite comme une dépendance, et on l'analyse sous les deux angles.
 
+Ces pourcentages portent sur l'échantillon et la méthode de l'étude, pas sur tout l'écosystème. En pratique, épingler une révision, relire les changements et vérifier les permissions demandées avant activation ; un scan de scripts seul ignore le contenu instructionnel.
+
 ---
 
 Quelles règles d'autorisation la spec MCP impose-t-elle aux serveurs ? <!--anki:6946284323454e704c71-->
@@ -85,6 +87,8 @@ Un jeton aux scopes larges (`files:*`, `admin:*`) volé ou détourné donne **to
 - Des **scopes initiaux minimaux** (lecture, découverte)
 - Une **élévation progressive** : le serveur demande un scope précis au moment où une opération privilégiée est tentée
 - Pas de scopes génériques (`*`, `full-access`), et une **journalisation** des élévations
+
+Un scope de lecture ne définit pas forcément quelles lignes ou quels clients sont accessibles. Combiner scopes, identité déléguée et autorisation sur la ressource ; tester aussi expiration et révocation, notamment lors de la reprise d'un agent longtemps suspendu.
 
 ---
 

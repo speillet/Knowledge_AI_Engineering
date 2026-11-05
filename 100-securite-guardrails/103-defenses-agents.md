@@ -46,12 +46,16 @@ Quels design patterns contre l'injection isolent la lecture des données non fia
 - **LLM Map-Reduce** : chaque document non fiable est traité par un **sous-agent isolé**, sans outils ; seul un résultat structuré (score, catégorie) remonte
 - **Dual LLM** : un LLM **privilégié** (outils, entrées de confiance) et un LLM **en quarantaine** (lit les données, sans outils), détaillé dans la carte suivante
 
+La sortie du modèle isolé reste non fiable. Limiter son schéma et valider sa sémantique avant transmission : un champ libre « recommandation » peut transporter une instruction malgré l'absence d'outils dans le sous-agent.
+
 ---
 
 Quels design patterns contre l'injection reposent sur un programme ou sur un contexte réduit ? <!--anki:49503325776469472e46-->
 ?
 - **Code-Then-Execute** : l'agent écrit un **programme** à partir de la demande, exécuté ensuite sous contrôle (idée poussée plus loin par CaMeL)
 - **Context-Minimization** : retirer du contexte ce qui n'est plus nécessaire, dont la **requête initiale** une fois qu'elle a servi, pour qu'elle ne puisse plus influencer la suite
+
+Ni le code généré ni le contexte réduit ne constituent seuls une preuve d'autorisation. Le programme doit être contrôlé avant exécution ; conserver séparément objectif validé et contraintes nécessaires. Supprimer une consigne métier essentielle peut aussi rendre l'agent incorrect.
 
 ---
 

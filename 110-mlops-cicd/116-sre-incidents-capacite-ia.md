@@ -81,6 +81,8 @@ Le comportement dépend aussi du **prompt, tokenizer, index, schéma d'outil, co
 
 Versionner l'ensemble utile, documenter les compatibilités et répéter la procédure de retour. Les effets externes déjà réalisés exigent réconciliation ou compensation ; les annuler n'est pas une propriété du rollback logiciel. Vérifier après bascule la qualité, les files en attente et le traitement des tâches démarrées sous l'ancienne configuration.
 
+Exemple : des embeddings de même dimension mais issus d'un autre modèle restent incompatibles. Revenir aux seuls poids du générateur ne répare pas cet index.
+
 ---
 
 À ne pas confondre : RTO et RPO pour une application IA ? <!--anki:3439663163353563633762653465313839343835313836623039336634646539-->
@@ -88,6 +90,8 @@ Versionner l'ensemble utile, documenter les compatibilités et répéter la proc
 Le **RTO** est l'objectif de délai de reprise après interruption ; le **RPO** représente la perte de données tolérable exprimée en durée. Reprendre en une heure ne signifie pas retrouver tous les événements jusqu'à la panne.
 
 Définir les objectifs par état : corpus, index reconstructible, checkpoints d'agents et journal d'effets métier. Une sauvegarde n'est utile que si restauration, clés, permissions et dépendances fonctionnent ensemble. Mesurer la reprise réelle lors d'un exercice et documenter les écarts aux objectifs.
+
+Exemple : un RPO de 15 minutes peut autoriser la perte de récents checkpoints, pas nécessairement celle de paiements déjà acceptés. Ces états exigent des objectifs distincts.
 
 ---
 

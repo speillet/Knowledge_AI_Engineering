@@ -21,7 +21,7 @@ Ni l'un ni l'autre ne prédit automatiquement la production. Vérifier contamina
 
 Par quoi faut-il commencer pour construire des evals ? <!--anki:45287263614956357d47-->
 ?
-Définir la **tâche et ses exigences**, puis examiner des exemples et erreurs réels ou simulés : sources manquantes, mauvais montant, action interdite, format invalide. Regrouper les défaillances pour choisir des critères qui guident une correction.
+Définir la **tâche et ses exigences**, puis examiner des exemples et erreurs réels ou simulés : sources manquantes, mauvais montant, action interdite, format invalide. Regrouper les défaillances pour choisir des critères qui guident une correction : sur 100 conversations relues, par exemple 31 sources manquantes, 12 montants faux et 4 actions interdites ([[98-debogage-agents|analyse d'erreurs]]).
 
 Un premier échantillon aide à découvrir les problèmes, sans prétendre estimer leur fréquence réelle. Ajouter les cas limites importants même s'ils ne sont pas encore observés. Les contrats déjà connus, comme droits d'accès ou exactitude d'un calcul, n'attendent pas un incident pour devenir des critères d'évaluation.
 
@@ -29,7 +29,7 @@ Un premier échantillon aide à découvrir les problèmes, sans prétendre estim
 
 Qu'est-ce qu'un golden dataset et comment le constituer ? <!--anki:686a7c383d56593b4855-->
 ?
-Un **jeu de référence versionné** contient entrées, contexte nécessaire et réponses ou critères attendus. Combiner trafic représentatif, cas métier, régressions connues et cas limites relus.
+Un **jeu de référence versionné** contient entrées, contexte nécessaire et réponses ou critères attendus. Combiner trafic représentatif, cas métier, régressions connues et cas limites relus : par exemple 300 demandes tirées au hasard du trafic, 60 cas rédigés avec le support et 40 régressions.
 
 Distinguer leurs usages : les bugs ajoutés nourrissent la non-régression ; un test final indépendant sert à estimer la qualité sans guider les réglages. Un jeu volontairement enrichi en cas difficiles ne représente plus directement la fréquence du trafic. Documenter provenance, segments, droits et qualité des annotations. « Golden » ne signifie pas que chaque référence est infaillible ou immuable.
 
@@ -39,13 +39,13 @@ Quelles sont les trois familles d'évaluateurs ? <!--anki:7a46426d355b3c3e386b--
 ?
 Le **code** contrôle des propriétés explicites : schéma, valeur attendue ou tests d'exécution. Un **juge LLM** apprécie des critères sémantiques définis. Les **humains** établissent et discutent des références, notamment pour les cas ambigus.
 
-Chacun peut se tromper : assertion mal conçue, juge biaisé, annotation incohérente. Choisir le moyen le plus simple qui mesure réellement le critère, puis le valider. Le code a un coût et sa détermination ne garantit pas la pertinence du test. Une sortie JSON valide ne prouve pas que son montant est correct.
+Exemple pour une extraction de facture : le code vérifie `total == somme(lignes)`, un juge contrôle qu'un libellé reformulé garde son sens, un humain tranche les factures ambiguës. Chacun peut se tromper : choisir le moyen le plus simple qui mesure réellement le critère, puis le valider. Le code a un coût et sa détermination ne garantit pas la pertinence du test. Une sortie JSON valide ne prouve pas que son montant est correct.
 
 ---
 
 Pourquoi préférer des critères binaires (pass/fail) aux notes de 1 à 10 ? <!--anki:796e4c44435b4b7e4e43-->
 ?
-Un **critère binaire explicite** facilite une décision de conformité : « toutes les affirmations chiffrées sont-elles étayées ? ». Il rend l'erreur localisable et se compare à une annotation de référence.
+Un **critère binaire explicite** facilite une décision de conformité : « toutes les affirmations chiffrées sont-elles étayées ? ». Il rend l'erreur localisable et se compare à une annotation de référence : deux annotateurs qui notent la même réponse 6 et 8 sur 10 répondent tous deux « non » à ce critère, en pointant le même montant.
 
 Ce n'est pas toujours supérieur à une échelle : la qualité stylistique ou une pertinence graduée peuvent nécessiter plusieurs niveaux, décrits par des exemples d'ancrage. Une question binaire vague reste vague. Mesurer accord et erreurs des évaluateurs, et ne pas réduire plusieurs dimensions à un oui/non qui masque les régressions.
 
@@ -55,7 +55,7 @@ Ce n'est pas toujours supérieur à une échelle : la qualité stylistique ou un
 ?
 Une eval **avec référence** utilise une réponse, des faits ou un résultat attendu pour comparer la sortie. Une eval **sans réponse de référence** vérifie un critère à partir des données disponibles : format, consigne ou soutien par les documents.
 
-« Sans référence » ne veut pas dire sans information fiable : juger la fidélité exige le contexte source. Une référence peut aussi contenir des erreurs ou n'illustrer qu'une formulation valable. Choisir les informations et le vérificateur selon le critère ; les expressions *reference-based* et *reference-free* doivent être définies dans le protocole.
+Exemple : « montant extrait = 1 240,00 € » se compare à la valeur annotée ; « la réponse ne contient que des faits présents dans les passages » se juge sans réponse de référence. « Sans référence » ne veut pas dire sans information fiable : juger la fidélité exige le contexte source. Une référence peut aussi contenir des erreurs ou n'illustrer qu'une formulation valable parmi d'autres.
 
 ---
 
@@ -64,6 +64,8 @@ Une eval **avec référence** utilise une réponse, des faits ou un résultat at
 - **Offline** : sur un **jeu figé** avant déploiement — détecte les régressions, sert de [[112-cicd-modeles|gate CI]].
 - **Online** : sur le **trafic réel** — évaluateurs sans référence sur un échantillon, feedback utilisateur, [[97-evals-online-ab-testing|A/B tests]].
 
+Exemple : en offline, 400 cas figés bloquent une PR si l'exactitude baisse ; en online, un juge validé note chaque jour 2 % des conversations réelles sur la fidélité aux sources.
+
 Les deux se nourrissent : les échecs vus en ligne **alimentent le golden dataset**.
 
 ---
@@ -71,6 +73,8 @@ Les deux se nourrissent : les échecs vus en ligne **alimentent le golden datase
 Pourquoi évaluer les composants **et** le système de bout en bout ? <!--anki:4529237523433a3c5f4b-->
 ?
 Le bout en bout dit **si** ça marche ; les evals de composants disent **où** ça casse. Un [[96-evals-rag-agents|RAG]] se découpe en **retrieval** (le bon document est-il remonté ?) et **génération** (la réponse est-elle fidèle ?) ; un agent en **choix d'outil**, **arguments**, **trajectoire** et **résultat final**.
+
+Exemple : la réussite passe de 82 % à 74 % ; le rappel@5 reste stable mais la fidélité baisse. Examiner génération et contexte effectif : un rappel identique peut cacher d'autres distracteurs ou un ordre différent. Rejouer avec contexte fixé avant d'attribuer l'écart au prompt.
 
 ---
 
@@ -84,7 +88,7 @@ Exemple : un utilisateur signale que l'assistant invente un délai de remboursem
 
 Qu'est-ce que la saturation d'une eval et que faire ? <!--anki:4730412c2d44506c2d2f-->
 ?
-Quand le système atteint **~100 %** sur le jeu, l'eval **ne discrimine plus** : elle protège encore contre les régressions mais ne guide plus l'amélioration. Il faut **ajouter des cas plus durs** (échecs de prod, cas adversariaux) pour garder un **jeu de progrès** distinct du **jeu de non-régression**.
+Quand le système atteint **~100 %** sur le jeu, l'eval **ne discrimine plus** : elle protège encore contre les régressions mais ne guide plus l'amélioration. Deux modèles très différents obtiennent 98 % et 99 % sur 200 cas ; l'écart tient à deux questions. Il faut **ajouter des cas plus durs** (échecs de prod, cas adversariaux) pour garder un **jeu de progrès** distinct du **jeu de non-régression**.
 
 ---
 
@@ -95,6 +99,8 @@ Quels sont les anti-patterns classiques en évaluation ? <!--anki:7a58572a706e4a
 - **Jeu trop petit** et conclusions tirées d'un écart de 2 points.
 - **Contamination** : optimiser les prompts sur le jeu de test lui-même (**overfitting** aux evals).
 - Oublier les **coûts et la latence** dans la comparaison.
+
+Exemple d'overfitting : quinze itérations de prompt réglées sur les 100 cas de test font passer le score de 72 % à 86 %, puis il retombe à 74 % sur 100 cas jamais vus.
 
 ---
 

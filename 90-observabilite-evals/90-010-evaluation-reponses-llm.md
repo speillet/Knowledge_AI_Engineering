@@ -25,6 +25,8 @@ La **pertinence** mesure si la réponse répond au besoin exprimé. Le **respect
 
 Une réponse pertinente de 500 mots échoue à une limite de 100 mots. Un texte français de 80 mots peut respecter ces contraintes tout en répondant à une autre question. Définir une règle de comptage et des exemples d'ancrage ; ne pas donner à une propriété mécanique le sens d'une réussite métier complète.
 
+Publier les deux critères séparément : optimiser la concision ne doit pas faire disparaître une réserve indispensable à la décision.
+
 ---
 
 Pourquoi une seule réponse de référence peut-elle pénaliser des réponses correctes ? <!--anki:3266306332623938643062353464306338383233363036323065356538656431-->
@@ -32,6 +34,8 @@ Pourquoi une seule réponse de référence peut-elle pénaliser des réponses co
 Une référence textuelle illustre souvent **une formulation parmi plusieurs**. Un exact match brut rejette alors une paraphrase correcte ou un autre raisonnement conduisant au même résultat.
 
 Pour une question ouverte, annoter faits requis, formulations admissibles et contradictions interdites, ou utiliser plusieurs références relues. Pour une cible réellement unique, comme un identifiant, conserver une comparaison stricte. Un juge sémantique peut aider mais doit être validé ; multiplier les références ne transforme pas une information erronée en vérité. Versionner aussi les annotations et leurs corrections.
+
+« 0,5 » et « 50 % » peuvent être équivalents ; deux identifiants client proches ne le sont pas. Normaliser selon le type de réponse.
 
 ---
 

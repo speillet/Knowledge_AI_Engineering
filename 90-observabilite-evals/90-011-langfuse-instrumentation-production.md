@@ -8,7 +8,7 @@ Pourquoi tracer seulement la gateway LLM ne suffit-il pas pour observer un agent
 ?
 La gateway voit les **appels de modèles qui la traversent**. Elle ne décrit pas nécessairement le retrieval, les outils métier, les décisions d'approbation ou l'attente dans une file.
 
-Créer une trace applicative qui relie ces étapes et lui rattacher les appels LLM. Sans cette structure, on peut connaître le coût de génération tout en ignorant pourquoi le dossier a échoué. La couverture réelle doit se vérifier sur une exécution avec outil, erreur et reprise.
+Créer une trace applicative qui relie ces étapes et lui rattacher les appels LLM. Exemple : la gateway montre deux appels réussis pour 3 200 tokens ; seule la trace applicative révèle que l'outil de lecture de commande a expiré après 4 s, d'où la réponse de repli. La couverture réelle doit se vérifier sur une exécution avec outil, erreur et reprise.
 
 ---
 
@@ -16,7 +16,7 @@ Comment choisir le périmètre d'une trace Langfuse pour une conversation ? <!--
 ?
 Une trace représente une **unité de travail inspectable**, par exemple un tour de conversation ou un run d'agent. Une session regroupe les traces liées au parcours.
 
-Un même dossier peut produire plusieurs traces lors de pauses humaines et de reprises, avec un identifiant métier commun. Éviter de maintenir artificiellement une observation ouverte plusieurs jours uniquement pour garder un arbre unique. Distinguer temps d'exécution actif, attente humaine et durée totale du dossier.
+Un même dossier peut produire plusieurs traces lors de pauses humaines et de reprises, avec un identifiant métier commun. Exemple : la proposition de remboursement forme une trace, l'exécution approuvée le lendemain une autre ; toutes deux portent `dossier_id=D-123` dans la même session. Éviter de maintenir artificiellement une observation ouverte plusieurs jours uniquement pour garder un arbre unique. Distinguer temps d'exécution actif, attente humaine et durée totale du dossier.
 
 ---
 
@@ -24,14 +24,19 @@ Un même dossier peut produire plusieurs traces lors de pauses humaines et de re
 ?
 Le **thread** porte la continuité de l'état, le **run** identifie une exécution et la **trace** relie ses observations techniques. Leur correspondance dépend de l'architecture : un thread peut contenir plusieurs runs et traces.
 
-Conserver des références explicites, en métadonnées, avec l'identité du dossier. Aucune de ces valeurs ne constitue une autorisation d'accès. Ne pas utiliser l'identifiant de trace comme clé d'idempotence d'une action : une reprise peut produire une nouvelle trace pour la même opération métier.
+Exemple : le thread `D-123` contient le run 1, la proposition, et le run 2, la reprise après approbation, chacun avec sa trace. Conserver ces références en métadonnées ; aucune ne constitue une autorisation d'accès. La clé d'idempotence reste métier, comme `D-123:rembourser` : la reprise a produit une nouvelle trace pour la même opération.
 
 ---
 
 Comment structurer les observations Langfuse d'une boucle d'agent ? <!--anki:3031316337333931316263323431393238636463386531393366376266386632-->
 ?
-Créer un parent pour l'exécution, puis distinguer **appels LLM, outils et étapes de recherche ou de validation**. Chaque invocation de modèle doit rester identifiable avec son usage et son résultat.
-
+Créer un parent pour l'exécution, puis distinguer **appels LLM, outils et étapes de recherche ou de validation**. Chaque invocation de modèle doit rester identifiable avec son usage et son résultat. Avec le SDK Python :
+```python
+with langfuse.start_as_current_observation(name="support-run", as_type="agent"):
+    with langfuse.start_as_current_observation(name="read-order", as_type="tool"): ...
+    with langfuse.start_as_current_observation(name="propose-refund", as_type="generation",
+                                               model="modele-x"): ...
+```
 Ne pas envelopper toute la boucle dans une seule generation : cela masque l'appel qui a grossi le contexte ou demandé un outil incorrect. Utiliser des noms stables et des métadonnées pour les identifiants variables, afin de garder des filtres et des évaluations comparables.
 
 ---
@@ -39,7 +44,13 @@ Ne pas envelopper toute la boucle dans une seule generation : cela masque l'appe
 Comment propager une trace entre une API et un worker ? <!--anki:3766396665323336396562643466333661366663303634383533313331373862-->
 ?
 Injecter le **contexte de traçage** dans le message de la file, puis l'extraire dans le worker avec les mécanismes compatibles OpenTelemetry. Selon la durée et la causalité, créer un enfant ou une nouvelle trace reliée par un lien et les identifiants applicatifs.
-
+```python
+# API : joindre le contexte au message
+msg["trace"] = {"trace_id": langfuse.get_current_trace_id(),
+                "parent_span_id": langfuse.get_current_observation_id()}
+# Worker : rattacher son travail à cette trace
+with langfuse.start_as_current_observation(name="worker", trace_context=msg["trace"]): ...
+```
 Le transport de contexte ne doit contenir ni secret ni preuve d'autorisation. Le worker doit reconstruire ses droits depuis une source fiable. Tester la file réelle : une propagation qui marche entre fonctions peut disparaître à la frontière de processus.
 
 ---
@@ -48,7 +59,7 @@ Pourquoi des observations Langfuse deviennent-elles orphelines en async ou dans 
 ?
 Le **contexte actif** peut ne pas être transmis à la tâche, au thread ou au processus exécutant le travail. Le span est alors créé sous un mauvais parent, ou dans une trace indépendante.
 
-Vérifier où les tâches sont créées, combien de temps le parent reste actif et comment l'intégration propage le contexte. Ajouter un test qui lance deux requêtes intercalées et contrôle leurs relations parent-enfant. Copier globalement « le dernier trace_id » mélange les utilisateurs.
+En Python, `asyncio.create_task` copie le contexte courant, mais `pool.submit(f)` ne transmet pas les `contextvars` au thread du pool ; `pool.submit(contextvars.copy_context().run, f)` les emporte. Ajouter un test qui lance deux requêtes intercalées et contrôle leurs relations parent-enfant. Copier globalement « le dernier trace_id » mélange les utilisateurs.
 
 ---
 
@@ -56,13 +67,13 @@ Quelles données faut-il fournir pour interpréter le coût d'une generation Lan
 ?
 Le **modèle réellement appelé**, les unités d'usage disponibles et une tarification adaptée. Distinguer notamment entrées, sorties et tokens mis en cache lorsque le fournisseur les expose.
 
-Une valeur absente ne doit pas devenir silencieusement un coût nul. Vérifier les alias de modèle, tarifs personnalisés et compteurs spécifiques du fournisseur. Réconcilier périodiquement les estimations avec la facturation, en conservant le périmètre : certains frais d'outils ou d'infrastructure sont hors coût LLM.
+Une valeur absente ne doit pas devenir silencieusement un coût nul. Exemple : le fournisseur renvoie un nom daté, `modele-x-2026-10`, absent de la table de prix ; aucun coût n'est inféré et le tableau qui additionne ces générations sous-estime la dépense. Vérifier alias, tarifs personnalisés et compteurs spécifiques. Réconcilier périodiquement les estimations avec la facturation, en conservant le périmètre : certains frais d'outils ou d'infrastructure sont hors coût LLM.
 
 ---
 
 Comment mesurer correctement une génération streamée avec Langfuse ? <!--anki:3165313938623363666230653464303338313733333931653563306539333863-->
 ?
-L'observation doit couvrir la **consommation réelle du flux**, pas seulement la création du générateur. Enregistrer premier contenu utile, fin ou annulation et usage final lorsqu'il est disponible.
+L'observation doit couvrir la **consommation réelle du flux**, pas seulement la création du générateur. Enregistrer premier contenu utile, avec `completion_start_time`, fin ou annulation, et usage final lorsqu'il est disponible. Une observation fermée dès le retour du générateur affiche quelques millisecondes pour une réponse de 12 s.
 
 Une réponse interrompue peut avoir consommé des tokens même si aucun total n'a été reçu. Marquer l'usage comme incomplet plutôt que zéro. La latence de génération et le délai perçu par l'utilisateur diffèrent si une file, un retrieval ou un proxy retarde l'affichage.
 
@@ -86,15 +97,19 @@ La moyenne globale peut donc sembler suffisante tout en laissant un incident rar
 
 Où masquer les données sensibles avant envoi à Langfuse ? <!--anki:3838316261663163646131663461313762303236646566653364316136616164-->
 ?
-Au plus près de la **source instrumentée**, avant export, en couvrant entrées, sorties, messages d'outils et métadonnées. Les fonctions de masquage du SDK peuvent aider, mais leur portée doit être testée sur les intégrations utilisées.
-
-Une règle sur le prompt ne masque pas automatiquement une erreur réseau ou un document placé dans les métadonnées. Préférer une collecte minimale et des identifiants pseudonymes. Vérifier les payloads exportés avec des secrets synthétiques, plutôt que seulement leur affichage dans l'interface.
+Au plus près de la **source instrumentée**, avant export, en couvrant entrées, sorties, messages d'outils et métadonnées. Les fonctions de masquage du SDK aident, mais leur portée doit être testée.
+```python
+def masquer(*, data, **kwargs):
+    return re.sub(r"\b\d{16}\b", "[CARTE]", data) if isinstance(data, str) else data
+langfuse = Langfuse(mask=masquer)
+```
+`mask` ne traite que les données posées par le SDK Langfuse ; les spans d'autres instrumentations OpenTelemetry relèvent de `mask_otel_spans`. Préférer une collecte minimale et des identifiants pseudonymes. Vérifier les payloads exportés avec des secrets synthétiques, plutôt que seulement leur affichage dans l'interface.
 
 ---
 
 Pourquoi un script court peut-il perdre ses dernières traces Langfuse ? <!--anki:3361373339386663393233373434383262313231643965373965643534633235-->
 ?
-Les observations peuvent être **mises en file puis exportées en arrière-plan**. Le processus peut finir avant cet export, surtout dans un script court ou un environnement interrompu rapidement.
+Les observations peuvent être **mises en file puis exportées en arrière-plan**. Le SDK Python les envoie par défaut par lots de 512 spans ou toutes les 5 s : un script qui termine en 2 s peut sortir avant le premier envoi.
 
 Prévoir un flush ou un arrêt propre du client à la frontière de vie du processus, avec un délai borné. Un flush déclenche ou attend l'export selon le SDK ; il ne prouve pas à lui seul que toute donnée est devenue interrogeable. Tester erreurs réseau et arrêt brutal.
 
@@ -104,13 +119,13 @@ Comment éviter de compter deux fois les appels LLM dans Langfuse ? <!--anki:623
 ?
 Cartographier les **instrumentations actives** : callback du framework, SDK du fournisseur, wrapper manuel et gateway. Un même appel peut être observé à plusieurs frontières.
 
-Choisir une observation de référence pour les tokens et le coût, ou relier explicitement les autres sans additionner deux usages identiques. Une trace parent résumant un coût ne doit pas être comptée en plus de tous ses enfants. Vérifier un exemple dont le nombre d'appels et les tokens sont connus.
+Choisir une observation de référence pour les tokens et le coût, ou relier explicitement les autres sans additionner deux usages identiques. Le client Langfuse peut écarter les spans d'une bibliothèque redondante avec `should_export_span`. Une trace parent résumant un coût ne doit pas être comptée en plus de tous ses enfants. Vérifier un exemple dont le nombre d'appels et les tokens sont connus.
 
 ---
 
 Quel comportement prévoir si Langfuse devient indisponible ? <!--anki:3238313361373463646664343466626562646566636237633439353734316466-->
 ?
-Distinguer **télémétrie de diagnostic** et journal métier exigé pour autoriser une action. Pour la première, borner files, retries et mémoire afin qu'une panne d'observabilité ne bloque pas toutes les requêtes.
+Distinguer **télémétrie de diagnostic** et journal métier exigé pour autoriser une action. Pour la première, borner files, retries et mémoire afin qu'une panne d'observabilité ne bloque pas toutes les requêtes. Le processeur par lots d'OpenTelemetry, sur lequel repose le SDK Python, garde par défaut 2 048 spans en file et abandonne les suivants.
 
 Mesurer les pertes et signaler la période aveugle. Si un audit durable est nécessaire avant une action sensible, l'enregistrer dans le système métier avec une politique explicite. Le SDK d'observabilité n'est pas automatiquement cette garantie d'audit.
 

@@ -100,6 +100,8 @@ Que peut-on cacher en dehors du modèle ? <!--anki:415f533243626d51464d-->
 - **Embeddings** : hash du chunk + version du modèle d'embedding, pour ne jamais ré-embedder
 - **Résultats d'outils, d'API et de retrieval**, avec un TTL adapté à leur fraîcheur
 
+Une clé doit aussi refléter les droits et versions pertinents. Ne pas normaliser aveuglément négations, unités ou identifiants : « autorisé » et « non autorisé » ne sont pas des réponses interchangeables, même si leurs embeddings sont proches.
+
 ---
 
 Comment éviter de servir une réponse périmée ou fausse depuis le cache ? <!--anki:76254f61255254613b4e-->
@@ -108,6 +110,8 @@ Comment éviter de servir une réponse périmée ou fausse depuis le cache ? <!-
 - Un **TTL** adapté à la fraîcheur des données, et une **invalidation** à chaque changement de prompt ou de données
 - **Ne pas cacher** les réponses personnalisées ou volontairement variées
 - Un **seuil strict** pour le cache sémantique
+
+Le TTL ne garantit pas une révocation immédiate. Si les droits changent, invalider l'entrée ou revérifier ses preuves avant service. Tester même question, deux utilisateurs puis retrait d'accès ; un hit rapide sur une information interdite reste un échec.
 
 ---
 

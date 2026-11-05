@@ -31,6 +31,8 @@ Comment attribuer les coûts aux équipes ? <!--anki:74243d714f553e3e7e64-->
 
 Sans attribution, personne n'est responsable d'un coût qui double, et les optimisations restent des vœux pieux.
 
+Réconcilier usage attribué et facture, en identifiant coûts partagés et données manquantes. Une requête passant par trois agents ne doit pas être facturée trois fois au parent en plus de ses enfants ; définir l'unité de consolidation.
+
 ---
 
 Comment encadrer les dépenses LLM des équipes ? <!--anki:532b47722b306e7350-->
@@ -74,6 +76,8 @@ Quelles pratiques FinOps côté GPU ? <!--anki:75432b70652f39746a70-->
 - **Spot ou préemptible** pour le non-critique (batch, evals), avec reprise sur interruption
 - **Scale-to-zero** des modèles peu appelés
 - **Réservations** pour la charge de base stable ([[12-kubernetes-gpu-inference|K8s GPU]])
+
+Le taux d'utilisation seul n'est pas une cible de valeur : un GPU occupé à recalculer du KV après préemption peut coûter davantage sans servir plus de tâches. Comparer goodput, SLO et coût par réussite, en gardant une marge pour les pics.
 
 ---
 

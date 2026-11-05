@@ -38,6 +38,8 @@ Que propose le NIST pour la sécurité de l'IA et des agents ? <!--anki:70572428
 - **AI RMF** : le cadre de gestion des risques de l'IA, avec son **profil IA générative** (AI 600-1)
 - **AI Agent Standards Initiative** du CAISI (février 2026) : interopérabilité et sécurité des agents. Elle prépare des **overlays SP 800-53** dédiés aux agents : moindre privilège des outils, confinement des actions, journalisation
 
+Un cadre organise les contrôles, il ne certifie pas automatiquement une application. Traduire chaque risque retenu en responsable, mesure et preuve : par exemple, un test montrant qu'un outil refuse réellement une opération hors périmètre.
+
 ---
 
 Quels cadres de management et de conformité s'appliquent à l'IA agentique ? <!--anki:4c565e4f416e3d577049-->
@@ -150,6 +152,8 @@ Quelles règles pour les environnements de dev et de test des agents ? <!--anki:
 - **Identifiants séparés** : aucun jeton de production accessible à un agent de dev
 - **Outils simulés** ou sandboxés pour les tests, surtout ceux qui écrivent ou envoient
 - **Mêmes politiques et mêmes guardrails** qu'en production, pour tester ce qui sera réellement déployé
+
+La parité porte sur les contrôles, pas sur le partage des secrets. Tester un envoi ou un paiement avec un double local et vérifier qu'aucun endpoint réel n'est accessible. Documenter les différences de préproduction qui limitent la portée des tests.
 
 ---
 

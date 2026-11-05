@@ -17,6 +17,8 @@ Quels signaux de qualité collecter en production ? <!--anki:7957626f517230716c-
 - **Implicites** : **reformulation** de la question, **copie** de la réponse, **acceptation** d'une suggestion de code, abandon, escalade vers un humain.
 - **Automatiques** : [[95-llm-as-judge|juges]] sans référence sur un échantillon, validations de format, détecteurs.
 
+Un signal implicite reste ambigu : copier peut signifier « utile » ou « à corriger ailleurs ». Croiser plusieurs signaux avec des traces annotées, et mesurer qui donne du feedback ; les silencieux ne sont pas automatiquement satisfaits.
+
 ---
 
 Qu'est-ce qu'un A/B test sur une application LLM ? <!--anki:4c3830253b43347c7138-->
@@ -47,6 +49,8 @@ Conséquences pratiques : un canary dure des heures, avec des critères d'arrêt
 Pourquoi faut-il fixer à l'avance la taille d'échantillon et la durée ? <!--anki:643c68246355213a393a-->
 ?
 Pour éviter le **peeking** : regarder le résultat tous les jours et **arrêter dès que c'est significatif** gonfle fortement le taux de faux positifs. On calcule la taille nécessaire (effet minimal détectable, puissance) avant de lancer, ou on utilise des **tests séquentiels** conçus pour le suivi continu.
+
+Prévoir aussi un cycle d'usage représentatif et des règles d'arrêt de sécurité. Arrêter pour incident est légitime, mais ne permet pas de présenter ensuite le résultat comme celui d'un test fixe achevé sans biais.
 
 ---
 
