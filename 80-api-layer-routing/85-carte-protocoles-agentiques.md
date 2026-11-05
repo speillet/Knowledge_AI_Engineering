@@ -67,6 +67,8 @@ Les **noms d'attributs et de spans** des traces d'applications LLM et d'agents :
 
 Intérêt : un même tableau de bord ou outil d'analyse lit les traces de **frameworks et plateformes différents**, sans adaptateur ([[93-monitoring-inference|monitoring]]).
 
+L'interopérabilité suppose des versions et unités compatibles. Épingler les conventions utilisées et vérifier un exemple exporté ; un nom standard ne garantit ni la présence de l'attribut ni sa bonne valeur. Masquer les contenus sensibles indépendamment du format.
+
 ---
 
 À quoi servent `AGENTS.md` et les skills dans le paysage des standards ? <!--anki:6c386c4d393f6e2f512f-->
@@ -103,6 +105,8 @@ Quand ne pas exposer un agent en A2A ? <!--anki:6c7a5b4c793579265f52-->
 - **Aucun consommateur externe** prévu : A2A ajoute authentification, découverte et surface d'attaque pour rien
 
 A2A se justifie **entre équipes, entre éditeurs ou entre organisations**.
+
+Exemple : deux composants déployés et versionnés ensemble peuvent partager une interface locale typée. Une frontière réseau devient pertinente avec autonomie de déploiement, contrat stable et besoin réel de découverte ; elle ajoute aussi timeouts, erreurs partielles et gestion d'identité.
 
 ---
 

@@ -90,6 +90,8 @@ L'[[83-gateway-ingress|Ingress]] gère le réseau ; LiteLLM gère la **logique p
 
 Le client reçoit une interface commune tandis que la gateway choisit le backend et applique les politiques de coût. Chaque saut ajoute une possibilité d'erreur, de délai ou de buffering du stream. Aligner les timeouts, propager les identifiants de requête et vérifier l'authentification à chaque frontière exposée.
 
+Comparer un même appel direct au backend puis via la chaîne complète. Si le streaming arrive en bloc uniquement via l'Ingress, changer de modèle ne corrigera pas ce buffering.
+
 ---
 
 Quel type de gateway LLM choisir : auto-hébergée, service managé du cloud, ou agrégateur SaaS ? <!--anki:3236613063623236323539633436323039303964303466393931623061646136-->
@@ -107,6 +109,8 @@ Que se passe-t-il quand une virtual key LiteLLM atteint son budget ? <!--anki:33
 Le proxy **refuse** les requêtes suivantes avec une erreur explicite, jusqu'à la fin de la période (`budget_duration`) ou un relèvement du plafond.
 
 Pour l'application, c'est une **panne** : il faut gérer cette erreur (message clair, mode dégradé), et **alerter avant** le plafond, par exemple à 80 % ([[122-finops-llm|FinOps]]).
+
+Ne pas réessayer en boucle une requête refusée pour budget : sans changement de plafond ou de période, elle restera refusée. Tester le comportement sous concurrence ; un plafond logique ne promet pas une facture exactement égale au centime près.
 
 ---
 

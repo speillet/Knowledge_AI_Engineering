@@ -55,6 +55,8 @@ Container
 
 Le Dockerfile décrit la construction ; l'image est l'artefact versionné ; le registry la distribue. Le runtime prépare ensuite une instance exécutable, le **conteneur**, avec processus, réseau et montages. Plusieurs conteneurs peuvent partir de la même image. Les données écrites pendant l'exécution ne deviennent pas automatiquement une nouvelle version de cette image.
 
+Identifier la livraison par son digest et stocker les données durables dans un volume prévu. Reconstruire le même Dockerfile avec des dépendances non épinglées peut produire une autre image : la recette seule ne garantit pas la reproductibilité.
+
 ---
 
 Comment résumer Docker, Kubernetes, containerd et runc ? <!--anki:4a54653c552f697c7a31-->
@@ -83,6 +85,8 @@ Quel serveur d'inférence pour quel usage : production GPU, performance maximale
 - **Poste local** : **Ollama** ou llama.cpp
 
 TGI est en mode maintenance ([[11-serveurs-inference-llm|serveurs d'inférence]]).
+
+Ces orientations ne remplacent pas un benchmark. Comparer sur le même modèle, la même quantification et les mêmes longueurs ; vérifier qualité, p95 et coût par tâche réussie. Le serveur le plus rapide sur une requête isolée peut moins bien tenir la concurrence cible.
 
 ---
 

@@ -47,11 +47,15 @@ Au-dessus du manifest, un **index d'image** peut pointer vers un manifest par pl
 ?
 À définir comment un conteneur est **créé et exécuté** par un [[03-containerd-runc|runtime OCI]] comme **runc** : un **bundle** (système de fichiers extrait + fichier `config.json`) et un **cycle de vie** normalisé (`create`, `start`, `kill`, `delete`). Le `config.json` décrit les **namespaces**, les **cgroups**, les montages et les capabilities à appliquer ([[08-linux-primitives-docker-fondamentaux|primitives Linux]]).
 
+Elle ne définit ni la construction de l'image ni le téléchargement depuis un registry. Pour diagnostiquer un échec, distinguer image récupérée, bundle préparé et processus démarré : ces étapes relèvent de composants différents.
+
 ---
 
 À quoi sert l'OCI Distribution Specification ? <!--anki:4e5b376774414d56514e-->
 ?
 À standardiser la **distribution des images** : une API HTTP (`/v2/…`) pour pousser et récupérer manifests et couches, par **tag** ou par **digest**. C'est elle qui rend les [[02-docker-images-registries|registries]] interchangeables, et elle sert aujourd'hui à distribuer bien plus que des images : charts Helm, politiques, et même des **poids de modèles** comme artefacts OCI ([[10-images-modeles-poids|poids de modèles]]).
+
+Un téléchargement réussi prouve la disponibilité de l'artefact, pas sa compatibilité CPU/GPU ni sa confiance. Vérifier digest, provenance et plateforme avant exécution ; l'authentification au registry n'autorise pas automatiquement tous ses dépôts.
 
 ---
 

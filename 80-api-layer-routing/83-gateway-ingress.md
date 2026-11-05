@@ -37,6 +37,8 @@ HTTPRoute    → le routage vers les Services (équipe applicative)
 ```
 Apports : **délégation par équipe** sans annotations propriétaires, découpage du trafic **par poids** (canary), et prise en charge d'autres protocoles (gRPC, TCP). C'est la voie recommandée par Kubernetes pour remplacer ingress-nginx. Les projets de gateway pour agents s'appuient dessus ([[38-plateformes-agents|agentgateway]]).
 
+Les ressources décrivent l'intention ; un contrôleur compatible doit l'appliquer. Vérifier les conditions d'acceptation et de programmation de la route : un YAML accepté par l'API ne garantit pas qu'un backend soit joignable.
+
 ---
 
 À ne pas confondre : Ingress, API gateway et gateway LLM ? <!--anki:68587e30382d4f264f2a-->
@@ -49,6 +51,8 @@ Gateway LLM   → modèles, tokens, budgets, fallbacks, traces LLM
 Ce sont des **responsabilités**, pas nécessairement trois produits empilés. Une gateway généraliste peut intégrer des fonctions LLM ou une extension de comptage des tokens ; une gateway LLM peut aussi terminer TLS.
 
 Choisir l'assemblage qui couvre les besoins sans dupliquer les contrôles, et désigner qui applique chaque quota ou timeout ([[81-litellm-api-layer|LiteLLM]]).
+
+Exemple : si l'Ingress coupe à 30 s un agent autorisé à travailler deux minutes, le client échoue malgré un backend sain. Aligner les délais et la propagation de l'annulation.
 
 ---
 

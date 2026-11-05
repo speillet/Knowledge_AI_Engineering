@@ -15,6 +15,8 @@ Quelle relation existe entre Singularity et Apptainer ? <!--anki:75255f5a4e5e676
 ?
 **Apptainer est la continuation du projet Singularity** : le projet a été renommé en 2021 en rejoignant la **Linux Foundation**, tandis que le nom Singularity a été conservé par une offre commerciale. Conséquence pratique : de la documentation et des scripts circulent encore avec la commande `singularity`, qui reste souvent disponible en alias.
 
+Le nom seul ne suffit pas à identifier le logiciel : SingularityCE et les offres commerciales ont aussi leur trajectoire. Relever binaire, version et documentation correspondante avant de transposer une option ou un comportement de montage.
+
 ---
 
 Quel est le format d'image historiquement natif d'Apptainer/Singularity ? <!--anki:4e496b6d7331432b713f-->
@@ -33,8 +35,10 @@ Une image SIF est-elle simplement une image OCI ? <!--anki:4d7c436a753d627a6e3c-
 
 À ne pas confondre : Apptainer et Docker sur le plan de la sécurité ? <!--anki:6e52296f4e61242e4541-->
 ?
-- **Docker** : un **démon qui tourne en root**. Appartenir au groupe `docker` équivaut, de fait, à un accès root sur la machine
-- **Apptainer** : **pas de démon**, le conteneur s'exécute **avec votre identité** et vos droits. C'est précisément pourquoi les clusters partagés l'autorisent ([[13-apptainer-inference-hpc|HPC]])
+- **Docker en mode rootful** : l'accès au socket du démon donne des pouvoirs équivalents à root. Le mode **rootless** change ce modèle.
+- **Apptainer** : pas de démon permanent, exécution généralement avec l'identité et les droits de l'utilisateur, adaptée aux politiques [[13-apptainer-inference-hpc|HPC]].
+
+Cela ne rend pas une image inoffensive : elle peut lire ou modifier les fichiers montés accessibles à l'utilisateur. Vérifier montages, réseau et configuration locale ; l'admission sur un cluster dépend de sa politique, pas seulement du produit.
 
 ---
 

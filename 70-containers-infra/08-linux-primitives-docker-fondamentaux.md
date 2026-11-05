@@ -9,6 +9,8 @@ Les **namespaces** et les **cgroups**, complétés par des mécanismes de sécur
 
 Un conteneur n'est donc **pas un objet du noyau** : c'est un **processus ordinaire** assemblé à partir de ces briques par un runtime comme [[03-containerd-runc|runc]].
 
+Il partage le noyau de l'hôte : empaqueter un espace utilisateur Ubuntu ne fournit pas un noyau Ubuntu distinct. Une fonctionnalité ou faille du noyau reste donc un sujet d'hôte, contrairement à une dépendance Python contenue dans l'image.
+
 ---
 
 À quoi servent les namespaces ? <!--anki:6a65563352482663542e-->
@@ -42,6 +44,8 @@ Quelle phrase permet de retenir la différence namespaces / cgroups ? <!--anki:4
 **Les namespaces isolent (ce qu'on voit) ; les cgroups limitent (ce qu'on consomme).**
 
 Exemple : un namespace PID masque les processus d'autres groupes, tandis qu'un cgroup mémoire borne la quantité utilisable. Un conteneur peut donc avoir une vue isolée sans limite stricte de mémoire, ou une limite sans réseau isolé. Les deux mécanismes se complètent avec permissions, capabilities et filtrage d'appels système.
+
+Un processus peut voir peu de voisins tout en consommant toute la RAM autorisée. Pour un OOM, examiner la limite du cgroup et son usage, pas seulement la mémoire libre affichée sur l'hôte.
 
 ---
 

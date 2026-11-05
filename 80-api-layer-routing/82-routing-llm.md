@@ -25,6 +25,8 @@ Des **heuristiques** sur la requête : longueur du prompt, langue, présence de 
 
 Exemple : envoyer une entrée trop longue vers un modèle disposant d'un contexte suffisant. Définir les priorités si plusieurs règles s'appliquent et une route par défaut explicite. Les exigences de confidentialité ou de région sont des contraintes dures ; elles ne doivent pas être contournées par une règle de coût.
 
+Tester les frontières : une requête juste au-dessus du seuil doit garder assez de place pour la sortie et les outils. Journaliser la règle gagnante permet d'expliquer une route inattendue.
+
 ---
 
 Qu'est-ce que le routage sémantique ? <!--anki:416e31782d254b435577-->
@@ -53,6 +55,8 @@ Envoyer d'abord la requête au **modèle bon marché**, **vérifier** la répons
 coût moyen ≈ 0,8 × 1 + 0,2 × 13 ≈ 3,4   contre 12 en tout-grand-modèle
 ```
 Le calcul ne tient que si la **vérification est fiable et bon marché** : sinon on paie deux fois pour un résultat incertain.
+
+Ajouter son coût à chaque requête, puis mesurer faux accords et faux rejets. Un faux accord laisse passer une réponse erronée ; un faux rejet réduit l'économie. Les cas escaladés subissent aussi les deux latences séquentielles.
 
 ---
 

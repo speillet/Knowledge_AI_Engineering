@@ -21,7 +21,9 @@ Docker est un outil de construction et d'exécution, pas une dépendance incorpo
 
 Que signifie « Docker/OCI compatible » ? <!--anki:494f576456637d502555-->
 ?
-Qu'une technologie parle les mêmes **formats et protocoles** : elle sait lire une **image OCI**, dialoguer avec un **registry** selon la spec de distribution, et exécuter un **bundle** conforme à la spec runtime. C'est ce qui permet de remplacer un composant sans toucher aux autres ([[01-oci|OCI]]).
+Qu'elle respecte les **formats ou protocoles OCI pertinents pour son rôle** : image, distribution ou runtime ([[01-oci|OCI]]). Un registry n'a pas besoin d'exécuter un conteneur pour être compatible avec la distribution OCI.
+
+Cette interopérabilité permet de remplacer des composants, pas de supprimer les contraintes de plateforme. Une image Linux ARM64 ne devient pas native sur un hôte AMD64 ; vérifier architecture, système et fonctionnalités requises. « Compatible OCI » doit donc préciser quelle spécification et quel périmètre ont été testés.
 
 ---
 
@@ -95,6 +97,8 @@ Docker Hub est-il un runtime ? <!--anki:715d2f71583467563355-->
 **Non**, c'est un **registry** : il stocke et distribue des images, il n'en exécute aucune. L'exécution revient à [[03-containerd-runc|containerd et runc]].
 
 En pratique, deux conséquences : Docker Hub applique des **limites de pull** aux comptes anonymes, et ses images publiques ne sont pas auditées. D'où l'usage d'un **registry interne** ou d'un miroir en CI et sur les nodes.
+
+Un `ImagePullBackOff` peut venir d'identifiants, de quota ou d'un tag absent, avant tout lancement de processus. Consulter l'événement de pull plutôt que chercher les logs d'une application qui n'a jamais démarré.
 
 ---
 
