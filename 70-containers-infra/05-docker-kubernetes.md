@@ -14,11 +14,15 @@ Pourquoi dockershim existait-il ? <!--anki:746b7c73773064733f75-->
 ?
 Parce que Docker Engine, antérieur à Kubernetes, n'expose pas l'interface **CRI**. Quand la CRI est apparue (pour ouvrir Kubernetes à plusieurs runtimes), il fallait bien continuer à faire fonctionner les clusters existants, tous basés sur Docker.
 
+Dockershim traduisait les demandes du kubelet vers Docker Engine. Cet adaptateur concernait le **pilotage de l'exécution**, pas le format des images. Sa présence ajoutait une couche à maintenir entre Kubernetes et le runtime sous-jacent.
+
 ---
 
 Kubernetes utilise-t-il encore dockershim nativement ? <!--anki:4d476c304a577c7d336d-->
 ?
 **Non**, il a été retiré dans la **version 1.24** (2022). Les clusters parlent désormais directement à un runtime compatible CRI. Ce qui a disparu, c'est **le raccourci vers Docker Engine**, pas la compatibilité avec les images Docker.
+
+Lors d'une migration, rechercher surtout les dépendances au socket Docker, aux chemins de logs et aux outils d'exploitation. Une image applicative standard peut rester identique, tandis qu'un agent qui monte `/var/run/docker.sock` nécessite une adaptation.
 
 ---
 

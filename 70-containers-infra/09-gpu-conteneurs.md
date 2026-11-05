@@ -9,6 +9,8 @@ Un conteneur voit-il le GPU de l'hôte par défaut ? <!--anki:7278436c2c57552b3c
 
 Le moteur doit être configuré pour transmettre cet accès, par exemple via le NVIDIA Container Toolkit. Le driver noyau fonctionne sur l'hôte ; l'image fournit l'environnement applicatif compatible. Vérifier d'abord le GPU côté hôte, puis dans le conteneur, afin de distinguer un problème de driver d'un problème d'exposition.
 
+`nvidia-smi` fonctionnel confirme la visibilité, pas l'exécution correcte des kernels du modèle. Ajouter un petit calcul GPU avec la bibliothèque réellement utilisée pour vérifier la compatibilité effective.
+
 ---
 
 Qu'est-ce que le NVIDIA Container Toolkit ? <!--anki:464b64547e593d74596f-->
@@ -60,9 +62,9 @@ Une image `devel` aide à construire une extension CUDA, mais embarquer compilat
 
 Peut-on limiter la VRAM d'un conteneur comme la RAM ? <!--anki:4743213f66743c323749-->
 ?
-**Non**, les cgroups ne gèrent pas la VRAM : un conteneur qui a accès au GPU peut en utiliser toute la mémoire. Le partage propre passe par **MIG** ou le time-slicing ([[12-kubernetes-gpu-inference|Kubernetes GPU]]).
+**Pas avec les limites RAM ordinaires des cgroups.** Un accès partagé au GPU ne crée pas un quota matériel de VRAM. **MIG**, sur GPU compatibles, fournit des partitions ; le **time-slicing n'isole pas la mémoire** ([[12-kubernetes-gpu-inference|Kubernetes GPU]]).
 
-Seul garde-fou applicatif : les serveurs d'inférence **préallouent** une fraction de la VRAM (`--gpu-memory-utilization` de vLLM, 0,9 par défaut), ce qui plafonne leur propre usage mais ne protège de rien d'autre.
+Un paramètre comme `--gpu-memory-utilization` guide le budget du moteur, sans empêcher un autre processus d'allouer la VRAM restante. Deux serveurs configurés chacun pour 90 % peuvent entrer en conflit. Dimensionner poids, KV et buffers ensemble ; utiliser une isolation adaptée plutôt que présenter un réglage applicatif comme une garantie entre tenants.
 
 ---
 

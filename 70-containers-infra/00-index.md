@@ -46,7 +46,7 @@ Pourquoi les conteneurs sont-ils devenus le standard pour servir des modèles ? 
 ?
 Ils figent **l'environnement complet** (CUDA, bibliothèques, serveur d'inférence) : le même artefact tourne en dev, en CI et en production, et s'orchestre sur Kubernetes.
 
-Ils regroupent les dépendances de l'application et simplifient la livraison d'une version identifiée. Ils **ne figent pas toute la machine** : noyau, driver GPU, matériel et volumes viennent de l'hôte. Il faut donc vérifier leur compatibilité et épingler aussi les poids et la configuration pour reproduire un service d'inférence.
+Ils regroupent les dépendances de l'application et simplifient la livraison d'une version identifiée. Ils **ne figent pas toute la machine** : noyau, driver GPU, matériel et volumes viennent de l'hôte. Il faut donc vérifier leur compatibilité et épingler aussi les poids et la configuration : par exemple `vllm/vllm-openai@sha256:…` plutôt que `:latest`, avec la révision exacte des poids sur le hub ([[09-gpu-conteneurs|GPU en conteneur]]).
 
 ---
 

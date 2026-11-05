@@ -96,7 +96,7 @@ startupProbe:                 # tolère 10 min de chargement
 readinessProbe:               # n'envoie du trafic qu'une fois le modèle chargé
   httpGet: { path: /health, port: 8000 }
 ```
-Sans startupProbe, la **livenessProbe** tue le conteneur en boucle avant qu'il ait fini de démarrer.
+Sans startupProbe, une **livenessProbe trop impatiente** peut redémarrer le conteneur en boucle. Vérifier que `/health` ne déclare pas seulement le processus vivant : la readiness doit refléter l'aptitude à servir le modèle. Une surcharge transitoire n'est pas forcément un motif de redémarrage.
 
 ---
 
@@ -105,7 +105,9 @@ Sans startupProbe, la **livenessProbe** tue le conteneur en boucle avant qu'il a
 - **Service** : une adresse stable **à l'intérieur** du cluster (IP virtuelle et nom DNS) devant des Pods éphémères, avec répartition de charge
 - **Ingress** : l'entrée **depuis l'extérieur** en HTTP(S), qui route vers des Services selon l'hôte et le chemin ([[83-gateway-ingress|Ingress]])
 
-Un Service seul n'expose rien sur Internet ; un Ingress sans Service ne sait pas où envoyer le trafic.
+Un Service **ClusterIP** n'expose pas directement Internet ; les types **NodePort** ou **LoadBalancer** peuvent fournir un accès externe selon le réseau. Un Ingress exige un contrôleur pour appliquer ses règles.
+
+Pour diagnostiquer un échec, tester d'abord le Pod, puis le Service, puis l'entrée externe : une erreur DNS ou TLS n'a pas le même correctif qu'un backend non prêt.
 
 ---
 

@@ -44,6 +44,8 @@ Quand l'utilisateur ferme l'onglet ou clique sur « Arrêter », le serveur doit
 
 En pratique : détecter la déconnexion du client, puis annuler la requête en cours (annulation de la tâche asynchrone, fermeture du flux vers le fournisseur) ([[121-couts-inference|coûts]]).
 
+La fermeture du flux ne garantit pas que le fournisseur ait arrêté le calcul. Mesurer les tokens produits après abandon et utiliser son mécanisme d'annulation lorsqu'il existe. Une action métier déjà exécutée exige une compensation éventuelle, pas seulement l'arrêt du stream.
+
 ---
 
 Comment streamer une sortie structurée (JSON) ? <!--anki:4f736b3c676762595649-->
@@ -88,6 +90,8 @@ Condition : que la génération **continue** côté serveur même sans client co
 Qu'est-ce qu'une clé d'idempotence et pourquoi en mettre sur une API LLM ? <!--anki:413e3131404d6351465b-->
 ?
 Un identifiant unique fourni par le client (`Idempotency-Key`) : si la même requête arrive deux fois (double clic, retry réseau), le serveur renvoie le **même résultat** au lieu de relancer. Sans elle, un retry relance l'agent, **double le coût** et peut **répéter une action** (ticket créé deux fois) ([[142-fiabilite-resilience-llm|retries]]).
+
+Le header n'a aucun effet sans implémentation serveur. Définir portée par client, durée de conservation et empreinte de la demande ; refuser une même clé avec des arguments différents. Pour un travail encore en cours, renvoyer son statut plutôt que démarrer un second agent.
 
 ---
 

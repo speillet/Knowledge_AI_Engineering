@@ -39,6 +39,8 @@ vllm serve meta-llama/Llama-3.1-8B-Instruct --max-model-len 8192
 
 Le moteur mutualise les calculs entre requêtes et gère la mémoire des séquences actives. La commande limite la longueur totale acceptée à 8 192 tokens selon la configuration du modèle. Vérifier disponibilité des poids, compatibilité matérielle et mémoire, puis protéger l'endpoint et tester sa tenue en charge avant exposition.
 
+Un modèle chargé ne prouve pas qu'il reste assez de KV pour la concurrence visée. Tester prompts longs et sorties longues ensemble, en suivant rejets et préemptions.
+
 ---
 
 Qu'est-ce que le multi-LoRA en serving ? <!--anki:46362e6e346d5f39534d-->
@@ -75,13 +77,13 @@ Le mode maintenance signifie qu'il ne faut pas supposer une évolution fonctionn
 
 Quel serveur utiliser pour l'inférence LLM locale ? <!--anki:6f484e484e652c34492a-->
 ?
-**llama.cpp** et **Ollama** : modèles **GGUF quantizés**, CPU, Mac (Apple Silicon) ou GPU grand public. Parfaits pour le dev local, pas pour une forte concurrence en production.
+**llama.cpp** et **Ollama** : modèles notamment **GGUF quantizés**, CPU, Mac (Apple Silicon) ou GPU grand public. Adaptés au développement et aux déploiements locaux ; leur capacité sous concurrence doit être mesurée.
 ```bash
 ollama run llama3.1:8b                       # local, un utilisateur
 vllm serve meta-llama/Llama-3.1-8B-Instruct \
   --max-model-len 8192 --gpu-memory-utilization 0.9   # serveur, multi-utilisateurs
 ```
-La bascule se fait dès que plusieurs utilisateurs arrivent en même temps : le **continuous batching** de vLLM change tout le débit ([[164-llm-local-edge|LLM locaux]]).
+La bascule dépend du matériel et du SLO, pas d'un seuil universel d'utilisateurs. Tester le [[164-llm-local-edge|service local]] à la concurrence attendue : s'il respecte qualité et délai, changer de moteur n'est pas obligatoire. Comparer débit utile, mémoire et coût d'exploitation avant migration.
 
 ---
 

@@ -54,6 +54,8 @@ Intérêt : servir plusieurs **petits modèles** ou environnements de test sans 
 
 Règle : **MIG pour la production multi-tenant**, time-slicing pour du développement ou des charges tolérantes.
 
+Vérifier que le profil MIG tient réellement poids et KV du modèle ; une partition trop petite reste inutilisable malgré son isolation. Le time-slicing augmente les consommateurs admis, pas la VRAM disponible ni la puissance physique.
+
 ---
 
 À quoi servent les node selectors, taints et tolerations pour le GPU ? <!--anki:786472704640764f4057-->
@@ -82,7 +84,7 @@ Par l'**autoscaling** : le **HPA** sur des métriques personnalisées, ou **KEDA
 ```yaml
 resources:
   limits:
-    nvidia.com/gpu: 1        # entier, exclusif
+    nvidia.com/gpu: 1        # unité annoncée par le device plugin
 nodeSelector:
   nvidia.com/gpu.product: NVIDIA-H100-80GB-HBM3
 tolerations:
@@ -90,6 +92,8 @@ tolerations:
     operator: Exists
 ```
 Le **scale-to-zero** ne vaut que si l'on accepte un **cold start** de plusieurs minutes ([[10-images-modeles-poids|cold start]]).
+
+La ressource demandée ne garantit l'exclusivité physique que sans partage configuré. Le YAML place un Pod ; il ne définit pas le HPA. Dimensionner aussi une réserve chaude pour couvrir le délai d'arrivée d'un nouveau réplica.
 
 ---
 

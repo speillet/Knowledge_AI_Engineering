@@ -39,6 +39,8 @@ volumeMounts:
 ```
 Le **cache local sur le node** est le plus rapide, le **volume partagé** le plus simple à mutualiser.
 
+Le mode hors ligne suppose les fichiers déjà présents, tokenizer et configuration compris. Précharger une révision complète et vérifier son empreinte ; un cache partiel doit faire échouer explicitement le démarrage, pas déclencher un téléchargement imprévu.
+
 ---
 
 À ne pas confondre : container registry et model registry ? <!--anki:666631384e6473424e60-->
@@ -60,7 +62,7 @@ poids 8B depuis le node   10 à 30 s
 chargement en VRAM        10 s à 1 min
 compilation (TensorRT)    plusieurs minutes, à faire une fois
 ```
-Retenir l'ordre de grandeur : **une à cinq minutes**, à comparer aux secondes d'un service web classique. C'est ce qui interdit un autoscaling purement réactif ([[12-kubernetes-gpu-inference|autoscaling GPU]]).
+Ces chiffres sont illustratifs, pas un SLO. Si le pic dure deux minutes et que le démarrage en prend quatre, l'autoscaling réactif arrive trop tard : prévoir capacité chaude, anticipation ou file compatible avec le délai produit ([[12-kubernetes-gpu-inference|autoscaling GPU]]).
 
 ---
 

@@ -38,6 +38,8 @@ apptainer exec --nv --bind /data/models:/models model.sif python serve.py
 
 Le chemin de gauche désigne le stockage visible sur l'hôte, celui de droite son emplacement dans le conteneur. Utiliser une révision précise des poids et un montage en lecture seule si aucune modification n'est nécessaire. Vérifier droits, débit du stockage partagé et présence de tous les fichiers attendus avant de lancer le serveur.
 
+La forme `--bind /data/models:/models:ro` explicite la lecture seule. Garder caches et résultats sur un autre chemin inscriptible ; sinon une bibliothèque tentant d'écrire près des poids peut échouer au démarrage.
+
 ---
 
 Comment récupérer une image Docker au format Apptainer ? <!--anki:4626266d35774b253342-->
@@ -49,6 +51,8 @@ apptainer pull vllm.sif docker://vllm/vllm-openai:latest
 ```
 
 Apptainer télécharge l'image du registry et la convertit en SIF ; Docker Engine n'a pas besoin de tourner sur le nœud. `latest` est pratique pour illustrer la commande mais n'est pas reproductible. En production, utiliser une référence immuable ou un tag contrôlé, conserver l'empreinte du SIF et vérifier la compatibilité du point d'entrée.
+
+Construire ou récupérer le SIF avant le job GPU évite de payer une allocation pendant le téléchargement. Tester ensuite l'image sur un nœud de calcul représentatif, pas uniquement sur le nœud de connexion.
 
 ---
 

@@ -14,11 +14,15 @@ containerd et Docker sont-ils la même chose ? <!--anki:77337a5b6e5556322929-->
 ?
 **Non.** Docker est une **suite d'outils** : CLI, construction d'images (BuildKit), réseau, Compose, Desktop. Sous le capot, Docker **délègue** l'exécution à containerd. Historiquement, containerd a d'ailleurs été **extrait de Docker** puis donné à la CNCF : on peut donc utiliser containerd **sans** Docker, ce que fait Kubernetes ([[05-docker-kubernetes|dockershim]]).
 
+Un nœud Kubernetes peut donc lancer des images produites par `docker build` sans disposer de Docker Engine. Ne pas installer le démon uniquement pour déboguer les Pods : interroger l'interface et les journaux du runtime réellement utilisé.
+
 ---
 
 Qu'est-ce que runc ? <!--anki:702e5e602d5751585a4f-->
 ?
 Un **runtime OCI bas niveau** : un binaire qui reçoit un **bundle** (système de fichiers + `config.json`) et demande au noyau de créer le conteneur, conformément à l'[[01-oci|OCI Runtime Specification]]. Il configure **namespaces, cgroups, capabilities, seccomp**, lance le premier processus… puis **se retire** : ce n'est pas un démon.
+
+Il ne télécharge pas l'image et ne décide pas du placement sur un cluster. Le shim conserve le suivi du processus pour containerd ; l'absence d'un processus `runc` permanent ne signifie donc pas que le conteneur s'est arrêté.
 
 ---
 
