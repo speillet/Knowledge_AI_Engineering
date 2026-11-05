@@ -42,6 +42,8 @@ Une perte train qui baisse tandis que la validation remonte suggère du **surapp
 
 Le dropout ou l'augmentation peuvent rendre le train plus difficile que la validation ; un écart n'est donc pas une preuve automatique. Relier les courbes aux erreurs concrètes et sélectionner un checkpoint sur validation avant de toucher au test final.
 
+Comparer aussi par longueur : une moyenne dominée par de nombreux tokens faciles peut masquer la dégradation des champs métier rares.
+
 ---
 
 Pourquoi essayer de surapprendre un minuscule lot avant un entraînement coûteux ? <!--anki:3762373161633066643138653434356539613933386633356165346664373135-->
@@ -49,6 +51,8 @@ Pourquoi essayer de surapprendre un minuscule lot avant un entraînement coûteu
 C'est un **test de fonctionnement du pipeline** : sur quelques exemples propres et fixes, un modèle suffisamment flexible devrait pouvoir réduire fortement sa perte. Un échec oriente vers labels, masques, gradients, paramètres gelés ou optimiseur avant d'accuser le volume de données.
 
 Désactiver temporairement les augmentations et simplifier la régularisation pour ce diagnostic. La réussite prouve une capacité de mémorisation locale, pas la généralisation. Remettre ensuite les réglages normaux et évaluer sur des observations indépendantes.
+
+Exemple : répéter huit paires instruction-réponse et vérifier que les tokens de réponse reçoivent des gradients. Une perte constante malgré ce test justifie d'inspecter le pipeline avant d'ajouter des GPU.
 
 ---
 

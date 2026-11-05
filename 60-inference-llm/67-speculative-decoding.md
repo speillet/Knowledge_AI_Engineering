@@ -91,6 +91,8 @@ Quand le speculative decoding aide-t-il et quand nuit-il ? <!--anki:515b7d72714b
 - **Aide** : petits batchs et services sensibles à la latence, où le GPU attend la mémoire ; texte prévisible (code, JSON, recopie) ; température basse
 - **Nuit** : **gros batchs** où le GPU est déjà saturé en calcul (la vérification consomme ce calcul et fait baisser le débit total) ; température élevée ou texte très créatif (faible acceptation)
 
+Ce sont des tendances, pas des critères suffisants. Comparer au decode normal à concurrence égale : un meilleur TPOT pour une requête isolée peut s'accompagner d'un moins bon débit et de files plus longues en production.
+
 ---
 
 Quelles métriques d'inférence le speculative decoding améliore-t-il ? <!--anki:503836423d712d492f3d-->
@@ -121,6 +123,8 @@ Quels coûts et quelles contraintes le speculative decoding impose-t-il ? <!--an
 - **Tokenizer compatible** entre brouillon et cible
 - Têtes EAGLE ou Medusa **à entraîner** pour chaque modèle cible, ou à trouver toutes faites
 - **Réglages à mesurer** : taux d'acceptation, longueur acceptée moyenne et TPOT, sur le trafic réel
+
+L'acceptation seule ne tranche pas : accepter quatre tokens peut coûter plus cher que les générer normalement si le brouillon est trop lent. Inclure son temps, la vérification et la mémoire perdue pour les requêtes concurrentes.
 
 ---
 

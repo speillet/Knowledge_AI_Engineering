@@ -8,7 +8,7 @@ Que signifie maximiser l’inférence d’un LLM dans un produit ? <!--anki:3766
 ?
 Choisir une cible utile : **plus de tâches réussies par seconde ou par euro**, sous contraintes de qualité, délais, capacité et équité. Le maximum de tokens/s n'est pertinent que si ces tokens servent réellement la tâche.
 
-Construire une frontière de compromis : conserver les configurations qu'aucune autre n'améliore sur tous les critères retenus. Certaines favorisent la latence individuelle, d'autres le traitement batch. Fixer d'abord les exigences incontournables, puis choisir dans les options admissibles. Inclure réserve et charge réelle ; une configuration optimale à saturation peut coûter trop cher en période creuse.
+Construire une frontière de compromis : conserver les configurations qu'aucune autre n'améliore sur tous les critères retenus. Exemple : A sert 40 tâches réussies/s avec un p95 de 1,2 s, B 55 avec 2,5 s, C 38 avec 1,4 s. C est dominée par A ; un SLO de 2 s élimine ensuite B. Fixer d'abord les exigences incontournables, puis choisir parmi les options admissibles, en incluant réserve et charge réelle.
 
 ---
 
@@ -32,7 +32,7 @@ Que chercher quand le GPU attend alors que le service d’inférence est lent ? 
 ?
 Examiner **CPU, tokenization, traitement d'images, sérialisation, réseau, stockage et ordonnanceur**. Une limite de threads, un quota CPU, un placement NUMA défavorable ou une boucle événementielle bloquée peuvent empêcher d'alimenter le GPU.
 
-Comparer temps avant moteur et temps GPU, files de chaque étape, copies et utilisation des cœurs. Tester une requête directement puis via le parcours complet avec les mêmes données. Augmenter les GPU ne corrige pas un frontend saturé. Après correction CPU ou I/O, refaire le test : le GPU peut devenir le nouveau facteur limitant.
+Comparer temps avant moteur et temps GPU, puis tester une requête directement et via le parcours complet. Exemple : un conteneur limité à 2 cœurs tokenise et diffuse 64 flux ; dans le `cpu.stat` de son cgroup, `nr_throttled` augmente pendant que le GPU reste à moitié inactif. Ajouter un GPU n'y change rien. Après correction, refaire le test : le GPU peut devenir le nouveau facteur limitant.
 
 ---
 
@@ -40,7 +40,7 @@ Comparer temps avant moteur et temps GPU, files de chaque étape, copies et util
 ?
 Les **graphes CUDA** rejouent une séquence d'opérations pour réduire les coûts de lancement. La **compilation** transforme et spécialise le programme. La **fusion** réunit des opérations pour diminuer lancements ou données intermédiaires.
 
-Ces techniques se complètent, avec des contraintes de formes et de compatibilité. Capture, compilation, réserves mémoire et éventuelles variantes de formes ont un coût ; certains chemins restent en exécution classique. Mesurer démarrage, mémoire de pointe et régime établi. Un gain à forme fixe peut disparaître avec un trafic très variable ou une opération non prise en charge.
+Ces techniques se complètent, avec des contraintes de formes. vLLM, par exemple, capture des graphes pour une liste de tailles de batch : un batch de 13 séquences est complété jusqu'à la taille capturée suivante, et au-delà de la plus grande l'exécution redevient classique. `--enforce-eager` désactive ces graphes pour mesurer leur apport. Capture et compilation coûtent du démarrage et de la mémoire.
 
 ---
 
@@ -48,7 +48,7 @@ Comment choisir un backend d’attention ou un kernel plus rapide ? <!--anki:306
 ?
 Vérifier compatibilité avec GPU, dtype, dimensions, masque d'attention, contexte, quantification et mode de génération. Un kernel rapide dans un microbenchmark peut être rarement utilisé dans le service, ou provoquer des conversions coûteuses.
 
-Comparer numériquement au backend de référence et valider les sorties sur les tâches critiques. Mesurer ensuite tout le parcours, aux longueurs et concurrences cibles. Inclure compilation et mémoire des espaces de travail si elles comptent pour le produit. Ne pas transposer un record de matrice isolée à une amélioration de TTFT ou de goodput.
+Exemple : un backend gagne 25 % sur un microbenchmark en BF16, mais le service stocke son KV cache en FP8, format qu'il ne prend pas en charge ; le moteur reste sur l'ancien chemin et le gain réel est nul. Comparer numériquement au backend de référence, valider les sorties sur les tâches critiques, puis mesurer tout le parcours aux longueurs et concurrences cibles.
 
 ---
 
@@ -96,7 +96,7 @@ Comment optimiser une cascade de modèles sans déplacer le coût vers les repri
 ?
 Router vers un modèle plus petit lorsque les évaluations montrent qu'il suffit, et escalader selon des critères vérifiés. Mesurer coût et délai **de toute la cascade**, incluant contrôle et second appel.
 
-Éviter les escalades systématiques après une première tentative inutile. Réduire contexte et verbosité en préservant les preuves et le format nécessaires. Un cache de réponse peut supprimer une génération, mais nécessite contrôle de fraîcheur, autorisations et clés pertinentes. Comparer succès par segment et coût par tâche, pas seulement le prix du modèle choisi en premier.
+Le contrôle décide du coût. Exemple : s'il rejette 60 % des réponses du petit modèle, dont la moitié étaient correctes, la majorité des tâches paie deux appels et attend deux fois. Mesurer ses faux rejets sur un jeu étiqueté et router d'emblée vers le grand modèle les segments qui escaladent presque toujours. Comparer succès par segment et coût par tâche, pas seulement le prix du modèle choisi en premier.
 
 ---
 
@@ -104,13 +104,13 @@ Comment maîtriser le budget de raisonnement et les branches parallèles d’un 
 ?
 Borner nombre d'appels, tokens, temps total et branches concurrentes, selon les mécanismes réellement exposés par le modèle et l'orchestrateur. Évaluer la **qualité gagnée par calcul supplémentaire**, notamment sur les tâches difficiles.
 
-Un raisonnement plus long ou plusieurs candidats peuvent améliorer certains résultats et gaspiller des ressources sur d'autres. Compter tokens internes disponibles, appels d'outils, juge et tentatives annulées. La parallélisation peut réduire la latence murale tout en augmentant le coût et la pression sur les quotas. Ajuster le budget par catégorie de tâche, avec une règle d'arrêt explicite.
+Un raisonnement plus long ou plusieurs candidats améliorent certains résultats et gaspillent des ressources sur d'autres. Exemple : quatre branches de 3 000 tokens coûtent 12 000 tokens pour une durée proche d'une seule ; si elles ne gagnent des points que sur les tâches difficiles, les réserver à cette catégorie. Compter aussi appels d'outils, juge et tentatives annulées. Fixer une règle d'arrêt explicite.
 
 ---
 
 Pourquoi les tokens textuels ne suffisent-ils pas à dimensionner l’inférence multimodale ? <!--anki:3436373435326462393331643462303239363238323537353730313263326431-->
 ?
-Image, audio et vidéo ajoutent décodage, redimensionnement, encodage et représentations dont le coût dépend de résolution, durée, fréquence d'images et architecture. Deux requêtes avec le même texte peuvent avoir des coûts très différents.
+Image, audio et vidéo ajoutent décodage, redimensionnement, encodage et représentations dont le coût dépend de résolution, durée, fréquence d'images et architecture. Une question de dix mots sur une vidéo de 60 s échantillonnée à 2 images/s fait encoder 120 images.
 
 Mesurer taille des médias, unités du processeur, temps d'encodage, mémoire de pointe et transferts, en plus du prefill/decode textuel. Distinguer unités facturées et unités réellement traitées par le moteur. Segmenter les benchmarks par modalité et tester les combinaisons : un frontend média ou un encodeur peut saturer avant le décodeur LLM.
 

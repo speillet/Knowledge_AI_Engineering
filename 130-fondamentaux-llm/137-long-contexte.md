@@ -31,6 +31,8 @@ Qu'est-ce que le test « needle in a haystack » et quelle est sa limite ? <!--a
 ?
 Cacher une **phrase précise** dans un long texte et demander de la retrouver. La plupart des modèles récents le réussissent presque parfaitement — mais c'est une tâche de **simple repérage**. Des benchmarks plus exigeants (**RULER**, multi-aiguilles, raisonnement sur plusieurs passages, suivi de variables) montrent une **longueur effective** souvent bien inférieure à la fenêtre annoncée.
 
+Tester plusieurs positions et des distracteurs plausibles. Retrouver un numéro de contrat ne prouve pas qu'on sait combiner sa clause avec une exception située ailleurs ; évaluer séparément récupération et raisonnement sur les preuves.
+
 ---
 
 Long contexte ou RAG ? <!--anki:4f3c556b3e682f4e3b40-->
@@ -44,9 +46,11 @@ Souvent : **RAG pour sélectionner**, contexte large pour **raisonner** sur la s
 
 Quel est le coût d'un long contexte à l'inférence ? <!--anki:6f402e3c566b7770777e-->
 ?
-- **Prefill** : calcul **quadratique** en longueur → **TTFT** élevé (plusieurs secondes pour des centaines de milliers de tokens).
-- **KV cache** : mémoire **linéaire** en longueur → moins de requêtes simultanées par GPU.
-- **Prix** : chaque appel re-facture tout le contexte, souvent avec un **tarif majoré** au-delà d'un seuil ([[121-couts-inference|coûts]], [[61-kv-cache-attention|KV cache]]).
+- **Prefill** : l'attention dense a une composante quadratique en longueur ; le coût total dépend aussi des autres couches et du cache.
+- **KV cache** : mémoire généralement linéaire en positions conservées → moins de requêtes simultanées.
+- **Prix** : dépend des tokens traités, des tarifs de cache et d'éventuels paliers ([[121-couts-inference|coûts]], [[61-kv-cache-attention|KV cache]]).
+
+Doubler le contexte ne double donc pas nécessairement le délai ni la facture. Mesurer TTFT, mémoire et coût avec des préfixes froids puis réutilisés ; un grand contexte accepté par l'API peut rester impraticable au débit cible.
 
 ---
 

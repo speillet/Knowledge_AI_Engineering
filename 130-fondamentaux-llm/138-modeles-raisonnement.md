@@ -34,7 +34,7 @@ Qu'est-ce qu'un budget de réflexion (thinking budget / reasoning effort) ? <!--
 ?
 Un paramètre d'API qui borne ou oriente **la quantité de tokens de raisonnement** (niveau faible/moyen/élevé, ou nombre max de tokens). C'est le **curseur qualité / latence / coût** : un effort élevé pour un problème difficile, faible pour une tâche simple ou interactive.
 
-Un niveau d'effort est souvent une **orientation**, pas la promesse d'un nombre exact de tokens ni d'une meilleure réponse. Le budget peut aussi partager la limite de sortie selon l'API. Tester plusieurs niveaux sur des tâches classées par difficulté, puis choisir selon le gain marginal de réussite et le délai acceptable pour l'utilisateur.
+Un niveau d'effort est souvent une **orientation**, pas une quantité exacte ni une garantie de justesse. La réflexion peut partager la limite de sortie : un budget consommé avant la réponse peut laisser celle-ci tronquée. Comparer plusieurs niveaux sur les mêmes tâches, par difficulté ; retenir le gain marginal de réussite compatible avec le délai utilisateur.
 
 ---
 
@@ -84,6 +84,8 @@ Le coût croît linéairement avec n, le gain beaucoup moins : les premiers essa
 - **Modèle de raisonnement** : le modèle a été **entraîné par RL** à produire une longue réflexion, à se vérifier et à revenir en arrière. La réflexion est **native**, souvent réglable par un budget, et parfois masquée
 
 Conséquence : avec un modèle de raisonnement, on décrit **l'objectif et les critères** plutôt que les étapes, et on paie les tokens de réflexion.
+
+Dans les deux cas, vérifier le résultat par calcul, source ou test indépendant : une longue justification convaincante peut rester fausse.
 
 ---
 

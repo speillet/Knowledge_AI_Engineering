@@ -20,6 +20,8 @@ Comment générer des données synthétiques variées ? <!--anki:686f5943344f635
 - générer en **deux temps** : d'abord les entrées, ensuite les réponses ;
 - faire varier les modèles et la température.
 
+Exemple : croiser trois langues, quatre intentions et deux niveaux de difficulté donne 24 cellules à couvrir, pas une garantie de diversité. Dédupliquer les paraphrases et contrôler les catégories rares. Ne jamais utiliser le test final comme graine de génération.
+
 ---
 
 Pourquoi le filtrage est-il l'étape la plus importante ? <!--anki:415b72513651782a2d72-->
@@ -56,6 +58,8 @@ L'élève peut apprendre à partir des réponses de l'enseignant ou de ses distr
 Qu'est-ce que la distillation du raisonnement ? <!--anki:4c2f403b3b7c5d4f2141-->
 ?
 Fine-tuner un petit modèle sur les **traces de raisonnement** d'un modèle de raisonnement (problème → réflexion → réponse vérifiée). Des modèles de quelques milliards de paramètres gagnent ainsi fortement en maths et en code ; c'est souvent **plus efficace que de faire du RL** directement sur un petit modèle ([[138-modeles-raisonnement|raisonnement]]).
+
+Le gain dépend des tâches et du protocole. Filtrer les solutions par un vérificateur indépendant et tester des problèmes non vus. Une réponse finale correcte peut cacher des étapes fausses ; apprendre une trace plus longue ne garantit pas un meilleur raisonnement.
 
 ---
 

@@ -50,6 +50,8 @@ Quel moteur de guided generation selon le serveur : vLLM ou SGLang, llama.cpp, o
 
 Les API propriétaires n'exposent que le JSON Schema : leur moteur est caché.
 
+Vérifier le sous-ensemble de schéma supporté sur la version déployée : unions, bornes et expressions régulières ne sont pas universelles. Tester un schéma réel, une sortie tronquée et un refus ; le nom du moteur ne garantit pas leur traitement identique.
+
 ---
 
 Comment obtenir une sortie structurée garantie avec une API propriétaire ? <!--anki:6b4237606b477d4d3c74-->
@@ -105,6 +107,8 @@ Que se passe-t-il si la génération atteint `max_tokens` au milieu d'un JSON co
 La sortie est **tronquée** et le JSON est invalide, malgré la contrainte : la guided generation garantit que chaque token **respecte** la grammaire, pas que la génération **aille jusqu'au bout**.
 
 La réponse l'indique (`finish_reason: "length"` ou `stop_reason: "max_tokens"`). Il faut **vérifier ce champ**, dimensionner `max_tokens` pour le pire cas, et borner la taille du schéma (listes de longueur maximale).
+
+Ne pas ajouter simplement une accolade pour « réparer » : des champs peuvent manquer ou une valeur être coupée. Rejeter le résultat incomplet et relancer sous budget, ou exposer explicitement l'échec au consommateur.
 
 ---
 

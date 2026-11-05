@@ -49,7 +49,7 @@ Pourquoi GQA et le tensor parallelism ne divisent-ils pas toujours le KV comme p
 ?
 **GQA** utilise moins de têtes K/V que de têtes de requête ; **MQA** n'en utilise qu'une. La taille KV dépend des têtes K/V et du schéma d'attention, pas seulement du nombre de paramètres.
 
-Le tensor parallelism peut répartir ces têtes, mais leur faible nombre ou une implémentation peuvent imposer une réplication. Ne pas diviser aveuglément la mémoire KV totale par le nombre de GPU. Vérifier le placement réel, les blocs disponibles sur chaque rang et la carte la plus contrainte. GQA est une propriété du modèle, pas un simple bouton du serveur.
+Le tensor parallelism répartit ces têtes entre GPU, mais pas en dessous d'une tête par rang. Exemple : un modèle à 8 têtes KV servi en TP=16 réplique chaque tête sur deux rangs ; le KV par GPU ne baisse plus au-delà de TP=8. Ne pas diviser aveuglément la mémoire KV totale par le nombre de GPU : vérifier les blocs disponibles sur chaque rang. GQA est une propriété du modèle, pas un simple bouton du serveur.
 
 ---
 
@@ -57,7 +57,7 @@ Comment les préemptions peuvent-elles provoquer une spirale de surcharge ? <!--
 ?
 Un manque de KV peut interrompre des séquences. Si leur état est abandonné, la reprise **recalcule** une partie du préfixe ; d'autres moteurs ou configurations peuvent déplacer l'état vers une mémoire plus lente.
 
-Ce travail supplémentaire consomme une capacité déjà rare et allonge la file. Suivre préemptions, temps de prefill, pression mémoire et goodput ; distinguer le recalcul des nouveaux tokens utilisateur. Réduire l'admission ou la concurrence, réserver davantage de KV ou adapter le contexte selon le diagnostic. Une préemption occasionnelle n'est pas une panne ; leur répétition appelle une mesure ciblée.
+Exemple : une séquence interrompue à 6 000 tokens de contexte repasse 6 000 tokens en prefill à sa reprise. Ce travail retarde les nouveaux prompts, la file s'allonge et d'autres séquences manquent de KV à leur tour. Suivre préemptions et goodput en distinguant le recalcul des nouveaux tokens utilisateur. Réduire l'admission ou la concurrence, ou réserver davantage de KV. Une préemption occasionnelle n'est pas une panne ; leur répétition appelle une mesure ciblée.
 
 ---
 
@@ -65,7 +65,7 @@ Pourquoi borner une file d’inférence en travail et en délai ? <!--anki:63653
 ?
 Le nombre de requêtes masque leur coût : un long prefill et une longue génération pèsent différemment. Estimer tokens d'entrée non cachés, budget de sortie et temps de service par classe, sans supposer un coût identique pour tous les tokens.
 
-Utiliser taille de file, âge et échéance pour l'admission. Refuser ou différer ce qui ne peut probablement plus réussir dans le délai, avec une politique produit explicite. Les longueurs de sortie étant incertaines, garder une marge et réviser les estimations. Une file illimitée transforme la surcharge en réponses devenues inutiles.
+Utiliser taille de file, âge et échéance pour l'admission. Exemple : avec un délai de réponse de 10 s et 25 s de travail estimé devant elle, une demande interactive ne peut plus réussir ; la refuser tout de suite ou la passer en différé, selon une politique produit explicite. Les longueurs de sortie étant incertaines, garder une marge. Une file illimitée transforme la surcharge en réponses devenues inutiles.
 
 ---
 
@@ -73,7 +73,7 @@ Comment éviter qu’un scheduler favorise toujours les mêmes requêtes ? <!--a
 ?
 Prioriser les tâches courtes ou les préfixes chauds peut améliorer le débit et la moyenne, mais faire attendre indéfiniment les longues demandes ou les caches froids.
 
-Ajouter quotas par client, classes de service et **vieillissement des priorités** ; mesurer attente maximale, refus et conformité par segment. Une file séparée pour le batch peut protéger l'interactif, au prix d'une capacité moins mutualisée. Choisir un compromis explicite entre débit, délais et équité. Ne pas confondre une meilleure moyenne obtenue par sélection avec une amélioration pour chaque catégorie.
+Ajouter quotas par client, classes de service et **vieillissement des priorités** ; mesurer attente maximale, refus et conformité par segment. Exemple : un client envoie 5 000 requêtes batch d'un coup ; en FIFO, les utilisateurs interactifs attendent derrière toute la rafale. Un quota par client ou une file pondérée, deux tours pour l'interactif et un pour le batch, borne cette attente. Ne pas confondre une meilleure moyenne obtenue par sélection avec une amélioration pour chaque catégorie.
 
 ---
 
@@ -81,7 +81,7 @@ Ajouter quotas par client, classes de service et **vieillissement des priorités
 ?
 La **réplication** répartit les requêtes entre copies indépendantes, chacune devant pouvoir servir le modèle. Le **tensor parallelism** partage des opérations d'une couche ; le **pipeline parallelism** distribue les couches en étages.
 
-Les deux derniers aident à faire tenir le modèle, avec communications ou bulles de pipeline. Ils ne garantissent pas une baisse de latence. À budget GPU fixe, comparer une grande instance à plusieurs petites instances : goodput, SLO, mémoire, cache et domaine de panne. Tenir compte de la topologie et mesurer les collectives, pas seulement les FLOP théoriques.
+Les deux derniers aident à faire tenir le modèle, avec communications ou bulles de pipeline. Ils ne garantissent pas une baisse de latence. Exemple : avec 8 GPU de 80 Go et 60 Go de poids, comparer quatre réplicas TP=2 et une instance TP=8. La première option isole les pannes et multiplie les caches ; la seconde offre plus de KV par requête, avec des collectives entre 8 GPU. Mesurer goodput et SLO sur le mix réel.
 
 ---
 
@@ -89,7 +89,7 @@ Qu’ajoute un modèle MoE au dimensionnement de l’inférence ? <!--anki:66396
 ?
 Les paramètres **actifs par token** influencent le calcul, mais les experts à conserver ou déplacer déterminent aussi la mémoire et les transferts. Deux MoE avec le même nombre de paramètres actifs peuvent avoir des performances très différentes.
 
-L'expert parallelism répartit les experts et introduit des échanges de tokens entre GPU. Suivre déséquilibre des experts, latences de communication et dispersion entre rangs. Un réseau lent ou quelques experts très sollicités peuvent limiter le débit avant le calcul théorique. Tester les routes réellement produites par le trafic, avec la configuration de placement retenue.
+L'expert parallelism répartit les experts et introduit des échanges de tokens entre GPU. Exemple : si le routeur envoie 30 % des tokens d'un batch à deux experts placés sur le même GPU, ce rang finit en dernier et toute l'itération l'attend. Suivre la charge par expert et la dispersion entre rangs, sur les routes réellement produites par le trafic.
 
 ---
 
@@ -103,9 +103,9 @@ C'est une borne sous hypothèses d'équilibrage et de capacité additive. Vérif
 
 Que mesurer lors du scale-out et du scale-in d’un service LLM ? <!--anki:3832626163623039653034373461313162313735366162323034383239373339-->
 ?
-En **scale-out**, mesurer temps jusqu'au premier travail réellement servi : ressources disponibles, poids chargés, compilation, échauffement et cache encore froid. Un processus démarré n'est pas nécessairement un réplica prêt.
+En **scale-out**, mesurer temps jusqu'au premier travail réellement servi : ressources disponibles, poids chargés, compilation, échauffement et cache encore froid. Si ce délai est de 6 minutes, un pic de 3 minutes ne se couvre que par une réserve déjà chaude ou une admission bornée.
 
-En **scale-in**, retirer le réplica du routage, drainer les demandes et borner cette phase selon leurs délais. Les états KV locaux et l'affinité des sessions peuvent être perdus. Mesurer les erreurs et la redistribution de charge pendant la transition. Stabiliser les décisions d'autoscaling pour éviter une oscillation où les instances disparaissent avant d'amortir leur démarrage.
+En **scale-in**, retirer le réplica du routage, drainer les demandes et borner cette phase selon leurs délais. Les états KV locaux et l'affinité des sessions peuvent être perdus. Stabiliser les décisions d'autoscaling pour éviter une oscillation où les instances disparaissent avant d'amortir leur démarrage.
 
 ---
 
@@ -113,7 +113,7 @@ Pourquoi l’annulation fait-elle partie de l’optimisation de capacité ? <!--
 ?
 Après abandon, timeout ou choix d'une autre réponse, un moteur peut continuer à générer si l'annulation ne lui parvient pas. Il consomme alors calcul, KV et quota sans produire de valeur.
 
-Propager un budget de temps et un signal d'annulation à travers application, gateway et serveur. Mesurer délai de libération, tokens produits après abandon et tâches orphelines ; vérifier le comportement du moteur. Une limite de sortie évite aussi les générations sans fin, mais sa réduction excessive augmente troncatures et reprises. Valider l'économie sur des tâches complètes.
+Exemple : un utilisateur ferme l'onglet après 2 s ; sans propagation, le moteur produit encore les 1 500 tokens prévus, soit 30 s d'une place de decode à 50 tokens/s. Propager un budget de temps et un signal d'annulation à travers application, gateway et serveur, puis mesurer les tokens produits après abandon. Une limite de sortie évite aussi les générations sans fin, mais sa réduction excessive augmente troncatures et reprises.
 
 ---
 

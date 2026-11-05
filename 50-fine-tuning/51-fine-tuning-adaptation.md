@@ -31,6 +31,8 @@ Qu'est-ce que le SFT ? <!--anki:6759363b4a296776615b-->
 ```
 En entraînement **assistant-only**, on masque la perte sur les consignes pour apprendre les réponses. Ce masquage dépend du collator et de la configuration : le vérifier, car certains pipelines entraînent sur toute la séquence.
 
+Inspecter un exemple tokenisé avec ses labels : les positions ignorées ne doivent pas contribuer à la perte, tandis que la réponse et sa terminaison doivent rester apprises. Une perte qui baisse ne prouve pas que le masque est correct.
+
 ---
 
 À ne pas confondre : full fine-tuning et PEFT ? <!--anki:666d6d6977395a684642-->
@@ -85,6 +87,8 @@ vllm serve meta-llama/Llama-3.1-8B-Instruct --enable-lora \
   --lora-modules support=./lora-support juridique=./lora-juridique
 ```
 Cet exemple suppose un serveur et une architecture compatibles. Vérifier versions de base, rangs et modules ciblés, puis mesurer mémoire, chargements d'adapters et débit sous concurrence. Le nombre de clients ne suffit pas à dimensionner les GPU : adapters simultanés, séquences actives et KV cache comptent aussi.
+
+L'identité du client doit déterminer les adapters autorisés. Un adapter juridique n'est pas une frontière de confidentialité et ne doit pas être sélectionnable librement par un autre tenant.
 
 ---
 

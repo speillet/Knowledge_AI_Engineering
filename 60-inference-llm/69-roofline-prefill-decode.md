@@ -10,6 +10,8 @@ Le nombre d'**opérations de calcul par octet lu en mémoire** (FLOP/octet). Ell
 - **Faible** : le GPU attend les données, le calcul est limité par la **bande passante mémoire**
 - **Élevée** : les données sont réutilisées beaucoup, le calcul est limité par la **puissance de calcul**
 
+Comparer au point de transition du matériel : `débit de calcul / bande passante`, en FLOP/octet. Un GPU théorique à 100 TFLOP/s et 2 To/s donne 50 FLOP/octet. Cette borne idéale n'intègre pas les petits kernels, communications ou coûts CPU ; vérifier le profil réel.
+
 ---
 
 Qu'est-ce que le modèle roofline ? <!--anki:734d2b432465463e4639-->
@@ -78,6 +80,8 @@ Pourquoi prefill et decode se gênent-ils sur le même GPU ? <!--anki:4d7676625e
 Un gros prefill **monopolise le GPU** pendant des centaines de millisecondes : les séquences en decode du même batch **attendent**, d'où des **pics de TPOT** visibles par les utilisateurs en cours de génération. Inversement, beaucoup de decodes ralentissent l'admission des nouveaux prompts et dégradent le **TTFT**.
 
 Les deux phases ont des goulots différents (calcul et mémoire) mais partagent la même machine.
+
+Comparer les latences inter-token avec et sans arrivée de longs prompts. Si les pauses coïncident, tester le prefill découpé et son budget de tokens avant de séparer les pools GPU ; vérifier que le TTFT reste acceptable.
 
 ---
 
