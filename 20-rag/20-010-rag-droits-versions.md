@@ -16,7 +16,7 @@ D'où doivent venir le tenant et les permissions d'une requête RAG ? <!--anki:3
 ?
 Du **contexte d'identité authentifié**, vérifié par l'application et son système d'autorisation. Les arguments produits par un modèle ou un champ libre de la requête ne sont pas une preuve d'appartenance à un tenant.
 
-Le service déduit le périmètre accessible et l'applique aux recherches, aux chargements de documents et aux citations. Une requête qui nomme une autre entreprise reste dans le périmètre autorisé. Les droits doivent aussi être revérifiés lorsqu'une conversation reprend après un changement de permissions.
+Le service déduit le périmètre accessible et l'applique aux recherches, aux chargements de documents et aux citations. Exemple : l'outil exposé au modèle est `rechercher(question)`, et le serveur ajoute lui-même `tenant` et groupes tirés du jeton. Une question qui nomme une autre entreprise reste dans le périmètre autorisé. Les droits doivent aussi être revérifiés lorsqu'une conversation reprend après un changement de permissions.
 
 ---
 
@@ -30,7 +30,7 @@ Tester les requêtes avec le **rôle réellement utilisé par le service**, ses 
 
 À ne pas confondre : filtrer les candidats RAG et masquer une réponse après génération ? <!--anki:6666646239353432613336333461663662353834383931333463643065646433-->
 ?
-**Filtrer les candidats** empêche les contenus interdits d'atteindre le modèle, les rerankers externes et les caches exposés à l'utilisateur. **Masquer la réponse** intervient après que ces composants ont déjà pu recevoir ou réutiliser l'information.
+**Filtrer les candidats** empêche les contenus interdits d'atteindre le modèle, les rerankers externes et les caches exposés à l'utilisateur. **Masquer la réponse** intervient après que ces composants ont déjà pu recevoir ou réutiliser l'information : si un reranker hébergé par un tiers a reçu 50 candidats dont six documents RH interdits, masquer la réponse n'annule pas cet envoi.
 
 Une recherche interne peut examiner des candidats puis les filtrer dans une frontière de confiance contrôlée. Le critère de sécurité porte sur l'absence d'exposition non autorisée ; il n'impose pas un ordre physique universel à tous les moteurs de recherche.
 
@@ -40,7 +40,7 @@ Pourquoi un top-k global suivi d'un filtre peut-il dégrader le rappel RAG ? <!-
 ?
 Des documents interdits peuvent **occuper les k premières places**. Les retirer laisse peu de résultats alors que des preuves autorisées existent plus loin.
 
-Chercher dans le sous-ensemble admissible, augmenter le budget de candidats ou utiliser une recherche itérative selon le moteur. Dans pgvector avec index approximatif, le filtre est appliqué après le parcours de l'index : mesurer le rappel sous les filtres réels. Élargir la recherche ne doit jamais élargir les permissions.
+Chercher dans le sous-ensemble admissible, augmenter le budget de candidats ou utiliser une recherche itérative selon le moteur. Dans pgvector avec index approximatif, le filtre est appliqué après le parcours de l'index ; depuis la version 0.8, `SET hnsw.iterative_scan = relaxed_order` poursuit ce parcours jusqu'à obtenir assez de lignes admissibles **ou atteindre ses limites de parcours**. Mesurer le rappel sous les filtres réels. Élargir la recherche ne doit jamais élargir les permissions.
 
 ---
 
@@ -72,7 +72,7 @@ Comment résoudre deux sources RAG contradictoires sans choisir arbitrairement l
 ?
 Vérifier d'abord **périmètre, droits et date d'effet**, puis appliquer une règle métier documentée sur l'autorité des sources : par exemple, contrat applicable avant FAQ informative.
 
-La priorité dépend du sujet ; un score de similarité n'est pas une autorité. Si deux sources de même autorité restent incompatibles, ne pas fusionner leurs valeurs : signaler l'incertitude permise ou demander une clarification. Conserver les références pour le diagnostic, sans exposer des sources interdites à l'utilisateur.
+La priorité dépend du sujet ; un score de similarité n'est pas une autorité. Dans l'atelier `examples/rag-verifiable`, un contrat a une autorité de 2, la FAQ de 1. Si deux sources de même autorité restent incompatibles, ne pas fusionner leurs valeurs : signaler l'incertitude permise ou demander une clarification. Conserver les références pour le diagnostic, sans exposer des sources interdites à l'utilisateur.
 
 ---
 
@@ -80,7 +80,7 @@ Que doit identifier une citation RAG pour rester vérifiable après une mise à 
 ?
 Le **document, sa version et le passage utilisé**. Une URL vers « la version courante » peut afficher demain un texte différent de celui qui soutenait la réponse.
 
-Conserver un identifiant de chunk lié à une version ou une empreinte, et un emplacement vérifiable dans la source. La résolution de la citation doit contrôler les droits actuels. Une empreinte identifie du contenu ; elle ne prouve ni sa vérité, ni son applicabilité, ni l'autorisation de le divulguer.
+Conserver un identifiant de chunk lié à une version ou une empreinte, et un emplacement vérifiable dans la source : `politique-retours@v4/chunk-07`, avec l'empreinte SHA-256 de son texte normalisé, reste vérifiable quand la v5 paraît. La résolution de la citation doit contrôler les droits actuels. Une empreinte identifie du contenu ; elle ne prouve ni sa vérité, ni son applicabilité, ni l'autorisation de le divulguer.
 
 ---
 
@@ -88,13 +88,13 @@ Pourquoi retirer un document de la source ne suffit-il pas à le retirer d'un RA
 ?
 Des **copies dérivées** peuvent rester accessibles : chunks, embeddings, résumés, caches de réponses et contexte des conversations.
 
-Propager un retrait ou une révocation aux consommateurs concernés, bloquer immédiatement les nouvelles expositions selon le contrat de service, puis vérifier la purge des copies persistantes. Une marque de retrait peut interdire la lecture pendant la reconstruction de l'index. Elle ne garantit pas à elle seule l'effacement physique de toutes les copies ni des réponses déjà reçues.
+Propager un retrait ou une révocation aux consommateurs concernés, bloquer immédiatement les nouvelles expositions selon le contrat de service, puis vérifier la purge des copies persistantes. Une marque de retrait peut interdire la lecture pendant la reconstruction de l'index : dans le cas `source-retiree` de l'atelier RAG, le chunk reste dans le snapshot mais n'est plus jamais exposé. Elle ne garantit pas à elle seule l'effacement physique de toutes les copies ni des réponses déjà reçues.
 
 ---
 
 Comment éviter qu'un cache de réponses RAG contourne une révocation de droits ? <!--anki:3166616632303562663964313438666161623865376138323137313131333934-->
 ?
-Associer les entrées au **périmètre d'autorisation**, aux versions des sources et à la politique utilisée. Invalider les résultats affectés, ou revérifier l'accès aux preuves au moment de servir une entrée.
+Associer les entrées au **périmètre d'autorisation**, aux versions des sources et à la politique utilisée. Exemple : la clé inclut un numéro de version des droits de l'utilisateur, incrémenté à chaque retrait, ce qui rend ses anciennes entrées introuvables. À défaut, revérifier l'accès aux preuves au moment de servir une entrée.
 
 Un cache indexé uniquement par question peut partager une réponse entre deux utilisateurs de droits différents. Une clé par utilisateur ne résout pas non plus un changement de ses droits. Une durée de vie limite une exposition dans le temps ; elle ne fournit pas une révocation immédiate.
 
@@ -112,13 +112,13 @@ Comment distinguer abstention utile et échec de recherche dans un RAG ? <!--ank
 ?
 Annoter si une **preuve autorisée et applicable existe dans le corpus de référence**. Si elle existe mais n'est pas récupérée, l'abstention protège la réponse tout en révélant un échec du retrieval. Si elle n'existe pas ou reste contradictoire, une réponse affirmée peut être injustifiée.
 
-Suivre séparément rappel, réussite des questions répondables, réponses injustifiées sur les autres cas et taux d'abstention. Tout refuser peut minimiser les erreurs factuelles tout en rendant le service inutilisable.
+Exemple : sur 100 questions, 70 ont une preuve ; s'abstenir sur 30 dont 10 répondables révèle 10 échecs à diagnostiquer et 20 abstentions justifiées. Si la preuve était récupérée, chercher l'erreur côté génération plutôt que retrieval. Suivre rappel, réussite, réponses injustifiées et abstention. Tout refuser peut minimiser les erreurs tout en rendant le service inutilisable.
 
 ---
 
 Comment évaluer une réponse RAG partielle sans récompenser l'omission des questions difficiles ? <!--anki:3366616362633138393063323464376161306561663063303137613939383530-->
 ?
-Définir à l'avance les **éléments demandés**, puis mesurer leur couverture et le soutien des affirmations émises. Une réponse peut citer correctement un seul élément et en omettre deux autres.
+Définir à l'avance les **éléments demandés**, puis mesurer leur couverture et le soutien des affirmations émises. Exemple : la question porte sur délai, frais et canal de retour ; la réponse cite correctement les deux premiers et signale « canal : aucune preuve trouvée », soit une couverture de 2 sur 3.
 
 Pour chaque élément manquant, distinguer preuve absente, conflit et preuve non récupérée. Dans un corpus sans preuve pour un élément, une réponse partielle explicite peut respecter le contrat ; sur un cas entièrement répondable, la même omission est un échec de complétude. Le dénominateur ne doit pas dépendre uniquement de ce que le système choisit de dire.
 
@@ -128,7 +128,7 @@ Quels changements de corpus doivent déclencher une régression RAG ? <!--anki:3
 ?
 Les **mises à jour, suppressions, changements de droits et changements de traitement**. Vérifier les réponses sur une version remplacée, une frontière de date, deux tenants, deux rôles et une source retirée.
 
-Ajouter des tests contrefactuels : modifier un fait puis retirer sa preuve. Le résultat doit suivre la modification, puis devenir partiel ou s'abstenir selon le contrat. Versionner corpus, questions et résultats pour distinguer une évolution attendue d'une régression de recherche ou de génération.
+Ajouter des tests contrefactuels : passer dans une copie du corpus le délai contractuel de 30 à 60 jours, puis retirer ce fait. La réponse doit suivre la modification, puis devenir partielle ou s'abstenir ; `tests/test_atelier_rag.py` vérifie ces deux variations. Versionner corpus, questions et résultats pour distinguer une évolution attendue d'une régression de recherche ou de génération.
 
 ---
 

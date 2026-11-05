@@ -67,6 +67,8 @@ graph = builder.compile()
 
 Le nœud `llm` ajoute la réponse du modèle ; `tools_condition` termine si aucun outil n'est demandé, sinon `ToolNode` exécute puis rend la main au modèle. `get_weather` et `model_with_tools` sont des prérequis : le modèle doit être lié aux mêmes outils. Ajouter limites d'itérations, permissions et gestion des erreurs avant un usage réel.
 
+Tester trois chemins avec un modèle simulé : réponse directe, outil puis réponse, outil en erreur. Vérifier l'ordre des messages et l'association de chaque résultat à son appel.
+
 ---
 
 Qu'est-ce qu'une edge conditionnelle dans LangGraph ? <!--anki:4335732e4d703f5b4531-->
@@ -113,6 +115,8 @@ Comment éviter qu'un graphe LangGraph boucle à l'infini ? <!--anki:4341417b4c6
 Avec la **`recursion_limit`** (nombre maximal de super-steps, passé dans la config) et des **conditions de sortie** explicites dans les fonctions de routage.
 
 Cette limite compte les étapes du graphe, pas directement les tokens ni la durée. Ajouter un délai global, un budget d'appels et une détection des actions répétées sans progrès. Intercepter l'erreur de limite et restituer l'état partiel ; augmenter le plafond sans diagnostic peut seulement rendre l'échec plus coûteux.
+
+Par exemple, trois recherches identiques renvoyant la même observation signalent une absence de progrès. La sortie doit indiquer l'information manquante plutôt que fabriquer une conclusion pour terminer.
 
 ---
 

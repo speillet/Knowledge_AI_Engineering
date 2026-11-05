@@ -42,6 +42,8 @@ Lors d'une réduction de l'historique, préserver les échanges cohérents : sup
 
 Le même schéma Pydantic peut conduire à des chemins d'exécution différents. Vérifier refus, sortie absente, erreur de validation et coexistence avec les vrais outils. La conformité au schéma garantit une structure, pas la justesse d'une décision.
 
+Exemple : `montant: float` accepte 500 alors que seuls 50 euros restent remboursables. Les deux stratégies peuvent produire cet objet valide ; le contrôle métier reste identique après extraction.
+
 ---
 
 Comment gérer une sortie structurée LangChain correcte en forme mais fausse métier ? <!--anki:6230336635653838653961633437336339386363666462376231363935386431-->
@@ -49,6 +51,8 @@ Comment gérer une sortie structurée LangChain correcte en forme mais fausse m�
 Ajouter un **validateur métier indépendant** après l'extraction. Pour une proposition de remboursement, vérifier commande, devise, montant restant et pièces justificatives avant toute écriture.
 
 Retourner une erreur exploitable pour une correction bornée, ou escalader si les données manquent. Une nouvelle génération ne résout pas un accès refusé ni une règle métier violée. Mesurer séparément erreurs de parsing, violations métier et réponses impossibles à établir.
+
+Par exemple, rejeter une proposition en USD pour une commande en EUR, même si les deux devises sont autorisées par le schéma. Relire l'état métier juste avant l'exécution si une autre demande peut le modifier.
 
 ---
 

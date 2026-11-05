@@ -10,6 +10,8 @@ Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou 
 
 Ces briques réduisent le code d'intégration et rendent certains comportements standardisés. Elles ne définissent pas automatiquement les bons outils, les permissions ni les critères de réussite. Avant adoption, vérifier qu'on peut comprendre le flux réel, inspecter les messages et reprendre une exécution interrompue sans dépendre d'un état caché.
 
+Un test révélateur consiste à arrêter le processus après un outil réussi : la reprise conserve-t-elle le résultat ou répète-t-elle l'action ? Le comportement importe davantage que le nom de l'abstraction.
+
 ---
 
 Qu'est-ce que LangChain ? <!--anki:43603633354a63316478-->
@@ -77,6 +79,8 @@ Quels critères utiliser pour choisir un framework d'agents ? <!--anki:7350393a5
 **Contrôle** du flux (graphe explicite ou boucle autonome), **persistance** et reprise, support **multi-modèles** et MCP, **observabilité** native, maturité et stabilité de l'API, langage de l'équipe.
 
 Faire un prototype couvrant un cas difficile : outil en erreur, interruption humaine, redémarrage et changement de modèle. Vérifier la traçabilité et le coût d'exploitation, pas seulement la brièveté du code de démonstration. Préférer le plus petit ensemble de fonctionnalités qui répond aux besoins mesurés de l'équipe.
+
+Fixer des critères éliminatoires avant l'essai : absence d'isolation entre clients ou reprise non maîtrisée. Une intégration supplémentaire ne compense pas l'échec d'une exigence obligatoire.
 
 ---
 

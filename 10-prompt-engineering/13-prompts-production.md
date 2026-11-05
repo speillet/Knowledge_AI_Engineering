@@ -17,9 +17,9 @@ Les **exemples** viennent en plus, quand le format ou le jugement attendu sont d
 
 Où placer les longs documents dans un prompt ? <!--anki:635d604a5d2428323726-->
 ?
-**Documents en haut, question et consignes en bas.** Sur de longs contextes, poser la question **après** les documents améliore nettement les réponses, et rappeler brièvement la tâche à la fin aide le modèle à ne pas la perdre ([[137-long-contexte|lost in the middle]]).
+**Tester documents puis question**, sans en faire une règle universelle : l'effet dépend du modèle, de la tâche et de la position de la preuve ([[137-long-contexte|lost in the middle]]). Garder les instructions prioritaires dans leur rôle dédié.
 
-C'est aussi l'ordre compatible avec le cache : **stable en tête**, variable à la fin ([[123-caching-agressif|caching]]).
+Comparer les mêmes questions avec la preuve au début, au milieu et à la fin, à longueur constante. Pour le [[123-caching-agressif|cache]], seul un préfixe réellement identique est réutilisable : un document qui change à chaque appel ne devient pas cachable parce qu'il est placé en tête. Arbitrer qualité et réutilisation mesurée.
 
 ---
 
@@ -33,7 +33,9 @@ Cette motivation ne garantit pas le respect du format. Associer le pourquoi à d
 
 Pourquoi « Tu es un expert en… » ne suffit-il pas ? <!--anki:70402569663046525a73-->
 ?
-Un **rôle** règle surtout le **ton et le registre** ; il n'apporte pas de connaissances et améliore peu l'exactitude. Ce qui change la qualité : le **contexte** (données, public, enjeu), les **critères de réussite** et les **exemples**. Un bon rôle est **précis** (« analyste crédit qui prépare une note pour un comité ») plutôt que flatteur.
+Un **rôle** oriente le **ton et le registre** ; il n'ajoute ni données vérifiées ni compétence garantie. Fournir surtout le **contexte**, les **critères de réussite** et les **exemples**.
+
+« Analyste crédit » reste insuffisant sans bilan, période et règles de calcul. « Calcule le ratio dette/revenus avec les valeurs fournies ; signale toute donnée absente » donne un comportement vérifiable. Comparer les résultats avec et sans rôle sur les mêmes dossiers : l'effet d'une persona sur l'exactitude dépend du modèle et de la tâche, pas du prestige du titre.
 
 ---
 

@@ -76,6 +76,8 @@ Utiliser un **LLM pour générer ou améliorer des prompts** : critique d'un pro
 
 Utile pour démarrer ou pour repérer des ambiguïtés, mais une variante n'est retenue que si elle **mesure mieux** sur le jeu d'eval ([[92-chainforge-evals-prompts|evals]]). Pour aller plus loin, l'optimisation automatique rend cette boucle systématique ([[12-optimisation-automatique-prompts|DSPy]]).
 
+Exemple : demander trois reformulations d'une consigne d'extraction, puis comparer les champs réellement extraits. L'auto-évaluation « ce prompt est plus clair » ne remplace pas ce test.
+
 ---
 
 Pourquoi traiter les prompts comme du code ? <!--anki:736c4f6a3c5d3021267c-->
@@ -85,6 +87,8 @@ Parce qu'ils **déterminent le comportement en production** autant que le code, 
 - **Tests de régression** sur un golden dataset avant chaque déploiement
 - **Revue** par un pair
 - **Rollback** rapide
+
+Par exemple, une consigne « répondre brièvement » peut supprimer des réserves indispensables. Associer chaque résultat à la version du prompt et du modèle permet d'isoler cette régression plutôt que de l'attribuer au hasard.
 
 Voir [[13-prompts-production|prompts en production]] et [[91-langfuse-observabilite|prompt management]].
 

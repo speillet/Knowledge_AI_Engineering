@@ -32,7 +32,7 @@ Comment choisir entre n8n, Zapier et Make pour un workflow ? <!--anki:78707c3f7a
 ?
 Comparer les outils sur le **besoin d'intégration et d'exploitation**. Zapier et Make proposent des services hébergés avec des connecteurs et un éditeur visuel ; n8n offre notamment une option d'auto-hébergement et l'insertion de code.
 
-Vérifier les connecteurs réellement nécessaires, les conditions de licence, la localisation des données, les limites et le coût au volume prévu. Tester aussi retries, export, revue et maintenance. L'auto-hébergement n'est pas gratuit à exploiter et un grand catalogue ne garantit pas la bonne couverture d'une API.
+Vérifier les connecteurs réellement nécessaires, les conditions de licence, la localisation des données, les limites et le coût au volume prévu. Exemple : des données de santé à garder sur ses serveurs orientent vers n8n auto-hébergé ; vingt intégrations SaaS courantes sans équipe d'exploitation, vers un service hébergé. L'auto-hébergement n'est pas gratuit à exploiter et un grand catalogue ne garantit pas la bonne couverture d'une API.
 
 ---
 
@@ -56,9 +56,15 @@ Partir du besoin de reprise : recalculer une partition de données n'est pas éq
 
 Pourquoi la durable execution intéresse-t-elle les agents ? <!--anki:624b5d7544713e7d2179-->
 ?
-Elle permet de **reprendre un workflow à partir d'un historique durable**, sans refaire nécessairement les étapes dont le résultat a déjà été enregistré. Une attente humaine peut être représentée par un état ou un événement persistant.
+Elle permet de **reprendre un workflow à partir d'un historique durable**, sans refaire les étapes dont le résultat a déjà été enregistré. Avec le SDK Python de Temporal :
+```python
+await workflow.execute_activity(proposer_remboursement, dossier,
+                                start_to_close_timeout=timedelta(minutes=5))
+await workflow.wait_condition(lambda: self.decision is not None)  # signal humain, sans limite de durée
+```
+Après un redémarrage, le worker rejoue l'historique : l'activité terminée n'est pas relancée, son résultat est relu.
 
-Une activité distante acceptée juste avant un crash peut toutefois être relancée si son résultat n'a pas été enregistré. Prévoir clés d'idempotence, vérification d'état et politique d'annulation ; un moteur ne transforme pas une API externe en transaction. Tester ces fenêtres de panne et la compatibilité du code lors des reprises. Voir les [[45-langgraph-production|checkpoints]] pour comparer les frontières de persistance.
+Une activité distante acceptée juste avant un crash peut toutefois être relancée si son résultat n'a pas été enregistré. Prévoir clés d'idempotence, vérification d'état et politique d'annulation ; un moteur ne transforme pas une API externe en transaction. Voir les [[45-langgraph-production|checkpoints]] pour comparer les frontières de persistance.
 
 ---
 
@@ -66,7 +72,7 @@ Une activité distante acceptée juste avant un crash peut toutefois être relan
 ?
 L’**orchestration de données** organise dépendances, partitions et disponibilité de résultats. La **durable execution** vise la reprise de workflows en s'appuyant sur un historique persistant des étapes et événements.
 
-Ces capacités se recouvrent selon les plateformes ; les traitements data ne sont pas tous périodiques, et une attente humaine n'impose pas un produit unique. Examiner granularité de reprise, délais, annulation, versioning et interactions externes. La persistance du workflow ne garantit pas qu'une activité distante s'exécute une seule fois : son idempotence ou un protocole adapté reste nécessaire.
+Exemple : Dagster recalcule la partition du 21 octobre d'un asset quand sa source change ; Temporal reprend le dossier D-123 à l'étape « attente de signature » après un redémarrage. Ces capacités se recouvrent selon les plateformes. Examiner granularité de reprise, délais, annulation, versioning et interactions externes. La persistance du workflow ne garantit pas qu'une activité distante s'exécute une seule fois : son idempotence ou un protocole adapté reste nécessaire.
 
 ---
 
@@ -74,7 +80,7 @@ Quelles limites du no-code en production ? <!--anki:4169365566313b657b25-->
 ?
 **Versioning et diff** difficiles, **tests automatisés** limités, gestion des erreurs et des secrets à surveiller, et risque de **workflows « shadow IT »** que personne ne maintient.
 
-Nommer un responsable, documenter les dépendances et prévoir sauvegarde, alertes et procédure de reprise. Tester la panne d'un connecteur et les notifications dupliquées. Un workflow visuellement simple peut engager des droits importants ; les identifiants de service doivent être limités et renouvelables, comme ceux d'une application développée en code.
+Nommer un responsable, documenter les dépendances et prévoir sauvegarde, alertes et procédure de reprise. Tester la panne d'un connecteur et les notifications dupliquées. Un workflow visuellement simple peut engager des droits importants. Exemple : il utilise le jeton personnel d'un employé parti, révoqué un vendredi, et échoue chaque nuit sans alerte. Utiliser des identifiants de service limités et renouvelables, comme pour une application développée en code.
 
 ---
 

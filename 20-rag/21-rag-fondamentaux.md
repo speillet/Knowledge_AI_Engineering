@@ -36,6 +36,8 @@ Requête   : question → embedding → retrieval top-k → prompt augmenté →
 
 L'**ingestion** prépare les passages et leurs métadonnées ; elle se relance quand les sources changent. À chaque **requête**, la recherche sélectionne les passages autorisés, éventuellement reclassés, puis le modèle construit une réponse sourcée. Conserver les identifiants de documents et les versions permet de diagnostiquer une erreur. La recherche peut aussi être lexicale ou hybride : une base vectorielle n'est pas obligatoire.
 
+Contrôle utile : conserver les passages récupérés pour un cas de test. Preuve absente du contexte : examiner l'ingestion et la recherche ; preuve présente mais mal utilisée : examiner la génération.
+
 ---
 
 Qu'est-ce que le chunking et pourquoi est-il critique ? <!--anki:4165744b3d31647a653d-->
@@ -87,6 +89,8 @@ La recherche vectorielle classe par **proximité de sens**, ce qui n'est pas la 
 - une négation change le sens sans éloigner beaucoup le vecteur
 
 D'où le **reranking** (qui évalue la paire question-passage) et la **recherche hybride** pour les termes exacts ([[22-rag-avance|RAG avancé]]).
+
+Un passage sur le bon produit mais sa version précédente peut rester très similaire. La pertinence exige aussi de vérifier les contraintes de version, date et périmètre de la question.
 
 ---
 

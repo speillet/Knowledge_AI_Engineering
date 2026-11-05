@@ -33,6 +33,8 @@ Host (Claude Code, Cursor, ton agent)
 ```
 Le **modèle ne parle jamais directement** à un serveur : c'est le host qui liste les outils, les présente au modèle, exécute l'appel et renvoie le résultat ([[32-tool-calling|tool calling]]).
 
+Le host reste responsable de l'accord utilisateur et du périmètre des connexions. Brancher deux serveurs n'autorise pas implicitement à transférer les données de l'un vers l'autre.
+
 ---
 
 Quelles sont les trois primitives exposées par un serveur MCP ? <!--anki:7334672d62745828472a-->
@@ -42,6 +44,8 @@ Quelles sont les trois primitives exposées par un serveur MCP ? <!--anki:733467
 - **Prompts** : templates réutilisables, déclenchés **par l'utilisateur** (souvent des commandes)
 
 La distinction porte sur **qui décide** de l'utiliser : le modèle, l'application, ou l'humain. Les extensions récentes ajoutent les **Tasks** (opérations longues suivies par polling) et les **Apps** (interface HTML rendue dans une sandbox).
+
+Exemple : un guide interne est une ressource, « analyser un incident » un template de prompt, et consulter son ticket un outil. Cette distinction ne remplace jamais l'autorisation côté serveur.
 
 ---
 

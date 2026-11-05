@@ -30,6 +30,8 @@ Un premier appel (ou un classifieur) **catégorise** l'entrée et l'envoie vers 
 
 Il évite un prompt fourre-tout qui dégrade toutes les catégories, et permet d'envoyer les cas simples vers un **petit modèle** ([[82-routing-llm|routing LLM]]).
 
+Prévoir une branche « ambigu ou hors périmètre » : forcer chaque ticket dans une catégorie connue masque les erreurs du routeur. Mesurer la réussite de bout en bout, car un excellent spécialiste ne compense pas une mauvaise orientation.
+
 ---
 
 Quelles sont les deux formes de parallélisation des appels LLM dans un workflow ? <!--anki:47335a5b4c435a6f5958-->
@@ -87,6 +89,8 @@ Comment choisir entre workflow et agent ? <!--anki:6f6678437a726b25366f-->
 - **Erreur coûteuse** : workflow, ou agent avec approbation humaine
 
 Règle d'Anthropic : commencer par **l'option la plus simple** qui marche, et n'ajouter de l'autonomie que si elle **mesure mieux** ([[94-evals-methodologie|evals]]).
+
+Exemple hybride : workflow fixe pour vérifier une facture, agent borné pour retrouver une pièce manquante. L'autonomie porte sur la recherche, pas sur l'autorisation de paiement.
 
 ---
 

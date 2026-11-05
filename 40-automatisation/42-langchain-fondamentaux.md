@@ -36,6 +36,8 @@ reponse = model.invoke("Explique le RAG en une phrase.")
 
 Installer l'intégration du fournisseur et configurer ses identifiants restent nécessaires. L'interface d'appel est commune, mais les modèles diffèrent sur les outils, les sorties structurées, les paramètres et les limites de contexte. Après changement de fournisseur, rejouer les tests fonctionnels et les evals plutôt que supposer une équivalence de comportement.
 
+Inclure au minimum un appel d'outil, une sortie structurée et un refus : un simple « bonjour » valide la connexion, pas la compatibilité applicative.
+
 ---
 
 Quels types de messages manipule LangChain ? <!--anki:6e25772567323b58302f-->
@@ -107,6 +109,8 @@ Quel est le rôle de LangSmith ? <!--anki:47476469236b7933533b-->
 La plateforme de l'éditeur pour **tracer, déboguer et évaluer** les applications LangChain/LangGraph (activée par variables d'environnement, ex. `LANGSMITH_TRACING=true`). Alternative open source : [[91-langfuse-observabilite|Langfuse]].
 
 Une trace permet de retrouver les appels, outils, durées et erreurs d'une requête, puis d'en faire un cas d'évaluation. Configurer les données effectivement envoyées et leur rétention avant d'activer la collecte. L'observabilité ne nécessite pas de stocker tous les secrets ou tous les contenus bruts.
+
+Pour un outil lent, comparer sa durée à celle du modèle et aux retries. Un temps total élevé n'indique pas, à lui seul, quel composant optimiser.
 
 ---
 

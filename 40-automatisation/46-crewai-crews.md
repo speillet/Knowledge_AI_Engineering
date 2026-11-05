@@ -55,6 +55,8 @@ Les `{variables}` sont remplacées par les `inputs` du kickoff.
 
 L'exemple comporte un agent et une tâche : une crew n'exige pas plusieurs agents. `search_tool` doit être défini, et le modèle ainsi que ses identifiants configurés. Le rôle et la biographie orientent la génération mais ne prouvent pas la véracité des annonces ; vérifier dates et sources dans le résultat.
 
+Si seules trois annonces vérifiées existent, en produire cinq inventerait des faits pour satisfaire le format. Prévoir un résultat partiel explicite et un budget de recherche.
+
 ---
 
 Quels modes d'exécution (process) propose un crew CrewAI ? <!--anki:4f623b5a442b527c2b4d-->
@@ -79,6 +81,8 @@ Comment obtenir une sortie structurée d'une tâche CrewAI ? <!--anki:4e2826512a
 Avec **`output_pydantic`** (ou `output_json`) sur la tâche : le résultat est validé contre le modèle. `output_file` écrit en plus le résultat dans un fichier.
 
 Définir un modèle de résultat, par exemple une liste de constats avec source et gravité. Traiter explicitement l'échec de conversion ou de validation ; ne pas laisser un texte libre passer pour un objet valide. Le fichier produit reste un artefact à contrôler et sa destination doit être limitée au répertoire prévu.
+
+Une URL valide n'établit pas qu'elle soutient le constat. Vérifier le passage cité séparément de la validation de structure.
 
 ---
 

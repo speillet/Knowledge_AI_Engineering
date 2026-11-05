@@ -38,6 +38,8 @@ Par **schema linking** : une première étape sélectionne les **tables et colon
 
 Mieux encore : exposer des **vues métier** préparées plutôt que les tables brutes.
 
+Conserver aussi les clés et tables de liaison nécessaires aux jointures. Pour « revenus par client », sélectionner `clients` et `lignes_facture` sans le lien `factures` peut rendre la bonne requête impossible, même avec les bonnes colonnes de montant.
+
 ---
 
 Qu'est-ce qu'une couche sémantique et pourquoi aide-t-elle ? <!--anki:4a75536f372969675526-->
@@ -83,6 +85,8 @@ Pourquoi un bon score sur Spider ne prédit-il pas la réussite d'un text-to-SQL
 - **Spider 2.0** (2024) : workflows d'entreprise réels (BigQuery, Snowflake), schémas de centaines de colonnes ; les taux de réussite y restent bien plus bas
 
 L'écart entre ces benchmarks rappelle qu'un score public ne prédit pas le résultat **sur sa propre base** ([[146-choix-modeles|choix de modèle]]).
+
+Construire des cas locaux avec dates fiscales, annulations et jointures un-à-plusieurs. Une requête peut s'exécuter sans erreur tout en doublant le chiffre d'affaires : comparer le résultat métier, pas seulement la syntaxe ou l'absence d'exception.
 
 ---
 

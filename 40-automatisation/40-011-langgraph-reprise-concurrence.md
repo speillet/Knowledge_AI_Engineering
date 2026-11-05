@@ -16,7 +16,7 @@ Comment choisir entre les modes de durabilité sync, async et exit de LangGraph 
 ?
 **`sync`** attend l'écriture du checkpoint avant de poursuivre ; **`async`** chevauche persistance et étape suivante ; **`exit`** persiste à la sortie du graphe, y compris erreur ou interruption prévue.
 
-Le compromis porte sur le coût de persistance et le travail récupérable après crash. `exit` ne protège pas les étapes intermédiaires contre la mort brutale du processus. Aucun mode ne rend transactionnel un service externe. Tester les modes avec le backend et les pannes envisagés.
+Le compromis porte sur le coût de persistance et le travail récupérable après crash. Exemple : `graph.invoke(entree, config, durability="sync")`. Dans une chaîne séquentielle arrêtée pendant l'étape 9, `sync` peut reprendre depuis le checkpoint suivant l'étape 8 ; `exit` ne garantit pas ces sauvegardes intermédiaires. Aucun mode ne rend transactionnel un service externe. Tester les modes avec le backend et les pannes envisagés.
 
 ---
 
@@ -24,7 +24,7 @@ Que deviennent les branches LangGraph réussies si une autre branche du même su
 ?
 Avec la persistance appropriée, les **pending writes** conservent les résultats des nœuds terminés du super-step. À la reprise, ces nœuds n'ont pas nécessairement à être relancés : le travail restant peut reprendre.
 
-Il faut distinguer un résultat enregistré d'un effet externe dont l'enregistrement n'a pas abouti. Injecter une panne dans une branche et compter les invocations après reprise. Ne pas déduire de ce mécanisme une garantie universelle d'exécution unique.
+Exemple : A, B et C tournent dans le même super-step ; A et B réussissent, C échoue sur une erreur réseau. Après `graph.invoke(None, config)`, seule C est relancée. Il faut distinguer un résultat enregistré d'un effet externe dont l'enregistrement n'a pas abouti. Ne pas déduire de ce mécanisme une garantie universelle d'exécution unique.
 
 ---
 
@@ -38,7 +38,13 @@ Conserver une proposition stable avant l'interruption ; placer l'exécution mét
 
 Pourquoi ne pas réordonner des interrupt dans un nœud LangGraph déjà suspendu ? <!--anki:6633383838643766396165333437333438346533623933303738663035373638-->
 ?
-Les valeurs de reprise sont associées aux interruptions selon leur ordre d'exécution dans le nœud. Ajouter, retirer ou permuter une interruption peut faire correspondre une réponse à la mauvaise question.
+Les valeurs de reprise sont associées aux interruptions selon leur ordre d'exécution dans le nœud.
+```python
+def valider(state):
+    montant_ok = interrupt("Valider le montant ?")   # réponse n° 1
+    iban_ok = interrupt("Confirmer l'IBAN ?")        # réponse n° 2
+```
+Si une nouvelle version permute ces appels, un dossier suspendu sur l'IBAN reçoit la validation du montant comme réponse à la question de l'IBAN.
 
 Conserver le chemin de code compatible pour les exécutions en attente, ou terminer/migrer explicitement celles-ci avant de déployer. Utiliser des étapes distinctes et des propositions versionnées facilite le suivi. Le déploiement d'un nouveau code ne supprime pas les anciens états persistés.
 
@@ -46,7 +52,13 @@ Conserver le chemin de code compatible pour les exécutions en attente, ou termi
 
 Comment traiter plusieurs interruptions LangGraph en attente simultanément ? <!--anki:6232346431373435633539363430616561646461396335613536316265343961-->
 ?
-Identifier **chaque interruption** et rattacher la réponse à la bonne demande ; les API récentes acceptent une correspondance entre identifiants d'interruption et valeurs de reprise. Ne pas assimiler un « oui » global à l'approbation de toutes les branches.
+Identifier **chaque interruption** et rattacher la réponse à la bonne demande ; les API récentes acceptent une correspondance entre identifiants d'interruption et valeurs de reprise.
+```python
+etat = graph.get_state(config)
+reponses = {i.id: decision_humaine(i.value) for i in etat.interrupts}
+graph.invoke(Command(resume=reponses), config)
+```
+Ne pas assimiler un « oui » global à l'approbation de toutes les branches.
 
 L'application vérifie propriétaire, droits, version et expiration de chaque proposition. Une branche approuvée peut avancer tandis qu'une autre attend, selon le graphe. Tester approbations désordonnées, doublons et refus partiel sur la version du runtime retenue.
 
@@ -71,7 +83,7 @@ Pourquoi un checkpointer LangGraph ne suffit-il pas à sérialiser deux requête
 ?
 Il conserve des checkpoints, mais la politique d'admission des **exécutions concurrentes** relève aussi du runtime et de l'application. Deux requêtes peuvent lire un état ancien et produire des décisions incompatibles.
 
-Choisir une règle explicite : rejeter, mettre en file ou remplacer la demande précédente avec les garanties prévues. En hébergement maison, assurer cette coordination entre réplicas ; un verrou Python ne protège qu'un processus. Les reducers du graphe ne règlent pas à eux seuls cette concurrence entre invocations.
+Choisir une règle explicite : rejeter, mettre en file ou remplacer la demande précédente. Le serveur d'agents de LangGraph l'expose par `multitask_strategy` : `reject`, `enqueue`, `interrupt` ou `rollback`. En hébergement maison, assurer cette coordination entre réplicas ; un verrou Python ne protège qu'un processus. Les reducers du graphe ne règlent pas à eux seuls cette concurrence entre invocations.
 
 ---
 
@@ -79,7 +91,18 @@ Comment concevoir un reducer LangGraph pour une collecte parallèle fiable ? <!-
 ?
 Définir la **sémantique de fusion** avant la fonction : concaténation, ensemble, mise à jour par identifiant ou conflit explicite. Si l'ordre ne doit pas compter, rechercher une opération associative et commutative ; si les doublons sont possibles, prévoir une identité stable.
 
-Deux résultats portant le même identifiant mais des contenus contradictoires ne doivent pas être écrasés silencieusement. Stocker les éléments par identifiant puis trier pour l'affichage est souvent plus robuste qu'une liste dont l'ordre dépend de l'arrivée des branches.
+Deux résultats portant le même identifiant mais des contenus contradictoires ne doivent pas être écrasés silencieusement :
+```python
+def fusion_par_id(a: dict, b: dict) -> dict:
+    conflits = {k for k in a.keys() & b.keys() if a[k] != b[k]}
+    if conflits:
+        raise ValueError(f"résultats contradictoires : {conflits}")
+    return {**a, **b}
+
+class Etat(TypedDict):
+    resultats: Annotated[dict[str, dict], fusion_par_id]
+```
+Stocker par identifiant puis trier pour l'affichage est plus robuste qu'une liste ordonnée par l'arrivée des branches.
 
 ---
 
@@ -99,7 +122,7 @@ La bonne forme dépend du reducer. Tester deux contributions successives et deux
 
 Comment choisir la mémoire d'un sous-graphe LangGraph ? <!--anki:3835393364376666643936353436373439656339376532613439323832633066-->
 ?
-Décider si l'agent délégué doit **repartir à chaque appel** ou conserver son propre historique. La configuration du checkpointer du sous-graphe et l'héritage du parent déterminent cette portée.
+Décider si l'agent délégué doit **repartir à chaque appel** ou conserver son propre historique. Par défaut (`checkpointer=None`), le sous-graphe hérite du checkpointer du parent et repart à chaque appel ; `sous_graphe.compile(checkpointer=True)` conserve son historique d'un appel à l'autre dans le même thread.
 
 Un sous-agent de synthèse ponctuelle ne doit pas récupérer arbitrairement un dossier précédent. Un assistant spécialisé persistant demande des identifiants et namespaces stables. Tester appels répétés et parallèles : partager une mémoire peut créer des conflits ou des fuites si le périmètre n'est pas explicite.
 
@@ -107,7 +130,7 @@ Un sous-agent de synthèse ponctuelle ne doit pas récupérer arbitrairement un 
 
 Comment faire évoluer le schéma d'état d'un graphe LangGraph en production ? <!--anki:3539643263336230323163643437343462623664643464643430396565643030-->
 ?
-Les checkpoints historiques restent lisibles par du **nouveau code** : prévoir valeurs par défaut, champs optionnels ou migrations explicites. Une annotation TypedDict ne convertit pas automatiquement les états déjà stockés.
+Les checkpoints historiques restent lisibles par du **nouveau code** : prévoir valeurs par défaut, champs optionnels ou migrations explicites. Une annotation TypedDict ne convertit pas les états déjà stockés : déclarer `canal: NotRequired[str]` et lire `state.get("canal", "web")` laisse reprendre les anciens dossiers.
 
 Ajouter une version applicative au contrat, conserver des fixtures anciennes et tester leur reprise. Retirer un champ ou renommer un nœud encore attendu par un thread interrompu demande une stratégie de compatibilité. Prévoir aussi le chemin de rollback : l'ancien code peut ignorer ou mal interpréter le nouvel état.
 
@@ -131,7 +154,7 @@ Les trois tentatives incluent l'initiale. Vérifier les retries internes du clie
 
 Pourquoi la limite de récursion LangGraph ne remplace-t-elle pas un budget d'agent ? <!--anki:6665643733613362383263383463376362303637613430663830326535626436-->
 ?
-Elle borne les **super-steps**, alors qu'une seule étape peut lancer beaucoup d'appels parallèles, traiter un long contexte ou attendre longtemps. Elle ne représente donc ni un montant ni un délai.
+Elle borne les **super-steps**, alors qu'une seule étape peut lancer beaucoup d'appels parallèles, traiter un long contexte ou attendre longtemps. Elle ne représente donc ni un montant ni un délai. Dans LangGraph 1.2.14, version de l'atelier support, sa valeur par défaut atteint 10 007 super-steps : la fixer, par exemple `config={"recursion_limit": 40}`, reste utile mais ne suffit pas.
 
 Cumuler plafond de branches actives, deadline et compteurs d'appels/tokens. Avant une délégation, réserver un budget partagé plutôt que donner à chaque branche le budget total. À l'épuisement, produire un résultat partiel explicite et conserver les éléments nécessaires au diagnostic.
 
@@ -149,7 +172,7 @@ Comment empêcher qu'un time travel LangGraph rejoue des effets réels pendant l
 ?
 Rejouer dans un environnement où les **outils d'écriture sont simulés** ou strictement autorisés pour le test. Copier seulement les données nécessaires et conserver un lien vers le cas d'origine.
 
-Un checkpoint décrit un état passé du graphe ; il ne restaure pas le solde d'un compte ou l'état d'un service tiers. Même si les clés d'idempotence protègent certaines actions, un nouveau chemin pourrait en générer d'autres. Séparer diagnostic et reprise opérationnelle autorisée.
+Un checkpoint décrit un état passé du graphe ; il ne restaure pas le solde d'un compte ou l'état d'un service tiers. Or `graph.invoke(None, ancien.config)`, avec `ancien` tiré de `get_state_history`, réexécute les nœuds suivants, outils compris. Même si les clés d'idempotence protègent certaines actions, un nouveau chemin pourrait en générer d'autres. Séparer diagnostic et reprise opérationnelle autorisée.
 
 ---
 

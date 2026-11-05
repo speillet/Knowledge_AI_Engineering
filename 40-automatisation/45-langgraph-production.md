@@ -109,6 +109,8 @@ Quels patterns multi-agents LangChain/LangGraph documentent-ils ? <!--anki:78287
 - **Skills** : un seul agent charge du contexte spécialisé à la demande
 - **Custom workflow** : un graphe sur mesure qui combine les précédents
 
+Choisir selon le contrôle attendu : un sous-agent rend un résultat au principal ; un handoff change l'interlocuteur actif. Tester qui garde l'historique et qui peut agir après le transfert, pas seulement la qualité du texte final.
+
 ---
 
 Comment déployer et déboguer un graphe LangGraph ? <!--anki:6c6747322662447d7252-->
@@ -116,6 +118,8 @@ Comment déployer et déboguer un graphe LangGraph ? <!--anki:6c6747322662447d72
 - **LangSmith Deployment** (ex-LangGraph Platform) : un **Agent Server** qui expose le graphe en API, avec persistance, files de tâches et streaming gérés
 - **Studio** : IDE visuel pour exécuter pas à pas et inspecter l'état
 - **Auto-hébergé** : le graphe dans son propre service (FastAPI, conteneur) avec un `PostgresSaver`
+
+Le déploiement doit aussi couvrir migrations de checkpoints, isolation des threads, annulation et secrets. Tester un redémarrage pendant une attente humaine : retrouver l'état en Studio ne prouve pas que le service sait reprendre correctement la demande.
 
 ---
 

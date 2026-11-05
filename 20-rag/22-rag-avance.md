@@ -49,13 +49,13 @@ Qu'est-ce que le query rewriting ? <!--anki:76394545532971765776-->
 - **Décomposition** : sous-questions pour une question à plusieurs sauts
 - **Contextualisation** : réécrire « et pour l'an dernier ? » en question autonome, à partir de l'historique de conversation
 
-Coût : un appel LLM de plus avant la recherche.
+Exemple de décomposition : « notre politique de télétravail est-elle plus généreuse qu'en 2023 ? » devient deux recherches, politique actuelle et politique 2023, avant la comparaison. Coût : un appel LLM de plus avant la recherche.
 
 ---
 
 Qu'est-ce que HyDE ? <!--anki:513c5b5f50533662435f-->
 ?
-**Hypothetical Document Embeddings** : le LLM rédige une **réponse hypothétique** à la question, et on cherche les documents proches de cette réponse plutôt que de la question. Une réponse ressemble davantage aux passages recherchés qu'une question courte.
+**Hypothetical Document Embeddings** : le LLM rédige une **réponse hypothétique** à la question, et on cherche les documents proches de cette réponse plutôt que de la question. Une réponse ressemble davantage aux passages recherchés qu'une question courte : « pourquoi mon pod redémarre-t-il en boucle ? » produit un passage hypothétique mentionnant `CrashLoopBackOff` et `OOMKilled`, termes de la documentation absents de la question.
 
 Limites : un appel LLM en plus, et une réponse hypothétique **fausse** peut orienter la recherche vers de mauvais passages. Utile surtout quand questions et documents emploient des vocabulaires différents.
 
@@ -65,7 +65,13 @@ Limites : un appel LLM en plus, et une réponse hypothétique **fausse** peut or
 ?
 À combiner similarité et **filtres structurés** (date, source, tenant, **permissions/ACL**) — indispensable pour la sécurité : ne jamais retrouver ce que l'utilisateur n'a pas le droit de voir.
 
-Les droits proviennent de l'identité authentifiée et du système d'autorisation, jamais d'un tenant fourni librement par le modèle. Appliquer les restrictions avant toute exposition au LLM, et propager la même isolation aux caches et citations. Tester notamment deux utilisateurs posant la même question avec des permissions différentes.
+Les droits proviennent de l'identité authentifiée, jamais d'un tenant fourni librement par le modèle. Avec pgvector, par exemple :
+```sql
+SELECT id, texte FROM chunks
+WHERE tenant_id = :tenant AND :groupe = ANY(groupes_autorises) AND date_effet <= current_date
+ORDER BY embedding <=> :vecteur_question LIMIT 10;      -- distance cosinus
+```
+Propager la même isolation aux caches et citations. Tester notamment deux utilisateurs posant la même question avec des permissions différentes.
 
 ---
 
@@ -99,7 +105,7 @@ Pourquoi l'ordre des chunks dans le contexte compte-t-il ? <!--anki:6e6c68533674
 ?
 Certains modèles exploitent moins bien une preuve située **au milieu d'un long contexte** : c'est l'effet « lost in the middle ». L'ordre des passages peut donc changer la réponse, même si les sources sont identiques.
 
-Tester plusieurs ordres, placer les preuves importantes dans des positions bien exploitées par le modèle et supprimer les redondances. **Ce n'est pas une règle universelle début/fin** : l'effet dépend du modèle, de la tâche et de la longueur. Préserver aussi la cohérence des passages liés.
+Tester plusieurs ordres : rejouer 200 questions avec la preuve en position 1, 5 puis 10 sur 10 passages, et comparer l'exactitude. Placer ensuite les preuves importantes dans les positions bien exploitées par le modèle et supprimer les redondances. **Ce n'est pas une règle universelle début/fin** : l'effet dépend du modèle, de la tâche et de la longueur. Préserver aussi la cohérence des passages liés.
 
 ---
 

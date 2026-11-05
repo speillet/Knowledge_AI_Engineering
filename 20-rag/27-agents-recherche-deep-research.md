@@ -31,6 +31,8 @@ Comment se déroule la boucle d'un agent de recherche ? <!--anki:4c7b53673262534
 
 L'arrêt se décide sur **couverture suffisante** ou **budget épuisé**.
 
+Tenir une matrice `sous-question → preuve → incertitude`. Dix pages reprenant la même dépêche ne couvrent pas dix points indépendants. À budget épuisé, distinguer les conclusions étayées des questions restées ouvertes.
+
 ---
 
 Pourquoi les agents de recherche utilisent-ils souvent plusieurs agents ? <!--anki:4831403a517c48356826-->
@@ -106,6 +108,8 @@ Quand ne pas utiliser d'agent de recherche ? <!--anki:777e6c2d5123333b7074-->
 - **Décision engageante** sans relecture humaine du rapport
 
 Il sert les questions **ouvertes, larges et à forte valeur** : veille, due diligence, état de l'art.
+
+Comparer à une recherche simple sur les mêmes questions : le surcoût doit acheter une meilleure couverture ou une vérification supplémentaire. Multiplier les sources sans résoudre les contradictions ajoute surtout du temps et du bruit.
 
 ---
 
