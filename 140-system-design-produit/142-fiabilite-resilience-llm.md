@@ -33,7 +33,11 @@ Comment faire des retries correctement sur une API LLM ? <!--anki:47233729762a37
 
 Qu'est-ce qu'une chaîne de fallbacks ? <!--anki:4b612e3c3921336d733a-->
 ?
-En cas d'échec du modèle principal : **même modèle chez un autre fournisseur/région** → **autre modèle** comparable → **modèle plus petit** → **réponse dégradée** (message d'attente, FAQ, humain). Chaque fallback doit être **évalué** : un prompt optimisé pour un modèle peut mal marcher sur un autre ([[81-litellm-api-layer|fallbacks LiteLLM]]).
+Une **suite bornée de solutions de repli**, choisies selon l'erreur et le contrat : autre backend compatible, autre modèle évalué, ou dégradation explicitement annoncée ([[81-litellm-api-layer|fallbacks LiteLLM]]).
+
+Exemple : après indisponibilité d'une région, une seconde région autorisée peut convenir ; après arguments invalides, changer de région ne corrige probablement rien. Un autre modèle peut aussi manquer le schéma ou la fenêtre de contexte requis.
+
+Conserver délai et budget globaux, éviter les pannes communes aux backends et ne pas rejouer un effet déjà exécuté. Arrêter la chaîne quand aucune option admissible ne reste. Une FAQ statique peut informer, sans être comptée comme résolution complète de toute demande.
 
 ---
 

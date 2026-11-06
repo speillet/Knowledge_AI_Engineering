@@ -52,9 +52,11 @@ Utiliser des bornes explicites, par exemple [début, fin), avec fuseau défini. 
 
 Comment définir les dépendances de données d’une partition aval ? <!--anki:3436626265303765326638343431653262666638663338373665326264376633-->
 ?
-Identifier **les partitions et versions amont nécessaires**, pas seulement les tâches qui doivent être vertes. Une variable glissante sur sept jours peut dépendre de sept partitions alors qu'un export quotidien n'en utilise qu'une.
+Décrire **quelles partitions et versions amont alimentent chaque partition aval**, avec règle de complétude, pas seulement ordre des tâches.
 
-Lors d'une correction amont, recalculer les partitions aval dont la fenêtre inclut cette donnée. Définir quand les entrées sont suffisamment complètes et si un résultat provisoire est acceptable. Un graphe de tâches sans correspondance entre partitions peut laisser un dataset déclaré prêt avec des entrées anciennes, manquantes ou incompatibles.
+Exemple : une feature quotidienne sur les sept jours `J−6` à `J` dépend de ces sept entrées. Corriger la source du jour `J` invalide aussi les sorties déjà produites pour `J+1` à `J+6`, pas seulement celle de `J`.
+
+Enregistrer ce lien pour cibler le recalcul et éviter un backfill intégral inutile. Distinguer entrée absente, vide valide et provisoire ; publier avec un indicateur de complétude si le métier l'accepte. Une tâche verte ne prouve pas que ses dépendances correspondent aux bonnes versions.
 
 ---
 

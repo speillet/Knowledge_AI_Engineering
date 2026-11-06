@@ -149,7 +149,11 @@ Méthode : une table **mode → signal → réponse → test**. Exemple : rate l
 
 Comment présenter les arbitrages de façon senior ? <!--anki:4e5d6f754e26452d754d-->
 ?
-Pour chaque choix, dire **ce qu'on gagne, ce qu'on perd, et ce qui ferait changer d'avis** : « RAG plutôt que fine-tuning car le corpus change chaque semaine ; on reconsidérera si le style de réponse devient le problème principal ». Et **chiffrer** : coût par requête, latence p95, taux d'erreur cible.
+Présenter **options, hypothèses, mesures, coût du risque et condition de réexamen**, pas seulement nommer une technologie.
+
+Exemple hypothétique : « B coûte 20 % de plus, mais respecte le p95 requis sur les documents longs ; A échoue sur ce segment. Nous retenons B et réexaminerons A après réduction du contexte, sans baisse de qualité. »
+
+Préciser charge, jeu d'évaluation et incertitude derrière les chiffres ; distinguer résultat mesuré et estimation. Inclure exploitation, verrouillage fournisseur et migration. Une bonne décision explique aussi pourquoi une option plus simple a été écartée et quel signal déclenchera un changement, avec responsable et échéance.
 
 ---
 

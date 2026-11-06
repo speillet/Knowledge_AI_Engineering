@@ -29,9 +29,11 @@ Pour une action à effet externe, enregistrer un état « résultat inconnu » e
 
 À ne pas confondre : idempotence d'une opération et déterminisme de sa réponse ? <!--anki:6333353633376632626632373464616362653235323461303964353765613762-->
 ?
-L'**idempotence** signifie que répéter la même opération conserve l'effet attendu d'une seule application. Le **déterminisme** signifie obtenir le même résultat pour les mêmes entrées dans les conditions définies.
+L'**idempotence** concerne l'effet de répétitions : il reste équivalent à une seule application. Le **déterminisme** concerne le résultat obtenu pour les mêmes entrées et conditions.
 
-Un service peut retourner une réponse textuelle différente tout en n'effectuant qu'un débit. Inversement, un agent peut répondre exactement la même phrase tout en déclenchant deux débits. Définir l'idempotence sur l'état métier observable, avec son périmètre et sa durée, puis préciser séparément si la réponse initiale est conservée et renvoyée aux retries.
+Exemple : « fixer le statut à clos » peut être idempotent tout en retournant d'abord « modifié », puis « déjà clos ». À l'inverse, deux débits peuvent produire exactement le même texte « effectué ».
+
+Définir l'effet métier, la clé, sa portée et sa durée de conservation ; préciser séparément si les retries récupèrent la première réponse. Tester requêtes concurrentes et paramètres incompatibles avec la même clé. Le même seed ou le même message du modèle ne protège pas contre un effet répété.
 
 ---
 

@@ -16,9 +16,11 @@ Ils lisent aussi beaucoup de **contenu non fiable** : issues, pull requests, REA
 
 Pourquoi les modes « sans permission » des agents de code sont-ils dangereux ? <!--anki:4f3b28362d317a4f6d47-->
 ?
-Les options qui suppriment les demandes d'approbation (`--dangerously-skip-permissions`, `--yolo`…) laissent l'agent **exécuter n'importe quelle commande** qu'une injection lui suggère. On ne les utilise que dans un environnement **isolé et jetable** : conteneur ou VM, **sans secrets**, réseau limité.
+Ils retirent des **contrôles d'approbation du harness**, selon l'outil, sans retirer les droits réels du processus. Une erreur ou injection peut donc utiliser tous les accès encore disponibles.
 
-Sinon, on travaille avec des **listes blanches** de commandes et des **règles de refus** sur les chemins sensibles ([[34-harness-plugins|permissions du harness]]).
+Exemple : un conteneur jetable avec le dépôt hôte monté en écriture, des identifiants cloud ou le socket Docker garde un fort rayon d'impact. « Jetable » ne signifie pas isolé.
+
+Limiter montages, secrets, réseau et permissions système ; privilégier une exécution éphémère aux accès strictement nécessaires. Les [[34-harness-plugins|permissions du harness]] complètent cette isolation. Une liste de commandes autorisées est insuffisante si elle permet un interpréteur capable d'effectuer arbitrairement les opérations interdites.
 
 ---
 

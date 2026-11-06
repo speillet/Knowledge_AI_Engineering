@@ -74,7 +74,11 @@ Ces éléments guident l'analyse, sans rendre toute utilisation d'un LLM automat
 
 Que dit le RGPD sur les décisions automatisées ? <!--anki:7460602e37623c3b6d6c-->
 ?
-L'**article 22** donne le droit de ne pas faire l'objet d'une décision **fondée exclusivement** sur un traitement automatisé produisant des **effets juridiques ou significatifs** (refus de crédit, rejet de candidature), sauf exceptions encadrées. Il faut une **intervention humaine réelle**, la possibilité de **contester** et une **information** sur la logique du traitement.
+L'**article 22** pose le droit de ne pas subir une décision exclusivement automatisée ayant un effet juridique ou similaire significatif, comme un refus de crédit. Il prévoit des exceptions : nécessité contractuelle, autorisation légale encadrée ou consentement explicite.
+
+Pour les exceptions contractuelle et de consentement, les garanties incluent intervention humaine, expression du point de vue et contestation ; l'exception légale doit aussi prévoir des protections adaptées.
+
+Exemple : une validation humaine de pure forme ne suffit pas à démontrer que la décision n'est plus exclusivement automatisée. Examiner rôle réel du relecteur, information fournie et données sensibles. Faire qualifier le dispositif concret, pas seulement son étiquette « assistant ».
 
 ---
 
@@ -146,6 +150,7 @@ Mise en situation : le métier veut automatiser le tri des candidatures, avec re
 - [CNIL — mise en conformité des systèmes d’IA avec le RGPD](https://www.cnil.fr/fr/intelligence-artificielle/ia-comment-etre-en-conformite-avec-le-rgpd)
 
 - [Union européenne — règlement (UE) 2016/679, RGPD](https://eur-lex.europa.eu/eli/reg/2016/679/oj/fra)
+- [CNIL — texte des articles 12 à 23, dont décisions automatisées](https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre3) — article 22 consulté le 6 novembre 2026 ; vérification limitée à cette carte.
 - [CNIL — ressources sur l’IA et les données personnelles](https://www.cnil.fr/fr/intelligence-artificielle)
 
 ## Connexions

@@ -56,9 +56,11 @@ Prévoir aussi un cycle d'usage représentatif et des règles d'arrêt de sécur
 
 Qu'est-ce que l'effet de nouveauté dans un A/B test ? <!--anki:782c3c2e4b3e40457e26-->
 ?
-L'**effet de nouveauté** désigne une réaction transitoire au changement, qui peut différer de l'effet durable du produit. Il peut être positif ou négatif ; sa durée n'est pas universelle.
+Une **réaction transitoire à un changement**, différente de son effet durable, positive ou négative selon l'usage.
 
-Prévoir une durée couvrant les cycles d'usage pertinents et examiner l'évolution selon le temps depuis la première exposition. Un changement quotidien du score peut aussi venir de la composition des cohortes ou de la saisonnalité. Ne pas prolonger ou arrêter opportunément l'expérience jusqu'à obtenir une courbe favorable.
+Exemple : une nouvelle interface augmente les clics le premier jour parce que les utilisateurs l'explorent, sans améliorer la résolution après plusieurs utilisations. Comparer par temps depuis première exposition et fréquence d'usage, pas seulement par date calendaire.
+
+Prévoir durée et analyse avant le test, avec les cycles métier pertinents. Contrôler composition des cohortes, saisonnalité et apprentissage de l'interface ; une évolution temporelle n'est pas automatiquement un effet de nouveauté. Ne pas supprimer après coup les jours défavorables ni prolonger jusqu'à obtenir une significativité favorable.
 
 ---
 

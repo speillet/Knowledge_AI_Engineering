@@ -153,12 +153,13 @@ Mise en situation : la reprise d'un agent passe en test, mais un arrêt du worke
 
 Mise en situation : une nouvelle version d'agent améliore la qualité moyenne mais échoue au test « aucun effet avant approbation ». Peut-elle être promue ? <!--anki:6165633863326538636231313465336539633436316263376365613762663839-->
 ?
-1. Bloquer la promotion selon l'invariant critique fixé à l'avance.
-2. Localiser le chemin qui contourne le contrôle : outil, middleware, reprise ou délégation.
-3. Corriger puis rejouer le scénario et les cas voisins.
-4. Refaire la comparaison qualité/coût sur la version corrigée.
+1. **Bloquer la promotion** : « aucun effet avant approbation » est un invariant critique, pas une composante compensable de la moyenne.
+2. **Confirmer l'effet réellement observé** avec le registre métier ou un double d'outil enregistrant les opérations ; ne pas se fier au texte de l'agent.
+3. **Localiser le chemin fautif** : outil, middleware, reprise, délégation ou concurrence.
+4. **Corriger au point d'exécution**, puis tester refus, absence d'approbation, expiration et proposition modifiée ; vérifier zéro effet dans chaque cas interdit.
+5. **Rejouer les contrôles et les evals** sur la version corrigée, car la correction peut changer qualité, coût et délai.
 
-**Piège** : compenser une violation de permission par un meilleur score linguistique moyen.
+**Piège** : relever le score de qualité global pour masquer une régression d'autorisation.
 
 ---
 

@@ -84,9 +84,11 @@ L'intervalle porte sur les timestamps ; la purge dépend des attributs temporels
 
 À ne pas confondre : flux append-only, upsert et rétraction ? <!--anki:3661653836633737643534383434623862646332663462613139646337613366-->
 ?
-Un flux **append-only** ajoute de nouveaux faits. Un **upsert** remplace l'état associé à une clé selon une règle de version. Une **rétraction** retire l'effet d'un résultat antérieur, éventuellement avant sa correction.
+**Append-only** ajoute des faits ; **upsert** remplace l'état d'une clé ; **rétraction** retire l'effet d'un résultat précédent.
 
-Un agrégat de fenêtre réémis avec un total de douze après dix ne doit pas toujours être additionné comme un delta de douze. Le consommateur doit connaître clé, version et sémantique des messages. Une destination acceptant seulement des ajouts peut nécessiter un journal de versions et une vue de reconstruction pour représenter les corrections.
+Exemple : un total de fenêtre passe de 10 à 12. Un upsert publie la nouvelle valeur **12** ; une logique différentielle peut retirer 10 puis ajouter 12, ou publier un delta **+2**. Additionner les deux totaux comme des événements indépendants donnerait 22 à tort.
+
+Le contrat précise clé, version, ordre et sens des messages. Un upsert tardif plus ancien ne doit pas écraser l'état récent. Sur une destination append-only, conserver un journal versionné et reconstruire l'état ; ajouter des lignes sans cette règle ne représente pas correctement les corrections.
 
 ---
 

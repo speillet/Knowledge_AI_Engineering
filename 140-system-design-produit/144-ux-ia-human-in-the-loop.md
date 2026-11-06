@@ -31,7 +31,11 @@ Comment concevoir un human-in-the-loop efficace ? <!--anki:6b3241637143484d6449-
 
 Pourquoi le streaming change-t-il l'expérience ? <!--anki:7a2c4128527e442d467d-->
 ?
-Un temps de réponse de 10 s est **inacceptable en attente muette**, mais **tolérable** si le texte apparaît après 500 ms. Le **TTFT** devient la métrique perçue. Contrepartie : il faut gérer l'**affichage progressif** du markdown, les **erreurs en cours de flux** et les contrôles de sortie **après** l'affichage (ou par morceaux).
+Il réduit l'**attente sans retour** et permet de commencer à lire avant la fin. Une réponse terminée en 10 secondes peut être mieux perçue si un contenu utile apparaît après 500 ms, sans que cela garantisse son acceptabilité.
+
+Mesurer premier contenu utile, fluidité et délai total : un indicateur animé n'est pas une réponse. Prévoir markdown incomplet, interruption, erreur tardive et distinction entre brouillon et résultat final.
+
+Le contenu déjà affiché ne peut pas être « désenvoyé ». Pour des données sensibles ou une sortie exigeant validation globale, tamponner avant affichage, même au prix de latence. Le streaming améliore la perception, pas nécessairement la durée ni la fiabilité.
 
 ---
 

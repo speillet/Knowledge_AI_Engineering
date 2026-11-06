@@ -41,9 +41,11 @@ Pour une question ouverte, annoter faits requis, formulations admissibles et con
 
 Quand normaliser une sortie avant un exact match ? <!--anki:3631313133633933373165323436353362613163376334393534353436626236-->
 ?
-Lorsque le **contrat considère les variantes comme équivalentes** : espaces superflus, ordre des clés d'un objet JSON ou notation décimale compatible. Définir et versionner ces transformations avant la comparaison.
+Seulement si le **contrat définit une équivalence** : espaces non significatifs, ordre des clés JSON ou notation décimale autorisée. Versionner cette règle avec l'évaluation.
 
-Préserver ce qui porte le sens : unités, devise, signe, négation, fuseau et ordre des éléments lorsqu'il compte. `1,00 EUR` et `1 EUR` peuvent être équivalents ; `1 USD` ne l'est pas. Pour une sortie structurée, parser puis comparer des valeurs typées ; une normalisation qui retire les unités peut masquer une erreur métier.
+Exemple : `1,00 EUR` et `1 EUR` peuvent être équivalents ; `1 USD` ne l'est pas. Dans une structure JSON, `true` et `1` ne sont pas interchangeables simplement parce qu'un langage les compare comme égaux.
+
+Parser avec validation stricte, puis comparer types, unités et valeurs. Préserver ordre des listes lorsqu'il compte, négations, signes et fuseaux pertinents. Tester aussi des sorties qui **doivent rester différentes** : une normalisation trop permissive transforme des erreurs réelles en succès d'exact match.
 
 ---
 

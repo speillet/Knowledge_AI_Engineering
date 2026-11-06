@@ -138,12 +138,14 @@ Les métriques donnent l'**agrégat** (le p95 a doublé), les traces donnent l'*
 Que contient un dashboard minimal d'inférence ? <!--anki:4c4c2d5a2c6c683f564b-->
 ?
 Les **golden signals** adaptés aux LLM :
-- **Trafic** : requêtes/s, tokens/s en entrée et en sortie
-- **Latence** : TTFT, TPOT et E2E en p50, p95 et p99
-- **Erreurs** : 5xx, 429, échecs de validation, `finish_reason=length`
-- **Saturation** : file d'attente, KV cache, préemptions
+- Trafic offert et réalisé, tokens d'entrée/sortie.
+- TTFT, intervalles de génération et durée totale par percentile.
+- Refus, timeouts, 5xx, validations échouées et troncatures non prévues.
+- File, occupation KV et préemptions.
 
-Plus deux vues : **usage et coût** par équipe, **qualité** (scores, feedback).
+Ajouter coût par équipe et qualité avec couverture de mesure. `finish_reason=length` est un signal à interpréter selon le contrat, pas toujours une erreur métier.
+
+Exemple : une minorité de prompts très longs peut souffrir malgré un p95 global acceptable. Ventiler par classes de longueur, backend et version, sans identifiants utilisateur comme labels à forte cardinalité. Relier un signal dégradé aux traces diagnostiques correspondantes.
 
 ---
 

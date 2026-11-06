@@ -84,7 +84,11 @@ Exemple de cas : « Où en est ma commande 4212 ? » attend l'outil `statut_comm
 
 Comment évaluer une conversation multi-tours ? <!--anki:6c46715556596074525d-->
 ?
-Avec un **simulateur d'utilisateur** (LLM avec un persona et un objectif) qui dialogue avec le système jusqu'à la fin, puis un juge sur **l'objectif atteint**, la **cohérence** entre les tours et la **gestion des changements d'avis**. Il faut rejouer **plusieurs fois** : le simulateur ajoute sa propre variance.
+Combiner **scénarios scriptés, conversations réelles autorisées et simulateurs**, puis évaluer objectif atteint, cohérence, changements d'avis et état métier final.
+
+Exemple : l'utilisateur corrige son adresse au troisième tour ; vérifier que la proposition finale et l'outil utilisent la nouvelle adresse, pas seulement que l'agent répond « compris ». Tester aussi refus, interruptions et reprises.
+
+Un simulateur LLM explore davantage de variantes mais ajoute biais et variance ; répéter les essais et vérifier qu'il respecte le scénario. Garder des cas déterministes pour les invariants et une référence indépendante. L'accord de deux agents sur « mission accomplie » ne prouve pas la réussite réelle.
 
 ---
 

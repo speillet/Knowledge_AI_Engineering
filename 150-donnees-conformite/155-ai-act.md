@@ -6,7 +6,11 @@ Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou 
 
 Qu'est-ce que l'AI Act ? <!--anki:4a5b34484f4550646148-->
 ?
-Le **règlement (UE) 2024/1689**, premier cadre juridique complet sur l'IA, entré en vigueur le **1er août 2024** avec une application **progressive**. Il suit une **approche par les risques** : plus un système peut nuire aux personnes, plus les obligations sont lourdes. Il s'applique à quiconque met un système d'IA **sur le marché ou en service dans l'UE**, même depuis l'étranger.
+Le **règlement (UE) 2024/1689**, entré en vigueur le **1er août 2024**, encadre l'IA avec une application progressive. Les obligations dépendent notamment de l'usage, du rôle de l'acteur et de la catégorie du système ou modèle.
+
+Exemple : fournir un modèle généraliste et déployer un système de recrutement ne correspondent pas au même rôle ni aux mêmes obligations. Une entreprise hors UE peut être concernée lorsqu'elle fournit le marché européen ou que les sorties sont utilisées dans l'UE.
+
+Vérifier **champ d'application, exclusions, qualification et calendrier** dans les textes à jour ; ni hébergement hors UE ni licence ouverte ne suffisent à conclure à une exemption.
 
 ---
 
@@ -148,6 +152,7 @@ Mise en situation : une équipe veut utiliser la détection d'émotions sur les 
 Revue ciblée du 6 octobre 2026 : calendrier, qualification du haut risque et obligations de transparence confrontés aux sources institutionnelles ci-dessous.
 
 - [Commission européenne — obligations de transparence, article 50](https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-50)
+- [Commission européenne — champ d'application, article 2](https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-2) — consultation ciblée du 6 novembre 2026.
 
 - [Commission européenne — classification haut risque, article 6](https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-6)
 

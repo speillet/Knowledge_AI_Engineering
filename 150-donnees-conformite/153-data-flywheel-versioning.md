@@ -48,7 +48,11 @@ Quel outil pour versionner quelles données : fichiers à côté du code, data l
 
 Comment versionner un index RAG ? <!--anki:5b24386779354f4f48-->
 ?
-En enregistrant pour chaque index : la **liste des documents et leurs versions** (hash), les paramètres de **chunking**, le **modèle d'embedding**, la date de construction. Les mises à jour incrémentales gardent un **journal** ; une reconstruction complète crée une **nouvelle version** qu'on peut comparer à l'ancienne sur l'eval de retrieval avant de basculer.
+Conserver un **manifeste reproductible** : documents/versions, parseur, chunking, embeddings et paramètres d'indexation, avec journal des ajouts, mises à jour et suppressions.
+
+Exemple : changer le modèle d'embedding nécessite un index cohérent avec les vecteurs de requête ; basculer l'alias avant la fin de construction expose un mélange incompatible. Construire à part, vérifier complétude et retrieval, puis publier la paire encodeur/index.
+
+Tester aussi le retour arrière. Restaurer un ancien index ne doit pas ressusciter des documents supprimés ni d'anciens droits d'accès : appliquer les politiques actuelles et réconcilier les suppressions avant exposition. Une date de construction seule ne permet pas cette reproduction.
 
 ---
 

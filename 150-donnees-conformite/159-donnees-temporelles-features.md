@@ -70,9 +70,11 @@ La politique dépend des consommateurs : un tableau de bord peut être corrigé,
 
 Comment évaluer un modèle dont les labels arrivent plusieurs semaines plus tard ? <!--anki:3034663863316234326462623434653339323737376463343665343536346230-->
 ?
-Définir une **période de maturation** cohérente avec la cible. Pour une résiliation dans les 30 jours, l'absence de résiliation après cinq jours ne constitue pas encore un négatif certain.
+Attendre la **maturation de la cible et de sa collecte**, ou utiliser une méthode adaptée à la censure. Une absence d'événement observé n'est pas toujours un label négatif.
 
-Évaluer des cohortes suffisamment anciennes ou employer une méthode adaptée aux observations censurées. Séparer les indicateurs rapides, encore provisoires, des métriques consolidées. Conserver date de prédiction, date d'observation et version du label. Une baisse apparente de positifs sur les dernières semaines peut provenir seulement de labels incomplets, pas d'une amélioration du modèle.
+Exemple : pour une résiliation dans les 30 jours, un dossier âgé de cinq jours n'est pas mûr. Si les événements arrivent avec sept jours de retard, même le jour 30 peut être trop tôt pour consolider les labels.
+
+Conserver date de prédiction, fenêtre cible, date d'observation et version du label. Publier séparément indicateurs provisoires et métriques consolidées, avec taux de couverture. Une baisse récente de positifs peut refléter leur indisponibilité plutôt qu'une amélioration réelle.
 
 ---
 

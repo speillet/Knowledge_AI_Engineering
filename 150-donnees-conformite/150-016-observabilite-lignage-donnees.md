@@ -167,13 +167,13 @@ Mise en situation : une unité monétaire incorrecte a alimenté trois entraîne
 
 Mise en situation : une alerte de volume se déclenche chaque week-end alors que la baisse est normale. Comment réduis-tu le bruit sans masquer une panne ? <!--anki:3338333935363038373531343435316538343230383030636136323362363863-->
 ?
-1. **Comparer la saisonnalité attendue** par source et segment.
-2. **Séparer absence légitime et livraison manquante**, grâce aux manifestes ou calendriers.
-3. **Ajuster la référence de volume** avec périodes comparables et seuils utiles.
-4. **Conserver les contrôles invariants**, notamment clés, contrats et fraîcheur requise.
-5. **Rejouer des incidents connus** pour vérifier qu'ils restent détectés.
+1. **Comparer les périodes comparables** : même jour de semaine, source et segment ; traiter jours fériés et changements de calendrier explicitement.
+2. **Vérifier le signal de livraison** : zéro vente déclaré par un manifeste n'est pas un fichier absent.
+3. **Adapter le seuil de volume** à une référence saisonnière robuste, avec minimum absolu si pertinent.
+4. **Garder les invariants** de schéma, clés et livraison attendue. Un petit volume normal peut encore contenir des données fausses.
+5. **Rejouer week-ends normaux et incidents injectés** : absence de fichier, retard, volume anormalement faible ; mesurer faux positifs et défauts manqués avant activation.
 
-**Piège** : désactiver les alertes du week-end sans prévoir les traitements réellement attendus.
+**Piège** : supprimer toutes les alertes du week-end ou apprendre automatiquement la nouvelle référence sur une panne prolongée.
 
 ---
 

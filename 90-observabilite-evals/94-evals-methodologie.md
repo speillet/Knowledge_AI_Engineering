@@ -5,9 +5,11 @@ Tags: #flashcards #ai-engineering #evals #llm #qualite
 
 Pourquoi l'évaluation est-elle la compétence centrale d'un AI Engineer senior ? <!--anki:672b7a264c7763732b24-->
 ?
-Les **evals** permettent de comparer les comportements d'un système IA sur des tâches, populations et critères définis. Elles quantifient qualité, limites et régressions, au-delà d'une démonstration réussie.
+Elles transforment une impression en **décision vérifiable** : comparer variantes, identifier échecs et borner les régressions sur des tâches représentatives.
 
-Elles **complètent les tests logiciels** : tests unitaires pour le code, contrats et intégration pour les interfaces, evals pour les comportements du modèle et du système complet. Des propriétés formelles restent possibles, comme un schéma de sortie ou une permission. Une bonne eval fournit une preuve limitée à son protocole, pas une garantie de toutes les réponses futures.
+Exemple : un prompt augmente la note moyenne mais oublie davantage les exceptions contractuelles. Une eval segmentée le révèle et permet de bloquer la promotion malgré un meilleur score global.
+
+Relier chaque critère au service attendu, conserver les cas et versions, puis associer tests logiciels, invariants stricts et mesures comportementales avec incertitude. L'évaluation doit aussi porter sur ses propres juges et sa couverture. Une démonstration ne suffit pas ; une eval non représentative non plus. La preuve reste limitée au protocole et doit être complétée par le suivi en production.
 
 ---
 

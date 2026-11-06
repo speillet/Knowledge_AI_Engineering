@@ -38,9 +38,11 @@ Le tarif est une politique commerciale : comparer entrées, sorties, raisonnemen
 
 Quel effet du prompt caching sur la facture ? <!--anki:796c756e764b716c6232-->
 ?
-Les **tokens de préfixe déjà en cache sont facturés à prix réduit** : gros gains sur les system prompts et définitions d'outils répétés ([[35-context-engineering|prompt caching]]).
+Chez les fournisseurs qui le proposent, les **tokens d'entrée réutilisés** bénéficient d'un tarif spécifique, souvent réduit ([[35-context-engineering|prompt caching]]). Écritures, stockage ou TTL peuvent modifier le bilan.
 
-Le gain réel dépend du taux de réutilisation, des tokens admissibles, du TTL et d'un éventuel prix d'écriture. La sortie reste généralement facturée comme une nouvelle génération. Mesurer les champs d'usage et la facture : un préfixe répété ne garantit pas un hit, et un cache peu relu peut ne pas être rentable.
+Exemple fictif, hors surcoût d'écriture : 10 000 tokens à 2 €/million coûtent 0,02 €. Si 8 000 sont lus à 0,50 €/million et 2 000 au tarif normal, l'entrée coûte **0,008 €**, soit 60 % d'économie. La sortie reste facturée séparément.
+
+Mesurer tokens effectivement réutilisés et facture, pas seulement répétition du prompt. En auto-hébergement, le gain relève du calcul évité et de la capacité libérée, pas nécessairement d'une remise par token.
 
 ---
 

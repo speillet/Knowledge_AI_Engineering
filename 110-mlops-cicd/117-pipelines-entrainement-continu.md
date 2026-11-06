@@ -112,11 +112,11 @@ Passer en entrée un **identifiant immuable** : partition datée, version de tab
 
 Comment choisir la fenêtre de données d'un réentraînement périodique ? <!--anki:3462653933633538646637613430653762333939313035373962633831633332-->
 ?
-- **Fenêtre glissante**, par exemple les 12 derniers mois : suit les changements, mais oublie les régimes anciens.
-- **Fenêtre cumulative** : plus d'exemples, mais conserve des comportements périmés.
-- **Pondération décroissante** des anciens exemples : compromis entre les deux.
+Comparer **fenêtre glissante, historique cumulatif et pondération décroissante** par [[172-validation-metriques-ml|backtest temporel]]. Le choix échange adaptation aux changements, couverture saisonnière et nombre d'événements rares.
 
-Couvrir au moins un cycle saisonnier complet si la cible en dépend. Comparer les fenêtres candidates par backtest sur plusieurs origines successives ([[172-validation-metriques-ml|validation temporelle]]). Une fenêtre courte réagit vite mais peut contenir trop peu de positifs rares, comme les fraudes. La durée de conservation autorisée des données personnelles peut aussi plafonner l'historique.
+Exemple : une fenêtre de trois mois réagit vite mais peut manquer les achats de fin d'année ; douze mois les couvrent, tout en conservant un ancien régime tarifaire. Aucune des deux ne gagne par principe.
+
+Vérifier que les labels sont disponibles à chaque origine du backtest, pas seulement que les observations sont anciennes. Couvrir les régimes utiles dans la limite de conservation autorisée ; après rupture structurelle, pondérer ou exclure l'ancien régime peut être préférable à accumuler davantage de données.
 
 ---
 

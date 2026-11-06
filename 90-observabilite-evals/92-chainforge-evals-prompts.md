@@ -5,9 +5,11 @@ Tags: #flashcards #ai-engineering #evals #prompts #llm
 
 Qu'est-ce que ChainForge ? <!--anki:50782b535f40475d557e-->
 ?
-Un **environnement visuel open source** pour **comparer systématiquement prompts et modèles** côte à côte : on relie des nœuds d'entrées, de prompts, de modèles et d'évaluateurs, et on visualise les résultats en grille.
+Un **environnement visuel open source de comparaison** : relier entrées, prompts, modèles et évaluateurs pour inspecter les sorties côte à côte.
 
-Utile en **phase d'exploration** : choisir un modèle, tester des variantes de prompt sur quelques dizaines de cas. Pour les evals en CI et en production, on passe à des outils scriptables ([[94-evals-methodologie|méthodologie]]).
+Exemple : deux prompts, deux modèles et trente cas donnent **120 combinaisons** avant répétitions. Cette grille aide à voir qu'une variante améliore les textes courts mais dégrade les documents longs ; un unique exemple flatteur ne le révèle pas.
+
+Conserver paramètres, versions, jeux et résultats, puis confirmer sur des cas tenus à l'écart. L'exploration visuelle facilite l'analyse, pas la preuve statistique. Pour une gate CI reproductible, exporter ou transcrire le protocole dans un workflow automatisable, sans changer subrepticement les critères ([[94-evals-methodologie|méthodologie]]).
 
 ---
 

@@ -117,12 +117,11 @@ Conserver source, auteur, date et portée de chaque souvenir permet de retirer l
 
 Qu'est-ce que l'injection invisible (ASCII smuggling) ? <!--anki:737b2855215e3b6f3e53-->
 ?
-Des instructions **lisibles par le modèle mais invisibles pour l'humain** :
-- **Caractères Unicode « tags »** ou de largeur nulle, qui ne s'affichent pas
-- **Texte blanc sur fond blanc**, police minuscule, commentaires HTML
-- **Texte caché dans une image** ou les métadonnées d'un PDF
+Un **décalage entre ce que voit le relecteur et ce que reçoit le modèle**. L'ASCII smuggling vise notamment des encodages Unicode peu ou pas visibles ; texte masqué, commentaires HTML et couches PDF cachées sont des techniques voisines, pas toutes le même mécanisme.
 
-L'humain qui relit ne voit rien. Parade : **normaliser et filtrer** l'Unicode invisible en entrée, et signaler les documents qui en contiennent.
+Exemple : l'extraction d'un PDF révèle du texte absent de son affichage habituel. Son interprétation dépend du parseur et du modèle ; une chaîne invisible n'est pas automatiquement comprise comme une instruction.
+
+Comparer rendu et extraction, signaler les caractères suspects et traiter le document comme donnée non fiable. Une normalisation Unicode ordinaire n'élimine pas tous les caractères invisibles ; filtrer sans détruire les écritures légitimes.
 
 ---
 

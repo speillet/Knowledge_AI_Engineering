@@ -24,11 +24,11 @@ En RAG, les deux sont des échecs de **faithfulness** ([[96-evals-rag-agents|év
 
 Quels leviers réduisent les hallucinations avant la génération ? <!--anki:68515d5d3f282d2d4d76-->
 ?
-1. **Grounding** : fournir les faits via [[21-rag-fondamentaux|RAG]] ou outils.
-2. **Consignes** : répondre **uniquement** à partir du contexte, sinon dire qu'on ne sait pas.
-3. **Tâche plus étroite** et vérifications adaptées : contraindre le format aide à contrôler la sortie, mais ni JSON ni température basse ne garantissent la factualité.
+Préparer des **preuves pertinentes, applicables et autorisées** via [[21-rag-fondamentaux|RAG]] ou outils, préciser le périmètre de réponse et définir l'abstention ou la réponse partielle lorsque la preuve manque.
 
-Mesurer séparément variabilité, respect du format et exactitude. Une source erronée ou périmée peut produire une réponse fidèle mais fausse.
+Exemple : un résultat d'outil donne « 250 » sans unité ; demander une conclusion monétaire pousse à compléter une information absente. Fournir unité, date et provenance, ou faire clarifier avant génération.
+
+Réduire les ambiguïtés et séparer données/instructions. Le format contraint facilite le contrôle, mais JSON et température basse ne garantissent pas l'exactitude. Même une réponse fidèle peut être fausse si sa source l'est ; évaluer récupération, soutien des affirmations et vérité métier séparément.
 
 ---
 

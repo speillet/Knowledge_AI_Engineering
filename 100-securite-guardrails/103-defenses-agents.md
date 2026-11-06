@@ -117,10 +117,11 @@ Avant exécution, par du code déterministe :
 
 Pourquoi l'approbation humaine peut-elle échouer ? <!--anki:493749283a79357e3b44-->
 ?
-- **Fatigue** : trop de demandes, et l'humain finit par tout valider sans lire
-- **Description trompeuse** : un agent détourné peut **décrire faussement** son action (« j'envoie le rapport à l'équipe ») alors qu'il fait autre chose
+Par **fatigue**, manque de contexte ou description trompeuse. L'humain peut approuver le résumé de l'agent plutôt que l'opération réellement soumise.
 
-C'est le risque « confiance humain-agent abusée » du Top 10 OWASP agentique.
+Exemple : l'écran affiche « partager avec l'équipe », mais l'appel vise une adresse externe. Construire le récapitulatif à partir des **arguments normalisés que le backend exécutera** : destinataire, périmètre, montant et pièces jointes.
+
+Lier l'approbation à cette proposition exacte, avec version et expiration ; demander une nouvelle validation si elle change. Concentrer les demandes sur les décisions utiles et tester que le relecteur peut réellement refuser. Une case cochée dans un journal ne démontre pas une supervision éclairée.
 
 ---
 

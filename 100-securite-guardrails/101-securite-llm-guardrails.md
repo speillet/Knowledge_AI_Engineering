@@ -82,13 +82,13 @@ Un contrôle peut être déterministe, comme une limite de montant, ou probabili
 
 Quel outil de guardrails pour quel besoin : PII, injection, contenu dangereux, règles de dialogue, format de sortie ? <!--anki:3362383461626362623366353435353739336437393164303264653933393364-->
 ?
-- **PII** (détection, anonymisation) : **Presidio**
-- **Prompt injection et jailbreak** : un classifieur dédié, comme **Prompt Guard** (Meta)
-- **Contenu dangereux** en entrée et en sortie : **Llama Guard**, ou les filtres de sécurité du fournisseur cloud
-- **Règles de dialogue** (sujets autorisés, enchaînements imposés) : **NeMo Guardrails** (NVIDIA)
-- **Validation des sorties** (format, valeurs) : **Guardrails AI**
+- **PII** : détection et masquage, par exemple Presidio ; masquer n'assure pas une anonymisation irréversible.
+- **Injection** : classifieur dédié, par exemple Prompt Guard.
+- **Contenu dangereux** : Llama Guard ou filtres fournisseur.
+- **Dialogue** : règles d'enchaînement, par exemple NeMo Guardrails.
+- **Format/valeurs** : validation de schéma et règles métier, éventuellement Guardrails AI.
 
-On les combine : aucun classifieur ne bloque l'injection à 100 % ([[103-defenses-agents|défenses]]).
+Exemple : un filtre de contenu peut accepter un texte poli contenant une donnée privée ; un validateur JSON ne détecte pas cette fuite. Tester chaque couche sur sa menace, avec faux positifs, faux négatifs et latence. Définir le traitement d'une indisponibilité ; aucun classifieur ne remplace les [[103-defenses-agents|contrôles d'autorisation]].
 
 ---
 

@@ -127,9 +127,11 @@ Une clé doit refléter aussi les **droits, la version des données et le périm
 
 Comment piloter le prompt caching en production ? <!--anki:6a474d563c7128623b56-->
 ?
-- Suivre le **taux de hit** (tokens lus en cache / tokens d'entrée) et le **coût par tâche**
-- **Alerter** sur une chute du taux de hit : c'est typiquement une régression silencieuse après un changement du prompt
-- Un **test d'intégration** : une 2e requête identique doit montrer des tokens lus en cache
+Suivre **tokens réutilisés, coût par tâche et TTFT**, par modèle et version de prompt. Vérifier seuil d'éligibilité, TTL, routage et éventuel coût d'écriture.
+
+Exemple : déplacer un horodatage variable avant les instructions communes casse le préfixe partagé. Un test avec préfixe stable et suffisamment long doit constater la réutilisation attendue par le contrat du moteur ou fournisseur.
+
+La seconde requête identique n'est pas une garantie universelle de hit : remplissage asynchrone, éviction ou autre réplique peuvent intervenir. Tester avec une attente bornée si nécessaire et signaler l'échec. Analyser une chute avant d'incriminer le prompt ; le trafic peut aussi avoir changé.
 
 ---
 

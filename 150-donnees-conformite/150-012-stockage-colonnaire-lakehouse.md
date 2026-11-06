@@ -46,9 +46,11 @@ Le transfert sans copie est possible dans certaines conditions de représentatio
 
 Comment les row groups et statistiques Parquet réduisent-ils les lectures ? <!--anki:3031373261633839316630383435373662656333656466396161343637303136-->
 ?
-Un fichier contient des **groupes de lignes**, eux-mêmes organisés en blocs par colonne. Le lecteur peut projeter les colonnes utiles et, lorsque les statistiques et filtres le permettent, éviter des groupes qui ne peuvent pas satisfaire la requête.
+Parquet regroupe les lignes en **row groups**, avec données organisées par colonne. Le lecteur peut lire seulement les colonnes projetées et éliminer des groupes incompatibles avec le filtre grâce aux statistiques.
 
-Des bornes min/max peu sélectives, des filtres non exploitables ou un lecteur incompatible réduisent ce gain. La taille des groupes échange granularité de filtrage, compression, parallélisme et mémoire. Vérifier les octets réellement lus et le plan ; ajouter un `WHERE` ne prouve pas que les données inutiles ont été évitées au stockage.
+Exemple : si les dates min/max d'un groupe sont en janvier, une recherche limitée à février peut l'éviter. Si chaque groupe mélange toute l'année, ces bornes deviennent peu sélectives malgré le même `WHERE`.
+
+Tri/clustering, taille des groupes et support du lecteur déterminent le gain. Les statistiques peuvent prouver l'absence d'une correspondance, pas nécessairement sa présence. Vérifier le plan et les octets réellement lus ; moins de lignes retournées ne signifie pas moins de données parcourues.
 
 ---
 

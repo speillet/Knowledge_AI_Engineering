@@ -133,9 +133,11 @@ Mesurer les pertes et signaler la période aveugle. Si un audit durable est néc
 
 Comment vérifier la couverture d'instrumentation d'un agent ? <!--anki:3339383631663663623762373463656138326632386331663166616332643632-->
 ?
-Construire une exécution de référence avec **retrieval, deux appels LLM, un outil, un échec et une reprise**. Comparer les observations attendues aux observations exportées, leurs parents et leurs identifiants.
+Définir une exécution de référence avec **retrieval, deux appels LLM, outil, erreur et reprise**, puis une liste explicite d'observations et relations attendues.
 
-Vérifier aussi coûts non doublés, résultat racine lisible et absence de secrets synthétiques. Une trace visible ne prouve pas qu'elle est complète. Répéter ce contrôle lors d'un changement d'intégration, particulièrement sur les chemins async et streaming.
+Exemple : deux spans LLM visibles ne prouvent pas que l'action métier est instrumentée. Vérifier présence, cardinalité, parents, statut final et corrélation avec cette action ; une assertion sur une liste vide ne doit pas réussir.
+
+Attendre l'export asynchrone avec un délai borné adapté, puis signaler toute observation manquante. Contrôler coûts non doublés, streaming clos correctement et absence de secrets synthétiques. Rejouer après changement d'intégration et lors d'une panne du collecteur ; la visibilité partielle n'est pas une couverture complète.
 
 ---
 
