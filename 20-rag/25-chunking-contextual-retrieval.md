@@ -77,7 +77,9 @@ Comparer à budget de contexte similaire, pas seulement à nombre de chunks éga
 
 Qu'est-ce que le chunking par propositions ? <!--anki:79456d2e71752a256331-->
 ?
-Faire réécrire le texte par un LLM en **propositions atomiques et autonomes** (« ACME a réalisé un CA de 12 M€ au T2 2025 »), chacune indexée séparément. Très précis pour les questions factuelles, mais **coûteux**, et la réécriture peut **déformer** le texte source : on garde toujours le lien vers le passage original pour la citation.
+Réécrire le texte en **propositions atomiques et autonomes**, indexées séparément. Exemple : « ACME prévoit 12 M€ de CA au T2 2025 » doit conserver **prévoit**, l'entreprise, la période et l'unité ; « ACME a réalisé 12 M€ » change le sens.
+
+Cette granularité peut améliorer les recherches factuelles, mais perdre conditions, négations ou relations entre propositions. L'extraction LLM ajoute coût et erreurs possibles. Garder un lien vers le passage original, vérifier que celui-ci implique réellement la proposition et restituer au besoin son contexte. Une proposition est un objet de recherche, pas une nouvelle source faisant autorité.
 
 ---
 

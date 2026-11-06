@@ -80,9 +80,11 @@ Réhydrater un état ne prouve pas que toutes les étapes déjà achevées seron
 
 Pourquoi vérifier l'existence d'un état avant une reprise de Flow CrewAI ? <!--anki:6637386362613135363432643466346138666635643738336336386262303663-->
 ?
-Une reprise doit retrouver **le dossier attendu**. Dans la documentation versionnée consultée, un identifiant de restauration introuvable peut conduire à repartir sans l'état attendu plutôt qu'à échouer explicitement.
+Une reprise doit retrouver **le dossier attendu**, pas seulement accepter un identifiant. Dans la documentation versionnée consultée, une restauration introuvable peut repartir sans l'état attendu.
 
-Le service applicatif doit donc valider existence, propriétaire et version avant la reprise. Distinguer reprise du même dossier et fork vers une nouvelle identité. Ne pas utiliser un fichier local perdu au redéploiement comme seule preuve que le dossier existe.
+Exemple : si le dossier R42 manque, ses valeurs initiales pourraient déclencher une nouvelle instruction alors que l'utilisateur demandait de continuer l'ancienne. Le service doit vérifier existence, propriétaire, version et statut ; si l'état manque, signaler l'échec et proposer une récupération explicite.
+
+Distinguer reprise et fork vers une nouvelle identité. Tester identifiant inconnu, mauvais propriétaire et schéma ancien. Un fichier local perdu au redéploiement ne constitue pas un registre durable des dossiers.
 
 ---
 

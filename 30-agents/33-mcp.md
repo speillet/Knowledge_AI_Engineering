@@ -71,9 +71,9 @@ Un serveur MCP **enveloppe** souvent une API REST : il choisit quelles opératio
 
 Un serveur MCP est-il lié à un modèle particulier ? <!--anki:6b6f7e2628343e304b4f-->
 ?
-**Non.** C'est l'intérêt : le même serveur (GitHub, base de données, navigateur…) sert n'importe quel host compatible MCP.
+**Non.** Le serveur expose des capacités via MCP ; le host les rend accessibles au modèle et organise les échanges. Changer de modèle ne nécessite donc pas, en principe, de réécrire le connecteur.
 
-Le serveur expose des capacités selon le protocole ; le host les présente au modèle et gère l'interaction. Changer de modèle ne demande donc pas nécessairement de modifier le serveur. En revanche, la qualité d'utilisation dépend des capacités du modèle, des descriptions d'outils et des fonctionnalités MCP prises en charge par le host.
+Mais **compatibilité protocolaire et qualité d'usage sont distinctes**. Exemple : deux hosts accèdent au même outil de tickets ; l'un exploite ses ressources associées, l'autre seulement ses outils. Transport, authentification et capacités prises en charge doivent aussi correspondre. Tester découverte, appel et traitement des erreurs avec chaque host ; un serveur joignable ne garantit ni toutes ses fonctionnalités ni un bon choix d'outil par le modèle.
 
 ---
 

@@ -35,9 +35,11 @@ Pratique efficace : faire **écrire le test d'abord** (qui échoue), puis le cod
 
 À quoi sert un fichier `CLAUDE.md` ou `AGENTS.md` ? <!--anki:676d516323456b606c62-->
 ?
-C'est la **mémoire de projet** chargée à chaque session : commandes de build et de test, conventions, architecture, pièges connus. `AGENTS.md` est le format **commun à plusieurs outils**, confié à l'Agentic AI Foundation.
+Un fichier d'**instructions de projet** : commandes de build et test, conventions, architecture et pièges connus. Son chargement et sa portée dépendent de l'outil et de l'emplacement ; le nom seul ne garantit pas son application.
 
-Le garder **court et factuel** : il consomme du contexte à chaque tour. Les procédures longues vont dans des **skills** chargées à la demande ([[34-harness-plugins|mémoire et skills]]).
+Exemple : préciser « exécuter les tests du module modifié, puis le typage » donne une action vérifiable, contrairement à « écrire du bon code ». Garder les commandes à jour, sans secrets, et vérifier leur prise en compte dans un cas simple.
+
+Rester court ; placer les procédures spécialisées dans des [[34-harness-plugins|skills]] adaptées au host. Ces instructions guident l'agent, mais ne remplacent ni permissions ni contrôles CI.
 
 ---
 

@@ -93,9 +93,11 @@ Si le montant passe de 30 à 300 euros après présentation, invalider l'accord 
 
 Comment un Flow CrewAI utilise-t-il la mémoire ? <!--anki:4836683e74747c21725f-->
 ?
-Via la mémoire unifiée : `self.remember(...)` pour stocker, `self.recall(...)` pour retrouver, `self.extract_memories(...)` pour découper un texte en faits — ce qui permet d'**accumuler des connaissances d'une exécution à l'autre**.
+La mémoire unifiée expose `self.remember(...)`, `self.recall(...)` et `self.extract_memories(...)` pour enregistrer, retrouver et extraire des informations réutilisables.
 
-Séparer les faits durables des observations temporaires : une préférence stable peut être mémorisée, une erreur d'outil ne doit pas devenir une vérité. Définir stockage, portée utilisateur, rétention et effacement. Lors d'un rappel, vérifier la provenance et la date, car une mémoire ancienne peut contredire une instruction ou une source plus récente.
+Exemple : « envoyer les factures en français » peut devenir une préférence confirmée ; « l'outil client a expiré » est un incident, pas la preuve que le client n'existe pas. Une extraction automatique produit des **candidats à mémoriser**, pas des faits certifiés.
+
+Définir portée utilisateur, provenance, date, rétention et effacement. Vérifier les contradictions au rappel. Cette mémoire de connaissances ne remplace pas l'état transactionnel du Flow : se souvenir qu'une facture était envisagée ne prouve pas qu'elle a été émise.
 
 ---
 

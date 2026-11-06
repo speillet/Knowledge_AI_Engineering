@@ -26,9 +26,11 @@ Le rôle décrit une compétence attendue ; il n'accorde pas une permission rée
 
 Comment définit-on une tâche CrewAI ? <!--anki:412a4645332e30695766-->
 ?
-Par une **`description`** (quoi faire), un **`expected_output`** (à quoi ressemble le résultat attendu) et l'**`agent`** responsable. Le champ `context` liste les **tâches dont la sortie** doit être fournie à celle-ci.
+Avec une **`description`**, un **`expected_output`** et un **`agent`** responsable ; `context` désigne les tâches dont les résultats sont nécessaires.
 
-Une bonne tâche nomme les sources, le périmètre et les critères de réussite. `expected_output` est une consigne au modèle, pas à lui seul une garantie de conformité : ajouter un schéma ou un validateur si le résultat alimente du code. Éviter de transmettre toutes les tâches précédentes lorsqu'une seule suffit.
+Exemple : « comparer les trois devis joints, hors taxes, en EUR » est plus vérifiable que « analyser les fournisseurs ». La sortie attendue précise fournisseur, montant, hypothèses et référence au devis ; le contexte transmet les devis extraits, pas tous les échanges antérieurs.
+
+`expected_output` reste une **consigne**, pas un contrôle de conformité. Si la sortie alimente du code, imposer un schéma et valider les règles métier : un nombre bien typé peut encore utiliser la mauvaise devise ou provenir d'un devis périmé.
 
 ---
 

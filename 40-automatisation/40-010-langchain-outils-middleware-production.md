@@ -98,9 +98,11 @@ Cette réduction aide le modèle à choisir et réduit le contexte. Elle complè
 
 Comment router un agent LangChain vers un autre modèle sans casser ses contrats ? <!--anki:6363613966383433393865613430643138363164656632656630663663343139-->
 ?
-Définir les capacités requises : appels d'outils, schéma structuré, contexte, contenu multimodal éventuel. Le modèle de secours doit respecter ces contrats ou produire un état d'échec explicite.
+Définir puis tester les **capacités minimales** : outils, schéma de sortie, contexte, modalités et contraintes de données. Le secours doit les respecter ou produire un échec explicite.
 
-Tracer le modèle réellement utilisé et réévaluer qualité, latence et coûts. Une erreur d'arguments ne justifie pas forcément un modèle plus puissant. Éviter qu'un fallback relance une action métier déjà effectuée ou recommence une boucle sans conserver son budget.
+Exemple : si l'historique utile dépasse la fenêtre du secours, changer seulement le nom du modèle ne suffit pas. Appliquer une réduction de contexte évaluée, choisir un autre modèle compatible ou arrêter ; ne pas supprimer silencieusement les contraintes métier.
+
+Tracer le modèle effectif et conserver budget consommé, résultats d'outils et état des actions. Un fallback n'autorise ni un format dégradé non annoncé ni le rejeu d'une opération déjà effectuée.
 
 ---
 

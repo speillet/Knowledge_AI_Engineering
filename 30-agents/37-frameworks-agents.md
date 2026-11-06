@@ -86,9 +86,11 @@ Fixer des critères éliminatoires avant l'essai : absence d'isolation entre cli
 
 Quel piège d'abstraction faut-il éviter avec les frameworks d'agents ? <!--anki:692c52522b5d41257d52-->
 ?
-Les **abstractions opaques** : on ne voit plus le prompt réellement envoyé au modèle. Il faut toujours pouvoir **inspecter les appels bruts** (traces [[91-langfuse-observabilite|Langfuse]]).
+Éviter les **abstractions opaques** qui masquent messages, appels d'outils et reprises réellement exécutés. Les traces [[91-langfuse-observabilite|Langfuse]] doivent permettre de relier une demande métier à ses appels, avec masquage des données sensibles.
 
-Inspecter messages système, descriptions d'outils, paramètres, résultats et retries réellement exécutés. Un composant peut ajouter un appel ou modifier le contexte sans que cela apparaisse dans le code métier. Sur un incident, reproduire un cas minimal et identifier la couche fautive avant de changer de modèle ou d'empiler une nouvelle abstraction.
+Exemple : un retry applicatif de trois tentatives enveloppe un client qui fait lui-même trois tentatives ; une demande peut déclencher neuf appels. Le code métier ne montre pourtant qu'une invocation.
+
+Inspecter paramètres effectifs, versions, résultats et politiques de reprise, puis reproduire un cas minimal. Diagnostiquer la couche fautive avant de changer de modèle ; une abstraction utile doit rester observable et testable.
 
 ---
 

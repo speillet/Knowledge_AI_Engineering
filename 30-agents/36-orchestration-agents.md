@@ -87,7 +87,11 @@ Définir qui peut lire et écrire chaque information, sous quelle version et ave
 
 Qu'est-ce que le protocole A2A ? <!--anki:752355255f5525695870-->
 ?
-**Agent2Agent** (initié par Google) : un standard pour que des agents **de fournisseurs différents** se découvrent (**Agent Card**) et se délèguent des tâches — là où [[33-mcp|MCP]] relie un agent à ses **outils**. Version **1.0** en mars 2026 (Agent Cards signées), hébergé depuis août 2026 par l'**Agentic AI Foundation**, comme MCP.
+**Agent2Agent** standardise les échanges entre agents : découverte des capacités via une **Agent Card**, envoi de demandes et suivi des tâches ou résultats. [[33-mcp|MCP]] expose plutôt des outils et ressources à un host ; les deux peuvent se combiner.
+
+Exemple : un agent achats demande une analyse à un agent fournisseur sans connaître son modèle ni son orchestration interne. Le protocole décrit l'échange, pas la fiabilité de cette analyse.
+
+Vérifier authentification, capacités compatibles, délais et état terminal de la tâche. Une Agent Card décrit un service ; elle ne constitue ni une autorisation d'accès ni une certification de ses réponses.
 
 ---
 

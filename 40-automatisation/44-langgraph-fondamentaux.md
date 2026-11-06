@@ -73,9 +73,11 @@ Tester trois chemins avec un modèle simulé : réponse directe, outil puis rép
 
 Qu'est-ce qu'une edge conditionnelle dans LangGraph ? <!--anki:4335732e4d703f5b4531-->
 ?
-Une transition dont la destination est calculée par une **fonction de routage** qui lit l'état : `add_conditional_edges("noeud", route)`. C'est ce qui crée les **branches** et les **boucles** (cycles) du graphe.
+Une transition dont la destination dépend d'une **fonction de routage** lisant l'état : `add_conditional_edges("noeud", route)`. Elle permet branches et cycles.
 
-Par exemple, router vers une correction si la validation échoue, sinon vers la fin. Tester toutes les valeurs de retour et assurer une condition de sortie pour chaque cycle. Une transition peut être déterministe même si l'information utilisée pour la choisir provient d'un LLM incertain.
+Exemple : après validation, router vers `terminer` si le résultat est valide, `corriger` s'il reste des tentatives, sinon `escalader`. Le compteur appartient à l'état et doit augmenter réellement à chaque correction.
+
+Tester chaque sortie, y compris état incomplet et budget épuisé. La fonction peut être déterministe tout en lisant une estimation LLM incertaine ; préférer un validateur indépendant pour un critère vérifiable. Éviter qu'une valeur inattendue choisisse silencieusement le chemin de réussite.
 
 ---
 

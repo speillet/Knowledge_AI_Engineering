@@ -18,9 +18,11 @@ Au-delà, l'**agent** choisit lui-même ses étapes ([[31-agents-fondamentaux|ag
 
 Qu'est-ce que le prompt chaining ? <!--anki:63754e5a7b244d33377b-->
 ?
-Découper une tâche en **étapes fixes**, chacune avec son prompt, la sortie de l'une nourrissant la suivante : extraire → traduire → résumer. Entre deux étapes, une **porte** (gate) en code peut vérifier le résultat : format, longueur, champ obligatoire.
+Découper une tâche en **étapes fixes**, chacune alimentant la suivante : extraire → traduire → résumer. Une **gate** en code peut bloquer une sortie invalide avant propagation ([[11-prompt-engineering-avance|décomposition]]).
 
-Avantages : chaque étape est **testable** et plus simple, donc plus fiable. Coût : plus d'appels et de latence ([[11-prompt-engineering-avance|décomposition]]).
+Chaque étape devient plus ciblée et testable, mais la chaîne n'est pas automatiquement plus fiable. Exemple : si chaque étape réussit avec une probabilité de 98 % conditionnellement aux précédentes réussies, trois étapes réussissent ensemble à environ **94,1 %**.
+
+Conserver les références aux données initiales pour repérer les déformations, tester aussi le résultat final et prévoir l'échec d'une gate. Le gain de contrôlabilité se paie en appels et latence.
 
 ---
 

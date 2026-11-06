@@ -14,10 +14,10 @@ Prérequis : une **évaluation suffisamment fiable** et des exemples représenta
 
 À ne pas confondre : meta-prompting et optimisation automatique ? <!--anki:324e316873327b5041-->
 ?
-- **Meta-prompting** : un LLM **réécrit** un prompt en une passe, d'après son jugement. Aucune garantie que la nouvelle version soit meilleure ([[11-prompt-engineering-avance|prompt engineering]])
-- **Optimisation automatique** : une **boucle de recherche** pilotée par une **métrique** sur un jeu de données. On ne garde une variante que si elle **mesure mieux**
+- **Meta-prompting** : demander à un LLM de rédiger ou améliorer un prompt. Une formulation plus convaincante ne prouve pas un gain ([[11-prompt-engineering-avance|prompt engineering]]).
+- **Optimisation automatique** : rechercher des variantes et les comparer avec une **métrique mesurée** sur des exemples.
 
-La première est une aide à la rédaction, la seconde une méthode d'ingénierie.
+Le meta-prompting peut générer les candidats d'une boucle d'optimisation : les deux ne s'excluent pas. Exemple : produire dix variantes d'extraction, les classer sur un jeu de validation, puis vérifier la gagnante sur un test resté à l'écart. Sans cette séparation, choisir le meilleur score peut surtout sélectionner un surapprentissage des exemples.
 
 ---
 

@@ -6,9 +6,9 @@ Vérifié le : 30 septembre 2026 — cette fiche cite des produits, versions ou 
 
 Qu'est-ce qu'un agent de recherche (deep research) ? <!--anki:315f783362537c352a-->
 ?
-Un agent qui répond à une question complexe en **menant lui-même une recherche** : il planifie, lance des dizaines de requêtes (web ou documents internes), lit les sources, **creuse** les pistes prometteuses, puis rédige un **rapport cité**. Il dure de quelques minutes à une heure, contre quelques secondes pour un RAG.
+Un agent qui **planifie et adapte une recherche** : formuler des sous-questions, consulter des sources, explorer les lacunes puis produire une synthèse citée. Le nombre de requêtes et la durée dépendent de la tâche et du budget, pas d'un seuil définissant le « deep research ».
 
-Toutes les grandes offres grand public en proposent un depuis 2025.
+Exemple : comparer deux normes exige de retrouver leurs textes, dates d'application et exceptions, puis de résoudre les contradictions. Le rapport doit relier chaque conclusion aux preuves et distinguer faits établis et incertitudes. Multiplier les pages lues ne garantit ni indépendance des sources ni couverture ; dix reprises du même communiqué restent une seule origine.
 
 ---
 

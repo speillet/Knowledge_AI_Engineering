@@ -41,10 +41,9 @@ Un **rôle** oriente le **ton et le registre** ; il n'ajoute ni données vérifi
 
 Comment prompter un modèle de raisonnement ? <!--anki:725b7449614f33655476-->
 ?
-- Décrire **l'objectif, les contraintes et les critères** plutôt que les étapes : le modèle planifie mieux seul
-- Ne pas imposer « réfléchis étape par étape », déjà natif ([[138-modeles-raisonnement|modèles de raisonnement]])
-- Régler le **budget de réflexion** selon la difficulté, pas au maximum par défaut
-- Garder les exemples **cohérents** : ils influencent aussi le raisonnement
+Décrire **l'objectif, les contraintes et les critères vérifiables** ; ne pas supposer qu'une longue procédure améliore toujours un [[138-modeles-raisonnement|modèle de raisonnement]]. Conserver néanmoins les étapes métier obligatoires et des exemples cohérents.
+
+Exemple : pour comparer deux offres, fournir le volume prévu, le plafond budgétaire et le format du tableau attendu ; demander les hypothèses et calculs utiles, pas une transcription de sa réflexion interne. La formule « réfléchis étape par étape » n'est pas un prérequis universel. Ajuster le **budget de réflexion** sur un jeu de cas : mesurer gain de qualité, coût et délai avant de l'augmenter.
 
 ---
 

@@ -26,9 +26,11 @@ Dans cet exemple, `get_weather` doit déjà être défini et l'intégration du m
 
 Sur quoi repose `create_agent` ? <!--anki:48725f6e587475697364-->
 ?
-Sur **[[44-langgraph-fondamentaux|LangGraph]]** : l'agent est un graphe compilé. Il hérite donc de la **persistance**, du **human-in-the-loop**, du streaming et de la durable execution de LangGraph.
+Sur **[[44-langgraph-fondamentaux|LangGraph]]** : `create_agent` construit un graphe compilé orchestrant modèle et outils. Il bénéficie de ses mécanismes de streaming, persistance et interruption lorsqu'ils sont configurés.
 
-Ces capacités nécessitent une configuration appropriée : un checkpointer persistant pour survivre au redémarrage, des interruptions aux bons endroits et une gestion des effets externes. Construire un agent ne crée pas automatiquement une base de données, une interface d'approbation ou une garantie d'exécution unique des outils.
+Exemple : après redémarrage, poursuivre une conversation exige un checkpointer durable et le même identifiant de thread ; recréer l'objet agent avec ses seuls outils ne recharge pas automatiquement l'ancien échange.
+
+Séparer **définition du graphe, état de l'exécution et effets externes**. La persistance de l'état ne rend pas une écriture métier unique : un outil rejoué peut la répéter. Valider reprise et idempotence par un arrêt réel du processus, pas seulement par deux appels successifs.
 
 ---
 
