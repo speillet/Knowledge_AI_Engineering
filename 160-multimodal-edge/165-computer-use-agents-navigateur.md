@@ -21,6 +21,8 @@ Il décrit la page comme un lecteur d'écran la perçoit : **rôles** (bouton, l
 
 C'est l'approche de **Playwright MCP**, qui expose des instantanés d'accessibilité et des actions par référence d'élément ([[33-mcp|MCP]]).
 
+Un canvas ou un bouton mal étiqueté peut rester invisible à cette représentation. Combiner inspection structurée et capture ciblée, puis vérifier l'état après action ; une référence d'élément issue d'un ancien écran peut ne plus être valide.
+
 ---
 
 Qu'est-ce que le grounding visuel et pourquoi est-il difficile ? <!--anki:6265387e2a3e4e355e67-->
@@ -46,6 +48,8 @@ Pourquoi un agent d'interface est-il lent et coûteux ? <!--anki:63515d347b2f574
 Chaque étape demande **observation → raisonnement → action → attente du rendu** : plusieurs secondes par clic. Une tâche de 30 étapes avec une capture par étape, c'est **30 images** et un historique qui grossit à chaque tour ([[121-couts-inference|coût d'un agent]]).
 
 Leviers : garder seulement les **dernières captures**, préférer la structure à l'image, et remplacer les étapes répétitives par des **scripts**.
+
+Mesurer aussi les reprises dues aux interfaces changeantes. Une API métier stable peut remplacer dix clics, mais doit préserver les mêmes permissions et validations. Optimiser le nombre d'actions sans vérifier leur effet peut seulement accélérer une erreur.
 
 ---
 

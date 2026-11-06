@@ -7,7 +7,7 @@ Pourquoi définir l'objectif produit avant d'entraîner un système de recommand
 ?
 Le modèle doit optimiser un **résultat utile**, pas seulement reproduire les clics historiques. Pour recommander des articles techniques, un clic, une lecture complète et une résolution de problème représentent des objectifs différents.
 
-Définir l'événement, son horizon et les contraintes de qualité, de fraîcheur et de latence. Comparer une baseline de popularité ou de règles contextualisées. Un meilleur taux de clic peut provenir de titres trompeurs ; mesurer aussi satisfaction, couverture du catalogue et effets indésirables avant de conclure à une amélioration.
+Définir l'événement, son horizon et les contraintes de qualité, de fraîcheur et de latence. Comparer une baseline de popularité ou de règles contextualisées. Exemple : une variante fait passer le taux de clic de 4 % à 5 %, mais la part des lectures complètes de 40 % à 30 % des clics, soit 1,5 % des impressions contre 1,6 % : elle favorise des titres accrocheurs. Mesurer aussi satisfaction et couverture du catalogue.
 
 ---
 
@@ -15,7 +15,7 @@ Définir l'événement, son horizon et les contraintes de qualité, de fraîcheu
 ?
 La **génération de candidats** réduit un grand catalogue à un sous-ensemble plausible, avec un budget de latence serré. Le **classement** ordonne ensuite ces candidats avec des caractéristiques et un calcul éventuellement plus coûteux.
 
-Un excellent ranker ne récupère pas un article absent des candidats. Mesurer séparément le rappel des candidats et la qualité du classement, puis le parcours complet après filtres métier. Comparer les rankers sur un ensemble contrôlé aide au diagnostic ; mesurer seulement ce sous-ensemble ne décrit pas tout le système.
+Exemple : une recherche vectorielle réduit 2 millions d'articles à 500 candidats, puis le ranker les ordonne ; si le bon article n'est pas parmi les 500, aucun ranker ne le fera apparaître. Mesurer séparément le rappel des candidats et la qualité du classement, puis le parcours complet après filtres métier. Comparer les rankers sur un ensemble contrôlé aide au diagnostic ; mesurer seulement ce sous-ensemble ne décrit pas tout le système.
 
 ---
 
@@ -23,7 +23,7 @@ Un excellent ranker ne récupère pas un article absent des candidats. Mesurer s
 ?
 Le **filtrage collaboratif** apprend à partir des interactions entre utilisateurs et éléments. La recommandation **par contenu** utilise leurs caractéristiques : thème, texte, catégorie ou attributs du contexte.
 
-Le collaboratif peut retrouver des proximités absentes des descriptions, mais dépend de l'historique disponible. Le contenu aide notamment pour les nouveaux éléments correctement décrits. Une approche hybride combine ces signaux ; elle ne supprime pas les biais de collecte. Comparer selon l'ancienneté des utilisateurs et des éléments plutôt que sur une moyenne dominée par les plus populaires.
+Exemple : un tutoriel publié ce matin n'a aucune interaction ; son texte le rapproche déjà des articles Kubernetes lus par l'utilisateur, alors que le collaboratif l'ignore jusqu'aux premiers clics. Le collaboratif découvre en revanche que les lecteurs d'un article GPU lisent aussi un article FinOps. Une approche hybride combine ces signaux ; elle ne supprime pas les biais de collecte. Comparer selon l'ancienneté des utilisateurs et des éléments plutôt que sur une moyenne dominée par les plus populaires.
 
 ---
 
@@ -31,13 +31,13 @@ Pourquoi une absence de clic n'est-elle pas toujours un exemple négatif fiable 
 ?
 L'utilisateur n'a peut-être **jamais vu l'élément**, ou ne l'a pas remarqué à sa position. Le feedback implicite mélange préférence, exposition et contexte. L'absence d'interaction sur tout le catalogue ne signifie donc pas rejet explicite.
 
-Journaliser les impressions réellement affichées, positions, candidats et versions. Définir un délai cohérent pour attribuer une interaction. Même une impression sans clic peut être ambiguë : onglet inactif, recommandation déjà connue ou objectif ne nécessitant pas d'ouverture. Le choix des labels modifie la tâche apprise.
+Exemple : un article placé en 9e position, alors que l'utilisateur n'a fait défiler que les 4 premières, n'a jamais été vu ; le traiter en négatif apprend surtout que les positions basses sont peu cliquées. Journaliser les impressions réellement affichées, positions et versions. Même une impression sans clic peut être ambiguë : onglet inactif, recommandation déjà connue ou objectif ne nécessitant pas d'ouverture. Le choix des labels modifie la tâche apprise.
 
 ---
 
 Pourquoi un modèle à deux tours facilite-t-il la recherche de recommandations à grande échelle ? <!--anki:3065383238373765333138613466613738373362366637323932623433353634-->
 ?
-Une tour encode le **contexte utilisateur**, l'autre l'**élément** ; une fonction simple, souvent un produit scalaire, compare leurs représentations. Les vecteurs des éléments peuvent être calculés à l'avance et indexés pour chercher rapidement des candidats.
+Une tour encode le **contexte utilisateur**, l'autre l'**élément** ; une fonction simple, souvent un produit scalaire, compare leurs représentations. Les vecteurs des éléments peuvent être calculés à l'avance et indexés : pour 5 millions d'éléments, seule la tour utilisateur tourne à la requête, puis un index de plus proches voisins renvoie quelques centaines de candidats.
 
 Cette séparation limite les interactions fines entre contexte et élément pendant la recherche. Un ranker plus riche peut les exploiter ensuite. Versionner ensemble encodeurs et index, et réencoder les éléments lorsque nécessaire : mélanger des espaces incompatibles peut dégrader le rappel sans provoquer d'erreur technique.
 
@@ -47,13 +47,13 @@ Cette séparation limite les interactions fines entre contexte et élément pend
 ?
 Un objectif **pointwise** apprend un score par élément ; **pairwise** apprend des préférences entre paires ; **listwise** optimise une propriété d'une liste. Ils diffèrent par le signal utilisé, le coût et leur lien avec la métrique finale.
 
-Un classifieur de clic peut fournir une baseline pointwise, mais son accuracy ne mesure pas directement l'ordre du top-k. Former les paires ou listes à l'intérieur d'un contexte comparable. Choisir l'objectif selon les labels disponibles, puis vérifier le résultat sur le classement réellement affiché.
+Un classifieur de clic peut fournir une baseline pointwise, mais son accuracy ne mesure pas directement l'ordre du top-k. Former les paires ou listes à l'intérieur d'un contexte comparable : `LGBMRanker(objective="lambdarank")` reçoit un paramètre `group` qui regroupe les candidats de chaque requête et pondère ses paires selon leur effet sur le nDCG. Choisir l'objectif selon les labels disponibles, puis vérifier le résultat sur le classement réellement affiché.
 
 ---
 
 Comment le choix des exemples négatifs influence-t-il un recommender ? <!--anki:6565303930643130653632323461646539363931636330666365636534363966-->
 ?
-Des négatifs **aléatoires** rendent souvent la séparation facile ; des négatifs difficiles apprennent des distinctions plus fines mais peuvent être de faux négatifs. Un article voisin non consulté peut réellement intéresser l'utilisateur.
+Des négatifs **aléatoires** rendent souvent la séparation facile ; des négatifs difficiles apprennent des distinctions plus fines mais peuvent être de faux négatifs. Pour un lecteur d'articles PostgreSQL, un négatif aléatoire sur la cuisine s'écarte trivialement ; un négatif sur MySQL apprend une vraie distinction, mais l'aurait peut-être intéressé.
 
 Documenter la distribution d'échantillonnage et comparer les résultats sur des candidats représentatifs du service. Les scores appris avec des classes artificiellement rééquilibrées ne sont pas automatiquement des probabilités de clic calibrées. Conserver les exclusions métier et la temporalité : un élément indisponible au moment historique ne doit pas devenir un candidat plausible de ce moment.
 
@@ -63,7 +63,7 @@ Pourquoi les journaux d'un ancien recommender biaisent-ils l'évaluation du suiv
 ?
 L'ancien système a choisi **ce qui était visible et à quelle position**. Les interactions observées reflètent cette politique, en plus des préférences. Un nouveau système proposant d'autres éléments rencontre des zones où les journaux apportent peu d'information.
 
-Des pondérations par probabilité d'exposition peuvent aider sous hypothèses explicites, avec risque de forte variance et besoin de support. Elles ne créent pas d'observations pour une action jamais proposée. Une exploration contrôlée ou un test randomisé fournit des preuves complémentaires, selon le risque du produit.
+Des pondérations par probabilité d'exposition peuvent aider sous hypothèses explicites. Un élément montré avec une probabilité de 0,05 reçoit un poids de 20 : quelques clics sur lui dominent l'estimation, d'où une forte variance. Ces poids ne créent pas d'observations pour une action jamais proposée. Une exploration contrôlée ou un test randomisé fournit des preuves complémentaires, selon le risque du produit.
 
 ---
 
@@ -71,7 +71,7 @@ Comment gérer le cold start d'un utilisateur ou d'un élément ? <!--anki:62623
 ?
 Prévoir un **chemin sans historique** : popularité contextualisée, attributs de l'élément, intention de la session ou préférences explicitement fournies. Pour un élément nouveau, la description peut permettre une première représentation avant les interactions.
 
-Mesurer ce segment séparément et définir la transition vers la personnalisation. Solliciter des préférences coûte un effort utilisateur ; une popularité globale peut mal servir des usages rares. Évaluer aussi le temps nécessaire pour exposer un nouvel élément pertinent, pas seulement les performances sur les utilisateurs déjà très actifs.
+Mesurer ce segment séparément et définir la transition vers la personnalisation. Exemple : un nouvel utilisateur reçoit les articles populaires de sa langue et de son produit, puis bascule vers la personnalisation après cinq lectures. Une popularité globale peut mal servir des usages rares. Évaluer aussi le temps nécessaire pour exposer un nouvel élément pertinent, pas seulement les performances sur les utilisateurs déjà très actifs.
 
 ---
 
@@ -89,7 +89,7 @@ L'ordre idéal place les deux éléments pertinents en tête. Préciser pertinen
 
 Pourquoi ajouter diversité et contraintes métier après le score de pertinence ? <!--anki:3736356165376333353332633438366561353530353966616166313831636462-->
 ?
-Les meilleurs scores individuels peuvent produire une **liste redondante**, indisponible ou mal adaptée à la session. Le reclassement applique exclusions, plafonds par catégorie, diversité ou fraîcheur selon un contrat explicite.
+Les meilleurs scores individuels peuvent produire une **liste redondante**, indisponible ou mal adaptée à la session : les cinq premiers résultats viennent tous de la même série de billets. Le reclassement applique exclusions, plafonds par catégorie, par exemple deux articles par série, diversité ou fraîcheur selon un contrat explicite.
 
 Mesurer le compromis entre pertinence et utilité de la liste, ainsi que les violations de contraintes. Les droits d'accès et exclusions impératives doivent être garantis par l'application. Une contrainte de diversité ne doit pas être présentée comme une amélioration universelle : sa valeur dépend de la tâche et de ce que l'utilisateur cherche à accomplir.
 

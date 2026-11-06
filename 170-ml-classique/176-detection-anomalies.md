@@ -16,7 +16,7 @@ Définir l'action que doit déclencher l'alerte et le coût d'une fausse alarme.
 ?
 La **détection d'outliers** cherche des observations atypiques dans un jeu pouvant déjà en contenir. La **détection de nouveauté** apprend une référence supposée normale, puis juge de nouvelles observations par rapport à cette référence.
 
-Cette distinction influence choix des données et méthode d'évaluation. Un historique contaminé peut faire apprendre un incident comme normal. Un nouveau comportement légitime peut être signalé à tort. Dans les deux cas, la pertinence métier exige des labels ou des investigations ; la géométrie des données ne définit pas seule l'incident.
+Exemple : nettoyer un an de paiements qui contient déjà des fraudes relève des outliers ; apprendre sur un mois vérifié sans incident, puis juger chaque nouvelle transaction, relève de la nouveauté. Un historique contaminé peut faire apprendre un incident comme normal. Un nouveau comportement légitime peut être signalé à tort. Dans les deux cas, la pertinence métier exige des labels ou des investigations ; la géométrie des données ne définit pas seule l'incident.
 
 ---
 
@@ -31,6 +31,10 @@ Pour décider, choisir un seuil sur des observations représentatives et examine
 Quelle baseline construire pour détecter une anomalie dans une série saisonnière ? <!--anki:3133393363653030656434313436393561643265306231313865386336376365-->
 ?
 Comparer l'observation à une **référence adaptée au contexte** : heure, jour, catégorie ou prévision historique. Une médiane et une dispersion robuste sur des périodes comparables peuvent fournir un premier score d'écart.
+```text
+score = |x − médiane| / (1,4826 × MAD)       sur les 8 lundis précédents à 14 h
+1 250 commandes, médiane 900, MAD 60 → 350 / 89 ≈ 3,9
+```
 
 Apprendre la référence sur le passé disponible et préciser ce qui arrive quand la dispersion est nulle ou les données absentes. Évaluer les résidus de prévision peut aider, sans garantir leur stabilité. Un seuil global sur les valeurs brutes signale souvent la saisonnalité normale plutôt que les incidents recherchés.
 
@@ -38,7 +42,7 @@ Apprendre la référence sur le passé disponible et préciser ce qui arrive qua
 
 Comment Isolation Forest repère-t-il des observations atypiques ? <!--anki:6362353831653063623837373431313339366433396539346664613032613361-->
 ?
-Il construit des arbres à **partitions aléatoires** des variables et mesure combien de séparations sont nécessaires pour isoler un point. Des observations isolées rapidement reçoivent un caractère plus atypique selon le score utilisé.
+Il construit des arbres à **partitions aléatoires** des variables et mesure combien de séparations sont nécessaires pour isoler un point. Des observations isolées rapidement reçoivent un caractère plus atypique selon le score utilisé. Dans scikit-learn, chaque arbre de `IsolationForest` utilise par défaut `min(256, n_samples)` observations ; `score_samples` est d'autant plus bas que le point est atypique.
 
 Le résultat dépend de la représentation, du sous-échantillonnage et de la structure des données. Ce mécanisme n'apprend pas directement une définition métier de fraude ou de panne. Tester plusieurs familles d'incidents et les fausses alertes ; une anomalie ressemblant géométriquement au fonctionnement normal peut rester difficile à détecter.
 
@@ -56,7 +60,7 @@ Pourquoi un autoencodeur peut-il bien reconstruire une anomalie ? <!--anki:36613
 ?
 L'autoencodeur apprend à **reconstruire ses entrées**, pas à reconnaître directement les incidents. Une capacité élevée, un entraînement contaminé ou une anomalie proche des motifs normaux peuvent produire une reconstruction très précise d'un cas problématique.
 
-Inversement, un cas normal nouveau peut être mal reconstruit. Comparer à des baselines simples et valider l'erreur de reconstruction sur des incidents représentatifs. Réduire arbitrairement la taille latente ne garantit pas de séparer normal et anormal ; examiner les variables qui dominent la perte et leur normalisation.
+Inversement, un cas normal nouveau peut être mal reconstruit. Comparer à des baselines simples et valider l'erreur de reconstruction sur des incidents représentatifs. Réduire arbitrairement la taille latente ne garantit pas de séparer normal et anormal. Examiner les variables qui dominent la perte : sans normalisation, une température de 0 à 1 000 écrase une vibration de 0 à 0,1, dont l'anomalie passe inaperçue.
 
 ---
 
@@ -84,7 +88,7 @@ Pourquoi évaluer une détection temporelle par incident en plus des points indi
 ?
 Un même incident peut durer des centaines de points. Le compter point par point peut surpondérer sa durée ou récompenser une détection très tardive. Mesurer aussi **incidents retrouvés, délai de détection et fausses alertes par période**.
 
-Définir fenêtres de tolérance, regroupement et règle d'association avant l'évaluation. Le point adjustment qui marque tout un intervalle détecté dès qu'un point l'est peut gonfler certains scores. Rapporter précisément le protocole et conserver une mesure reflétant le moment où l'opérateur aurait réellement pu intervenir.
+Définir fenêtres de tolérance, regroupement et règle d'association avant l'évaluation. Le point adjustment, qui marque tout un intervalle détecté dès qu'un point l'est, peut gonfler les scores : un incident de 180 minutes repéré à la 170e compte 11 points détectés, ou 180 après ajustement, pour un délai de 170 minutes. Rapporter précisément le protocole et conserver une mesure reflétant le moment où l'opérateur aurait réellement pu intervenir.
 
 ---
 
@@ -92,7 +96,7 @@ Comment évaluer un détecteur d'anomalies quand les labels sont incomplets ? <!
 ?
 Faire relire les alertes et un **échantillon de non-alertes**, avec une stratégie et des probabilités de sélection documentées. Examiner uniquement les alertes permet d'approcher leur précision, mais pas de compter les incidents manqués dans toute la population.
 
-Utiliser, si nécessaire, des pondérations et une incertitude adaptées à l'échantillonnage. Des anomalies injectées testent certains mécanismes, sans représenter automatiquement les incidents réels. Séparer cas confirmés, inconnus et labels retardés ; l'absence de signalement ne constitue pas une preuve de normalité.
+Exemple : si 3 non-alertes sur 300, tirées au hasard parmi 50 000, sont des incidents, on estime environ 500 incidents manqués, avec un intervalle large ; chaque cas relu pèse ici 50 000 / 300. Des anomalies injectées testent certains mécanismes, sans représenter automatiquement les incidents réels. Séparer cas confirmés, inconnus et labels retardés ; l'absence de signalement ne constitue pas une preuve de normalité.
 
 ---
 

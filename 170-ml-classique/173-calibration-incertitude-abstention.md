@@ -9,6 +9,8 @@ La **discrimination** est la capacité à classer les positifs devant les négat
 
 Un score peut très bien ordonner les cas tout en étant trop confiant. Pour choisir un seuil selon un coût attendu, contrôler les probabilités en plus du classement. Une bonne calibration globale ne garantit pas celle de chaque population ni un classement utile.
 
+Prédire partout la prévalence peut être calibré sans discriminer aucun cas. Examiner conjointement courbe de fiabilité, métrique de classement et performance de la décision.
+
 ---
 
 Comment lire une courbe de fiabilité sans se laisser tromper ? <!--anki:6537616439316332303635323462366138313632616134393832356135363733-->
@@ -102,6 +104,8 @@ négatif : p × C_FN
 revue : C_revue + coût attendu des erreurs restantes
 ```
 Choisir le minimum sous les contraintes de qualité et capacité. Si la revue est supposée parfaite, son coût se réduit à `C_revue` ; c'est une hypothèse à vérifier. Des délais, capacités limitées et coûts variables peuvent changer la politique. Une probabilité mal calibrée fausse l'arbitrage.
+
+Ajouter le délai de file au coût de revue si une décision tardive perd sa valeur. Tester les probabilités proches des frontières de décision, où une petite erreur de calibration change l'action choisie.
 
 ---
 

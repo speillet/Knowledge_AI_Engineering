@@ -17,6 +17,8 @@ L'**ATE** est l'effet moyen d'un traitement sur une population définie : `E[Y(1
 
 Pour une même personne, on n'observe généralement qu'une des deux issues potentielles. Le CATE n'est donc pas une mesure directe de son effet individuel. Préciser population, intervention et horizon ; un effet moyen positif peut masquer des segments peu aidés ou lésés. Leur estimation nécessite données suffisantes et validation indépendante.
 
+Une campagne bénéfique en moyenne peut donc rester inutile pour les clients qui auraient acheté sans elle : prédire l'achat n'est pas estimer l'effet de la campagne.
+
 ---
 
 À quoi sert un graphe causal avant de choisir les variables d'ajustement ? <!--anki:6464643931623734623766393434666262653865396366616331336531366238-->
@@ -64,6 +66,8 @@ Que représente un score de propension et à quoi sert-il ? <!--anki:34356566366
 Le **score de propension** est la probabilité de recevoir le traitement conditionnellement aux variables retenues : `e(X)=P(T=1|X)`. Il décrit l'attribution de l'action, pas le risque de l'issue.
 
 Appariement ou pondération peuvent l'utiliser pour équilibrer des caractéristiques observées. Pour une pondération ATE classique, les traités reçoivent `1/e(X)` et les non-traités `1/(1−e(X))`. Contrôler équilibre et poids extrêmes. Un bon prédicteur d'attribution ne prouve ni l'absence de confusion non mesurée ni la validité de l'effet causal.
+
+Si `e(X)=0,01`, un traité pèse 100 : quelques observations peuvent dominer l'estimation. Tronquer les poids réduit parfois la variance, mais change le biais ou la population effectivement représentée.
 
 ---
 

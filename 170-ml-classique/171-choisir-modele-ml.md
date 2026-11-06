@@ -7,7 +7,7 @@ Comment choisir entre règles, ML classique et LLM pour un besoin métier ? <!--
 ?
 Partir de la **décision attendue**, des données disponibles et du coût des erreurs. Des règles conviennent à une politique explicite et stable ; un modèle supervisé apprend une relation à partir d'exemples labellisés ; un LLM apporte surtout des capacités de traitement du langage et de génération.
 
-Comparer ces approches sur les mêmes cas et contraintes. Une extraction par LLM suivie d'un modèle tabulaire peut être pertinente. La complexité supplémentaire doit apporter un gain mesurable de qualité ou de maintenance, pas seulement une démonstration plus impressionnante.
+Exemple : refuser un remboursement au-delà de 500 € relève d'une règle ; estimer un risque de fraude sur 40 variables labellisées, d'un modèle supervisé ; lire le motif rédigé par le client, d'un LLM. Une extraction par LLM suivie d'un modèle tabulaire peut être pertinente. La complexité supplémentaire doit apporter un gain mesurable de qualité ou de maintenance.
 
 ---
 
@@ -31,7 +31,7 @@ Quelle baseline construire avant un modèle prédictif complexe ? <!--anki:65363
 ?
 Mesurer une **référence simple et exploitable** : classe majoritaire pour une classification, moyenne ou médiane pour une régression selon la perte, règle métier existante, ou modèle linéaire. Pour prévoir une série, une valeur récente ou saisonnière peut être plus pertinente qu'une constante.
 
-Évaluer cette référence avec exactement les mêmes observations et métriques que le candidat. Une baseline révèle parfois une cible mal définie ou un jeu facile. Conserver aussi le coût et la latence : un faible gain de score peut ne pas justifier une chaîne plus fragile.
+Évaluer cette référence avec exactement les mêmes observations et métriques que le candidat. Exemple : la règle de routage par mots-clés envoie déjà 81 % des tickets à la bonne équipe ; c'est ce score, pas le hasard, que le modèle doit battre. Conserver aussi le coût et la latence : un faible gain de score peut ne pas justifier une chaîne plus fragile.
 
 ---
 
@@ -39,7 +39,7 @@ Que suppose une régression linéaire et quand est-elle utile ? <!--anki:3230383
 ?
 Elle représente la prédiction par une **somme pondérée des variables**, avec un intercept. C'est une référence rapide lorsque des effets additifs constituent une approximation raisonnable. Des interactions ou transformations peuvent enrichir les variables tout en conservant une relation linéaire dans les coefficients.
 
-Inspecter les erreurs selon les segments et les valeurs prédites. Une extrapolation hors des données observées peut devenir absurde. Un coefficient décrit une association conditionnelle dans ce modèle ; il ne démontre pas qu'une intervention sur la variable aurait cet effet causal.
+Inspecter les erreurs selon les segments et les valeurs prédites. Une extrapolation peut devenir absurde : appris sur des logements de 20 à 120 m², `prix = 50 000 + 4 000 × surface` annonce 1,65 million d'euros pour un entrepôt de 400 m². Un coefficient décrit une association conditionnelle dans ce modèle ; il ne démontre pas qu'une intervention sur la variable aurait cet effet causal.
 
 ---
 
@@ -47,7 +47,7 @@ Pourquoi la régression logistique sert-elle à classifier ? <!--anki:6136336230
 ?
 Dans le cas binaire, elle transforme un score linéaire par une **sigmoïde** pour produire une probabilité estimée de la classe positive. Un seuil convertit ensuite cette probabilité en décision ; malgré son nom, la tâche finale est une classification.
 
-Elle fournit une baseline compacte et rapide, notamment avec des variables textuelles ou tabulaires. La qualité des probabilités doit être vérifiée sur des observations indépendantes. Le seuil de 0,5 n'est pas une obligation : il dépend des erreurs acceptables et du coût des décisions.
+Elle fournit une baseline compacte et rapide, notamment avec des variables textuelles ou tabulaires. La qualité des probabilités doit être vérifiée sur des observations indépendantes. Le seuil de 0,5 n'est pas une obligation : pour ne pas manquer les fraudes, une équipe peut envoyer en revue toute transaction au-dessus de 0,3, selon le coût des erreurs et la capacité de revue.
 
 ---
 
@@ -55,7 +55,7 @@ Comment la régularisation limite-t-elle le surapprentissage ? <!--anki:65386332
 ?
 Elle pénalise certaines solutions complexes lors de l'entraînement. Pour un modèle linéaire, **L2** réduit les coefficients ; **L1** peut en annuler certains. On accepte éventuellement un ajustement moins précis du train pour mieux généraliser.
 
-L'intensité se choisit sur validation, avec une échelle des variables adaptée. Une pénalité trop forte produit du sous-apprentissage. Elle ne corrige ni des labels faux ni une fuite de données ; un modèle fortement régularisé peut encore exploiter une information qui n'existera pas en production.
+L'intensité se choisit sur validation, avec une échelle des variables adaptée. Attention au sens du paramètre : dans `LogisticRegression` de scikit-learn, `C` est l'inverse de la force, donc `C=0.01` régularise bien plus que `C=1`, alors que l'`alpha` de `Ridge` croît avec elle. Une pénalité trop forte produit du sous-apprentissage. Elle ne corrige ni des labels faux ni une fuite de données ; un modèle fortement régularisé peut encore exploiter une information qui n'existera pas en production.
 
 ---
 
@@ -71,7 +71,7 @@ Un arbre profond peut mémoriser des particularités du train et changer forteme
 ?
 Une **random forest** agrège des arbres diversifiés par échantillonnage des observations et des variables ; leur combinaison réduit notamment la variance. Le **gradient boosting** ajoute progressivement des arbres pour améliorer une fonction de perte, en suivant le signal laissé par l'ensemble courant.
 
-Le boosting est un candidat important sur des données tabulaires, mais ne gagne pas systématiquement. Comparer les deux avec un budget de réglage explicite. Profondeur, nombre d'arbres et, pour le boosting, taux d'apprentissage influencent généralisation, latence et mémoire.
+Le boosting est un candidat important sur des données tabulaires, mais ne gagne pas systématiquement. Exemple : une forêt de 500 arbres profonds se règle peu ; un boosting de 2 000 arbres de profondeur 6 au taux 0,05 demande un arrêt anticipé sur validation. Comparer les deux avec un budget de réglage explicite. Profondeur, nombre d'arbres et, pour le boosting, taux d'apprentissage influencent généralisation, latence et mémoire.
 
 ---
 
@@ -87,15 +87,21 @@ Pourquoi le prétraitement fait-il partie du modèle déployé ? <!--anki:666661
 ?
 Le modèle apprend sur une **représentation précise** : ordre des colonnes, imputation, normalisation, encodage des catégories. Il faut enregistrer et réutiliser ces transformations avec les poids. Réapprendre la normalisation sur chaque requête ou changer l'ordre des colonnes modifie le sens des entrées.
 
-Apprendre les transformations sur le train, puis les appliquer aux autres jeux. Définir aussi le comportement pour une catégorie inconnue ou une colonne manquante. Une chaîne de transformation versionnée évite que notebook et service reconstruisent différemment les mêmes variables.
+Apprendre les transformations sur le train, puis les appliquer aux autres jeux.
+```python
+pipe = make_pipeline(SimpleImputer(strategy="median"), StandardScaler(), LogisticRegression())
+pipe.fit(X_train, y_train)               # médianes et échelles apprises sur le train seul
+joblib.dump(pipe, "modele-v3.joblib")    # transformations et poids versionnés ensemble
+```
+Une chaîne versionnée évite que notebook et service reconstruisent différemment les mêmes variables. Définir aussi le comportement face à une colonne manquante.
 
 ---
 
 Comment traiter les variables numériques et catégorielles sans créer de fausse structure ? <!--anki:3533373434353664643636353432376138646464323234366439323236356333-->
 ?
-Adapter l'encodage à la méthode. Une **standardisation** aide de nombreux modèles linéaires régularisés et méthodes de distance ; les arbres fondés sur des seuils en ont généralement moins besoin. Un encodage indicateur évite d'inventer un ordre entre des villes.
+Adapter l'encodage à la méthode. Une **standardisation** aide de nombreux modèles linéaires régularisés et méthodes de distance ; les arbres fondés sur des seuils en ont généralement moins besoin. Coder Paris = 1, Lyon = 2 et Marseille = 3 ferait croire à un modèle linéaire que Marseille vaut « plus » que Paris : un encodage indicateur évite cet ordre inventé.
 
-Des catégories très nombreuses demandent une stratégie de mémoire et de généralisation. Un encodage utilisant la cible doit être appris sans révéler le label de l'observation encodée. Prévoir les catégories nouvelles au lieu de les laisser provoquer des erreurs imprévues.
+`OneHotEncoder(handle_unknown="ignore")` encode une ville nouvelle par des zéros au lieu d'échouer. Un encodage utilisant la cible doit être appris sans révéler le label de l'observation encodée : `TargetEncoder` de scikit-learn croise les plis pendant `fit_transform`. Des catégories très nombreuses demandent aussi une stratégie de mémoire.
 
 ---
 

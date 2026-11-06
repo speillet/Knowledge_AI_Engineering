@@ -9,6 +9,8 @@ Le **train** sert à apprendre les paramètres et transformations. La **validati
 
 Regarder le test après chaque essai en fait progressivement un jeu de validation. Documenter les décisions et réserver un test indépendant pour la conclusion. Après cette mesure, un éventuel réentraînement sur davantage de données crée un autre artefact : préciser ce qui a effectivement été évalué puis déployé.
 
+L'imputation et la normalisation s'apprennent aussi sur train : les calculer sur toutes les données avant le split introduit une fuite même sans utiliser les labels.
+
 ---
 
 Quelles formes de fuite de données peuvent rendre une évaluation ML trompeuse ? <!--anki:6539316435373633373665653463353461386435376536363636663864346434-->
@@ -101,6 +103,8 @@ Choisir le seuil sur **validation**, en tenant compte des faux positifs, faux n�
 prédire positif si p > C_FP / (C_FP + C_FN)
 ```
 Avec un faux positif à 5 unités et un faux négatif à 95, le seuil théorique est 0,05. Vérifier calibration et résultat métier, puis figer le seuil avant le test final. Un score de classement arbitraire n'est pas une probabilité.
+
+Si ce seuil déclenche 2 000 alertes pour 200 places de revue, la contrainte de capacité impose une autre politique ; ne pas ignorer les alertes excédentaires dans l'évaluation.
 
 ---
 

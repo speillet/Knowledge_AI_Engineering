@@ -8,7 +8,7 @@ Vérifié le : 8 octobre 2026
 ?
 Une explication **locale** décrit une prédiction particulière ; une explication **globale** résume le comportement du modèle sur une population. Les variables dominantes en moyenne peuvent ne pas expliquer un cas atypique.
 
-Choisir l'échelle selon la question : diagnostiquer un ticket mal classé ou comprendre la politique générale de routage. Préciser modèle, sortie et population analysés. Agréger des explications locales peut masquer des effets opposés entre segments ; une importance globale ne suffit donc pas à justifier chaque décision individuelle.
+Choisir l'échelle selon la question : diagnostiquer un ticket mal classé ou comprendre la politique générale de routage. Exemple : l'offre souscrite domine le routage en moyenne, mais ce ticket-ci bascule à cause du mot « remboursement » dans son objet. Préciser modèle, sortie et population analysés. Agréger des explications locales peut masquer des effets opposés entre segments ; une importance globale ne suffit donc pas à justifier chaque décision individuelle.
 
 ---
 
@@ -16,7 +16,13 @@ Que mesure l'importance par permutation d'une variable ? <!--anki:34323464613838
 ?
 Elle mesure la **dégradation d'un score** quand on mélange une variable dans un jeu donné, en conservant le modèle entraîné. On teste ainsi sa dépendance prédictive à cette information pour la métrique retenue.
 
-Utiliser un jeu tenu à l'écart et répéter les permutations pour mesurer la variabilité. Le résultat dépend du modèle, de la population et du score ; ce n'est pas une propriété absolue de la variable. Permuter peut créer des observations irréalistes, surtout lorsque les variables sont fortement dépendantes.
+Utiliser un jeu tenu à l'écart et répéter les permutations pour mesurer la variabilité.
+```python
+from sklearn.inspection import permutation_importance
+r = permutation_importance(model, X_test, y_test, scoring="roc_auc", n_repeats=10, random_state=0)
+r.importances_mean, r.importances_std     # baisse moyenne de l'AUC et sa dispersion
+```
+Le résultat dépend du modèle, de la population et du score ; ce n'est pas une propriété absolue de la variable. Permuter peut créer des observations irréalistes, surtout lorsque les variables sont fortement dépendantes.
 
 ---
 
@@ -30,7 +36,7 @@ Avec une perte dont une valeur faible est meilleure, interpréter l'augmentation
 
 Pourquoi deux variables corrélées peuvent-elles avoir une faible importance individuelle ? <!--anki:6166306366623936656532663437303362393761643035613561366131346262-->
 ?
-Elles peuvent fournir une **information substituable** : quand l'une est mélangée, l'autre permet encore de bien prédire. Une faible importance individuelle ne prouve donc pas que le groupe de variables est inutile.
+Elles peuvent fournir une **information substituable** : quand l'une est mélangée, l'autre permet encore de bien prédire. Exemple : `revenu_mensuel` et `revenu_annuel` paraissent chacune inutiles, car mélanger l'une laisse l'autre intacte. Une faible importance individuelle ne prouve donc pas que le groupe de variables est inutile.
 
 Examiner leurs dépendances, tester une permutation groupée ou comparer des modèles réentraînés sans le groupe. Ces expériences répondent à des questions différentes : dépendance du modèle actuel ou possibilité d'apprendre sans ces données. Elles doivent conserver le protocole de validation ; retirer une variable sur la seule base d'un classement d'importances peut tromper.
 
@@ -40,13 +46,17 @@ Que représente une contribution SHAP ? <!--anki:3335653430666264363334303434656
 ?
 Une contribution **SHAP** attribue à une variable une part de l'écart entre la sortie expliquée et une valeur de référence, dans un jeu de coalitions défini. Sous la propriété d'additivité, référence et contributions reconstituent cette sortie, à l'erreur d'approximation près.
 
-Le résultat dépend de la manière de représenter l'absence d'une variable et des dépendances prises en compte. Il explique le modèle sous ces conventions, pas automatiquement les causes du phénomène réel. Vérifier quelle classe et quelle unité de sortie sont effectivement expliquées.
+Le résultat dépend de la manière de représenter l'absence d'une variable et des dépendances prises en compte. Il explique le modèle sous ces conventions, pas automatiquement les causes du phénomène réel. Vérifier quelle classe et quelle unité de sortie sont effectivement expliquées :
+```python
+sv = shap.TreeExplainer(xgb_binaire)(X_test)    # sortie expliquée : marge en log-odds
+sv.base_values[0] + sv.values[0].sum()           # ≈ marge prédite pour la ligne 0
+```
 
 ---
 
 Pourquoi le choix de la population de référence change-t-il une explication SHAP ? <!--anki:3962326137306130336361383462306139643530626233343761613162363139-->
 ?
-La référence précise **par rapport à quoi** la prédiction est expliquée. Comparer une demande au client moyen ou aux demandes du même service change la base et les attributions possibles, même si la prédiction reste identique.
+La référence précise **par rapport à quoi** la prédiction est expliquée. Comparer une demande au client moyen ou aux demandes du même service change la base et les attributions possibles, même si la prédiction reste identique. Le revenu d'un demandeur peut ainsi contribuer positivement face à l'ensemble des clients, et négativement face aux seuls clients de sa région, mieux rémunérés.
 
 Choisir un ensemble représentatif de la question posée, le versionner et documenter son échantillonnage. Les variables dépendantes demandent une attention particulière au mécanisme de masquage. Une évolution du graphique peut venir d'une nouvelle référence plutôt que d'un changement du modèle ; conserver les deux versions pour comparer.
 
@@ -65,7 +75,7 @@ La probabilité finale est donc environ 55 %. On ne peut pas traiter +0,8 comme 
 
 À ne pas confondre : PDP et courbes ICE ? <!--anki:3565633339626133663835313461366538306264313030633130303766336266-->
 ?
-Un **PDP** moyenne les prédictions obtenues en faisant varier une caractéristique ; les **courbes ICE** montrent ces variations pour chaque observation. La moyenne peut masquer des interactions ou des comportements opposés entre groupes.
+Un **PDP** moyenne les prédictions obtenues en faisant varier une caractéristique ; les **courbes ICE** montrent ces variations pour chaque observation. La moyenne peut masquer des comportements opposés : un PDP plat pour la remise, alors que les courbes ICE montent pour les nouveaux clients et descendent pour les habitués. `PartialDependenceDisplay.from_estimator(model, X, ["remise"], kind="both")` trace les deux.
 
 Les deux peuvent évaluer des combinaisons irréalistes lorsque les variables sont dépendantes. Examiner les zones où des données existent et compléter par des analyses conditionnelles adaptées. Une courbe montante décrit une réaction du modèle à ces entrées artificielles, pas la preuve qu'une intervention réelle sur la variable augmenterait la cible.
 
@@ -73,7 +83,7 @@ Les deux peuvent évaluer des combinaisons irréalistes lorsque les variables so
 
 Qu'est-ce qui rend une explication contrefactuelle réellement actionnable ? <!--anki:6139353063643962643034313430663939383265333839313630653762626331-->
 ?
-Elle propose un **changement réalisable** des entrées qui modifie la décision du modèle, en respectant variables immuables, dépendances et coût de l'action. Modifier fictivement une date de naissance ou une variable indisponible à l'utilisateur ne fournit pas un recours utile.
+Elle propose un **changement réalisable** des entrées qui modifie la décision du modèle, en respectant variables immuables, dépendances et coût de l'action. « Réduire l'encours de carte de 400 € » peut constituer un recours ; « avoir cinq ans de moins » ou modifier une variable hors de portée de l'utilisateur n'en fournit aucun.
 
 Vérifier que le point obtenu est plausible et que la recommandation résiste à de petites variations. Franchir la frontière d'un modèle ne prouve pas une amélioration de la situation réelle. Un conseil d'action demande des hypothèses causales supplémentaires et une validation de son effet.
 
@@ -81,7 +91,7 @@ Vérifier que le point obtenu est plausible et que la recommandation résiste à
 
 Pourquoi une justification rédigée par un LLM n'est-elle pas une preuve du mécanisme de décision ? <!--anki:3461363763306332646438373433646162653337623239393239303135656663-->
 ?
-Le texte généré est une **sortie supplémentaire**, pas un accès garanti au calcul qui a produit la décision. Un modèle peut donner une justification plausible tout en utilisant d'autres indices ; une explication reconstruite après coup peut aussi être inexacte.
+Le texte généré est une **sortie supplémentaire**, pas un accès garanti au calcul qui a produit la décision. Un modèle peut donner une justification plausible tout en utilisant d'autres indices. Turpin et al. placent la bonne réponse toujours en (A) dans les exemples few-shot : le modèle choisit plus souvent (A), sans que son raisonnement écrit mentionne cet indice.
 
 Pour un pipeline, exposer les faits vérifiables : entrées utilisées, règles appliquées, sources et résultat des outils. Tester les affirmations de l'explication contre ces traces. La lisibilité facilite l'usage, mais ne remplace ni fidélité au système ni exactitude de la décision.
 
@@ -91,7 +101,7 @@ Comment vérifier qu'une explication de modèle est utile et fidèle ? <!--anki:
 ?
 Tester la **fidélité à la sortie expliquée**, la stabilité dans le contexte pertinent et l'utilité pour la tâche humaine. Une décomposition additive correcte est un contrôle technique ; elle ne garantit ni causalité ni compréhension.
 
-Comparer des perturbations plausibles, des références et des versions. Mesurer si l'explication aide réellement à détecter une erreur ou à choisir une action, plutôt que seulement à convaincre. Des prédictions proches peuvent avoir des raisons différentes ; juger la stabilité selon le comportement attendu, sans imposer une invariance aveugle.
+Test possible : comparer l'effet du retrait des variables jugées importantes à un retrait aléatoire, avec une règle de remplacement plausible. Corrélations et interactions limitent ce test ; une perturbation hors distribution peut tromper. Mesurer aussi l'aide à détecter une erreur ou choisir une action, plutôt que le seul pouvoir de persuasion. Des prédictions proches peuvent avoir des raisons différentes : ne pas imposer une invariance aveugle.
 
 ---
 
