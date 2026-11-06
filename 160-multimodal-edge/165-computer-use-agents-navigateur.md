@@ -27,9 +27,11 @@ Un canvas ou un bouton mal étiqueté peut rester invisible à cette représenta
 
 Qu'est-ce que le grounding visuel et pourquoi est-il difficile ? <!--anki:6265387e2a3e4e355e67-->
 ?
-Relier une intention (« le bouton Valider ») à une **position exacte à l'écran**. Les VLM se trompent de quelques pixels, confondent des icônes sans libellé et gèrent mal les écrans denses ou à haute résolution ([[161-modeles-vision-langage|VLM]]).
+Relier une intention à **l'élément visuel et aux coordonnées où agir**. Un [[161-modeles-vision-langage|VLM]] peut confondre des icônes, manquer un petit bouton ou utiliser une capture devenue obsolète.
 
-Parades : réduire la résolution de façon maîtrisée, **set-of-mark** (numéroter les éléments cliquables sur l'image), modèles entraînés spécifiquement à l'usage d'interfaces, vérification par une nouvelle capture après chaque action.
+Exemple : sur une capture réduite de moitié, le point `(300, 200)` correspond à `(600, 400)` dans l'image originale, avant prise en compte du zoom et des décalages. Mélanger ces repères produit un mauvais clic même si l'élément a été reconnu.
+
+Préférer les identifiants d'accessibilité quand disponibles ; sinon utiliser marquage des éléments, transformation explicite des coordonnées et nouvelle observation après action. Un écran déplacé invalide les anciennes coordonnées.
 
 ---
 

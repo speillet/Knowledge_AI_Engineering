@@ -66,11 +66,13 @@ Exemple de confirmation : « J'ai noté le dossier quatre, sept, deux, un, c'est
 
 Comment évaluer un agent vocal ? <!--anki:633e2c6f5e44436b267b-->
 ?
-- **Latence** perçue (p50, p95) de bout en bout.
-- **Taux d'erreur de mots** (WER) du STT sur ses propres enregistrements.
-- **Réussite de la tâche** via des conversations simulées (voix synthétique ou texte).
-- Taux d'**interruptions** involontaires et de **silences** trop longs.
-- Qualité et naturel de la voix (écoutes humaines).
+Évaluer **réussite métier, qualité audio et dynamique de conversation** :
+- Latence entre fin de parole et premier son utile, avec p50/p95.
+- WER du STT, mais aussi erreurs sur noms, montants et négations.
+- Interruptions involontaires, silences et arrêt de la voix quand l'utilisateur reprend.
+- Réussite et naturel jugés sur des conversations représentatives.
+
+Exemple : « ne bloquez pas ma carte » mal transcrit peut être plus grave que plusieurs articles oubliés. Ventiler par accent, bruit et appareil. Les simulations textuelles testent la logique, pas le microphone, la détection de fin de parole ni les chevauchements ; compléter par des essais audio réels.
 
 ---
 

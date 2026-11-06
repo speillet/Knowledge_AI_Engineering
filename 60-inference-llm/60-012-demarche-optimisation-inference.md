@@ -14,9 +14,11 @@ Construire une frontière de compromis : conserver les configurations qu'aucune 
 
 Comment passer d’un symptôme de lenteur à une hypothèse d’optimisation ? <!--anki:3536626435386262303236373461366638646339666264376663633731323337-->
 ?
-Décomposer le parcours puis relier **temps perdu et ressource limitante** : file, tokenization, prefill, decode, communication, streaming, outils et validation. Comparer un cas lent à un cas comparable normal.
+Décomposer le parcours : file, tokenization, prefill, decode, communication, outils et validation. Relier **temps perdu et ressource limitante** sur des cas comparables.
 
-Écrire une hypothèse vérifiable : « si les collectives dominent, réduire le TP devrait diminuer leur part, avec mémoire et qualité inchangées ». Prévoir métrique attendue, contrôle et critère d'abandon. Un GPU actif ou un cache plein est un indice, pas une cause prouvée. Refaire la décomposition après le changement : le goulot peut se déplacer.
+Exemple : avec 800 ms de file et 80 ms de prefill, diviser uniquement ce prefill par deux économise 40 ms, à file inchangée. L'attente dominante appelle une hypothèse de capacité ou d'admission, pas seulement un meilleur kernel.
+
+Pour chaque hypothèse, définir changement isolé, métrique attendue, garde-fous qualité/mémoire et critère d'abandon. Rejouer la charge, car le changement peut modifier la file et déplacer le goulot. GPU actif et cache plein restent des indices, pas des causes prouvées.
 
 ---
 

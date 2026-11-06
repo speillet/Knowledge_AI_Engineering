@@ -37,10 +37,11 @@ Tester plusieurs positions et des distracteurs plausibles. Retrouver un numéro 
 
 Long contexte ou RAG ? <!--anki:4f3c556b3e682f4e3b40-->
 ?
-- **Long contexte** : corpus **petit et stable** (un contrat, un dépôt de code), questions qui demandent une **vue d'ensemble**, prototype rapide. Avec le [[123-caching-agressif|prompt caching]], le coût peut rester raisonnable.
-- **RAG** : corpus **grand** ou qui **change**, besoin de **citations**, de **contrôle d'accès** par document, de coût et de latence maîtrisés.
+Le **long contexte** convient à un ensemble borné de documents quand leurs relations globales comptent ; le **RAG** sélectionne les passages utiles dans un corpus plus grand ou changeant. Souvent, les deux se combinent.
 
-Souvent : **RAG pour sélectionner**, contexte large pour **raisonner** sur la sélection.
+Exemple : comparer toutes les clauses de deux contrats peut justifier leur chargement complet ; retrouver la notice applicable parmi des milliers exige d'abord une sélection.
+
+Les deux approches nécessitent droits d'accès, provenance et tests de citations. Tout faire tenir dans la fenêtre ne garantit pas l'exploitation de chaque détail. Mesurer omissions, coût et délai ; le [[123-caching-agressif|prompt caching]] réduit certains coûts, pas les erreurs d'attention ou de sélection.
 
 ---
 

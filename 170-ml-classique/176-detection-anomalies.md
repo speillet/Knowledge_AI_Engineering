@@ -22,9 +22,11 @@ Exemple : nettoyer un an de paiements qui contient déjà des fraudes relève de
 
 Pourquoi un score d'anomalie de 0,95 n'est-il pas nécessairement un risque de 95 % ? <!--anki:6431623064323139323738383465656538323839316133323230316631636137-->
 ?
-Un **score d'anomalie** ordonne souvent les observations selon isolement, densité ou erreur de reconstruction. Son échelle, et parfois son sens, dépendent de l'algorithme ; il n'est pas automatiquement calibré comme une probabilité d'incident.
+Un **score d'anomalie** mesure souvent un isolement, une faible densité ou une erreur de reconstruction. Son échelle et son sens dépendent de l'algorithme : 0,95 n'est pas automatiquement une probabilité.
 
-Pour décider, choisir un seuil sur des observations représentatives et examiner les alertes obtenues. Le paramètre `contamination` de certains estimateurs règle un seuil à partir d'une proportion supposée ; il ne mesure pas la prévalence réelle et ne garantit pas le taux de fausses alertes futur.
+Exemple : sélectionner les 1 % les plus atypiques de 10 000 observations produit 100 alertes, **pas nécessairement 100 incidents** ni 1 % de faux positifs. Estimer précision et rappel avec des labels fiables, puis choisir le seuil selon coût des erreurs et capacité de revue.
+
+`contamination` peut régler ce seuil à partir d'une proportion supposée ; il ne découvre pas la prévalence réelle. Surveiller la dérive des scores et des résultats métier.
 
 ---
 

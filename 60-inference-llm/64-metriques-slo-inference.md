@@ -102,9 +102,11 @@ L'activité GPU complète le diagnostic ; seule, elle ne distingue pas les goulo
 
 Comment mesurer les performances d'un déploiement d'inférence LLM ? <!--anki:505e777663703b53257c-->
 ?
-Par des **benchmarks de charge** réalistes (distribution des longueurs de prompt/sortie, taux d'arrivée) : `vllm bench serve`, **GuideLLM**, **genai-perf** (NVIDIA). On trace la **courbe latence vs débit**.
+Construire une **courbe charge offerte → latence, erreurs et goodput**, avec longueurs et arrivées représentatives. Des outils comme `vllm bench serve`, GuideLLM ou genai-perf aident à l'exécuter.
 
-Inclure un échauffement, les erreurs, le cache froid ou chaud et les pointes de charge. Un test à taux d'arrivée imposé montre comment la file grossit lorsque le service sature. Reporter les hypothèses et la distribution du trafic avec les résultats pour que la comparaison entre configurations soit reproductible.
+Exemple : deux serveurs ont le même p95 sur les réponses terminées, mais l'un refuse 20 % des demandes. Ils n'offrent pas le même service : inclure refus, timeouts et résultats conformes au SLO dans le bilan.
+
+Fixer modèle, qualité, distribution des entrées/sorties, échauffement et état du cache. Balayer jusqu'à saturation, puis tester les pointes. Un pic de tokens/s sur prompts courts ne certifie ni capacité en production ni latence sur documents longs.
 
 ---
 

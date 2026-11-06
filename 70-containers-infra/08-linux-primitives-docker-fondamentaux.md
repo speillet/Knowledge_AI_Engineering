@@ -92,9 +92,11 @@ Pour un serveur d'inférence, les **poids et les caches** vont dans un volume : 
 
 Qu'est-ce qu'un Dockerfile ? <!--anki:6641264b537b71293034-->
 ?
-Une **recette déclarative** décrivant comment construire une image (base, dépendances, code, commande de démarrage).
+Une **recette de construction d'image** : `FROM` choisit la base, `COPY` ajoute des fichiers, `RUN` exécute une étape du build, `CMD` fournit une commande par défaut au démarrage.
 
-Par exemple, `FROM` choisit la base, `COPY` ajoute des fichiers, `RUN` installe les dépendances et `CMD` fournit une commande par défaut. Le Dockerfile est une entrée du build ; l'image en est le résultat. Épingler base et dépendances, et exclure secrets et fichiers inutiles du contexte de construction.
+Exemple : installer les dépendances avec `RUN` les inscrit dans l'image ; lancer le serveur avec `CMD` le démarre lors de la création du conteneur, pas pendant le build. `CMD` peut être remplacé au lancement.
+
+Épingler base et dépendances, et limiter le contexte de build. Copier un secret puis le supprimer dans une couche ultérieure ne l'efface pas de l'historique de l'image ; utiliser les mécanismes de secrets du build plutôt que `COPY`.
 
 ---
 

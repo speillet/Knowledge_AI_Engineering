@@ -91,9 +91,11 @@ Un plafond côté client peut laisser le serveur sous-chargé tout en donnant l'
 
 Comment interpréter request-rate et max-concurrency dans un benchmark vLLM ? <!--anki:3364373366333239396338643431353561656131373639303232323963656238-->
 ?
-`--request-rate` règle le rythme prévu des envois ; `--max-concurrency` borne les demandes simultanées. Une limite atteinte peut réduire le rythme réellement envoyé : ce test n'est plus une boucle ouverte non contrainte.
+**`--request-rate`** fixe le rythme demandé ; **`--max-concurrency`** limite les requêtes simultanées. Une limite active peut empêcher de produire la charge annoncée.
 
-Vérifier la version et `vllm bench serve --help`, puis publier rythme demandé, réalisé et retard d'émission. Documenter aussi `--burstiness`, nombre de prompts et données utilisées. Ne pas recopier un résultat d'outil sans vérifier unités, gestion des erreurs, définition du goodput et population entrant dans chaque percentile.
+Exemple : avec 20 requêtes en vol au maximum et une durée moyenne de 2 secondes, le débit réalisé plafonne autour de **10 requêtes/s** en régime stable, même si 50 étaient demandées. Le test n'est plus une arrivée ouverte non contrainte ; une faible latence peut masquer cette limitation.
+
+Vérifier version et `vllm bench serve --help`. Publier rythme demandé/réalisé, retard d'émission, longueurs, erreurs et population des percentiles ; documenter aussi échauffement, cache et burstiness.
 
 ---
 

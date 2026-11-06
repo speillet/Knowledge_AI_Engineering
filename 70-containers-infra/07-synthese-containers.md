@@ -69,11 +69,13 @@ Ces responsabilités se complètent : un développeur construit une image avec D
 
 Comment donne-t-on accès au GPU selon l'environnement ? <!--anki:434a6a212c3b70547052-->
 ?
-- [[09-gpu-conteneurs|Docker]] → `--gpus`
-- [[13-apptainer-inference-hpc|Apptainer]] → `--nv`
-- [[12-kubernetes-gpu-inference|Kubernetes]] → ressource `nvidia.com/gpu`
+- [[09-gpu-conteneurs|Docker]] : `--gpus`, avec Container Toolkit configuré.
+- [[13-apptainer-inference-hpc|Apptainer]] : `--nv`, dans une allocation GPU autorisée.
+- [[12-kubernetes-gpu-inference|Kubernetes]] : ressource `nvidia.com/gpu`, publiée par le device plugin.
 
-Ces options expriment un accès ou une allocation, mais nécessitent une pile GPU fonctionnelle sur l'hôte. Sous Docker, configurer le Container Toolkit ; sous Kubernetes, publier les ressources via le device plugin ; en HPC, obtenir aussi l'allocation de l'ordonnanceur. Aucun de ces réglages n'augmente la VRAM disponible ni ne corrige une incompatibilité de driver.
+Distinguer **allocation par l'ordonnanceur, visibilité dans le conteneur et utilisation par le framework**. Exemple : `nvidia-smi` réussit, mais l'application utilise un paquet CPU ou place ses tenseurs sur CPU ; le GPU reste inutilisé.
+
+Valider successivement driver, allocation, exposition et petite inférence réelle. Aucun de ces réglages n'ajoute de VRAM ni ne garantit une isolation mémoire sous partage. En HPC, voir un GPU ne donne pas le droit d'utiliser celui d'un autre job.
 
 ---
 

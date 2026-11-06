@@ -111,13 +111,13 @@ Mise en situation : ton nouveau ranker gagne en nDCG offline, mais le taux de r�
 
 Mise en situation : les nouveaux documents pertinents ne sont jamais recommandés, malgré des descriptions complètes. Comment diagnostiques-tu ? <!--anki:3330623837396361663832663432653739666635613235343461306532376433-->
 ?
-1. **Vérifier ingestion et éligibilité**, puis présence effective dans l'index.
-2. **Mesurer leur rappel parmi les candidats**, avant le classement final.
-3. **Examiner la dépendance à la popularité** et à l'historique d'interactions.
-4. **Tester un chemin par contenu** ou une exposition contrôlée des nouveautés.
-5. **Mesurer délai de découverte et satisfaction**, sans sacrifier les contraintes de qualité.
+1. **Suivre quelques documents nommés** : ingestion, index, droits, langue et date de publication. Une description disponible ne prouve pas leur éligibilité.
+2. **Inspecter les candidats avant classement** sur des requêtes où leur pertinence est vérifiée. S'ils sont absents, corriger d'abord cette étape.
+3. **Tester le démarrage à froid** : un score fondé sur les clics peut attribuer zéro à tout document nouveau.
+4. **Ajouter un chemin par contenu ou une exploration contrôlée**, avec quota limité et mêmes contraintes de qualité.
+5. **Comparer par ancienneté** délai jusqu'à première exposition, rappel et satisfaction ; journaliser les probabilités d'exposition si une correction du biais est prévue.
 
-**Piège** : modifier le ranker alors que les documents n'atteignent jamais son entrée.
+**Piège** : conclure que les nouveautés sont mauvaises parce qu'elles ont peu de clics alors qu'elles ne sont jamais montrées.
 
 ---
 

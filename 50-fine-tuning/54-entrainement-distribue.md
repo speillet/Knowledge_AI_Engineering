@@ -37,12 +37,14 @@ Il faut aussi répartir les **données** : DDP synchronise les gradients mais ne
 
 Qu'est-ce que ZeRO et FSDP ? <!--anki:45643a7d4866595d5b4e-->
 ?
-Des variantes du data parallelism qui **répartissent (sharding) les états** entre GPU au lieu de les dupliquer :
-- **ZeRO-1** : états de l'optimiseur ;
-- **ZeRO-2** : + gradients ;
-- **ZeRO-3 / FSDP** : + poids (rassemblés couche par couche au moment du calcul).
+Des techniques de **partitionnement des états** entre workers :
+- **ZeRO-1** répartit les états d'optimiseur.
+- **ZeRO-2** répartit aussi les gradients.
+- **ZeRO-3**, comme FSDP en sharding complet, répartit aussi les paramètres, temporairement rassemblés pour le calcul.
 
-La mémoire par GPU est divisée par le **nombre de GPU**, au prix de **plus de communications**. Implémentations : DeepSpeed, PyTorch FSDP.
+Exemple : sur quatre GPU, un état uniformément partitionné occupe environ un quart par GPU, **pas l'ensemble de l'entraînement**. Activations, buffers de communication et paramètres momentanément rassemblés s'ajoutent à cette part.
+
+Plus de sharding économise de la mémoire persistante mais augmente les communications. Mesurer le pic réel et le débit ; un découpage trop grossier peut provoquer un OOM pendant un rassemblement malgré une faible occupation au repos.
 
 ---
 

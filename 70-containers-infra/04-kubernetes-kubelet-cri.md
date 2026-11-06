@@ -13,7 +13,11 @@ Si un Pod disparaît, les contrôleurs cherchent à rétablir le nombre demandé
 
 Qu'est-ce qu'un Pod ? <!--anki:7850754b2339264c582f-->
 ?
-La **plus petite unité déployable** : un ou plusieurs conteneurs qui partagent le **réseau** (même IP, même `localhost`) et des **volumes**, planifiés ensemble sur un même node. Un Pod est **éphémère et jamais modifié** : on le remplace. Les conteneurs annexes servent de **sidecars** (proxy, collecte de logs) ou d'**init containers**, par exemple pour télécharger les poids d'un modèle avant le démarrage du serveur ([[10-images-modeles-poids|poids]]).
+La **plus petite unité déployable Kubernetes** : des conteneurs co-localisés sur un node, partageant le réseau et pouvant monter des volumes communs. Leurs systèmes de fichiers racines ne sont pas automatiquement partagés.
+
+Exemple : un init container télécharge les [[10-images-modeles-poids|poids]] dans un volume que monte ensuite le serveur ; un sidecar peut joindre ce serveur via `localhost`.
+
+Le Pod est éphémère, mais **pas intégralement immuable** : certains champs peuvent être modifiés. Un changement de template de Deployment remplace généralement les Pods. Un Pod recréé a une nouvelle identité ; conserver les données nécessaires dans un stockage adapté, pas seulement dans son système de fichiers local.
 
 ---
 
@@ -136,6 +140,9 @@ Mise en situation : une équipe demande pourquoi ses Pods GPU restent en attente
 **Piège** : regarder l'utilisation réelle des nodes plutôt que leurs ressources **réservées**.
 
 ---
+
+## Sources
+- [Kubernetes — Pods, mises à jour et remplacement](https://kubernetes.io/docs/concepts/workloads/pods/) — consultation ciblée du 6 novembre 2026.
 
 ## Connexions
 - [[00-index|Index Conteneurs]] — conteneurs, OCI, Docker

@@ -6,7 +6,11 @@ Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou 
 
 Historiquement, comment Kubernetes communiquait-il avec Docker Engine ? <!--anki:41645a73796a5a6f502a-->
 ?
-Via une couche d'adaptation appelée **dockershim**, **intégrée au kubelet** : elle traduisait les appels [[04-kubernetes-kubelet-cri|CRI]] vers l'API de Docker Engine. Un maillon de plus à maintenir, pour un chemin déjà tortueux (`kubelet → dockershim → Docker Engine → containerd → runc`).
+Par **dockershim**, un adaptateur intégré au kubelet qui traduisait la [[04-kubernetes-kubelet-cri|CRI]] vers l'API Docker Engine : `kubelet → dockershim → Docker Engine → containerd → runc`.
+
+Cette adaptation était nécessaire parce que Docker Engine n'implémentait pas directement la CRI. Retirer ce maillon intégré ne signifie pas retirer la compatibilité des images construites avec Docker : un runtime CRI compatible peut les utiliser.
+
+Exemple : migrer un node vers containerd change la couche d'exécution et ses outils de diagnostic, pas nécessairement les Dockerfiles des applications. Vérifier toutefois les dépendances au socket Docker, aux chemins de logs et à la configuration runtime.
 
 ---
 

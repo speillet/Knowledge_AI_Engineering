@@ -14,9 +14,11 @@ Dans vLLM, `max_model_len`, `max_num_batched_tokens` et `max_num_seqs` jouent de
 
 Comment régler ensemble max_num_seqs et max_num_batched_tokens ? <!--anki:6236383933626232323836333435393439313637633131646563633230363966-->
 ?
-`max_num_seqs` limite les séquences traitées ensemble ; `max_num_batched_tokens` limite le travail en tokens par itération. Avec chunked prefill, ce travail combine nouveaux tokens de prefill et de decode.
+**`max_num_seqs`** borne les séquences traitées ensemble ; **`max_num_batched_tokens`** borne le travail en tokens d'une itération. Avec chunked prefill, ce budget se partage entre prefill et decode.
 
-Balayer ces deux paramètres sur le mix réel. Un budget trop grand peut allonger les itérations ; trop petit peut faire attendre le prefill. Une concurrence excessive augmente la pression KV et les préemptions. Suivre TTFT, ITL, goodput, mémoire et refus ensemble. Documenter les valeurs effectives : les défauts d'une autre version ou machine ne constituent pas un réglage optimal.
+Exemple : autoriser beaucoup de séquences ne garantit pas leur admission si leurs KV saturent la mémoire. Augmenter seulement le budget de tokens peut accélérer le prefill mais rallonger les itérations et dégrader l'ITL.
+
+Balayer les deux paramètres sur un mix fixe, puis sur des pointes réalistes. Retenir le meilleur **goodput sous SLO**, pas le maximum de tokens/s. Suivre TTFT, ITL, préemptions, refus et mémoire ; consigner les valeurs effectives et la version.
 
 ---
 

@@ -65,7 +65,11 @@ La spécialisation observée dépend du modèle, de la couche et des données é
 
 Quel est le coût caché d'un MoE en inférence ? <!--anki:706d666f3345467d2f48-->
 ?
-La **mémoire** : il faut charger **tous les experts** même si peu sont actifs → plusieurs GPU ou nœuds pour un grand MoE. Et comme chaque token d'un batch va vers des experts différents, les **gros batchs** activent presque tous les experts : le gain de calcul reste, mais le décodage devient vite **limité par la bande passante mémoire**.
+La **mémoire totale des poids** et les **communications de routage**. Activer peu d'experts par token réduit le calcul, pas le nombre d'experts à stocker quelque part.
+
+Exemple : un modèle à 48 milliards de paramètres totaux mais 6 milliards actifs n'a pas l'empreinte de poids d'un dense de 6 milliards. Offloader des experts réduit la VRAM résidente au prix de transferts et de latence.
+
+Un batch diversifié peut solliciter beaucoup d'experts ; déséquilibre de charge et échanges entre GPU deviennent alors déterminants. Le goulot peut être mémoire, réseau ou calcul : mesurer plutôt que déduire la vitesse des seuls paramètres actifs.
 
 ---
 

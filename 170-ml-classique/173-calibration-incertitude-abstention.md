@@ -15,9 +15,11 @@ Prédire partout la prévalence peut être calibré sans discriminer aucun cas. 
 
 Comment lire une courbe de fiabilité sans se laisser tromper ? <!--anki:6537616439316332303635323462366138313632616134393832356135363733-->
 ?
-Regrouper les prédictions par plage de probabilité et comparer, dans chaque groupe, la probabilité moyenne à la fréquence des positifs. Afficher aussi les **effectifs** : un groupe de cinq cas ne permet pas la même conclusion qu'un groupe de cinq mille.
+Par plage de probabilité, comparer **prédiction moyenne et fréquence observée**, avec effectifs et incertitude.
 
-Les résultats dépendent du découpage des plages. Examiner les segments importants et l'incertitude plutôt qu'un unique écart agrégé. Une courbe proche de la diagonale sur le jeu utilisé pour ajuster le calibrateur ne constitue pas une validation indépendante.
+Exemple : dix dossiers prédits autour de 0,8 dont six positifs donnent un point proche de `(0,8 ; 0,6)`, mais peu de précision statistique. Mille dossiers apportent davantage d'information ; ils ne corrigent toutefois pas un échantillon biaisé.
+
+Changer les bornes des plages peut modifier la courbe. Examiner segments métier et zones où des décisions sont prises, pas seulement l'écart agrégé. Évaluer sur un jeu distinct de celui ayant ajusté le calibrateur. Une bonne diagonale ne suffit pas : prédire la prévalence pour tous peut être calibré sans discriminer les cas.
 
 ---
 

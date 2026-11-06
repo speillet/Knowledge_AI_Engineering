@@ -104,7 +104,11 @@ Sur un node Kubernetes, `crictl` est le réflexe de diagnostic.
 
 Où le GPU entre-t-il dans la chaîne containerd → runc ? <!--anki:49616e4d622f4e78292d-->
 ?
-Juste **avant runc** : le NVIDIA Container Toolkit **modifie la spécification OCI** du conteneur (par un hook ou par **CDI**, Container Device Interface) pour y ajouter les devices `/dev/nvidia*` et les bibliothèques du driver. runc crée ensuite le conteneur comme d'habitude, sans rien savoir du GPU ([[09-gpu-conteneurs|GPU & conteneurs]]).
+Lors de la **préparation/création du conteneur** : le NVIDIA Container Toolkit configure l'exposition des périphériques et bibliothèques du driver hôte, via intégration runtime, hooks ou **CDI** selon la pile.
+
+Le runtime bas niveau applique ces ressources au conteneur ; il n'exécute pas lui-même les calculs CUDA. Exemple : une image peut contenir CUDA et démarrer normalement, mais échouer à initialiser le GPU si les devices ou bibliothèques nécessaires ne sont pas exposés.
+
+Diagnostiquer driver hôte, intégration containerd/CDI et allocation du périphérique avant de reconstruire l'image. Cette exposition ne crée ni VRAM supplémentaire ni allocation auprès de l'ordonnanceur ([[09-gpu-conteneurs|GPU & conteneurs]]).
 
 ---
 

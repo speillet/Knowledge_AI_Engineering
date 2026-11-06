@@ -29,7 +29,11 @@ Un SIF est monté **en lecture seule** : pour écrire, on monte un répertoire d
 
 Une image SIF est-elle simplement une image OCI ? <!--anki:4d7c436a753d627a6e3c-->
 ?
-**Non.** Une image [[01-oci|OCI]] est un **empilement de couches** décrit par un manifest ; un SIF est un **fichier unique** contenant un système de fichiers en lecture seule. La conversion se fait à la récupération (`docker://`), et elle est **à sens unique** en pratique : on ne repart pas d'un SIF pour alimenter un registry de conteneurs.
+**Non.** Une image [[01-oci|OCI]] décrit configuration et couches ; un **SIF** regroupe dans un fichier des objets, généralement dont un système de fichiers compressé en lecture seule.
+
+Apptainer peut convertir une image récupérée via `docker://` en SIF. Ce SIF peut aussi être publié dans un registre OCI compatible via **`oras://`**, comme artefact : cela ne le transforme pas en image directement exécutable par Docker.
+
+Exemple : partager `modele.sif` par registre évite un transfert manuel sur chaque cluster, mais les consommateurs doivent comprendre le format SIF. Distinguer **format d'exécution et canal de distribution**, puis vérifier provenance et compatibilité de la conversion.
 
 ---
 
@@ -96,6 +100,7 @@ Mise en situation : un collègue veut stocker les poids d'un modèle de 40 Go da
 ## Sources
 
 - [Apptainer — accès aux périphériques et bibliothèques GPU](https://apptainer.org/docs/user/main/gpu.html)
+- [Apptainer — publication de SIF avec push et ORAS](https://apptainer.org/docs/user/latest/cli/apptainer_push.html) — consultation ciblée du 6 novembre 2026.
 
 ## Connexions
 - [[13-apptainer-inference-hpc|Apptainer & inférence HPC]] — usage avancé pour le serving LLM

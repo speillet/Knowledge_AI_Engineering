@@ -71,10 +71,13 @@ Sans taint, des charges sans GPU viennent occuper la mémoire et le CPU de machi
 
 Que sont KServe et Kubeflow ? <!--anki:63503c706e2e62445352-->
 ?
-- **KServe** : une couche de **serving de modèles** sur Kubernetes. Une ressource `InferenceService` décrit le modèle et son runtime, et KServe gère endpoint, autoscaling (jusqu'au scale-to-zero), versions et découpage du trafic (canary)
-- **Kubeflow** : une **suite MLOps** plus large (notebooks, pipelines, entraînement, tuning), dont KServe a été extrait
+**KServe** fournit une couche de serving Kubernetes, notamment avec `InferenceService` ; **Kubeflow** regroupe des composants MLOps plus larges : notebooks, pipelines, entraînement et tuning.
 
-Alternative fréquente pour les LLM : un Deployment vLLM classique, plus un routeur conscient du cache ([[66-prefix-caching-radix-attention|routage cache-aware]]).
+Autoscaling, canary et scale-to-zero dépendent du mode de déploiement et des composants configurés : ce ne sont pas des garanties automatiques.
+
+Exemple : revenir de zéro réplique impose de récupérer les poids et initialiser le moteur ; un SLO interactif peut nécessiter des réplicas chauds malgré une option de scale-to-zero.
+
+Comparer le besoin de standardisation au coût d'exploitation. Un Deployment vLLM avec routage adapté peut suffire ; la plateforme ne choisit pas seule un bon [[66-prefix-caching-radix-attention|routage cache-aware]].
 
 ---
 

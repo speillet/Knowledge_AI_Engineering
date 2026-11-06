@@ -26,10 +26,11 @@ Cela n'implique pas une vérification gratuite : attention, KV, calcul et brouil
 
 Comment décide-t-on d'accepter un token proposé ? <!--anki:4457756f687577352a63-->
 ?
-- **Greedy** : accepté s'il est égal au token le plus probable de la cible
-- **Sampling** (speculative sampling) : accepté avec la probabilité **min(1, p(x) / q(x))**, où p est la probabilité selon la cible et q selon le brouillon. En cas de rejet, on retire un token dans la distribution corrigée **max(0, p − q)** renormalisée
+En **greedy**, accepter le token s'il correspond au choix greedy de la cible. En **speculative sampling exact**, une proposition tirée de `q` est acceptée avec **`min(1, p(x)/q(x))`**, où `p` est la distribution cible au même préfixe.
 
-Cette règle garantit que la sortie suit **exactement la distribution de la cible** ([[65-probabilites-sampling|probabilités & sampling]]).
+Exemple : si `q(x)=0,5` et `p(x)=0,2`, accepter avec probabilité 0,4. Après rejet, tirer dans **`max(0, p−q)` renormalisée**, pas directement dans `p`.
+
+Cette correction conserve la distribution cible sous les hypothèses de l'algorithme. Vérifier cohérence des températures et filtres ; une acceptation heuristique n'offre pas cette garantie ([[65-probabilites-sampling|sampling]]). Même distribution ne signifie pas nécessairement même séquence pour une graine donnée.
 
 ---
 

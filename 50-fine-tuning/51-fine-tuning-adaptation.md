@@ -37,9 +37,11 @@ Inspecter un exemple tokenisé avec ses labels : les positions ignorées ne doiv
 
 À ne pas confondre : full fine-tuning et PEFT ? <!--anki:666d6d6977395a684642-->
 ?
-Le **full FT** met à jour tous les poids (coûteux en GPU et stockage) ; le **PEFT** (Parameter-Efficient FT) n'entraîne qu'une **petite fraction de paramètres**.
+Le **full fine-tuning** met à jour tous les poids ; le **PEFT** entraîne un sous-ensemble ou des paramètres ajoutés, comme les matrices LoRA, en gelant l'essentiel de la base.
 
-Le full fine-tuning conserve une grande flexibilité, mais doit stocker gradients et états d'optimiseur pour tous les paramètres entraînés. Une méthode PEFT comme LoRA réduit fortement ces états et permet plusieurs adaptations d'une même base. Le modèle de base reste nécessaire à l'inférence ; le petit adapter ne constitue pas un modèle autonome.
+Exemple : partager une base entre trois adaptations métier évite de stocker trois copies complètes des poids entraînés. Chaque adapter doit toutefois retrouver **la bonne révision de base**, les modules visés et le tokenizer compatible ; il n'est pas autonome.
+
+Le PEFT réduit surtout gradients et états d'optimiseur entraînables, pas toute la mémoire : base et activations restent nécessaires. Comparer qualité et ressources sur la tâche ; moins de paramètres entraînés ne garantit pas le même résultat.
 
 ---
 

@@ -48,9 +48,11 @@ Lire les compteurs d'usage du service plutôt qu'estimer la facture à partir du
 
 Quand ne pas utiliser un modèle de raisonnement ? <!--anki:51502558695d4271762f-->
 ?
-Éviter de payer un effort de raisonnement élevé lorsque **le gain mesuré ne justifie pas son coût et sa latence**. C'est souvent le cas pour une extraction simple, une reformulation courte ou une interaction dont le délai de réponse est très contraint.
+Quand le **gain mesuré ne justifie pas le coût et le délai**, ou quand un traitement déterministe suffit. Extraire un identifiant déjà structuré ne demande pas nécessairement un modèle ; classer un texte ambigu peut en revanche bénéficier de raisonnement.
 
-Ce sont des hypothèses à tester, pas des exclusions absolues : une classification ambiguë peut demander un raisonnement utile, et certains modèles ajustent leur effort. Comparer plusieurs budgets sur des exemples représentatifs, puis router les demandes difficiles vers davantage de calcul. Conserver une possibilité d'escalade lorsque la solution rapide ne satisfait pas les contrôles.
+Exemple fictif : passer de 99,0 % à 99,1 % de résultats valides en ajoutant deux secondes est peut-être défavorable pour une interaction instantanée, mais acceptable pour un dossier coûteux à corriger.
+
+Comparer sur les mêmes cas, avec incertitude statistique et coût des erreurs. Tester plusieurs budgets, pas seulement deux modèles, et prévoir une escalade sur critères vérifiables.
 
 ---
 

@@ -39,9 +39,11 @@ En pratique : quelques dizaines de phrases d'exemple par route, et un **seuil de
 
 Qu'est-ce qu'un routeur appris (ex. RouteLLM) ? <!--anki:733a60734a2a716f745b-->
 ?
-Un **classifieur entraîné sur des données de préférence** qui prédit si le modèle faible suffira pour une requête donnée. Un **seuil** règle le compromis coût/qualité.
+Un modèle apprend, à partir de comparaisons ou résultats, **quand un backend plus coûteux apporte un gain utile**. Un seuil règle le compromis coût/qualité pour les modèles et le trafic évalués.
 
-Entraîner et calibrer ce routeur sur des requêtes proches du trafic cible, puis évaluer ses erreurs d'orientation. Un faux choix du petit modèle peut coûter de la qualité ; choisir trop souvent le grand annule l'économie. Inclure latence et coût du routeur lui-même dans la comparaison avec une règle statique.
+Exemple : une phrase courte contenant une exception juridique peut être difficile ; la longueur seule ne suffit pas à router. Évaluer les erreurs d'orientation par type de tâche et gravité, avec possibilité d'escalade.
+
+Comparer à une règle statique en incluant coût et latence du routeur. Après changement des modèles candidats, revérifier les labels, la calibration et le seuil : un routeur entraîné pour une paire ne prédit pas automatiquement le comportement d'une autre.
 
 ---
 

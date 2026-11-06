@@ -14,10 +14,11 @@ Le délai initial dépend du contexte, du modèle, de la file et du réseau ; il
 
 À ne pas confondre : SSE et WebSocket ? <!--anki:4c7763604f434577474d-->
 ?
-- **SSE** (Server-Sent Events) : flux **serveur → client** sur une réponse HTTP ordinaire (`text/event-stream`). Simple, passe les proxys, **reconnexion** intégrée. Format des API de LLM
-- **WebSocket** : canal **bidirectionnel** permanent. Utile quand le client envoie aussi en continu : voix, interruption en temps réel, collaboration ([[163-voix-temps-reel|voix]])
+**SSE** transporte des événements serveur → client sur HTTP (`text/event-stream`) ; **WebSocket** maintient un canal bidirectionnel, utile notamment pour la [[163-voix-temps-reel|voix]] interactive.
 
-Pour un chat ou un agent textuel, SSE suffit dans la grande majorité des cas.
+Exemple : un chat envoie une demande par HTTP puis reçoit les tokens par SSE ; un appel vocal échange continuellement audio et événements dans les deux sens.
+
+La reconnexion automatique concerne notamment le client navigateur `EventSource`, pas toute lecture SSE via `fetch`. **Reconnexion n'est pas reprise garantie** : il faut identifiants et politique de rejeu côté serveur pour éviter pertes ou doublons. Les deux transports demandent gestion des délais, de la déconnexion et des proxys ; SSE ne neutralise pas leur buffering.
 
 ---
 

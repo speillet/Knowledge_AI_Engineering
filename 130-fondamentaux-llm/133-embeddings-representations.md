@@ -98,10 +98,11 @@ La représentation attribue des poids à un petit nombre de dimensions lexicales
 
 Quelles sont les limites des embeddings denses ? <!--anki:4741334661243f797b34-->
 ?
-- Mauvais sur les **correspondances exactes** (identifiants, codes produits, négations).
-- Un seul vecteur **résume mal** un long document → importance du [[21-rag-fondamentaux|chunking]].
-- Sensibles au **décalage de domaine**.
-- La proximité sémantique **n'est pas la pertinence** : « symptômes de la grippe » et « traitement de la grippe » sont proches.
+Un vecteur dense compresse le texte : il peut perdre détails, contraintes ou distinctions rares. La **proximité sémantique n'est ni une égalité ni une preuve**.
+
+Exemple : `AB-120` et `AB-102` peuvent sembler proches tout en désignant deux pièces incompatibles ; « autorisé » et « non autorisé » partagent aussi beaucoup de contexte. Combiner recherche lexicale, filtres exacts et reranking selon la tâche.
+
+Un long document dilue parfois un fait local : utiliser le [[21-rag-fondamentaux|chunking]]. Tester négations, identifiants et vocabulaire métier sur ses données ; un bon score général ne garantit pas le rappel dans un domaine différent.
 
 ---
 

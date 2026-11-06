@@ -84,12 +84,11 @@ Exemple de principe : « choisir la réponse la plus utile qui ne fournit pas d'
 
 Comment construire un bon jeu de préférences ? <!--anki:5161616669632121623d-->
 ?
-- Prompts **représentatifs** de l'usage visé, y compris des cas difficiles.
-- Réponses candidates **variées** (plusieurs modèles ou températures) pour que les comparaisons soient informatives.
-- **Consignes d'annotation** précises, mesure de l'**accord inter-annotateurs**.
-- Contrôle des biais (longueur, format) pour ne pas apprendre « plus long = mieux ».
+Construire des **comparaisons informatives sur les usages réels**, avec cas difficiles et réponses variées. Définir la grille d'[[151-donnees-curation-annotation|annotation]], masquer l'identité du modèle et permuter l'ordre des candidats pour limiter les biais.
 
-Voir [[151-donnees-curation-annotation|annotation]].
+Exemple : comparer une réponse courte exacte à une réponse longue mais fausse révèle si les annotateurs récompensent le style plutôt que le fond. Autoriser égalité ou indécidable lorsque le protocole le permet, plutôt que fabriquer une préférence.
+
+Mesurer accord et désaccords par catégorie ; faire arbitrer les cas ambigus. Séparer entraînement et test par familles de requêtes pour ne pas récompenser la mémorisation de variantes presque identiques.
 
 ---
 

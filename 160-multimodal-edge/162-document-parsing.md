@@ -31,12 +31,12 @@ Exemple : sur une page à deux colonnes, une extraction ligne par ligne mélange
 
 Quel outil de parsing selon le document : PDF natif simple, mise en page complexe, scans en volume, données confidentielles ? <!--anki:3963656532376466656136373464373061363131353338666435663437353963-->
 ?
-- **PDF natif au texte simple** : une bibliothèque classique (**PyMuPDF**, pdfplumber), rapide et gratuite
-- **Mise en page complexe, tableaux** : un pipeline avec analyse de layout (**Docling**, **Unstructured**, **Marker**, MinerU)
-- **Scans et formulaires en volume** : un service cloud (AWS Textract, Azure Document Intelligence, Google Document AI) ou un **VLM** qui convertit chaque page en Markdown
-- **Données qui ne doivent pas sortir** : un pipeline open source auto-hébergé, avec Tesseract pour l'OCR de base
+- **PDF natif simple** : extraction textuelle, par exemple pdfplumber ou PyMuPDF, après vérification de licence.
+- **Mise en page complexe** : analyse de layout, par exemple Docling ou Unstructured.
+- **Scans en volume** : OCR local ou service documentaire, éventuellement VLM pour les cas difficiles.
+- **Données confinées** : pipeline auto-hébergé dont les appels réseau sont maîtrisés.
 
-On tranche sur la qualité **mesurée sur ses propres documents**, puis sur le coût.
+Tester sur les erreurs qui comptent : un tableau lisible en Markdown peut associer le montant à la mauvaise ligne. Mesurer champs, ordre de lecture et provenance, puis coût et débit. Le cloud n'est pas obligatoire pour le volume ; l'open source ne garantit ni confidentialité ni exploitation gratuite.
 
 ---
 

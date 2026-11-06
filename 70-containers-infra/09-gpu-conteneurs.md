@@ -15,9 +15,11 @@ Le moteur doit être configuré pour transmettre cet accès, par exemple via le 
 
 Qu'est-ce que le NVIDIA Container Toolkit ? <!--anki:464b64547e593d74596f-->
 ?
-Le composant qui **injecte le GPU dans les conteneurs** au démarrage : il monte les devices `/dev/nvidia*` et les **bibliothèques du driver de l'hôte** (dont `libcuda.so`), pour Docker, containerd, CRI-O ou Podman. Il s'insère comme un **hook du runtime** OCI, ou déclare le matériel via **CDI** (Container Device Interface), la voie standardisée qui fonctionne aussi en rootless.
+La pile d'intégration qui expose les **périphériques NVIDIA et bibliothèques du driver hôte** aux conteneurs, notamment via runtime, hooks ou **CDI**, selon la configuration.
 
-Sans lui, l'image a bien CUDA mais le conteneur ne voit **aucun GPU**.
+Exemple : CUDA dans l'image fournit des composants utilisateur, mais pas le module noyau du driver. Le Toolkit rend accessibles les éléments hôte nécessaires ; il ne remplace ni l'installation du driver ni la vérification de compatibilité.
+
+Sans exposition configurée, une image CUDA ne reçoit pas automatiquement le GPU. CDI peut servir aux runtimes rootless compatibles, mais permissions et configuration hôte restent indispensables. Tester une inférence, pas seulement la présence de `/dev/nvidia*`.
 
 ---
 

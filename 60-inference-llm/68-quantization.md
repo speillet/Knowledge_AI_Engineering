@@ -70,7 +70,11 @@ Des modèles sont désormais **publiés quantizés nativement**, par QAT ou post
 
 Comment fonctionne GPTQ ? <!--anki:4f366a575e4973377544-->
 ?
-Une PTQ des **poids, couche par couche** (souvent INT4 par groupes de 128). Sur un jeu de calibration, GPTQ quantize les poids **colonne par colonne** et **corrige les poids restants** pour compenser l'erreur commise, grâce à une information de second ordre (une approximation de la **hessienne**). Bonne qualité en 4 bits, avec un risque de **sur-ajuster le jeu de calibration**.
+Une **quantification post-entraînement des poids**, couche par couche, qui cherche à préserver les sorties sur des activations de calibration. Elle quantifie progressivement des colonnes et ajuste les poids restants à l'aide d'une approximation de second ordre.
+
+Exemple : arrondir un poids crée une erreur ; GPTQ essaie d'en compenser une partie avec des poids encore non quantifiés, plutôt que d'arrondir chaque poids indépendamment.
+
+Nombre de bits et taille des groupes sont des réglages, pas des constantes universelles. Une calibration limitée aux dialogues peut mal préserver le code. Évaluer des tâches tenues à l'écart et vérifier le kernel cible : un fichier plus petit n'est pas automatiquement plus rapide.
 
 ---
 

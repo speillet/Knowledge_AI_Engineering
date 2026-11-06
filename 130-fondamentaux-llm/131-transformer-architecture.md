@@ -45,9 +45,11 @@ Exemple : pour apprendre à compléter « Le chat dort », la position « chat �
 
 Pourquoi plusieurs têtes d'attention (multi-head) ? <!--anki:70495d3d7d324e5e5848-->
 ?
-Chaque tête a ses propres projections Q/K/V et peut se spécialiser dans **un type de relation** (syntaxe, coréférence, position proche…). Les sorties des têtes sont **concaténées** puis reprojetées.
+Plusieurs têtes construisent **des pondérations différentes d'une même séquence** grâce à leurs projections ; leurs sorties sont concaténées puis reprojetées.
 
-Elles donnent plusieurs façons de combiner l'information d'une même séquence, au lieu d'une unique pondération. La spécialisation n'est pas imposée tête par tête ni forcément interprétable. Avec GQA ou MQA, plusieurs têtes de requête partagent des K/V pour économiser de la mémoire ; le principe de vues multiples demeure.
+Exemple : dans « Léa pose le dossier car il est lourd », une tête peut privilégier les liens proches, une autre une relation avec « dossier ». Ce sont des possibilités apprises, pas des rôles linguistiques assignés ni une explication garantie du raisonnement.
+
+À dimension totale fixée, ajouter des têtes réduit leur dimension individuelle : ce n'est pas un gain gratuit de capacité. Avec GQA ou MQA, les têtes de requête restent multiples mais partagent certaines projections K/V pour réduire la mémoire.
 
 ---
 

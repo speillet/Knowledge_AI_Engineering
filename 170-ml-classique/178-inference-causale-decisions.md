@@ -89,9 +89,11 @@ Si un autre segment ne gagne qu'un point, le gain attendu devient −1 unité. U
 
 Pourquoi des tests de réfutation réussis ne prouvent-ils pas une conclusion causale ? <!--anki:6563653334313566386630303430643862663861356166666438623762363364-->
 ?
-Placebos, contrôles négatifs ou analyses de sensibilité peuvent révéler une **fragilité** du protocole. Leur réussite montre seulement que les vérifications retenues n'ont pas détecté de problème ; une hypothèse non testable peut rester fausse.
+Ils peuvent **révéler un défaut**, pas exclure tous les défauts possibles. Un placebo ou contrôle négatif ne teste qu'une implication particulière des hypothèses, avec une puissance limitée.
 
-Choisir des contrôles ayant un sens dans le domaine et mesurer l'ampleur d'une confusion non observée nécessaire pour inverser la décision. Rapporter estimations, incertitude et hypothèses résiduelles. Une petite p-valeur ou une série de diagnostics verts ne transforme pas une observation en expérience randomisée.
+Exemple : aucun effet détecté sur une issue supposée insensible au traitement est rassurant ; cela n'exclut pas un facteur non observé influençant uniquement l'issue principale. « Non significatif » peut aussi signifier trop peu de données.
+
+Choisir des contrôles justifiés par le domaine, vérifier ce qu'ils pourraient détecter et analyser la sensibilité à une confusion non observée. Rapporter hypothèses restantes et incertitude ; des diagnostics verts ne transforment pas une étude observationnelle en randomisation.
 
 ---
 
