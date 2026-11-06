@@ -31,7 +31,9 @@ Aucune méthode n'est parfaite : combiner et **mesurer le rappel** sur ses donn�
 
 Comment utiliser un LLM externe sans lui envoyer de PII ? <!--anki:7146545960793666793a-->
 ?
-**Pseudonymiser avant l'appel, ré-identifier après** : remplacer les entités par des jetons cohérents (`CLIENT_1`), appeler le modèle, puis remettre les vraies valeurs dans la réponse. Limites : le modèle perd du contexte (genre, lieu), et les jetons doivent rester **cohérents** au fil de la conversation.
+**Minimiser et transformer avant l'appel**, en vérifiant ce qui reste identifiable. Remplacer un nom par `CLIENT_1` est une pseudonymisation, pas une garantie d'absence de données personnelles : profession rare, adresse ou événement peuvent réidentifier.
+
+Conserver la table de correspondance localement, borner sa portée et réidentifier seulement pour un destinataire autorisé. Tester les données résiduelles, y compris métadonnées et pièces jointes. Si l'absence de données personnelles est impérative et non démontrable, ne pas envoyer le contenu au service externe ; choisir un traitement adapté à cette contrainte.
 
 ---
 
@@ -68,6 +70,8 @@ Quels risques de fuite entre utilisateurs spécifiques aux LLM ? <!--anki:46376c
 - **Cache partagé** (sémantique ou de réponses) entre utilisateurs.
 - **Mémoire d'agent** mal isolée.
 - **Prompt injection** qui exfiltre le contexte vers un tiers ([[101-securite-llm-guardrails|exfiltration]]).
+
+Tester la même question avec deux identités et après révocation d'un droit. Contrôler aussi liens de téléchargement, citations et journaux : masquer la réponse affichée ne répare pas une information déjà envoyée à un composant non autorisé.
 
 ---
 

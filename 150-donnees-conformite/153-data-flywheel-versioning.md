@@ -60,6 +60,8 @@ Quels signaux de production alimentent la flywheel sans annotation humaine ? <!-
 - **Acceptation** ou rejet de suggestions.
 - **Résultats** vérifiables (tests qui passent, ticket résolu).
 
+Ces signaux sont des indices, pas tous des labels : une reformulation peut préciser un besoin, et une modification peut ajouter une préférence sans corriger d'erreur. Valider un échantillon et conserver la provenance avant de les utiliser pour entraîner.
+
 ---
 
 Quels pièges menacent une data flywheel ? <!--anki:4d62452a5442293c4656-->
@@ -68,6 +70,8 @@ Quels pièges menacent une data flywheel ? <!--anki:4d62452a5442293c4656-->
 - **Boucle auto-renforçante** : on n'améliore que ce qu'on mesure déjà.
 - **Dérive des labels** si le guide d'annotation change sans re-labelliser.
 - **Consentement** et **finalité** : réutiliser les conversations pour entraîner exige une base légale ([[154-rgpd-llm|RGPD]]).
+
+Comparer les populations avec et sans feedback. Si seuls les utilisateurs experts corrigent les sorties, entraîner uniquement sur leurs corrections peut améliorer leur segment tout en dégradant les débutants. Réserver un jeu indépendant représentatif pour mesurer ce déplacement.
 
 ---
 

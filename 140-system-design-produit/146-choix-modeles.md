@@ -78,6 +78,8 @@ Comment comparer le coût de deux modèles correctement ? <!--anki:4b3f394d40257
 ?
 Sur **le coût par tâche réussie** : un modèle moins cher par token peut consommer **plus de tokens** (tokenizer moins efficace, réponses plus longues, raisonnement), **échouer plus souvent** (retries, escalades) ou exiger un prompt plus long. On mesure les tokens **réels** sur son eval ([[121-couts-inference|coûts]]).
 
+Fixer d'abord les seuils de qualité et latence, puis comparer les modèles admissibles. Compter aussi outils, juge et reprise humaine. Un prix moyen inférieur obtenu en abandonnant les dossiers difficiles n'est pas une économie à service équivalent.
+
 ---
 
 Pourquoi ne pas chercher « le meilleur modèle » unique ? <!--anki:4c62553c676731324f2f-->
@@ -103,6 +105,8 @@ Comment limiter les risques lors d'une migration vers un nouveau modèle ? <!--a
 3. **Shadow** ou **canary** sur le trafic réel.
 4. **A/B test** si l'enjeu produit est important.
 5. Garder l'ancien modèle en **fallback** jusqu'à stabilisation ([[112-cicd-modeles|CI/CD des modèles]]).
+
+Le shadow ne doit pas doubler les effets métier : simuler les outils d'écriture du candidat. Vérifier aussi tokenizer, refus, schémas et limites ; une API compatible ne garantit pas un comportement identique.
 
 ---
 

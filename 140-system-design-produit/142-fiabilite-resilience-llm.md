@@ -7,6 +7,8 @@ Pourquoi une application LLM est-elle plus fragile qu'une application classique 
 ?
 Elle dépend d'un service **externe, lent, coûteux et non déterministe** : latences de plusieurs secondes à plusieurs minutes, **rate limits**, pannes du fournisseur, **sorties mal formées**, et changements de comportement lors des **mises à jour du modèle**. La résilience doit être **conçue**, pas ajoutée après coup.
 
+Même auto-hébergé, un modèle conserve des sorties à valider et des ressources limitées. Distinguer succès technique et succès métier : HTTP 200 peut transporter une réponse inutilisable. Prévoir timeouts, validation, budget de reprise et mode dégradé explicite.
+
 ---
 
 Quels timeouts configurer sur les appels à un LLM ? <!--anki:455f43415a692f2c7b6f-->
@@ -74,6 +76,8 @@ Comment rendre fiable une tâche d'agent de longue durée ? <!--anki:6432522c7d3
 - **Checkpointer l'état** à chaque étape pour reprendre après une panne ([[45-langgraph-production|durable execution]], [[41-automatisation-code-nocode|Temporal]]).
 - **Idempotence** des outils à effets de bord (clé d'idempotence).
 - **Limites** : nombre d'étapes, budget de tokens, durée.
+
+Tester un crash après l'effet métier mais avant son checkpoint. À la reprise, consulter l'opération persistée avec la même identité au lieu de supposer qu'elle n'a pas eu lieu. Un statut « inconnu, vérification en cours » vaut mieux qu'un faux échec suivi d'un doublon.
 
 ---
 

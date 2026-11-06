@@ -6,7 +6,7 @@ Vérifié le : 9 octobre 2026 — références techniques et exemples de cette f
 
 À ne pas confondre : ETL et ELT dans un pipeline de données IA ? <!--anki:3335323665353333336238353433396662366239393935376130313139346330-->
 ?
-**ETL** transforme avant de charger dans la destination analytique ; **ELT** charge d'abord, puis transforme avec les ressources de cette destination. Une chaîne réelle peut combiner les deux.
+**ETL** transforme avant de charger dans la destination analytique ; **ELT** charge d'abord, puis transforme avec les ressources de cette destination. Une chaîne réelle combine souvent les deux : pseudonymiser les e-mails clients avant l'entrepôt partagé, puis transformer les journaux chargés bruts avec dbt.
 
 Conserver les sources facilite certains rejeux, mais ne justifie pas de copier sans limite toutes les données sensibles. Choisir où filtrer, pseudonymiser et valider selon les accès et usages autorisés. Comparer coûts de transfert, ressources et traçabilité. L'ordre des lettres ne garantit ni qualité ni reproductibilité : celles-ci demandent contrats, versions et règles de publication.
 
@@ -14,7 +14,7 @@ Conserver les sources facilite certains rejeux, mais ne justifie pas de copier s
 
 Quel intérêt ont des couches brute, préparée et métier dans un pipeline IA ? <!--anki:3361363930643062353730623430316262613066646566383034613335383837-->
 ?
-Elles séparent **fidélité à la source, transformations communes et produits consommables**. La couche brute aide à expliquer et rejouer ; la couche préparée normalise identités et types ; la couche métier expose des datasets au grain et aux garanties explicites.
+Elles séparent **fidélité à la source, transformations communes et produits consommables**. Exemple : `brut.tickets` garde le JSON reçu pour expliquer et rejouer ; `prep.tickets` type les dates et dédoublonne ; `metier.tickets_resolus_jour` expose une ligne par ticket résolu et par jour, avec ses garanties.
 
 Les appellations bronze, silver et gold sont des conventions, pas des niveaux de qualité automatiques. Chaque couche doit avoir contrat, propriétaire, rétention et accès. Éviter de multiplier les copies sans besoin ; un petit pipeline peut matérialiser seulement les frontières utiles à la reprise, au partage ou à la validation.
 
@@ -24,7 +24,7 @@ Les appellations bronze, silver et gold sont des conventions, pas des niveaux de
 ?
 L'**orchestrateur** décide quelles tâches lancer, avec quelles dépendances, paramètres et reprises. Le **moteur de traitement** exécute les transformations : requêtes SQL, calcul distribué, parsing ou inférence par lots.
 
-Un DAG peut soumettre un job distant sans traiter lui-même son volume de données. Il doit suivre sa vraie fin et récupérer ses références de sortie, pas seulement constater qu'une soumission a réussi. Cette séparation aide à dimensionner chaque couche, mais impose de gérer annulation, timeout et reprise lorsqu'un job continue après la perte de connexion à l'orchestrateur.
+Exemple : une tâche Airflow lance une requête BigQuery de 40 minutes ; le calcul s'exécute chez BigQuery, et la tâche doit suivre l'identifiant du job. Le DAG doit connaître sa vraie fin et récupérer ses références de sortie, pas seulement constater qu'une soumission a réussi. Cette séparation aide à dimensionner chaque couche, mais impose de gérer annulation, timeout et reprise lorsqu'un job continue après la perte de connexion à l'orchestrateur.
 
 ---
 
@@ -32,7 +32,13 @@ Un DAG peut soumettre un job distant sans traiter lui-même son volume de donné
 ?
 Une **tâche** représente une opération exécutée ; un **asset** représente un résultat de données identifiable, comme une table de features ou une partition de corpus. Une même tâche peut produire plusieurs assets, et un asset peut être reconstruit lors de plusieurs exécutions.
 
-Suivre seulement les tâches ne dit pas forcément quelle version les consommateurs peuvent lire. Définir dépendances, partitions et critères de disponibilité du résultat. Une orchestration orientée assets facilite ce raisonnement, mais n'élimine ni les contrôles de contenu ni les problèmes de cohérence entre plusieurs sorties.
+Suivre seulement les tâches ne dit pas forcément quelle version les consommateurs peuvent lire. Avec Dagster, l'asset déclare lui-même dépendances et partitions :
+```python
+@asset(partitions_def=DailyPartitionsDefinition(start_date="2026-01-01"))
+def features_clients(commandes):      # dépend de l'asset « commandes »
+    ...
+```
+Une orchestration orientée assets facilite ce raisonnement, mais n'élimine ni les contrôles de contenu ni les problèmes de cohérence entre plusieurs sorties.
 
 ---
 
@@ -54,7 +60,7 @@ Lors d'une correction amont, recalculer les partitions aval dont la fenêtre inc
 
 Pourquoi transmettre des références de datasets entre tâches plutôt que leur contenu complet ? <!--anki:3133383036323433646564313462663738323635393731343564353136303961-->
 ?
-Les métadonnées d'orchestration conviennent à des **identifiants, chemins, versions et manifestes**, pas nécessairement à des millions de lignes ou à des poids de modèles. Transmettre le contenu peut saturer la base de l'orchestrateur et dupliquer des données sensibles.
+Les métadonnées d'orchestration conviennent à des **identifiants, chemins, versions et manifestes**, pas à des millions de lignes ou à des poids de modèles. Exemple : un DataFrame de 2 millions de lignes poussé en XCom remplit la base de métadonnées d'Airflow ; `s3://features/v42/_manifest.json` suffit.
 
 Écrire les résultats dans un stockage adapté, puis passer une référence stable avec contrôles d'accès et durée de conservation. La tâche suivante vérifie la version et le statut de publication. Un chemin `latest` mutable n'offre pas la même garantie qu'un manifeste immuable ; une référence expirée doit être détectée clairement.
 
@@ -62,7 +68,13 @@ Les métadonnées d'orchestration conviennent à des **identifiants, chemins, ve
 
 Comment rendre une tâche de transformation sûre à relancer ? <!--anki:6566366433353762383064623432353761613363316166613737643433326133-->
 ?
-Définir un résultat identifié par **entrées, période et version de logique**, puis publier de manière idempotente ou remplacer une partition complète selon un protocole sûr. Écrire provisoirement avant validation peut éviter qu'un lecteur voie une sortie partielle.
+Définir un résultat identifié par **entrées, période et version de logique**, puis publier de manière idempotente ou remplacer une partition complète selon un protocole sûr.
+```sql
+BEGIN;
+DELETE FROM ventes_jour WHERE jour = DATE '2026-10-21';
+INSERT INTO ventes_jour SELECT ... WHERE jour = DATE '2026-10-21';
+COMMIT;   -- relancer redonne la même partition, sans doublons
+```
 
 Tester un crash avant écriture, après écriture et avant confirmation à l'orchestrateur. Les appels externes peuvent être répétés malgré une sortie aval dédupliquée : prévoir identifiants et garanties adaptées. Une tâche qui reprend ne doit pas choisir de nouvelles entrées implicites ou relancer un effet métier sans contrôle.
 
@@ -72,7 +84,7 @@ Comment distinguer une erreur à réessayer d’une erreur à corriger dans un p
 ?
 Une erreur **transitoire**, comme une indisponibilité brève ou un quota temporaire, peut justifier des retries bornés avec attente croissante et dispersion. Une violation de schéma ou une donnée invalide exige souvent correction ou quarantaine.
 
-Classer les erreurs, fixer un budget et préserver les preuves nécessaires au diagnostic. Réessayer immédiatement à l'infini peut saturer la dépendance et bloquer les autres partitions. Ne pas absorber l'erreur puis déclarer le dataset complet ; rendre visibles couverture partielle, nombre de tentatives et actions attendues du propriétaire.
+Exemple : HTTP 429 ou 503, retry après 1, 2 puis 4 s avec dispersion, cinq fois au plus ; colonne `montant` absente, quarantaine et alerte au propriétaire, sans retry. Réessayer immédiatement à l'infini peut saturer la dépendance et bloquer les autres partitions. Ne pas absorber l'erreur puis déclarer le dataset complet ; rendre visibles couverture partielle, nombre de tentatives et actions attendues du propriétaire.
 
 ---
 
@@ -88,7 +100,7 @@ Que vérifier en CI pour une transformation de données avant sa publication ? <
 ?
 Combiner **tests de logique sur petits exemples**, contrôles de schéma et de contrats, puis comparaison d'un résultat sur un périmètre représentatif. Tester les clés, limites temporelles, suppressions et rejeux, pas seulement la compilation.
 
-Exécuter dans une destination isolée avec droits et coûts bornés. Les tests sur données doivent préciser s'ils bloquent la publication ou signalent une dégradation. Une requête de test qui retourne zéro ligne peut valider un invariant formulé incorrectement ; relire aussi la définition et prévoir un exemple qui doit effectivement échouer.
+Exécuter dans une destination isolée avec droits et coûts bornés, par exemple `dbt build --select state:modified+ --defer --state prod/` pour les seuls modèles modifiés et leurs dépendants. Un test dbt passe quand sa requête renvoie zéro ligne : `WHERE montant < 0` sur une colonne toujours nulle passe toujours. Prévoir un exemple qui doit échouer.
 
 ---
 
@@ -96,13 +108,13 @@ Pourquoi un déclenchement à heure fixe ne prouve-t-il pas que les données amo
 ?
 Un horaire prévoit une **exécution**, pas la complétude d'une source. Un export peut arriver tard, partiellement ou sous un nouveau schéma alors que le cron aval démarre normalement.
 
-Attendre un signal de publication fiable, vérifier manifeste et contrat, puis appliquer timeout et politique de données manquantes. Un déclenchement par événement réduit certains délais, mais un événement « fichier créé » peut lui aussi arriver avant une publication complète. Séparer arrivée, validation et disponibilité pour consommation, avec un état explicite à chaque frontière.
+Attendre un signal de publication fiable, vérifier manifeste et contrat, puis appliquer timeout et politique de données manquantes. Un déclenchement par événement réduit certains délais, mais un événement « fichier créé » peut lui aussi arriver avant une publication complète : un export écrit en 25 minutes est lu tronqué, sauf si l'on attend un marqueur `_SUCCESS` ou un manifeste. Séparer arrivée, validation et disponibilité pour consommation, avec un état explicite à chaque frontière.
 
 ---
 
 Comment éviter qu’un backfill monopolise les ressources des pipelines courants ? <!--anki:6362313636623664393431343438653061666633346632363535303230626162-->
 ?
-Réserver **concurrence et quotas** par classe de travail, limiter les runs actifs et découper le backfill en unités reprenables. Tenir compte des limites de la source, du warehouse et des API modèles, pas seulement des workers.
+Réserver **concurrence et quotas** par classe de travail, limiter les runs actifs et découper le backfill en unités reprenables. Dans Airflow, par exemple, `max_active_runs=2` sur le DAG de backfill et un pool `backfill` de deux emplacements, distinct de celui du trafic courant. Tenir compte des limites de la source, du warehouse et des API modèles, pas seulement des workers.
 
 Mesurer retard du trafic courant et progression du rejeu, puis ajuster la priorité. Des tâches individuellement légères peuvent produire une pointe importante lorsqu'elles démarrent ensemble. Prévoir pause, annulation et nettoyage ; un job distant peut continuer à consommer après un timeout de l'orchestrateur.
 

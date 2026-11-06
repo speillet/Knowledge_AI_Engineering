@@ -124,6 +124,8 @@ Quand choisir un traitement LLM synchrone ou asynchrone ? <!--anki:4c506377553d6
 
 Une tâche d'agent de plusieurs minutes **ne doit pas** tenir une requête HTTP ouverte ([[142-fiabilite-resilience-llm|fiabilité]]).
 
+Séparer soumission et suivi : renvoyer un identifiant durable, puis exposer statut et résultat. Le streaming peut montrer la progression sans devenir le seul stockage du travail ; une reconnexion ne doit pas redémarrer la tâche.
+
 ---
 
 Comment isoler les clients d'une application LLM multi-tenant ? <!--anki:45785b5e5036705d493b-->
@@ -132,6 +134,8 @@ Comment isoler les clients d'une application LLM multi-tenant ? <!--anki:45785b5
 - **Quotas et budgets** par tenant.
 - **Clés et configurations** (modèle, prompt) par tenant.
 - **Pas de cache partagé** entre tenants pour des données privées ([[123-caching-agressif|sécurité du cache]]).
+
+Déduire le tenant de l'identité authentifiée, pas d'un champ proposé par le modèle. Tester aussi téléchargements, citations, traces et reprise après révocation : filtrer la recherche ne protège pas automatiquement tous les chemins d'accès.
 
 ---
 

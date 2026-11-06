@@ -7,7 +7,7 @@ Pourquoi commencer un workflow d'agent par ses invariants métier ? <!--anki:613
 ?
 Les **invariants** décrivent ce qui doit rester vrai malgré erreurs et concurrence : une commande ne doit pas être débitée deux fois, un stock ne doit pas devenir négatif, une action sensible doit correspondre aux paramètres approuvés.
 
-Ils guident le stockage, les transitions et les contrôles. Un prompt demandant de « faire attention » n'impose aucune contrainte aux écritures. Pour chaque invariant, identifier où il est vérifié, quelles opérations concurrentes peuvent le menacer et ce qui se passe si le processus plante à cet endroit.
+Ils guident le stockage, les transitions et les contrôles. Un prompt demandant de « faire attention » n'impose rien aux écritures ; `CHECK (stock >= 0)` ou `UNIQUE (commande_id)` sur la table des débits font échouer l'écriture fautive, quel que soit le texte du modèle. Pour chaque invariant, identifier où il est vérifié, quelles opérations concurrentes peuvent le menacer et ce qui se passe si le processus plante à cet endroit.
 
 ---
 
@@ -15,21 +15,27 @@ Quel problème pose une double écriture entre base métier et broker ? <!--anki
 ?
 Si l'on **valide en base puis publie un événement**, un crash entre les deux laisse un changement sans notification. Si l'on publie d'abord, l'événement peut annoncer une modification finalement annulée en base.
 
-Changer l'ordre déplace le problème sans le résoudre. Il faut une coordination transactionnelle adaptée ou enregistrer durablement l'intention de publication avec la mutation métier. Les retries peuvent réparer certains échecs, mais exigent de savoir ce qui reste à publier et de supporter les doublons. Un bloc `try/except` ne couvre pas un arrêt brutal du processus.
+Changer l'ordre déplace le problème sans le résoudre. Il faut une coordination transactionnelle adaptée ou enregistrer durablement l'intention de publication avec la mutation métier. Les retries exigent de savoir ce qui reste à publier. Exemple : `commit()` réussit, puis le pod est tué pour dépassement mémoire avant `send()` ; la commande existe, mais aucun service de préparation ne l'apprend, et aucun `try/except` ne s'est exécuté.
 
 ---
 
 Comment le pattern transactional outbox résout-il la double écriture ? <!--anki:3738363031656632333061323438653162666433346538613039663263616231-->
 ?
 Écrire **la mutation métier et l'événement à publier dans la même transaction locale**. Un relais lit ensuite les entrées validées de l'outbox et les transmet au broker, avec reprise sur erreur.
-
+```sql
+BEGIN;
+INSERT INTO commandes (id, statut) VALUES ('c-17', 'creee');
+INSERT INTO outbox (event_id, type, payload)
+  VALUES ('e-901', 'CommandeCreee', '{"commande":"c-17"}');
+COMMIT;   -- les deux lignes existent, ou aucune
+```
 Si la transaction échoue, ni mutation ni événement ne sont validés. Si le relais s'arrête, l'événement reste récupérable. Cela couple l'intention de publication à l'état métier, sans rendre l'envoi distant atomique. Surveiller l'âge des événements non publiés et prévoir leur rétention ainsi qu'une politique de nettoyage sûre.
 
 ---
 
 Pourquoi le relais d'une outbox peut-il publier deux fois le même événement ? <!--anki:3635346334356362356136373464663161633463323539336438313261396566-->
 ?
-Il peut **publier avec succès puis planter avant d'enregistrer ce succès**. À la reprise, l'entrée paraît encore à envoyer. La marquer comme envoyée avant publication créerait au contraire une fenêtre de perte.
+Il peut **publier avec succès puis planter avant d'enregistrer ce succès**. Exemple : le broker accepte `e-901`, puis le relais redémarre avant `UPDATE outbox SET publie = true` ; au cycle suivant, `e-901` repart. La marquer comme envoyée avant publication créerait au contraire une fenêtre de perte.
 
 Garder un identifiant stable d'événement et rendre les consommateurs tolérants à la relivraison. Pour un ordre par entité, porter aussi une séquence et organiser les relais en conséquence. L'outbox ne garantit ni ordre global ni effet unique chez chaque destinataire par sa seule présence.
 
@@ -38,6 +44,12 @@ Garder un identifiant stable d'événement et rendre les consommateurs tolérant
 Comment une inbox transactionnelle protège-t-elle un consommateur ? <!--anki:3430383365313537643539643430323939376562363230306266356365326535-->
 ?
 Le consommateur stocke **l'identifiant de l'événement traité et sa mutation locale dans la même transaction**. Une contrainte unique empêche une relivraison de répéter cette mutation. Après commit, il peut acquitter le message ; une panne avant ack devient un rejeu reconnaissable.
+```sql
+BEGIN;
+INSERT INTO inbox (event_id) VALUES ('e-901');   -- clé primaire : échoue si déjà traité
+UPDATE stocks SET reserve = reserve + 1 WHERE sku = 'A12';
+COMMIT;
+```
 
 Le périmètre est important : un e-mail ou un paiement exécuté en dehors de cette transaction n'est pas protégé par la seule inbox. Pour ces effets, utiliser une intention durable et une destination idempotente, ou une procédure de réconciliation lorsque le résultat reste inconnu.
 
@@ -47,7 +59,7 @@ Le périmètre est important : un e-mail ou un paiement exécuté en dehors de c
 ?
 Une **transaction distribuée** coordonne des participants capables de prendre part à un protocole commun de validation, par exemple en deux phases. Une **saga** enchaîne des transactions locales et prévoit des actions métier pour compenser les étapes déjà effectuées en cas d'échec.
 
-Une saga rend visibles des états intermédiaires et ne fournit pas automatiquement l'isolation d'une transaction globale. Elle convient à des opérations longues avec compensations acceptables. Un fournisseur externe arbitraire ne peut pas être intégré à une transaction globale simplement en l'appelant depuis un bloc transactionnel local.
+Une saga rend visibles des états intermédiaires et ne fournit pas automatiquement l'isolation d'une transaction globale. Exemple : réserver un hôtel, débiter la carte, émettre un billet ; aucune de ces API ne participe à un commit en deux phases. Si le débit échoue, la saga annule la réservation d'hôtel par une nouvelle opération. Appeler ces API depuis un bloc transactionnel local ne les y intègre pas.
 
 ---
 
@@ -77,7 +89,7 @@ Utiliser des états métier explicites, réservations, contraintes et contrôles
 
 Quels états conserver pour une action externe dont la réponse peut être perdue ? <!--anki:3630666665336530626530633466313961653133376664316562333136306631-->
 ?
-Distinguer au moins **intention enregistrée, action en cours, réussite confirmée, échec confirmé et résultat inconnu**. Ce dernier état évite de convertir un timeout en certitude d'échec.
+Distinguer au moins **intention enregistrée, action en cours, réussite confirmée, échec confirmé et résultat inconnu**. Exemple : un virement expire après 30 s ; il passe en « inconnu », pas en « échec », et une consultation par clé d'opération révèle cinq minutes plus tard qu'il a été exécuté.
 
 Conserver clé d'opération, paramètres autorisés, références du fournisseur et historique des tentatives. Les transitions doivent être contrôlées : un retour tardif ne doit pas écraser un état déjà réconcilié sans vérification. Exposer un statut récupérable permet au client et à l'opérateur de suivre l'action même après une déconnexion ou le redémarrage d'un agent.
 
@@ -87,7 +99,7 @@ Pourquoi un checkpoint d'agent ne suffit-il pas à sécuriser les effets externe
 ?
 Le checkpoint décrit **l'état sauvegardé du workflow**, mais n'est pas nécessairement atomique avec l'action réalisée par un outil distant. Si l'action réussit puis que la sauvegarde échoue, la reprise peut revenir juste avant cette action.
 
-Enregistrer son identité avant l'appel et réutiliser cette identité à la reprise. Consulter ou réconcilier son résultat au lieu de générer une nouvelle intention. La persistance du framework rend le calcul reprenable ; l'unicité des effets exige des garanties supplémentaires dans les outils et leurs destinations.
+Enregistrer son identité avant l'appel et réutiliser cette identité à la reprise. Exemple : LangGraph réexécute le nœud `payer` depuis le dernier checkpoint ; seule la clé stable `run-42:payer`, transmise au prestataire, lui permet de reconnaître le premier débit. La persistance du framework rend le calcul reprenable ; l'unicité des effets exige des garanties supplémentaires dans les outils et leurs destinations.
 
 ---
 
@@ -95,7 +107,7 @@ Comment tester les garanties d'un workflow distribué au-delà du chemin heureux
 ?
 Injecter des pannes **aux frontières entre effet, persistance et acquittement**. Rejouer le même événement, perdre une réponse, arrêter un worker après un commit, désordonner les messages et exécuter deux tentatives simultanées.
 
-Vérifier les invariants métier et la capacité à retrouver un état terminal ou un état inconnu explicite. Un test qui contrôle seulement la réponse HTTP manque les doubles effets. Utiliser des simulateurs pour couvrir les scénarios, puis vérifier les garanties réelles des intégrations : un mock parfait peut masquer les limites du fournisseur.
+Vérifier les invariants métier et la capacité à retrouver un état terminal ou un état inconnu explicite. Exemple : un point d'injection `os._exit(1)` juste après le commit simule un arrêt qu'aucun `finally` n'intercepte ; un proxy comme Toxiproxy coupe la réponse du broker après réception. Un test qui contrôle seulement la réponse HTTP manque les doubles effets, et un mock parfait peut masquer les limites réelles du fournisseur.
 
 ---
 

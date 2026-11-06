@@ -6,7 +6,7 @@ Vérifié le : 9 octobre 2026 — références techniques et exemples de cette f
 
 Comment définir un SLO de données utile à un produit IA ? <!--anki:6338353835303661393538373438626139353234656232346339623536373631-->
 ?
-Définir **consommateur, population, mesure, seuil et période d'observation**. Par exemple : part des partitions quotidiennes attendues, validées et disponibles avant une heure donnée, ou part des lectures de features assez fraîches pour la décision.
+Définir **consommateur, population, mesure, seuil et période d'observation**. Par exemple : 99 % des partitions quotidiennes attendues validées et disponibles avant 6 h, sur 30 jours glissants, ou part des lectures de features assez fraîches pour la décision.
 
 Compter aussi les partitions absentes et les échecs, pas seulement les sorties reçues. Préciser le statut des périodes sans activité attendue. Un SLO doit déclencher une décision : attente, dernière version valide, abstention ou intervention. Il ne remplace pas les autres dimensions ; des données ponctuelles peuvent rester incomplètes ou fausses.
 
@@ -16,7 +16,7 @@ Quels horodatages distinguer pour mesurer la fraîcheur de données servies à u
 ?
 Séparer **date de l'événement, arrivée dans le pipeline et disponibilité chez le consommateur**. Selon l'usage, l'âge d'une valeur à la lecture ou le délai événement-à-publication exprime mieux la contrainte que la durée du job.
 
-Une tâche peut finir en une minute après avoir attendu deux heures son export source. Documenter horloges, fuseaux et événements sans timestamp fiable. Pour un stock, la dernière valeur connue peut être trop ancienne même si les requêtes fonctionnent. Mesurer distributions et segments, avec le comportement prévu lorsque l'objectif n'est pas respecté.
+Une tâche peut finir en une minute après avoir attendu deux heures son export source. De même, le contrôle `freshness` de dbt mesure l'âge du `loaded_at_field` choisi : une date de chargement mesure l'arrivée, pas l'âge des événements. Pour un stock, la dernière valeur connue peut être trop ancienne même si les requêtes fonctionnent. Mesurer distributions et segments, avec le comportement prévu lorsque l'objectif n'est pas respecté.
 
 ---
 
@@ -24,7 +24,13 @@ Pourquoi le timestamp maximal d’une table ne suffit-il pas à mesurer sa compl
 ?
 Une seule ligne récente peut faire paraître la table **fraîche** alors qu'une partition, un client ou une source entière manque. Un maximum décrit une extrémité, pas la couverture des données attendues.
 
-Comparer manifestes, clés et volumes attendus par segment ; compléter par âge des éléments en retard et statut des partitions. Les volumes habituels sont un signal utile, mais une vraie baisse d'activité peut les modifier. Séparer constat et cause : un contrôle de fraîcheur réussi ne prouve pas que l'ensemble du lot est publiable.
+Comparer manifestes, clés et volumes attendus par segment, en partant de la liste attendue pour voir les absents :
+```sql
+SELECT a.client_id FROM clients_attendus a
+LEFT JOIN documents d ON d.client_id = a.client_id AND d.jour = DATE '2026-10-21'
+GROUP BY a.client_id HAVING count(d.id) = 0;
+```
+Les volumes habituels sont un signal utile, mais une vraie baisse d'activité peut les modifier. Séparer constat et cause : un contrôle de fraîcheur réussi ne prouve pas que l'ensemble du lot est publiable.
 
 ---
 
@@ -32,7 +38,7 @@ Comparer manifestes, clés et volumes attendus par segment ; compléter par âge
 ?
 Un **test de code** vérifie le comportement sur des entrées définies ; un **contrôle de données** examine une exécution réelle ou son résultat : unicité, références, intervalles, taux de nulls ou cohérence métier.
 
-Ils se complètent. Un transformateur correct peut recevoir une source incomplète, et une contrainte satisfaite peut laisser passer une formule fausse. Classer les contrôles en bloquants, dégradants ou informatifs, avec propriétaire. Prévoir des exemples qui doivent échouer et mesurer la couverture des contrôles, au lieu de compter seulement le nombre de tests verts.
+Ils se complètent. Exemple : un test unitaire vérifie que 1 250 centimes deviennent 12,50 € ; il passe encore le jour où la source livre 30 % de montants nuls, que seul un contrôle `not_null` sur la partition détecte. À l'inverse, une contrainte satisfaite peut laisser passer une formule fausse. Classer les contrôles en bloquants, dégradants ou informatifs, avec propriétaire, et mesurer leur couverture plutôt que le nombre de tests verts.
 
 ---
 
@@ -40,7 +46,13 @@ Pourquoi deux tables ayant le même nombre de lignes peuvent-elles être désync
 ?
 Une ligne manquante et une ligne supplémentaire peuvent **s'annuler dans le compteur**. Les mêmes identifiants peuvent aussi porter des versions ou valeurs différentes. Le nombre de lignes est donc un premier contrôle, pas une preuve d'équivalence.
 
-Comparer clés, versions, sommes métier et empreintes adaptées, sur un périmètre temporel cohérent. Normaliser types et nulls avant comparaison ; un hash nécessite une sérialisation canonique et conserve un risque de collision. Les différences doivent être localisables pour réparer seulement les partitions ou objets concernés lorsque c'est possible.
+Comparer clés, versions, sommes métier et empreintes adaptées, sur un périmètre temporel cohérent. Une différence dans les deux sens localise les écarts :
+```sql
+(SELECT id, version FROM source EXCEPT SELECT id, version FROM cible)
+UNION ALL
+(SELECT id, version FROM cible EXCEPT SELECT id, version FROM source);
+```
+Normaliser types et nulls avant comparaison, puis réparer seulement les objets ou partitions listés.
 
 ---
 
@@ -48,14 +60,19 @@ Comparer clés, versions, sommes métier et empreintes adaptées, sur un périm�
 ?
 Le **lignage déclaré** décrit les dépendances prévues dans les modèles, requêtes ou configurations. Le **lignage observé** relie une exécution à ses entrées et sorties effectivement utilisées, avec leurs identités et versions disponibles.
 
-Du SQL dynamique, des fichiers lus dans une UDF ou un appel externe peuvent échapper à l'analyse statique. Inversement, une instrumentation incomplète peut manquer des événements. Croiser les deux et mesurer la couverture. Un graphe joli mais incomplet ne doit pas être interprété comme une preuve d'absence d'impact sur les consommateurs non représentés.
+Du SQL dynamique, des fichiers lus dans une UDF ou un appel externe peuvent échapper à l'analyse statique. Exemple : le graphe dbt déclare `ref('commandes')`, mais un hook lit aussi `read_parquet('s3://exports/remises/*.parquet')` ; seul le lignage observé voit cette source. Inversement, une instrumentation incomplète peut manquer des événements. Croiser les deux et mesurer la couverture. Un graphe joli mais incomplet ne doit pas être interprété comme une preuve d'absence d'impact sur les consommateurs non représentés.
 
 ---
 
 À quoi servent Job, Run et Dataset dans le modèle OpenLineage ? <!--anki:3430623966656261333037353432663238643936313635326665386434386431-->
 ?
 Un **Job** identifie un traitement ; un **Run** une de ses exécutions ; un **Dataset** une entrée ou une sortie. Des événements et facettes ajoutent notamment état, schéma, code et contexte de lecture ou d'écriture.
-
+```json
+{"eventType": "COMPLETE", "run": {"runId": "0192f3…"},
+ "job": {"namespace": "prod-airflow", "name": "features.build_daily"},
+ "inputs":  [{"namespace": "postgres://crm:5432", "name": "public.commandes"}],
+ "outputs": [{"namespace": "s3://features", "name": "daily"}]}
+```
 Cette séparation permet de relier une modification de code à des versions produites lors d'exécutions précises. Elle ne collecte pas automatiquement toutes les métadonnées : les intégrations doivent les émettre correctement. Conserver des identités stables et un namespace évite de fusionner des tables homonymes de deux environnements ou d'attribuer plusieurs identités au même objet.
 
 ---
@@ -64,13 +81,13 @@ Quand faut-il un lignage de colonne ou d’enregistrement plutôt qu’un simple
 ?
 Le lignage de **table** aide à trouver les consommateurs d'une source. Celui de **colonne** précise les champs dépendants d'une transformation. Celui d'**enregistrement** peut retrouver les documents, exemples ou décisions concernés par un objet particulier.
 
-Choisir la granularité selon le diagnostic et les obligations opérationnelles, avec coût et confidentialité. Un index RAG demande souvent une correspondance document-vers-chunks, pas une copie de chaque contenu dans les traces. Le lignage d'une jointure dynamique peut être plus difficile à obtenir ; documenter ses zones d'incertitude.
+Choisir la granularité selon le diagnostic et les obligations, avec coût et confidentialité. Exemple : pour retirer les données d'un client, le graphe de tables indique que le dataset de fine-tuning dépend de la base support ; seul un lignage d'enregistrement liste les 37 exemples qui en dérivent. Un index RAG demande souvent une correspondance document-vers-chunks, pas une copie de chaque contenu dans les traces. Documenter les zones d'incertitude, comme les jointures dynamiques.
 
 ---
 
 Que doit rendre trouvable un catalogue de données pour un AI Engineer ? <!--anki:6134366561633630323963663433363462623930656632623363656239623462-->
 ?
-Pour chaque dataset : **sens, grain, propriétaire, accès, fraîcheur et limites d'usage**, avec schéma, exemples et versions utiles. Le catalogue aide à choisir une source plutôt qu'une table au nom plausible mais obsolète.
+Pour chaque dataset : **sens, grain, propriétaire, accès, fraîcheur et limites d'usage**, avec schéma, exemples et versions utiles. Le catalogue aide à choisir une source plutôt qu'une table au nom plausible mais obsolète : entre `clients` et `clients_v2`, il indique que la première est figée depuis mars et compte une ligne par client et par pays.
 
 Distinguer responsabilité métier, exploitation technique et consommateurs. Une description ne prouve pas que les contraintes sont contrôlées ; relier les contrats aux mesures et incidents. Vérifier aussi la date de mise à jour de cette documentation. Un catalogue sans propriétaire ni processus de correction peut devenir un inventaire de promesses périmées.
 
@@ -78,15 +95,15 @@ Distinguer responsabilité métier, exploitation technique et consommateurs. Une
 
 Comment estimer l’impact d’une partition de données corrompue sur un système IA ? <!--anki:3738353035646266616234383436636462633564373337646166623563656530-->
 ?
-Suivre **versions et dépendances** vers les tables dérivées, exemples, modèles entraînés, index et caches construits à partir de cette partition. Distinguer les consommateurs qui l'ont réellement utilisée de ceux qui pourraient l'utiliser.
+Suivre **versions et dépendances** vers les tables dérivées, exemples, modèles entraînés, index et caches construits à partir de cette partition. Distinguer les consommateurs qui l'ont réellement utilisée de ceux qui pourraient l'utiliser : un modèle dont la fenêtre d'entraînement s'arrêtait au 1er mars n'a pas lu la partition du 3 mars, même s'il dépend de la même table.
 
-Définir mise en quarantaine, réparation, reconstruction et notification interne selon le risque. Une nouvelle version correcte ne retire pas les prédictions déjà émises. Conserver les références nécessaires aux investigations, avec accès limité. Lorsque le lignage est incomplet, traiter l'impact comme incertain et élargir les vérifications au lieu de conclure à l'absence de dommage.
+Définir mise en quarantaine, réparation, reconstruction et notification interne selon le risque. Une nouvelle version correcte ne retire pas les prédictions déjà émises. Lorsque le lignage est incomplet, traiter l'impact comme incertain et élargir les vérifications au lieu de conclure à l'absence de dommage.
 
 ---
 
 Comment surveiller les données sans exposer leur contenu sensible ni créer des millions de séries ? <!--anki:6464393833643331623965643436333462303831653666313532633763373261-->
 ?
-Publier des **mesures agrégées et des références de diagnostic** : volumes, retard, nulls, violations par source ou segment pertinent. Éviter valeurs libres, identifiants individuels et contenu documentaire dans les labels des métriques.
+Publier des **mesures agrégées et des références de diagnostic** : volumes, retard, nulls, violations par source ou segment pertinent. Éviter valeurs libres, identifiants individuels et contenu documentaire dans les labels des métriques : `docs_en_retard{client_id=…}` sur 2 millions de clients crée 2 millions de séries, `{segment=…}` en crée douze.
 
 Limiter les échantillons de données brutes aux outils de diagnostic autorisés, avec rétention et accès appropriés. Une empreinte ou un identifiant peut rester corrélable : il n'est pas automatiquement anonyme. Choisir des agrégations qui permettent de détecter un segment en panne sans recopier tout le dataset dans les logs de monitoring.
 
@@ -116,7 +133,7 @@ Un échantillon sans erreur n'établit donc pas que le dataset est sain. Des err
 
 Comment éviter que les contrôles de qualité coûtent plus cher que le pipeline surveillé ? <!--anki:3438623363313839653536653464363439663561623333323438393339323463-->
 ?
-Classer les contrôles selon **criticité, fréquence et volume nécessaire**. Vérifier à chaque publication les invariants essentiels sur les partitions modifiées ; réserver certains scans complets ou comparaisons lourdes à une cadence justifiée.
+Classer les contrôles selon **criticité, fréquence et volume nécessaire**. Vérifier à chaque publication les invariants essentiels sur les partitions modifiées ; réserver certains scans complets à une cadence justifiée. Exemple : unicité des clés sur la partition du jour, 20 Go, à chaque publication, et sur l'historique de 8 To une fois par semaine.
 
 Réutiliser des statistiques fiables lorsqu'elles répondent réellement à la question, et préciser ce que l'échantillonnage peut manquer. Mesurer coût, durée et erreurs détectées. Une optimisation de contrôle ne doit pas supprimer silencieusement sa garantie, par exemple remplacer une recherche exhaustive de doublons par une estimation sans changer le contrat de publication.
 

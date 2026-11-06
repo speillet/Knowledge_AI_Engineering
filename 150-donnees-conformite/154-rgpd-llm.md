@@ -44,6 +44,8 @@ Qui est responsable de traitement et qui est sous-traitant ? <!--anki:4a3170492e
 ?
 En général, l'**entreprise qui déploie** l'application est **responsable de traitement** ; le **fournisseur d'API** de modèle est **sous-traitant** (article 28) s'il traite les données uniquement pour son compte, d'où la nécessité d'un **DPA**. S'il réutilise les données pour ses propres fins (entraînement), il peut devenir **responsable** pour cette partie.
 
+Qualifier les rôles par traitement effectif, pas seulement par étiquette contractuelle. Cartographier finalités, instructions, sous-traitants ultérieurs et transferts ; le même acteur peut avoir des rôles différents selon l'opération. Faire valider les cas ambigus avec le DPO ou le juridique.
+
 ---
 
 Quels problèmes posent les transferts hors UE ? <!--anki:77264354606a562d344b-->
@@ -65,6 +67,8 @@ Pour les poids d'un modèle, ne pas promettre une suppression ciblée sans preuv
 Quand faut-il une analyse d'impact (AIPD / DPIA) ? <!--anki:6c6a3239587567735849-->
 ?
 Quand le traitement présente un **risque élevé** pour les personnes : **nouvelles technologies** (l'IA générative en fait souvent partie), **évaluation ou profilage**, données **sensibles** (santé, opinions), **surveillance** de salariés, **grande échelle**. L'AIPD documente risques et mesures, et s'articule avec les évaluations exigées par l'[[155-ai-act|AI Act]].
+
+Ces éléments guident l'analyse, sans rendre toute utilisation d'un LLM automatiquement soumise à AIPD. Examiner critères et listes de l'autorité compétente avant déploiement ; réévaluer lors d'un changement de finalité, de population ou de données.
 
 ---
 

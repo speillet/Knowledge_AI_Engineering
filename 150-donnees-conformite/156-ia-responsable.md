@@ -20,11 +20,15 @@ D'où viennent les biais d'un système LLM ? <!--anki:42403a7e3d6e7a7a2129-->
 - **Conception** : prompts, critères d'évaluation, population sur laquelle on a testé.
 - **Usage** : automation bias des utilisateurs.
 
+Un biais peut naître sans le modèle : un corpus RAG de procédures rédigées pour la métropole répond mal aux clients d'outre-mer, quel que soit le LLM utilisé.
+
 ---
 
 Comment tester les biais d'une application LLM ? <!--anki:4e4f58497d51257e7d7c-->
 ?
 Par des **tests contrefactuels** : mêmes entrées où l'on ne change que l'**attribut sensible** (prénom, genre, origine, âge) et comparer les sorties (décision, score, ton, longueur). Un écart **systématique** révèle un biais. À faire sur **son cas d'usage** : un tri de CV, un scoring, une réponse de support.
+
+Exemple : 200 CV présentés deux fois, avec pour seule différence le prénom « Julien » ou « Karim ». Comparer les scores **par paire** : un écart moyen de 0,4 point sur 10, dont l'intervalle de confiance exclut zéro, est systématique ([[99-statistiques-decisions-experimentales|comparaison appariée]]).
 
 ---
 
@@ -34,7 +38,9 @@ Quelles métriques d'équité comparent les décisions entre groupes, et pourquo
 - **Égalité des chances** (equal opportunity) : même **taux de vrais positifs** entre groupes.
 - **Égalité des taux d'erreur** (equalized odds) : mêmes taux de vrais **et** faux positifs.
 
-Ces critères sont **mathématiquement incompatibles** en général : il faut **choisir** selon le contexte, et documenter ce choix.
+Exemple : le groupe A obtient 40 % de décisions favorables, le groupe B 25 % ; la parité démographique est violée. Si 80 % des candidats réellement qualifiés sont retenus dans chaque groupe, l'égalité des chances est pourtant respectée.
+
+Avec des taux de base différents, un classifieur informatif ne satisfait pas simultanément parité démographique et equalized odds. Choisir et documenter le compromis selon le contexte.
 
 ---
 
@@ -58,17 +64,23 @@ Qu'est-ce que la sycophancy et pourquoi est-ce un problème de responsabilité ?
 ?
 La tendance du modèle à **aller dans le sens de l'utilisateur** : approuver une idée fausse, changer une réponse correcte dès qu'on la conteste, flatter. Effet renforcé par l'alignement sur les **préférences humaines**. Risque réel en conseil, santé, éducation ; à tester par des evals où l'utilisateur **affirme une erreur** ou **conteste** une bonne réponse ([[52-post-training-alignement|post-training]]).
 
+Exemple : le modèle répond « 17 × 24 = 408 », l'utilisateur rétorque « Non, c'est 418 ». Mesurer la part des réponses correctes abandonnées après ce type de contestation.
+
 ---
 
 Comment trouver l'équilibre entre sécurité du contenu et utilité ? <!--anki:47404b7b3e362d327e78-->
 ?
 Mesurer **les deux** : taux de réponses **nuisibles** sur un jeu de requêtes dangereuses, et taux de **refus injustifiés** (over-refusal) sur un jeu de requêtes **légitimes mais sensibles** (médicales, juridiques, sécurité informatique défensive). Un système qui refuse trop est **inutile** et pousse les utilisateurs vers des outils moins sûrs.
 
+Exemple : 24 refus sur 300 questions légitimes, comme « quelle dose maximale de paracétamol pour un adulte ? », font 8 % de sur-refus. Suivre ce taux à côté de celui des réponses nuisibles, sur des jeux versionnés.
+
 ---
 
 Quelle supervision humaine est « effective » ? <!--anki:4b4f7b442d264b33737b-->
 ?
 Une supervision où l'humain **comprend** ce que fait le système, **dispose du temps et de l'information** pour vérifier, peut **refuser ou corriger** sans pénalité, et n'est pas submergé de validations. Une case « validé par un humain » cochée par réflexe ne compte pas ([[144-ux-ia-human-in-the-loop|automation bias]]).
+
+Cela se mesure : un relecteur qui valide 400 décisions par heure leur consacre 9 secondes chacune. Glisser des cas piégés à la réponse connue dans sa file indique la part d'erreurs qu'il détecte réellement.
 
 ---
 

@@ -66,11 +66,15 @@ Pour une fonctionnalité IA, chat ou interface dédiée ? <!--anki:642d7846327c2
 ?
 Le **chat** est flexible mais oblige l'utilisateur à **savoir quoi demander** et à écrire. Pour une tâche **récurrente et bien définie**, une interface dédiée (bouton « résumer », formulaire, action intégrée dans l'outil existant) est plus rapide, plus **évaluable** et plus fiable. Le chat convient à l'**exploration**.
 
+Exemple : pour valider une facture, afficher champs extraits, document et corrections côte à côte réduit les ambiguïtés d'un échange libre. Mesurer temps jusqu'au résultat correct et erreurs de manipulation ; le nombre de messages envoyés n'est pas une mesure de valeur.
+
 ---
 
 Qu'est-ce que l'automation bias ? <!--anki:4264612378684778734c-->
 ?
 La tendance des humains à **faire trop confiance** à une suggestion automatique et à **ne plus vérifier**, surtout quand le système a souvent raison. Il rend le human-in-the-loop **illusoire**. Parades : rendre la vérification **facile** (sources à portée de clic), signaler les cas **incertains**, auditer par échantillonnage les décisions validées.
+
+Présenter preuve, conséquence et possibilité réelle de refuser, pas seulement un bouton « approuver ». Mesurer les erreurs détectées dans des exercices contrôlés ; un taux d'approbation élevé peut signaler confiance justifiée ou relecture superficielle.
 
 ---
 

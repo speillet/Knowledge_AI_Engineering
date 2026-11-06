@@ -42,6 +42,8 @@ Quelles obligations pour un système à haut risque ? <!--anki:754c3a4e344f493f6
 ?
 Système de **gestion des risques**, **gouvernance des données** (qualité, biais), **documentation technique**, **journalisation** automatique, **transparence** envers les déployeurs, **supervision humaine** effective, **exactitude, robustesse et cybersécurité**, système de gestion de la qualité, **évaluation de conformité** et marquage CE, enregistrement dans la base de l'UE, **surveillance après commercialisation**.
 
+Répartir les obligations selon le rôle et la catégorie applicables. Exemple : une supervision de recrutement exige un humain compétent, informé et capable de contester le classement, pas seulement un bouton d'approbation. Relier chaque exigence à une preuve maintenue et vérifier le calendrier applicable.
+
 ---
 
 À ne pas confondre : fournisseur et déployeur ? <!--anki:6a68263531675a333877-->
@@ -83,7 +85,13 @@ Vérifier la disposition applicable au rôle, à l'usage et à la date de mise s
 
 Quelles sanctions prévoit l'AI Act ? <!--anki:714d7b7e6959667d2b6f-->
 ?
-Jusqu'à **35 M€ ou 7 %** du chiffre d'affaires mondial pour les pratiques **interdites** ; jusqu'à **15 M€ ou 3 %** pour les autres manquements (dont les obligations GPAI) ; jusqu'à **7,5 M€ ou 1 %** pour des informations inexactes fournies aux autorités. Montants plafonnés plus bas pour les PME.
+Les **articles 99 et 101** distinguent notamment :
+- **Pratiques interdites** : 35 M€ ou 7 % du chiffre d'affaires mondial annuel.
+- **Obligations visées à l'article 99(4)** : 15 M€ ou 3 %.
+- **Informations incorrectes, incomplètes ou trompeuses** aux autorités nationales ou organismes notifiés : 7,5 M€ ou 1 %.
+- **Fournisseurs GPAI**, sanctionnés par la Commission selon l'article 101 : 15 M€ ou 3 %.
+
+Pour une entreprise, retenir normalement le plafond le plus élevé ; l'article 99 prévoit le plus bas pour les PME et certains manquements des SMC. Ce sont des plafonds, pas des amendes automatiques : circonstances et proportionnalité comptent.
 
 ---
 
@@ -134,6 +142,8 @@ Mise en situation : une équipe veut utiliser la détection d'émotions sur les 
 ---
 
 ## Sources
+
+- [Commission européenne — article 99, sanctions](https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-99) et [article 101, fournisseurs GPAI](https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-101) — dispositions de sanction consultées le 5 novembre 2026 ; pas de revérification intégrale de la fiche.
 
 Revue ciblée du 6 octobre 2026 : calendrier, qualification du haut risque et obligations de transparence confrontés aux sources institutionnelles ci-dessous.
 

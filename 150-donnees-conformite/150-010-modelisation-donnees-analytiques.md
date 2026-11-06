@@ -8,7 +8,11 @@ Pourquoi définir le grain d’une table avant de construire des variables ML ? 
 ?
 Le **grain** précise ce que représente une ligne : événement, ligne de commande, client à une date, ou document dans une version. Il détermine les clés, les jointures et les agrégations valides.
 
-« Une ligne par client » et « une ligne par client et par jour » ne sont pas interchangeables. Mélanger les deux peut répéter un label ou surpondérer les clients actifs. Écrire la règle d'unicité, la population couverte et la temporalité avant les colonnes ; vérifier ensuite ce contrat sur les données produites.
+« Une ligne par client » et « une ligne par client et par jour » ne sont pas interchangeables. Mélanger les deux peut répéter un label ou surpondérer les clients actifs. Écrire la règle d'unicité, la population couverte et la temporalité avant les colonnes, puis vérifier ce contrat sur les données produites :
+```sql
+SELECT client_id, date_decision, count(*) FROM exemples
+GROUP BY client_id, date_decision HAVING count(*) > 1;   -- doit être vide
+```
 
 ---
 
@@ -16,14 +20,18 @@ Le **grain** précise ce que représente une ligne : événement, ligne de comma
 ?
 Un système **OLTP** sert des opérations transactionnelles courtes : créer une commande, lire un compte ou modifier un état avec des garanties de concurrence. Un système **OLAP** privilégie scans, jointures et agrégations sur beaucoup de lignes pour analyser ou préparer un dataset.
 
-Ce sont des profils de charge, pas deux catégories absolument étanches. Une petite base relationnelle peut couvrir les deux. Isoler les extractions lourdes si elles dégradent le service ; une réplique ou une copie analytique introduit aussi du retard à mesurer. Choisir selon accès, cohérence et volume.
+Ce sont des profils de charge, pas deux catégories étanches ; une petite base relationnelle peut couvrir les deux. Exemple : PostgreSQL sert le panier en quelques millisecondes, mais scanner 400 millions de commandes pour un dataset revient à un moteur colonnaire ou à une réplique, dont le retard se mesure. Choisir selon accès, cohérence et volume.
 
 ---
 
 Comment un schéma en étoile organise-t-il les données analytiques ? <!--anki:6262656638663766353537633432333261353265353231666639326234376463-->
 ?
 Une **table de faits** décrit des événements ou mesures à un grain précis ; les **dimensions** portent les attributs utilisés pour filtrer et regrouper. Une ligne de vente référence par exemple produit, client et date.
-
+```text
+fait_ventes(date_id, produit_id, client_id, quantite, montant)   grain : ligne de vente
+dim_produit(produit_id, categorie, marque)
+dim_client(client_id, segment, pays)
+```
 Cette organisation rend explicites les jointures et les définitions réutilisables. Elle peut alimenter un dataset ML ou un assistant SQL, sans imposer que toutes les données IA aient ce format. Les documents, graphes et événements imbriqués peuvent conserver d'autres représentations. Contrôler unicité des dimensions et intégrité des références avant d'agréger.
 
 ---
@@ -67,7 +75,7 @@ Le total métier reste **120 €**. Préagréger lignes et paiements au grain co
 ?
 Une mesure **additive** se somme sur les dimensions prévues, comme des montants de ventes dans une même devise. Une mesure **semi-additive**, comme un stock instantané, se somme entre entrepôts mais généralement pas entre dates. Une mesure **non additive**, comme un taux, demande un calcul adapté.
 
-Pour agréger des taux de succès, conserver numérateurs et dénominateurs puis les sommer ; une moyenne simple des taux de segments peut être trompeuse. Déclarer dimensions autorisées, unités et population. Même une somme de ventes devient incorrecte avec doubles comptes ou devises mélangées.
+Pour agréger des taux de succès, conserver numérateurs et dénominateurs puis les sommer : 90 % sur 10 cas et 50 % sur 1 000 cas donnent 70 % en moyenne simple, mais (9 + 500) / 1 010 ≈ 50,4 % au total. Déclarer dimensions autorisées, unités et population. Même une somme de ventes devient incorrecte avec doubles comptes ou devises mélangées.
 
 ---
 
@@ -91,7 +99,7 @@ Comment gérer une dimension qui arrive après le fait qui la référence ? <!--
 ?
 Conserver le fait avec un **statut de référence manquante** ou une ligne de dimension provisoire, selon le contrat, puis réconcilier lorsque la dimension arrive. Mesurer ces cas et définir les usages qui doivent attendre.
 
-Une jointure interne supprimerait silencieusement les faits orphelins ; fabriquer une valeur métier arbitraire masquerait le manque. Lors de la réparation, choisir la version temporelle appropriée et recalculer les résultats dépendants. Un membre « inconnu » facilite la publication, mais ne transforme pas une information absente en information fiable pour l'entraînement.
+Exemple : une vente du 3 mars référence un client créé dans le CRM le 5 ; elle est chargée avec la clé −1, « client inconnu », puis rattachée à la bonne version le 5. Une jointure interne supprimerait silencieusement ce fait orphelin. À la réparation, recalculer les résultats dépendants. Un membre « inconnu » facilite la publication, mais ne rend pas fiable pour l'entraînement une information absente.
 
 ---
 
@@ -99,7 +107,7 @@ Pourquoi l’entity resolution doit-elle être évaluée avant de fusionner des 
 ?
 L'**entity resolution** décide si des enregistrements désignent la même entité malgré des identifiants différents. Une fusion abusive mélange des personnes ou produits ; une fusion manquée fragmente leur historique et peut répartir leurs données entre train et test.
 
-Préférer des correspondances fiables lorsqu'elles existent, puis évaluer les rapprochements approximatifs sur des références annotées. Conserver méthode, score, version et possibilité de séparation. Un nom identique n'est pas une clé globale. Adapter les seuils aux conséquences métier et vérifier les erreurs par source et segment.
+Préférer des correspondances fiables lorsqu'elles existent, puis évaluer les rapprochements approximatifs sur des références annotées. Conserver méthode, score, version et possibilité de séparation. Un nom identique n'est pas une clé globale. Adapter les seuils aux conséquences : rapprocher « Jean Martin, Lyon » et « J. Martin, 69003 » avec un score de 0,82 peut suffire pour une campagne, pas pour fusionner des historiques de santé.
 
 ---
 
@@ -107,7 +115,15 @@ Que doit spécifier une métrique métier réutilisée par des modèles et un as
 ?
 Définir **population, grain, numérateur, dénominateur, période et exclusions**. « Client actif » peut signifier connexion, achat ou abonnement non résilié ; une requête SQL valide ne tranche pas cette ambiguïté.
 
-Versionner la définition et ses dépendances, avec propriétaire et exemples attendus. Une couche sémantique centralise ces règles, mais doit encore respecter droits d'accès, fraîcheur et disponibilité des dimensions. Tester un petit jeu comprenant remboursements, inconnus et frontières temporelles aide à révéler les divergences avant qu'elles ne deviennent des labels ou des réponses utilisateur.
+Versionner la définition et ses dépendances, avec propriétaire et exemples attendus :
+```yaml
+metrique: taux_resolution            # version 3, propriétaire : support
+population: tickets fermés, hors spam
+numerateur: tickets résolus sans réouverture sous 7 jours
+denominateur: tickets fermés
+periode: semaine ISO, fuseau Europe/Paris
+```
+Une couche sémantique centralise ces règles, mais doit encore respecter droits d'accès, fraîcheur et disponibilité des dimensions. Tester un petit jeu comprenant remboursements, inconnus et frontières temporelles aide à révéler les divergences avant qu'elles ne deviennent des labels ou des réponses utilisateur.
 
 ---
 
