@@ -6,11 +6,13 @@ Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou 
 
 Pourquoi faire tourner un LLM en local ou sur site ? <!--anki:68767b39524b69526735-->
 ?
-- **Confidentialité / souveraineté** : les données ne sortent pas.
+- **Confidentialité / souveraineté** : possibilité de garder les données sur site.
 - **Hors ligne** ou réseau contraint (usine, terrain, embarqué).
 - **Latence** sans aller-retour réseau.
-- **Coût** marginal nul à fort volume sur du matériel déjà payé.
+- **Coût** marginal potentiellement faible sur du matériel déjà payé.
 - **Contrôle** : version figée, pas de dépréciation imposée.
+
+Ces bénéfices exigent des contrôles : désactiver ou maîtriser télémétrie, outils distants et téléchargements. L'énergie, l'usure et la capacité occupée restent des coûts. Tester le service réseau coupé : un modèle local peut encore dépendre d'une authentification ou d'une recherche externe.
 
 ---
 
@@ -70,6 +72,8 @@ Quels défis d'exploitation d'une flotte de modèles locaux ? <!--anki:255a2e4b7
 Quand le on-prem GPU devient-il rentable par rapport aux API ? <!--anki:63522c7c41676e3e78-->
 ?
 Quand l'**utilisation** des GPU est **élevée et régulière**, que le modèle open weights atteint la **qualité** requise, et que l'équipe sait l'**exploiter**. Le calcul doit inclure matériel, énergie, hébergement, ingénieurs, et le **taux d'occupation** réel — un GPU inoccupé la nuit coûte autant ([[121-couts-inference|break-even API vs self-host]]).
+
+Comparer plusieurs scénarios de volume et une réserve de panne, pas seulement la charge maximale théorique. Les coûts fixes continuent pendant l'inactivité, même si l'énergie diminue. Un modèle local moins cher mais souvent escaladé vers une API peut annuler l'économie attendue.
 
 ---
 

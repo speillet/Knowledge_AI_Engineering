@@ -36,11 +36,15 @@ Qu'est-ce que la détection de fin de tour (turn detection) ? <!--anki:775f535e3
 ?
 Décider **quand l'utilisateur a fini de parler**. Un simple **VAD** (détection d'activité vocale) sur le silence coupe la parole lors d'une pause ou attend trop. Les systèmes récents combinent VAD et **modèle sémantique** qui estime si la phrase est **terminée**. C'est un réglage majeur du ressenti.
 
+Tester hésitations, nombres dictés, bruit et plusieurs accents. Réduire le seuil de silence accélère la réponse mais augmente les interruptions prématurées ; mesurer les deux, avec la durée fin de parole → premier audio utile.
+
 ---
 
 Qu'est-ce que le barge-in ? <!--anki:424839232e437e4b5e44-->
 ?
 La capacité de l'utilisateur à **interrompre** l'agent pendant qu'il parle. Il faut **arrêter le TTS immédiatement**, **annuler** la génération en cours, et **mettre à jour l'historique** avec ce qui a réellement été prononcé (pas le texte complet prévu), sinon le modèle croit avoir dit des choses que l'utilisateur n'a pas entendues.
+
+Vider aussi les buffers de lecture côté client. Un accusé d'annulation serveur ne garantit pas le silence du haut-parleur. Tester une interruption pendant un montant ou une instruction importante, puis vérifier ce que l'agent suppose avoir communiqué.
 
 ---
 

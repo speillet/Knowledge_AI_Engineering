@@ -38,6 +38,8 @@ Qu'est-ce que CLIP et pourquoi est-il important ? <!--anki:72534c43653d506e2567-
 ?
 Un modèle entraîné par **apprentissage contrastif** sur des centaines de millions de paires (image, légende) : images et textes sont projetés dans un **même espace d'embedding**. Il sert d'**encodeur visuel** à beaucoup de VLM et permet la **recherche d'images par texte** et la classification **zero-shot**.
 
+Pour classer, comparer l'image à plusieurs descriptions textuelles de classes. Le choix des formulations influence le résultat ; un score de similarité élevé n'est pas une probabilité calibrée. Vérifier les classes proches et prévoir les images hors des catégories proposées.
+
 ---
 
 Quelles sont les faiblesses typiques des VLM ? <!--anki:422a414951316f21335b-->
@@ -47,6 +49,8 @@ Quelles sont les faiblesses typiques des VLM ? <!--anki:422a414951316f21335b-->
 - **Tableaux** et graphiques denses (lecture de valeurs).
 - **Hallucinations visuelles** : décrire un objet absent, surtout s'il est attendu dans la scène.
 - **Prompt injection** par du **texte dans l'image**.
+
+Tester les transformations réellement utilisées : réduction de résolution, recadrage ou compression. Une valeur lisible dans l'original peut disparaître dans l'entrée du modèle. Pour les champs critiques, conserver l'emplacement de la preuve et une voie de vérification, plutôt que demander au modèle d'être plus sûr.
 
 ---
 

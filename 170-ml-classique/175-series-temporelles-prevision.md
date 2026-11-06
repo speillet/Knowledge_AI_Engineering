@@ -7,7 +7,7 @@ Que faut-il définir avant de prévoir une série temporelle ? <!--anki:38323132
 ?
 Préciser **la cible, l'horizon, la cadence et l'instant de décision**. Prévoir chaque matin la demande du lendemain diffère d'une prévision hebdomadaire des quatre prochaines semaines. L'information disponible et le coût des erreurs ne sont pas les mêmes.
 
-Définir aussi la granularité : article, magasin ou total. Distinguer demande réelle et ventes observées lorsque des ruptures limitent les ventes. Le backtest doit reproduire ces décisions et cette disponibilité historique, pas seulement prédire une colonne décalée dans un tableau complet.
+Définir aussi la granularité : article, magasin ou total. Distinguer demande réelle et ventes observées lorsque des ruptures limitent les ventes : un article en rupture trois jours affiche zéro vente, pas une demande nulle. Le backtest doit reproduire ces décisions et cette disponibilité historique, pas seulement prédire une colonne décalée dans un tableau complet.
 
 ---
 
@@ -15,7 +15,7 @@ Pourquoi une prévision saisonnière naïve constitue-t-elle une baseline import
 ?
 Elle reprend la **dernière valeur observée de la même saison** : pour une série quotidienne à cycle hebdomadaire, le lundi précédent sert à prévoir le lundi suivant. Elle capture un motif récurrent avec très peu de paramètres.
 
-Comparer le modèle candidat à cette référence sur les mêmes horizons et dates. Une baseline naïve simple reprend seulement la dernière valeur. Fêtes, promotions ou ruptures structurelles peuvent invalider la répétition saisonnière ; leur présence motive une amélioration mesurée, sans supprimer l'intérêt de la comparaison.
+Sur une grille quotidienne complète, `y.shift(7)` convient si la valeur décalée est connue à la date de décision. Pour prévoir 28 jours d'un coup, répéter la dernière semaine observée : utiliser ensuite les vraies ventes futures créerait une fuite. Comparer aux mêmes horizons et dates. Fêtes, promotions et ruptures peuvent invalider cette répétition, d'où l'intérêt de mesurer le gain du candidat.
 
 ---
 
@@ -23,13 +23,19 @@ Comparer le modèle candidat à cette référence sur les mêmes horizons et dat
 ?
 **ETS** représente niveau, tendance et saisonnalité via lissage exponentiel. **ARIMA** décrit des dépendances temporelles et peut utiliser des différences pour traiter certaines non-stationnarités. Une **régression avec retards** apprend une relation à partir de lags et d'autres variables disponibles.
 
-Le choix dépend de la structure, du volume de séries et des informations externes. Un modèle global peut partager l'apprentissage entre séries. Comparer au même protocole multi-horizon ; davantage de paramètres ou un modèle pré-entraîné ne garantit pas un gain sur la population visée.
+Le choix dépend de la structure, du volume de séries et des informations externes.
+```python
+ExponentialSmoothing(y, trend="add", seasonal="add", seasonal_periods=7)   # statsmodels
+ARIMA(y, order=(1, 1, 1), seasonal_order=(1, 0, 0, 7))
+X = pd.concat({"lag1": y.shift(1), "lag7": y.shift(7)}, axis=1)            # régression
+```
+Un modèle global, par exemple un seul boosting pour 5 000 articles, peut partager l'apprentissage entre séries. Comparer au même protocole multi-horizon ; davantage de paramètres ou un modèle pré-entraîné ne garantit pas un gain sur la population visée.
 
 ---
 
 Comment construire un backtest à origines glissantes ? <!--anki:6134643739613434633563343463323562633266383333656563646135366564-->
 ?
-Choisir plusieurs **dates de décision**. À chacune, reconstruire les données disponibles, entraîner ou réutiliser le modèle selon la cadence prévue, puis prévoir les horizons réellement demandés. Avancer la date et répéter sans inclure les observations futures dans l'entraînement.
+Choisir plusieurs **dates de décision**. À chacune, reconstruire les données disponibles, entraîner ou réutiliser le modèle selon la cadence prévue, puis prévoir les horizons demandés. `TimeSeriesSplit(n_splits=3, test_size=28)` produit trois blocs de test consécutifs de 28 observations : 28 jours seulement sur une grille quotidienne complète, pas des débuts de mois. Des origines mensuelles exigent un découpage calendaire explicite.
 
 Rapporter les erreurs par horizon et période, avec une agrégation explicite entre séries. Des fenêtres qui se chevauchent produisent des erreurs dépendantes. Régler les hyperparamètres sur des fenêtres de validation distinctes et réserver une période finale indépendante pour la conclusion.
 
@@ -45,7 +51,7 @@ Archiver les versions historiques de ces informations pour un backtest réaliste
 
 À ne pas confondre : prévision récursive et prévision directe à plusieurs horizons ? <!--anki:3565636464326634363862303463333138313963633531373465646264623232-->
 ?
-La méthode **récursive** prédit un pas puis réutilise cette prédiction pour avancer. Elle peut accumuler ses erreurs. Une méthode **directe** apprend une cible pour chaque horizon, éventuellement avec un modèle commun produisant plusieurs sorties.
+La méthode **récursive** prédit un pas puis réutilise cette prédiction pour avancer. Elle peut accumuler ses erreurs. Une méthode **directe** apprend une cible pour chaque horizon, éventuellement avec un modèle commun produisant plusieurs sorties. Pour J+7, la première enchaîne sept prédictions d'un pas ; la seconde entraîne sept modèles, ou un modèle à sept sorties.
 
 La seconde évite certaines rétroactions mais peut demander plus de données ou produire des horizons peu cohérents entre eux. Le backtest doit reproduire la stratégie réelle : alimenter une prévision récursive avec les vraies valeurs intermédiaires futures donnerait un résultat trop optimiste.
 
@@ -55,7 +61,11 @@ Comment éviter une fuite de cible dans des moyennes mobiles utilisées pour pr�
 ?
 Construire chaque agrégat uniquement avec des **observations disponibles avant la décision**. Pour prévoir la valeur du jour avant son observation, une moyenne incluant cette valeur fuit la cible ; une fenêtre centrée peut aussi incorporer le futur.
 
-Dans un tableau supervisé, décaler la cible avant de calculer la fenêtre est une protection fréquente, à adapter à l'horizon et au délai de collecte. Traiter chaque série séparément. Vérifier quelques lignes à la main, y compris début de série, trous et changements de fréquence.
+Dans un tableau supervisé, décaler avant de calculer la fenêtre est une protection fréquente, à adapter à l'horizon et au délai de collecte, série par série :
+```python
+df["moy7"] = df.groupby("article")["ventes"].transform(lambda s: s.shift(1).rolling(7).mean())
+```
+Vérifier quelques lignes à la main, y compris début de série, trous et changements de fréquence.
 
 ---
 
@@ -82,13 +92,13 @@ Comment évaluer un intervalle de prévision à 90 % ? <!--anki:3338646162346561
 ?
 Mesurer sa **couverture empirique** et sa **largeur**, par horizon et segment. Un intervalle immense peut couvrir presque toutes les observations sans aider à planifier ; un intervalle trop étroit masque l'incertitude.
 
-Comparer sur des périodes successives avec assez d'observations, en tenant compte de leur dépendance. Examiner les ruptures de régime et les hypothèses sur les variables futures. L'intervalle vise les futures observations, pas seulement l'incertitude sur une moyenne estimée. Un taux global de 90 % ne garantit pas la couverture de chaque magasin.
+Exemple : 830 valeurs réelles sur 1 000 tombent dans des intervalles annoncés à 90 %, soit une sous-couverture de 7 points. Comparer sur des périodes successives avec assez d'observations, en tenant compte de leur dépendance. Examiner les ruptures de régime et les hypothèses sur les variables futures. L'intervalle vise les futures observations, pas seulement l'incertitude sur une moyenne estimée. Un taux global de 90 % ne garantit pas la couverture de chaque magasin.
 
 ---
 
 Pourquoi réconcilier les prévisions d'une hiérarchie de séries ? <!--anki:6431303330386462666633343464353861633332363433653861363165306631-->
 ?
-Des prévisions séparées par magasin et au niveau national peuvent donner des **totaux incompatibles**. La réconciliation impose une cohérence avec la structure d'agrégation, en tenant compte de la méthode et, selon l'approche, des erreurs historiques.
+Des prévisions séparées par magasin et au niveau national peuvent donner des **totaux incompatibles** : 100, 120 et 80 pour trois magasins, mais 330 pour le total. La réconciliation impose une cohérence avec la structure d'agrégation, en tenant compte de la méthode et, selon l'approche, des erreurs historiques.
 
 Vérifier les contraintes métier, notamment non-négativité et changements de périmètre. La cohérence ne garantit pas une meilleure précision à tous les niveaux. Les quantiles ne s'additionnent généralement pas : le quantile 90 % du total dépend aussi de la dépendance entre les composantes.
 

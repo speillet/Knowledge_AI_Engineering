@@ -8,6 +8,8 @@ Pourquoi le parsing de documents est-il souvent le goulot d'un RAG d'entreprise 
 ?
 Parce que les documents réels sont des **PDF scannés, tableaux, slides, formulaires, colonnes multiples, en-têtes et pieds de page**. Un mauvais parsing (tableau aplati, colonnes mélangées, texte manquant) produit des chunks **inexploitables** : aucun modèle ni reranker ne rattrape une information **perdue à l'ingestion** ([[21-rag-fondamentaux|RAG]]).
 
+Exemple : un contrat scanné ingéré sans OCR produit des chunks vides ; une question sur sa clause de résiliation ne peut plus trouver de preuve, quel que soit le modèle.
+
 ---
 
 À ne pas confondre : PDF natif et PDF scanné ? <!--anki:4c4f575870682a745132-->
@@ -15,7 +17,7 @@ Parce que les documents réels sont des **PDF scannés, tableaux, slides, formul
 - **Natif** (généré numériquement) : contient une **couche texte** extractible directement (pypdf, pdfplumber, PyMuPDF), mais **sans structure** fiable (ordre de lecture, tableaux).
 - **Scanné** : une **image** de page → nécessite de l'**OCR**.
 
-Beaucoup de PDF sont **mixtes** ; il faut détecter page par page.
+Beaucoup de PDF sont **mixtes** ; il faut détecter page par page. Exemple : si `page.get_text()` de PyMuPDF renvoie moins de 20 caractères sur une page occupée par une image, envoyer cette page à l'OCR.
 
 ---
 
@@ -40,7 +42,14 @@ On tranche sur la qualité **mesurée sur ses propres documents**, puis sur le c
 
 Comment traiter les tableaux lors du parsing de documents ? <!--anki:4b3d5068593763564574-->
 ?
-Les extraire en **structure** (markdown, HTML ou JSON), pas en texte aplati. Pour le RAG : garder le tableau **entier** dans un chunk avec son **titre et ses en-têtes de colonnes** ; pour un grand tableau, répéter les en-têtes dans chaque morceau. On peut aussi générer un **résumé textuel** du tableau pour l'embedding et fournir le tableau complet au LLM.
+Les extraire en **structure** (markdown, HTML ou JSON), pas en texte aplati. Pour le RAG : garder le tableau **entier** dans un chunk avec son **titre et ses en-têtes de colonnes** ; pour un grand tableau, répéter les en-têtes dans chaque morceau.
+```text
+Tableau 3 — Tarifs 2026
+| Offre    | Prix mensuel | Engagement |
+|----------|--------------|------------|
+| Standard | 12 €         | aucun      |
+```
+On peut aussi générer un **résumé textuel** du tableau pour l'embedding et fournir le tableau complet au LLM.
 
 ---
 
@@ -56,11 +65,15 @@ Qu'est-ce que le retrieval sur images de pages (type ColPali) ? <!--anki:692e4d5
 ?
 On **n'extrait pas le texte** : chaque page est encodée **comme image** par un VLM en embeddings multi-vecteurs (late interaction), et la requête texte est comparée directement à ces pages. Robuste aux mises en page complexes et aux graphiques, au prix d'un **stockage** plus lourd et d'une réponse générée par un **VLM**.
 
+Ordre de grandeur : ColPali produit environ un millier de vecteurs de 128 dimensions par page, soit quelques centaines de Ko, contre quelques Ko pour un embedding unique de passage.
+
 ---
 
 Comment chunker en respectant la structure ? <!--anki:49576b5a755e527e6934-->
 ?
 Découper **selon la hiérarchie** (sections, sous-sections) plutôt qu'à taille fixe, **ne jamais couper** un tableau ou une liste au milieu, et ajouter à chaque chunk son **contexte** : titre du document, chemin des titres (« Contrat > Article 5 > Résiliation »), date, source. Ce contexte améliore beaucoup le retrieval ([[22-rag-avance|RAG avancé]]).
+
+Docling, par exemple, fournit un `HierarchicalChunker` qui suit la structure détectée, et un `HybridChunker` qui la combine à une limite de tokens.
 
 ---
 
@@ -70,12 +83,14 @@ Comment évaluer une chaîne de parsing ? <!--anki:7750667d2928215a777b-->
 - Métriques : **taux d'erreur de caractères** (OCR), exactitude des **cellules** de tableau, ordre de lecture, **champs** extraits corrects.
 - Et surtout l'effet **en aval** : recall du retrieval et qualité des réponses du RAG.
 
+Exemple : 12 erreurs sur 1 000 caractères de référence donnent un taux d'erreur de 1,2 % ; une seule de ces erreurs dans un IBAN suffit pourtant à rendre le champ inutilisable.
+
 ---
 
 Quels pièges d'exploitation dans une chaîne d'ingestion ? <!--anki:504a6b3c446331367152-->
 ?
 - **Coût et durée** : un VLM ou un service cloud sur des millions de pages coûte cher → traitement **batch**, cache par hash de fichier.
-- **Échecs silencieux** : pages vides, encodages cassés → contrôles de qualité automatiques (longueur, ratio de caractères valides).
+- **Échecs silencieux** : pages vides, encodages cassés → contrôles de qualité automatiques, par exemple alerte sous 200 caractères ou sous 50 % de caractères alphanumériques sur une page de texte.
 - **Mises à jour** : ré-ingestion incrémentale et suppression des anciennes versions.
 - **Confidentialité** des documents envoyés à un service externe ([[152-pii-confidentialite|PII]]).
 
