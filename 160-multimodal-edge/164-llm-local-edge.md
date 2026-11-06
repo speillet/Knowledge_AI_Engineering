@@ -47,7 +47,11 @@ La **mémoire unifiée** partagée CPU/GPU permet de charger des modèles de **p
 
 Quels modèles viser pour l'edge ? <!--anki:79514e2a284664622c76-->
 ?
-Les **small language models** (≈ 1 à 8 B paramètres), souvent **distillés** de plus gros, en **quantization 4 bits**. Ils sont bons en tâches **ciblées** (classification, extraction, reformulation, autocomplétion) mais faibles en connaissances générales et en raisonnement long. Un **fine-tuning** ou une distillation sur la tâche compense beaucoup ([[53-donnees-synthetiques-distillation|distillation]]).
+Partir des **contraintes du matériel et de la tâche**, puis tester de petits modèles, éventuellement quantifiés ou [[53-donnees-synthetiques-distillation|distillés]]. La plage 1–8 milliards de paramètres est un repère, pas une définition de l'edge.
+
+Exemple : 3 milliards de poids à 4 bits représentent environ **1,5 Go décimaux bruts**, auxquels s'ajoutent métadonnées, activations, runtime et KV cache. Cela ne garantit pas de tenir confortablement dans 2 Go.
+
+Mesurer qualité, temps de réponse, énergie et ralentissement thermique sur l'appareil cible. Un modèle spécialisé peut battre un plus gros sur sa tâche ; fine-tuning et distillation ne compensent pas automatiquement toutes ses limites.
 
 ---
 

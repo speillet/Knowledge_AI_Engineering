@@ -6,9 +6,11 @@ Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou 
 
 Qu'est-ce qu'une API layer (LLM gateway) ? <!--anki:79752c38462d5a6c3765-->
 ?
-Une **couche unique entre les applications et tous les modèles** (API cloud et modèles auto-hébergés) : une seule interface, et des fonctions transverses centralisées (auth, budgets, fallbacks, logs).
+Une **interface commune devant plusieurs backends**, cloud ou auto-hébergés, qui centralise authentification, routage, budgets et observation.
 
-Elle donne aux applications un point d'accès cohérent et centralise les politiques communes. Par exemple, une clé d'équipe peut accéder à certains modèles dans un budget donné. Cette couche devient aussi une dépendance du service : prévoir disponibilité, configuration versionnée et capacité à diagnostiquer une erreur de routage.
+Exemple : une application utilise un alias métier ; la gateway le résout vers un fournisseur autorisé pour cette équipe et cette catégorie de données. Le modèle effectivement choisi doit rester traçable.
+
+L'unification d'API ne rend pas les capacités identiques : vérifier outils, sorties structurées, streaming et limites de contexte après routage. Cette couche devient aussi une dépendance critique ; prévoir disponibilité, configuration versionnée et tests de panne. Un fallback ne doit pas envoyer des données vers un fournisseur interdit sous prétexte de maintenir le service.
 
 ---
 

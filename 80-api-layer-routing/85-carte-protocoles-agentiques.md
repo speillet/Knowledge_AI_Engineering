@@ -32,13 +32,11 @@ Question à se poser : qui décide de la suite, l'appelant (MCP) ou l'appelé (A
 
 Que contient une Agent Card A2A ? <!--anki:6d3f5351705879773044-->
 ?
-Le document de **découverte** d'un agent, publié à une adresse connue :
-- **Identité** et description, fournisseur, version
-- **Compétences** (skills) : ce que l'agent sait faire, avec exemples
-- **Endpoint** et modes d'échange supportés (streaming, notifications)
-- **Authentification** attendue
+Une **description de découverte** : identité, fournisseur/version, compétences et exemples, endpoints, capacités d'échange et mécanismes d'authentification attendus.
 
-Depuis A2A 1.0 (mars 2026), les cartes peuvent être **signées** : l'appelant vérifie qu'elles viennent bien de l'éditeur annoncé ([[102-menaces-agents|usurpation]]).
+Exemple : une carte annonce analyse de documents et streaming ; le client peut vérifier ces capacités avant de soumettre une tâche, sans connaître l'implémentation interne.
+
+Si une signature est fournie, la vérifier avec une identité ou clé de confiance, pas avec une clé inconnue simplement jointe au document. Elle aide à authentifier l'origine et l'intégrité, **pas la compétence ni l'autorisation**. Traiter descriptions et endpoints comme des informations à contrôler ; une carte copiée peut servir à une [[102-menaces-agents|usurpation]].
 
 ---
 

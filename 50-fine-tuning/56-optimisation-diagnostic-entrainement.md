@@ -82,9 +82,11 @@ Journaliser la norme avant clipping et sa fréquence : une activation permanente
 
 À ne pas confondre : model.eval() et désactivation des gradients dans PyTorch ? <!--anki:6236346430303366383035613432356262323136626233386134303039373262-->
 ?
-**`model.eval()`** change le comportement de modules comme dropout et BatchNorm. **`torch.no_grad()`** désactive l'enregistrement des opérations pour le calcul de gradients dans son contexte. Ces mécanismes sont indépendants : l'un ne déclenche pas automatiquement l'autre.
+**`model.eval()`** modifie le comportement de modules comme dropout et BatchNorm ; **`torch.no_grad()`** désactive l'enregistrement du graphe d'autograd dans son contexte. Les deux sont indépendants.
 
-Pour une validation habituelle, combiner le mode évaluation et l'absence de gradients, puis restaurer le mode entraînement. Oublier `eval()` peut rendre les scores instables ; oublier `no_grad()` peut gaspiller de la mémoire. Une validation qui exige des dérivées constitue un autre cas d'usage.
+Exemple : avec `no_grad()` mais sans `eval()`, un dropout reste actif et BatchNorm peut encore actualiser ses statistiques d'entraînement. Avec `eval()` seul, les opérations peuvent toujours construire un graphe de gradients et consommer de la mémoire.
+
+Pour une validation habituelle, combiner les deux, puis restaurer le mode précédent avant de poursuivre l'entraînement. Pour calculer une sensibilité par rapport à l'entrée, conserver les gradients même en mode évaluation : absence d'apprentissage et absence de dérivées sont deux choix différents.
 
 ---
 

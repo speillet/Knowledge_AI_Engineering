@@ -88,9 +88,11 @@ Le surcoût dépend de la complexité du schéma, du moteur, du cache et du nomb
 
 Quel lien entre guided generation et tool calling ? <!--anki:727c60472d7655416165-->
 ?
-Le tool calling décrit un outil et ses arguments attendus, souvent par **JSON Schema**. Un mode strict de sortie structurée peut contraindre leur génération, mais **tout appel d'outil n'est pas automatiquement décodé sous contrainte** : cela dépend du fournisseur et de la configuration.
+Le [[32-tool-calling|tool calling]] exprime une demande d'opération ; la **guided generation** peut contraindre la forme de ses arguments, souvent décrite par JSON Schema. Ce sont deux mécanismes distincts : tous les appels ne sont pas décodés sous contrainte.
 
-L'application doit donc valider nom, arguments, permissions et règles métier avant d'exécuter. Même des arguments parfaitement conformes peuvent viser le mauvais compte ou déclencher une action non autorisée ([[32-tool-calling|tool calling]]).
+Exemple : un schéma impose un entier positif pour `montant_centimes` ; le modèle peut produire `25` en pensant à 25 euros. La syntaxe est correcte, le montant métier ne l'est pas.
+
+Valider schéma effectivement supporté, unités, autorisation et cohérence avec la demande avant exécution. Une génération interrompue ou un refus doit aussi être traité explicitement, sans supposer qu'un mode strict produit toujours un appel complet.
 
 ---
 

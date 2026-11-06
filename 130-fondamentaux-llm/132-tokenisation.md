@@ -21,9 +21,9 @@ Une fois le tokenizer appris, les fusions et le vocabulaire sont fixés : encode
 
 Pourquoi les tokenizers modernes travaillent-ils au niveau de l'octet ? <!--anki:4c39395e4c4a45662433-->
 ?
-Un tokenizer à couverture d'octets, comme le **byte-level BPE**, peut représenter les textes encodés en UTF-8 en partant de 256 valeurs d'octet, puis fusionner des séquences fréquentes. Cela évite un token inconnu pour les caractères rares, mais ceux-ci peuvent nécessiter plusieurs tokens.
+Une **couverture complète des octets** permet de représenter tout texte UTF-8 sans token inconnu pour un caractère rare. Le byte-level BPE part d'unités d'octets puis fusionne des séquences fréquentes ; d'autres tokenizers utilisent seulement un repli sur les octets.
 
-Tous les tokenizers ne suivent pas exactement cet algorithme ; certains utilisent un mécanisme de repli sur les octets. Cela ne signifie pas qu'une API de texte accepte n'importe quel fichier binaire brut : il faut respecter son format d'entrée.
+Exemple : « é » occupe deux octets en UTF-8, mais peut former un token, être fragmenté ou appartenir à un token plus long. **Octet, caractère et token ne sont donc pas interchangeables**. Les écritures peu fréquentes peuvent consommer davantage de tokens pour un texte visuellement court. Mesurer avec le tokenizer cible ; cette couverture n'autorise pas l'envoi de fichiers binaires bruts à une API textuelle.
 
 ---
 

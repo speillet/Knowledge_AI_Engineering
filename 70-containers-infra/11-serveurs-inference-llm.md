@@ -14,10 +14,11 @@ Il ordonne les requêtes pour partager le matériel, gère la mémoire des séqu
 
 À ne pas confondre : serveur d'inférence et gateway LLM ? <!--anki:4441306c4a2b54426b3d-->
 ?
-- **Serveur d'inférence** (vLLM, SGLang, TensorRT-LLM) : il **exécute le modèle** sur des GPU. Un serveur, un ou quelques modèles chargés en VRAM
-- **Gateway LLM** ([[81-litellm-api-layer|LiteLLM]]) : il **ne calcule rien**. Il route vers des modèles, gère clés, budgets, quotas, fallbacks et traces
+Le **serveur d'inférence** charge les poids et calcule les sorties sur son matériel ; la **gateway** ([[81-litellm-api-layer|LiteLLM]]) applique des politiques et achemine les appels vers les backends. Elle effectue du traitement, mais normalement pas l'inférence du modèle cible.
 
-Chaîne complète : `client → Ingress → gateway LLM → serveur d'inférence → GPU`. Les deux exposent souvent la **même API compatible OpenAI**, ce qui explique la confusion.
+Exemple : une réponse HTTP 429 peut venir du quota de gateway alors que les GPU sont libres ; ajouter un serveur ne corrige pas cette politique.
+
+Chaîne fréquente : `client → ingress → gateway → serveur → accélérateur`. Des API externes remplacent parfois le serveur auto-hébergé. Tracer chaque couche : une API compatible OpenAI ne dit pas quelle couche répond ni où se trouve le goulot.
 
 ---
 

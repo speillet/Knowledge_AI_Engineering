@@ -29,10 +29,11 @@ Lecture : performance atteignable = min(plafond de calcul, intensité × bande p
 
 À ne pas confondre : memory-bound et compute-bound ? <!--anki:6a6f7d6d386152727063-->
 ?
-- **Memory-bound** : le temps est dicté par les **octets à lire**. On accélère en lisant moins (quantization, cache plus petit) ou en réutilisant chaque lecture (batch plus gros)
-- **Compute-bound** : le temps est dicté par les **FLOP**. On accélère avec plus de calcul (GPU plus puissant, FP8 natif, parallélisme) ou moins d'opérations
+**Memory-bound** : les transferts mémoire dominent ; **compute-bound** : le calcul domine. Le modèle roofline compare approximativement `octets / bande passante` et `FLOPs / débit de calcul`, avec des débits réellement atteignables.
 
-Optimiser le mauvais côté ne sert à rien : quantizer les poids accélère peu un prefill compute-bound.
+Exemple : si les deux estimations valent 8 ms et 2 ms, doubler le calcul réduit la seconde à 1 ms mais laisse le plancher mémoire à 8 ms. Réduire les octets ou mieux réutiliser les poids est plus prometteur.
+
+Quantification, batching et précision peuvent agir sur plusieurs termes. Ce modèle simplifié n'inclut pas tous les surcoûts : communication, synchronisation et petits kernels peuvent dominer. Vérifier le régime avec un profileur.
 
 ---
 

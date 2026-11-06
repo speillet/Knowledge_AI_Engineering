@@ -44,9 +44,11 @@ Accès GPU : Docker `--gpus` · Apptainer `--nv` · Kubernetes `nvidia.com/gpu`
 
 Pourquoi les conteneurs sont-ils devenus le standard pour servir des modèles ? <!--anki:45514a373c635d6d4a50-->
 ?
-Ils figent **l'environnement complet** (CUDA, bibliothèques, serveur d'inférence) : le même artefact tourne en dev, en CI et en production, et s'orchestre sur Kubernetes.
+Ils regroupent **serveur et dépendances applicatives** dans un artefact versionné, transportable entre environnements compatibles et orchestrable, notamment sur Kubernetes. Ils **ne figent pas toute la machine** : noyau, driver GPU, matériel et volumes restent externes.
 
-Ils regroupent les dépendances de l'application et simplifient la livraison d'une version identifiée. Ils **ne figent pas toute la machine** : noyau, driver GPU, matériel et volumes viennent de l'hôte. Il faut donc vérifier leur compatibilité et épingler aussi les poids et la configuration : par exemple `vllm/vllm-openai@sha256:…` plutôt que `:latest`, avec la révision exacte des poids sur le hub ([[09-gpu-conteneurs|GPU en conteneur]]).
+Exemple : remettre l'ancienne image ne restaure pas l'ancien modèle si les poids montés ont changé. Un rollback fiable doit identifier **image par digest, révision des poids, tokenizer et configuration**, puis vérifier leur compatibilité avec l'hôte.
+
+Tester un démarrage et une inférence représentative sur la cible ; un build réussi ne valide ni l'accès au GPU ni la mémoire nécessaire ([[09-gpu-conteneurs|GPU en conteneur]]).
 
 ---
 

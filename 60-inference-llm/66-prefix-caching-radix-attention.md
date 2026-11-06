@@ -85,11 +85,11 @@ Un **canal auxiliaire temporel** : un TTFT plus court révèle qu'un préfixe es
 
 Comment mesurer l'efficacité du prefix cache ? <!--anki:79677d5a467a362a2129-->
 ?
-- **Taux de hit** du prefix cache (métriques Prometheus de vLLM et SGLang)
-- **TTFT** par percentile, avant et après
-- Côté API : part des tokens d'entrée **lus depuis le cache**
+Mesurer **tokens réutilisés**, TTFT et coût, pas seulement requêtes ayant un hit. Vérifier l'unité exacte des métriques du moteur ou fournisseur ([[123-caching-agressif|caching agressif]]).
 
-Une chute brutale du taux de hit signale souvent un préfixe devenu instable ([[123-caching-agressif|caching agressif]]).
+Exemple simplifié : une requête de 100 tokens entièrement réutilisée et une autre de 9 900 tokens sans hit donnent **50 % de requêtes avec hit**, mais seulement **1 % des tokens réutilisés**.
+
+Comparer cache froid/chaud à charge et longueurs identiques, en incluant évictions et mémoire occupée. Une chute peut venir d'un préfixe instable, mais aussi d'un changement de trafic, de routage ou de pression mémoire. Un hit élevé n'assure pas une baisse du TTFT si l'attente domine.
 
 ---
 

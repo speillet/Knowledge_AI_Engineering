@@ -14,7 +14,11 @@ Un objet Ingress décrit des règles ; un **Ingress controller** doit les implé
 
 Un Ingress fonctionne-t-il seul ? <!--anki:45497c54723d663e553e-->
 ?
-**Non.** L'objet Ingress n'est qu'une **déclaration** ; il faut un **Ingress controller** (Traefik, HAProxy, Cilium…) qui l'observe et configure réellement un proxy. ingress-nginx, longtemps le plus répandu, n'est plus maintenu depuis mars 2026. Sans controller installé, l'objet est accepté par l'API et **rien ne se passe** : c'est une cause classique de « mon Ingress ne répond pas ».
+**Non.** L'Ingress déclare des règles ; un **controller compatible** doit les observer et configurer le chemin réseau effectif.
+
+Exemple : `kubectl apply` réussit mais l'Ingress vise une classe qu'aucun controller ne gère. L'objet existe, sans route fonctionnelle. Vérifier `ingressClassName`, événements et logs du controller avant de modifier le serveur LLM.
+
+Poursuivre ensuite la chaîne : adresse publiée, DNS, certificat, Service et endpoints prêts. Le statut de l'objet n'est pas un test de bout en bout. Choisir un controller maintenu et vérifier ses fonctionnalités ; toutes les annotations ne sont pas portables entre implémentations.
 
 ---
 

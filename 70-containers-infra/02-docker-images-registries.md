@@ -104,10 +104,11 @@ Un `ImagePullBackOff` peut venir d'identifiants, de quota ou d'un tag absent, av
 
 À ne pas confondre : tag et digest ? <!--anki:72692e4142293e5a457b-->
 ?
-- **Tag** (`app:1.2.0`, `app:latest`) : une **étiquette mutable**. Elle peut être **réécrite** et pointer demain vers une autre image
-- **Digest** (`app@sha256:9f2c…`) : l'**empreinte du contenu**, donc **immuable** et vérifiable
+Un **tag** est un nom déplaçable, sauf politique d'immuabilité du registre ; un **digest** identifie un contenu précis.
 
-En production, on **épingle le digest** : cela identifie le contenu de l'image testée ; configuration, poids montés, secrets, architecture et driver doivent aussi être maîtrisés pour reproduire son comportement.
+Exemple : `app:1.2.0` peut être republié après un correctif. Deux machines tirant ce tag à des dates différentes peuvent exécuter des contenus différents ; un digest évite cette ambiguïté.
+
+Un digest peut identifier un manifeste mono-plateforme ou un index multi-plateforme : consigner aussi la plateforme et l'image effectivement résolue. **Intégrité n'est pas confiance** : le hash ne certifie ni auteur ni absence de vulnérabilité. Épingler aussi configuration et poids externes pour reproduire le service, pas seulement l'image.
 
 ---
 

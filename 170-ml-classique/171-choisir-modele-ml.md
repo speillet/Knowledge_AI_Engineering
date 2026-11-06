@@ -61,9 +61,11 @@ L'intensité se choisit sur validation, avec une échelle des variables adaptée
 
 Comment un arbre de décision apprend-il des interactions ? <!--anki:6538323032383132316466343433376262336232346537663863653066336433-->
 ?
-Il partitionne les observations par une succession de **tests sur les variables**. Une branche peut traiter différemment les clients récents selon leur activité : l'effet d'une variable dépend alors des décisions précédentes. Les feuilles portent une prédiction calculée à partir des exemples d'entraînement qui y arrivent.
+Par des **tests successifs** : une séparation n'agit que sur les observations ayant atteint son nœud. L'effet d'une variable dépend ainsi des séparations précédentes.
 
-Un arbre profond peut mémoriser des particularités du train et changer fortement après une petite variation des données. Limiter profondeur et taille minimale des feuilles. Une règle lisible dans l'arbre n'est pas forcément stable ou causale.
+Exemple : une branche teste l'ancienneté, puis l'activité seulement chez les nouveaux clients. Une faible activité peut alors augmenter la prédiction de départ chez eux, sans changer celle des clients anciens. Les feuilles estiment leur prédiction avec les exemples d'entraînement reçus.
+
+L'arbre peut représenter une interaction sans qu'elle ait été créée manuellement, mais l'apprentissage ne garantit pas de la trouver. Limiter profondeur et taille minimale des feuilles, puis tester stabilité et généralisation ; une branche lisible n'est pas une relation causale.
 
 ---
 

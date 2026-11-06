@@ -43,9 +43,11 @@ Rapporter les erreurs par horizon et période, avec une agrégation explicite en
 
 Pourquoi distinguer variables futures connues et variables futures à prévoir ? <!--anki:6439613435346139376561313434386261633631363235643238623938333563-->
 ?
-Un **calendrier** ou une promotion déjà planifiée peut être disponible pour l'horizon visé. La météo effectivement observée ce jour-là ne l'est pas : seules ses prévisions disponibles à la date de décision peuvent servir.
+Une variable future n'est utilisable que si sa **valeur ou sa prévision était disponible à l'origine de décision**. Calendrier et promotions déjà décidées diffèrent de la météo réellement observée plus tard.
 
-Archiver les versions historiques de ces informations pour un backtest réaliste. Utiliser une variable future inconnue impose de la prévoir ou d'étudier des scénarios ; cette incertitude influence le résultat final. Un intervalle conditionnel à une météo supposée exacte ne couvre pas automatiquement l'erreur de la prévision météo.
+Exemple : pour prévoir lundi les ventes de vendredi, utiliser la prévision météo publiée lundi, pas celle révisée jeudi ni la température mesurée vendredi. Archiver date de publication, date visée et version pour reproduire ce choix en backtest.
+
+Une promotion peut aussi changer : retenir le planning connu alors. Si une variable doit être prévue, propager son incertitude ou comparer des scénarios ; un intervalle conditionnel à une valeur supposée exacte ne la couvre pas automatiquement.
 
 ---
 

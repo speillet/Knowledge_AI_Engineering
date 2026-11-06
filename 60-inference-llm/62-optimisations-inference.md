@@ -5,10 +5,11 @@ Tags: #flashcards #ai-engineering #inference #optimisation #llm
 
 Quelles sont les deux phases de l'inférence d'un LLM ? <!--anki:482678244d584c28753b-->
 ?
-- **Prefill** : traitement de **tout le prompt en parallèle** → produit le premier token et remplit le [[61-kv-cache-attention|KV cache]]
-- **Decode** : génération **token par token**, chacun dépendant du précédent
+Le **prefill** traite les positions du prompt, avec parallélisme entre positions sous masque causal, et construit le [[61-kv-cache-attention|KV cache]]. Sa sortie permet d'échantillonner le premier token. Le **decode** poursuit la génération autorégressive en réutilisant ce cache.
 
-Le prefill prépare les représentations de tous les tokens d'entrée ; le decode ajoute les nouvelles positions une à une. Un long document avec une réponse courte charge surtout le prefill ; une rédaction longue sollicite beaucoup le decode. Cette distinction aide à choisir l'optimisation et la métrique pertinentes.
+Exemple : résumer un long document en une phrase sollicite surtout l'entrée ; rédiger plusieurs pages à partir d'une courte consigne sollicite surtout les étapes de sortie. Batching, cache et concurrence peuvent modifier le goulot réel.
+
+Le TTFT inclut aussi file et transport : il n'est pas un chronomètre du seul prefill. Mesurer séparément attente, premier token et intervalles de génération.
 
 ---
 

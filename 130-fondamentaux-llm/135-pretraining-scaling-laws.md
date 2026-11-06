@@ -21,7 +21,11 @@ Le **mélange** compte autant que la quantité : une source longue peut dominer 
 
 Que disent les scaling laws ? <!--anki:6725533c2f733155372f-->
 ?
-La **loss** du modèle diminue de façon **prévisible (loi de puissance)** avec la **taille du modèle (N)**, la **quantité de données (D)** et le **calcul (C ≈ 6·N·D FLOPs)**. On peut donc **prédire la performance** d'un gros entraînement à partir de petits essais, et choisir comment répartir un budget de calcul.
+Ce sont des **régularités empiriques** : dans un régime donné, la loss varie approximativement selon des lois de puissance avec paramètres, données et calcul. Pour un Transformer dense, `C ≈ 6ND` donne un ordre de grandeur du calcul d'entraînement.
+
+Elles aident à répartir un budget entre taille et tokens à partir de petits essais comparables. Exemple : doubler les paramètres à calcul fixe impose approximativement de diviser les tokens par deux ; le meilleur compromis dépend de la courbe ajustée.
+
+Une baisse prédite de loss **ne garantit pas** un gain métier précis. Changement de données, architecture ou recette peut invalider l'extrapolation.
 
 ---
 

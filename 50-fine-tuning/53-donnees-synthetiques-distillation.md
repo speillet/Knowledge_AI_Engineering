@@ -50,8 +50,12 @@ L'élève peut apprendre à partir des réponses de l'enseignant ou de ses distr
 
 À ne pas confondre : distillation « sur les sorties » et « sur les logits » ? <!--anki:477836586d2c757d4b34-->
 ?
-- **Sur les sorties** (sequence-level) : l'élève est fine-tuné (SFT) sur les **textes générés** par l'enseignant — possible même avec un modèle fermé via API.
-- **Sur les logits** (soft labels) : l'élève apprend à reproduire la **distribution de probabilités** complète de l'enseignant (loss KL) — plus riche en information, mais exige l'accès aux logits et un **tokenizer compatible**.
+- **Sur les sorties** : apprendre les séquences produites par l'enseignant, souvent par SFT ; possible via une API textuelle si ses conditions l'autorisent.
+- **Sur les logits** : rapprocher les distributions enseignant/élève, par exemple via une divergence KL.
+
+Exemple : le texte retenu montre seulement « Paris » ; la distribution peut révéler que « Lyon » restait plausible. Cette information supplémentaire distingue une cible presque certaine d'une cible ambiguë.
+
+Comparer directement les distributions token par token exige des vocabulaires alignés et une température maîtrisée. Quelques log-probabilités exposées par une API ne sont pas la distribution complète ; des tokenizers différents nécessitent une méthode d'alignement adaptée.
 
 ---
 

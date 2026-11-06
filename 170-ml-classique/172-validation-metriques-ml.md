@@ -110,9 +110,11 @@ Si ce seuil déclenche 2 000 alertes pour 200 places de revue, la contrainte de 
 
 À ne pas confondre : MAE et RMSE pour une régression ? <!--anki:6231663061663632383331383465633138663637316237303362306363666533-->
 ?
-La **MAE** moyenne les valeurs absolues des erreurs ; la **RMSE** prend la racine de leur carré moyen et pénalise davantage les grandes erreurs. Toutes deux s'expriment dans l'unité de la cible.
+**MAE = moyenne(|erreur|)** ; **RMSE = racine(moyenne(erreur²))**. Les deux ont l'unité de la cible, mais la RMSE donne davantage de poids aux grands écarts.
 
-Pour des erreurs de 0 et 10 jours, MAE = 5 jours et RMSE ≈ 7,07 jours. Choisir selon le coût des écarts et examiner leur distribution. Si sous-estimer coûte beaucoup plus que surestimer, une perte symétrique peut manquer l'objectif ; une approche quantile peut mieux représenter le besoin.
+Exemple : erreurs de 0 et 10 jours → MAE 5, RMSE environ 7,07 jours. Erreurs de 5 et 5 jours → MAE et RMSE de 5 jours. Même MAE, mais dispersion différente : la RMSE préfère ici les erreurs moins concentrées.
+
+Choisir selon le coût métier, pas le score numériquement le plus petit. Ces métriques symétriques ne distinguent pas retard et avance ; examiner les signes ou une perte asymétrique si leurs conséquences diffèrent.
 
 ---
 

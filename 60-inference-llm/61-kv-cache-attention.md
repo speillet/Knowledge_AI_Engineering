@@ -111,9 +111,11 @@ Arrondir à 26 surestime la capacité sous ces hypothèses. C'est un plafond mé
 
 Que se passe-t-il si on double `max_model_len` sur un serveur vLLM ? <!--anki:3066363230336533336366653437396238396664636166383237643436363065-->
 ?
-Les requêtes longues peuvent occuper **deux fois plus de KV cache** : quand elles arrivent, la concurrence baisse d'autant. Les requêtes courtes ne paient rien de plus, car le cache est alloué par blocs à la demande (**PagedAttention**).
+On **autorise des séquences plus longues**, sans doubler automatiquement le KV de chaque requête. Avec allocation paginée, l'occupation suit surtout les tokens réellement conservés.
 
-Au démarrage, vLLM vérifie qu'au moins une requête de longueur maximale tient dans le cache, et **refuse de démarrer** sinon. On fixe donc `max_model_len` au besoin réel, pas au maximum du modèle.
+Pour une attention dense conservant tout le contexte, doubler la longueur effectivement utilisée double approximativement le KV par requête ; à budget KV fixe, moins de requêtes longues tiennent ensemble. Les autres allocations et les mélanges de longueurs empêchent d'en déduire une concurrence exactement divisée par deux.
+
+La nouvelle limite peut aussi dépasser la capacité vérifiée au démarrage, selon version et configuration. Dimensionner sur le besoin réel, puis mesurer mémoire, préemptions et latence avec des requêtes atteignant cette limite.
 
 ---
 

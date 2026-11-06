@@ -61,10 +61,11 @@ Un téléchargement réussi prouve la disponibilité de l'artefact, pas sa compa
 
 À ne pas confondre : Dockerfile et image OCI ? <!--anki:74493137785359437339-->
 ?
-- **Dockerfile** : la **recette de construction**, un fichier texte propre à l'outillage Docker et BuildKit. Il ne fait **pas** partie des spécifications OCI
-- **Image OCI** : le **résultat** de la construction, au format normalisé (manifest, config, couches)
+Le **Dockerfile** est une recette de build ; l'**image OCI** est un artefact normalisé contenant manifeste, configuration et couches. OCI ne prescrit pas la recette employée.
 
-D'où le fait qu'on puisse produire une image OCI **sans Dockerfile** (Buildpacks, Bazel, Nix, `apptainer build`) et l'exécuter partout.
+Exemple : deux builds du même Dockerfile peuvent produire des digests différents si `FROM` ou des dépendances non épinglées ont changé. Conserver la recette ne suffit donc pas à retrouver l'artefact testé.
+
+Des outils comme Buildpacks, Bazel ou Nix peuvent produire une image OCI sans Dockerfile. En revanche, un build Apptainer produit généralement un SIF, autre format. La normalisation OCI ne garantit pas l'exécution partout : architecture, système et capacités du runtime doivent être compatibles.
 
 ---
 

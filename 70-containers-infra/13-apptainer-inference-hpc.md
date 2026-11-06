@@ -6,9 +6,11 @@ Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou 
 
 Pourquoi préfère-t-on Apptainer à Docker en environnement HPC ? <!--anki:632d364048502c312858-->
 ?
-Parce qu'il est **rootless** et **sans démon** : aucun service privilégié à faire tourner sur des nœuds partagés entre des centaines d'utilisateurs. À cela s'ajoute l'intégration naturelle avec l'existant : **images sur le système de fichiers partagé**, lancement dans un job **Slurm**, accès direct aux **GPU** et aux interconnexions (MPI, InfiniBand).
+Apptainer s'intègre aux **identités Unix, systèmes de fichiers partagés et ordonnanceurs HPC**, sans démon central comparable à Docker Engine. Un job Slurm peut lancer une image SIF avec les droits de l'utilisateur.
 
-Donner l'accès à Docker sur un cluster partagé équivaudrait à donner **root** à tout le monde.
+Exemple : le conteneur lit les données autorisées au compte et utilise les GPU alloués au job ; il ne doit pas contourner les quotas du cluster.
+
+Nuancer la sécurité : Apptainer peut être installé avec un composant setuid selon la configuration ; Docker existe aussi en rootless. C'est l'accès au socket d'un Docker **rootful** qui confère des pouvoirs équivalents à root. Respecter les choix d'installation et politiques des administrateurs.
 
 ---
 

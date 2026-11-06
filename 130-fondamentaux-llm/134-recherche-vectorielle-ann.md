@@ -21,9 +21,13 @@ Au niveau fin, élargir le nombre de candidats explorés augmente généralement
 
 Quels paramètres de HNSW règlent le compromis rappel / coût ? <!--anki:76525d40386e2f777647-->
 ?
-- **M** : nombre de liens par nœud — plus de rappel, plus de mémoire.
-- **ef_construction** : largeur de recherche à la construction — meilleur graphe, construction plus lente.
-- **ef_search** (ou ef) : largeur de recherche à la requête — **le levier principal** au runtime : plus de rappel, plus de latence.
+- **M** contrôle la connectivité du graphe : davantage de liens coûte plus de mémoire.
+- **ef_construction** élargit la recherche à la construction : meilleur graphe potentiel, indexation plus coûteuse.
+- **ef_search** élargit l'exploration à la requête : levier runtime du compromis rappel/latence.
+
+Exemple : fixer `k=10`, puis comparer plusieurs valeurs de `ef_search` aux dix voisins d'une recherche exacte sur un échantillon. Rapporter rappel@10 et latence p95 avec les mêmes filtres.
+
+Augmenter ces paramètres ne garantit pas un gain utile ; les effets dépendent des données et de l'implémentation. `ef_search` n'est pas le nombre de résultats retournés.
 
 ---
 

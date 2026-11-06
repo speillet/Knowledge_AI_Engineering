@@ -52,9 +52,11 @@ Exemple : si le modèle donne 0,90 au premier token, k = 40 conserve 39 candidat
 
 Qu'est-ce que le top-p (nucleus sampling) ? <!--anki:46793e5f305777615e5f-->
 ?
-Garder le **plus petit ensemble de tokens dont la probabilité cumulée atteint p** (ex. 0,9), renormaliser, échantillonner. L'ensemble **s'adapte** : étroit quand le modèle est sûr, large quand il hésite.
+Trier les tokens par probabilité décroissante, garder le **plus petit préfixe atteignant le seuil p**, puis renormaliser et tirer au hasard.
 
-Pour des probabilités 0,6, 0,25, 0,1 et 0,05, un seuil de 0,8 garde les deux premiers tokens, qui cumulent 0,85. On renormalise avant tirage. Le seuil réduit les options peu probables mais ne mesure pas la confiance factuelle ; un modèle peut être très concentré sur une réponse erronée.
+Exemple : pour `0,6 ; 0,25 ; 0,1 ; 0,05`, `top-p=0,8` conserve les deux premiers, de masse totale 0,85. Leurs probabilités de tirage deviennent environ **0,706 et 0,294**, pas 0,6 et 0,25 ; les autres sont exclues.
+
+La taille du noyau s'adapte à la concentration de la distribution. Température et autres filtres peuvent modifier cette distribution selon leur ordre d'application. Le seuil ne mesure pas la vérité : une réponse fausse peut concentrer une probabilité élevée.
 
 ---
 

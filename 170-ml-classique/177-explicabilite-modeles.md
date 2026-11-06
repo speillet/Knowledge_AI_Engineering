@@ -121,13 +121,13 @@ Mise en situation : deux variables très corrélées ont une importance par perm
 
 Mise en situation : le métier lit une contribution SHAP de +0,7 comme « 70 % de risque en plus ». Comment corriges-tu ? <!--anki:3431633238323565336661303438336461613865393037363437333965653834-->
 ?
-1. **Identifier la sortie expliquée**, sa classe, son unité et sa valeur de référence.
-2. **Reconstituer la prédiction** avec les contributions et vérifier l'additivité attendue.
-3. **Montrer la transformation correcte**, par exemple la sigmoïde des log-odds.
-4. **Adapter le libellé de l'interface** et fournir un exemple numérique vérifié.
-5. **Rappeler la portée prédictive**, sans présenter la contribution comme un effet causal.
+1. **Identifier l'espace expliqué** : probabilité, log-odds ou autre score, ainsi que classe et référence.
+2. **Reconstituer la sortie** avec toutes les contributions et vérifier l'additivité attendue.
+3. **Montrer un exemple dans la bonne unité** : si la référence vaut −2 log-odds, que cette contribution vaut +0,7 et que les autres sont nulles, le total vaut −1,3. La sigmoïde passe d'environ 11,9 % à 21,4 %, soit **9,5 points**, pas 70 %.
+4. **Corriger l'interface** : afficher unité et référence ; ne pas transformer séparément chaque contribution par la sigmoïde, qui est non linéaire.
+5. **Rappeler la portée prédictive** : cette décomposition n'est pas l'effet causal d'une intervention.
 
-**Piège** : conserver un graphique séduisant dont l'unité est interprétée de travers.
+**Piège** : confondre contribution additive au score et variation additive de probabilité.
 
 ---
 

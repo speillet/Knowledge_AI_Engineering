@@ -93,13 +93,11 @@ Dans les deux cas, le coût dominant est souvent la **génération des trajectoi
 
 Quand une équipe produit doit-elle faire du RL agentique ? <!--anki:7077524a526d3c78352f-->
 ?
-Rarement en premier. Dans l'ordre :
-1. Prompts, descriptions d'outils et contexte ([[48-patterns-workflows-agentiques|patterns]])
-2. Meilleur modèle ou routage
-3. SFT sur trajectoires réussies
-4. **RL**, si l'on a un **vérificateur fiable**, un **environnement reproductible**, beaucoup de volume et un gain qui justifie des semaines d'ingénierie
+Quand une baseline solide plafonne et que l'équipe possède **récompense vérifiable, environnement contrôlé et budget d'expérimentation**. Commencer généralement par outils, contexte et [[48-patterns-workflows-agentiques|patterns]], puis comparer modèle, routage et SFT avant d'investir dans le RL.
 
-Le RL amplifie ce que le vérificateur récompense : un vérificateur imparfait produit un agent qui l'exploite.
+Exemple : récompenser « ticket fermé » peut apprendre à fermer trop tôt ; vérifier résolution réelle, absence d'action interdite et coût total donne un objectif plus fidèle. Évaluer hors entraînement, avec un contrôle indépendant du vérificateur utilisé pour apprendre.
+
+Prévoir rollouts sans effets métier incontrôlés et surveillance des régressions. Un score de récompense en hausse ne justifie pas le déploiement si qualité réelle ou sûreté se dégradent.
 
 ---
 

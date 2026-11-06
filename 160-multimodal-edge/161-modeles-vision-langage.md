@@ -64,7 +64,11 @@ La réussite dépend du modèle, du contexte et des contrôles ; elle n'est pas 
 
 Qu'est-ce qu'un agent computer use ? <!--anki:4f7c725d4e73705f5f2a-->
 ?
-Un agent qui **voit l'écran** (captures successives) et agit par **clics, frappes et défilement** pour utiliser n'importe quelle interface graphique. Puissant pour les applications **sans API**, mais **lent**, coûteux (une image par étape) et risqué : il faut une **VM ou un navigateur isolés**, des permissions minimales et des confirmations pour les actions sensibles.
+Un agent qui observe une interface, notamment par captures d'écran, puis agit par **clics, saisie et défilement**. Il peut aussi exploiter le DOM ou l'accessibilité selon l'outillage.
+
+Exemple : remplir un formulaire dans une application sans API, puis vérifier le récapitulatif avant validation. Un clic envoyé ne prouve pas que le champ a été rempli ni que la transaction a réussi.
+
+Ces agents restent sensibles aux changements d'écran, chargements et dialogues inattendus ; ils ne maîtrisent pas toute interface. Préférer une API fiable lorsqu'elle existe. Sinon, isoler l'environnement, limiter les permissions et exiger une confirmation pour les effets sensibles.
 
 ---
 

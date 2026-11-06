@@ -84,10 +84,11 @@ Le **mmap** projette le fichier en mémoire sans copie intermédiaire : les proc
 
 À ne pas confondre : safetensors et GGUF ? <!--anki:3636316535383632616663663462353961326137313766323332643535323562-->
 ?
-- **safetensors** : le format standard des checkpoints Hugging Face, en BF16 ou déjà quantizés (FP8, AWQ, GPTQ), que chargent **vLLM, SGLang et Transformers** pour le serving GPU
-- **GGUF** : le format **fichier unique** de llama.cpp et Ollama, qui embarque poids **quantizés** (Q4_K_M, Q8_0…), tokenizer et métadonnées, pour l'inférence **locale ou sur CPU**
+**safetensors** stocke des tenseurs sans exécuter de code Python à la désérialisation ; configuration et tokenizer sont généralement séparés. **GGUF** regroupe tenseurs et métadonnées pour des runtimes comme llama.cpp, avec plusieurs précisions possibles.
 
-Un même modèle est souvent publié dans les deux formats ([[164-llm-local-edge|LLM locaux]], [[68-quantization|quantization]]).
+Ni l'un ni l'autre ne garantit une quantification particulière. GGUF n'est pas réservé au CPU et peut être réparti en plusieurs fichiers ; safetensors ne garantit pas à lui seul la sûreté de tout le code du dépôt.
+
+Exemple : renommer un checkpoint ne convertit pas son format. Choisir une conversion et une [[68-quantization|quantification]] prises en charge par le runtime, puis contrôler tokenizer, qualité et mémoire ([[164-llm-local-edge|inférence locale]]).
 
 ---
 
