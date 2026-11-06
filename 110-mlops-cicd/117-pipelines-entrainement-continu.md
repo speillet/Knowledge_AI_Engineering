@@ -66,6 +66,8 @@ Le run doit relier le score à ce qui l'a produit : **hyperparamètres et graine
 
 `mlflow.autolog()` capture les paramètres et métriques du framework, mais ni la version des données ni les segments métier : il faut les ajouter. Deux runs sans snapshot identifié ne se comparent pas, même avec un code identique.
 
+Archiver aussi l'environnement et le protocole de split. Un artefact modèle rechargeable ne garantit pas que son score soit reproductible si la requête SQL source renvoie désormais d'autres lignes.
+
 ---
 
 À quoi sert la signature d'un modèle enregistré dans MLflow, et que ne vérifie-t-elle pas ? <!--anki:6239663931636263656563383439313061333262393861346664663238353164-->
@@ -85,6 +87,8 @@ client.set_registered_model_alias("fraude", "champion", 8)
 modele = mlflow.pyfunc.load_model("models:/fraude@champion")
 ```
 Le rollback replace l'alias sur la version 7. Un service qui a chargé le modèle au démarrage garde cependant l'ancienne version jusqu'à son rechargement : prévoir ce rechargement et journaliser la **version résolue**, pas l'alias. Des tags comme `validation_status=approved` consignent les décisions.
+
+Un tag d'approbation n'est pas un contrôle d'accès. Limiter qui peut déplacer l'alias et tester la version chargée par chaque réplica après promotion.
 
 ---
 

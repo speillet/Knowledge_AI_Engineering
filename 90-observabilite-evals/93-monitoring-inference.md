@@ -25,6 +25,8 @@ Au format Prometheus, sur `/metrics` :
 - **Volume** : `vllm:prompt_tokens_total`, `vllm:generation_tokens_total`, `vllm:request_success_total` (label `finished_reason`)
 
 Les noms évoluent d'une version à l'autre : vérifier sur `/metrics`. Voir [[64-metriques-slo-inference|métriques & SLO]].
+
+Ces agrégats peuvent masquer un réplica saturé : ventiler aussi par instance et modèle. Une moyenne de KV à 50 % peut cacher un GPU plein et un autre vide ; elle ne décrit pas la capacité disponible pour chaque requête.
 ```promql
 # TTFT p95 sur 5 minutes
 histogram_quantile(0.95,
@@ -169,6 +171,8 @@ Quels contrôles avant d'envoyer du trafic à un nouveau déploiement ? <!--anki
 Comment détecter une régression après un changement de modèle ou de configuration ? <!--anki:6965217e3d6c7a2a2879-->
 ?
 En étiquetant **toutes les métriques** avec le modèle, sa révision et la configuration de serving (quantization, speculative decoding, version du moteur). On compare alors la **nouvelle version et l'ancienne sur le même trafic** : latences, erreurs, taux de validation, `finish_reason`, scores de qualité. Côté evals, on compare **question par question** ([[114-reproductibilite-variance|comparaison appariée]]).
+
+Garder des labels à cardinalité bornée : un identifiant de requête appartient aux traces, pas aux séries Prometheus. Contrôler aussi le mix de longueurs et de clients ; une hausse de latence peut venir du trafic plutôt que de la release.
 
 ---
 

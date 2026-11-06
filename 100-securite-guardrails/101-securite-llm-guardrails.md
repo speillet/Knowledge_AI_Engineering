@@ -22,10 +22,10 @@ Elle est **directe** dans une demande utilisateur ou **indirecte** dans une page
 
 À ne pas confondre : injection directe et injection indirecte ? <!--anki:4a452b7d3f7c7c5b5855-->
 ?
-- **Directe** : l'utilisateur tape lui-même l'injection dans sa requête. Il n'attaque que sa propre session, avec ses propres droits
+- **Directe** : l'instruction hostile arrive dans la requête de l'utilisateur.
 - **Indirecte** : elle est cachée dans un **contenu tiers** que le modèle lit : page web, document [[22-rag-avance|RAG]], e-mail, résultat d'outil ou de serveur [[33-mcp|MCP]]
 
-L'indirecte est la plus dangereuse pour les agents : l'attaquant n'a pas besoin d'accès au système, et l'agent agit avec les **droits de la victime**.
+L'indirecte peut atteindre un agent sans accès à sa session. Dans les deux cas, l'impact dépend des **permissions effectives de l'application**, parfois supérieures à celles de l'émetteur. Une identité utilisateur valide ne rend pas son texte digne de confiance ; contrôler les actions indépendamment des instructions du modèle.
 
 ---
 
@@ -104,7 +104,7 @@ chunks = index.search(
             "groupes": {"$in": session.groupes}},   # imposé côté serveur
 )
 ```
-Deux règles : le filtre est **construit par le code** à partir de l'identité vérifiée, et il est appliqué **pendant** la recherche, pas après ([[134-recherche-vectorielle-ann|filtrage et index ANN]]).
+Le filtre vient du code et doit bloquer toute **exposition non autorisée**, y compris aux rerankers, caches et citations. Certains moteurs filtrent après un parcours ANN interne : cela peut réduire le rappel, sans imposer d'envoyer les candidats interdits au modèle ([[134-recherche-vectorielle-ann|filtrage et index ANN]]). Tester deux rôles et une révocation, pas seulement deux questions.
 
 ---
 

@@ -174,6 +174,8 @@ Top 10 OWASP agentique : que sont le mauvais usage des outils et l'exécution de
 - **Mauvais usage des outils** (ASI02) : l'agent utilise un outil légitime de façon dangereuse (suppression, envoi en masse). Parade : validation des arguments, quotas, approbation des actions à risque
 - **Exécution de code inattendue** (ASI05) : l'agent génère et lance du code ou des commandes dangereuses. Parade : sandbox isolée, sans secrets, au réseau filtré
 
+La séparation aide au diagnostic : une API autorisée appelée sur la mauvaise ressource relève de l'autorisation métier ; un processus lancé hors confinement relève du contrôle d'exécution. Tester les deux frontières, car une sandbox ne valide pas les arguments d'une API distante.
+
 ---
 
 Top 10 OWASP agentique : que sont l'abus d'identité et la communication inter-agents non sécurisée ? <!--anki:773b325725532a2d5d67-->
@@ -187,6 +189,8 @@ Top 10 OWASP agentique : que sont la chaîne d'approvisionnement et l'empoisonne
 ?
 - **Chaîne d'approvisionnement** (ASI04) : outils, serveurs MCP, plugins ou skills malveillants ou compromis. Parade : registre interne, versions épinglées, analyse avant autorisation ([[104-securite-mcp-skills|MCP & skills]])
 - **Empoisonnement du contexte et de la mémoire** (ASI06) : données récupérées ou mémorisées falsifiées, qui orientent les décisions suivantes. Parade : provenance, politique d'écriture, cloisonnement, purge
+
+Une version épinglée garantit une identité d'artefact, pas son innocuité. Prévoir retrait du registre, révocation des accès et recherche des exécutions ayant consommé une version compromise ; la traçabilité rend cette réponse possible.
 
 ---
 

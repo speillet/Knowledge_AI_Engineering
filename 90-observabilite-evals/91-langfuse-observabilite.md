@@ -14,6 +14,8 @@ Une plateforme **open source d'observabilité LLM**, auto-hébergeable ou en Saa
 
 Alternatives : LangSmith, Arize Phoenix, Braintrust, ou des traces OpenTelemetry dans un outil d'observabilité existant ([[93-monitoring-inference|monitoring]]).
 
+Une trace n'est pas une évaluation : elle montre ce qui s'est passé, pas si la décision était correcte. Ajouter des scores reliés à des critères explicites et contrôler la couverture des étapes instrumentées.
+
 ---
 
 Pourquoi l'observabilité LLM diffère-t-elle de l'APM classique ? <!--anki:6678545e5a4b5374595b-->
@@ -45,6 +47,8 @@ Que permet le suivi des sessions et des users ? <!--anki:63492c7126682c43374f-->
 De **regrouper les traces par conversation ou par utilisateur** : suivre un parcours de bout en bout, retrouver l'historique d'un cas signalé au support, repérer les utilisateurs qui reformulent sans cesse (signal d'échec) et attribuer les coûts par client ou par équipe ([[122-finops-llm|FinOps]]).
 
 Attention : un identifiant utilisateur est une **donnée personnelle**. On préfère un identifiant **pseudonyme** ([[152-pii-confidentialite|PII]]).
+
+La pseudonymisation ne rend pas les données anonymes si le lien reste possible. Séparer identifiant métier, session et trace, limiter les accès et la rétention. Deux conversations d'un même utilisateur ne doivent pas être fusionnées en une seule exécution.
 
 ---
 

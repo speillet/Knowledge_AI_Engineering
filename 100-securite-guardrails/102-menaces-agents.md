@@ -111,6 +111,8 @@ Qu'est-ce que l'empoisonnement de la mémoire d'un agent ? <!--anki:47756c463848
 ?
 L'attaquant fait écrire dans la **mémoire long terme** de fausses informations ou des **instructions** (par une conversation, un document, un e-mail). Contrairement à une injection classique, elle **persiste entre les sessions** et peut toucher **d'autres utilisateurs** si la mémoire est partagée (risque ASI06 de l'OWASP). Voir [[39-memoire-agents|mémoire des agents]] et les parades dans [[103-defenses-agents|architecture défensive]].
 
+Conserver source, auteur, date et portée de chaque souvenir permet de retirer les faits dérivés d'une source compromise. Une mémoire ne doit pas transformer un contenu externe en règle système simplement parce qu'il a été résumé.
+
 ---
 
 Qu'est-ce que l'injection invisible (ASCII smuggling) ? <!--anki:737b2855215e3b6f3e53-->
@@ -157,6 +159,8 @@ D'où la sandbox isolée, sans secrets et au réseau filtré ([[103-defenses-age
 Les attaquants utilisent-ils eux-mêmes des agents ? <!--anki:74636f2c60696d682f58-->
 ?
 **Oui.** En novembre 2025, Anthropic a révélé qu'un groupe étatique avait utilisé **Claude Code** pour automatiser **80 à 90 %** d'une campagne d'espionnage contre une trentaine de cibles : reconnaissance, recherche de failles, exploitation, tri des données volées. Les agents **abaissent le coût des attaques** ; la défense doit aussi s'automatiser (détection, tri des alertes, correctifs).
+
+Ces chiffres décrivent le cas rapporté, pas toutes les attaques ni leur taux de réussite. Côté défense, vérifier surtout délais de détection, révocation des accès et confinement lors d'exercices autorisés.
 
 ---
 

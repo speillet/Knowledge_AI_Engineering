@@ -52,6 +52,8 @@ Rejouer le **golden dataset à chaque modification** de prompt ou de modèle, so
 
 On regarde les scores globaux **et** les cas qui **basculent** de réussi à échoué : un score stable peut masquer dix régressions compensées par dix améliorations.
 
+Fixer des critères bloquants par risque : un gain rédactionnel ne compense pas une fuite entre clients. Rejouer les cas stochastiques si nécessaire, avec le même protocole pour les deux versions, et examiner les écarts appariés.
+
 ---
 
 Pourquoi les evals sont-elles un prérequis au déploiement ? <!--anki:4d4f4667637553714c55-->
@@ -59,6 +61,8 @@ Pourquoi les evals sont-elles un prérequis au déploiement ? <!--anki:4d4f46676
 Sans mesure, impossible de **choisir un modèle**, de **[[82-routing-llm|router]]**, de valider un changement de prompt ou de savoir si une optimisation de coût a dégradé la qualité : on pilote à l'aveugle, sur des impressions tirées de quelques exemples.
 
 Un jeu d'eval de quelques centaines de cas représentatifs est le premier livrable d'un projet LLM, avant le prompt définitif.
+
+Ce volume est un point de départ, pas une preuve suffisante pour les événements rares. Compléter par des cas critiques ciblés et déclarer les limites : zéro erreur observée sur 100 essais ne démontre pas une fiabilité de 100 %.
 
 ---
 

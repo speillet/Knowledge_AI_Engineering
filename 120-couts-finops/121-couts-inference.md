@@ -85,6 +85,8 @@ Quels leviers techniques réduisent le coût d'inférence d'un LLM ? <!--anki:4a
 
 Toujours mesurer l'effet sur la qualité : une économie qui fait chuter le taux de réussite augmente le **coût par tâche réussie**.
 
+Exemple fictif : passer de 0,04 € à 80 % de réussite à 0,03 € à 50 % fait passer le coût par réussite de 0,05 € à 0,06 €. Inclure aussi les reprises et la vérification humaine.
+
 ---
 
 Que coûte réellement le contexte long ? <!--anki:70715578642e522529-->
@@ -100,6 +102,8 @@ Qu'est-ce que les unit economics d'une feature LLM ? <!--anki:7135367b5678255e2b
 Le **coût par requête / utilisateur / feature rapporté à la valeur produite** — la métrique qui décide si une feature IA est viable.
 
 Par exemple, rapporter le coût total d'un dossier traité au temps effectivement économisé ou à la marge générée. Inclure retries, échecs, vérification humaine et outils externes. Une moyenne par requête peut masquer un petit nombre de tâches très coûteuses ; segmenter par usage et suivre aussi les percentiles.
+
+Distinguer coût marginal et coût complet : un GPU déjà payé peut rendre un appel supplémentaire bon marché, sans rendre rentable une feature qui immobilise la capacité toute la journée.
 
 ---
 

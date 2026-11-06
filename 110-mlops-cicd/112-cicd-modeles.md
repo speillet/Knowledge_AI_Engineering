@@ -38,6 +38,8 @@ Quatre références distinctes, à tracer **ensemble** :
 
 Un manifeste de release qui les regroupe permet de redéployer ou d'annuler l'ensemble d'un coup.
 
+Exemple : image v7, prompt v12, poids révision R et index I4 forment une combinaison testée. Déplacer seulement le label du modèle peut casser un schéma d'outil attendu par cette image. Vérifier la compatibilité du manifeste entier.
+
 ---
 
 À ne pas confondre : blue/green et canary pour un modèle ? <!--anki:4c433e55363b3a3f6e2a-->
@@ -62,6 +64,8 @@ Comment fonctionne le rollback d'un modèle ? <!--anki:7a484c43315e344e4931-->
 On revient à la **version précédente** du modèle, de l'adapter ou du prompt, par exemple en redéplaçant une étiquette dans le registry.
 
 Conditions : un versioning strict, l'ancienne version **encore disponible** (un modèle d'API peut avoir été retiré), et des **schémas de sortie compatibles**, sinon les systèmes en aval cassent. Un rollback se **teste** avant d'en avoir besoin.
+
+Après bascule, tracer la version réellement servie : caches et réplicas peuvent conserver l'ancienne cible du label. Vérifier un cas métier connu et les files en cours ; modifier une référence dans le registre n'est pas la preuve du rétablissement.
 
 ---
 

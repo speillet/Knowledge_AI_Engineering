@@ -11,6 +11,8 @@ En deux étages :
 
 Un mauvais score global ne dit pas lequel corriger ; les métriques par étage, si.
 
+Faire un test oracle : fournir au générateur les passages de référence. Si l'échec persiste, améliorer le retrieval seul ne suffit pas. Si la réponse devient correcte, comparer les preuves réellement récupérées et leurs versions au contexte oracle.
+
 ---
 
 Que mesurent recall@k, MRR et nDCG ? <!--anki:4a7e6f715833634b5574-->
@@ -42,6 +44,8 @@ Valider le juge ou les annotateurs. Une affirmation vraie mais non étayée peut
 Comment construire un jeu d'eval de retrieval sans annotation manuelle massive ? <!--anki:492e45662f7739523f5b-->
 ?
 **Génération synthétique** : pour chaque chunk, faire écrire par un LLM des **questions dont ce chunk est la réponse** → paires (question, chunk attendu). À compléter par des **questions réelles** annotées, car les questions synthétiques sont souvent **trop proches du texte** (recouvrement lexical) et surestiment le recall.
+
+Un chunk générateur n'est pas forcément l'unique passage pertinent. Annoter les alternatives acceptables et ajouter des questions sans réponse, ambiguës ou portant sur plusieurs passages ; sinon le jeu favorise artificiellement la récupération d'un seul texte source.
 
 ---
 

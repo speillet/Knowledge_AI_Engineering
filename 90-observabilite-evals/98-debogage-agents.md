@@ -28,6 +28,8 @@ Elle révèle les **vrais** modes d'échec du système, avant de choisir quoi me
 
 On corrige la **première erreur** de la trace : les suivantes en découlent souvent.
 
+La première anomalie observée reste une hypothèse causale. Rejouer avec cette étape corrigée ou simulée, en gardant le reste constant, puis vérifier si l'échec disparaît. Plusieurs défauts indépendants peuvent coexister dans la même trace.
+
 ---
 
 Quelles catégories d'échec d'agent rencontre-t-on le plus souvent ? <!--anki:727553234b4d6c736937-->
@@ -94,6 +96,8 @@ Quels signaux de production pointent vers les traces à lire ? <!--anki:43695d44
 - **Échantillon aléatoire**, pour trouver les échecs silencieux
 
 Lire chaque semaine un lot de traces reste l'activité la plus rentable pour améliorer un agent ([[93-monitoring-inference|monitoring]]).
+
+Combiner sélection par risque et tirage aléatoire : les seules traces lentes ignorent les erreurs rapides et convaincantes. Versionner les cas retenus et limiter leur contenu sensible avant de les transformer en régressions.
 
 ---
 

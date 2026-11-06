@@ -102,6 +102,8 @@ Comment encadrer les pull requests produites par des agents ? <!--anki:422528524
 - **Compte dédié** à l'agent (bot) pour tracer qui a écrit quoi
 - Les **tests et scans de sécurité** passent obligatoirement avant fusion
 
+Vérifier que le compte de l'agent ne peut pas modifier ces protections ni contourner les contrôles requis. Une CI verte ne remplace pas la relecture des changements sensibles, notamment lorsqu'une PR modifie aussi les tests qui la valident.
+
 ---
 
 Comment protéger les secrets face aux agents de code ? <!--anki:7441306c3a563f2f7e41-->
@@ -120,6 +122,8 @@ Quelle politique d'entreprise pour les outils de code IA ? <!--anki:555b5e314e2a
 - **Paramètres gérés centralement** et non modifiables par l'utilisateur : règles de refus, sandbox, serveurs MCP autorisés
 - **Serveurs MCP et skills** issus du registre interne uniquement ([[104-securite-mcp-skills|MCP & skills]])
 - **Télémétrie** envoyée au SIEM, **formation** des développeurs, et **processus d'incident** connu
+
+Vérifier contractuellement rétention, usage des données et sous-traitants : l'étiquette « entreprise » ne suffit pas. Prévoir une procédure de retrait d'un outil approuvé et de révocation de ses accès si les conditions ou le risque changent.
 
 ---
 

@@ -101,6 +101,8 @@ Les données de production **nourrissent** l'amélioration continue.
 
 La **curation** transforme un signal brut en exemple exploitable : vérifier l'erreur, enlever les données inutiles, produire une référence et choisir le bon jeu. Garder un test indépendant évite d'optimiser uniquement les incidents déjà vus. Mesurer après déploiement si la correction améliore réellement l'usage sans dégrader d'autres segments.
 
+Un pouce négatif ne fournit pas la bonne réponse. Faire annoter la cause avant entraînement : erreur factuelle, délai excessif et désaccord utilisateur demandent des corrections différentes.
+
 ---
 
 Quand réentraîner ou fine-tuner à nouveau un modèle en production ? <!--anki:69216450773565735339-->
@@ -146,6 +148,8 @@ Comment alerter sur une baisse de qualité d'une application LLM en production ?
 Comme sur la disponibilité : des **seuils** sur les scores de qualité, les taux de refus et d'erreurs, les latences, **par segment**, reliés aux [[64-metriques-slo-inference|SLO]].
 
 Précautions : alerter sur une **tendance** (moyenne glissante sur plusieurs heures) plutôt que sur un point isolé, car les scores d'échantillons sont bruités, et joindre à l'alerte des **exemples de traces** pour diagnostiquer vite.
+
+Inclure effectif évalué et couverture : une moyenne stable calculée sur la moitié des requêtes peut masquer une panne du juge. Les incidents critiques, comme une fuite de données confirmée, exigent une réaction sans attendre une tendance.
 
 ---
 

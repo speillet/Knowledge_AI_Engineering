@@ -47,6 +47,8 @@ Comment rédiger un bon prompt de juge ? <!--anki:6939636d73502e7a64-->
 - Sortie **structurée** ([[63-guided-generation|JSON]]) pour l'agrégation.
 - Fournir le **contexte nécessaire** (documents, consigne originale).
 
+Inclure un cas correct mais peu élégant et un cas fluide mais faux pour vérifier que le juge note le bon critère. Traiter le texte évalué comme une donnée, jamais comme une instruction modifiant la grille.
+
 ---
 
 Comment valider un juge LLM ? <!--anki:446d7b2f5475595e5641-->
@@ -79,6 +81,8 @@ L'inversion suppose des TPR/TNR applicables à la population visée et un dénom
 Faut-il utiliser un modèle plus fort que le modèle évalué ? <!--anki:677a4f344a67506e7d57-->
 ?
 Souvent oui pour les critères difficiles, mais ce n'est **pas obligatoire** : vérifier une propriété précise est plus facile que produire la réponse. Un **petit modèle bien prompté et validé** peut suffire et coûte bien moins cher. On évite si possible le **même modèle** que le système évalué (auto-préférence).
+
+Comparer les erreurs du juge à des annotations humaines par catégorie, pas seulement son accord moyen. Pour une somme ou un identifiant exact, un contrôle déterministe peut être plus fiable et moins cher qu'un modèle, même très puissant.
 
 ---
 

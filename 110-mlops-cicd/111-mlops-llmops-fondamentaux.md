@@ -36,6 +36,8 @@ Quels artefacts de code et de configuration faut-il versionner dans un système 
 
 Changer l'un d'eux change le comportement : chaque réponse en production doit pouvoir être reliée à la **combinaison exacte** qui l'a produite ([[13-prompts-production|prompts en production]]).
 
+Un manifeste peut relier `git_sha`, version du prompt, modèle et empreinte de configuration. Ne pas y copier les secrets : conserver leurs références et les droits d'accès nécessaires, séparément des artefacts versionnés.
+
 ---
 
 Quels artefacts de modèle et de données faut-il versionner dans un système LLM ? <!--anki:364c47756e29552b3e-->
@@ -45,6 +47,8 @@ Quels artefacts de modèle et de données faut-il versionner dans un système LL
 - Les **index RAG** : documents sources, chunking et modèle d'embedding ([[153-data-flywheel-versioning|versioning]])
 
 Un score d'eval sans la version du jeu de test ne veut rien dire.
+
+Conserver aussi le split, les annotations et la politique de filtrage. Deux index utilisant les mêmes documents mais des chunks ou embeddings différents sont deux artefacts distincts ; un nom de dossier « corpus-production » ne suffit pas à les reproduire.
 
 ---
 
