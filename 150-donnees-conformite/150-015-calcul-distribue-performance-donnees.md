@@ -8,7 +8,7 @@ Quand distribuer un traitement de données plutôt que l’exécuter sur une mac
 ?
 Lorsque **volume, temps de traitement, concurrence ou tolérance aux pannes** dépassent ce qu'une machine adaptée peut fournir à coût acceptable. Comparer d'abord une exécution locale vectorisée, éventuellement capable de déborder sur disque, à la solution distribuée.
 
-Distribuer ajoute coordination, transferts et exploitation ; un petit job peut devenir plus lent. Un volume supérieur à la RAM n'impose pas toujours un cluster si le moteur peut traiter par blocs. Mesurer mémoire maximale, I/O, durée et coût sur une charge représentative, avec une réserve adaptée au pic.
+Distribuer ajoute coordination, transferts et exploitation ; un petit job peut devenir plus lent. Un volume supérieur à la RAM n'impose pas toujours un cluster : DuckDB peut agréger 200 Go de Parquet sur une machine de 64 Go en débordant sur disque. Mesurer mémoire maximale, I/O, durée et coût sur une charge représentative, avec une réserve adaptée au pic.
 
 ---
 
@@ -16,7 +16,13 @@ Distribuer ajoute coordination, transferts et exploitation ; un petit job peut d
 ?
 Une **transformation paresseuse** construit un plan sans nécessairement le calculer immédiatement. Une **action** demande un résultat et déclenche son exécution. Cette séparation permet à l'optimiseur de combiner des opérations et de réduire des lectures.
 
-Définir une transformation sans lancer d'action ne mesure pas le temps réel du pipeline. Plusieurs actions peuvent aussi recalculer des étapes si elles ne sont pas réutilisées ou persistées. Inclure exécution, écriture et validation dans le benchmark, et comprendre si le résultat observé provient de données froides ou déjà en cache.
+Définir une transformation sans lancer d'action ne mesure pas le temps réel du pipeline.
+```python
+df = spark.read.parquet("s3://ventes/").filter("pays = 'FR'")  # plan seulement
+df.count()                          # action : lecture, filtre poussé dans le scan
+df.write.parquet("s3://sortie/")    # seconde action : tout est relu sans persistance
+```
+Inclure exécution, écriture et validation dans le benchmark, et comprendre si le résultat observé provient de données froides ou déjà en cache.
 
 ---
 
@@ -24,7 +30,7 @@ Qu’est-ce qu’un shuffle dans un calcul distribué ? <!--anki:643839663336356
 ?
 Un **shuffle** redistribue les données entre partitions, souvent entre machines, pour rapprocher celles nécessaires à une jointure, un tri ou une agrégation. Il peut coûter réseau, sérialisation, mémoire et disque.
 
-Filtrer les lignes, projeter les colonnes et préagréger lorsque c'est valide peut réduire les octets échangés. Tous les opérateurs de même nom ne produisent pas le même plan : partitionnement existant et moteur comptent. Inspecter le plan physique et les métriques d'échange ; davantage de CPU ne répare pas forcément un réseau saturé.
+Filtrer les lignes, projeter les colonnes et préagréger lorsque c'est valide peut réduire les octets échangés. Tous les opérateurs de même nom ne produisent pas le même plan : partitionnement existant et moteur comptent. Inspecter le plan physique, où Spark affiche un shuffle comme `Exchange hashpartitioning(client_id, …)`, et les métriques d'échange ; davantage de CPU ne répare pas forcément un réseau saturé.
 
 ---
 
@@ -32,7 +38,7 @@ Pourquoi le nombre de partitions de calcul est-il un compromis ? <!--anki:306630
 ?
 Trop peu de partitions limitent le **parallélisme** et augmentent la mémoire par tâche ; trop de petites partitions accroissent les frais de planification et les petits fichiers produits. Leur taille peut être très inégale malgré un nombre apparemment correct.
 
-Distinguer partitions de fichiers, partitions d'un shuffle et partitions métier de table. Choisir à partir des tailles observées, des ressources par tâche et de la concurrence, puis inspecter la distribution des durées. Un `repartition(1)` peut simplifier la sortie tout en créant un goulot et un risque mémoire.
+Distinguer partitions de fichiers, partitions d'un shuffle et partitions métier de table. Exemple : avec les 200 partitions de shuffle par défaut de Spark, 2 To donnent des tâches d'environ 10 Go ; 4 000 partitions ramènent chacune vers 500 Mo. L'exécution adaptative peut ensuite fusionner les trop petites. Un `repartition(1)` peut simplifier la sortie tout en créant un goulot et un risque mémoire.
 
 ---
 
@@ -40,7 +46,7 @@ Comment reconnaître un skew de clés dans une jointure ou une agrégation distr
 ?
 Le **skew** apparaît lorsque certaines clés concentrent beaucoup plus de données ou de travail. Quelques tâches deviennent très longues ou débordent en mémoire tandis que les autres sont terminées.
 
-Comparer tailles de partitions, durées et clés fréquentes, y compris les valeurs nulles ou par défaut. Les réponses possibles incluent préagrégation, traitement séparé des clés chaudes ou stratégies adaptatives du moteur. Ajouter des workers ne partage pas automatiquement une clé indivisible. Vérifier d'abord qu'une jointure erronée n'est pas la cause de la concentration.
+Comparer tailles de partitions, durées et clés fréquentes, y compris les valeurs nulles ou par défaut : `GROUP BY client_id ORDER BY count(*) DESC LIMIT 10` révèle par exemple 30 % des lignes sur `client_id` nul. Les réponses possibles incluent préagrégation, traitement séparé des clés chaudes ou `spark.sql.adaptive.skewJoin.enabled`, qui découpe les partitions trop grosses d'une jointure. Ajouter des workers ne partage pas automatiquement une clé indivisible. Vérifier d'abord qu'une jointure erronée n'est pas la cause de la concentration.
 
 ---
 
@@ -48,7 +54,7 @@ Quand une jointure broadcast est-elle utile et quel risque mémoire introduit-el
 ?
 Elle diffuse une **petite relation** aux workers pour éviter de redistribuer la grande selon la clé de jointure. Elle convient si la petite relation et la structure nécessaire à la jointure tiennent dans la mémoire disponible des exécutants.
 
-La taille compressée sur disque sous-estime souvent la taille décodée et la table de hachage. Tenir compte des tâches concurrentes et du coût de diffusion. Un seuil ou un hint ne prouve pas la faisabilité. Comparer plans, pic mémoire et durée ; vérifier la sémantique et le support du type de jointure.
+La taille compressée sur disque sous-estime souvent la taille décodée et la table de hachage. Spark diffuse automatiquement une table estimée sous `spark.sql.autoBroadcastJoinThreshold`, 10 Mo par défaut, et le hint `broadcast(ref)` force la diffusion au-delà : ni l'un ni l'autre ne prouve qu'elle tient en mémoire. Comparer plans, pic mémoire et durée ; vérifier la sémantique et le support du type de jointure.
 
 ---
 
@@ -56,7 +62,15 @@ Comment le salting peut-il répartir une clé chaude sans fausser une agrégatio
 ?
 Ajouter un **suffixe de répartition** à la clé chaude permet de produire plusieurs agrégats partiels, puis de les combiner en retirant ce suffixe. La fonction doit être combinable correctement.
 
-Pour une moyenne, conserver somme et effectif ; moyenner les moyennes partielles sans poids est incorrect. Une jointure salée peut exiger de répliquer les correspondances de l'autre côté, ce qui augmente les données. Tester comptes et sommes après recombinaison. Le salting n'est pas une recette universelle : les fonctions non décomposables et les exigences d'ordre limitent son usage.
+Pour une moyenne, conserver somme et effectif ; moyenner les moyennes partielles sans poids est incorrect.
+```python
+sale = df.withColumn("sel", (F.rand() * 16).cast("int"))
+partiel = sale.groupBy("client", "sel").agg(F.sum("montant").alias("s"), F.count("montant").alias("n"))
+final = partiel.groupBy("client").agg(
+    F.when(F.sum("n") > 0, F.sum("s") / F.sum("n")).alias("moyenne")
+)
+```
+Une jointure salée peut exiger de répliquer les correspondances de l'autre côté, ce qui augmente les données. Tester comptes et sommes après recombinaison. Le salting n'est pas une recette universelle : les fonctions non décomposables et les exigences d'ordre limitent son usage.
 
 ---
 
@@ -64,7 +78,7 @@ Pourquoi collecter un résultat distribué sur le driver peut-il provoquer une p
 ?
 Une opération comme **collect** rapatrie le résultat dans le processus coordinateur. La mémoire totale du cluster ne protège pas ce processus, qui peut devoir recevoir et matérialiser toutes les lignes.
 
-Pour inspecter, prendre un échantillon ou une limite maîtrisée ; pour publier, écrire depuis les partitions vers un stockage adapté. Agréger avant de rapatrier seulement un petit résultat. Vérifier aussi les conversions en objets Python, souvent plus volumineuses que les données compactes. Augmenter la RAM du driver peut repousser la panne sans corriger une collecte sans borne.
+Pour inspecter, `df.limit(1000).toPandas()` ; pour publier, `df.write.parquet(...)` depuis les partitions. Dans Spark, `spark.driver.maxResultSize`, 1 Go par défaut, borne les résultats sérialisés, **pas le pic mémoire après décodage**. Même 1 000 lignes très larges peuvent déborder. Agréger avant de rapatrier un petit résultat et mesurer sa taille. Augmenter la RAM du driver peut repousser la panne sans corriger une collecte sans borne.
 
 ---
 
@@ -72,7 +86,7 @@ Pourquoi préférer des expressions natives aux UDF ligne par ligne quand elles 
 ?
 Les expressions natives sont souvent **visibles de l'optimiseur** et exécutées de manière vectorisée. Une UDF opaque, notamment avec un passage entre runtimes, peut introduire sérialisation, allocations et perte d'optimisations.
 
-Une UDF reste utile pour une logique non exprimable autrement ; la traiter par lots peut réduire les surcoûts. Comparer les résultats sur nulls, types et encodages, puis mesurer la performance. Des appels réseau ou LLM dans une UDF ajoutent aussi quotas, reprises et effets répétés : leur orchestration doit être explicite.
+Exemple : `F.lower(F.col("email"))` reste dans le moteur ; `udf(lambda s: s.lower())` envoie chaque ligne à Python ; une `pandas_udf` traite des lots Arrow. Une UDF reste utile pour une logique non exprimable autrement. Comparer les résultats sur nulls, types et encodages, puis mesurer la performance. Des appels réseau ou LLM dans une UDF ajoutent aussi quotas, reprises et effets répétés : leur orchestration doit être explicite.
 
 ---
 
@@ -80,7 +94,7 @@ Quand persister un résultat intermédiaire de pipeline en mémoire ou sur disqu
 ?
 Lorsque sa **réutilisation** économise davantage que son coût de matérialisation, de stockage et de gestion. Un intermédiaire calculé une seule fois n'a pas automatiquement intérêt à être mis en cache.
 
-Évaluer taille décodée, nombre de consommateurs, invalidation et pression mémoire. Libérer les résultats devenus inutiles et identifier la version source associée. Un cache peut accélérer un benchmark tout en masquant le coût d'un premier passage. Persister pour accélérer n'est pas la même chose que publier une version durable et auditée d'un dataset.
+Exemple : une table de features nettoyée alimente trois agrégats ; `df.persist()` avant les trois actions évite trois relectures, puis `df.unpersist()` libère la mémoire. Évaluer aussi taille décodée, invalidation et version source associée. Un cache peut accélérer un benchmark tout en masquant le coût d'un premier passage. Persister pour accélérer n'est pas la même chose que publier une version durable et auditée d'un dataset.
 
 ---
 
@@ -88,7 +102,7 @@ Comment choisir entre agrégat exact et agrégat approximatif sur de grands volu
 ?
 Un agrégat **approximatif** peut réduire mémoire et échanges pour estimer cardinalités ou quantiles, avec une erreur dépendant de l'algorithme et des paramètres. Il peut convenir au suivi exploratoire si sa précision suffit à la décision.
 
-Pour un contrôle d'unicité, une facturation ou un seuil contractuel, vérifier si l'approximation est acceptable ; une estimation ne prouve pas l'absence de doublons. Documenter erreur, population et propriétés de fusion. Comparer à un résultat exact sur un périmètre maîtrisé, sans extrapoler une précision universelle à tous les jeux de données.
+Exemple : `approx_count_distinct("user_id", rsd=0.01)` vise un **écart-type relatif** de 1 %, pas une erreur maximale garantie de 1 %. Il ne prouve pas l'absence de doublons. Pour une facturation ou un seuil contractuel, vérifier si l'approximation est acceptable. Documenter erreur, population et propriétés de fusion. Comparer à un résultat exact sur un périmètre maîtrisé, sans extrapoler une précision universelle.
 
 ---
 
@@ -96,7 +110,7 @@ Comment distinguer un pipeline limité par le CPU, la mémoire ou les entrées-s
 ?
 Relier les **temps d'étapes** à l'utilisation CPU, attente réseau/disque, débit lu, mémoire maximale et volumes de spill. Des workers peu occupés peuvent attendre des fichiers, un quota aval ou une tâche déséquilibrée.
 
-Mesurer plusieurs couches avant de changer le nombre de workers. Réduire les lectures aide un goulot I/O ; filtrer avant un shuffle réduit les échanges ; borner les lots limite le pic mémoire. Comparer à résultat identique et inclure le coût de bout en bout. Un pourcentage CPU global peut cacher une tâche unique saturée.
+Exemple dans l'interface Spark : un stage avec 40 Go de « Spill (Disk) » manque de mémoire par tâche ; un stage qui lit S3 avec des CPU à 15 % est limité par les I/O. Réduire les lectures aide un goulot I/O ; filtrer avant un shuffle réduit les échanges ; borner les lots limite le pic mémoire. Un pourcentage CPU global peut cacher une tâche unique saturée.
 
 ---
 

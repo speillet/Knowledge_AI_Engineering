@@ -8,7 +8,7 @@ Quand choisir batch, micro-batch ou traitement continu d’événements ? <!--an
 ?
 Partir du **délai utile au produit**, du volume et du coût d'exploitation. Le batch traite un ensemble borné ; le micro-batch traite des lots fréquents ; le continu réagit au fil du flux, avec état et garanties propres au moteur.
 
-Une fraîcheur de quinze minutes peut être satisfaite sans traitement événement par événement. Un besoin de réaction rapide peut le justifier, mais complexifie retards, reprises et résultats provisoires. Mesurer le délai source-à-consommateur, pas seulement la durée d'un opérateur. « Temps réel » doit correspondre à un objectif chiffré.
+Exemple : un score de fraude doit répondre en moins d'une seconde pendant le paiement, ce qui justifie le continu ; des recommandations rafraîchies toutes les 15 minutes se contentent d'un micro-batch. Le continu complexifie retards, reprises et résultats provisoires. Mesurer le délai source-à-consommateur, pas seulement la durée d'un opérateur. « Temps réel » doit correspondre à un objectif chiffré.
 
 ---
 
@@ -16,7 +16,7 @@ Que garantit l’ordre d’une partition de journal, et que ne garantit-il pas ?
 ?
 Un journal partitionné peut garantir un **ordre à l'intérieur d'une partition**, selon son protocole. Il ne crée pas automatiquement d'ordre global entre partitions, ni d'ordre métier entre événements produits tardivement.
 
-Choisir une clé d'entité lorsque ses événements doivent rester ensemble. Le traitement asynchrone aval peut encore inverser les effets si plusieurs requêtes terminent dans un autre ordre. Conserver versions et identités, puis définir les opérations autorisées hors ordre. Changer le partitionnement ou le routage des clés demande également une stratégie de transition.
+Choisir une clé d'entité lorsque ses événements doivent rester ensemble. Le traitement asynchrone aval peut encore inverser les effets si plusieurs requêtes terminent dans un autre ordre. Conserver versions et identités, puis définir les opérations autorisées hors ordre. Changer le partitionnement demande une transition : passer de 12 à 24 partitions change le résultat de `hash(clé) mod n`, et les nouveaux événements d'une commande peuvent précéder les anciens, restés dans l'autre partition.
 
 ---
 
@@ -32,7 +32,7 @@ Comment les fenêtres fixes, glissantes et de session regroupent-elles un flux ?
 ?
 Une **fenêtre fixe** découpe le temps en intervalles adjacents ; une **fenêtre glissante** peut faire appartenir un événement à plusieurs intervalles ; une **session** regroupe des événements séparés par moins qu'un délai d'inactivité défini.
 
-Choisir selon la question métier, les bornes et la clé de regroupement. Un événement tardif peut modifier une session ou relier deux sessions auparavant séparées, selon la politique retenue. La fenêtre indique quels événements sont regroupés ; elle ne suffit pas à définir quand le résultat est émis, corrigé ou considéré comme final.
+Choisir selon la question métier, les bornes et la clé de regroupement. Un événement tardif peut relier deux sessions : avec 30 minutes d'inactivité, des clics à 10 h 00, 10 h 20 et 11 h 05 forment deux sessions, qu'un clic arrivé en retard, horodaté 10 h 45, fusionne. La fenêtre indique quels événements sont regroupés ; elle ne suffit pas à définir quand le résultat est émis, corrigé ou considéré comme final.
 
 ---
 
@@ -51,15 +51,20 @@ Il n'appartient pas à [11:55, 12:05) ni à [12:10, 12:20). Un compteur glissant
 ?
 La **fenêtre** détermine le regroupement des événements ; le **watermark** estime la progression du temps événement ; le **trigger** règle quand émettre un résultat. Un même regroupement peut produire un premier résultat rapide puis des corrections.
 
-Définir aussi retard autorisé et mode d'accumulation. Réémettre un total cumulatif n'a pas la même signification qu'émettre seulement les nouveaux éléments. Les consommateurs doivent savoir remplacer, additionner ou rétracter selon ce contrat. Aucun nom de fenêtre ne garantit à lui seul qu'un résultat publié est définitif.
+Exemple : fenêtre fixe d'une heure, résultat provisoire chaque minute, résultat principal quand le watermark dépasse la fin de l'heure, puis corrections pendant dix minutes de retard autorisé. Définir aussi le mode d'accumulation : réémettre un total cumulatif n'a pas la même signification qu'émettre seulement les nouveaux éléments. Les consommateurs doivent savoir remplacer, additionner ou rétracter selon ce contrat. Aucun nom de fenêtre ne garantit à lui seul qu'un résultat publié est définitif.
 
 ---
 
 Pourquoi une entrée inactive peut-elle bloquer la progression d’un traitement multi-flux ? <!--anki:3035626635653535376633663436623961303863376330656630623633346639-->
 ?
-Le moteur peut combiner les progrès des entrées de manière **conservatrice**, par exemple avec le minimum des watermarks actifs. Une partition qui n'émet plus peut empêcher de finaliser des fenêtres même si les autres avancent.
+Le moteur peut combiner les progrès des entrées de manière **conservatrice**, par exemple avec le minimum des watermarks actifs. Si onze partitions sont à 12 h 00 et qu'une douzième, silencieuse, reste à 9 h 00, le watermark global vaut 9 h 00 et aucune fenêtre postérieure ne se ferme.
 
-Configurer la détection d'inactivité selon les garanties du moteur et la nature des sources. Une entrée silencieuse n'est pas forcément définitivement terminée : à sa reprise, ses événements peuvent être tardifs. Surveiller watermarks par entrée, silence attendu et événements corrigés ou rejetés. Forcer la progression change le compromis entre délai et complétude.
+Configurer la détection d'inactivité selon les garanties du moteur, par exemple dans Flink :
+```java
+WatermarkStrategy.forBoundedOutOfOrderness(Duration.ofSeconds(5))
+                 .withIdleness(Duration.ofMinutes(1));
+```
+Une entrée silencieuse n'est pas forcément définitivement terminée : à sa reprise, ses événements peuvent être tardifs. Surveiller watermarks par entrée, silence attendu et événements corrigés ou rejetés. Forcer la progression change le compromis entre délai et complétude.
 
 ---
 
@@ -67,7 +72,13 @@ Pourquoi une jointure entre deux flux a-t-elle besoin de bornes temporelles ou d
 ?
 Pour rapprocher des événements futurs, le traitement doit **retenir les événements sans correspondance**. Sans borne ou règle de nettoyage, cet état peut croître indéfiniment sur des flux non bornés.
 
-Définir clé, intervalle de correspondance, retard accepté et sort des objets qui ne trouvent jamais de partenaire. Une commande et son paiement peuvent demander des heures de conservation. Supprimer l'état trop tôt perd des associations ; le garder sans limite peut rendre les checkpoints et reprises impraticables. Mesurer taille, durée de restauration et taux de non-correspondance.
+Définir clé, intervalle de correspondance, retard accepté et sort des objets qui ne trouvent jamais de partenaire. En Flink SQL, une jointure d'intervalle borne cet état :
+```sql
+SELECT c.id, p.montant FROM commandes c, paiements p
+WHERE c.id = p.commande_id
+  AND p.ts BETWEEN c.ts AND c.ts + INTERVAL '2' HOUR;
+```
+L'intervalle porte sur les timestamps ; la purge dépend des attributs temporels et de la progression des watermarks, pas de deux heures murales garanties. Supprimer trop tôt perd des associations ; conserver sans limite alourdit checkpoints et reprises. Mesurer taille d'état, restauration et non-correspondances.
 
 ---
 
@@ -83,7 +94,7 @@ De quoi dépend une garantie exactly-once de bout en bout dans un pipeline de fl
 ?
 Il faut coordonner **positions source, état du traitement et publication des sorties**, avec sources rejouables et destinations compatibles. Les checkpoints du moteur peuvent restaurer un état cohérent sans empêcher tous les appels externes répétés.
 
-Une écriture transactionnelle, une déduplication ou un upsert idempotent peut couvrir la destination selon le protocole. Préciser cette frontière et tester les pannes avant/après commit. Un appel HTTP à un système sans clé d'idempotence n'est pas couvert automatiquement. Exactly-once décrit un effet observable garanti dans un périmètre, pas nécessairement une unique exécution physique de chaque fonction.
+Une écriture transactionnelle, une déduplication ou un upsert idempotent peut couvrir la destination. Exemple : en mode exactly-once, le sink Kafka de Flink valide sa transaction à la fin du checkpoint ; un lecteur en `read_committed` ne voit pas les sorties d'un checkpoint abandonné. Un appel HTTP à un système sans clé d'idempotence n'est pas couvert automatiquement. Exactly-once décrit un effet observable garanti dans un périmètre, pas nécessairement une unique exécution physique de chaque fonction.
 
 ---
 
@@ -91,7 +102,7 @@ Quel compromis crée une durée de conservation de l’état de déduplication ?
 ?
 Une **TTL** borne les identifiants conservés et le coût mémoire, mais un doublon rejoué après leur expiration peut ne plus être reconnu. La bonne durée dépend des retards, de la rétention source et des horizons de rejeu.
 
-Distinguer TTL technique et validité métier. Pour un effet durable, une protection persistante dans la destination peut être nécessaire. Documenter aussi quel temps pilote l'expiration, car temps événement et temps de traitement divergent pendant une panne. Tester un rejeu au-delà de la TTL et annoncer la garantie réellement obtenue.
+Exemple : avec une TTL de 24 h, rejouer sept jours du topic après un incident fait repasser six jours d'événements comme nouveaux. Distinguer TTL technique et validité métier. Pour un effet durable, une protection persistante dans la destination peut être nécessaire. Documenter aussi quel temps pilote l'expiration, car temps événement et temps de traitement divergent pendant une panne. Tester un rejeu au-delà de la TTL et annoncer la garantie réellement obtenue.
 
 ---
 
@@ -99,7 +110,7 @@ Qu’est-ce que la backpressure dans un pipeline de streaming ? <!--anki:6665393
 ?
 Un opérateur aval trop lent **ralentit ses producteurs** ou fait croître des files, selon le mécanisme de régulation. C'est un signal de déséquilibre de capacité, pas nécessairement un défaut de la source.
 
-Mesurer débit, retard, files, état et temps d'attente pour localiser le premier goulot. Augmenter les buffers reporte la saturation et peut aggraver la mémoire ou la latence. Borne de file, admission, ressources et politique de dégradation doivent respecter les garanties métier : jeter des événements change la complétude et ne doit pas rester invisible.
+Mesurer débit, retard, files, état et temps d'attente pour localiser le goulot. Exemple dans Flink : l'opérateur qui appelle une API d'embeddings affiche `busyTimeMsPerSecond` proche de 1 000, et tous ceux en amont sont en backpressure ; c'est lui qu'il faut traiter. Augmenter les buffers reporte la saturation et peut aggraver la mémoire ou la latence. Jeter des événements pour tenir la charge change la complétude et ne doit pas rester invisible.
 
 ---
 
@@ -107,7 +118,7 @@ Que vérifier avant de redimensionner un traitement avec état ? <!--anki:326638
 ?
 Vérifier **redistribution des clés, compatibilité de l'état sauvegardé et protocole de reprise**. Le moteur doit retrouver l'état correct de chaque clé après changement de parallélisme ; des identifiants d'opérateurs instables ou un schéma incompatible peuvent empêcher la restauration.
 
-Tester un checkpoint ou savepoint adapté au moteur, le rejeu et la continuité des sorties. Une sauvegarde d'état n'inclut pas nécessairement toutes les dépendances externes. Mesurer le temps de restauration et la capacité de rattrapage avant d'annoncer qu'un redimensionnement résout immédiatement la saturation.
+Exemple dans Flink : l'état est réparti en groupes de clés fixés par le parallélisme maximal, au moins 128 par défaut ; on redimensionne sous cette limite depuis un savepoint, mais la modifier rend l'état incompatible, et un opérateur sans `uid()` stable peut ne pas retrouver le sien. Mesurer le temps de restauration et la capacité de rattrapage avant d'annoncer qu'un redimensionnement résout immédiatement la saturation.
 
 ---
 

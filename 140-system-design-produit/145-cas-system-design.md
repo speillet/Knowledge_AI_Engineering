@@ -86,6 +86,8 @@ Cas 7 — Assistant vocal temps réel : quelles contraintes dominent ? <!--anki:
 ?
 La **latence de bout en bout** (< 1 s ressentie) : pipeline **STT → LLM → TTS** en streaming à chaque étape, ou modèle **speech-to-speech** natif ; détection de fin de parole et **gestion des interruptions** (barge-in). Réponses **courtes** et sans markdown ([[163-voix-temps-reel|voix temps réel]]).
 
+Cette seconde est une cible illustrative à valider. Mesurer fin de parole → premier audio utile, avec réseau et détection de silence. Si l'utilisateur interrompt, arrêter aussi l'audio déjà en buffer et éviter d'ajouter au contexte des phrases qu'il n'a pas entendues.
+
 ---
 
 Comment cadrer le besoin, l'architecture et les données dans une réponse de system design ? <!--anki:7525777d58607c31264e-->
@@ -117,6 +119,8 @@ Quelles erreurs éviter en entretien de system design LLM ? <!--anki:646e3f68777
 - Ignorer **droits d'accès, PII et prompt injection**.
 - Ne donner **aucun chiffre** (volume, coût, latence).
 - Présenter le modèle comme **fiable** sans plan pour ses erreurs.
+
+Rendre les hypothèses révisables : « 10 requêtes/s, pointe ×3, réponse p95 sous 5 s » permet de discuter capacité et file. Séparer données connues, hypothèses de dimensionnement et mesures à réaliser au prototype.
 
 ---
 

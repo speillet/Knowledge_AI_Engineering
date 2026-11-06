@@ -7,7 +7,7 @@ Qu'est-ce qui distingue un AI Engineer senior d'un confirmé ? <!--anki:684c3732
 ?
 Un senior prend en charge un **résultat de bout en bout dans l'incertitude** : cadrage, preuve de valeur, choix techniques, livraison et exploitation. Il explicite les compromis, détecte une expérience trompeuse et sait arrêter une approche insuffisante.
 
-Sa contribution se voit aussi dans l'autonomie des autres : décisions documentées, revues utiles, transmission et procédures réellement exécutables. Connaître les définitions de ce vault aide à raisonner ; démontrer ces compétences demande des réalisations, des incidents analysés et des arbitrages expliqués avec leurs limites.
+Face à une eval à 94 % sur un jeu construit par l'équipe, il demande d'abord comment les cas ont été choisis. Sa contribution se voit aussi dans l'autonomie des autres : décisions documentées, revues utiles, transmission et procédures réellement exécutables. Connaître les définitions de ce vault aide à raisonner ; démontrer ces compétences demande des réalisations, des incidents analysés et des arbitrages expliqués avec leurs limites.
 
 ---
 
@@ -20,6 +20,8 @@ Comment identifier un bon cas d'usage LLM ? <!--anki:4b2577697b426f3a4c41-->
 
 À éviter : les cas où une **règle simple** ou un modèle ML classique suffisent, et les cas où une erreur est **grave et difficile à détecter**.
 
+Exemple : résumer 300 appels de support par jour pour un conseiller qui relit le résumé est un bon candidat ; refuser seul un crédit ne l'est pas.
+
 ---
 
 Comment estimer le ROI d'une fonctionnalité IA ? <!--anki:46336235733534795e37-->
@@ -27,6 +29,8 @@ Comment estimer le ROI d'une fonctionnalité IA ? <!--anki:46336235733534795e37-
 **Valeur** : temps gagné × coût horaire × volume, revenus additionnels, erreurs évitées.
 **Coûts** : développement, **inférence récurrente**, infra, **revue humaine** restante, maintenance (evals, migrations de modèles), risques.
 Inclure le **taux d'adoption** réel et le coût des **erreurs** du système. Un POC impressionnant n'est pas un ROI.
+
+Exemple : 2 000 tickets par mois, 6 minutes gagnées sur chacun à 40 € de l'heure, soit 8 000 €. Avec 60 % d'adoption réelle, il reste 4 800 € ; après 1 200 € d'inférence et 1 500 € de revue humaine, 2 100 € par mois, avant maintenance et coût des erreurs.
 
 ---
 
@@ -50,17 +54,28 @@ En plus du contenu classique (contexte, objectifs, architecture, alternatives) :
 - l'**estimation de coût** d'inférence à l'échelle ;
 - le **plan de rollout** (canary, A/B) et de **rollback**.
 
+Exemple de critère d'évaluation : 300 cas annotés, dont 40 adversariaux ; mise en production si l'exactitude atteint 92 %, sans aucune fuite de PII et avec un p95 sous 4 s.
+
 ---
 
 Qu'est-ce qu'un ADR et pourquoi en écrire pour les choix IA ? <!--anki:66767745303f396a214d-->
 ?
 Un **Architecture Decision Record** : un court document qui fige **une décision, son contexte, les options écartées et ses conséquences**. Les choix IA (modèle, framework, RAG vs fine-tuning) sont **souvent remis en cause** quand le marché bouge : l'ADR permet de savoir **pourquoi** on a choisi et **à quelle condition** on doit reconsidérer.
+```text
+ADR-014 — Recherche hybride pour l'assistant support
+Contexte : 30 % des questions citent un code produit exact.
+Options écartées : vecteurs seuls (rappel@10 = 0,71), BM25 seul (0,64).
+Décision : BM25 + vecteurs fusionnés par RRF (0,86).
+Réexaminer si : un modèle d'embedding seul dépasse 0,85, ou si le coût d'index double.
+```
 
 ---
 
 Build ou buy pour une brique IA ? <!--anki:623f7e44644d5d2e292c-->
 ?
 **Acheter** (SaaS, API managée) quand la brique est **non différenciante**, standard et que le fournisseur est meilleur et moins cher à l'échelle. **Construire** quand c'est **au cœur de la valeur**, quand les données ou contraintes (souveraineté, intégration) l'imposent, ou quand aucune offre ne convient. Critères : coût total, **lock-in**, confidentialité, vitesse, compétences internes ([[38-plateformes-agents|plateformes d'agents]]).
+
+Exemple : acheter l'OCR de factures standard ; construire le tri des sinistres qui exploite quinze ans de données internes et constitue l'avantage métier.
 
 ---
 
@@ -78,7 +93,7 @@ Quels standards de développement un lead met-il en place pour l'équipe ? <!--a
 - **Evals obligatoires** en CI pour tout changement de prompt ou de modèle.
 - **Templates** de design doc et d'ADR.
 
-Le standard doit rendre une décision reproductible : artefacts identifiés, critères de réussite et trace de l'arbitrage. Adapter la profondeur de la revue au risque ; les petits changements ont besoin de contrôles ciblés et rapides. Le lead fournit exemples et outillage pour que ces pratiques soient effectivement utilisées, pas seulement documentées.
+Le standard doit rendre une décision reproductible : par exemple, toute PR qui modifie un prompt lance l'eval de 150 cas et affiche l'écart au score de `main`. Adapter la profondeur de la revue au risque ; les petits changements ont besoin de contrôles ciblés et rapides. Le lead fournit exemples et outillage pour que ces pratiques soient effectivement utilisées, pas seulement documentées.
 
 ---
 
@@ -88,7 +103,7 @@ Quels standards d'exploitation et de sécurité un lead met-il en place ? <!--an
 - **Checklist de sécurité** : injection, PII, permissions des outils.
 - **Traces** systématiques et revue régulière d'échantillons.
 
-Nommer les responsables des alertes, incidents, budgets et migrations de modèles. Tester arrêt d'urgence, révocation d'accès et reprise sur un scénario réaliste. Les traces doivent être utiles au diagnostic et proportionnées aux données sensibles ; une centralisation technique ne remplace pas la responsabilité des équipes pour les usages qu'elles livrent.
+Nommer les responsables des alertes, incidents, budgets et migrations de modèles. Tester arrêt d'urgence, révocation d'accès et reprise sur un scénario réaliste : chaque trimestre, révoquer la clé d'un agent et vérifier qu'il s'arrête en moins de 5 minutes. Les traces doivent être utiles au diagnostic et proportionnées aux données sensibles ; une centralisation technique ne remplace pas la responsabilité des équipes pour les usages qu'elles livrent.
 
 ---
 
@@ -104,6 +119,8 @@ Comment rester à jour sans courir après chaque nouveauté ? <!--anki:732f4a7c7
 - Tester les nouveautés **sur ses propres evals**, pas sur des annonces.
 - Réserver un **temps d'exploration** limité et partager les résultats (notes, démos internes).
 - Maintenir des fiches comme ce vault, **corrigées** quand la réalité change.
+
+Exemple : un modèle annoncé meilleur passe d'abord les 200 cas de l'eval maison, avec coût et latence, avant toute migration ; l'exploration occupe deux heures par semaine et se restitue en une démo mensuelle.
 
 ---
 

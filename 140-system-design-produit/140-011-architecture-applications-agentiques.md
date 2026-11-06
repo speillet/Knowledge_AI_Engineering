@@ -8,14 +8,20 @@ Comment choisir les briques nécessaires à une application agentique ? <!--anki
 ?
 Partir du **processus métier** : étapes, outils, état, critères de fin et contraintes d'exploitation. LangChain fournit des abstractions et une boucle d'agent ; LangGraph permet de contrôler un graphe ; CrewAI organise tâches et rôles ; Langfuse observe et évalue.
 
-Ces rôles ne rendent pas obligatoire leur assemblage complet. Retenir les composants qui résolvent un besoin vérifié, avec une frontière claire entre eux. Un simple appel structuré peut suffire pour classifier ; la reprise et les validations longues justifient davantage d'orchestration.
+Ces rôles ne rendent pas obligatoire leur assemblage complet. Retenir les composants qui résolvent un besoin vérifié, avec une frontière claire entre eux. Exemple : classer 5 000 e-mails par jour en huit catégories demande un appel structuré et une validation ; un remboursement dont l'approbation peut attendre deux jours justifie un graphe persistant.
 
 ---
 
 Quel contrat définir entre l'API et le moteur d'un agent ? <!--anki:3861623432653065393030613435363161393439643862633131643463336433-->
 ?
-Un contrat **d'exécution métier** : entrée validée, identité autorisée, statut, résultat et erreur structurée. Prévoir des opérations distinctes pour soumettre, consulter, approuver et annuler.
-
+Un contrat **d'exécution métier** : entrée validée, identité autorisée, statut, résultat et erreur structurée. Prévoir des opérations distinctes pour soumettre, consulter, approuver et annuler, comme dans l'atelier `examples/agentic-support` :
+```text
+POST /runs                  soumettre, avec Idempotency-Key
+GET  /runs/{id}             consulter l'état public
+POST /runs/{id}/decision    approuver ou refuser une proposition précise
+POST /runs/{id}/cancel      demander l'annulation
+GET  /runs/{id}/events      suivre les événements publics
+```
 Garder les classes internes du framework derrière un adaptateur facilite tests et migrations. Le client ne devrait pas devoir comprendre tous les champs du graphe ni envoyer un `Command` arbitraire. Versionner les événements publics et les états visibles, car une interface peut rester ouverte pendant un déploiement.
 
 ---
@@ -24,7 +30,7 @@ Pourquoi un statut HTTP 202 ne prouve-t-il pas qu'un agent terminera sa tâche ?
 ?
 Il signifie que la demande a été **acceptée pour traitement**, sans résultat final garanti. Avant de l'émettre, rendre la demande récupérable dans un stockage durable ou expliciter une garantie plus faible.
 
-Renvoyer un identifiant et une URL de suivi. Le contrat doit expliquer échec, expiration et annulation. Un client qui reçoit 202 doit encore pouvoir consulter un état après redémarrage du serveur ; une simple tâche en mémoire peut disparaître entre-temps.
+Renvoyer un identifiant et une URL de suivi, par exemple `202 Accepted` avec `Location: /runs/r-81f2` et un corps `{"id": "r-81f2", "status": "accepted"}`. Le contrat doit expliquer échec, expiration et annulation. Un client qui reçoit 202 doit encore pouvoir consulter un état après redémarrage du serveur ; une simple tâche en mémoire peut disparaître entre-temps.
 
 ---
 
@@ -32,7 +38,7 @@ Pourquoi une tâche en arrière-plan FastAPI ne remplace-t-elle pas une file dur
 ?
 Elle peut exécuter un travail après la réponse dans le **processus applicatif**, sans fournir à elle seule stockage durable, reprise par un autre worker et coordination distribuée.
 
-Pour un traitement qui doit survivre à un crash, persister demande et statut, puis organiser la consommation et les reprises. Réserver les tâches locales aux besoins compatibles avec leurs limites. Le caractère « background » décrit le moment d'exécution, pas une garantie de livraison ou de persistance.
+Exemple : `background_tasks.add_task(executer_agent, run_id)` tourne dans le pod qui a répondu ; si un redéploiement l'arrête 30 s plus tard, le travail disparaît alors que la réponse est partie. Pour survivre à un crash, persister demande et statut, puis organiser consommation et reprises. Le caractère « background » décrit le moment d'exécution, pas une garantie de livraison ou de persistance.
 
 ---
 
@@ -40,13 +46,13 @@ Quels états publics exposer pour suivre un run d'agent ? <!--anki:3836303230303
 ?
 Définir une **machine à états explicite** : accepté, en cours, en attente d'approbation, puis terminé, échoué ou annulé selon les transitions permises. Conserver aussi les causes et l'éventuelle possibilité de reprise.
 
-Une panne technique peut laisser une action externe dans un état inconnu ; exposer alors une phase de vérification plutôt qu'annoncer un échec sans effet. Distinguer « demande d'annulation reçue » et « travail effectivement arrêté ». Tester les transitions interdites et concurrentes.
+Une panne technique peut laisser une action externe dans un état inconnu ; exposer alors une phase de vérification plutôt qu'annoncer un échec sans effet. Distinguer « demande d'annulation reçue » et « travail effectivement arrêté ». Tester transitions permises et interdites : `waiting_approval → cancelled` est autorisée, `completed → running` ne l'est pas.
 
 ---
 
 Comment traiter une soumission répétée avec la même clé d'idempotence ? <!--anki:3466386264396533643734363439383662343236636236343335633839616635-->
 ?
-Lier la clé à un **périmètre authentifié** et à une empreinte des entrées. Même clé et même contenu retrouvent l'opération ; même clé et contenu différent produisent un conflit explicite.
+Lier la clé à un **périmètre authentifié** et à une empreinte des entrées. Même clé et même contenu retrouvent l'opération ; même clé et contenu différent produisent un conflit explicite. Dans l'atelier support, renvoyer `Idempotency-Key: exemple-1` avec `amount_cents` passé de 2000 à 2500 donne HTTP 409.
 
 La réservation de la clé doit être atomique avec la création du dossier. Fixer durée de rétention et comportement pour une opération encore en cours. Cette protection à l'entrée ne suffit pas pour les outils : chaque effet métier doit aussi posséder une identité stable lors des reprises.
 
@@ -56,13 +62,18 @@ Pourquoi vérifier les droits à chaque consultation et reprise d'un agent ? <!-
 ?
 Un identifiant de run ou de thread désigne une **ressource**, pas son propriétaire. Vérifier les droits sur lecture, événements, téléchargement d'artefact, approbation et annulation.
 
-Reconstruire l'identité depuis l'authentification ; ne pas faire confiance à un tenant fourni dans l'état par le client. Les droits peuvent changer pendant une attente humaine. Les revérifier avant une action sensible, même si le dossier avait été créé par une personne autorisée.
+Reconstruire l'identité depuis l'authentification ; ne pas faire confiance à un tenant fourni dans l'état par le client. Les droits peuvent changer pendant une attente humaine : si Alice crée un dossier puis quitte l'équipe finance, son approbation trois jours plus tard doit échouer, même si elle reste propriétaire du dossier.
 
 ---
 
 Que doit contenir une proposition d'action soumise à approbation humaine ? <!--anki:3935333239373430343839623439373038336333663934343065363566373031-->
 ?
 Une **action précise et versionnée** : type, cible, arguments effectifs, conséquences et expiration. Associer la décision à son identifiant ou empreinte, à l'identité du décideur et à l'heure.
+```json
+{"action": "rembourser", "commande": "C-881", "version_commande": 7,
+ "montant_centimes": 4500, "expire_le": "2026-10-23T10:00:00Z"}
+```
+La décision porte l'empreinte SHA-256 de ce JSON canonique.
 
 Si le montant ou le destinataire change, l'approbation précédente ne doit plus s'appliquer. Afficher ces éléments dans l'interface et vérifier leur correspondance côté serveur. Le modèle peut préparer la proposition ; il ne doit pas pouvoir fabriquer la preuve de son approbation.
 
@@ -80,7 +91,7 @@ Par exemple, un autre opérateur peut avoir remboursé la commande pendant l'att
 ?
 La **déconnexion** arrête un canal de suivi ; l'**annulation** demande l'arrêt du travail. Une tâche longue peut continuer quand le navigateur se ferme, puis être consultée plus tard.
 
-Définir cette politique par type de tâche. Une annulation doit être authentifiée, persistée et propagée aux composants capables de l'appliquer. Si une action externe a déjà été validée, annoncer son état réel et prévoir une compensation métier si nécessaire. Fermer un flux ne remonte pas le temps.
+Définir cette politique par type de tâche : fermer l'onglet peut valoir annulation pour une réponse de chat, pas pour un audit de 20 minutes que l'utilisateur viendra consulter. Une annulation doit être authentifiée, persistée et propagée aux composants capables de l'appliquer. Si une action externe a déjà été validée, annoncer son état réel et prévoir une compensation métier si nécessaire. Fermer un flux ne remonte pas le temps.
 
 ---
 
@@ -88,7 +99,7 @@ Comment publier des événements d'agent sans exposer son état interne complet 
 ?
 Transformer les mises à jour internes en **événements publics filtrés** : étape, progression, demande d'approbation, résultat ou erreur admissible. Définir un schéma et vérifier les droits avant émission.
 
-L'état peut contenir secrets, instructions internes ou résultats d'outils appartenant à un autre périmètre. Une simple sérialisation de `state` est donc un mauvais contrat d'interface. Ne pas afficher des raisonnements internes comme preuve de vérité ; privilégier actions réalisées et sources utiles.
+L'état peut contenir secrets, instructions internes ou résultats d'outils appartenant à un autre périmètre. Une simple sérialisation de `state` est donc un mauvais contrat d'interface ; publier plutôt `{"id": 42, "type": "approval_requested", "montant_centimes": 4500}`. Ne pas afficher des raisonnements internes comme preuve de vérité ; privilégier actions réalisées et sources utiles.
 
 ---
 
@@ -96,13 +107,13 @@ Que faire quand le curseur de reprise d'un flux d'agent a expiré ? <!--anki:666
 ?
 Détecter que les anciens événements ne sont **plus disponibles**, puis proposer un snapshot public courant et un nouveau point de reprise. Ne pas inventer les événements manquants ni relancer automatiquement le travail.
 
-Le client doit pouvoir reconstruire son affichage depuis cet état. Documenter la rétention du journal d'événements séparément de celle des résultats et checkpoints. Tester reconnexion après expiration, doublons et événements arrivant pendant la récupération du snapshot.
+Exemple : le client se reconnecte avec `Last-Event-ID: 1200`, mais le journal ne garde qu'une heure d'événements ; le serveur envoie un événement `snapshot` avec l'état public courant, puis reprend à l'événement 1 857. Documenter la rétention du journal d'événements séparément de celle des résultats et checkpoints. Tester reconnexion après expiration, doublons et événements arrivant pendant la récupération du snapshot.
 
 ---
 
 Comment gérer un client lent qui consomme les événements d'un agent ? <!--anki:3931363834636564346563383437326339303533666135626233383565393332-->
 ?
-Borner les **buffers par connexion** et choisir une politique : agréger la progression, couper le canal avec possibilité de reprise, ou ralentir le producteur lorsque c'est acceptable.
+Borner les **buffers par connexion** et choisir une politique : agréger la progression, couper le canal avec possibilité de reprise, ou ralentir le producteur lorsque c'est acceptable. Exemple : au-delà de 256 événements en attente, fusionner les fragments de texte ; après 30 s de file pleine, fermer la connexion avec un curseur de reprise.
 
 Un client lent ne doit pas épuiser la mémoire du worker ni bloquer tous les autres dossiers. Conserver les événements métier indispensables dans un journal approprié ; les fragments de texte intermédiaires peuvent avoir une politique différente. Mesurer taille des buffers, retard du consommateur et reconnexions.
 
@@ -112,7 +123,7 @@ Comment déployer une nouvelle version d'un agent alors que des runs sont actifs
 ?
 Maintenir une **compatibilité de code, d'état et de contrats** pour les exécutions en cours. Selon le système, drainer les workers anciens, router les reprises vers leur version ou migrer explicitement les états.
 
-Tester des dossiers interrompus avant et après chaque frontière importante. Un rollback de conteneur ne suffit pas si le stockage a déjà été transformé de façon incompatible. Tracer la version du workflow et conserver les artefacts nécessaires pour diagnostiquer les reprises.
+Exemple : chaque run porte `workflow_version=1`, et un worker v1 reste actif jusqu'à ce que les 37 dossiers v1 en attente d'approbation soient terminés. Un rollback de conteneur ne suffit pas si le stockage a déjà été transformé de façon incompatible. Tracer la version du workflow et conserver les artefacts nécessaires pour diagnostiquer les reprises.
 
 ---
 

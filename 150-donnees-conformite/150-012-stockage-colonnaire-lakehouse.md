@@ -8,7 +8,7 @@ Vérifié le : 9 octobre 2026 — références techniques et exemples de cette f
 ?
 Un **warehouse** organise des données pour les requêtes analytiques et leur exploitation gouvernée. Un **lake** conserve des fichiers de formats variés, souvent sur stockage objet. Une approche **lakehouse** ajoute notamment des métadonnées et garanties de table aux données du lake.
 
-Ces architectures se recouvrent selon les plateformes. Le nom ne garantit ni qualité, ni faible coût, ni transactions couvrant tous les systèmes. Pour l'IA, examiner reproductibilité des datasets, scans, mises à jour, gouvernance et accès des moteurs. Un petit projet peut rester sur une base relationnelle et quelques fichiers versionnés.
+Exemple : ventes nettoyées dans un entrepôt SQL ; PDF bruts et annotations JSONL sur S3 ; tables Iceberg sur S3 lisibles par Spark, Trino et DuckDB. Ces architectures se recouvrent ; le nom ne garantit ni qualité, ni faible coût, ni transactions couvrant tous les systèmes. Pour l'IA, examiner reproductibilité, scans, mises à jour et gouvernance. Un petit projet peut rester sur une base relationnelle et quelques fichiers versionnés.
 
 ---
 
@@ -16,13 +16,13 @@ Comment choisir un stockage selon le mode d’accès d’un système IA ? <!--an
 ?
 Partir des **requêtes et garanties attendues**. Des lectures par clé à faible latence, des transactions métier, des scans de milliards de lignes et une recherche de voisins vectoriels demandent des structures différentes.
 
-Une architecture peut combiner stockage objet des sources, tables analytiques des exemples et index spécialisés pour le serving. Définir lequel fait autorité et comment synchroniser les dérivés. Une base vectorielle n'est pas nécessairement le référentiel de documents ou de permissions. Mesurer fraîcheur, cohérence, latence et coût des mises à jour, pas seulement le débit de lecture.
+Exemple : le solde d'un client lu par clé en quelques millisecondes dans PostgreSQL, deux milliards d'exemples d'entraînement scannés en Parquet, 50 millions de vecteurs dans un index de voisins. Définir lequel fait autorité et comment synchroniser les dérivés. Une base vectorielle n'est pas nécessairement le référentiel de documents ou de permissions. Mesurer fraîcheur, cohérence, latence et coût des mises à jour, pas seulement le débit de lecture.
 
 ---
 
 Pourquoi un stockage objet ne doit-il pas être traité comme un répertoire transactionnel ? <!--anki:3630353762313535616662303433316362353863316539666438646637646335-->
 ?
-Un stockage objet manipule des **objets identifiés par clé** ; des préfixes ressemblant à des dossiers ne garantissent ni renommage atomique d'un ensemble ni transaction entre fichiers. Ses garanties exactes dépendent du service et des opérations.
+Un stockage objet manipule des **objets identifiés par clé** ; des préfixes ressemblant à des dossiers ne garantissent ni renommage atomique d'un ensemble ni transaction entre fichiers. Ainsi, `aws s3 mv` d'un « dossier » copie puis supprime chaque objet : un lecteur qui liste pendant l'opération voit une partie des fichiers à chaque chemin.
 
 Pour publier un dataset cohérent, écrire des objets immuables puis un manifeste ou un commit de table avec une primitive adaptée. Une forte cohérence de lecture d'un objet ne crée pas une transaction multifichier. Garder empreintes, autorisations et stratégie de nettoyage ; des fichiers partiellement publiés ne doivent pas devenir visibles par simple listing.
 
@@ -32,7 +32,7 @@ Quand choisir JSONL, Avro ou Parquet pour transporter ou conserver des données 
 ?
 **JSONL** facilite inspection et échanges ligne par ligne, avec validation de schéma à organiser. **Avro** fournit une sérialisation avec schéma et règles de résolution lecteur/rédacteur, utile notamment aux événements. **Parquet** stocke les colonnes pour favoriser scans sélectifs et compression analytique.
 
-Choisir selon lecteurs, évolution, types et accès. Aucun format ne fournit seul la qualité métier ou une publication transactionnelle de plusieurs fichiers. Des dates, décimaux et valeurs nulles peuvent changer de sens lors des conversions ; tester un aller-retour sur des cas représentatifs avant de généraliser.
+Exemple : JSONL pour 500 cas d'évaluation relus à la main, Avro pour des événements Kafka avec registre de schémas, Parquet pour 300 Go de features lues par colonne. Aucun format ne fournit seul la qualité métier ou une publication transactionnelle de plusieurs fichiers. Des dates, décimaux et valeurs nulles peuvent changer de sens lors des conversions ; tester un aller-retour sur des cas représentatifs avant de généraliser.
 
 ---
 
@@ -56,7 +56,12 @@ Des bornes min/max peu sélectives, des filtres non exploitables ou un lecteur i
 ?
 Le **partitionnement** sépare logiquement les données selon une règle, par exemple le jour, pour écarter des ensembles entiers. Le **clustering** ou tri rapproche des valeurs à l'intérieur d'un ensemble et peut rendre les statistiques de fichiers plus sélectives.
 
-Leur mise en œuvre varie selon le stockage et le moteur ; ils peuvent se compléter. Une requête filtrant les dates profite souvent d'une organisation temporelle, tandis que des filtres clients peuvent bénéficier d'un autre ordre. Choisir selon la charge réelle et le coût d'entretien, sans supposer qu'un index classique existe partout.
+Leur mise en œuvre varie selon le stockage et le moteur ; ils peuvent se compléter. Avec Iceberg :
+```sql
+CREATE TABLE evenements (...) USING iceberg PARTITIONED BY (days(ts));
+ALTER TABLE evenements WRITE ORDERED BY client_id;   -- tri dans chaque partition
+```
+Un filtre sur les dates écarte des jours entiers ; un filtre client profite des bornes min/max resserrées par le tri. Choisir selon la charge réelle et le coût d'entretien, sans supposer qu'un index classique existe partout.
 
 ---
 
@@ -64,7 +69,7 @@ Pourquoi partitionner un lake par identifiant utilisateur peut-il être une mauv
 ?
 Une clé de **très forte cardinalité** peut créer beaucoup de partitions minuscules et de fichiers, avec coûts de métadonnées, de planification et d'accès. Les utilisateurs peu actifs aggravent ce problème.
 
-Évaluer une partition temporelle, un nombre borné de buckets ou du clustering selon les requêtes. Éviter aussi des partitions trop grosses qui rendent les filtres inutiles. Mesurer distribution des tailles, sélectivité et rythme d'écriture. Une partition est une décision physique ; elle ne remplace ni le filtre de tenant ni le contrôle d'autorisation.
+Exemple : partitionner par utilisateur peut créer cinq millions de partitions minuscules ; `bucket(64, user_id)` limite à 64 buckets par combinaison des autres clés, **pas à 64 fichiers**. Plusieurs écritures produisent encore plusieurs fichiers par bucket. Évaluer partition temporelle, buckets ou clustering selon les requêtes. Mesurer tailles, sélectivité et rythme d'écriture. Une partition physique ne remplace ni le filtre de tenant ni l'autorisation.
 
 ---
 
@@ -72,7 +77,7 @@ Pourquoi les petits fichiers peuvent-ils ralentir un pipeline malgré un faible 
 ?
 Chaque fichier entraîne des coûts fixes : **ouverture, métadonnées, requêtes au stockage et planification de tâches**. Des millions de petits objets peuvent saturer ces opérations avant de saturer la bande passante.
 
-La compaction regroupe des fichiers pour réduire ce surcoût, en respectant visibilité atomique et lecteurs concurrents. Trop compacter peut diminuer parallélisme et sélectivité ou accroître la mémoire de traitement. Choisir une taille à partir des moteurs et de la charge, puis mesurer temps de planification, octets lus et coût de réécriture. La compaction ne doit pas changer le contenu logique.
+La compaction regroupe des fichiers pour réduire ce surcoût, en respectant visibilité atomique et lecteurs concurrents : dans Iceberg, `CALL catalog.system.rewrite_data_files(table => 'db.evenements')` publie les fichiers regroupés dans un nouveau snapshot. Trop compacter peut diminuer parallélisme et sélectivité ou accroître la mémoire de traitement. Choisir une taille à partir des moteurs et de la charge, puis mesurer temps de planification, octets lus et coût de réécriture. La compaction ne doit pas changer le contenu logique.
 
 ---
 
@@ -80,7 +85,7 @@ La compaction regroupe des fichiers pour réduire ce surcoût, en respectant vis
 ?
 **Parquet** décrit l'organisation d'un fichier. **Iceberg** décrit une table, ses fichiers, snapshots, schémas et métadonnées de partitionnement ; les fichiers de données peuvent être en Parquet.
 
-Le format de table permet notamment une lecture cohérente et une évolution suivie des métadonnées avec un catalogue et des moteurs compatibles. Déposer plusieurs fichiers Parquet dans un dossier ne crée pas ces garanties. Vérifier la compatibilité des fonctionnalités utilisées, notamment suppressions et écritures concurrentes. Le catalogue qui publie l'état de la table fait partie du protocole, pas seulement de la documentation.
+Le format de table permet une lecture cohérente et une évolution suivie des métadonnées. Déposer plusieurs fichiers Parquet dans un dossier ne crée pas ces garanties : un lecteur qui liste le dossier pendant l'écriture de 40 fichiers peut en voir 17, alors qu'avec Iceberg il suit le snapshot du catalogue et voit 0 ou 40 fichiers. Vérifier la compatibilité des moteurs avec les fonctionnalités utilisées ; le catalogue qui publie l'état de la table fait partie du protocole.
 
 ---
 
@@ -88,13 +93,13 @@ Quelle frontière vérifier derrière la promesse de transactions ACID d’un la
 ?
 Identifier **l'unité transactionnelle réelle** : souvent une table et son commit, avec garanties définies par moteur, catalogue et opération. Une lecture de snapshot peut être cohérente alors que deux tables ont été mises à jour à des instants différents.
 
-Relier une table d'exemples et une table de labels exige donc une version compatible ou un protocole de publication explicite. Des écritures concurrentes peuvent provoquer conflits et retries, pas seulement s'additionner. Les fichiers, index vectoriels et notifications externes ne deviennent pas automatiquement atomiques avec le commit de la table.
+Relier exemples et labels exige des versions compatibles ou un protocole de publication explicite. Deux `MERGE` depuis le même snapshot peuvent entrer en conflit selon les données touchées et l'isolation ; partager ce snapshot ne garantit pas un échec. Après conflit, réévaluer l'opération sur le nouvel état avant reprise. Les index vectoriels et notifications externes ne deviennent pas atomiques avec le commit de la table.
 
 ---
 
 Que change une évolution du schéma ou du partitionnement d’une table Iceberg ? <!--anki:3934373662376233643038313435363939653136653763656238663766316266-->
 ?
-Iceberg utilise notamment des **identifiants de champs** pour suivre le schéma, et peut faire coexister plusieurs spécifications de partitionnement. Changer le partitionnement concerne les nouvelles écritures sans réécrire automatiquement tous les anciens fichiers.
+Iceberg utilise notamment des **identifiants de champs** pour suivre le schéma, et peut faire coexister plusieurs spécifications de partitionnement. Changer le partitionnement concerne les nouvelles écritures sans réécrire automatiquement tous les anciens fichiers : passé de `days(ts)` à `hours(ts)` le 1er octobre, septembre reste découpé par jour.
 
 Cela facilite l'évolution physique, mais ne convertit pas implicitement le sens métier des valeurs. Renommer une unité sans conversion reste une erreur. Vérifier compatibilité des lecteurs, types autorisés et répartition des fichiers ; prévoir une réécriture si elle est nécessaire aux performances. L'évolution des métadonnées et la migration des contenus sont deux opérations distinctes.
 
@@ -102,7 +107,7 @@ Cela facilite l'évolution physique, mais ne convertit pas implicitement le sens
 
 Pourquoi le time travel ne garantit-il pas la reproductibilité indéfinie d’un dataset ? <!--anki:3234316635376566313530393462313339633664383431393039626630656532-->
 ?
-Les requêtes historiques dépendent de la **conservation des snapshots et de leurs fichiers**. L'expiration ou un nettoyage peut rendre une ancienne version inaccessible ; une référence enregistrée dans un rapport ne préserve pas les octets.
+Les requêtes historiques dépendent de la **conservation des snapshots et de leurs fichiers**. `SELECT … FROM t VERSION AS OF 8231` ne fonctionne que tant que `expire_snapshots` n'a pas retiré ce snapshot : l'expiration peut rendre une ancienne version inaccessible ; une référence enregistrée dans un rapport ne préserve pas les octets.
 
 Aligner rétention, sauvegardes et besoins de reproduction, avec les contraintes d'effacement applicables. Conserver les versions de transformations et des sources externes aussi. Une sauvegarde se valide par restauration, et un historique sur le même stockage ne couvre pas toutes ses pannes. Documenter la durée pendant laquelle chaque expérience reste effectivement reconstructible.
 
@@ -112,7 +117,7 @@ Comment une suppression logique diffère-t-elle de l’effacement physique dans 
 ?
 Une suppression peut devenir invisible aux lecteurs via **réécriture de fichiers ou métadonnées de suppression**, selon format et moteur. Les anciennes copies peuvent rester dans des snapshots, caches, exports ou sauvegardes.
 
-Vérifier le chemin de lecture et la maintenance qui retire les données devenues inutiles. Certains lecteurs doivent appliquer des fichiers de suppression ; contourner le format de table peut exposer des lignes retirées. Ne pas annoncer un effacement complet à partir d'un simple `DELETE` réussi. Inventorier les copies et appliquer la politique de conservation et d'accès prévue.
+Exemple : avec les fichiers de suppression d'Iceberg, un `DELETE` enregistre les lignes retirées ; leurs octets restent dans les fichiers de données jusqu'à leur réécriture, puis l'expiration des snapshots qui les référencent. Un lecteur qui contourne le format de table peut encore les voir. Ne pas annoncer un effacement complet à partir d'un simple `DELETE` réussi. Inventorier les copies et appliquer la politique de conservation et d'accès prévue.
 
 ---
 

@@ -15,7 +15,13 @@ Qu'est-ce qu'une jointure point-in-time pour construire un dataset ML ? <!--anki
 ?
 Pour chaque observation à prédire à l'instant **t**, récupérer les variables historiques valides à cet instant, sans prendre leurs versions futures. Une valeur peut aussi être exclue si elle est trop ancienne selon sa durée de validité.
 
-La seule condition « date de l'événement ≤ t » ne suffit pas lorsque des données arrivent tard : vérifier leur disponibilité réelle à t. Un historique réécrit aujourd'hui peut autrement faire croire qu'une information était accessible hier. Définir précisément la garantie temporelle du stockage ou de l'outil utilisé.
+La seule condition « date de l'événement ≤ t » ne suffit pas lorsque des données arrivent tard : joindre sur leur disponibilité réelle à t.
+```python
+pd.merge_asof(obs.sort_values("t"), feats.sort_values("disponible_a"),
+              left_on="t", right_on="disponible_a", by="client_id",
+              direction="backward", tolerance=pd.Timedelta("7D"))  # dernière valeur connue, d'au plus 7 jours
+```
+Un historique réécrit aujourd'hui peut autrement faire croire qu'une information était accessible hier.
 
 ---
 
@@ -34,7 +40,7 @@ Pourquoi conserver plusieurs versions d'une valeur historique corrigée ? <!--an
 ?
 Une correction peut changer ce que l'on considère vrai **pour une date passée**, sans changer ce que le système savait à l'époque. Une représentation bitemporelle distingue période de validité métier et période de connaissance ou d'enregistrement.
 
-On peut ainsi répondre à deux questions différentes : « quelle est notre meilleure estimation actuelle du passé ? » et « quelles données pouvaient guider la décision passée ? ». Écraser l'ancienne valeur empêche le second usage. Définir la politique de conservation et les besoins d'audit avant de choisir ce niveau de détail.
+On peut ainsi distinguer la meilleure estimation actuelle du passé et les données qui guidaient la décision passée. Exemple : le revenu de janvier d'un client, enregistré à 3 000 € le 3 janvier, est corrigé à 3 400 € le 15 mars. Une décision du 10 février a vu 3 000 € ; écraser l'ancienne valeur rend ce fait irreconstituable. Choisir ce niveau de détail selon les besoins d'audit.
 
 ---
 
@@ -50,7 +56,7 @@ Que signifie un watermark dans un traitement de flux ? <!--anki:3765613236353839
 ?
 Un **watermark** représente une estimation de progression dans le temps des événements. Il aide à décider quand produire ou finaliser les résultats d'une fenêtre et comment traiter les données qui arrivent ensuite.
 
-Ce n'est pas une preuve universelle que plus aucun événement ancien n'arrivera. Les garanties dépendent de la source et du moteur. Choisir une tolérance au retard, puis décider entre correction, résultat provisoire ou rejet documenté. Attendre davantage améliore parfois la complétude, mais augmente latence et état conservé.
+Ce n'est pas une preuve universelle que plus aucun événement ancien n'arrivera. Exemple : avec un watermark égal à « horodatage maximal vu − 10 minutes », 12 h 30 observé déclare la fenêtre 12 h 00–12 h 15 complète ; un événement de 12 h 10 reçu ensuite est tardif. Choisir une tolérance au retard, puis décider entre correction, résultat provisoire ou rejet documenté. Attendre davantage améliore parfois la complétude, mais augmente latence et état conservé.
 
 ---
 
@@ -58,7 +64,7 @@ Comment traiter un événement tardif après publication d'un agrégat ? <!--ank
 ?
 Choisir une **politique explicite de correction** : mettre à jour l'agrégat avec une nouvelle version, publier une rétraction suivie du résultat corrigé, ou le classer hors délai avec une mesure de perte de couverture.
 
-La politique dépend des consommateurs : un tableau de bord peut être corrigé, une action externe déjà effectuée ne s'annule pas automatiquement. Si l'agrégat sert de variable ML, conserver aussi la valeur réellement vue lors de la prédiction. Remplacer tout l'historique par la valeur finale fausserait une simulation du fonctionnement passé.
+La politique dépend des consommateurs : un tableau de bord peut être corrigé, une action externe déjà effectuée ne s'annule pas automatiquement. Exemple : les ventes du 20 octobre, publiées à 10 000 €, passent à 10 450 € en version 2 ; la décision prise le 21 garde la trace des 10 000 € qu'elle a réellement vus. Remplacer tout l'historique par la valeur finale fausserait une simulation du fonctionnement passé.
 
 ---
 
@@ -72,15 +78,15 @@ Définir une **période de maturation** cohérente avec la cible. Pour une rési
 
 Qu'est-ce que le training-serving skew des variables ? <!--anki:6663663964393236376562653464623239343638613033613763356635393539-->
 ?
-C'est un **écart entre les variables utilisées à l'entraînement et celles produites en service** : formule différente, arrondi, fuseau, source, fraîcheur ou gestion des absences. Même des poids identiques se comportent différemment si les entrées ont changé de sens.
+C'est un **écart entre les variables utilisées à l'entraînement et celles produites en service** : formule différente, arrondi, fuseau, source, fraîcheur ou gestion des absences. Même des poids identiques se comportent différemment si les entrées ont changé de sens. Exemple : `anciennete_jours` est calculée en UTC à minuit pour l'entraînement, en heure de Paris à l'instant de la requête en service ; certains clients gagnent un jour.
 
-Partager les définitions et versions réduit ce risque. Comparer les valeurs effectivement servies à un recalcul contrôlé sur les mêmes événements, en respectant leur disponibilité. Un historique finalisé peut légitimement différer d'un état provisoire ; cette différence doit être comprise plutôt que masquée dans la comparaison.
+Partager les définitions et versions réduit ce risque. Comparer les valeurs effectivement servies à un recalcul contrôlé sur les mêmes événements, en respectant leur disponibilité. Un historique finalisé peut légitimement différer d'un état provisoire : comprendre cet écart plutôt que le masquer.
 
 ---
 
 Quand un feature store est-il utile, et que ne garantit-il pas ? <!--anki:6331346435366635393235633430303461303230326362373566383935376235-->
 ?
-Il peut centraliser **définitions, historiques et accès aux variables** pour plusieurs modèles, avec des chemins adaptés à l'entraînement et au service. Il devient intéressant lorsque les duplications de calcul et incohérences coûtent plus que sa propre complexité.
+Il peut centraliser **définitions, historiques et accès aux variables** pour plusieurs modèles, avec des chemins adaptés à l'entraînement et au service. Il devient intéressant lorsque les duplications de calcul et incohérences coûtent plus que sa propre complexité : trois modèles qui recalculent chacun « achats sur 30 jours » avec des fenêtres différentes, par exemple.
 
 Il ne rend pas les variables exactes par magie et ne supprime pas les problèmes de disponibilité historique. Vérifier jointures temporelles, fraîcheur, corrections et responsabilités. Une petite application peut commencer avec une pipeline versionnée et un stockage simple, puis ajouter cette brique lorsque des besoins mesurés le justifient.
 
@@ -88,9 +94,9 @@ Il ne rend pas les variables exactes par magie et ne supprime pas les problèmes
 
 Quel comportement prévoir lorsqu'une variable de production est trop ancienne ? <!--anki:3030623161323236366138653430363562346665633465353835346631323562-->
 ?
-Définir une **durée de validité propre à la variable et à l'usage**. Le pays d'un compte peut tolérer plus de retard qu'un solde ou un stock. Contrôler l'âge réel de la valeur, pas seulement l'état de santé du service qui la renvoie.
+Définir une **durée de validité propre à la variable et à l'usage**. Contrôler l'âge réel de la valeur, pas seulement l'état de santé du service qui la renvoie.
 
-Prévoir attente bornée, modèle de secours, abstention ou décision humaine selon le risque. Une valeur absente et une valeur périmée peuvent exiger des traitements différents. Mesurer l'utilisation du mode dégradé pour éviter qu'il devienne silencieusement le fonctionnement normal.
+Prévoir attente bornée, modèle de secours, abstention ou décision humaine selon le risque. Exemple : un stock vaut 5 minutes, le pays du compte 30 jours ; un stock vieux de deux heures bascule vers un modèle de secours qui n'utilise pas cette variable. Une valeur absente et une valeur périmée peuvent exiger des traitements différents. Mesurer l'utilisation du mode dégradé pour éviter qu'il devienne silencieusement le fonctionnement normal.
 
 ---
 
@@ -98,7 +104,12 @@ Prévoir attente bornée, modèle de secours, abstention ou décision humaine se
 ?
 Le **stockage offline** sert notamment à reconstruire des historiques et lots d'entraînement. Le **stockage online** vise la récupération des variables utiles à une requête avec la latence attendue, souvent par clé d'entité.
 
-Une valeur courante rapide à lire ne fournit pas automatiquement son historique ; un historique complet n'offre pas nécessairement un accès interactif rapide. Les définitions doivent rester compatibles entre chemins. Vérifier types, valeurs manquantes, fraîcheur et version des transformations. Un feature store facilite ces interfaces, mais ne garantit pas à lui seul l'identité des informations disponibles à chaque instant.
+Une valeur courante rapide à lire ne fournit pas automatiquement son historique ; un historique complet n'offre pas nécessairement un accès interactif rapide. Feast expose ainsi deux appels pour la même définition :
+```python
+store.get_historical_features(entity_df=obs, features=["client:achats_30j"])   # offline, point-in-time
+store.get_online_features(features=["client:achats_30j"], entity_rows=[{"client_id": 42}])
+```
+Vérifier types, valeurs manquantes, fraîcheur et version des transformations dans les deux chemins.
 
 ---
 
@@ -106,7 +117,7 @@ Comment matérialiser des features en ligne sans écraser une valeur récente pa
 ?
 Associer **clé d'entité, version de feature et ordre temporel pertinent**, puis écrire selon une politique qui refuse ou isole les mises à jour obsolètes. Les garanties du stockage et de son connecteur doivent être vérifiées.
 
-Séparer reconstruction offline et publication online lorsque leurs objectifs diffèrent. Un backfill historique ne doit pas remplacer la valeur courante simplement parce qu'il termine plus tard. Tester événement tardif, correction valide, suppression et rejeu ; conserver les horodatages nécessaires. La règle « plus grand timestamp gagne » n'est correcte que si ce timestamp exprime réellement l'ordre métier attendu.
+Séparer reconstruction offline et publication online lorsque leurs objectifs diffèrent. Un backfill historique ne doit pas remplacer la valeur courante simplement parce qu'il termine plus tard : recalculée pour le 1er mars et écrite le 10 octobre, `achats_30j` écraserait sinon la valeur du jour. Tester événement tardif, correction valide, suppression et rejeu. La règle « plus grand timestamp gagne » n'est correcte que si ce timestamp exprime réellement l'ordre métier attendu.
 
 ---
 

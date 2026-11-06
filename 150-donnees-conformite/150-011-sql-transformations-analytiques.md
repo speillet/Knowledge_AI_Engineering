@@ -23,6 +23,8 @@ LEFT JOIN tickets t
 ```
 Placer ce critère dans `ON` conserve ici les clients sans ticket ouvert. Cela ne garantit pas une ligne par client : plusieurs tickets ouverts créent plusieurs correspondances. Choisir ensuite une agrégation ou une sélection cohérente avec le grain souhaité.
 
+Tester trois clients : sans ticket, avec un ticket fermé, avec deux ouverts. Le résultat attendu doit préserver les trois clients tout en rendant explicite la multiplicité du dernier.
+
 ---
 
 Pourquoi comparer une colonne SQL à NULL avec = ne teste-t-il pas son absence ? <!--anki:3032646563643533396361643461633238393565326466343464363936373637-->
@@ -65,6 +67,8 @@ WITH ranked AS (
 SELECT id, valeur FROM ranked WHERE rn = 1;
 ```
 Un timestamp seul peut laisser des ex æquo. Un départage stable garantit la reproductibilité, pas la vérité métier : des événements contradictoires à la même version doivent aussi être détectés.
+
+Si la dernière version est un marqueur de suppression, le garder pendant le classement puis filtrer les objets supprimés. Retirer les suppressions avant `ROW_NUMBER` ferait réapparaître une ancienne version active.
 
 ---
 

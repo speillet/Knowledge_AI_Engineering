@@ -7,13 +7,13 @@ Tags: #flashcards #ai-engineering #system-design #distribue #idempotence
 ?
 **Au plus une fois** évite les relivraisons mais peut perdre un message. **Au moins une fois** permet des relivraisons pour ne pas abandonner un message non confirmé ; le consommateur doit supporter les doublons.
 
-Préciser les conditions de durabilité, de rétention et de disponibilité qui bornent ces garanties. Un broker ne promet pas nécessairement de réessayer éternellement. Pour une action d'agent, distinguer message reçu et effet métier réalisé : deux réceptions peuvent correspondre à un seul effet si le consommateur est correctement conçu.
+Le choix dépend du coût d'une perte : perdre un point de télémétrie sur mille est acceptable, perdre une commande ne l'est pas. La seconde exige au moins une fois et une déduplication. Un broker ne promet pas pour autant de réessayer éternellement. Pour une action d'agent, distinguer message reçu et effet métier réalisé : deux réceptions peuvent correspondre à un seul effet si le consommateur est correctement conçu.
 
 ---
 
 Pourquoi une garantie exactement une fois doit-elle préciser son périmètre ? <!--anki:3866373364386264623830343439393839643132626537386366336564633831-->
 ?
-Elle peut concerner **une transaction interne au moteur**, sans inclure un paiement ou un e-mail externe. Par exemple, consommer un événement et produire un résultat dans un même système transactionnel n'englobe pas automatiquement les effets d'une API distante.
+Elle peut concerner **une transaction interne au moteur**, sans inclure un paiement ou un e-mail externe. Par exemple, les transactions Kafka valident ensemble l'offset lu et les messages écrits dans un topic de sortie ; un e-mail envoyé pendant ce traitement peut quand même partir deux fois.
 
 Demander quelles écritures sont atomiques, comment les reprises sont identifiées et combien de temps les doublons sont reconnus. On peut obtenir un effet métier unique avec livraisons répétées, déduplication et destination adaptée. Il faut démontrer cette chaîne de garanties au lieu de l'inférer d'une option portant le nom « exactly-once ».
 
@@ -37,7 +37,7 @@ Un service peut retourner une réponse textuelle différente tout en n'effectuan
 
 Comment construire une clé d'idempotence pour une action d'agent ? <!--anki:6334313330346166326230393438616639636331376164373165343539643165-->
 ?
-Créer un **identifiant stable de l'intention métier**, avant l'appel externe, et le réutiliser à chaque tentative de cette même action. Le rattacher au tenant et au type d'opération ; une nouvelle intention reçoit une nouvelle clé.
+Créer un **identifiant stable de l'intention métier**, avant l'appel externe, et le réutiliser à chaque tentative de cette même action. Le rattacher au tenant et au type d'opération, par exemple `tenant-7:remboursement:dossier-123` ; une nouvelle intention reçoit une nouvelle clé.
 
 Ne pas dériver uniquement la clé du texte généré, qui peut varier, ni uniquement des paramètres, car deux achats identiques peuvent être légitimes. Conserver aussi une empreinte des paramètres pertinents. La réutilisation d'une clé avec un autre montant doit provoquer un conflit explicite, pas exécuter une nouvelle action silencieusement.
 
@@ -47,7 +47,12 @@ Pourquoi « vérifier puis insérer » ne suffit-il pas à dédupliquer deux req
 ?
 Deux workers peuvent tous deux lire **« opération absente »**, puis effectuer chacun l'action. Une lecture préalable n'exclut pas l'autre écriture.
 
-Pour un effet entièrement dans une base, associer une contrainte d'unicité sur l'identité de l'opération et la mutation métier dans la même transaction. La seconde tentative doit attendre ou constater le conflit et retrouver le résultat. Si l'effet est externe, l'unicité locale ne couvre pas le crash après son exécution : la destination doit coopérer ou une réconciliation doit résoudre l'incertitude.
+Pour un effet entièrement dans une base, associer une contrainte d'unicité sur l'identité de l'opération et la mutation métier dans la même transaction.
+```sql
+INSERT INTO operations (op_id) VALUES (:op_id)
+ON CONFLICT (op_id) DO NOTHING RETURNING op_id;   -- aucune ligne : déjà prise
+```
+La seconde tentative doit attendre ou constater le conflit et retrouver le résultat. Si l'effet est externe, l'unicité locale ne couvre pas le crash après son exécution : la destination doit coopérer ou une réconciliation doit résoudre l'incertitude.
 
 ---
 
@@ -55,7 +60,7 @@ Quelle durée de conservation choisir pour les clés d'idempotence ? <!--anki:38
 ?
 La durée doit couvrir **l'horizon réel de retry et de rejeu**, y compris reprises manuelles, incidents et tâches retardées. Après expiration, une ancienne tentative peut être considérée comme nouvelle et reproduire son effet.
 
-Documenter ce que garantit la destination et ne pas supposer une déduplication éternelle. Pour une opération durablement unique, un identifiant métier persistant peut être nécessaire au-delà d'un cache de clés. Définir aussi le traitement des opérations en cours ou au résultat inconnu : les supprimer par simple TTL peut rouvrir une fenêtre de double exécution.
+Documenter ce que garantit la destination. Exemple : Stripe peut purger une clé d'idempotence au bout de 24 heures ; un rejeu manuel trois jours après un incident doit s'appuyer sur un identifiant métier persistant, comme le numéro de dossier. Définir aussi le traitement des opérations en cours ou au résultat inconnu : les supprimer par simple TTL peut rouvrir une fenêtre de double exécution.
 
 ---
 
@@ -63,7 +68,7 @@ Quand acquitter un message consommé pour éviter les pertes ? <!--anki:63353730
 ?
 Après la **persistance durable de l'effet et des informations de déduplication**, lorsque leur périmètre le permet. Acquitter avant peut perdre le travail après une panne. Acquitter après laisse une fenêtre de relivraison si le worker plante entre commit et ack.
 
-Cette dernière fenêtre se traite par une reprise idempotente. Si l'ack et la mutation ne partagent pas de transaction, ne prétendre pas les rendre atomiques avec leur seul ordre d'exécution. Les appels externes exigent en plus une stratégie pour l'effet déjà réalisé mais encore non enregistré localement.
+Exemple avec RabbitMQ : en `auto_ack`, un worker qui meurt en cours de traitement perd le message ; avec `basic_ack` après le commit, le message est relivré et une reprise idempotente reconnaît le doublon. L'ordre d'exécution ne rend pas atomiques un ack et une mutation hors de la même transaction. Les appels externes exigent en plus une stratégie pour l'effet déjà réalisé mais encore non enregistré localement.
 
 ---
 
@@ -71,7 +76,7 @@ Une file de messages garantit-elle l'ordre de toutes les opérations ? <!--anki:
 ?
 **Pas nécessairement.** L'ordre peut être garanti seulement par partition ou clé, et plusieurs consommateurs peuvent terminer leurs traitements dans un ordre différent de celui des réceptions.
 
-Définir l'ordre nécessaire, généralement par entité métier, puis choisir partitionnement, séquence et politique de reprise. Un numéro de version aide à refuser un état obsolète. Mais un delta, comme « ajouter un article », ne peut pas toujours être ignoré parce qu'une opération suivante est déjà arrivée. L'ordre global coûte davantage et reste souvent inutile.
+Définir l'ordre nécessaire, généralement par entité métier. Exemple : Kafka place tous les messages de clé `commande-88` dans la même partition, mais deux threads du consommateur peuvent encore les terminer dans le désordre. Un numéro de version aide à refuser un état obsolète. Mais un delta, comme « ajouter un article », ne peut pas toujours être ignoré parce qu'une opération suivante est déjà arrivée. L'ordre global coûte davantage et reste souvent inutile.
 
 ---
 
@@ -91,7 +96,7 @@ Cet exemple est du SQL paramétré conceptuel. Vérifier le nombre de lignes tou
 ?
 L'**atomicité** garantit que les écritures d'une transaction sont validées ensemble ou annulées ensemble. L'**isolation** définit ce que des transactions concurrentes peuvent observer et les anomalies encore possibles.
 
-Deux transactions atomiques peuvent tout de même violer une règle globale si elles lisent chacune un état incomplet des actions de l'autre. Par exemple, deux dépenses peuvent chacune sembler compatibles avec un plafond partagé. Protéger l'invariant par contraintes, verrouillage ou isolation appropriée, puis gérer les conflits et reprises que le stockage peut demander.
+Deux transactions atomiques peuvent tout de même violer une règle globale si elles lisent chacune un état incomplet des actions de l'autre. Par exemple, avec un plafond de 1 000 € déjà consommé à 800 €, deux dépenses de 150 € lisent chacune 800 €, se jugent autorisées et portent le total à 1 100 €. Protéger l'invariant par contraintes, verrouillage ou isolation appropriée, puis gérer les conflits et reprises que le stockage peut demander.
 
 ---
 
@@ -99,7 +104,7 @@ Pourquoi un verrou distribué avec expiration ne suffit-il pas toujours à prot�
 ?
 Un worker peut être **suspendu assez longtemps pour perdre son bail**, puis reprendre sans le savoir. Un second worker possède alors le verrou, mais le premier peut encore envoyer une écriture tardive.
 
-Un fencing token croissant, vérifié par la ressource protégée, permet de refuser les opérations provenant d'un ancien détenteur. Sans cette vérification au point d'écriture, le numéro ne protège rien. Une écriture conditionnelle sur version peut aussi convenir selon le besoin. Tester pauses, partitions réseau et expiration, pas seulement la concurrence en fonctionnement normal.
+Un fencing token croissant, vérifié par la ressource protégée, permet de refuser les opérations provenant d'un ancien détenteur. Exemple : A obtient le jeton 33, puis une pause de 40 s dépasse son bail de 30 s ; B obtient 34 et écrit. Au réveil de A, le stockage refuse son écriture portant 33. Une écriture conditionnelle sur version peut aussi convenir selon le besoin. Tester pauses, partitions réseau et expiration, pas seulement la concurrence en fonctionnement normal.
 
 ---
 

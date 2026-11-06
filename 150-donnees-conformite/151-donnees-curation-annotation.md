@@ -75,6 +75,8 @@ Pourquoi faut-il séparer strictement les jeux de développement et de test ? <!
 ?
 Si l'on ajuste prompts, few-shot ou fine-tuning en regardant le jeu de test, celui-ci devient un **jeu d'entraînement déguisé** : les scores **surestiment** la performance réelle. On itère sur un **jeu de dev**, on ne consulte le **jeu de test** que pour les décisions finales, et on le **renouvelle** périodiquement.
 
+Séparer aussi par famille documentaire, client ou période selon l'usage : une traduction du même contrat dans train et test reste une fuite. Le renouvellement ne répare pas rétroactivement un score déjà contaminé ; conserver son statut et son historique.
+
 ---
 
 Quelles données de production faut-il collecter dès le lancement ? <!--anki:77423d7b6a6a503e387d-->
@@ -91,6 +93,8 @@ Comment préparer des données pour un fine-tuning ? <!--anki:46607e4c3f4754636c
 - **Qualité > quantité** : quelques centaines à quelques milliers d'exemples excellents suffisent souvent en SFT.
 - **Diversité** des cas, y compris refus et abstentions souhaités.
 - Retrait des **PII**, déduplication, **jeu de validation** séparé.
+
+Inspecter un échantillon après tokenisation, pas seulement le JSON source : réponse tronquée, outils mal sérialisés et labels masqués peuvent annuler la qualité de la curation. Mesurer la couverture des cas métier avant d'augmenter le volume.
 
 ---
 

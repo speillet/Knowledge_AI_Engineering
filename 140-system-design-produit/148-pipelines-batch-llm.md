@@ -6,9 +6,9 @@ Vérifié le : 30 septembre 2026 — cette fiche cite des produits, versions ou 
 
 Quand traiter des données par LLM en batch plutôt qu'en ligne ? <!--anki:73254754575550477a61-->
 ?
-Quand **personne n'attend la réponse** : extraction sur un stock de documents, classification d'un historique de tickets, enrichissement d'un catalogue, génération d'embeddings, evals massives. On optimise alors le **coût et le débit**, plus la latence.
+Quand le résultat peut être **différé** : extraction documentaire, classification d'historique, embeddings ou évaluations massives. Les remises des API batch et le meilleur remplissage GPU peuvent réduire le coût, selon l'offre et la charge ([[121-couts-inference|coûts]]).
 
-Gains typiques : **−50 %** avec une batch API, GPU auto-hébergés à **pleine charge**, et aucune contrainte de SLO de latence ([[121-couts-inference|coûts]]).
+Le batch garde une **échéance** : un rapport disponible à 9 h échoue si le traitement termine à midi. Dimensionner débit utile, retries et marge avant cette échéance ; prévoir reprise par item plutôt que relancer tout le lot. Déclarer séparément acceptation du job et réussite de chacun de ses résultats.
 
 ---
 
@@ -108,6 +108,8 @@ Pourquoi enregistrer les versions avec chaque résultat ? <!--anki:45596b3269384
 Chaque sortie doit porter le **modèle, la version du prompt et la date** qui l'ont produite. Sans cela, impossible de savoir quels items **retraiter** quand on corrige un prompt ou qu'un modèle est déprécié, ni d'expliquer un résultat six mois plus tard.
 
 C'est le **lignage** des données générées, aussi utile en audit qu'en maintenance ([[153-data-flywheel-versioning|versioning]]).
+
+Ajouter identifiant d'entrée, version du schéma et statut de validation. Pour retraiter les erreurs du prompt v3, sélectionner ces résultats précisément ; un simple nom de fichier ou la date d'exécution ne distingue pas les différentes configurations d'un même lot.
 
 ---
 

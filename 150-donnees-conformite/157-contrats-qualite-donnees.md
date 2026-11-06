@@ -37,9 +37,13 @@ Conserver un indicateur de disponibilité ou un statut de calcul et définir le 
 
 À ne pas confondre : compatibilité backward et forward d'un schéma ? <!--anki:3133663165663634643834393432643362653636396334656238636433326630-->
 ?
-La compatibilité **backward** permet au nouveau lecteur de lire les anciennes données. La compatibilité **forward** permet à l'ancien lecteur de lire les nouvelles. Le comportement dépend du format, des valeurs par défaut et des règles de résolution ; ajouter un champ n'est donc pas toujours inoffensif.
+La compatibilité **backward** permet au nouveau lecteur de lire les anciennes données. La compatibilité **forward** permet à l'ancien lecteur de lire les nouvelles. Le comportement dépend du format et des valeurs par défaut : ajouter un champ n'est pas toujours inoffensif.
 
-Lister les versions de producteurs et consommateurs qui vont coexister et tester leurs combinaisons. Une vérification contre la seule version précédente ne garantit pas la compatibilité avec tout l'historique. Renommer un champ métier nécessite aussi de préserver son sens, pas seulement de satisfaire le registre.
+Avec Avro, ajouter ce champ reste backward, car le nouveau lecteur complète les anciens messages par la valeur par défaut ; sans `default`, il ne peut plus les lire.
+```json
+{"name": "canal", "type": "string", "default": "web"}
+```
+Tester les combinaisons de versions qui vont coexister : la seule version précédente ne représente pas tout l'historique. Renommer un champ métier exige aussi de préserver son sens, pas seulement de satisfaire le registre.
 
 ---
 
@@ -55,7 +59,7 @@ Quand mettre les données invalides en quarantaine plutôt que bloquer tout le p
 ?
 Quand isoler les erreurs permet de publier un résultat encore **cohérent et acceptable**. Conserver l'enregistrement brut, la raison du rejet, sa provenance et une procédure de correction puis de rejeu.
 
-La politique dépend de la criticité : quelques descriptions mal formées peuvent être exclues d'un index, mais une table incomplète peut rendre un calcul global faux. Mesurer et annoncer la couverture publiée. Fixer un seuil d'arrêt et alerter ; jeter silencieusement les lignes invalides peut créer un biais systématique sur certains clients ou formats.
+La politique dépend de la criticité : exclure d'un index 30 fiches produit sur 50 000 au HTML mal formé reste acceptable, publier une table de taux de change sans l'euro ne l'est pas. Mesurer et annoncer la couverture publiée. Fixer un seuil d'arrêt, par exemple 0,5 % de rejets ou tout rejet sur une clé critique, et alerter ; jeter silencieusement les lignes invalides peut créer un biais systématique sur certains clients ou formats.
 
 ---
 
@@ -63,7 +67,7 @@ Comment distinguer une dérive réelle des données d'un incident de pipeline ? 
 ?
 Une dérive peut refléter une **évolution de la population**, alors qu'un incident altère sa représentation : unité modifiée, jointure cassée, source manquante. Vérifier d'abord schémas, volumes, taux de nulls, versions et déploiements amont.
 
-Comparer les segments touchés aux changements connus et aux données brutes. Si seule une source bascule soudainement, réparer la collecte avant de réentraîner. Une distance statistique signale un changement, pas sa cause ni son impact métier. Confirmer ensuite si la qualité prédictive est réellement affectée.
+Comparer les segments touchés aux changements connus et aux données brutes. Exemple : la part des tickets en anglais passe de 10 % à 35 % en une nuit, uniquement pour le formulaire web redéployé la veille ; un champ de langue mal rempli est plus probable qu'un changement de clientèle. Réparer alors la collecte avant de réentraîner. Une distance statistique signale un changement, pas sa cause ni son impact sur la qualité prédictive.
 
 ---
 
@@ -71,7 +75,7 @@ Pourquoi publier un dataset via une version validée plutôt qu'écraser les fic
 ?
 Un consommateur pourrait lire un **mélange de versions** pendant l'écriture. Construire un snapshot, vérifier son contenu puis basculer atomiquement un pointeur ou un manifeste permet de rendre visible un ensemble cohérent.
 
-La garantie dépend du stockage : il faut une primitive de publication adaptée, pas supposer qu'un répertoire est transactionnel. Conserver la version précédente facilite le retour arrière. Les manifestes doivent désigner des objets immuables ou identifiés par empreinte pour qu'une même version ne change pas sous les lecteurs.
+La garantie dépend du stockage : sur S3, chaque objet s'écrit de façon atomique, mais pas un préfixe entier. Écrire `dataset/v42/`, le valider, puis remplacer l'objet `_LATEST` qui contient `v42` fournit cette bascule. Conserver la version précédente facilite le retour arrière. Les manifestes doivent désigner des objets immuables ou identifiés par empreinte pour qu'une même version ne change pas sous les lecteurs.
 
 ---
 
@@ -79,7 +83,7 @@ Quel lignage conserver pour diagnostiquer une mauvaise donnée dans une prédict
 ?
 Relier **source et version, transformations et configuration, dataset publié et consommateur**. Pour une prédiction, enregistrer les références utiles vers les variables ou documents effectivement utilisés, avec l'heure et la version du modèle.
 
-Cela permet de retrouver les résultats affectés par un lot corrompu et de rejouer seulement les traitements concernés. Un simple nom de table « courante » ne suffit pas si son contenu a changé. Adapter la granularité du lignage au diagnostic nécessaire et à la confidentialité, sans dupliquer toutes les données sensibles dans les logs.
+Exemple : chaque décision enregistre `modele=fraude-v12` et `features=snapshot-2026-10-20T06` ; un lot corrompu le 20 octobre désigne alors exactement les décisions concernées, à rejouer seules. Un simple nom de table « courante » ne suffit pas si son contenu a changé. Adapter la granularité du lignage au diagnostic nécessaire et à la confidentialité, sans dupliquer toutes les données sensibles dans les logs.
 
 ---
 

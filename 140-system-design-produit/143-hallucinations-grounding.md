@@ -7,12 +7,16 @@ Qu'est-ce qu'une hallucination ? <!--anki:43342c5e784379766728-->
 ?
 Une sortie **plausible mais fausse ou non étayée** : fait inventé, citation inexistante, fonction d'API imaginaire, chiffre erroné. Elle vient de la nature même du modèle, qui génère **ce qui est probable**, pas **ce qui est vrai**, et d'un entraînement qui récompense souvent **répondre plutôt que s'abstenir**.
 
+Exemples : citer un « article 12.4 » absent du contrat fourni, ou appeler `df.to_markdown_table()`, méthode qui n'existe pas dans pandas.
+
 ---
 
 À ne pas confondre : hallucination intrinsèque et extrinsèque ? <!--anki:68752d663634387a247b-->
 ?
 - **Intrinsèque** : la sortie **contredit** la source fournie (résumé qui inverse un chiffre).
 - **Extrinsèque** : la sortie **ajoute** une information **absente** de la source, vraie ou fausse — invérifiable à partir du contexte.
+
+Exemple : la source indique un délai de retour de 30 jours. Répondre « 14 jours » est intrinsèque ; ajouter « frais de retour offerts », dont la source ne dit rien, est extrinsèque.
 
 En RAG, les deux sont des échecs de **faithfulness** ([[96-evals-rag-agents|évaluation]]).
 
@@ -42,17 +46,21 @@ Qu'est-ce que l'abstention et pourquoi est-elle difficile ? <!--anki:6d23262a5e6
 ?
 La capacité à répondre **« je ne sais pas »** ou **« ce n'est pas dans les documents »**. Difficile car les modèles sont biaisés vers **répondre** ; il faut l'**exiger explicitement**, fournir des **exemples** d'abstention, et l'**évaluer** avec des questions **sans réponse** dans le jeu de test (sinon on optimise un système qui ne s'abstient jamais).
 
+Exemple de consigne : « Si les documents ne contiennent pas la réponse, réponds exactement : Je ne trouve pas cette information dans les documents fournis. » Une formule fixe se compte facilement dans l'évaluation.
+
 ---
 
 Comment arbitrer entre abstention et couverture ? <!--anki:762f2b51314c5a4a552a-->
 ?
 Trop d'abstentions = système **inutile** ; trop peu = **réponses fausses**. On mesure les deux (taux de réponse, précision des réponses données) et on choisit le point selon le **coût d'une erreur** : un assistant médical ou juridique doit s'abstenir plus qu'un outil de brainstorming.
 
+Exemple : avec un seuil de confiance à 0,5, le système répond à 90 % des questions avec 88 % d'exactitude ; à 0,8, il répond à 70 % avec 97 %. Le métier choisit le point selon le coût d'une erreur et celui d'une non-réponse.
+
 ---
 
 Comment détecter une hallucination après génération ? <!--anki:423a236456252a5e4e45-->
 ?
-**Vérifier les affirmations contre une source de référence** : passages récupérés, données structurées ou règles métier. Un juge ou un modèle d'inférence textuelle peut aider, mais il doit être évalué sur des annotations fiables.
+**Vérifier les affirmations contre une source de référence** : passages récupérés, données structurées ou règles métier. Un juge ou un modèle d'inférence textuelle peut aider, mais il doit être évalué sur des annotations fiables. Ce dernier classe la paire (passage cité, phrase) en implication, neutralité ou contradiction : « neutre » signale une affirmation non étayée.
 
 La divergence entre générations et les logprobs servent de signaux de triage, pas de preuves : plusieurs réponses peuvent répéter la même erreur, et une continuation probable peut être fausse. Mesurer faux positifs et faux négatifs du détecteur. En cas d'incertitude, déclencher abstention ou revue selon le risque.
 
@@ -65,13 +73,13 @@ Comment communiquer l'incertitude à l'utilisateur ? <!--anki:783a747339575a7d75
 - Signaler les réponses **à vérifier** (confiance faible, pas de source).
 - Ne pas sur-promettre dans l'interface (« réponse vérifiée » seulement si c'est vrai).
 
-Voir [[144-ux-ia-human-in-the-loop|UX de l'IA]].
+Exemple : « Délai de retour : 30 jours [Conditions générales, § 4.2]. Frais de retour : non précisés dans les documents. » Voir [[144-ux-ia-human-in-the-loop|UX de l'IA]].
 
 ---
 
 Pourquoi une température basse ne garantit-elle pas la factualité d'un LLM ? <!--anki:6436363963323235643535633431616538653434343230393137643133366330-->
 ?
-La température modifie la **distribution de sélection des tokens**, pas la vérité des faits disponibles. Une réponse fausse très probable peut être reproduite avec assurance à température basse.
+La température modifie la **distribution de sélection des tokens**, pas la vérité des faits disponibles. Une réponse fausse très probable peut être reproduite avec assurance à température basse : un modèle qui associe à tort Sydney à la capitale de l'Australie le répétera à chaque appel.
 
 Une sortie structurée garantit éventuellement un format conforme, pas un chiffre exact. Mesurer la factualité sur des références fiables ; fournir des preuves adaptées, vérifier les calculs avec du code et prévoir l'abstention lorsque la source manque. Réduire la variabilité peut aider certaines tâches, mais son effet sur l'exactitude doit être évalué.
 
