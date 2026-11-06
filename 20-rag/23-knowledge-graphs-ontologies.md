@@ -111,11 +111,11 @@ Un terme récent, **non standardisé**, avec deux sens :
 
 Quels sont les coûts et les pièges d'un knowledge graph ? <!--anki:64642c3535557229767e-->
 ?
-- **Extraction LLM** sur tout le corpus : coûteuse et bruitée
-- **Maintenance** : mises à jour incrémentales, faits qui changent, dérive du schéma
-- **Évaluation** difficile : qualité de l'extraction et des réponses
+Le coût comprend **extraction, maintenance et évaluation**, pas seulement le stockage du graphe. Une relation erronée peut contaminer plusieurs réponses multi-hop.
 
-Démarrer avec une **ontologie restreinte** aux besoins réels, et comparer à un [[21-rag-fondamentaux|RAG vectoriel]] sur les mêmes [[92-chainforge-evals-prompts|evals]] avant de généraliser.
+Exemple : transformer « fournisseur envisagé » en « fournisseur agréé » crée une arête plausible mais fausse. Conserver le passage justificatif, le type et la période de validité de la relation permet de la contrôler et de la retirer quand la source change.
+
+Démarrer avec une **ontologie restreinte** ; mesurer qualité des entités, des relations et des réponses. Comparer le gain à un [[21-rag-fondamentaux|RAG vectoriel]] sur les mêmes [[92-chainforge-evals-prompts|evals]], en intégrant le coût de correction humaine.
 
 ---
 

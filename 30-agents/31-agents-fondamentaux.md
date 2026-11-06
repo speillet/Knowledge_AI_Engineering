@@ -87,9 +87,11 @@ Chaque tour peut renvoyer l'historique ; chaque agent ajoute son propre contexte
 
 Comment un agent sait-il quand s'arrêter ? <!--anki:653272545f6866677138-->
 ?
-Quand le modèle **répond sans appeler d'outil** (ou émet un signal de fin), ou quand le harnais atteint une **limite** (itérations, budget).
+Le protocole peut signaler la fin quand le modèle répond sans outil ou émet un signal dédié ; le harnais impose aussi des limites d'itérations, de temps et de coût.
 
-Distinguer **fin d'exécution et succès métier** : une réponse finale peut annoncer à tort que la tâche est accomplie. Vérifier l'état attendu quand c'est possible, par exemple l'existence du fichier produit. En cas de budget épuisé, restituer le travail effectué, les incertitudes et la prochaine étape plutôt que présenter l'arrêt comme une réussite.
+Distinguer **terminé, réussi, bloqué et interrompu**. Exemple : pour produire un CSV, l'existence du fichier ne suffit pas ; vérifier colonnes requises, nombre de lignes attendu et absence d'erreur d'export. Une phrase « c'est fait » n'est pas une preuve.
+
+En cas de limite atteinte, sauvegarder l'avancement utile et restituer résultat partiel, incertitudes et prochaine étape. Le critère de succès doit être défini avant l'exécution, indépendamment de l'autoévaluation du modèle.
 
 ---
 

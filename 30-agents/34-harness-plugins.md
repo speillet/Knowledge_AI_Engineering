@@ -43,9 +43,11 @@ Le SDK fournit des briques, pas le contrat métier. Pour un support client, vér
 
 Qu'est-ce qu'un plugin dans un harness ? <!--anki:21632f592e76504753-->
 ?
-Un **paquet d'extensions** qu'on installe dans le host : **commandes** (slash commands), **skills**, **sous-agents**, **hooks** et **serveurs MCP**, distribués ensemble.
+Un **paquet d'extensions** installé dans le host : commandes, skills, sous-agents, hooks ou serveurs MCP selon le produit. Tous ces composants ne sont pas obligatoires.
 
-Le contenu exact dépend du host : tous les plugins n'incluent pas chacun de ces composants. Le paquet apporte une intégration ou une procédure réutilisable, par exemple un ensemble d'outils pour travailler sur des tickets. Examiner sa provenance, sa version et ses permissions ; installer une extension ne doit pas lui donner implicitement accès à toutes les données.
+Exemple : un plugin de revue de tickets peut réunir une commande d'entrée, une procédure de diagnostic et un connecteur au gestionnaire de tickets. La procédure décrit quoi faire ; le connecteur fournit l'accès réel.
+
+Avant activation, examiner provenance, version et permissions de chaque composant, puis tester sur un périmètre limité. **Installer n'autorise pas tout** : une mise à jour qui ajoute un hook ou un serveur peut changer les actions possibles, même si la commande visible reste identique.
 
 ---
 

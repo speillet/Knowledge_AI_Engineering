@@ -14,9 +14,11 @@ Chaque nœud reçoit des données, réalise une opération et transmet sa sortie
 
 Qu'est-ce qu'un trigger dans un outil de workflow ? <!--anki:68544b7e4c744e677a2d-->
 ?
-L'**événement qui lance le workflow** : webhook, planification (cron), nouveau mail, message Slack, ligne ajoutée dans une base…
+L'**événement qui lance un workflow** : webhook, horaire planifié, message ou changement de données. Il apporte généralement identifiant, date et contenu.
 
-Le trigger fournit généralement un événement avec ses données : identifiant, date et contenu utile. Une même notification peut arriver plusieurs fois ; prévoir une clé de déduplication avant une action comme créer une facture. Distinguer le déclenchement de la réussite du traitement et définir comment reprendre après un échec.
+Exemple : un webhook de commande est enregistré durablement, puis traité en arrière-plan. L'accusé de réception confirme sa prise en charge, **pas la livraison de la commande**. Si le producteur renvoie le même événement après un timeout, une clé stable doit empêcher une seconde action métier.
+
+Prévoir authentification de la source, déduplication et reprise après échec. Un déclenchement planifié exige aussi de définir fuseau horaire et comportement si l'exécution précédente n'est pas terminée.
 
 ---
 

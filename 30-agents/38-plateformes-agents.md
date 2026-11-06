@@ -94,11 +94,13 @@ La politique peut mettre le message en file, interrompre le travail ou remplacer
 
 Quelles stratégies un runtime propose-t-il face au double texting ? <!--anki:42397a604d446b253650-->
 ?
-Quatre stratégies (vocabulaire de LangSmith Deployment) :
-- **Enqueue** : finir le run en cours, puis traiter le nouveau message
-- **Reject** : refuser le nouveau message
-- **Interrupt** : arrêter le run en conservant son état, puis continuer avec le nouveau message
-- **Rollback** : annuler le run en cours et repartir du nouveau message
+Dans le vocabulaire de LangSmith Deployment :
+- **Enqueue** : mettre le nouveau message en attente.
+- **Reject** : refuser une exécution concurrente.
+- **Interrupt** : interrompre le run courant en conservant son état pour la suite.
+- **Rollback** : abandonner les changements d'état du run courant avant le suivant.
+
+Choisir selon le métier : une correction de brouillon peut interrompre le travail ; une opération déjà engagée demande davantage de coordination. **Rollback ne rappelle pas un e-mail et n'annule pas un paiement externe.** Ces effets exigent idempotence ou compensation. Tester le comportement quand le second message arrive avant, pendant et après l'action.
 
 ---
 

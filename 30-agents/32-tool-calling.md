@@ -5,9 +5,11 @@ Tags: #flashcards #ai-engineering #agents #tool-calling #llm
 
 Qu'est-ce que le tool calling (function calling) ? <!--anki:4c434c62492628352f4a-->
 ?
-Le mécanisme par lequel un LLM **émet un appel structuré** (nom d'outil + arguments JSON) que **l'application exécute** avant de renvoyer le résultat au modèle.
+Le LLM **propose un appel structuré** : nom d'outil et arguments. L'application valide puis exécute l'opération autorisée et renvoie son résultat au modèle, associé à l'identifiant d'appel.
 
-Le modèle ne lance pas directement la fonction. L'application valide les arguments, l'autorisation et les limites, puis associe le résultat à l'identifiant d'appel attendu. Exemple : `statut_commande(id)` fournit un fait à utiliser dans la réponse. Une sortie conforme au schéma n'implique pas que les arguments soient légitimes ou corrects.
+Exemple : `statut_commande(id="C42")` demande une lecture, pas une preuve que C42 appartient à l'utilisateur. Le backend contrôle cette appartenance et distingue commande absente, accès refusé et indisponibilité technique. Le modèle peut ensuite répondre ou demander un autre outil.
+
+Le schéma garantit au mieux la **forme** des arguments ; ni leur véracité, ni l'autorisation, ni la réussite de l'exécution ne découlent du JSON. Un appel proposé n'est pas une action accomplie.
 
 ---
 

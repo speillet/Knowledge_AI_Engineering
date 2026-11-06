@@ -6,9 +6,9 @@ Vérifié le : 13 octobre 2026
 
 Pourquoi la pertinence d'un passage RAG ne suffit-elle pas à l'utiliser comme preuve ? <!--anki:3961663861303264376631323462373538363333643236643561653032313563-->
 ?
-Un passage doit être **pertinent, autorisé et applicable** à la question. Une forte similarité ne prouve ni le droit de le lire, ni sa validité à la date demandée, ni son autorité sur le sujet.
+Un passage doit être **pertinent, autorisé et applicable**. La similarité ne prouve ni le droit de le lire, ni sa validité à la date demandée, ni son autorité.
 
-Exemple fictif : une ancienne politique de remboursement peut reprendre exactement les mots de la question tout en décrivant un délai remplacé. Vérifier ces conditions avant d'exposer le passage au modèle, puis contrôler le soutien de chaque affirmation dans la réponse.
+Exemple fictif : un barème 2024 peut être la bonne preuve pour une commande de 2024, mais pas pour une commande actuelle. Inversement, le document le plus récent n'est pas toujours celui applicable au cas historique. Vérifier identité, périmètre contractuel et période de validité avant d'exposer le passage au modèle. Contrôler ensuite qu'il **soutient précisément l'affirmation**, plutôt que de simplement traiter du même sujet.
 
 ---
 

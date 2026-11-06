@@ -63,9 +63,9 @@ La requête générée est une **entrée non fiable**, influençable par injecti
 
 Comment un système text-to-SQL corrige-t-il ses erreurs ? <!--anki:493c403f785f2c3e4b37-->
 ?
-Par une **boucle d'exécution** : on exécute (ou `EXPLAIN`), et en cas d'erreur on renvoie le **message d'erreur** au modèle pour qu'il corrige, avec un nombre limité de tentatives. Un résultat **vide ou aberrant** (0 ligne, montant négatif) peut aussi déclencher une vérification.
+Par une **boucle bornée** : analyser la requête, utiliser `EXPLAIN` lorsque pertinent, puis exécuter sous permissions et limites contrôlées. Renvoyer une erreur exploitable sans secrets permet de corriger syntaxe ou colonnes inconnues.
 
-Cela corrige la syntaxe et les noms de colonnes, **pas** les erreurs de sens : une requête qui s'exécute peut répondre à une autre question.
+Une exécution réussie ne valide pas le **sens**. Exemple : joindre chaque commande à ses lignes puis sommer le total de commande le compte plusieurs fois. Contrôler grain, cardinalités et agrégations, avec des jeux de données où l'erreur devient visible. Un résultat vide ou négatif mérite examen, mais peut être légitime : ne pas modifier arbitrairement la requête jusqu'à obtenir un résultat « rassurant ».
 
 ---
 

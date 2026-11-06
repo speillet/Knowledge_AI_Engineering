@@ -14,10 +14,12 @@ Enregistrer « préfère les réponses en français » avec sa source et sa port
 
 Quels types de mémoire distingue-t-on pour un agent ? <!--anki:234b3f24393a6b7661-->
 ?
-- **De travail** : le contexte de la tâche en cours
-- **Sémantique** : des **faits** (« l'utilisateur est végétarien »)
-- **Épisodique** : des **expériences** passées (« la dernière fois, ce déploiement a échoué à cause du quota »)
-- **Procédurale** : du **savoir-faire** (instructions, skills, prompt système mis à jour)
+- **De travail** : données de la tâche courante, comme le panier en cours.
+- **Sémantique** : faits, par exemple une préférence alimentaire confirmée.
+- **Épisodique** : expériences situées, comme un déploiement bloqué par un quota à une date donnée.
+- **Procédurale** : savoir-faire, comme une procédure de diagnostic.
+
+Ces catégories décrivent l'usage, pas quatre bases obligatoires. Un incident de quota est une expérience, **pas la preuve d'une limite permanente**. Le transformer en procédure demande validation et généralisation prudente. Pour chaque mémoire durable, conserver provenance, portée, date et possibilité de correction ; ne pas promouvoir automatiquement toute conversation en fait établi.
 
 ---
 

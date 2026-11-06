@@ -5,9 +5,9 @@ Tags: #flashcards #ai-engineering #prompt-engineering #llm
 
 Quel est le rôle du system prompt par rapport au user prompt ? <!--anki:6876605d304e7d7c4d6f-->
 ?
-Le **system prompt fixe le cadre** (rôle, règles, format, périmètre) et a priorité ; le **user prompt porte la tâche** du moment.
+Le **system prompt fixe le cadre** (rôle, règles, format, périmètre) ; le **user prompt porte la tâche** du moment. Dans la hiérarchie prévue par l'API, le cadre prévaut sur une demande utilisateur incompatible.
 
-Par exemple, le système définit un assistant de support qui cite sa documentation ; l'utilisateur demande comment réinitialiser son compte. Le cadre doit préciser quoi faire si l'information manque. **Une instruction de priorité supérieure n'est pas une barrière de sécurité** : les permissions et validations des actions restent appliquées par le code.
+Exemple : le système exige une réponse sourcée ; l'utilisateur demande d'inventer une référence. L'assistant doit signaler l'absence de preuve, pas fabriquer une citation. Séparer les consignes stables des données de la demande facilite les tests de ce conflit. **La priorité n'est pas une barrière de sécurité** : les permissions et validations des actions restent appliquées par le code.
 
 ---
 

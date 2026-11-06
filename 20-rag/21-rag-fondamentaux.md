@@ -21,9 +21,9 @@ Il répond à un besoin d'accès et de traçabilité, pas à une garantie de vé
 
 RAG ou fine-tuning pour apporter des connaissances ? <!--anki:4c7d4823364c5e317e31-->
 ?
-**RAG pour les connaissances** (fraîches, volumineuses, avec droits d'accès), **[[51-fine-tuning-adaptation|fine-tuning]] pour le comportement** (format, ton, tâche). Les deux se combinent.
+Privilégier le **RAG pour des connaissances actualisables et traçables**, le **[[51-fine-tuning-adaptation|fine-tuning]] pour apprendre un comportement** (format, ton, tâche). Ce n'est pas une frontière absolue : l'entraînement peut mémoriser des faits, sans garantir leur restitution ni leur effacement.
 
-Le RAG permet de mettre à jour ou retirer une source sans réentraîner le modèle et facilite les citations. Le fine-tuning apprend des régularités à partir d'exemples, sans garantir la restitution fidèle d'un fait ni son effacement ultérieur. Exemple : retrouver une politique commerciale par RAG et adapter par fine-tuning la façon de structurer la réponse.
+Exemple : pour un catalogue dont les prix changent chaque jour, récupérer le tarif courant plutôt que réentraîner quotidiennement. Un fine-tuning peut ensuite améliorer l'extraction ou la structure de réponse. Si la bonne information est déjà fournie mais mal exploitée, travailler le comportement ; si elle manque ou est périmée, corriger d'abord la source et sa récupération.
 
 ---
 

@@ -98,9 +98,11 @@ Dans cet extrait, le prompt prépare les messages, le modèle génère et le par
 
 Quelles briques LangChain fournit-il pour le RAG ? <!--anki:6d7c557541244b554728-->
 ?
-**Document loaders** (PDF, web, bases), **text splitters** (ex. `RecursiveCharacterTextSplitter`), **embeddings**, **vector stores** et **retrievers** (`vector_store.as_retriever()`) — tout le pipeline du [[21-rag-fondamentaux|RAG]] avec des interfaces communes.
+Des **loaders**, **splitters**, modèles d'**embeddings**, **vector stores** et **retrievers**, avec des interfaces communes pour composer le [[21-rag-fondamentaux|RAG]].
 
-L'intérêt est de pouvoir remplacer un chargeur ou un retriever sans réécrire tout le pipeline. Les interfaces ne choisissent pas le bon découpage ni les passages pertinents. Conserver les métadonnées de source et les droits d'accès, puis évaluer recherche et génération séparément sur des questions représentatives.
+Exemple : charger une notice PDF, découper ses pages, indexer les fragments puis appeler le retriever issu de `vector_store.as_retriever()`. Les métadonnées doivent conserver document, page, version et périmètre d'accès jusqu'à la citation finale.
+
+Une interface interchangeable n'assure pas un comportement identique : deux retrievers peuvent filtrer différemment ou produire des scores non comparables. Tester les passages réellement retournés et leur autorisation après remplacement ; la génération ne répare pas un passage manquant ou une provenance perdue.
 
 ---
 

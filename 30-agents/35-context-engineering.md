@@ -81,9 +81,11 @@ Les trois se combinent : mémoire pour ce qui doit durer, compaction pour tenir 
 
 Comment les sous-agents aident-ils à gérer le contexte ? <!--anki:4f7d3b7869655a2c734e-->
 ?
-Un [[36-orchestration-agents|sous-agent]] explore dans **son propre contexte** et ne renvoie qu'un **résumé condensé** : le contexte de l'agent principal reste propre.
+Un [[36-orchestration-agents|sous-agent]] explore dans **son propre contexte** et renvoie un résultat ciblé : le principal n'ingère pas toutes ses recherches.
 
-Le résumé doit inclure conclusions, références et incertitudes, afin que le principal puisse vérifier ce qui compte. Cette délégation aide une recherche décomposable, mais peut perdre des détails ou répéter du travail. Définir une question étroite et un format de retour précis ; donner à chaque sous-agent uniquement les outils et données nécessaires.
+Exemple : déléguer l'identification des limites d'une API avec un retour « limite, condition, référence, incertitude », plutôt qu'un résumé général du fournisseur. Le principal conserve les éléments nécessaires à la décision et peut rouvrir la source d'une affirmation critique.
+
+La séparation réduit l'encombrement du contexte principal, **pas nécessairement les tokens totaux ni le délai**. Éviter les missions redondantes et les délégations qui exigent de retransmettre tout l'historique ; borner question, outils et format de retour.
 
 ---
 

@@ -18,11 +18,13 @@ Le backend et le mode de durabilité déterminent quand une sauvegarde est effec
 
 Quels checkpointers LangGraph propose-t-il ? <!--anki:4a23792655613437387d-->
 ?
-- **`InMemorySaver`** : en mémoire, perdu au redémarrage (tests)
-- **`SqliteSaver`** : fichier local (développement)
-- **`PostgresSaver`** / `AsyncPostgresSaver` : **production**
+- **`InMemorySaver`** : mémoire du processus, adaptée aux tests, perdue à son arrêt.
+- **`SqliteSaver`** : persistance sur fichier, utile en local ou pour un déploiement limité.
+- **`PostgresSaver` / `AsyncPostgresSaver`** : stockage partagé adapté aux services multi-workers.
 
-Le choix dépend de la durabilité, du nombre de workers et des contraintes d'exploitation. Une base persistante demande initialisation du schéma, sauvegardes et politique de rétention. Les checkpoints peuvent contenir les messages et résultats d'outils : limiter les accès et prévoir l'effacement des données sensibles.
+Exemple : deux réplicas ayant chacun leur fichier SQLite ne partagent pas l'historique d'un thread. Une base commune résout l'accès aux checkpoints, pas à elle seule les mises à jour concurrentes du métier.
+
+Choisir selon durabilité, concurrence et exploitation ; tester restauration d'une sauvegarde, rétention et effacement. Un fichier persistant dans un conteneur reste perdu si son stockage ne survit pas au remplacement.
 
 ---
 

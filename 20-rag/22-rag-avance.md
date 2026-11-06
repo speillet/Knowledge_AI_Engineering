@@ -93,11 +93,12 @@ Une première source peut révéler une date ou une entité à vérifier par une
 
 Quels problèmes de production spécifiques au RAG ? <!--anki:6a455549472f7c24745b-->
 ?
-- **Fraîcheur de l'index** : ré-ingestion incrémentale des documents modifiés ou supprimés
-- **Propagation des droits d'accès** : un utilisateur ne doit jamais recevoir un passage qu'il n'a pas le droit de lire
-- **Coût des embeddings** à l'échelle, et ré-indexation complète si l'on change de modèle ([[133-embeddings-representations|embeddings]])
-- **Dérive du chunking** entre versions du pipeline
-- **Qualité du parsing** des documents sources ([[162-document-parsing|parsing]])
+Le RAG doit maintenir la cohérence entre **sources, index, droits et caches** :
+- Propager modifications, suppressions et révocations d'accès, pas seulement ajouter des documents.
+- Versionner [[133-embeddings-representations|embeddings]] et chunking ; une migration peut nécessiter de réencoder le corpus.
+- Détecter les pertes de contenu au [[162-document-parsing|parsing]].
+
+Exemple : un document supprimé de la source reste exposé si ses anciens chunks ou une réponse en cache survivent. Suivre le délai de propagation et tester cette suppression de bout en bout. Un index techniquement disponible mais en retard sur les droits ne constitue pas un service correct.
 
 ---
 

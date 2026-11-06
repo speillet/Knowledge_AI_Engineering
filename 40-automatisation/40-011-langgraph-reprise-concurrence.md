@@ -30,9 +30,11 @@ Exemple : A, B et C tournent dans le même super-step ; A et B réussissent, C �
 
 Pourquoi un nœud LangGraph contenant interrupt doit-il pouvoir recommencer ? <!--anki:3331333363616538363435613435666638373731366163643836643062346461-->
 ?
-La reprise réexécute le nœud depuis son début, puis restitue la réponse humaine à l'appel d'**`interrupt`** correspondant. Les lectures, calculs et effets précédents peuvent donc être rejoués.
+La reprise réexécute le nœud depuis son début avant de restituer la réponse humaine à l'**`interrupt`** correspondant. Les opérations précédentes peuvent donc être rejouées.
 
-Conserver une proposition stable avant l'interruption ; placer l'exécution métier dans une étape ultérieure idempotente. Éviter d'englober l'interruption dans un bloc qui capture toute exception : son signal doit remonter au runtime. Tester le même scénario dans un nouveau processus.
+Exemple : recalculer une remise à partir d'un tarif modifié pendant l'attente peut appliquer un montant différent de celui approuvé. Persister la proposition exacte, sa version et son unité avant l'interruption ; vérifier à la reprise que l'approbation porte toujours sur cette proposition.
+
+Exécuter ensuite l'action dans une étape idempotente. Ne pas capturer le signal d'interruption avec un traitement d'erreur général. Tester reprise dans un nouveau processus et modification des données pendant l'attente.
 
 ---
 

@@ -51,7 +51,11 @@ Par exemple, une hypothèse provisoire de réunion doit rester en session tant q
 
 Comment l'opération recall de Cognee choisit-elle sa stratégie de recherche ? <!--anki:636d76242e427a3c316e-->
 ?
-Par **routage automatique** : des règles repèrent les citations exactes ou les demandes de règles de code, sinon il utilise **HYBRID_COMPLETION** (chunks, résumés et voisinage des entités en un seul appel LLM). On peut forcer une stratégie : `GRAPH_COMPLETION`, `RAG_COMPLETION`, `CHUNKS`, `CHUNKS_LEXICAL` (BM25), `SUMMARIES`, `TEMPORAL`, `CYPHER`… C'est une **récupération par graphe**, pas une simple similarité d'embeddings.
+Par un **routeur à règles**, pas par un choix LLM systématique : sans stratégie explicite, la mémoire permanente utilise généralement **`HYBRID_COMPLETION`**. Le paramètre `query_type` permet de forcer un mode.
+
+Le périmètre compte aussi : avec `session_id` seul, Cognee peut d'abord chercher dans le cache de session ; préciser `datasets` ou `query_type` oriente vers la mémoire permanente. Examiner le champ **`source`** du résultat pour distinguer ces chemins.
+
+Exemple : une réponse issue de `source="session"` ne démontre pas que le graphe contient le fait. Pour diagnostiquer un oubli, vérifier périmètre, provenance et état d'indexation avant de changer de stratégie.
 
 ---
 
@@ -126,6 +130,7 @@ Mise en situation : un utilisateur demande la suppression de toutes ses données
 ## Sources
 
 - [Cognee — documentation du projet](https://docs.cognee.ai/)
+- [Cognee — routage de recall et portée de session](https://docs.cognee.ai/core-concepts/main-operations/recall.md) — consultation ciblée du 6 novembre 2026 ; ne constitue pas une revérification de toute la fiche.
 
 ## Connexions
 - [[23-knowledge-graphs-ontologies|Knowledge graphs & ontologies]] — les concepts sous-jacents
