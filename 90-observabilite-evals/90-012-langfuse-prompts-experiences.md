@@ -102,9 +102,11 @@ Publier la couverture d'évaluation et les erreurs avec les scores : « 0,8 de m
 
 Comment versionner un juge sans casser la lecture des scores historiques ? <!--anki:6232656333363865326132613465666539363735653837383336623266623561-->
 ?
-Enregistrer **modèle, prompt, configuration et barème** du juge. Calibrer la nouvelle version sur des cas annotés puis faire une période de comparaison avec l'ancienne.
+Versionner **modèle, prompt, paramètres, barème et règles de parsing** du juge, avec chaque score. Faire noter les mêmes sorties par les deux versions sur une période de comparaison.
 
-Un score `qualite=0,8` ne conserve pas le même sens si le rubric change. Séparer les séries ou recalculer un ensemble de référence explicitement identifié. Garder les désaccords et les exemples limites : une moyenne de juges ne résout pas automatiquement une ambiguïté de définition.
+Exemple : le nouveau barème pénalise les citations manquantes ; une chute de 0,8 à 0,6 peut alors venir du juge, pas d'une dégradation de l'agent. Séparer les séries et expliquer la rupture.
+
+Si l'on recalcule l'historique, conserver score original et version de recalcul plutôt qu'écraser les valeurs. Contrôler accord avec annotations humaines, cas limites et couverture. Un score absent ou une erreur d'évaluateur ne doit pas être transformé en zéro.
 
 ---
 

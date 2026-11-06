@@ -23,11 +23,11 @@ On peut donc comparer deux réponses **avec une référence**, ou noter une seul
 
 Quels sont les principaux biais d'un juge LLM ? <!--anki:66606e455a70326a5d66-->
 ?
-- **Biais de position** : préférer la réponse présentée en premier (ou en second).
-- **Biais de verbosité** : préférer les réponses **longues**.
-- **Auto-préférence** : favoriser les sorties de **son propre modèle** ou de sa famille.
-- **Complaisance** : noter trop généreusement.
-- **Sensibilité au format** (markdown, assurance du ton) plutôt qu'à l'exactitude.
+Un juge peut favoriser **position, longueur, style, famille de modèle** ou noter trop généreusement. Ces biais varient selon juge, tâche et barème.
+
+Exemple : une réponse longue, assurée et bien formatée peut battre une réponse brève mais exacte. Construire des paires contrôlées où seule la présentation change, puis d'autres où une erreur factuelle est introduite, pour distinguer préférence stylistique et jugement du fond.
+
+Masquer l'origine, permuter l'ordre, fournir des critères précis et comparer aux annotations arbitrées. Examiner désaccords par catégorie ; une moyenne d'évaluateurs partageant les mêmes biais ne crée pas une référence indépendante. Mesurer aussi stabilité et erreurs de parsing des scores.
 
 ---
 

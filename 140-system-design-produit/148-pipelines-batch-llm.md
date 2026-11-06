@@ -115,11 +115,11 @@ Ajouter identifiant d'entrée, version du schéma et statut de validation. Pour 
 
 Quand auto-héberger le traitement batch plutôt qu'utiliser une API ? <!--anki:69234355312640396e2f-->
 ?
-- **Volume très élevé et récurrent** : des GPU occupés à 100 % pendant des jours amortissent vite leur coût
-- **Données sensibles** qui ne doivent pas sortir ([[152-pii-confidentialite|confidentialité]])
-- **Petit modèle suffisant**, ou modèle fine-tuné pour la tâche
+Quand **volume prévisible, modèle adapté et contraintes de données** justifient le coût total d'exploitation. Un GPU occupé à 100 % n'est pas une preuve de rentabilité : mesurer résultats valides par euro, délais, reprises et temps d'ingénierie.
 
-Le mode **hors ligne** de vLLM (`LLM.generate` sur une grande liste de prompts) maximise le débit ; le **prefix caching** profite des instructions communes ([[66-prefix-caching-radix-attention|prefix caching]]).
+Exemple : un gros traitement mensuel peut laisser le matériel inactif le reste du mois ; une API batch ou une location temporaire peut coûter moins cher.
+
+Le mode hors ligne, par exemple `LLM.generate`, permet batching et [[66-prefix-caching-radix-attention|réutilisation de préfixes]], sans garantir un optimum automatique. Tester le lot réel et prévoir résultats durables par élément. L'auto-hébergement facilite certaines contraintes de [[152-pii-confidentialite|confidentialité]], mais exige toujours contrôle des accès et des flux réseau.
 
 ---
 

@@ -95,12 +95,11 @@ Même avec une seed, l'ordre des calculs parallèles, les kernels ou le batching
 
 Comment gérer dev/staging/prod pour une app LLM ? <!--anki:69354f78696b443b7756-->
 ?
-- **Mêmes pipelines** de déploiement partout, seules les valeurs changent
-- Modèles, prompts et datasets **épinglés** par environnement
-- **Evals de non-régression** obligatoires avant chaque promotion ([[112-cicd-modeles|eval gate]])
-- **Staging alimenté par des cas réels**, anonymisés, plutôt que par des exemples inventés
+Promouvoir un **ensemble versionné cohérent** : code, modèle, prompt, schémas d'outils et configuration, avec les mêmes mécanismes de déploiement. Séparer identités, secrets, données et permissions des environnements.
 
-Piège fréquent : un alias de modèle (`latest`) en production, qui change sans que personne n'ait rien déployé.
+Exemple : un staging rejoue des demandes réalistes mais dirige les outils d'envoi et de paiement vers des doubles de test ; changer seulement le modèle ne suffit pas à l'isoler.
+
+Associer cas représentatifs correctement dépersonnalisés et cas synthétiques couvrant les limites. Exiger des [[112-cicd-modeles|eval gates]] avant promotion et prévoir rollback. Un alias fournisseur mutable exige aussi de tracer la version résolue et détecter les changements subis sans déploiement applicatif.
 
 ---
 

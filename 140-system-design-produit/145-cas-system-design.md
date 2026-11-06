@@ -74,11 +74,15 @@ Ordres de grandeur à fixer : par exemple 15 étapes, 0,50 € de modèle et 100
 
 Cas 6 — Chatbot grand public à fort trafic : priorités de coût ? <!--anki:757d596e60654e602f71-->
 ?
-- **Routage** : la majorité des messages vers un **petit modèle**, les difficiles vers un gros ([[82-routing-llm|routing]]).
-- **Prompt caching** du system prompt, **cache sémantique** des questions fréquentes.
-- **Limites** de longueur d'historique (résumé glissant).
-- **Quotas par utilisateur** contre les abus (denial of wallet).
-- Modération en entrée et sortie à coût minimal (classifieur léger).
+Commencer par le **coût par conversation réussie**, puis optimiser ses postes dominants :
+- [[82-routing-llm|Routage]] évalué vers un modèle moins cher quand il satisfait les critères.
+- Prompt caching des préfixes stables.
+- Historique maîtrisé sans perdre préférences, contraintes ou contexte essentiel.
+- Quotas de tokens, d'appels et de dépense.
+
+Exemple : un cache sémantique peut réutiliser une FAQ publique, pas une réponse personnelle sur le solde d'un compte. Inclure tenant, droits et fraîcheur dans l'éligibilité, ou renoncer au cache de réponses.
+
+Conserver modération et contrôles critiques ; une baisse de coût accompagnée de davantage de reprises ou de revue humaine peut être un faux gain.
 
 ---
 

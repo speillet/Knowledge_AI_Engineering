@@ -49,10 +49,11 @@ Quels engagements vérifier chez un fournisseur de modèle ? <!--anki:4f3e476d28
 
 Comment protéger les logs et traces ? <!--anki:42425a31576f6c566c77-->
 ?
-- **Masquer les PII** avant stockage, ou chiffrer les champs sensibles.
-- **Rétention courte** et automatique.
-- **Accès restreint** et journalisé (les traces LLM contiennent souvent plus d'informations sensibles que la base métier).
-- Séparer l'accès aux **métriques** (large) de l'accès au **contenu** (restreint) — voir [[93-monitoring-inference|journalisation des prompts]].
+**Minimiser avant collecte**, puis masquer, contrôler les accès, chiffrer et appliquer une rétention justifiée. Séparer métriques agrégées et contenu détaillé ([[93-monitoring-inference|journalisation des prompts]]).
+
+Exemple : le prompt est masqué dans la trace principale, mais un message d'exception recopie la requête brute. Tester aussi erreurs, retries, pièces jointes et exports avec des secrets synthétiques repérables.
+
+Le chiffrement ne remplace pas la minimisation : les personnes autorisées au déchiffrement voient toujours les données. Un hash stable peut rester un identifiant personnel ; il ne garantit pas l'anonymat. Vérifier suppression et rétention dans caches, réplicas et sauvegardes selon les politiques prévues, pas seulement dans l'interface de consultation.
 
 ---
 

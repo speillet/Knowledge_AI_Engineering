@@ -83,12 +83,11 @@ Le taux d'utilisation seul n'est pas une cible de valeur : un GPU occupé à rec
 
 Comment arbitrer coût, qualité et latence ? <!--anki:69412d2547702d7c503f-->
 ?
-C'est un **triangle** : on ne maximise pas les trois. Les [[92-chainforge-evals-prompts|evals]] et les [[64-metriques-slo-inference|SLO]] rendent l'arbitrage **objectif** :
-1. Fixer un **plancher de qualité** et un **plafond de latence**
-2. Parmi les options qui les respectent, choisir la **moins chère**
-3. Réévaluer à chaque nouveau modèle, car les prix baissent vite
+Fixer **qualité minimale, SLO de latence et contraintes obligatoires**, puis comparer le coût total des options admissibles grâce aux [[92-chainforge-evals-prompts|evals]] et aux [[64-metriques-slo-inference|mesures de service]].
 
-Sans plancher de qualité explicite, l'optimisation des coûts dégrade le produit sans que personne ne le décide.
+Exemple fictif : A coûte 0,01 € par tentative et réussit 80 % des tâches ; B coûte 0,012 € et réussit 98 %. Hors reprises, leurs coûts par réussite valent environ **0,0125 € et 0,01224 €** : B peut être économiquement préférable.
+
+Inclure retries, revue humaine et exploitation. Il existe des compromis, mais une amélioration peut aussi réduire coût et délai tout en améliorant la qualité. Réévaluer sur mesures, pas sur l'hypothèse que les prix baissent toujours.
 
 ---
 

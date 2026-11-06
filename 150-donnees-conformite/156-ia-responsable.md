@@ -86,10 +86,11 @@ Cela se mesure : un relecteur qui valide 400 décisions par heure leur consacre 
 
 À ne pas confondre : safety et security ? <!--anki:4f462d3828282f2f755e-->
 ?
-- **Safety** : éviter que le système **cause du tort** en fonctionnement normal : contenu dangereux, biais, conseils erronés, sycophancy
-- **Security** : empêcher qu'un **attaquant** détourne le système : prompt injection, exfiltration, abus d'outils ([[101-securite-llm-guardrails|sécurité]])
+**Safety** vise la prévention des dommages causés par le système, y compris sans adversaire ; **security** vise sa protection contre les accès ou actions hostiles ([[101-securite-llm-guardrails|sécurité]]).
 
-En français, les deux se traduisent souvent par « sécurité », d'où la confusion. Les équipes, les tests et les métriques diffèrent : évaluations de contenu et red teaming comportemental d'un côté, modèle de menace et tests d'intrusion de l'autre.
+Exemple : une recommandation erronée donnée spontanément relève de la safety ; une instruction externe qui détourne l'agent vers une fuite de données relève de la security. Une attaque peut aussi provoquer un dommage de safety : les périmètres se recouvrent.
+
+Définir scénarios, responsables et critères séparément, puis tester leurs interactions. Un filtre de contenu ne remplace pas les permissions ; une infrastructure protégée ne garantit pas des conseils exacts ou un traitement équitable.
 
 ---
 

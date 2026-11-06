@@ -164,13 +164,13 @@ Mise en situation : une table de référence fait 200 Mo sur disque mais son bro
 
 Mise en situation : un job d’embeddings distribué relance certaines partitions et la facture API double. Comment fiabilises-tu le traitement ? <!--anki:6330396139353930393939333465616361353466353363326433623236363664-->
 ?
-1. **Identifier les appels répétés** avec clé d'objet, version et configuration d'embedding.
-2. **Séparer calcul et publication**, en conservant les résultats durables réutilisables.
-3. **Prévoir la reprise sans effet répété**, avec idempotence si l'API le permet et déduplication aval.
-4. **Borner concurrence et quotas**, puis classer erreurs transitoires et permanentes.
-5. **Tester une panne après réponse distante**, avant enregistrement local du résultat.
+1. **Tracer les répétitions** par objet, hash du texte et version/configuration du modèle, y compris tentatives spéculatives du moteur distribué.
+2. **Réutiliser un résultat durable** pour cette clé ; publier atomiquement afin que deux workers ne créent pas deux résultats logiques.
+3. **Examiner la frontière de facturation** : si l'API propose une idempotence couvrant l'opération, réutiliser sa clé. Sinon, la déduplication aval n'annule pas les appels déjà facturés.
+4. **Borner concurrence et retries**, avec quotas et distinction entre erreur permanente, transitoire et résultat inconnu.
+5. **Injecter la panne critique** après succès distant mais avant sauvegarde locale, puis mesurer appels facturés et doublons publiés séparément.
 
-**Piège** : supposer qu'une tâche distribuée n'exécute sa fonction qu'une seule fois.
+**Piège** : promettre une facturation exactement une fois alors que l'API ne fournit ni idempotence ni récupération du résultat perdu.
 
 ---
 

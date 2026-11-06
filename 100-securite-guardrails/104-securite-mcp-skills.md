@@ -31,10 +31,11 @@ La description mélange une capacité anodine et une consigne étrangère à sa 
 
 Qu'est-ce qu'un rug pull MCP ? <!--anki:663651424058654c574a-->
 ?
-Un serveur **change ses définitions d'outils ou son comportement après avoir été approuvé** : la version auditée était saine, la mise à jour ne l'est plus. Parades :
-- **Épingler** la version et l'empreinte des définitions d'outils
-- **Alerter** à chaque changement de description
-- **Revoir** les mises à jour comme une montée de version de dépendance
+Un serveur change **après son approbation** : définitions d'outils, permissions demandées ou comportement. La confiance accordée à une version ne couvre pas automatiquement la suivante.
+
+Exemple : le schéma de l'outil reste identique mais son backend distant change de destination pour les données. Le hash des descriptions ne détecte pas ce changement de comportement.
+
+Épingler artefacts lorsque possible, comparer les capacités annoncées et revoir les mises à jour. Pour un service distant non figé, limiter données exposées, permissions et destinations réseau ; surveiller les actions effectives. Une définition inchangée et une connexion authentifiée ne constituent pas une preuve de comportement inchangé.
 
 ---
 

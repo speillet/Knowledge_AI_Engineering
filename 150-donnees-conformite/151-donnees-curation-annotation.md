@@ -51,7 +51,11 @@ Un désaccord fréquent révèle souvent un **critère mal défini**, pas un mau
 
 Comment mesurer l'accord inter-annotateurs ? <!--anki:416b7945232c3f326648-->
 ?
-Faire annoter un **même échantillon** par plusieurs personnes et calculer le **kappa de Cohen** (2 annotateurs) ou l'**alpha de Krippendorff** (plusieurs annotateurs, données manquantes). Ces mesures corrigent l'**accord dû au hasard**. Un accord humain faible fixe aussi un **plafond** : inutile d'exiger d'un [[95-llm-as-judge|juge LLM]] plus d'accord que les humains entre eux.
+Faire annoter **indépendamment le même échantillon**, puis mesurer accord brut, désaccords par classe et coefficient adapté : kappa de Cohen pour deux annotateurs, alpha de Krippendorff pour des configurations plus générales.
+
+Exemple : si une classe représente 95 % des cas, un fort accord brut peut surtout refléter cette prévalence. Les coefficients corrigés utilisent un modèle d'accord attendu, mais restent sensibles à la distribution et au protocole.
+
+Un faible accord signale ambiguïté, difficulté ou formation insuffisante ; ce n'est **pas un plafond mathématique universel** pour un [[95-llm-as-judge|juge LLM]]. Construire une référence arbitrée et documenter l'incertitude plutôt que déclarer automatiquement un annotateur infaillible.
 
 ---
 

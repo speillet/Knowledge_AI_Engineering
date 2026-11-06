@@ -13,9 +13,11 @@ Un gain minuscule peut devenir significatif avec beaucoup de données tout en ne
 
 Que signifie une p-valeur de 0,03 dans une comparaison de modèles ? <!--anki:6561656235626662376234663463343561326563666435336662613531643437-->
 ?
-Sous l'**hypothèse nulle** et les hypothèses du test, c'est la probabilité d'obtenir une statistique au moins aussi extrême que celle observée. Ce n'est ni la probabilité que l'hypothèse nulle soit vraie ni 97 % de chances que le nouveau modèle soit meilleur.
+Sous l'**hypothèse nulle** et les hypothèses du test, une p-valeur de 0,03 est la probabilité d'une statistique au moins aussi extrême que celle observée. Ce n'est pas 97 % de chances que le modèle soit meilleur.
 
-La conclusion dépend du protocole : indépendance, appariement, arrêt et nombre de comparaisons. Rapporter aussi la différence mesurée et son intervalle. Une p-valeur calculée après sélection opportuniste de la métrique n'a plus l'interprétation du test initialement prévu.
+Exemple : tester vingt métriques indépendantes sous vingt hypothèses nulles vraies au seuil de 5 % donne environ **64 % de probabilité d'au moins un résultat significatif** : `1 − 0,95^20`. Sélectionner ensuite le meilleur résultat trompe donc l'interprétation.
+
+Préspécifier métrique, appariement, arrêt et correction des comparaisons multiples. Rapporter effet, intervalle et coût métier ; significativité ne signifie ni grand effet ni décision automatiquement favorable.
 
 ---
 

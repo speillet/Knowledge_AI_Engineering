@@ -81,9 +81,11 @@ Si le montant ou le destinataire change, l'approbation précédente ne doit plus
 
 Comment éviter qu'une approbation valide devienne dangereuse pendant l'attente ? <!--anki:3431653135316132386233393437396439376364616535633434353639653938-->
 ?
-Revérifier les **préconditions métier au moment d'exécuter** : état courant, version de la ressource, droits et expiration. Une approbation concerne une proposition, pas un droit de modifier arbitrairement la ressource plus tard.
+Lier l'approbation à une **proposition exacte et versionnée**, puis revérifier droits, expiration et préconditions lors de l'exécution.
 
-Par exemple, un autre opérateur peut avoir remboursé la commande pendant l'attente. Une écriture conditionnelle doit détecter ce changement et demander réconciliation ou nouvelle validation. Conserver l'approbation dans le checkpoint ne supprime pas cette course temporelle.
+Exemple : le validateur approuve la modification d'un contrat en version 7 ; entre-temps, un opérateur publie la version 8. Le service exécutant doit refuser l'écriture conditionnée à la version 7 et demander réconciliation ou nouvelle approbation.
+
+Une lecture « tout est encore valide » suivie d'une écriture non protégée laisse une course temporelle. Appliquer le contrôle avec l'opération, par transaction, version attendue ou mécanisme équivalent. Ni le checkpoint ni l'approbation passée ne figent la ressource ; ne pas réinterpréter silencieusement l'accord pour une proposition différente.
 
 ---
 

@@ -21,9 +21,11 @@ Le manifeste permet de vérifier qu'une expérience relit le bon contenu et que 
 
 Pourquoi distinguer document source, texte extrait et exemple tokenisé ? <!--anki:6136333861303865396161393463636561623935383238636630643032326438-->
 ?
-Ce sont des **représentations successives**, chacune susceptible de changer. Le parseur peut perdre un tableau, une normalisation peut supprimer une négation, et le tokenizer ou le template peuvent modifier longueur et structure des exemples.
+Ce sont **trois artefacts distincts**, reliés par des transformations versionnées. Une source inchangée peut produire un texte différent après changement de parseur, puis d'autres tokens après changement de tokenizer ou template.
 
-Conserver les références source et versions de transformations, avec contrôles à chaque frontière. Pour un RAG, garder si utile page ou emplacement pour vérifier les citations ; pour un entraînement, tracer les éléments utilisés pour calculer la loss. Reproduire seulement les fichiers bruts ne garantit pas de reproduire les mêmes tokens ni les mêmes labels.
+Exemple : un PDF contient un tableau correct, mais le parseur associe une valeur à la mauvaise colonne. Le hash du PDF prouve son identité, pas la fidélité du texte extrait.
+
+Conserver identifiants et versions à chaque étape, avec contrôles de structure et références aux pages. En entraînement, tracer aussi labels, masques de loss et troncature. Une erreur doit pouvoir être localisée puis corrigée sans confondre source, extraction et exemple effectivement consommé.
 
 ---
 

@@ -116,11 +116,11 @@ Répéter le jugement réduit une partie de l'aléa, mais **pas un biais systém
 
 Comment rendre un fine-tuning reproductible ? <!--anki:74213c39574676285476-->
 ?
-- Fixer **toutes les seeds** (Python, NumPy, PyTorch/CUDA) et l'**ordre des données**
-- Forcer les algorithmes déterministes : `torch.use_deterministic_algorithms(True)`, `CUBLAS_WORKSPACE_CONFIG=:4096:8`, `cudnn.benchmark = False`
-- **Versionner** données, code, config, image et **type de GPU**
+Figer **données, ordre d'échantillonnage, seeds, base, code, bibliothèques, matériel et configuration distribuée**. Activer les options déterministes appropriées, par exemple `torch.use_deterministic_algorithms(True)`, en respectant leurs préconditions.
 
-Changer de matériel ou de nombre de GPU modifie quand même les résultats au bit près : on vise des **métriques équivalentes**, pas des poids identiques.
+Exemple : reprendre un entraînement exige aussi états d'optimiseur, scheduler, générateurs aléatoires et position du sampler. Recharger seulement les poids avec la même seed ne reprend pas le même calcul.
+
+Le déterminisme peut ralentir ou refuser une opération sans implémentation adaptée. Des changements de matériel ou de réduction distribuée peuvent modifier les résultats. Distinguer reproduction bit à bit dans une pile fixée et **reproductibilité des conclusions**, évaluée par plusieurs runs et des métriques comparables.
 
 ---
 

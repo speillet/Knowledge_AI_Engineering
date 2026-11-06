@@ -70,7 +70,7 @@ Les autres valeurs par défaut et syntaxes citées viennent des documentations d
 
 ## Complément transversal de novembre 2026
 
-L'enrichissement couvre désormais les **147 fiches des 17 sections**, index conteneurs compris. Par rapport au commit `218570f`, **536 réponses sur 2 186** sont modifiées : les 316 réponses du travail local initial, relues et corrigées lorsque nécessaire, et 220 réponses supplémentaires dans les 110 autres fiches.
+La première passe de novembre a couvert les **147 fiches des 17 sections**, index conteneurs compris. Par rapport au commit `218570f`, **536 réponses sur 2 186** étaient modifiées : les 316 réponses du travail local initial, relues et corrigées lorsque nécessaire, et 220 réponses supplémentaires dans les 110 autres fiches.
 
 Chaque fiche contient donc un enrichissement effectif ; cela ne signifie pas que ses réponses ont toutes été réécrites. Les ajouts ciblent les mécanismes insuffisamment expliqués, les critères de décision, les contre-exemples et les vérifications concrètes. La longueur seule n'est pas un objectif.
 
@@ -102,3 +102,35 @@ Les contrôles de lisibilité conservent les limites de 110 mots par réponse st
 Validation locale finale du 6 novembre : `make check` réussi, **54 tests**, ruff et mypy sans erreur, lint sans avertissement, catalogues synchronisés et export de **2 186 cartes actives et 71 retirées**. Des vérifications ciblées supplémentaires couvrent les conversions FLOPs/GPU-heures, le coût par réussite, les probabilités, le `LEFT JOIN`, le classement des suppressions et la moyenne avec valeurs nulles.
 
 Cette passe est une relecture ciblée des réponses enrichies, **pas une certification exhaustive des 2 186 cartes ni de toutes les API citées**. Les vérifications de bibliothèques rapportées dans le bilan historique ci-dessus n'ont pas toutes été répétées. Les dates globales `Vérifié le` ne sont pas avancées ; les consultations ponctuelles nouvelles sont identifiées dans les sources concernées. Les configurations locales MCP et VS Code restent hors publication.
+
+## Seconde passe transversale — 6 novembre 2026
+
+Cette continuation approfondit **une réponse dans chacune des 147 fiches**, par rapport à `07df340`, point de départ après les six premières PR. Elle comprend **146 réponses jusque-là inchangées depuis `218570f`**, et un nouveau complément à l'unique carte de l'index conteneurs, déjà enrichie.
+
+Le cumul est donc de **682 réponses distinctes modifiées**, et non 683 : `536 + 146`. Les 147 réponses de cette seconde passe comprennent **141 cartes standard et 6 mises en situation**. Aucune carte n'est ajoutée, supprimée ou déplacée ; questions et identifiants restent identiques.
+
+### Apports pédagogiques
+
+- **Distinguer mécanisme et garantie** : appel d'outil proposé ou exécuté, checkpoint et effet externe, signature et confiance, HTTP 200 et service réellement rendu.
+- **Rendre les compromis mesurables** : calculs de coût par réussite, coût d'entrée avec cache, charge offerte/réalisée, MAE/RMSE, log-odds SHAP et comparaisons multiples.
+- **Préciser les hypothèses techniques** : mémoire totale d'un MoE, états partitionnés de FSDP, contexte réellement utilisé, unités des métriques de cache et ordre des filtres d'échantillonnage.
+- **Renforcer les cas de production** : approbation devenue périmée, effet distant réussi avant panne locale, tombstone expiré avant backfill, labels non mûrs et dérive d'un juge.
+- **Corriger les simplifications trompeuses** : un Pod n'est pas intégralement immuable ; un SIF peut être distribué par registre OCI via ORAS sans devenir une image Docker ; GGUF n'impose ni CPU ni fichier unique ; une reconnexion SSE ne garantit pas la reprise du flux ; l'accord humain n'est pas un plafond universel d'évaluation.
+
+| Lot | Sections | Fiches / réponses |
+| --- | --- | ---: |
+| Prompts, RAG, agents et workflows | 10, 20, 30, 40 | 32 |
+| Modèles, exécution, infrastructure, multimodal et ML | 50, 60, 70, 80, 130, 160, 170 | 58 |
+| Qualité, exploitation, produit et données | 90, 100, 110, 120, 140, 150 | 57 |
+
+### Vérifications et limites
+
+La comparaison avec `07df340` contrôle **exactement une réponse modifiée par fiche**, toutes les questions, les identifiants, l'ordre et le total de **2 186 cartes**. La comparaison avec `218570f` confirme le cumul de 682 réponses distinctes. Les 354 mises en situation et 182 cartes de confusion restent présentes.
+
+Le lint ne signale aucune erreur ni avertissement : les cartes standard restent sous 110 mots et les mises en situation sous 140. Les calculs ajoutés ont été vérifiés en Python standard, notamment la conservation de la distribution du speculative sampling, les conversions de probabilités, les coûts, le SLI et les dépendances d'une fenêtre de sept jours.
+
+Les consultations primaires ciblées concernent **le routage Cognee, les mises à jour des Pods Kubernetes, la publication SIF avec Apptainer, l'article 22 du RGPD et le champ d'application de l'AI Act**. Les liens et la portée de consultation sont ajoutés aux fiches concernées. Il ne s'agit pas d'une revérification de toutes les versions, bibliothèques ou dispositions réglementaires du vault ; les dates globales des fiches restent inchangées.
+
+Validation locale finale : **`make check` réussi, 54 tests**, ruff et mypy sans erreur, catalogues et ateliers validés. **`make export` réussi** ; inspection de la base du paquet : 2 257 notes, tous les 2 186 identifiants actifs présents, et exactement 71 cartes retirées suspendues. Les lots passent également les contrôles CI avant leur fusion.
+
+Les exemples de calcul sont illustratifs, avec tarifs fictifs lorsqu'ils portent sur une facture ; les exemples d'API, de GPU et d'infrastructure n'ont pas tous été exécutés dans un environnement réel. Les configurations locales MCP/VS Code ne sont ni modifiées ni publiées.

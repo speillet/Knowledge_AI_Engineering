@@ -27,12 +27,11 @@ Vérifier ces exigences sur l'offre exacte : contrat, région et fonctionnalité
 
 Pourquoi un classement de benchmarks ne suffit-il pas pour choisir un modèle ? <!--anki:6d6d6943634d763c4d30-->
 ?
-- Les benchmarks mesurent des **capacités générales**, pas **ta tâche**.
-- **Contamination** : certains scores sont gonflés ([[135-pretraining-scaling-laws|contamination]]).
-- Les **arènes de préférence** (votes humains à l'aveugle) favorisent le **style** (longueur, format) autant que l'exactitude.
-- Les écarts de quelques points sont souvent **dans le bruit**.
+Un classement mesure **un protocole et une population de tâches**, pas nécessairement le produit visé. [[135-pretraining-scaling-laws|Contamination]], biais de style et incertitude peuvent limiter sa portée.
 
-Ils servent à faire une **liste courte**, que l'on départage avec son eval.
+Exemple : le meilleur modèle sur des questions générales peut échouer à produire le schéma attendu dans la langue des clients, ou dépasser le délai du service.
+
+Utiliser les benchmarks pour présélectionner, puis comparer sur les mêmes cas applicatifs : qualité, formats, outils, coûts et p95. Vérifier versions, paramètres et budgets de génération ; des conditions différentes peuvent expliquer le classement. Examiner aussi segments critiques et contraintes contractuelles, plutôt qu'un écart moyen de quelques points sans intervalle.
 
 ---
 

@@ -73,9 +73,11 @@ Elle ne restaure pas toujours exactement le passé : un e-mail envoyé a pu êtr
 
 Comment concevoir une compensation qui peut elle-même être rejouée ? <!--anki:3331396262346265623232323436363539633138626639386561336330633333-->
 ?
-Lui donner **sa propre identité stable**, liée à l'action originale, et enregistrer son état. Vérifier la situation actuelle avant de corriger : un remboursement total déjà effectué ne doit pas être répété, et une réservation expirée n'exige pas forcément la même action qu'une réservation active.
+Attribuer à la compensation une **identité stable liée à l'action originale**, avec paramètres et état persistés. Faire respecter son unicité et ses préconditions par le service exécutant, pas par une simple lecture préalable.
 
-Prévoir résultats inconnus, retries bornés et intervention opérationnelle. L'ordre de compensation dépend des dépendances métier, pas toujours de l'ordre inverse mécanique. Conserver les références externes nécessaires pour vérifier le résultat, même après une reprise de l'orchestrateur.
+Exemple : un remboursement compensatoire réussit, puis l'orchestrateur tombe avant d'enregistrer la réponse. À la reprise, réutiliser la même identité et retrouver le résultat distant, plutôt que créer un second remboursement.
+
+Prévoir états inconnus, retries bornés et réconciliation. Une compensation partielle doit préciser montant et périmètre ; le même identifiant avec d'autres paramètres doit être rejeté. L'ordre dépend du métier, pas toujours de l'inverse exact des étapes.
 
 ---
 

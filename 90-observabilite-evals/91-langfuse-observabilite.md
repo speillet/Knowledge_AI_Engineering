@@ -54,9 +54,11 @@ La pseudonymisation ne rend pas les données anonymes si le lien reste possible.
 
 Qu'est-ce que le prompt management de Langfuse ? <!--anki:466a4f293328754834-->
 ?
-Des **prompts versionnés, stockés hors du code** et récupérés par l'application à l'exécution, avec des **étiquettes** (`production`, `staging`).
+Un registre de **prompts versionnés**, récupérables par l'application via version ou étiquette, comme `production`. Il permet de promouvoir ou restaurer un prompt sans nécessairement redéployer le code ([[13-prompts-production|prompts en production]]).
 
-Intérêts : itérer et faire un rollback **sans redéployer**, comparer deux versions en A/B, et relier chaque trace à la version du prompt utilisée. Contrepartie : un prompt peut changer sans commit, d'où la nécessité d'une eval avant de déplacer l'étiquette ([[13-prompts-production|prompts en production]]).
+Exemple : déplacer `production` de v12 vers v13 ne suffit pas à prouver que chaque worker utilise v13 : certains peuvent encore avoir v12 en cache. Tracer la **version effectivement résolue**, pas seulement l'étiquette demandée.
+
+Soumettre promotion et rollback à des evals, permissions et journal de changement. Définir comportement en cas de registre indisponible et délai de propagation du cache. Le prompt doit rester compatible avec outils, variables et modèle déployés.
 
 ---
 

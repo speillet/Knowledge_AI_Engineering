@@ -215,7 +215,11 @@ Comment limiter le rayon d'impact d'un agent qui déraille ? <!--anki:482d267241
 
 Quelles traces et quel audit pour la conformité ? <!--anki:74515d325a734c793226-->
 ?
-Une **trace complète par tâche** (OpenTelemetry, spans d'agent, de modèle et d'outil) qui répond à : **qui** (utilisateur et agent), **a fait quoi**, **sur quelles données**, **avec quelle approbation**, **avec quelle version** de l'agent. Les décisions de politique et les approbations vont dans un **journal d'audit immuable**, avec une durée de rétention définie. Voir [[93-monitoring-inference|monitoring de l'inférence]].
+Distinguer **trace de diagnostic** et **preuve d'audit** : relier identité, tâche, versions, décisions de politique, approbation, action et résultat, sans recopier inutilement les données sensibles ([[93-monitoring-inference|monitoring]]).
+
+Exemple : un span dit « outil appelé », mais le journal d'audit doit permettre de retrouver la proposition approuvée et l'identifiant de l'opération externe. Les deux se relient par corrélation.
+
+Protéger le journal contre les modifications non autorisées, vérifier sa couverture et définir rétention/effacement compatibles avec les obligations. « Immuable » ne signifie pas conserver toutes les données pour toujours. Tester la panne du collecteur et prévoir tampon durable ou refus explicite selon la criticité.
 
 ---
 

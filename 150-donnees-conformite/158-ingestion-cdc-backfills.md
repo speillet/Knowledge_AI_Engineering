@@ -121,13 +121,13 @@ Mise en situation : après un arrêt de trois jours, le journal source ne contie
 
 Mise en situation : un backfill a remis dans l'index des documents supprimés la veille. Quelle correction apportes-tu ? <!--anki:6165356537633730326435373439663062383533323366623565336332353466-->
 ?
-1. **Suspendre la publication affectée** et identifier les objets ressuscités.
-2. **Comparer versions et suppressions** entre historique rejoué et état source courant.
-3. **Protéger les écritures** avec une version et des marqueurs de suppression adaptés au rejeu.
-4. **Reconstruire ou réparer** les objets dérivés et vérifier les caches associés.
-5. **Tester un backfill concurrent** avec modifications et suppressions avant de reprendre.
+1. **Suspendre l'exposition affectée**, identifier les objets réintroduits et les réponses éventuellement servies.
+2. **Reconstituer la chronologie** : snapshot du backfill, positions CDC, versions et tombstones ; ne pas prendre l'heure d'ingestion pour une version métier.
+3. **Refuser les écritures anciennes** : une suppression version 9 doit empêcher le rejeu d'un document version 8.
+4. **Conserver la preuve de suppression** assez longtemps pour les replays autorisés, ou réconcilier avec une source faisant autorité avant publication.
+5. **Réparer index et caches**, puis tester suppression, mise à jour et backfill concurrents, y compris après expiration des tombstones.
 
-**Piège** : dédupliquer par identifiant sans distinguer l'existence d'un objet de sa version valide.
+**Piège** : supprimer physiquement le document et son marqueur, puis accepter tout objet absent comme nouveau lors du prochain backfill.
 
 ---
 

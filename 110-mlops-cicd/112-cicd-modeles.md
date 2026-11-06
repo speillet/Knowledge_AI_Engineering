@@ -5,9 +5,11 @@ Tags: #flashcards #ai-engineering #mlops #cicd #llm
 
 Qu'apporte le CI/CD d'une app LLM en plus du CI/CD classique ? <!--anki:4a6b3758755748575f5d-->
 ?
-Des **eval gates** : la qualité du modèle ou du prompt est testée automatiquement **comme du code**, en plus des tests logiciels habituels.
+Des **eval gates sur le comportement**, en plus des tests de code, contrats et intégration. L'opposition n'est pas « tests déterministes, evals statistiques » : les deux peuvent comporter de l'aléa, et un invariant métier peut être strict.
 
-La différence de fond : les tests classiques sont **déterministes** (réussi ou échoué), les evals sont **statistiques** (un score sur un jeu de cas, avec de la variance). Il faut donc des seuils, des marges et assez d'exemples pour qu'un écart soit significatif ([[114-reproductibilite-variance|variance]]).
+Exemple : bloquer toute action non autorisée, tout en comparant la qualité de résumé sur un échantillon avec intervalle d'incertitude. Un gain moyen ne compense pas la violation du premier critère.
+
+Fixer jeux, versions, seuils et protocole de répétition avant les essais ([[114-reproductibilite-variance|variance]]). Évaluer les segments critiques et mesurer couverture/échecs de l'évaluateur ; une gate sans cas représentatifs peut laisser passer une régression.
 
 ---
 

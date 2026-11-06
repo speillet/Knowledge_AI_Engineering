@@ -49,9 +49,11 @@ Tester les combinaisons de versions qui vont coexister : la seule version préc�
 
 Comment migrer un champ de données sans casser tous ses consommateurs ? <!--anki:6335316261383337393062343465383938393436346631616438333937623233-->
 ?
-Utiliser une migration **ajouter, migrer, retirer** : introduire la nouvelle représentation, rendre les consommateurs capables de la lire, vérifier leur bascule, puis retirer l'ancienne après la période convenue.
+Suivre **ajouter → migrer → retirer** : publier la nouvelle représentation, adapter les consommateurs, observer leur bascule puis retirer l'ancienne selon un délai convenu.
 
-Par exemple, conserver temporairement `montant_centimes` et `montant_decimal` avec une règle de conversion explicite. Éviter une double écriture indépendante qui laisse les deux valeurs diverger. Contrôler les anciens clients, les historiques rejoués et les modèles entraînés avec l'ancien format avant suppression. Un schéma compatible ne rend pas automatiquement compatibles les calculs métier.
+Exemple : passer de centimes entiers à montant décimal exige une conversion exacte, une devise et une règle d'arrondi. Produire les deux champs depuis une même valeur canonique et contrôler leur cohérence, plutôt que les écrire indépendamment.
+
+Rejouer des événements historiques avec leur version : `1250` ne doit pas être lu comme 1 250 euros s'il représentait 12,50 euros. Vérifier clients retardataires, features et modèles existants ; prévoir rollback. Compatibilité de schéma et compatibilité sémantique sont deux validations distinctes.
 
 ---
 

@@ -137,9 +137,11 @@ Un alias stable peut pointer vers une version différente, et un identifiant dat
 
 Quel rôle pour l'humain dans la boucle de production ? <!--anki:695e2a5b4b652e41353c-->
 ?
-**Annoter des échantillons** et **revoir les cas limites** : l'humain reste la source de vérité. Ses annotations servent à la fois à mesurer la qualité, à **calibrer les juges automatiques** et à enrichir le golden dataset.
+L'humain **annote, arbitre et révise les critères**, mais ses labels peuvent aussi être erronés ou ambigus. Utiliser une grille, des sources vérifiables et une procédure de désaccord ([[151-donnees-curation-annotation|annotation]]).
 
-Pour tenir dans le temps : un volume fixe et régulier (par exemple 50 traces par semaine), choisi par échantillonnage plutôt qu'au hasard des signalements ([[151-donnees-curation-annotation|annotation]]).
+Exemple : réserver une partie des 50 traces hebdomadaires à un échantillon représentatif et une autre aux incidents rares. Les cas ciblés révèlent des défauts, mais leur taux d'erreur ne représente pas directement tout le trafic.
+
+Conserver le mode de sélection et les effectifs, puis pondérer si nécessaire. Les annotations servent à estimer la qualité et calibrer les juges ; garder un jeu indépendant au lieu d'entraîner et d'évaluer sur les mêmes corrections.
 
 ---
 

@@ -54,9 +54,11 @@ Conserver la provenance et la logique de construction pour pouvoir la reconstrui
 
 Pourquoi contrôler la cardinalité avant chaque jointure de données ? <!--anki:6139326230373030303334373439633938376338623437343138333730616530-->
 ?
-Une jointure **un-à-plusieurs** peut multiplier les lignes et répéter les mesures du côté « un ». Deux tables contenant plusieurs lignes par clé produisent un produit des correspondances pour chaque clé.
+La jointure peut **changer le grain et le poids des observations**. Plusieurs correspondances par clé multiplient les lignes ; plusieurs lignes de chaque côté produisent leur produit.
 
-Vérifier le grain des deux côtés, l'unicité attendue et le nombre de lignes avant/après. Pour enrichir une table d'exemples sans changer son grain, agréger ou sélectionner explicitement la bonne version de l'autre table. Un `DISTINCT` final peut cacher le symptôme tout en supprimant des observations valides ou en laissant les sommes déjà faussées.
+Exemple : enrichir un dataset « une ligne par client » avec son historique d'adresses surpondère les clients ayant déménagé. Le modèle reçoit alors une distribution différente, même si aucune cellule n'est nulle.
+
+Vérifier unicité attendue (`GROUP BY ... HAVING COUNT(*) > 1`), effectifs et sommes avant/après. Sélectionner l'adresse applicable à la date de l'exemple, ou agréger explicitement. Un `DISTINCT` final ne rétablit pas nécessairement le grain et peut masquer des incohérences plutôt que les résoudre.
 
 ---
 

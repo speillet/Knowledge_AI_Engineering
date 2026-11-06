@@ -15,9 +15,11 @@ Il faut donc des **traces complètes** et une méthode, pas seulement des logs d
 
 Qu'est-ce que l'analyse d'erreurs (error analysis) ? <!--anki:6c6b3c60573e3c384654-->
 ?
-Une méthode **qualitative d'abord** : lire des dizaines de traces ratées, noter librement ce qui cloche (**open coding**), puis regrouper ces notes en **catégories** d'échec (**axial coding**) et les compter.
+Examiner des cas, décrire les problèmes librement (**open coding**), puis construire une **taxonomie d'échecs** exploitable et compter leur fréquence sur un échantillon adapté.
 
-Elle révèle les **vrais** modes d'échec du système, avant de choisir quoi mesurer. Les métriques génériques (« utilité », « pertinence ») passent souvent à côté ([[94-evals-methodologie|méthodologie]]).
+Exemple : « mauvaise réponse » peut recouvrir document absent, passage ignoré ou résultat d'outil mal interprété. Ces catégories conduisent à des corrections différentes ; la trace et des replays ciblés aident à tester la cause.
+
+Inclure des succès et des cas contrastés, pas uniquement les signalements spectaculaires. Noter fréquence, gravité et couverture ; une collection de tickets biaisée ne mesure pas le taux global. Après correction, transformer les cas en tests de non-régression sans suradapter toute l'[[94-evals-methodologie|évaluation]] à quelques incidents.
 
 ---
 

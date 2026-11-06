@@ -136,9 +136,11 @@ Définir l'identité de chaque élément, l'ordre éventuel et le traitement des
 
 Comment utiliser EXPLAIN pour diagnostiquer une requête de préparation de données lente ? <!--anki:3339643564313965373735383430666438316432393735633133313665383736-->
 ?
-Examiner **lectures, cardinalités estimées, filtres, stratégies de jointure et tris**, puis confronter le plan aux mesures d'exécution. Une mauvaise estimation peut entraîner un choix inadapté ; une jointure multiplicative peut expliquer coût et données erronées.
+Comparer **cardinalités estimées et réelles**, lectures, filtres, tris et stratégies de jointure. Les coûts du plan ne sont pas automatiquement des millisecondes.
 
-Vérifier statistiques, colonnes réellement lues et possibilité d'éliminer des partitions. Dans PostgreSQL, `EXPLAIN ANALYZE` exécute la requête : utiliser un contexte de test adapté, surtout pour une mutation. Un coût estimé n'est pas une durée en millisecondes. Optimiser après avoir confirmé l'équivalence des résultats, pas seulement la vitesse.
+Exemple : un nœud attendu à 100 lignes en produit un million ; une jointure choisie pour un petit résultat peut devenir très coûteuse. Examiner statistiques, sélectivité et grain avant de forcer une stratégie. Tenir compte du nombre de boucles pour interpréter les mesures d'un nœud.
+
+Dans PostgreSQL, **`EXPLAIN ANALYZE` exécute réellement** la requête : choisir un environnement adapté, surtout pour les mutations. Vérifier octets lus, partitions évitées et mémoire, puis confirmer que l'optimisation conserve les résultats attendus.
 
 ---
 

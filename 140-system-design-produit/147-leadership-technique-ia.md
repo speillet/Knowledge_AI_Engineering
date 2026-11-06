@@ -109,7 +109,11 @@ Nommer les responsables des alertes, incidents, budgets et migrations de modèle
 
 Comment expliquer les limites de l'IA à un décideur non technique ? <!--anki:79794d41516042715354-->
 ?
-En termes de **risque et de probabilité**, pas de technologie : « sur 100 demandes, 92 sont traitées correctement, 5 sont escaladées, 3 contiennent une erreur que l'on détecte dans 2 cas sur 3 ». Montrer des **exemples réels** d'échecs, le **coût** et le **plan de mitigation**. Éviter aussi bien l'enthousiasme sans chiffres que le refus de principe.
+Par **fréquences, conséquences et garde-fous**, avec des catégories sans double comptage.
+
+Exemple fictif sur 100 demandes : 92 bonnes réponses automatiques, 5 escalades préventives et 3 erreurs, dont 2 détectées puis escaladées. Cela représente **7 dossiers à revoir et 1 erreur non détectée**, pas un service fiable à 99 % sans travail humain.
+
+Préciser échantillon, période, incertitude et délai de détection ; ces fréquences ne prédisent pas exactement les 100 prochains cas. Montrer un échec concret, sa gravité, le coût de correction et qui peut interrompre le service. Le décideur doit arbitrer un risque résiduel explicite, pas seulement un pourcentage de performance.
 
 ---
 

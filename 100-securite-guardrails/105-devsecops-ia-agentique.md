@@ -159,13 +159,11 @@ La parité porte sur les contrôles, pas sur le partage des secrets. Tester un e
 
 Que journaliser pour la sécurité d'un agent ? <!--anki:755e792c39652e345530-->
 ?
-Pour chaque action :
-- **Qui** : l'utilisateur et l'agent
-- **Quel outil**, avec quels arguments (secrets masqués)
-- **Décision de politique**, approbation éventuelle, résultat
-- **ID de corrélation** vers la trace complète
+Journaliser **identité vérifiée, outil, horodatage, décision de politique et résultat**, avec identifiant d'action/corrélation, version et référence d'approbation. Masquer les arguments sensibles avant export vers le SIEM.
 
-On envoie ces journaux au **SIEM**. Comme ils contiennent des données sensibles, on les **protège** (accès restreint, rétention définie). Voir [[93-monitoring-inference|monitoring]].
+Exemple : distinguer « demande autorisée », « appel envoyé » et « effet confirmé ». Après timeout, un statut **inconnu** évite de déclarer à tort réussite ou échec ; une réconciliation pourra compléter le journal.
+
+Inclure refus et erreurs, pas seulement les actions réussies. Protéger intégrité, accès et rétention ; ne pas enregistrer des secrets pour prouver leur utilisation. Les traces diagnostiques peuvent être échantillonnées, mais les événements d'audit critiques doivent suivre une politique de couverture explicite ([[93-monitoring-inference|monitoring]]).
 
 ---
 

@@ -5,9 +5,11 @@ Tags: #flashcards #ai-engineering #mlops #sre #incidents #capacite
 
 Pourquoi un statut HTTP 200 ne suffit-il pas comme SLI d'un service IA ? <!--anki:3635323732333063663032383435633261333464373137376137633665346238-->
 ?
-Un **SLI** doit représenter le service rendu : une réponse vide, hors délai ou invalide peut arriver avec HTTP 200. Définir les événements éligibles, le critère de succès et la fenêtre de mesure au niveau utilisateur.
+HTTP 200 indique un succès protocolaire, pas nécessairement une **réponse utile et conforme au délai**. Définir événements éligibles, succès et fenêtre au niveau utilisateur.
 
-Séparer disponibilité technique, latence et qualité lorsque leurs mesures n'ont pas la même couverture. Une qualité estimée sur un échantillon annoté comporte incertitude et retard ; ne pas la présenter comme une mesure exhaustive instantanée. Compter les replis selon leur conformité au contrat produit.
+Exemple : sur 1 000 demandes éligibles, 990 arrivent en HTTP 200, mais 40 de ces réponses sont vides ou hors délai ; le succès de ce contrat est **950/1 000 = 95 %**, pas 99 %. Les catégories doivent être sans double comptage.
+
+Séparer ce SLI de la qualité estimée sur un échantillon annoté, avec couverture et incertitude. Un fallback ne compte comme succès que s'il respecte le contrat produit ; une réponse d'attente n'est pas automatiquement une résolution.
 
 ---
 
