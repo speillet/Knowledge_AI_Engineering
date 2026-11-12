@@ -118,6 +118,8 @@ budget = 1 440 × 0,005 = 7,2 observations non conformes
 ```
 Avec ces unités discrètes, sept passent le seuil, huit ne le passent plus. Cela ne signifie pas sept minutes d'indisponibilité si les observations ne représentent pas des minutes équivalentes. Vérifier couverture de la collecte et définition des absences. Un objectif global respecté peut encore cacher un segment systématiquement dégradé.
 
+Pour une décision d'exploitation, conserver les violations individuelles et leur durée. Sept observations consécutives au même moment peuvent demander une réaction différente de sept écarts isolés, malgré un pourcentage final identique.
+
 ---
 
 Calcul : un défaut touche indépendamment 1 % des lignes. Sur un échantillon aléatoire de 100 lignes, quelle probabilité de ne détecter aucun défaut ? <!--anki:3061353064323333353066333439303361613332333231643266333666373465-->
@@ -128,6 +130,8 @@ P(aucun défaut) = (1 − 0,01)^100 ≈ 36,6 %
 P(au moins un défaut) ≈ 63,4 %
 ```
 Un échantillon sans erreur n'établit donc pas que le dataset est sain. Des erreurs regroupées par source ou période invalident l'hypothèse d'indépendance et motivent un échantillonnage stratifié ou ciblé. Réserver les contrôles exhaustifs aux invariants qui l'exigent et dont le coût est acceptable ; annoncer la couverture réelle de la validation.
+
+Pour atteindre 95 % de probabilité de détecter au moins un défaut à ce taux indépendant, il faut environ 299 lignes : résoudre `0,99^n ≤ 0,05`. Une erreur plus rare demande un échantillon plus grand.
 
 ---
 

@@ -71,6 +71,8 @@ p = 1 / (1 + exp(−0,2)) ≈ 0,5498
 ```
 La probabilité finale est donc environ 55 %. On ne peut pas traiter +0,8 comme une hausse de 80 points de probabilité. Vérifier l'unité annoncée par l'explainer : certaines configurations expliquent une probabilité, d'autres une marge ou une autre transformation de sortie.
 
+La base correspond à l'explainer et à sa population de référence, pas nécessairement au taux positif brut. Ajouter toutes les contributions dans l'espace annoncé avant la transformation inverse ; ne transformer chaque contribution séparément qu'avec une interprétation justifiée.
+
 ---
 
 À ne pas confondre : PDP et courbes ICE ? <!--anki:3565633339626133663835313461366538306264313030633130303766336266-->

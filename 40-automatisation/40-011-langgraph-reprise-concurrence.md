@@ -79,6 +79,8 @@ resultat = graph.invoke(None, config=config)
 
 Ne pas reconstruire les entrées initiales et les injecter aveuglément : cela peut démarrer un nouveau tour ou accumuler de nouveau les messages. Distinguer erreur, interruption et exécution terminée.
 
+Vérifier aussi la version du graphe et l'exclusivité de la reprise sur ce thread. Deux workers reprenant le même état peuvent entrer en concurrence ; le checkpointer ne garantit pas, à lui seul, l'idempotence du système métier.
+
 ---
 
 Pourquoi un checkpointer LangGraph ne suffit-il pas à sérialiser deux requêtes sur le même thread ? <!--anki:6330643362343966643762663437366439396439333132306663303537343731-->
@@ -152,6 +154,8 @@ builder.add_node(
 
 Les trois tentatives incluent l'initiale. Vérifier les retries internes du client et l'idempotence avant de traiter une erreur d'écriture comme une simple indisponibilité.
 
+Le budget du nœud inclut sommeil entre tentatives et temps des clients internes. Tester une panne persistante : l'exécution doit terminer dans l'échéance globale et signaler une opération externe encore incertaine au lieu de la rejouer aveuglément.
+
 ---
 
 Pourquoi la limite de récursion LangGraph ne remplace-t-elle pas un budget d'agent ? <!--anki:6665643733613362383263383463376362303637613430663830326535626436-->
@@ -219,6 +223,8 @@ Mise en situation : un déploiement renomme le nœud LangGraph d'approbation alo
 4. Prévoir un rollback compatible et surveiller les reprises après déploiement.
 
 **Piège** : valider uniquement les nouveaux dossiers créés après la mise à jour.
+
+Conserver un échantillon anonymisé de checkpoints couvrant les versions déjà déployées. Tester les effets externes et les identifiants de proposition après migration ; un graphe qui démarre correctement sur un nouvel état ne prouve pas cette compatibilité.
 
 ---
 

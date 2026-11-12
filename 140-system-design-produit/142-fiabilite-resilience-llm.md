@@ -13,12 +13,9 @@ Même auto-hébergé, un modèle conserve des sorties à valider et des ressourc
 
 Quels timeouts configurer sur les appels à un LLM ? <!--anki:455f43415a692f2c7b6f-->
 ?
-- **Timeout de connexion** court.
-- **Timeout jusqu'au premier token** (TTFT) : détecte un modèle saturé.
-- **Timeout entre tokens** en streaming : détecte un flux bloqué.
-- **Timeout global** adapté à la tâche (un agent ≠ une autocomplétion).
+Distinguer **connexion**, attente de la première réponse utile, **inactivité du flux** et **durée totale**. Ces délais protègent contre des problèmes différents : réseau inaccessible, attente excessive, stream bloqué ou tâche qui s'éternise.
 
-Un seul timeout global de 60 s laisse l'utilisateur attendre **sans rien voir**.
+Un long TTFT peut venir de la file, du prefill, du raisonnement ou du transport ; il ne prouve pas à lui seul une saturation. Propager une échéance globale aux outils et retries, puis annuler le travail aval si elle expire. Tester les heartbeats : des octets réguliers peuvent maintenir un flux vivant sans fournir de contenu utile à l'utilisateur.
 
 ---
 
@@ -28,6 +25,8 @@ Comment faire des retries correctement sur une API LLM ? <!--anki:47233729762a37
 - **Backoff exponentiel avec jitter**, en respectant l'en-tête **Retry-After**.
 - **Nombre limité** de tentatives et **budget de retries** global pour ne pas amplifier une panne.
 - Attention aux actions **non idempotentes** d'un agent (paiement, e-mail) : pas de retry aveugle.
+
+Chaque tentative consomme le délai restant et peut déjà être facturée. Sur timeout d'une écriture, rechercher son résultat par identifiant avant de rejouer ; distinguer réponse perdue et opération certainement non exécutée.
 
 ---
 
@@ -55,6 +54,8 @@ Comment gérer une sortie LLM mal formée dans une application ? <!--anki:507e47
 2. **Valider** : schéma (Pydantic, JSON Schema) + règles métier.
 3. **Réparer** : ré-appel avec **le message d'erreur** de validation (1 ou 2 fois max).
 4. **Dégrader** : valeur par défaut ou erreur explicite, jamais une sortie invalide propagée en aval.
+
+Une valeur par défaut doit être explicitement admissible et signalée comme telle. Pour une facture, remplacer un montant illisible par zéro peut être syntaxiquement valide mais dangereux ; préférer un statut incomplet et une revue.
 
 ---
 
@@ -89,6 +90,8 @@ Pourquoi épingler la version du modèle ? <!--anki:5043614c313623677e64-->
 ?
 Un alias type « latest » peut **changer de modèle sans prévenir** → comportement, format ou coût modifiés en production. On épingle une **version datée**, on **teste** la nouvelle version sur les evals, puis on migre volontairement — et on surveille les **dates de dépréciation** des fournisseurs ([[113-monitoring-drift-feedback|mises à jour des modèles API]]).
 
+Épingler n'empêche ni dépréciation ni changement d'infrastructure autour du modèle. Conserver la combinaison prompt, outils et paramètres validés, puis tester un remplacement avant l'échéance ; prévoir une date de revue et une route de secours compatible.
+
 ---
 
 Quels SLO définir pour une application LLM ? <!--anki:6c773648497256297b71-->
@@ -100,11 +103,15 @@ Quels SLO définir pour une application LLM ? <!--anki:6c773648497256297b71-->
 
 Avec un **budget d'erreur** qui décide quand geler les changements ([[64-metriques-slo-inference|SLO d'inférence]]).
 
+Définir pour chaque indicateur population, fenêtre et traitement des refus, timeouts et annulations. Un HTTP 200 avec un montant faux ne compte pas comme réussite métier ; séparer validité de forme et exactitude utile.
+
 ---
 
 Comment tester la résilience d'une application LLM ? <!--anki:68407a3a592331445669-->
 ?
 Par du **chaos testing** : injecter des 429, des timeouts, des flux coupés, des réponses invalides, un index vide, et vérifier que les fallbacks, circuit breakers et messages dégradés fonctionnent. Et des **tests de charge** avec des longueurs de prompt **réalistes** (la charge dépend des tokens, pas du nombre de requêtes).
+
+Fixer avant l'essai le comportement attendu et les invariants métier. Couper après un effet externe puis reprendre vérifie davantage qu'un timeout simulé avant tout appel ; contrôler aussi absence de doublon et annulation effective.
 
 ---
 
@@ -136,6 +143,8 @@ Sous hypothèse d'**indépendance** et de bascule parfaite :
 → environ 1,08 min indisponible sur 30 jours
 ```
 En série, ce sont les **disponibilités qui se multiplient**. En redondance, on multiplie les probabilités d'indisponibilité simultanée. Le fallback ne protège pas une gateway commune en panne ; corrélation, délais de détection, capacité de secours et échecs de bascule dégradent le résultat réel ([[82-routing-llm|fallbacks]]).
+
+Ces temps représentent une traduction théorique des probabilités en durée attendue. Ils ne décrivent pas la fréquence ni la durée de chaque incident : une même disponibilité peut correspondre à une longue panne ou de nombreuses microcoupures.
 
 ---
 

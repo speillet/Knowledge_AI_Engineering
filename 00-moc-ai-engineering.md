@@ -11,6 +11,8 @@ Pour appliquer les métriques, l’[atelier local de décision IA](examples/deci
 
 Pour construire des preuves vérifiables, l’[atelier RAG local](examples/rag-verifiable/README.md) compare deux politiques sur dix cas fictifs : droits, dates d'effet, conflits, retrait et abstention. Étudier [[22-rag-avance|la recherche avancée]], [[20-010-rag-droits-versions|les droits et versions]], puis [[96-evals-rag-agents|l'évaluation RAG]] ; produire un tableau affirmation/preuve et un rapport reproductible.
 
+Pour comprendre l’exécution d’une requête LLM, le [parcours prefill → RadixAttention → speculative decoding](docs/comprendre-prefill-radix-speculation-2026-11-12.md) suit les états calculés, les branches partagées et les tokens vérifiés. Il complète les fiches avec un exemple continu et des calculs détaillés.
+
 La [revue transversale du 12 novembre 2026](docs/revue-transversale-2026-11-12.md) présente les 147 approfondissements, les corrections et les limites de la vérification des sources.
 
 ## Parcours de lecture
@@ -197,6 +199,7 @@ L’[audit d’inférence du 8 octobre](docs/audit-inference-llm-2026-10-08.md) 
 - [[60-010-benchmarks-charge-inference|Benchmarks de charge pour l’inférence LLM]]
 - [[60-011-capacite-ordonnancement-inference|Capacité & ordonnancement de l’inférence LLM]]
 - [[60-012-demarche-optimisation-inference|Démarche d’optimisation de l’inférence LLM]]
+- [[60-013-prefill-decode-pas-a-pas|Prefill & decode — Exécution pas à pas]]
 
 ## 70 — Conteneurs & Infra
 

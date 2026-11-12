@@ -8,6 +8,8 @@ Quel principe directeur pour sécuriser un agent face à l'injection ? <!--anki:
 ?
 **Supposer la compromission** : n'importe quel texte lu par l'agent peut prendre le contrôle du modèle. La sécurité doit donc être appliquée **hors du modèle**, par du code déterministe, et viser à **limiter ce qu'un agent détourné peut faire** (le rayon d'impact). On empile plusieurs couches (**défense en profondeur**), car aucune n'est parfaite ([[102-menaces-agents|menaces]]).
 
+Par exemple, une page peut demander de publier une clé API : un outil sans accès à ce secret et sans destination réseau libre limite l'effet possible, même si le modèle reprend l'instruction.
+
 ---
 
 Qu'est-ce que l'Agents Rule of Two de Meta ? <!--anki:725f70486f3430653e51-->
@@ -72,6 +74,8 @@ Qu'apporte CaMeL (Google DeepMind, 2025) par rapport au pattern Dual LLM ? <!--a
 Le LLM privilégié écrit un **programme** à partir de la seule demande de l'utilisateur. Un interpréteur **trace la provenance** de chaque valeur et applique des **politiques** avant chaque appel d'outil (ex. interdit d'envoyer un e-mail à une adresse venue d'une donnée non fiable).
 
 Le Dual LLM protège le **flux de contrôle** ; CaMeL protège aussi le **flux de données**.
+
+Une valeur provenant d'une page non fiable reste marquée lors des transformations : l'envoyer dans un e-mail doit satisfaire la politique. Les garanties dépendent des opérations suivies et des politiques définies, pas du seul nom CaMeL.
 
 ---
 
@@ -150,12 +154,9 @@ Ils réduisent le taux de réussite et fournissent des **signaux de détection**
 
 Comment protéger la mémoire d'un agent ? <!--anki:654c2c423f327471373a-->
 ?
-- **Politique d'écriture** : quoi mémoriser, et à partir de quelles sources (pas de contenu externe brut)
-- **Provenance** attachée à chaque souvenir, **cloisonnement** par utilisateur
-- **Pas d'instructions** en mémoire, seulement des faits et des préférences
-- **Analyse** des écritures (injection, données sensibles), **expiration** et **purge** possibles
+Protéger la mémoire d'un agent exige de contrôler **ce qui entre, qui peut le relire et combien de temps il reste**. Associer chaque souvenir à sa provenance, son utilisateur et sa date ; distinguer fait validé, préférence et inférence.
 
-Voir [[39-memoire-agents|mémoire des agents]].
+Une instruction trouvée dans une page web ne doit pas devenir une règle durable. Une mémoire procédurale approuvée peut toutefois contenir des instructions : elle demande un circuit de confiance distinct. Tester correction, expiration et suppression jusque dans les index, caches et sauvegardes selon leur politique. Un namespace correctement nommé ne remplace pas une autorisation de lecture et d'écriture.
 
 ---
 
@@ -167,6 +168,8 @@ Comment sécuriser les échanges entre agents ? <!--anki:467633627237594f6856-->
 - **Coupe-circuits** pour arrêter une cascade
 
 Voir [[36-orchestration-agents|orchestration]].
+
+Authentifier l'émetteur ne rend pas son contenu exact ni son action autorisée. Vérifier destinataire, tâche déléguée et scopes à chaque frontière ; refuser qu'une sortie d'agent élargisse elle-même les permissions.
 
 ---
 
@@ -180,6 +183,8 @@ Quelles couches de conception et de contrôle forment la défense en profondeur 
 ```
 
 Ces couches visent à empêcher qu'un contenu malveillant devienne une action puissante. L'identité limite les ressources accessibles ; le moteur de politiques vérifie l'action réelle ; l'isolation borne les effets si un contrôle échoue. Par exemple, un outil de lecture documentaire n'a besoin ni d'un secret de paiement ni d'un accès réseau général.
+
+Tester aussi l'échec d'une couche : une injection réussie doit rencontrer les limites d'identité ou de réseau. Plusieurs filtres semblables ne constituent pas forcément plusieurs barrières indépendantes ; rechercher les dépendances communes.
 
 ---
 
@@ -255,6 +260,8 @@ Mise en situation : ton agent de code tourne dans un conteneur avec les identifi
 - [OWASP — Top 10 des risques des applications LLM](https://genai.owasp.org/llm-top-10/)
 - [MCP — bonnes pratiques de sécurité, édition 2026-07-28](https://modelcontextprotocol.io/docs/2026-07-28/tutorials/security/security_best_practices)
 
+- [Debenedetti et al. — CaMeL](https://arxiv.org/abs/2503.18813) — revue ciblée du 12 novembre 2026 : provenance des données et politiques d’appels d’outils.
+
 ## Connexions
 - [[102-menaces-agents|Menaces & incidents]] — ce contre quoi on se défend
 - [[101-securite-llm-guardrails|Sécurité LLM & guardrails]] — lethal trifecta, guardrails
@@ -273,4 +280,5 @@ Mise en situation : ton agent de code tourne dans un conteneur avec les identifi
 - [[85-carte-protocoles-agentiques|Carte des protocoles]] — quel protocole à quelle frontière de l'agent
 - [[33-mcp|MCP]] — le protocole standard entre agents et outils
 - [[40-010-langchain-outils-middleware-production|LangChain — Contrats, outils & middleware en production]] — permissions appliquées par le service
+- [[39-memoire-agents|Mémoire des agents]] — provenance, politiques d’écriture et suppression des souvenirs
 - [[00-moc-ai-engineering|MOC AI Engineering]]

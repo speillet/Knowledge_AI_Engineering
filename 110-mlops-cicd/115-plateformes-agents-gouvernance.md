@@ -98,9 +98,9 @@ Un agent **autonome** a au contraire son propre compte (ex. les « autopilots »
 
 Où vivent les jetons d'un agent ? <!--anki:4630305e382b7b6f4121-->
 ?
-Dans un **coffre** géré par la plateforme, qui les **injecte au moment de l'appel d'outil**, **jamais dans le contexte du modèle ni dans la sandbox** : une injection de prompt ne peut pas exfiltrer ce que le modèle ne voit pas.
+Une architecture privilégiée conserve les **credentials dans un coffre ou un proxy d'outils**, qui authentifie l'action et injecte le secret au dernier moment. Le modèle reçoit un résultat métier plutôt que le jeton brut.
 
-Les jetons sont **courts** (minutes) et **limités** au périmètre de la tâche, et révoqués au retrait de l'agent.
+Utiliser des droits minimaux, une durée limitée et une révocation adaptée. Ne pas exposer le secret dans contexte, logs ou fichiers accessibles à l'agent lorsque l'architecture l'évite. Cela empêche certaines lectures directes, mais pas l'abus d'un outil autorisé : une injection peut encore demander une consultation ou un envoi indu. Le proxy doit vérifier identité, arguments et destination.
 
 ---
 
@@ -254,6 +254,8 @@ Quatre leviers :
 - **Petits modèles** pour les sous-étapes ([[82-routing-llm|routing]])
 
 La métrique qui décide : le **coût par tâche réussie**, comparé au coût du processus actuel.
+
+Inclure les tentatives échouées et les appels encore en vol dans l'enveloppe budgétaire. Segmenter les coûts par résultat : une baisse du prix par appel peut cacher davantage de tours ou de reprises.
 
 ---
 

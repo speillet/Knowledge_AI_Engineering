@@ -1,42 +1,46 @@
 # Prefix caching & RadixAttention — Flashcards
 Tags: #flashcards #ai-engineering #inference #kv-cache #caching #llm
-Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: prefix caching de vLLM, arbre radix de SGLang, éviction, ordonnancement et routage cache-aware, offloading du KV cache (LMCache), limites, canal auxiliaire temporel, métriques par requête et token, gain de TTFT réel, affinité et surcharge, isolation par cache_salt. -->
+Vérifié le : 12 novembre 2026 — mécanismes et limites confrontés aux articles et documentations cités ; performances à mesurer sur la cible.
+<!-- summary: prefix caching de vLLM, arbre radix de SGLang, éviction, ordonnancement et routage cache-aware, offloading du KV cache (LMCache), limites, canal auxiliaire temporel, métriques par requête et token, gain de TTFT réel, affinité et surcharge, isolation par cache_salt, arbre compressé pas à pas, références et séparation des branches, calcul de partage, cache hybride et logits. -->
 
 
 Qu'est-ce que le prefix caching côté serveur ? <!--anki:703830706b2926403428-->
 ?
-La **réutilisation du [[61-kv-cache-attention|KV cache]]** d'un préfixe déjà calculé par une requête précédente : le serveur saute le prefill de ces tokens. Résultat : **TTFT plus court** et **débit plus élevé**. Il faut une correspondance **exacte, token par token, depuis le début** du prompt.
+Le **prefix caching** réutilise les clés et valeurs déjà calculées pour le début exact d'une séquence, avec le même modèle et un état compatible. Il évite de recalculer les représentations de ces positions lors du prefill d'une autre requête.
 
-Exemple : avec un system prompt commun de 3 000 tokens resté en cache, une requête de 3 200 tokens ne calcule plus que 200 tokens en prefill. Le gain ne porte que sur le prefill : le decode, souvent dominant pour les longues réponses, ne change pas.
+Si 3 000 tokens initiaux d'un prompt de 3 200 sont réutilisables, les 200 nouveaux doivent encore traverser le modèle et consulter le passé. Le cache ne fournit ni une réponse finale ni une recherche sémantique. Le gain dépend du travail évité, des transferts et de la file ; le decode continue de lire le contexte et de calculer les tokens suivants.
 
 ---
 
 Comment vLLM implémente-t-il l'automatic prefix caching ? <!--anki:4e4853344a45633c4345-->
 ?
-Le KV cache est découpé en **blocs** ([[61-kv-cache-attention|PagedAttention]]). Chaque bloc plein est identifié par un **hash** (hash du bloc parent + tokens du bloc + clés éventuelles : adaptateur LoRA, image, sel). Une table hash → bloc permet de retrouver les préfixes ; les blocs libres sont évincés en **LRU**. Activé par défaut dans vLLM V1.
+vLLM associe des **blocs KV physiques** aux tokens de séquences logiques. Pour reconnaître un bloc de préfixe, son identifiant dépend notamment des tokens, du bloc parent et d'informations de compatibilité comme adapter, contenu multimodal ou sel de cache.
+
+Deux blocs au texte identique mais précédés de contextes différents ne sont donc pas interchangeables. Une table permet de retrouver les blocs réutilisables ; la gestion de références et l'éviction contrôlent leur durée de vie. Granularité et comportement dépendent de la version : distinguer préfixe logique commun et tokens effectivement réutilisés. PagedAttention organise la mémoire ; le cache de préfixe décide de sa réutilisation.
 
 ---
 
 Qu'est-ce que RadixAttention ? <!--anki:71516b533b7348404c3e-->
 ?
-La technique de **SGLang** qui range les préfixes en cache dans un **arbre radix** : chaque arête porte une séquence de tokens, chaque nœud pointe vers ses pages de KV cache. Une requête **descend l'arbre** jusqu'au plus long préfixe commun, réutilise son KV cache et ajoute une branche pour la suite. Le partage est **automatique** entre requêtes, tours de conversation et branches parallèles.
+**RadixAttention** organise la réutilisation du KV cache dans SGLang au moyen d'un **arbre radix**, un arbre de préfixes dont les chemins sans bifurcation sont compressés en séquences de tokens.
+
+Le moteur cherche le plus long préfixe déjà calculé et compatible, récupère ses références KV, puis calcule la suite et l'insère dans l'arbre. L'arbre contient des métadonnées de recherche ; les tenseurs vivent dans les pools mémoire du moteur. Le mot « attention » ne désigne pas une nouvelle formule de softmax : l'optimisation évite des calculs répétés entre requêtes, conversations ou branches partageant exactement leur début.
 
 ---
 
 Comment SGLang évince-t-il les entrées de l'arbre radix ? <!--anki:746d6a686e7c2f454321-->
 ?
-En **LRU sur les feuilles** : on retire d'abord les branches les moins récemment utilisées. Un **compteur de références** protège les nœuds utilisés par des requêtes en cours, et la mémoire libérée retourne au pool commun.
+Dans le mécanisme classique décrit par RadixAttention, l'éviction choisit des **feuilles réutilisables selon leur ancienneté**, en protégeant par références les chemins utilisés par des requêtes actives. Libérer une feuille peut rendre son parent lui-même candidat.
 
-Conséquence : un préfixe partagé par de nombreuses requêtes, comme le system prompt, reste près de la racine et survit, alors que les fins de conversation propres à chaque utilisateur partent en premier. Sous forte pression mémoire, une conversation reprise après quelques minutes peut ne retrouver que le system prompt et repayer le prefill de tout son historique.
+Les suffixes peu utilisés disparaissent ainsi souvent avant un préfixe partagé. Ce n'est pas une garantie de conservation : si tout un sous-arbre devient inactif, il peut finir par être retiré. Les versions récentes proposent plusieurs politiques et caches hybrides ; vérifier la configuration. Ne jamais évincer un bloc encore nécessaire à un calcul actif pour améliorer artificiellement le hit rate.
 
 ---
 
 Qu'est-ce que l'ordonnancement cache-aware ? <!--anki:736e6973636b5e717b7b-->
 ?
-Servir en priorité les requêtes dont le **préfixe en cache est le plus long** : cela maximise les hits avant que ces préfixes soient évincés. Le risque est de **faire attendre** les autres requêtes : on l'équilibre avec une règle d'équité.
+Un **scheduler sensible au cache** utilise la réutilisation possible pour ordonner les requêtes, au lieu de considérer uniquement leur arrivée. La politique longest-prefix-match favorise celles qui retrouvent un long préfixe compatible.
 
-Dans SGLang, la politique *longest prefix match* trie la file selon la longueur du préfixe déjà en cache. Exemple : 50 requêtes portent sur le même document de 8 000 tokens. Les servir ensemble ne calcule ce préfixe qu'une fois ; les intercaler avec d'autres peut le faire évincer, puis recalculer. Sous faible charge, la file est courte et l'ordre change peu de chose.
+Cela peut amortir le traitement d'un document partagé avant son éviction. Ce n'est pas toujours le meilleur délai utilisateur : une requête sans hit peut attendre indéfiniment si de nouvelles requêtes chaudes arrivent. Combiner âge, échéance, charge et équité ; comparer le travail économisé au temps passé en file. À faible charge, le choix d'ordre compte souvent moins que coût du prompt et vitesse du modèle.
 
 ---
 
@@ -54,15 +58,17 @@ Le gain dépend des tokens effectivement réutilisés, pas seulement du nombre d
 
 Pourquoi le routage entre réplicas doit-il tenir compte du cache ? <!--anki:723d5362493f5e2c4929-->
 ?
-Chaque réplica a **son propre cache** : un load balancer round-robin disperse les préfixes et le taux de hit s'effondre. Un routage par **affinité de préfixe** envoie la requête là où son préfixe est déjà chaud, tout en équilibrant la charge : SGLang router, llm-d, NVIDIA Dynamo, vLLM production stack ([[82-routing-llm|routage LLM]]).
+Quand les caches résident **localement sur les réplicas**, répartir aveuglément les requêtes disperse les préfixes chauds. Un routeur peut préférer l'instance qui possède déjà le préfixe compatible, sous réserve des droits et de sa charge.
+
+Comparer délai de file, prefill restant et transferts éventuels ; un hit sur une instance surchargée peut être moins utile qu'un calcul neuf ailleurs. Un cache hiérarchique ou partagé change ce compromis, sans supprimer les coûts de déplacement du KV. Mesurer par réplica les tokens réutilisés et la latence réelle, plutôt que supposer que toute affinité améliore le service.
 
 ---
 
 Qu'est-ce que l'offloading du KV cache ? <!--anki:482b3a513b2b5b7e2545-->
 ?
-Étendre le cache **au-delà de la VRAM** : RAM CPU, SSD, stockage distant, voire un cache **partagé entre instances** (LMCache, gestionnaire de blocs de Dynamo). On conserve ainsi beaucoup plus de préfixes, et pour un long préfixe, **recharger** coûte moins cher que **recalculer**.
+L'**offloading** déplace ou sauvegarde des K/V hors de la mémoire GPU, par exemple en RAM hôte ou sur un stockage hiérarchique. Il augmente le volume conservable, mais la réutilisation exige un transfert vers le lieu du calcul.
 
-Le gain dépend du rapport entre bande passante de transfert et coût du prefill. Il est fort pour les longs préfixes d'un gros modèle, faible pour quelques centaines de tokens, où lire depuis un SSD ou le réseau peut coûter plus que recalculer. Les transferts doivent aussi se recouvrir avec le calcul : sinon ils ajoutent leur durée au TTFT.
+Comparer coût de récupération, calcul évité et contention sur les liens. Un long préfixe peut être rentable à recharger ; quelques tokens peuvent coûter moins cher à recalculer. Lorsque des transferts sont recouvrables avec le calcul, une partie du délai peut être masquée, sans disparaître du budget de bande passante. Inclure allocations, synchronisation et isolation des données dans l'évaluation.
 
 ---
 
@@ -79,7 +85,9 @@ Un horodatage placé avant les instructions stables peut invalider tout le préf
 
 Quel risque de sécurité pose un prefix cache partagé entre plusieurs clients ? <!--anki:6b45506d623c422f4b4a-->
 ?
-Un **canal auxiliaire temporel** : un TTFT plus court révèle qu'un préfixe est déjà en cache, ce qui permet de deviner le prompt d'un autre utilisateur morceau par morceau. Parades : **isoler le cache par tenant** (ex. `cache_salt` dans vLLM) ; les fournisseurs d'API isolent le cache par organisation ou par workspace.
+Un **canal temporel** peut révéler qu'un préfixe deviné se trouve déjà en cache : sa réutilisation réduit une partie du prefill. L'attaquant observe des temps, pas directement les tenseurs ni le texte du voisin.
+
+Des essais répétés et des connaissances préalables peuvent rendre cet indice exploitable malgré le bruit. Définir une frontière de partage autorisée, puis imposer côté serveur une séparation adaptée, par exemple un sel secret de cache par groupe de confiance lorsque le moteur le permet. Vérifier l'offre et la fonctionnalité précises : aucune règle universelle d'isolation de tous les fournisseurs ne doit être présumée.
 
 ---
 
@@ -129,41 +137,124 @@ Faire attribuer par la gateway une valeur secrète stable pour chaque groupe de 
 
 ---
 
+À ne pas confondre : RadixAttention, PagedAttention et FlashAttention ? <!--anki:3638343633313466366663623439303138376531383064356131386566353362-->
+?
+**RadixAttention** identifie les préfixes déjà calculés pour réutiliser leur état. **PagedAttention** organise le KV en blocs physiques adressés par des séquences logiques. **FlashAttention** optimise le calcul de l'attention et ses transferts mémoire sans matérialiser toute la matrice des scores.
+
+Ces rôles sont complémentaires : retrouver un préfixe, gérer ses pages et calculer efficacement les nouvelles positions. Aucun ne transforme un texte seulement ressemblant en cache réutilisable. Leur combinaison et les kernels disponibles dépendent du moteur ; mesurer le travail évité et le calcul restant au lieu de multiplier des facteurs d'accélération annoncés séparément.
+
+---
+
+Comment un arbre radix représente-t-il deux prompts qui divergent après trois tokens ? <!--anki:3066383534356432373639383465393061316435346433326565666362326235-->
+?
+Supposons les tokens symboliques `[S,A,B,C]` puis `[S,A,B,D,E]`. Le préfixe commun de longueur trois reste unique ; les suffixes se séparent :
+```text
+racine
+  └─ [S A B]  → références KV communes
+       ├─ [C]   → suffixe de la requête 1
+       └─ [D E] → suffixe de la requête 2
+```
+Une arête porte plusieurs tokens, contrairement à un trie naïf avec un nœud par token. La seconde requête réutilise les états de `S,A,B`, puis calcule `D,E` en consultant ce passé. Ces lettres sont des identifiants de tokens pédagogiques, pas des caractères supposés correspondre aux tokens d'un vrai tokenizer.
+
+---
+
+Que se passe-t-il si un nouveau prompt diverge au milieu d'une arête radix existante ? <!--anki:3664383234653336326238643466616662353233396564326536333038333131-->
+?
+Le moteur **scinde l'arête** à la frontière du préfixe commun. Si l'arbre contient `[S,A,B]` et reçoit `[S,A,F]`, il crée un nœud après `[S,A]`, puis deux chemins `[B]` et `[F]`.
+
+Les états KV déjà calculés de `S,A` restent réutilisables ; scinder les métadonnées ne signifie pas recalculer ces tokens. Les références doivent néanmoins respecter les contraintes de pages de l'allocateur. Ce découpage rend possibles de futurs partages plus courts et plusieurs branches. Une divergence du troisième token n'invalide pas les deux premiers, si modèle, positions et périmètre de cache correspondent.
+
+---
+
+Pourquoi des tokens identiques au milieu de deux prompts ne suffisent-ils pas à partager leur KV cache ? <!--anki:3161633764316361323036363437333839626532646334623131633237366235-->
+?
+Dans un **Transformer causal**, l'état d'un token dépend de ses prédécesseurs à travers les couches. Le mot « Paris » après deux contextes différents peut donc produire des clés et valeurs différentes, même avec le même identifiant de token.
+
+Le partage sûr porte sur un début identique dans un état compatible, pas sur une sous-chaîne trouvée ailleurs. Les positions, le modèle, l'adapter et les entrées multimodales comptent aussi. RadixAttention cherche cette identité de préfixe ; il ne rapproche pas des paraphrases. Un cache sémantique de réponses répond à une autre question et demande d'autres validations.
+
+---
+
+Comment les références protègent-elles un préfixe partagé pendant un decode ? <!--anki:6237343037376338656364363432313138393961666466383365363037653336-->
+?
+Une requête active **retient les références** aux blocs dont son attention a encore besoin. Une seconde requête peut retenir les mêmes blocs de préfixe, tout en allouant ses propres suffixes.
+
+Quand une requête se termine, elle libère ses références ; les blocs ne doivent pas être recyclés tant qu'un autre lecteur les utilise. Sans lecteur actif, ils peuvent rester en cache, puis être évincés selon la politique. Partager des blocs ne donne pas le droit d'y écrire arbitrairement : une divergence requiert des états distincts, avec copie si un bloc partiellement partagé doit être modifié.
+
+---
+
+Calcul : combien de tokens KV distincts pour les prompts [S,A,B,C], [S,A,B,D,E] et [S,A,F] avec partage idéal ? <!--anki:3435306465323963653338383466303862623737613262323966303436353764-->
+?
+Sans partage, les longueurs totalisent `4 + 5 + 3 = 12` positions. L'arbre idéal conserve :
+```text
+[S A] : 2 positions partagées par les trois prompts
+[B]   : 1 partagée par les deux premiers
+[C]   : 1 ; [D E] : 2 ; [F] : 1
+total = 7 positions KV distinctes
+économie logique = 5 / 12 ≈ 41,7 %
+```
+Le calcul suppose compatibilité et partage exact, hors pages partiellement remplies, métadonnées et sorties nouvelles. Il mesure le stockage logique évité, pas une baisse identique du temps total : les suffixes calculent encore leur attention sur le préfixe et les réponses restent à générer.
+
+---
+
+Pourquoi changer la température ne rend-il pas forcément un préfixe KV inutilisable ? <!--anki:3463383939633963313663333462356638353665323263663561643365383238-->
+?
+La **température de sampling** agit sur les logits utilisés pour choisir une sortie ; elle ne change pas les représentations d'un préfixe fixé lorsque le modèle et son calcul restent identiques.
+
+Deux requêtes peuvent donc partager le même préfixe puis générer des suites différentes. En revanche, ces nouvelles suites ne partagent leur cache que tant que leurs tokens coïncident exactement. Modifier poids, adapter, positions ou entrées change potentiellement les états et demande une séparation appropriée. La décision de partage dépend aussi des clés et règles du moteur ; ne pas confondre éligibilité mathématique et comportement effectivement configuré.
+
+---
+
+Pourquoi une longue correspondance de tokens ne suffit-elle pas toujours avec un cache hybride récent ? <!--anki:3239343937633630313830633432663039353766333038316331356132366262-->
+?
+Un moteur hybride peut conserver **plusieurs types d'état** : attention complète, fenêtre glissante ou état récurrent. La présence d'un chemin de tokens ne prouve pas que chaque composant possède encore l'état nécessaire à cette frontière.
+
+Le cache unifié de SGLang recherche une frontière de réutilisation acceptée par tous les composants requis. Un composant évincé ou sans checkpoint peut raccourcir cette frontière. Les schémas simples d'arbre radix décrivent donc le cas classique, pas toutes les garanties d'un modèle hybride. Vérifier l'architecture et les compteurs de réutilisation effective avant de convertir une longueur commune en gain attendu.
+
+---
+
+Pourquoi un hit complet du prefix cache peut-il encore demander un peu de calcul ? <!--anki:3561343831646530616437323465633862333831653032383932363830303534-->
+?
+Un **cache KV** conserve des clés et valeurs, pas nécessairement les logits finaux ou la distribution du prochain token. Même si tout le prompt correspond, le moteur peut devoir rejouer sa dernière position ou utiliser un autre état conservé pour obtenir cette distribution.
+
+Recherche du cache, contrôles de compatibilité, allocation et éventuel transfert ajoutent aussi du délai. « Tous les tokens étaient déjà connus » ne signifie donc pas TTFT nul. Vérifier ce que compte le moteur comme hit et comme token recalculé ; distinguer réutilisation des représentations, disponibilité des logits et émission du premier token.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton assistant multi-tours affichait 70 % de hits sur le prefix cache. Après une mise à jour, le taux tombe à 5 % et le TTFT double. Que cherches-tu ? <!--anki:7964774643443c5a3328-->
 ?
-1. **Un changement en tête de prompt** : horodatage, identifiant de session, ordre des outils devenu variable
-2. **Vérifier la règle** : le prefix caching exige une correspondance **exacte depuis le premier token**
-3. **Regarder le déploiement** : nouveaux réplicas aux caches froids, ou routage redevenu round-robin
-4. **Corriger** : contenu stable en tête, variable en fin, et **routage par affinité de préfixe** ([[82-routing-llm|routing]])
-5. **Surveiller** le taux de hit comme métrique de premier plan ([[123-caching-agressif|caching]])
+1. **Comparer les entrées tokenisées** avant et après mise à jour : début du prompt, template, outils, variables et ordre des documents.
+2. **Vérifier la compatibilité du cache** : modèle, adapter, positions, sel et périmètre de partage.
+3. **Examiner l'exploitation** : réplicas froids, routage, évictions et pression des séquences actives.
+4. **Restaurer un préfixe stable si le sens le permet**, puis rejouer le même trafic avec et sans réutilisation.
+5. **Mesurer tokens réutilisés et délais**, en distinguant file et calcul du suffixe.
 
-**Piège** : une seule variable dynamique insérée au début du system prompt suffit à annuler tout le cache.
+**Piège** : déplacer les données dans le prompt pour maximiser le hit sans vérifier les effets sur la qualité ni la confidentialité.
 
 ---
 
 Mise en situation : tu passes de 1 à 4 réplicas vLLM derrière un load balancer classique, et le TTFT se dégrade alors que tu as plus de GPU. Pourquoi ? <!--anki:6e67712c2325372c714e-->
 ?
-1. **Cause** : chaque réplica a **son propre cache**. Un round-robin disperse les requêtes et fait chuter les hits
-2. **Mesurer** : taux de hit par réplica, avant et après le passage à l'échelle
-3. **Corriger** : routeur **cache-aware** (SGLang router, llm-d, Dynamo, vLLM production stack) qui envoie la requête là où son préfixe est chaud
-4. **Équilibrer** : l'affinité ne doit pas créer de point chaud. Le routeur arbitre entre hit et charge
-5. **Compléter** : offloading du KV cache, voire cache partagé entre instances (LMCache)
+1. **Tester l'hypothèse de dispersion** : les caches locaux se réchauffent séparément et le trafic peut perdre son affinité.
+2. **Comparer les réplicas** : longueurs réutilisées, files, évictions et démarrage des poids.
+3. **Évaluer un routage sensible au cache**, qui arbitre gain de prefill et délai d'attente.
+4. **Tester l'équité et les frontières de partage**, sans concentrer les tenants sur une instance saturée.
+5. **Étudier un cache hiérarchique ou partagé** seulement si les transferts et la coordination s'amortissent.
 
-**Piège** : conclure que le passage à l'échelle « ne sert à rien » sans regarder le cache.
+**Piège** : attribuer toute dégradation au cache sans éliminer stockage saturé, générateur de charge limité ou changement du mix de requêtes.
 
 ---
 
 Mise en situation : ton service multi-clients partage un même modèle, et un client s'inquiète que ses prompts puissent fuiter via le cache. Que réponds-tu ? <!--anki:7542547e2e756e342652-->
 ?
-1. **Le risque est réel** : le prefix caching crée un **canal auxiliaire temporel**. Un TTFT plus court révèle qu'un préfixe est déjà en cache
-2. **Ce qui fuit** : pas le contenu directement, mais la possibilité de **deviner un prompt** morceau par morceau en mesurant les temps de réponse
-3. **Parade principale** : isoler le cache par client (`cache_salt` dans vLLM), comme les fournisseurs d'API le font par organisation
-4. **Coût** : moins de partage, donc moins de hits. C'est un arbitrage sécurité contre performance
-5. **Vérifier** aussi l'isolation de la mémoire, des index et des journaux ([[115-plateformes-agents-gouvernance|isolation multi-tenant]])
+1. **Décrire le risque** : un temps de réponse peut fournir un indice sur un préfixe deviné déjà présent, sans lecture directe du cache.
+2. **Définir le groupe autorisé à partager** : utilisateur, tenant ou autre frontière de confiance justifiée.
+3. **Imposer la séparation côté serveur**, avec clés de cache appropriées ou instances distinctes ; un client ne choisit pas le périmètre d'un voisin.
+4. **Tester les autres états partagés** : médias, index, mémoire et journaux.
+5. **Mesurer le compromis** entre confidentialité, hits et capacité, avec les mécanismes de la version déployée.
 
-**Piège** : partager le cache entre clients pour « améliorer les performances globales ».
+**Piège** : généraliser les engagements d'une API commerciale à tous ses produits, ou supposer qu'un hash de tokens constitue une autorisation.
 
 ---
 
@@ -173,6 +264,12 @@ Mise en situation : ton service multi-clients partage un même modèle, et un cl
 - [SGLang — documentation du serveur et de ses optimisations](https://docs.sglang.io/)
 
 - [vLLM — isolation du cache et sécurité](https://docs.vllm.ai/en/latest/usage/security/) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
+
+- [Zheng et al. — RadixAttention, mécanisme classique et références](https://arxiv.org/html/2312.07104v2) — revue ciblée du 12 novembre 2026 : arbre compressé, partage, éviction et ordonnancement.
+
+- [SGLang — politiques d’éviction du cache radix](https://github.com/sgl-project/sglang/blob/main/docs/docs/advanced_features/radix_eviction_policy.mdx) — revue ciblée du 12 novembre 2026 : politiques actuelles, à distinguer du mécanisme classique.
+
+- [SGLang — cache radix unifié](https://www.sglang.io/blog/unified-radix-cache) — revue ciblée du 12 novembre 2026 : frontière de réutilisation commune aux composants des modèles hybrides.
 
 ## Connexions
 - [[61-kv-cache-attention|KV cache & attention]] — PagedAttention et prefix caching
@@ -185,4 +282,5 @@ Mise en situation : ton service multi-clients partage un même modèle, et un cl
 - [[51-fine-tuning-adaptation|Fine-tuning]] — adapter un modèle, LoRA et QLoRA
 - [[69-roofline-prefill-decode|Roofline & désagrégation]] — ce qui limite chaque phase de l'inférence
 - [[60-011-capacite-ordonnancement-inference|Capacité & ordonnancement]] — relier mémoire, budgets et débit utile sous charge
+- [[60-013-prefill-decode-pas-a-pas|Prefill & decode pas à pas]] — suivre les positions calculées, le cache et les délais
 - [[00-moc-ai-engineering|MOC AI Engineering]]

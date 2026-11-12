@@ -79,9 +79,11 @@ Exemple : « ne bloquez pas ma carte » mal transcrit peut être plus grave que 
 Quels risques spécifiques à la voix ? <!--anki:6c253c2d3a31356b6f78-->
 ?
 - **Clonage de voix** et usurpation : ne pas considérer la simple ressemblance vocale comme une preuve d’identité suffisante pour une action sensible.
-- **Consentement** à l'enregistrement et durée de conservation des audios (données personnelles, voire **biométriques**).
+- **Cadre légal de l'enregistrement**, information et durée de conservation des audios (données personnelles, voire **biométriques** selon leur traitement).
 - **Transparence** : informer qu'on parle à une IA ([[155-ai-act|AI Act]]).
 - Injection par la parole ou par l'audio d'un contenu joué.
+
+La base légale dépend du traitement ; le consentement n'est pas une solution universelle. Définir aussi alternative textuelle, contrôle d'identité indépendant et suppression des enregistrements ; une voix ressemblante peut provenir d'un enregistrement rejoué.
 
 ---
 

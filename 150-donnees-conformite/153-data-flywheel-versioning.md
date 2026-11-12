@@ -7,6 +7,8 @@ Qu'est-ce qu'une data flywheel ? <!--anki:452f4c54795042304253-->
 ?
 Une **boucle d'amélioration continue** : le produit est utilisé → on collecte **traces et feedback** → on **analyse** les échecs → on améliore (prompts, retrieval, evals, fine-tuning) → le produit est meilleur → plus d'usage et de données. L'avantage concurrentiel durable vient de cette boucle, pas du modèle, que tout le monde peut acheter.
 
+La boucle ne s'améliore que si les retours sont pertinents, autorisés et transformés en changements évalués. Une hausse de données mal labellisées ou biaisées peut amplifier les erreurs ; conserver un test indépendant pour confirmer le gain.
+
 ---
 
 Comment commence un tour de data flywheel ? <!--anki:4f4d77716748323a2d5f-->
@@ -43,6 +45,8 @@ Quel outil pour versionner quelles données : fichiers à côté du code, data l
 - **Data lake entier**, avec branches et commits façon git : **lakeFS**
 - **Tables analytiques** : **Delta Lake** ou **Apache Iceberg**, avec leur historique (time travel)
 - **Jeux d'eval** : datasets versionnés de la plateforme d'eval ([[91-langfuse-observabilite|Langfuse]]) ou du Hugging Face Hub
+
+Quel que soit l'outil, vérifier restauration, versions des transformations et durée de conservation. Un pointeur Git sans objet accessible, ou un snapshot expiré, ne permet pas de reconstruire le dataset effectivement utilisé.
 
 ---
 

@@ -133,6 +133,8 @@ scan complet = 900/1 024 × 5 ≈ 4,39 €
 ```
 Les colonnes réelles n'ont pas toutes la même taille et les filtres ne sont pas toujours exploitables. Les unités facturées peuvent différer des octets physiques lus. Ce calcul illustre la sélectivité ; vérifier plan, métrique de scan et tarification effective pour une décision réelle.
 
+Une compression physique différente entre colonnes invaliderait la proportion simple 3/30. Pour vérifier l'économie, comparer les scans avec le même moteur, la même version de table et le même résultat attendu.
+
 ---
 
 Calcul : 512 Gio sont écrits en fichiers de 1 Mio. Combien de fichiers cela représente-t-il, puis combien après regroupement idéal à 256 Mio, sans changement de volume ? <!--anki:6234616161353562636366313461336539396633666533663134323566393432-->

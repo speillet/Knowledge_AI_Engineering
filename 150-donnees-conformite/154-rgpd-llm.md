@@ -84,7 +84,9 @@ Exemple : une validation humaine de pure forme ne suffit pas à démontrer que l
 
 Le modèle lui-même contient-il des données personnelles ? <!--anki:79743c65434234557449-->
 ?
-C'est **débattu**. Le Comité européen de la protection des données (avis de décembre 2024) considère qu'un modèle entraîné sur des données personnelles **n'est pas automatiquement anonyme** : il faut démontrer au cas par cas que l'**extraction** de données personnelles est improbable. Cela concerne surtout ceux qui **entraînent** ou **fine-tunent** des modèles.
+Un modèle entraîné sur des données personnelles n'est **pas automatiquement anonyme**. L'avis 28/2024 du CEPD demande une appréciation au cas par cas des moyens raisonnablement susceptibles d'être utilisés.
+
+Il faut notamment que soient insignifiantes les probabilités d'extraire des données personnelles des personnes du corpus et d'en obtenir par les requêtes, volontairement ou non. Documenter accès au modèle, attaques réalistes et mesures de limitation ; quelques prompts sans fuite ne suffisent pas. Développement et déploiement demandent chacun une analyse de leur traitement. La seule suppression du dataset source ne démontre ni anonymat du modèle ni effacement de ce qu'il a mémorisé.
 
 ---
 
@@ -162,6 +164,8 @@ Mise en situation : le métier veut automatiser le tri des candidatures, avec re
 - [CNIL — ressources sur l’IA et les données personnelles](https://www.cnil.fr/fr/intelligence-artificielle)
 
 - [Union européenne — RGPD, articles 5 à 7 et 13](https://eur-lex.europa.eu/eli/reg/2016/679/oj/fra) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
+
+- [CEPD — avis 28/2024 sur les modèles d’IA](https://www.edpb.europa.eu/system/files/documents/2024-12/edpb_opinion_202428_ai-models_en.pdf) — revue ciblée du 12 novembre 2026 : anonymat apprécié au cas par cas, extraction et obtention par requêtes.
 
 ## Connexions
 - [[152-pii-confidentialite|PII & confidentialité]] — les mesures techniques

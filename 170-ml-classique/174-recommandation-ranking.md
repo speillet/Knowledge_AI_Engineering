@@ -85,6 +85,8 @@ nDCG@3 = DCG/IDCG ≈ 0,6934
 ```
 L'ordre idéal place les deux éléments pertinents en tête. Préciser pertinences, gain et univers de candidats pour comparer des scores. Le résultat évalue ce classement annoté ; il ne mesure ni exposition équitable ni satisfaction durable des utilisateurs.
 
+Pour une pertinence non binaire, annoncer aussi la fonction de gain : `r` et `2^r−1` donnent des valeurs différentes. Le dénominateur idéal doit être construit sur le même univers et avec les mêmes conventions.
+
 ---
 
 Pourquoi ajouter diversité et contraintes métier après le score de pertinence ? <!--anki:3736356165376333353332633438366561353530353966616166313831636462-->

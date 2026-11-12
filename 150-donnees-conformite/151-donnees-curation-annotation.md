@@ -47,6 +47,8 @@ Qu'est-ce qu'un bon guide d'annotation ? <!--anki:716b3a504a62423d5e4b-->
 
 Un désaccord fréquent révèle souvent un **critère mal défini**, pas un mauvais annotateur.
 
+Faire annoter les mêmes exemples sans concertation avant l'arbitrage. Versionner les règles et noter les motifs de désaccord permet de distinguer évolution du guide, ambiguïté réelle et erreur individuelle.
+
 ---
 
 Comment mesurer l'accord inter-annotateurs ? <!--anki:416b7945232c3f326648-->
@@ -64,6 +66,8 @@ Qui doit annoter les données d'un projet LLM ? <!--anki:655759474a3971454429-->
 - **Experts métier** pour les critères qui exigent de la compétence (médical, juridique, code) — chers mais indispensables sur le jeu d'eval de référence.
 - **Annotateurs formés** (internes ou prestataires) pour les volumes.
 - **LLM** pré-annotant, **humains qui valident** : accélère fortement mais introduit le biais du modèle (les humains tendent à accepter la proposition).
+
+Mesurer séparément accord et exactitude sur des cas arbitrés. Un contrôle aveugle de la proposition initiale, sur un échantillon, aide à révéler le biais d'ancrage introduit par la pré-annotation automatique.
 
 ---
 
@@ -111,6 +115,8 @@ double (20 %) :   400 × 3 min =  20 h × 80 €/h = 1 600 €
 total                                          ≈ 9 600 €, plus le guide d'annotation
 ```
 C'est le prix d'un jeu d'eval de référence fiable : on réserve les experts aux cas où l'expertise compte, et on passe par des annotateurs formés ou un LLM pré-annotant pour le volume ([[94-evals-methodologie|golden dataset]]).
+
+Le double marquage sert à observer les désaccords ; il ne garantit pas la justesse des labels. Prévoir pilote, arbitrage des cas ambigus et révisions du guide ; ces activités ajoutent du temps au coût arithmétique calculé.
 
 ---
 

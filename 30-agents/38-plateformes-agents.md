@@ -121,6 +121,8 @@ Quel type de service de sandbox choisir pour un agent : offre de son cloud, serv
 
 Critères de choix : technologie d'isolation, **temps de démarrage**, persistance possible entre deux appels, filtrage réseau. Voir aussi [[34-harness-plugins|harness]].
 
+Tester l'isolation avec deux tâches simultanées et une sortie réseau interdite. Un démarrage rapide n'évalue ni la résistance de la frontière ni l'effacement des données après destruction ; examiner ces garanties séparément.
+
 ---
 
 Qu'est-ce qu'une gateway d'outils (ou gateway MCP) ? <!--anki:677b3430255e3c483576-->
@@ -156,10 +158,9 @@ Les plateformes donnent une identité à chaque agent (Entra Agent ID, AgentCore
 
 À ne pas confondre : agent délégué et agent autonome ? <!--anki:41734f3c442839645429-->
 ?
-- **Agent délégué** : il agit **au nom d'un utilisateur** et hérite de **ses droits** (OAuth, accès délégué), jamais d'un compte de service surpuissant
-- **Agent autonome** : il agit **en son nom propre**, avec sa propre identité et ses propres droits, et un **humain propriétaire** responsable
+Un **agent délégué** agit au nom d'un utilisateur dans un mandat limité ; ses droits doivent rester un sous-ensemble autorisé pour cette tâche. Un **agent autonome** utilise une identité propre, avec des permissions et un propriétaire responsable définis.
 
-Le mécanisme des jetons est détaillé dans la fiche senior ([[115-plateformes-agents-gouvernance|gouvernance]]).
+Par exemple, un agent de support peut consulter seulement les dossiers de son demandeur, tandis qu'un traitement nocturne dispose d'un accès de service encadré. Dans les deux cas, vérifier identité, finalité, expiration et droits avant l'effet. « Autonome » ne signifie pas sans supervision, et « délégué » ne justifie pas de copier tous les jetons de l'utilisateur.
 
 ---
 

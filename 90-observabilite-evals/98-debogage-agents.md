@@ -87,6 +87,8 @@ Que faire d'un échec d'agent une fois sa cause comprise ? <!--anki:69374a72434a
 
 Sans l'étape 2, le même échec revient au prochain changement de modèle.
 
+Conserver entrée minimale, état initial, versions et effet observé sans données sensibles inutiles. Le test doit échouer sur la version défectueuse et vérifier le besoin métier ; recopier seulement le texte attendu peut masquer une nouvelle variante du défaut.
+
 ---
 
 Quels signaux de production pointent vers les traces à lire ? <!--anki:43695d442f3f3f7d6d33-->

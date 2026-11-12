@@ -84,6 +84,8 @@ Alertes = 1 089 ; précision = 90 / 1 089 ≈ 8,3 %
 ```
 Le taux de faux positifs porte sur les événements normaux, pas sur toutes les alertes. Malgré un bon rappel, la plupart des investigations seraient inutiles. Avec des taux estimés, ajouter leur incertitude et vérifier la prévalence de production avant de dimensionner l'équipe.
 
+Si chaque alerte coûte dix minutes d'investigation, cela représente environ 181,5 heures de revue. Une faible précision devient donc une contrainte de capacité concrète ; regrouper les alertes d'un même incident peut changer ce coût.
+
 ---
 
 Pourquoi évaluer une détection temporelle par incident en plus des points individuels ? <!--anki:6439623633616130303133383432363238656239336361343264613864646162-->

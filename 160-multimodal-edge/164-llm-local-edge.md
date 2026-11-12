@@ -39,11 +39,15 @@ Quel outil pour servir un LLM en local : développeur seul, Mac, interface graph
 - **Interface graphique** : **LM Studio**
 - **Équipe, utilisateurs simultanés** : **vLLM** ou **SGLang** sur un serveur GPU on-prem ([[11-serveurs-inference-llm|serveurs d'inférence]])
 
+Ces choix sont des points de départ, pas un classement universel. Vérifier modèle supporté, sorties structurées, concurrence et conditions de déploiement ; tester le parcours réel avant de choisir sur la seule facilité d'installation.
+
 ---
 
 Pourquoi les Mac Apple Silicon sont-ils populaires pour les LLM locaux ? <!--anki:797c71366d393945402f-->
 ?
-La **mémoire unifiée** partagée CPU/GPU permet de charger des modèles de **plusieurs dizaines à centaines de Go** sur une seule machine, avec une bande passante élevée. Le **débit** reste inférieur à un GPU serveur, et le **prefill** (long prompt) est lent, mais c'est une solution compacte pour le développement et les petits déploiements.
+La **mémoire unifiée** donne au CPU et au GPU accès à un espace mémoire commun, ce qui peut faciliter le chargement de modèles plus volumineux sur certaines configurations Apple Silicon.
+
+La mémoire annoncée n'est pas intégralement disponible au modèle : système, autres applications, KV et buffers en consomment aussi. Débit de decode et durée de prefill dépendent du modèle, de la quantification, du backend et du matériel comparé ; aucune hiérarchie universelle face aux GPU serveurs ne découle de la marque. Mesurer un workload soutenu sur la machine cible, notamment température et partage de bande passante.
 
 ---
 
@@ -72,6 +76,8 @@ Quels défis d'exploitation d'une flotte de modèles locaux ? <!--anki:255a2e4b7
 - **Observabilité** limitée (pas de logs centralisés par défaut).
 - **Sécurité** : les poids sont **extractibles** de l'appareil, et le modèle local reste exposé à la prompt injection.
 - **Evals** à refaire pour chaque quantization.
+
+Prévoir une mise à jour progressive, une vérification d'intégrité et un rollback compatible avec les données locales. Tester un appareil hors ligne pendant la migration ; contrôler ensuite la version effectivement active, pas seulement celle téléchargée.
 
 ---
 

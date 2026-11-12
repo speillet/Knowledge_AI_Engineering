@@ -101,6 +101,8 @@ n ≈ 16 × p(1 − p) / δ²  =  16 × 0,7 × 0,3 / 0,02²  ≈ 8 400 par bras
 ```
 Diviser l'effet cherché par 2 **multiplie par 4** l'échantillon : détecter +1 point demande ≈ 34 000 par bras. Si le trafic ne le permet pas, viser un effet plus gros, une métrique moins bruitée, ou s'appuyer sur les evals offline ([[114-reproductibilite-variance|variance]]).
 
+Une évaluation offline aide à sélectionner un candidat, mais n'identifie pas à elle seule l'effet produit causal d'un déploiement. La règle ignore notamment regroupements et lectures séquentielles ; adapter le dimensionnement au plan réel.
+
 ---
 
 Pourquoi distinguer intention de traiter et analyse des seuls utilisateurs effectivement exposés dans un A/B test IA ? <!--anki:3034633733303261663164643439653661666532656332373862333265623635-->

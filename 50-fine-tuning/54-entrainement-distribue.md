@@ -25,6 +25,8 @@ total ≈ 16 octets × 7e9          ≈ 112 Go (+ activations)
 ```
 Cette enveloppe dépasse une carte de 80 Go ; une carte plus grande, plusieurs GPU avec sharding ou une adaptation légère sont des options. Les seuls poids d’inférence occupent environ 14 Go. D'où l'intérêt de [[51-fine-tuning-adaptation|LoRA / QLoRA]] ou du sharding ZeRO/FSDP.
 
+Les 112 Go sont décimaux et concernent les états listés, pas chaque configuration d'optimiseur. Préciser la répartition entre GPU et les copies réellement présentes ; le batch et le checkpointing modifient surtout les activations, absentes ici.
+
 ---
 
 Qu'est-ce que le data parallelism (DDP) ? <!--anki:7a643e4b316b7a3a7526-->

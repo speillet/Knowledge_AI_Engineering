@@ -43,6 +43,8 @@ Qu'est-ce que la Product Quantization (PQ) ? <!--anki:484430554d377855643f-->
 ?
 Une compression : chaque vecteur est découpé en **m sous-vecteurs**, chacun remplacé par l'**indice du centroïde** le plus proche dans un petit dictionnaire. Un vecteur de 768 floats (3 Ko) peut tenir en **quelques dizaines d'octets**. Les distances deviennent **approximatives** → on combine souvent avec un **re-scoring** sur les vecteurs complets. IVF-PQ est le classique des très gros corpus.
 
+Avec 96 sous-vecteurs et 256 centroïdes par dictionnaire, chaque indice tient sur un octet : le code occupe 96 octets, hors dictionnaires. Les centroïdes s'apprennent sur un corpus représentatif ; leur qualité conditionne la dégradation du rappel.
+
 ---
 
 Quelles autres techniques de compression de vecteurs existent ? <!--anki:7328294347582a3e372a-->
@@ -82,10 +84,9 @@ Procédure : tirer quelques centaines à milliers de requêtes réelles, calcule
 
 Base vectorielle dédiée ou extension d'une base existante ? <!--anki:68674461647c78563b3c-->
 ?
-- **Extension** (pgvector dans PostgreSQL, OpenSearch/Elasticsearch) : **une seule base**, transactions, jointures, ACL et BM25 déjà là — suffisant jusqu'à des **dizaines de millions** de vecteurs.
-- **Base dédiée** (Qdrant, Milvus, Weaviate, Pinecone…) : meilleures performances à grande échelle, quantization et filtrage avancés, multi-tenant.
+Comparer une **extension d'un système déjà exploité** et une **base spécialisée** sur le même besoin : rappel, filtres de droits, fraîcheur, latence, disponibilité et coût d'exploitation.
 
-Le choix par défaut raisonnable : **commencer avec ce qu'on opère déjà**.
+Une extension peut simplifier transactions, jointures et sauvegardes. Une base spécialisée peut offrir des mécanismes de recherche ou de distribution plus adaptés, sans supériorité automatique. Le seuil dépend des dimensions, de l'index et de la charge, pas seulement du nombre de vecteurs. Rejouer un trafic représentatif avec filtres et mises à jour, puis tester restauration et révocation ; commencer avec l'existant est une baseline à mesurer, pas une obligation.
 
 ---
 
@@ -111,6 +112,8 @@ vecteurs int8 = 10 000 000 × 768 × 1 = 7,68 Go
 total simplifié int8 = 7,68 + 1,28 = 8,96 Go
 ```
 Seule la part des vecteurs est divisée par quatre : le total diminue d'environ **3,57 fois**. Ajouter métadonnées, structures d'allocation, niveaux du graphe, buffers et éventuelle copie pleine précision. Ce calcul donne un plancher pédagogique, pas la RAM exacte d'une implémentation HNSW.
+
+Pour un budget réel, mesurer aussi construction et maintenance de l'index. Une compression qui tient en mémoire peut déplacer le coût vers les calculs de distance ou le re-scoring ; vérifier rappel et latence ensemble.
 
 ---
 

@@ -84,6 +84,8 @@ plafond moyen = min(600, 60, 40) = 40 requêtes/min
 ```
 La sortie limite ici, avant même latence et capacité du fournisseur. Vérifier fenêtres, bursts, quotas partagés, estimation/réservation et traitement du cache dans l'API réelle. Réduire les entrées ne lève pas ce goulot ; borner les sorties exige de préserver la qualité.
 
+Le minimum de ces plafonds est nécessaire mais peut ne pas être soutenable : variations de longueur, rafales et fenêtres glissantes créent des rejets. Lisser les appels et mesurer les limites réellement appliquées par le service.
+
 ---
 
 Pourquoi retries et hedging peuvent-ils réduire le débit utile d’un LLM ? <!--anki:3433656533303238313566313437666262363965353837363738393865303835-->

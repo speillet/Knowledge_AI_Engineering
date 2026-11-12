@@ -65,6 +65,8 @@ Qu'est-ce que le pattern small-to-big (parent-child) ? <!--anki:6f4d265d7a2f3e53
 
 Il découple deux besoins contradictoires : la **précision** de la recherche et la **complétude** du contexte.
 
+Dédupliquer les parents si plusieurs petits chunks pointent vers la même section, et plafonner le contexte renvoyé. Préserver droits et versions du parent ; un enfant pertinent ne justifie pas d'exposer un bloc plus large non autorisé.
+
 ---
 
 Le chunking sémantique vaut-il son coût ? <!--anki:67377e70797147715e59-->
@@ -114,6 +116,8 @@ sortie inchangée  : 160 000 × 75 / 1e6 × 5 = 60 €
 total sans cache  : 1 436 € ; avec cache : 376 €
 ```
 Les 80 M tokens représentent les documents ; les 96 M restants, chunks et consignes. Le gain suppose les quinze relectures réellement servies depuis le cache. Expiration, préfixes différents et tentatives supplémentaires changent la facture. C'est un coût d'ingestion, à réévaluer lors des modifications.
+
+Les consignes et chunks non cachés coûtent encore 96 € d'entrée dans ce scénario. Le cache porte ici sur le document placé dans un préfixe réutilisable ; il ne rend pas gratuites les autres parties de chaque appel.
 
 ---
 

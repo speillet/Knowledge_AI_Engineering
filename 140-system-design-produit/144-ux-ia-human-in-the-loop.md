@@ -18,6 +18,8 @@ Exemple : afficher la source à côté d'un montant permet de le vérifier en de
 
 On commence souvent en copilote, on **mesure** le taux d'acceptation, puis on automatise les cas où il est très élevé.
 
+Le degré d'autonomie se définit par action : un assistant peut rédiger seul mais exiger une validation avant envoi. Relier chaque niveau à ses permissions, sa preuve d'exécution et sa possibilité de retour arrière.
+
 ---
 
 Comment concevoir un human-in-the-loop efficace ? <!--anki:6b3241637143484d6449-->
@@ -26,6 +28,8 @@ Comment concevoir un human-in-the-loop efficace ? <!--anki:6b3241637143484d6449-
 - Montrer **exactement** ce qui va être fait (diff, destinataire, montant), pas un résumé rédigé par le modèle.
 - Permettre de **modifier** avant d'approuver, pas seulement accepter/refuser.
 - **Journaliser** qui a approuvé quoi ([[103-defenses-agents|approbation humaine fiable]]).
+
+Présenter source, incertitude et arguments exacts de l'action, puis mesurer temps de revue et erreurs humaines. Si toutes les propositions sont acceptées sans lecture, la présence d'un bouton n'établit pas une supervision effective.
 
 ---
 
@@ -55,6 +59,8 @@ Comment collecter du feedback utile sur les réponses d'un assistant IA ? <!--an
 
 Relier chaque feedback à la **trace complète** ([[91-langfuse-observabilite|Langfuse]]) pour pouvoir l'analyser.
 
+Un clic ou une correction n'est pas automatiquement une vérité terrain ni une autorisation de réentraînement. Conserver motif et contexte avec une politique de données adaptée, puis faire valider les corrections qui deviennent des références.
+
 ---
 
 Comment gérer les attentes des utilisateurs d'une application IA ? <!--anki:5165422e7e717c7b467e-->
@@ -63,6 +69,8 @@ Comment gérer les attentes des utilisateurs d'une application IA ? <!--anki:516
 - Proposer des **exemples de requêtes** pour guider l'usage.
 - Afficher **les sources** et la possibilité d'erreur, sans avertissement générique ignoré de tous.
 - Indiquer qu'on parle à une **IA** (obligation de transparence de l'[[155-ai-act|AI Act]] pour les chatbots).
+
+Distinguer lancement, traitement en cours et succès confirmé par le système métier. Montrer un état récupérable après interruption et un moyen de corriger ou reprendre ; éviter qu'un indicateur de progression simule un avancement non mesuré.
 
 ---
 

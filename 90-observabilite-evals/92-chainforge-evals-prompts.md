@@ -46,6 +46,8 @@ def evaluer(sortie, attendu):
 ```
 Un JSON parsable n'est pas forcément un objet ni un résultat correct. Ces assertions illustrent une comparaison à la référence ; les types, unités et règles d'arrondi se définissent selon le contrat. Règle : **le plus simple qui marche** ([[94-evals-methodologie|familles d'évaluateurs]]).
 
+Ces contrôles restent aussi bons que leurs références : une valeur attendue fausse produit un test trompeur. Normaliser uniquement les différences sans effet métier, afin de ne pas effacer une erreur de signe, d'unité ou de devise.
+
 ---
 
 Qu'est-ce qu'un test de régression de prompts ? <!--anki:632b5d52586e586c503e-->

@@ -157,6 +157,8 @@ valeurs : 500 000 × 1 024 × 4 = 2 048 000 000 octets = 2,048 Go
 ```
 Le tarif est fictif ; ce n'est pas le coût total d'indexation. Ajouter parsing, métadonnées, structure d'index, stockage, exploitation et réindexations éventuelles. Un chevauchement répète des tokens et augmente ces volumes ; des documents mal extraits restent inutilisables malgré des embeddings peu coûteux.
 
+Les 2,048 Go ne couvrent que les valeurs vectorielles float32. Le nombre de vecteurs et leurs dimensions servent à dimensionner cette composante ; l'index et les métadonnées peuvent modifier nettement l'occupation effective du service.
+
 ---
 
 Comment une expérience avec contexte de référence aide-t-elle à diagnostiquer un RAG ? <!--anki:3335616337333837333331363434633339343062323136336363653033613664-->

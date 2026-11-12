@@ -31,6 +31,8 @@ Comment isoler un agent de code sur un poste de développement ? <!--anki:712b49
 - **Réseau sortant** limité aux registres de paquets et aux API nécessaires
 - **Sandbox intégrée** de l'outil activée (système de fichiers et réseau restreints)
 
+Vérifier concrètement les montages, les sockets et le réseau avec l'identité réelle du processus. Monter le socket Docker ou des credentials hérités peut rendre un environnement apparemment isolé beaucoup plus puissant que prévu.
+
 ---
 
 Qu'a révélé l'attaque s1ngularity contre Nx (août 2025) ? <!--anki:495d797c65437a405750-->
@@ -49,6 +51,8 @@ Que s'est-il passé avec l'extension Amazon Q pour VS Code (juillet 2025) ? <!--
 Une **pull request malveillante** a ajouté au prompt de l'extension une instruction demandant à l'agent d'**effacer les fichiers locaux et des ressources cloud**. Cette version a été **publiée officiellement** avant d'être retirée.
 
 La leçon : les **prompts et configurations d'un outil IA sont du code**. Ils suivent les mêmes contrôles de revue et de chaîne d'approvisionnement que le reste.
+
+Un test de sécurité doit vérifier qu'une consigne destructive ne peut produire d'effet avec les droits disponibles. La revue du prompt complète les permissions d'exécution ; elle ne les remplace pas.
 
 ---
 

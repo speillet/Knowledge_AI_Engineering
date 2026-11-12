@@ -34,8 +34,9 @@ L'état de thread permet de reprendre un dossier en cours ; une préférence dur
 
 Quand écrire en mémoire : pendant la conversation ou en arrière-plan ? <!--anki:514f75377d7373513a29-->
 ?
-- **Pendant** (hot path) : l'agent appelle un outil « enregistrer un souvenir ». Disponible tout de suite, mais ajoute de la latence et détourne l'agent de sa tâche.
-- **En arrière-plan** : un processus analyse la conversation **après coup** et en extrait les souvenirs. Aucune latence, mais un délai et moins de contrôle en direct.
+L'écriture **pendant la conversation** rend un souvenir immédiatement disponible, mais ajoute appel d'outil, validation et délai au parcours critique. Une écriture **en arrière-plan** peut consolider les échanges après coup, avec un retard de disponibilité.
+
+L'asynchronisme déplace le coût ; il ne le supprime pas et peut créer une concurrence avec une correction utilisateur. Pour une préférence utile tout de suite, écrire une version validée ; pour une synthèse moins urgente, consolider plus tard avec provenance. Prévoir conflits, expiration et reprise de l'écriture, puis mesurer latence et qualité de rappel plutôt que promettre un traitement gratuit.
 
 ---
 
@@ -83,6 +84,8 @@ Où stocker la mémoire long terme d'un agent ? <!--anki:474e52572d285e445668-->
 - **Profil structuré** (document clé-valeur) : préférences et attributs d'un utilisateur
 - **Fichiers** : `CLAUDE.md`, ou le memory tool d'Anthropic qui lit et écrit dans un répertoire de mémoire
 
+Choisir d'abord les opérations nécessaires : recherche approximative, attribut courant ou relation temporelle. Conserver une source faisant autorité et des identifiants stables pour corriger ou supprimer les copies ; plusieurs stockages demandent une stratégie de synchronisation.
+
 ---
 
 Comment fonctionne la mémoire de Letta (ex-MemGPT) ? <!--anki:65302b6a764f7b402e40-->
@@ -122,6 +125,8 @@ Quels risques pose une mémoire persistante ? <!--anki:7623374a3f4c6c633932-->
 - **Souvenirs faux ou périmés**
 
 Parades : valider ce qu'on écrit, TTL, et une interface pour **voir et effacer** ses souvenirs.
+
+Tester une correction puis une récupération ancienne : une donnée fausse ne doit pas revenir depuis un résumé ou un index oublié. Traiter sauvegardes et traces selon leur rétention ; retirer le texte visible ne supprime pas toutes ses copies.
 
 ---
 

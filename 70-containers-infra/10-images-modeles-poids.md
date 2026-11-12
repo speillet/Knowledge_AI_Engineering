@@ -13,6 +13,8 @@ Convertir les octets en bits avant de diviser par le débit :
 ```
 Ces durées ne couvrent que le transfert à débit constant. Chargement en RAM/VRAM, lecture du stockage, désérialisation, compilation et échauffement peuvent encore retarder la readiness. Un cache local évite ce transfert distant, mais sa durée doit être mesurée plutôt que supposée universellement de quelques secondes.
 
+Un débit réseau annoncé n'est pas forcément le débit utile soutenu. Si quatre réplicas lisent les mêmes poids sur une source commune saturée, le temps individuel peut augmenter ; tester ce démarrage concurrent avant de dimensionner l'autoscaling.
+
 ---
 
 Faut-il mettre les poids dans l'image du conteneur ? <!--anki:707d512f4d7270214938-->

@@ -33,6 +33,8 @@ Linux Kernel
 
 C'est une **chaîne possible**, fréquente : le kubelet demande l'exécution via la CRI, containerd gère le cycle de vie et délègue la création du processus à un runtime OCI tel que runc. Le noyau fournit isolation et contrôle des ressources. D'autres implémentations peuvent remplacer containerd ou runc tout en respectant les interfaces attendues.
 
+Pour localiser une erreur, demander quelle interface a terminé son travail : image tirée, processus créé, application prête. Les logs du modèle ne peuvent pas expliquer une authentification de registre qui échoue avant son lancement.
+
 ---
 
 Quelle chaîne représente un workflow classique d'image ? <!--anki:7232636a597439215430-->

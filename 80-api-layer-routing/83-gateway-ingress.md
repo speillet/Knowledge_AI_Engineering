@@ -76,6 +76,8 @@ Client → Ingress (TLS, routage) → gateway/LiteLLM (auth, quotas) → Service
 
 L'Ingress expose le domaine ; la gateway authentifie et choisit le backend ; le Service fournit une destination stable vers les Pods prêts ; les Pods exécutent le modèle. Certains composants peuvent être fusionnés. Diagnostiquer chaque saut : résolution DNS, TLS, autorisation, routage, readiness et calcul, en gardant un identifiant commun dans les logs.
 
+Mesurer les durées par saut et vérifier la propagation de l'annulation. Une connexion client fermée peut laisser le backend calculer si la coupure n'est pas transmise ; le coût GPU continue alors sans résultat consommé.
+
 ---
 
 Pourquoi le streaming (SSE) impose-t-il des réglages particuliers ? <!--anki:715e606d2e4e6d786140-->
@@ -102,6 +104,8 @@ taille de requête    plafonnée selon les formats réellement acceptés
 quotas               requêtes, tokens et concurrence
 ```
 Distinguer délai de connexion, délai entre lectures et durée totale. Tester un stream long, une période sans émission et une déconnexion client. Un timeout très élevé sans annulation peut laisser tourner du GPU inutilement ([[142-fiabilite-resilience-llm|fiabilité]]).
+
+Consigner les valeurs choisies avec un scénario de validation : prompt long, pause de raisonnement et client lent. Aligner les délais de tous les proxies ; la limite la plus courte peut interrompre un flux pourtant autorisé ailleurs.
 
 ---
 

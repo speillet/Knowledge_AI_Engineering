@@ -9,6 +9,8 @@ Quelles sont les grandes étapes de fabrication d'un LLM ? <!--anki:7a3f3d7a4d61
 2. **Mid-training** (optionnel) : données plus ciblées (code, maths, long contexte).
 3. **Post-training** : SFT puis alignement par préférences et **RL** → modèle qui suit les instructions, utilise des outils et raisonne ([[52-post-training-alignement|post-training]]).
 
+Les enchaînements varient : toutes les équipes ne font pas de RL et les données SFT peuvent être humaines ou synthétiques validées. Évaluer chaque étape sur des jeux séparés pour distinguer progrès ciblé et régression générale.
+
 ---
 
 Sur quelles données pré-entraîne-t-on un LLM ? <!--anki:4124396750642f6d357d-->
@@ -41,7 +43,9 @@ Si l'inférence représente l'essentiel du coût de vie, entraîner plus longtem
 
 Pourquoi les modèles actuels sont-ils entraînés bien au-delà de Chinchilla ? <!--anki:267869342439474772-->
 ?
-Chinchilla optimise le **coût d'entraînement**, pas le **coût total**. Un modèle plus **petit** entraîné sur **beaucoup plus de tokens** (des centaines, voire des milliers de tokens par paramètre) coûte plus à entraîner mais est **moins cher à servir** — et l'inférence domine le coût sur la durée de vie d'un modèle déployé.
+Chinchilla optimise le **coût d'entraînement**, pas le **coût total**. Un modèle plus **petit** entraîné sur **beaucoup plus de tokens** (des centaines, voire des milliers de tokens par paramètre) coûte plus à entraîner mais est **moins cher à servir** — et l'inférence peut dominer le coût sur la durée de vie d'un modèle très utilisé.
+
+Cet arbitrage dépend du nombre futur d'appels. Un modèle rarement servi peut ne jamais amortir ce surcroît d'entraînement ; comparer coût initial et économie par requête sur un horizon explicite, à qualité comparable.
 
 ---
 

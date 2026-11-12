@@ -101,6 +101,8 @@ Quelles sont les limites du LLM-as-a-judge ? <!--anki:70352b21524a7a6e7031-->
 - **Coût** : un appel de juge par critère et par exemple.
 - Incapable de vérifier des **faits qu'il ignore** : pour l'exactitude factuelle, il faut une **référence** ou le contexte.
 
+Des biais partagés avec le modèle évalué peuvent survivre à plusieurs jugements. Inclure des contre-exemples factuels, inverser les positions en comparaison et analyser les désaccords humains ; l'accord entre deux modèles n'établit pas une référence indépendante.
+
 ---
 
 Où utiliser le juge en production ? <!--anki:4630707a3f4a6a656f73-->
@@ -129,6 +131,8 @@ par jour     : 1 000 × 0,0075 €             = 7,50 € → ≈ 225 € par mo
 ```
 Abordable sur un **échantillon**, cher si l'on juge 100 % d'un trafic important. Leviers : échantillonner, un juge plus petit **validé contre des annotations humaines**, et des assertions de code pour ce qui est vérifiable.
 
+Le calcul suppose un appel par critère, sans retry ni cache. Un jugement multicritère peut économiser des tokens mais modifier la qualité de mesure ; le comparer à des annotations humaines plutôt que supposer la même fiabilité.
+
 ---
 
 Calcul : avec succès comme classe positive, un juge accepte 76 % des réponses. Ses TPR = 0,90 et TNR = 0,80 sont supposés connus et stables sur ce trafic. Quel taux réel de succès estime-t-on ? <!--anki:6162303264663366653030653436353662653763383334326530343366373935-->
@@ -141,6 +145,8 @@ p = (q + TNR − 1) / (TPR + TNR − 1)
 vérification : 0,90 × 0,80 + 0,20 × 0,20 = 0,76
 ```
 Le taux estimé vaut **80 %**, sous ces hypothèses. En pratique, TPR et TNR sont estimés et peuvent varier selon le segment : propager leur incertitude avant d'interpréter l'écart. Cette correction porte sur une proportion agrégée, pas sur le verdict de chaque réponse.
+
+Si `TPR + TNR − 1` est proche de zéro, l'inversion devient instable : un petit écart sur ces taux change fortement l'estimation. Vérifier le pouvoir discriminant du juge avant d'utiliser cette correction.
 
 ---
 

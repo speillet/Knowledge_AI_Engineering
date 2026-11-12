@@ -80,7 +80,9 @@ Nombre de bits et taille des groupes sont des réglages, pas des constantes univ
 
 Comment fonctionne AWQ ? <!--anki:6f356c62755260316047-->
 ?
-**Activation-aware Weight Quantization** : environ **1 % des poids sont décisifs**, ceux qui multiplient les **activations les plus fortes**. AWQ les repère sur un jeu de calibration et **agrandit ces canaux avant la quantization** (en compensant côté activations) pour les protéger. Il n'y a ni rétropropagation ni reconstruction : c'est rapide, et **moins dépendant du jeu de calibration** que GPTQ.
+**AWQ** utilise les statistiques d'activations d'un corpus de calibration pour identifier les canaux dont les erreurs de quantification affectent fortement les sorties. Un redimensionnement des canaux, compensé sur les activations, réduit l'erreur lors de la quantification des poids.
+
+L'idée n'est pas de conserver systématiquement 1 % des poids en pleine précision : le repère vient des observations de l'article, pas d'une règle universelle. La recherche des échelles est faite sans réentraîner le modèle par rétropropagation. Vérifier corpus, format produit et kernels compatibles, puis mesurer qualité par segment et vitesse ; le nom AWQ ne garantit ni gain fixe ni absence de régression.
 
 ---
 
@@ -278,6 +280,8 @@ Mise en situation : ton fournisseur publie le même modèle en BF16, FP8 et GGUF
 
 - [vLLM — quantification et matériels compatibles](https://docs.vllm.ai/en/latest/features/quantization/)
 - [llama.cpp — formats, quantification et inférence locale](https://github.com/ggml-org/llama.cpp)
+
+- [Lin et al. — AWQ](https://arxiv.org/abs/2306.00978) — revue ciblée du 12 novembre 2026 : statistiques d’activations et redimensionnement des canaux.
 
 ## Connexions
 - [[62-optimisations-inference|Optimisations d'inférence]] — prefill, decode et bande passante mémoire

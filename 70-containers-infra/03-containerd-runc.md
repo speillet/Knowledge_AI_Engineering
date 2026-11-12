@@ -6,7 +6,9 @@ Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou 
 
 Qu'est-ce que containerd ? <!--anki:482f38677a352a716331-->
 ?
-Un **container runtime de haut niveau** (projet CNCF diplômé) qui gère : le **pull et le stockage des images**, les **snapshots** du système de fichiers, le **cycle de vie** des conteneurs, le réseau via des plugins. Il expose une API gRPC, utilisée par Docker comme par Kubernetes à travers la [[04-kubernetes-kubelet-cri|CRI]].
+**containerd** gère des opérations de haut niveau : téléchargement et stockage des images, snapshots du système de fichiers, tâches et cycle de vie des conteneurs. Il délègue l'exécution bas niveau à un runtime OCI tel que runc via des shims.
+
+Docker peut s'appuyer sur containerd ; Kubernetes communique avec une intégration CRI. Pour les Pods, le réseau s'articule notamment avec les plugins CNI selon la configuration. Distinguer ces responsabilités aide au diagnostic : erreur de registre, création du conteneur et crash applicatif ne se réparent pas au même niveau. containerd n'est ni l'ordonnanceur Kubernetes ni le modèle exécuté.
 
 ---
 

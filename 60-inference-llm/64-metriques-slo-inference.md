@@ -237,4 +237,5 @@ Mise en situation : ton autoscaling se déclenche trop tard, et des requêtes at
 - [[146-choix-modeles|Choix de modèles]] — critères, benchmarks et migration
 - [[116-sre-incidents-capacite-ia|SRE : incidents & capacité des services IA]] — relier capacité et expérience utilisateur
 - [[60-010-benchmarks-charge-inference|Benchmarks de charge LLM]] — mesurer la capacité sans masquer files et échecs
+- [[60-013-prefill-decode-pas-a-pas|Prefill & decode pas à pas]] — suivre les positions calculées, le cache et les délais
 - [[00-moc-ai-engineering|MOC AI Engineering]]

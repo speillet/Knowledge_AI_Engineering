@@ -122,6 +122,8 @@ part des tokens B = 900 000 / 1 000 000 = 90 %
 ```
 Avec une loss moyennée uniformément sur ces tokens non masqués, B contribue beaucoup plus que ne le suggère le comptage des documents. Masquage, packing, troncature ou pondération changent cette contribution. Fixer l'unité visée avant d'annoncer qu'un corpus est équilibré.
 
+Pour viser 50 % des tokens de chaque groupe à longueurs inchangées, il faudrait ajuster les fréquences d'échantillonnage ou les poids. Lire chaque texte court neuf fois au total égalise le volume sans créer neuf fois plus d'information.
+
 ---
 
 Comment contrôler qu’un filtrage de qualité n’appauvrit pas excessivement un corpus ? <!--anki:6337653966306332613463373464356339353162396138333063666135316135-->

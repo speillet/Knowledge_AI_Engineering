@@ -13,7 +13,9 @@ Le batching, les kernels ou une révision du backend peuvent changer l'ordre des
 
 D'où vient principalement le non-déterminisme d'un serveur d'inférence ? <!--anki:42575a626e2f243e7b46-->
 ?
-Du **manque d'invariance au batch** : les kernels (matmul, normalisation, attention) changent leur **ordre de réduction** selon la taille du batch. Or, avec le [[62-optimisations-inference|continuous batching]], le batch dépend des **autres requêtes** présentes à cet instant : le résultat dépend de la charge du serveur. Des kernels **batch-invariants** (modes déterministes de SGLang ou vLLM) corrigent cela, au prix de performances.
+Une source importante est la **non-invariance au batch** : les kernels peuvent modifier leur ordre de réduction selon la forme du calcul. Les arrondis changent alors légèrement les logits ; deux tokens proches peuvent échanger leur rang.
+
+Avec le continuous batching, la forme dépend aussi des requêtes concurrentes. Une graine ne fixe donc pas tout l'environnement numérique. Des kernels ou modes déterministes réduisent certaines variations, avec des conditions et coûts propres au moteur. Vérifier également sampling, matériel, versions et opérations parallèles ; il n'existe pas une unique cause dominante pour tous les déploiements.
 
 ---
 
