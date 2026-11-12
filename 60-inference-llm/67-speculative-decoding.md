@@ -1,7 +1,7 @@
 # Speculative decoding — Flashcards
 Tags: #flashcards #ai-engineering #inference #speculative-decoding #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: brouillon et vérification en une passe, conditions d’amortissement des lectures, règle d'acceptation sans perte, gain selon le taux d'acceptation, choix de k, types de brouillons (petit modèle, n-grammes, EAGLE, Medusa, MTP), vérification en arbre, quand ça aide ou nuit, configuration vLLM, coûts, métriques d'acceptation, validation d'un déploiement. -->
+<!-- summary: brouillon et vérification en une passe, conditions d’amortissement des lectures, règle d'acceptation sans perte, gain selon le taux d'acceptation, choix de k, types de brouillons (petit modèle, n-grammes, EAGLE, Medusa, MTP), vérification en arbre, quand ça aide ou nuit, configuration vLLM, coûts, métriques d'acceptation, validation d'un déploiement, calcul d'amortissement de la spéculation. -->
 
 
 Quel est le principe du speculative decoding ? <!--anki:735b235457367c524b6a-->
@@ -145,6 +145,14 @@ Comment valider un déploiement avec speculative decoding ? <!--anki:6c70435e573
 1. **Exactitude** : en greedy, les sorties doivent être **identiques** à celles de la cible seule sur un jeu de prompts (aux écarts numériques près) ; en sampling, les evals ne doivent pas bouger
 2. **Gain** : benchmark de charge à **plusieurs niveaux de concurrence**. Le TPOT doit baisser à faible charge, et le débit ne doit pas s'effondrer au pic
 3. **Réglage** : ajuster k, ou désactiver la technique au-delà d'une certaine taille de batch, selon ces mesures ([[93-monitoring-inference|monitoring de l'inférence]])
+
+---
+
+Calcul : un draft coûte 2 ms pour un bloc, sa vérification 10 ms et accepte en moyenne trois tokens utiles. Quel gain idéal face à 6 ms par token sans spéculation ? <!--anki:3234653339366662386438313464663039353764653432633838636563643462-->
+?
+Le bloc spéculatif coûte `2 + 10 = 12 ms` pour **trois tokens utiles en moyenne**, soit environ `4 ms/token`. La référence demanderait `3 × 6 = 18 ms` : accélération idéale de **1,5×**.
+
+Supposer mêmes conditions de charge, absence de coût caché et mesure des tokens réellement émis. Avec un seul token utile, les 12 ms deviendraient plus lents que la référence. Mesurer aussi mémoire du draft, latence de bout en bout et débit sous saturation ; un gain par séquence ne garantit pas un gain de capacité.
 
 ---
 

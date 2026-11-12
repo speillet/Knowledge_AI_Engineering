@@ -1,7 +1,7 @@
 # Modèles vision-langage (VLM) — Flashcards
 Tags: #flashcards #ai-engineering #multimodal #vision #vlm #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: VLM génératif ou contrastif, encodeur visuel, coût des images, CLIP, limites, injection visuelle, OCR, coordonnées après transformation, qualité par champ et document complet. -->
+<!-- summary: VLM génératif ou contrastif, encodeur visuel, coût des images, CLIP, limites, injection visuelle, OCR, coordonnées après transformation, qualité par champ et document complet, résolution d'image et conservation des preuves. -->
 
 
 Qu'est-ce qu'un modèle vision-langage ? <!--anki:663a6d6d793b28727740-->
@@ -112,6 +112,14 @@ P(document correct) = 0,99^20 ≈ 0,818 = 81,8 %
 P(au moins une erreur) ≈ 18,2 %
 ```
 Un score de 99 % par champ ne signifie donc pas 99 % de documents corrects. L'indépendance est une hypothèse pédagogique : une même erreur de lecture peut affecter plusieurs champs. Mesurer directement le succès complet sur des documents représentatifs plutôt que transformer une moyenne globale en garantie.
+
+---
+
+Pourquoi réduire la résolution d'une image peut-il diminuer le coût d'un VLM tout en détruisant la preuve utile ? <!--anki:3532616662326539316137653431633839393762323664366262343361373635-->
+?
+Le **redimensionnement** peut rendre illisibles petits caractères, décimales ou légendes. Une image moins coûteuse n'est intéressante que si l'information nécessaire à la tâche reste disponible.
+
+Comparer plusieurs résolutions sur des cas annotés, notamment tableaux et détails fins. Utiliser au besoin une vue globale puis un recadrage ciblé, en conservant les transformations de coordonnées. Mesurer exactitude des champs critiques et coût total des reprises. Une bonne description générale de l'image ne prouve pas que le modèle peut lire le montant imprimé en bas de page.
 
 ---
 

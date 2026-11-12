@@ -1,7 +1,7 @@
 # Streaming & intégration applicative — Flashcards
 Tags: #flashcards #ai-engineering #api #streaming #agents #llm
 Vérifié le : 30 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: intérêt du streaming, SSE ou WebSocket, tampons des proxys, annulation côté serveur, JSON en streaming, événements d'un agent (AG-UI), tâches longues asynchrones, reprise d'un flux, clé d'idempotence, calcul des connexions ouvertes. -->
+<!-- summary: intérêt du streaming, SSE ou WebSocket, tampons des proxys, annulation côté serveur, JSON en streaming, événements d'un agent (AG-UI), tâches longues asynchrones, reprise d'un flux, clé d'idempotence, calcul des connexions ouvertes, déduplication à la reconnexion SSE. -->
 
 
 Pourquoi streamer les réponses d'un LLM ? <!--anki:6536416a5043402c2f28-->
@@ -106,6 +106,14 @@ pic ×3          ≈ 1 800
 Chaque flux tient une connexion et souvent une tâche asynchrone : il faut un serveur **asynchrone** (pas un thread par requête) et vérifier les **limites de connexions** du proxy et du fournisseur ([[64-metriques-slo-inference|concurrence]]).
 
 Ces chiffres sont des **moyennes** : la loi de Little ne dit rien des pointes à la minute ni des flux anormalement longs. Dimensionner sur un percentile haut du nombre de flux observés, avec une marge, plutôt que sur 600.
+
+---
+
+Pourquoi une reconnexion SSE peut-elle afficher deux fois le même événement d'agent ? <!--anki:3664656336333734666238333464613538393835396339663233306464303737-->
+?
+Une **reconnexion** peut rejouer des événements déjà reçus, notamment si le client n'a pas enregistré son dernier curseur avant la coupure.
+
+Donner aux événements un identifiant stable et ordonné selon le contrat ; le client déduplique et reprend depuis son curseur. Si l'historique a expiré, récupérer un état de référence plutôt que reconstruire un résultat à partir d'un flux incomplet. Les événements d'affichage ne doivent pas déclencher directement des effets métier rejouables. Distinguer reprise de transport et reprise de l'exécution de l'agent.
 
 ---
 

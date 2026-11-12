@@ -1,6 +1,6 @@
 # Fondamentaux des agents — Flashcards
 Tags: #flashcards #ai-engineering #agents #llm
-<!-- summary: workflow ou agent, pattern ReAct, composants d'un agent minimal, trois formes de human-in-the-loop, risques et parades, ordres de grandeur de coût, conditions d'arrêt. -->
+<!-- summary: workflow ou agent, pattern ReAct, composants d'un agent minimal, trois formes de human-in-the-loop, risques et parades, ordres de grandeur de coût, conditions d'arrêt, preuve de fin de tâche. -->
 
 
 Qu'est-ce qu'un agent LLM ? <!--anki:502c4c3f7a7c7b624a33-->
@@ -92,6 +92,14 @@ Le protocole peut signaler la fin quand le modèle répond sans outil ou émet u
 Distinguer **terminé, réussi, bloqué et interrompu**. Exemple : pour produire un CSV, l'existence du fichier ne suffit pas ; vérifier colonnes requises, nombre de lignes attendu et absence d'erreur d'export. Une phrase « c'est fait » n'est pas une preuve.
 
 En cas de limite atteinte, sauvegarder l'avancement utile et restituer résultat partiel, incertitudes et prochaine étape. Le critère de succès doit être défini avant l'exécution, indépendamment de l'autoévaluation du modèle.
+
+---
+
+Quelle preuve faut-il demander avant qu'un agent annonce qu'une tâche métier est terminée ? <!--anki:6236373266383337663938303463393462303462663030323039656461663066-->
+?
+Définir une **condition de fin observable** dans le système métier : commande enregistrée, document publié ou test effectivement passé. Une phrase du modèle, un plan achevé ou un appel d'outil envoyé ne suffit pas.
+
+Associer l'opération à un identifiant et vérifier son état final auprès de la source faisant autorité. Distinguer succès, échec et résultat encore inconnu. Si un traitement est asynchrone, annoncer son lancement puis suivre sa confirmation. Cette distinction évite qu'un agent transforme une intention ou un accusé de réception en succès utilisateur.
 
 ---
 

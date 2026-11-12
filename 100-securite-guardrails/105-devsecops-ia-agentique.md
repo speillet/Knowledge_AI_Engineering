@@ -1,7 +1,7 @@
 # DevSecOps pour l'IA agentique — Flashcards
 Tags: #flashcards #ai-engineering #securite #devsecops #agents #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: threat modeling (MAESTRO, ATLAS), référentiels (OWASP, NIST, ISO 42001), AI-BOM, SBOM ou AI-BOM, supply chain des modèles, contrôles en CI, tests adversariaux (promptfoo, garak, PyRIT), red teaming, security eval gate, prompts comme du code, environnements, journalisation, détection, réponse à incident, vulnérabilités, responsabilités. -->
+<!-- summary: threat modeling (MAESTRO, ATLAS), référentiels (OWASP, NIST, ISO 42001), AI-BOM, SBOM ou AI-BOM, supply chain des modèles, contrôles en CI, tests adversariaux (promptfoo, garak, PyRIT), red teaming, security eval gate, prompts comme du code, environnements, journalisation, détection, réponse à incident, vulnérabilités, responsabilités, vérification des attestations au déploiement. -->
 
 
 Qu'est-ce que le DevSecOps appliqué à l'IA agentique ? <!--anki:44494a704c554b4f3d6c-->
@@ -219,6 +219,14 @@ Des **security champions** dans les équipes, et la formation des développeurs 
 - **AI-BOM** : étend l'inventaire aux **composants IA** : modèles et leurs versions, jeux de données, prompts, serveurs MCP, skills, agents et leurs outils
 
 L'AI-BOM répond à la question « quels agents utilisent ce serveur MCP compromis ? » que le SBOM ne couvre pas.
+
+---
+
+Pourquoi une attestation de provenance d'un modèle doit-elle être vérifiée au déploiement ? <!--anki:6166396335633339336130613466373561376565636161326535363436366236-->
+?
+Une **attestation** relie un artefact à une construction et à un producteur selon un modèle de confiance. La conserver sans la vérifier ne bloque aucun artefact non autorisé.
+
+Au déploiement, contrôler identité du signataire, digest exact, source et conditions requises par la politique. Appliquer le contrôle aux poids et au code de chargement concernés. Conserver la décision pour l'audit et prévoir la révocation. Une signature valide d'un acteur non approuvé n'est pas suffisante ; une provenance approuvée ne garantit pas non plus l'absence de vulnérabilité ou de biais.
 
 ---
 

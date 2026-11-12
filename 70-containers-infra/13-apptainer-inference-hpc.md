@@ -1,7 +1,7 @@
 # Apptainer & inférence HPC — Flashcards
 Tags: #flashcards #conteneurs #apptainer #hpc #llm #inference
 Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: Apptainer ou Docker en HPC, modèle de sécurité, intégration Slurm, `--nv`, poids montés depuis le système de fichiers partagé, images SIF, fichier de définition, service multi-nœuds (Ray, InfiniBand, NCCL), exposition d'un serveur lancé dans un job. -->
+<!-- summary: Apptainer ou Docker en HPC, modèle de sécurité, intégration Slurm, `--nv`, poids montés depuis le système de fichiers partagé, images SIF, fichier de définition, service multi-nœuds (Ray, InfiniBand, NCCL), exposition d'un serveur lancé dans un job, drainage avant walltime. -->
 
 
 Pourquoi préfère-t-on Apptainer à Docker en environnement HPC ? <!--anki:632d364048502c312858-->
@@ -99,6 +99,14 @@ Le serveur écoute sur un **nœud de calcul** dont le nom change à chaque job :
 - Le **walltime** limite la durée : prévoir une resoumission automatique et un **health check** côté client
 
 Ces contournements montrent la limite du HPC pour un service permanent ([[12-kubernetes-gpu-inference|Kubernetes GPU]]).
+
+---
+
+Pourquoi un job Slurm qui arrive à son walltime doit-il cesser d'accepter de nouvelles requêtes avant l'arrêt ? <!--anki:3063353234626533643164613434616438313935303361346466393731653531-->
+?
+Le **walltime** impose une échéance indépendante de la durée des requêtes. Continuer à accepter du travail jusqu'à la dernière seconde augmente les réponses interrompues.
+
+Prévoir une phase de drainage : retirer l'instance de la découverte, refuser les nouvelles demandes et laisser finir celles qui tiennent dans le délai restant. Rendre les travaux longs reprenables ou annoncer explicitement leur interruption. Tester l'arrêt avec des clients actifs. Une resoumission automatique restaure éventuellement la capacité, mais ne garantit ni la continuité du flux ni la conservation des requêtes en mémoire.
 
 ---
 

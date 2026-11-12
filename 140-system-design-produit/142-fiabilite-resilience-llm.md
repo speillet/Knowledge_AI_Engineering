@@ -1,6 +1,6 @@
 # Fiabilité & résilience des applications LLM — Flashcards
 Tags: #flashcards #ai-engineering #system-design #fiabilite #production #llm
-<!-- summary: timeouts, retries, fallbacks, circuit breaker, retry, fallback ou circuit breaker, retries multipliés entre couches, sorties mal formées, dégradation gracieuse, rate limits, tâches longues, épinglage de version, SLO, chaos testing. -->
+<!-- summary: timeouts, retries, fallbacks, circuit breaker, retry, fallback ou circuit breaker, retries multipliés entre couches, sorties mal formées, dégradation gracieuse, rate limits, tâches longues, épinglage de version, SLO, chaos testing, classification des erreurs d'un circuit breaker. -->
 
 
 Pourquoi une application LLM est-elle plus fragile qu'une application classique ? <!--anki:47364949697173294a73-->
@@ -136,6 +136,14 @@ Sous hypothèse d'**indépendance** et de bascule parfaite :
 → environ 1,08 min indisponible sur 30 jours
 ```
 En série, ce sont les **disponibilités qui se multiplient**. En redondance, on multiplie les probabilités d'indisponibilité simultanée. Le fallback ne protège pas une gateway commune en panne ; corrélation, délais de détection, capacité de secours et échecs de bascule dégradent le résultat réel ([[82-routing-llm|fallbacks]]).
+
+---
+
+Pourquoi un circuit breaker doit-il distinguer panne fournisseur et erreur propre à une requête ? <!--anki:3632643539613639346636623436333061363833336131333665313131373836-->
+?
+Un **circuit breaker** suspend temporairement les appels vers une dépendance défaillante. S'il compte une entrée invalide ou un refus métier comme panne globale, quelques requêtes peuvent bloquer le service pour tous.
+
+Classer erreurs récupérables, erreurs de contrat et décisions métier ; choisir la portée du circuit par dépendance ou route pertinente. Tester la réouverture avec un trafic limité et un budget partagé avec les retries. Une bascule doit préserver droits, format et contraintes de données. Le circuit protège la capacité ; il ne corrige pas une demande incorrecte.
 
 ---
 

@@ -1,6 +1,6 @@
 # Évaluation des outputs & des réponses LLM — Flashcards
 Tags: #flashcards #ai-engineering #evals #reponses #qualite #llm
-<!-- summary: grille par dimension, exactitude et complétude, pertinence et consignes, références multiples, normalisation, BLEU et ROUGE, BERTScore, résumés, réponses numériques, critères bloquants et agrégation par affirmation. -->
+<!-- summary: grille par dimension, exactitude et complétude, pertinence et consignes, références multiples, normalisation, BLEU et ROUGE, BERTScore, résumés, réponses numériques, critères bloquants et agrégation par affirmation, validation des affirmations et du style. -->
 
 
 Comment définir une grille d'évaluation d'une réponse LLM ? <!--anki:6631303738646665313965663463613262386165393030353031373061313738-->
@@ -113,6 +113,14 @@ moyenne par réponse : (1/1 + 5/9) / 2 = 7/9 ≈ 77,8 %
 regroupement        : (1 + 5) / (1 + 9) = 6/10 = 60 %
 ```
 La première donne le même poids à chaque réponse ; la seconde donne le même poids à chaque affirmation et davantage aux réponses longues. Fixer la granularité de découpage et le traitement des réponses sans affirmation. Aucun score ne mesure les informations attendues mais omises, ni ne rend acceptable une erreur critique. Voir [[96-evals-rag-agents|évaluation des preuves]].
+
+---
+
+Pourquoi évaluer les affirmations d'une réponse séparément de son style ? <!--anki:3564386539316363616131363436636262383339336265366162346539636461-->
+?
+Une **réponse fluide** peut contenir une seule affirmation fausse qui suffit à rendre la décision dangereuse. Un score global de style ou d'utilité peut masquer cette erreur.
+
+Décomposer les affirmations vérifiables, associer chacune à une preuve et distinguer exactitude, couverture et présentation. Pondérer les erreurs selon leur conséquence sans cacher leur nombre. Par exemple, date et montant d'un remboursement demandent un contrôle spécifique. Conserver un score de réponse complète : compter seulement les phrases correctes peut récompenser une réponse très courte qui évite toutes les parties difficiles.
 
 ---
 

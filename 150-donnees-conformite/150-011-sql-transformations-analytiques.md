@@ -1,7 +1,7 @@
 # SQL pour les pipelines et datasets IA — Flashcards
 Tags: #flashcards #ai-engineering #donnees #data-engineering
 Vérifié le : 9 octobre 2026 — références techniques et exemples de cette fiche.
-<!-- summary: jointures et filtres, NULL, agrégations, fenêtres, déduplication déterministe, anti-jointures, CTE, SQL temporel, plans de requête et contrôles de transformations. -->
+<!-- summary: jointures et filtres, NULL, agrégations, fenêtres, déduplication déterministe, anti-jointures, CTE, SQL temporel, plans de requête et contrôles de transformations, déduplication déterministe et égalités. -->
 
 
 Dans quel ordre logique raisonner sur une requête SQL analytique ? <!--anki:3638393465633964663639633434613639363865613739346437383030623434-->
@@ -149,6 +149,14 @@ Pourquoi tester une transformation SQL avec des données adverses de petite tail
 Un petit jeu explicite rend les **erreurs sémantiques observables** : doublons de clés, valeurs nulles, absence de correspondance, égalité de timestamps, suppression et frontière temporelle. Fixer les lignes attendues, pas seulement le nombre total.
 
 Compléter par des invariants sur un volume représentatif : unicité, références, sommes de contrôle métier et stabilité au rejeu. Une requête qui compile peut produire des labels faux ou perdre un segment. Un test unitaire ne mesure toutefois ni la performance à grande échelle ni la qualité réelle de la source.
+
+---
+
+Pourquoi un ORDER BY incomplet rend-il une déduplication SQL non déterministe ? <!--anki:3865326234363963663835383432656639383534613735366164313835653233-->
+?
+Un **ROW_NUMBER** ordonné seulement par un timestamp peut départager arbitrairement deux lignes de même date. La ligne conservée peut changer selon le plan ou le partitionnement.
+
+Ajouter un critère stable qui représente réellement la priorité : version source, séquence d'événement ou identifiant avec règle métier explicite. Si deux valeurs contradictoires restent équivalentes, signaler le conflit plutôt que le cacher. Tester égalités et timestamps nuls. Un tri déterministe garantit la reproductibilité du choix ; il ne prouve pas que la ligne choisie est la version métier correcte.
 
 ---
 

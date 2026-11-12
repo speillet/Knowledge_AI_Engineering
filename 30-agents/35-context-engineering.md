@@ -1,6 +1,6 @@
 # Context engineering — Flashcards
 Tags: #flashcards #ai-engineering #agents #context-engineering #llm
-<!-- summary: le contexte comme budget, context rot, compaction, sous-agents, prompt caching, contexte chargé au besoin (just-in-time). -->
+<!-- summary: le contexte comme budget, context rot, compaction, sous-agents, prompt caching, contexte chargé au besoin (just-in-time), invariants de compaction. -->
 
 
 Qu'est-ce que le context engineering ? <!--anki:6d7964697b53773a6a7e-->
@@ -113,6 +113,14 @@ Le harness doit **réserver la sortie et compacter avant la limite**. Exemple fi
 
 ---
 
+Comment vérifier qu'une compaction conserve les informations indispensables à un agent ? <!--anki:6666353138343263643833373438366638616236346465316337373135373131-->
+?
+Définir des **invariants à préserver** : objectif courant, contraintes, décisions validées, références de preuves et opérations encore incertaines. Comparer ces éléments avant et après compaction sur des sessions longues.
+
+Tester une reprise qui exige un fait ancien, un refus utilisateur et l'identifiant d'une opération déjà exécutée. Garder les règles d'autorisation dans le contrôle applicatif et les faits durables dans un stockage adapté. Une bonne reformulation du résumé ne suffit pas : mesurer réussite et absence de répétition d'effets après reprise.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton agent de support donne de bonnes réponses au début des conversations, puis se dégrade et se contredit au bout d'une heure. Que fais-tu ? <!--anki:463a55674e31642c4634-->
@@ -150,6 +158,10 @@ Mise en situation : ton agent doit analyser 300 pages de documentation technique
 **Piège** : découper mécaniquement en 10 appels sans mémoire entre eux, et perdre le fil du raisonnement.
 
 ---
+
+## Sources
+
+- [Anthropic — gestion du contexte et compaction des agents](https://www.anthropic.com/research/effective-context-engineering-for-ai-agents) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
 
 ## Connexions
 - [[11-prompt-engineering-avance|Prompt engineering]] — le prompt dans son budget global

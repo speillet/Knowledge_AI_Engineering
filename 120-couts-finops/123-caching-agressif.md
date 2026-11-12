@@ -1,7 +1,7 @@
 # Caching agressif — Flashcards
 Tags: #flashcards #ai-engineering #finops #caching #couts #llm
 Vérifié le : 17 octobre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: prompt caching (TTL, prix d'écriture et de lecture), structure de prompt stable, ce qui casse le cache, contexte append-only, requêtes parallèles et pré-chauffage, caches de réponses, d'embeddings et d'outils, prompt caching, cache exact ou sémantique, invalidation, sécurité, pilotage. -->
+<!-- summary: prompt caching (TTL, prix d'écriture et de lecture), structure de prompt stable, ce qui casse le cache, contexte append-only, requêtes parallèles et pré-chauffage, caches de réponses, d'embeddings et d'outils, prompt caching, cache exact ou sémantique, invalidation, sécurité, pilotage, faux équivalents du cache sémantique. -->
 
 
 Qu'est-ce que le caching agressif pour une application LLM ? <!--anki:48792f4f3f4d7031763c-->
@@ -140,6 +140,14 @@ La seconde requête identique n'est pas une garantie universelle de hit : rempli
 - **Prompt caching** : réutilise le **calcul du préfixe** chez le fournisseur ou le serveur. La réponse est toujours **générée**, donc toujours juste
 - **Cache de réponses exact** : renvoie une réponse déjà produite pour une requête **identique**, sans appel au modèle
 - **Cache sémantique** : renvoie une réponse déjà produite pour une requête **proche** en embedding. Le plus économique, mais le seul qui peut **se tromper** de question ([[82-routing-llm|cache sémantique]])
+
+---
+
+Pourquoi un cache sémantique doit-il être testé sur des questions presque identiques mais aux réponses opposées ? <!--anki:6562643638356465353737373433313061336430323966316134623863363332-->
+?
+La **proximité d'embeddings** peut rapprocher « puis-je annuler avant 24 heures ? » et « puis-je annuler après 24 heures ? ». Une petite différence lexicale peut pourtant changer la règle applicable.
+
+Construire des paires sur négation, montant, date, identité et version de contrat. Inclure ces dimensions dans la clé ou vérifier leur équivalence avant réutilisation. Mesurer les mauvaises réutilisations en plus du hit rate. Réserver ce cache aux tâches où l'équivalence de réponse est suffisamment vérifiable ; une forte similarité ne constitue pas une preuve de même intention métier.
 
 ---
 

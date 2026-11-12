@@ -1,7 +1,7 @@
 # MLOps & LLMOps — Fondamentaux — Flashcards
 Tags: #flashcards #ai-engineering #mlops #llmops #llm
 Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: DevOps ou MLOps, spécificités du LLMOps, ce qu'il faut versionner (code et config, modèles et données), model registry, lineage, reproductibilité, environnements dev/staging/prod, rôle du Lead. -->
+<!-- summary: DevOps ou MLOps, spécificités du LLMOps, ce qu'il faut versionner (code et config, modèles et données), model registry, lineage, reproductibilité, environnements dev/staging/prod, rôle du Lead, manifeste cohérent de release. -->
 
 
 Qu'est-ce que le MLOps ? <!--anki:72493079506c593c216d-->
@@ -112,6 +112,14 @@ Imposer les **standards** plutôt que tout faire lui-même :
 - **Runbooks** : que faire si la qualité chute ou si un fournisseur tombe
 
 Le but : qu'un changement risqué ne puisse pas partir en production **par accident**.
+
+---
+
+Pourquoi un manifeste de release IA doit-il désigner un ensemble cohérent d'artefacts ? <!--anki:3238613763396433623462303430633239386138326562306435343466343561-->
+?
+Une **release** doit relier code, modèle, tokenizer, prompt, index ou features et configuration par des versions immuables. Leurs alias courants peuvent évoluer indépendamment.
+
+Publier ce manifeste après validation de la combinaison, puis faire résoudre les références une seule fois pour le run. Conserver son identifiant dans les résultats et traces. Tester un redéploiement à partir du manifeste sans accès implicite à « latest ». Une collection d'artefacts versionnés ne suffit pas si personne ne sait quelle combinaison a réellement servi une décision.
 
 ---
 

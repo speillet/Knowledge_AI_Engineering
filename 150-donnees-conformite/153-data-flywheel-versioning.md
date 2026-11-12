@@ -1,6 +1,6 @@
 # Data flywheel & versioning des données — Flashcards
 Tags: #flashcards #ai-engineering #donnees #flywheel #versioning #mlops
-<!-- summary: boucle d'amélioration, étapes, versioning des données, outils (DVC, lakeFS, Iceberg), lineage d'une eval, versioning d'un index, signaux implicites, pièges, priorisation. -->
+<!-- summary: boucle d'amélioration, étapes, versioning des données, outils (DVC, lakeFS, Iceberg), lineage d'une eval, versioning d'un index, signaux implicites, pièges, priorisation, représentativité des retours de production. -->
 
 
 Qu'est-ce qu'une data flywheel ? <!--anki:452f4c54795042304253-->
@@ -84,6 +84,14 @@ Comment prioriser les améliorations issues de la flywheel ? <!--anki:7649423b5a
 Par **fréquence × gravité** de chaque catégorie d'échec, rapportées au **coût** de la correction. Une erreur rare mais grave (engagement financier) peut passer avant une erreur fréquente mais bénigne (ton). Tenir un **tableau des modes de défaillance** mis à jour à chaque tour.
 
 Exemple : un ton inapproprié touche 8 % des réponses, avec une gravité de 1 ; des montants erronés en touchent 0,5 %, avec une gravité de 50 car ils engagent l'entreprise. Scores : 8 contre 25. Les montants passent d'abord, bien que seize fois moins fréquents. Les poids de gravité se fixent avec le métier, et le coût de correction départage les cas proches.
+
+---
+
+Pourquoi une data flywheel doit-elle garder des exemples de réussites ordinaires en plus des échecs signalés ? <!--anki:6536303434346466643734383439326239353966313838356338346539303765-->
+?
+Les **signalements** surreprésentent souvent utilisateurs actifs, erreurs visibles et situations irritantes. Entraîner uniquement sur ces retours peut déplacer le modèle au détriment des usages courants.
+
+Conserver, avec une politique de données adaptée, un échantillon représentatif des demandes et un ensemble ciblé de cas difficiles. Tracer la règle de collecte et les corrections apportées. Évaluer séparément amélioration des échecs et régressions sur le trafic ordinaire. Une boucle de feedback utile augmente l'information disponible ; elle ne doit pas confondre fréquence des plaintes et fréquence des situations réelles.
 
 ---
 

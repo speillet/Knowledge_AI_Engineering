@@ -1,6 +1,6 @@
 # Tool calling — Flashcards
 Tags: #flashcards #ai-engineering #agents #tool-calling #llm
-<!-- summary: définition des outils, appels parallèles contrôlés, tool calling ou MCP, validation des arguments, erreurs et timeouts, statuts d’opération, pagination et coût des schémas. -->
+<!-- summary: définition des outils, appels parallèles contrôlés, tool calling ou MCP, validation des arguments, erreurs et timeouts, statuts d’opération, pagination et coût des schémas, séparation proposition et exécution. -->
 
 
 Qu'est-ce que le tool calling (function calling) ? <!--anki:4c434c62492628352f4a-->
@@ -131,6 +131,14 @@ Pourquoi la pagination d'un outil peut-elle fausser la conclusion d'un agent ? <
 Un résultat **limité à une page** ne représente pas nécessairement toute la collection. L'agent peut conclure « aucune commande récente » après avoir lu seulement les premiers éléments d'un autre tri.
 
 Indiquer filtres, ordre, limite, présence d'une suite et curseur de continuation. Préférer un filtre ou une agrégation côté service pour une question globale. Si le budget ne permet pas de parcourir toutes les pages, annoncer le périmètre réellement consulté. Évaluer les tâches dont la preuve se trouve après la première page.
+
+---
+
+Pourquoi un outil de proposition doit-il être séparé d'un outil d'exécution ? <!--anki:3337613762613866656336363461633538633337313562636234633634396666-->
+?
+La **proposition** calcule et décrit une action ; l'**exécution** applique un effet autorisé. Cette séparation permet de valider destinataire, montant et conséquences avant l'écriture.
+
+Par exemple, préparer un remboursement renvoie une proposition versionnée ; l'exécution exige son identifiant, une autorisation encore valide et une clé d'idempotence. Si les paramètres changent, refaire la validation au lieu de réutiliser un accord ancien. La séparation des outils aide l'interface ; le serveur doit malgré tout vérifier les droits et l'état métier au moment d'agir.
 
 ---
 

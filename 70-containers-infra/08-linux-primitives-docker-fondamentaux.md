@@ -1,6 +1,6 @@
 # Primitives Linux & fondamentaux Docker — Flashcards
 Tags: #flashcards #conteneurs #linux #docker
-<!-- summary: namespaces et cgroups, conteneur ou VM, layers, ordre du Dockerfile et cache, volumes et bind mounts, port mapping. -->
+<!-- summary: namespaces et cgroups, conteneur ou VM, layers, ordre du Dockerfile et cache, volumes et bind mounts, port mapping, distinction entre RAM et VRAM. -->
 
 
 Sur quelles primitives du kernel Linux reposent les conteneurs ? <!--anki:6c342463685269653428-->
@@ -83,10 +83,9 @@ Un volume simplifie la gestion du stockage par le moteur ; un bind mount convien
 
 À ne pas confondre : couche inscriptible et volume ? <!--anki:4c2e7958784f645d4a5a-->
 ?
-- **Couche inscriptible** du conteneur : tout ce qu'on y écrit **disparaît** à sa suppression, et les écritures passent par l'overlay, donc sont **plus lentes**
-- **Volume ou bind mount** : les données **survivent** au conteneur et les écritures vont directement sur le système de fichiers
+La **couche inscriptible** appartient au cycle de vie du conteneur ; ses données sont perdues à sa suppression. Un **volume ou bind mount** conserve des données hors de cette couche, sous réserve de sa propre politique de suppression.
 
-Pour un serveur d'inférence, les **poids et les caches** vont dans un volume : jamais dans la couche inscriptible, jamais dans l'image ([[10-images-modeles-poids|poids de modèles]]).
+Les surcoûts dépendent du driver et des accès : le copy-on-write peut pénaliser certaines écritures, tandis qu'un volume réseau peut lui-même être lent. Mesurer le stockage réel. Pour des poids volumineux partagés et des caches persistants, préférer un stockage externe adapté ; embarquer des poids immuables dans l'image reste un choix possible avec des compromis de distribution ([[10-images-modeles-poids|poids de modèles]]).
 
 ---
 
@@ -109,6 +108,14 @@ docker run -p 8000:8000 my-inference-server
 ```
 
 Le premier nombre est le port de l'hôte, le second celui du conteneur. L'application doit écouter sur une adresse joignable dans le conteneur. Sans adresse explicite, le port peut être publié sur toutes les interfaces ; pour un usage local, utiliser `-p 127.0.0.1:8000:8000` et garder l'authentification adaptée au service.
+
+---
+
+Pourquoi une limite mémoire de conteneur ne réserve-t-elle pas automatiquement de la mémoire GPU ? <!--anki:3032646263336463396331373433393038333039336564353430376462666535-->
+?
+Les **limites de mémoire habituelles du conteneur** portent sur la mémoire gérée par le système hôte. La VRAM et son allocation dépendent du GPU, du runtime et des mécanismes de partage retenus.
+
+Un processus peut respecter sa limite RAM tout en échouant en VRAM, ou l'inverse pendant le chargement des poids. Surveiller séparément RAM, mémoire épinglée et VRAM. Définir les limites et l'isolation GPU avec les composants adaptés, puis tester plusieurs workloads concurrents. Le seul champ mémoire du conteneur ne constitue pas un quota de VRAM.
 
 ---
 
@@ -137,6 +144,12 @@ Mise en situation : un responsable sécurité demande d'exécuter le code géné
 **Piège** : traiter « conteneurisé » comme synonyme de « sûr pour exécuter n'importe quel code ».
 
 ---
+
+## Sources
+
+- [Kubernetes — gestion des ressources des conteneurs](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
+
+- [Docker — stockage, couches inscriptibles et drivers](https://docs.docker.com/engine/storage/drivers/) — vérification ciblée du 12 novembre 2026, sans renouvellement de la date globale de la fiche.
 
 ## Connexions
 - [[03-containerd-runc|runc]] — configure namespaces & cgroups

@@ -1,7 +1,7 @@
 # Sécurité des agents de code — Flashcards
 Tags: #flashcards #ai-engineering #securite #agents #coding-agents #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: cible de choix, modes sans permission, isolation du poste, s1ngularity, Amazon Q, fichiers d'instructions piégés, PromptPwnd, agents en CI/CD, slopsquatting et typosquatting, qualité du code généré, revue des PR d'agents, secrets, politique d'entreprise. -->
+<!-- summary: cible de choix, modes sans permission, isolation du poste, s1ngularity, Amazon Q, fichiers d'instructions piégés, PromptPwnd, agents en CI/CD, slopsquatting et typosquatting, qualité du code généré, revue des PR d'agents, secrets, politique d'entreprise, secrets accessibles au code de test. -->
 
 
 Pourquoi les agents de code sont-ils une cible de choix ? <!--anki:476b3a2c623d293b2560-->
@@ -135,6 +135,14 @@ Vérifier contractuellement rétention, usage des données et sous-traitants : l
 - **Slopsquatting** : l'attaquant publie un paquet au nom **inventé par un LLM**, que les agents de code recommandent de façon récurrente
 
 Le second vise les **hallucinations** des modèles plutôt que les humains. Parade commune : vérifier l'existence et la réputation d'un paquet avant de l'installer, et bloquer les paquets trop récents.
+
+---
+
+Pourquoi un secret disponible uniquement pendant les tests peut-il encore être exfiltré par du code proposé par un agent ? <!--anki:3662303333616138613037343461343262363436393334646636376134653435-->
+?
+Les **tests exécutent du code** : fixtures, scripts d'installation et hooks peuvent lire l'environnement et utiliser le réseau. Un secret absent du prompt peut donc rester accessible au processus lancé.
+
+Exécuter le code non approuvé sans secrets sensibles et avec un réseau limité, puis réserver les validations privilégiées à un contexte contrôlé. Revoir aussi les changements de dépendances et de CI. Tester que les branches non approuvées ne récupèrent pas les jetons de publication. La séparation du raisonnement du modèle et de l'exécution ne protège que si les droits du processus sont réellement réduits.
 
 ---
 

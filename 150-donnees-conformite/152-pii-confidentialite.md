@@ -1,6 +1,6 @@
 # PII & confidentialité des données — Flashcards
 Tags: #flashcards #ai-engineering #donnees #pii #confidentialite #securite
-<!-- summary: où passent les données, détection, masquage, pseudonymisation et anonymisation, pseudonymiser avant l'appel, engagements des fournisseurs, logs, mémorisation, fuites entre utilisateurs, secrets, privacy by design. -->
+<!-- summary: où passent les données, détection, masquage, pseudonymisation et anonymisation, pseudonymiser avant l'appel, engagements des fournisseurs, logs, mémorisation, fuites entre utilisateurs, secrets, privacy by design, réidentification par attributs indirects. -->
 
 
 Où passent les données personnelles dans une application LLM ? <!--anki:75613b6d24494663604d-->
@@ -92,6 +92,14 @@ Exemple : un assistant RH reçoit l'identifiant de l'employé plutôt que son no
 
 ---
 
+Pourquoi remplacer les noms par des identifiants stables peut-il encore permettre la réidentification ? <!--anki:6630326539386137336338663462653362373766366566323964663165613733-->
+?
+Des **identifiants stables** relient les événements d'une personne. Combinés à dates, lieux, profession ou événements rares, ils peuvent permettre de la retrouver même sans son nom.
+
+Évaluer l'ensemble des attributs et les possibilités de rapprochement, puis réduire précision, rétention et accès selon la finalité. Protéger séparément la table de correspondance quand elle existe. Ne pas qualifier automatiquement ces données d'anonymes : la pseudonymisation reste un traitement de données personnelles. Tester les risques sur les traces et exports, pas seulement sur le texte envoyé au modèle.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton service juridique interdit d'envoyer des données clients à un fournisseur externe, mais le cas d'usage l'exige. Quelles options présentes-tu ? <!--anki:4c2a2352337659677e4b-->
@@ -117,6 +125,10 @@ Mise en situation : un développeur demande l'accès aux traces de production po
 **Piège** : donner un accès large « le temps du débogage », qui ne se referme jamais.
 
 ---
+
+## Sources
+
+- [CNIL — données personnelles et identification indirecte](https://www.cnil.fr/fr/rgpd-de-quoi-parle-t-on) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
 
 ## Connexions
 - [[154-rgpd-llm|RGPD appliqué aux LLM]] — le cadre légal

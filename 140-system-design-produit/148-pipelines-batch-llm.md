@@ -1,7 +1,7 @@
 # Pipelines batch à grande échelle — Flashcards
 Tags: #flashcards #ai-engineering #batch #system-design #couts #llm
 Vérifié le : 30 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: batch ou en ligne, batch API (JSONL, `custom_id`, 24 h), batch API ou continuous batching, architecture reprenable, calculs de coût et de durée sous quota, classement des erreurs, contrôle qualité statistique, versions enregistrées avec chaque résultat, auto-hébergement hors ligne, quand ne pas utiliser de batch API. -->
+<!-- summary: batch ou en ligne, batch API (JSONL, `custom_id`, 24 h), batch API ou continuous batching, architecture reprenable, calculs de coût et de durée sous quota, classement des erreurs, contrôle qualité statistique, versions enregistrées avec chaque résultat, auto-hébergement hors ligne, quand ne pas utiliser de batch API, identifiants indépendants de l'ordre des résultats. -->
 
 
 Quand traiter des données par LLM en batch plutôt qu'en ligne ? <!--anki:73254754575550477a61-->
@@ -129,6 +129,14 @@ Quand ne pas utiliser une batch API ? <!--anki:4b552b3350372d2f6a78-->
 - **Étapes dépendantes** : un agent ou une chaîne où chaque appel dépend du précédent ne se soumet pas en un lot
 - **Itérations rapides** sur le prompt : pendant la mise au point, l'appel en ligne sur un échantillon est plus pratique
 - **Très petits volumes** : la gestion des lots coûte plus que l'économie
+
+---
+
+Pourquoi un traitement LLM batch doit-il identifier chaque élément indépendamment de sa position dans le fichier de sortie ? <!--anki:3336353463383632316264373435326638383439666431323739323631616361-->
+?
+L'**ordre de restitution** peut différer de celui des entrées, et certains éléments peuvent échouer. Rapprocher par numéro de ligne peut associer une réponse au mauvais dossier.
+
+Attribuer un identifiant stable à chaque demande et joindre les résultats sur cette clé, avec contrôle des doublons et éléments manquants. Reprendre uniquement les unités non confirmées selon leur statut, en conservant l'identité métier. Tester une sortie mélangée et partielle. Un batch déclaré terminé ne garantit pas que toutes ses demandes ont réussi ni que leurs effets ont été publiés.
 
 ---
 

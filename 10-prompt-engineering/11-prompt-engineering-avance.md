@@ -1,6 +1,6 @@
 # Prompt engineering avancé — Flashcards
 Tags: #flashcards #ai-engineering #prompt-engineering #llm
-<!-- summary: system prompt et user prompt, few-shot, few-shot ou fine-tuning, chain-of-thought (coût, balises), self-consistency et ses limites, délimiteurs, décomposition en appels, meta-prompting, prompts versionnés comme du code, anti-patterns. -->
+<!-- summary: system prompt et user prompt, few-shot, few-shot ou fine-tuning, chain-of-thought (coût, balises), self-consistency et ses limites, délimiteurs, décomposition en appels, meta-prompting, prompts versionnés comme du code, anti-patterns, tests métamorphiques. -->
 
 
 Quel est le rôle du system prompt par rapport au user prompt ? <!--anki:6876605d304e7d7c4d6f-->
@@ -107,6 +107,14 @@ Pourquoi neuf réponses identiques sur dix tirages d’un LLM ne démontrent-ell
 Le chiffre mesure ici un **accord entre tirages**, sans vérité terrain. Un prompt contenant une fausse prémisse ou une lacune commune au modèle peut produire la même erreur neuf fois.
 
 Le vote majoritaire peut améliorer une tâche lorsque des erreurs se compensent, mais son gain se vérifie sur des cas annotés indépendants du réglage. Contrôler la normalisation des réponses, le coût des dix générations et les cas où le vote se trompe avec assurance. Pour annoncer une probabilité de correction, il faut valider la calibration du score d'accord.
+
+---
+
+Comment utiliser des tests métamorphiques pour vérifier la robustesse d'un prompt ? <!--anki:6433386631383831653636363437633062363537653538643563393234336639-->
+?
+Un **test métamorphique** transforme une entrée tout en connaissant la relation attendue entre les sorties. Par exemple, changer l'ordre de deux factures doit permuter les extractions correspondantes sans modifier leurs montants.
+
+Tester paraphrases, espaces, ordre des exemples et ajout d'informations sans rapport. Définir la propriété avant l'essai et vérifier que la transformation conserve bien le sens. Une négation ou un changement de devise ne doit justement pas conserver la réponse. Ces tests révèlent des fragilités sans constituer à eux seuls une preuve d'exactitude.
 
 ---
 

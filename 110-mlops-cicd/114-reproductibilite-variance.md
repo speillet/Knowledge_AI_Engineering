@@ -1,6 +1,6 @@
 # Reproductibilité & variance — Flashcards
 Tags: #flashcards #ai-engineering #mlops #reproductibilite #evals #llm
-<!-- summary: non-déterminisme à température 0, invariance au batch, seed, appel rejouable, tests sur des sorties variables, erreur standard et intervalles de confiance, comparaison appariée, pass@k et pass^k, variance du LLM-as-judge, fine-tuning reproductible. -->
+<!-- summary: non-déterminisme à température 0, invariance au batch, seed, appel rejouable, tests sur des sorties variables, erreur standard et intervalles de confiance, comparaison appariée, pass@k et pass^k, variance du LLM-as-judge, fine-tuning reproductible, stabilité par tâche répétée. -->
 
 
 Une température à 0 garantit-elle des sorties identiques ? <!--anki:6354476e2a6372354e28-->
@@ -141,6 +141,14 @@ succès moyen = (1 + 0,5)/2 = 0,75
 carré du succès moyen = 0,75² = 0,5625
 ```
 Les valeurs diffèrent car les difficultés diffèrent. Pour ce protocole, deux essais répètent la même tâche ; ils ne rééchantillonnent pas une tâche du mélange à chaque tentative. Un succès global moyen de 75 % ne suffit donc pas à déterminer le pass^2 moyen. Préciser tâches, répétitions et pondération avant d'agréger.
+
+---
+
+Pourquoi répéter plusieurs fois chaque tâche avant de comparer la stabilité de deux agents ? <!--anki:3232383735333832656138383437646639376330653431323964366130323633-->
+?
+Un **score moyen** mélange difficulté des tâches et variance des exécutions. Un agent peut réussir toujours les mêmes cas, tandis qu'un autre réussit chaque cas de façon intermittente avec la même moyenne globale.
+
+Répéter chaque tâche avec état initial contrôlé, puis rapporter succès moyen et distribution de fiabilité par tâche. Garder les répétitions groupées dans l'analyse de l'incertitude. Choisir la métrique selon le besoin : une automatisation sans supervision exige une régularité différente d'une génération où l'utilisateur sélectionne un candidat. Des appels répétés sur des tâches différentes ne mesurent pas cette stabilité.
 
 ---
 

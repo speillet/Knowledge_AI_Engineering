@@ -1,6 +1,6 @@
 # Recherche vectorielle & index ANN — Flashcards
 Tags: #flashcards #ai-engineering #fondamentaux #vector-search #rag
-<!-- summary: brute force ou ANN, rappel de l'index ou rappel du retrieval, calcul de la mémoire d'un index HNSW, HNSW et ses paramètres, IVF, Product Quantization, quantization scalaire et binaire, DiskANN, filtrage, recall de l'index, pgvector ou base dédiée, exploitation, dimensionnement. -->
+<!-- summary: brute force ou ANN, rappel de l'index ou rappel du retrieval, calcul de la mémoire d'un index HNSW, HNSW et ses paramètres, IVF, Product Quantization, quantization scalaire et binaire, DiskANN, filtrage, recall de l'index, pgvector ou base dédiée, exploitation, dimensionnement, traitement des ex æquo dans un benchmark ANN. -->
 
 
 Pourquoi ne pas faire une recherche exacte (brute force) des plus proches voisins ? <!--anki:434b37366f67544e55-->
@@ -120,6 +120,14 @@ Seule la part des vecteurs est divisée par quatre : le total diminue d'environ 
 - **Rappel du retrieval** (recall@k d'un RAG) : la part des **documents pertinents** pour la question qui sont remontés. Il mesure la **qualité de bout en bout** : chunking, modèle d'embedding, requête et index
 
 Un index à 99 % de rappel ANN peut donner un mauvais RAG si l'**embedding** ne rapproche pas les bons passages. On règle `ef_search` avec le premier, on juge le système avec le second ([[96-evals-rag-agents|evals RAG]]).
+
+---
+
+Pourquoi deux top-k exacts différents peuvent-ils être également valides pour évaluer un index ANN ? <!--anki:6666643537386462326234643432363439366238303062393637343430636562-->
+?
+Des **distances ex æquo** à la frontière du top-k peuvent admettre plusieurs listes exactes. Comparer leurs seuls identifiants à une unique liste de référence peut pénaliser un résultat géométriquement équivalent.
+
+Définir le traitement des égalités avant le benchmark : départage déterministe ou règle d'équivalence par distance avec tolérance justifiée. Garder identiques normalisation, précision et filtres. Inspecter les doublons de vecteurs et la sensibilité numérique. Cette convention concerne le rappel de l'index ; elle ne prouve pas que tous les documents équidistants sont également pertinents pour l'utilisateur.
 
 ---
 

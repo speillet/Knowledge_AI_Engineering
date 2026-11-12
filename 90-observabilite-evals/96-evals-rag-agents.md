@@ -1,6 +1,6 @@
 # Évaluation des RAG & des agents — Flashcards
 Tags: #flashcards #ai-engineering #evals #rag #agents #llm
-<!-- summary: retrieval et génération, calculs precision/recall@k et MRR, nDCG, fidélité ou exactitude, contexte oracle, jeux synthétiques, résultat ou trajectoire, environnements d’eval, pass^k et efficacité; couverture des citations, calcul de soutien, tests contrefactuels. -->
+<!-- summary: retrieval et génération, calculs precision/recall@k et MRR, nDCG, fidélité ou exactitude, contexte oracle, jeux synthétiques, résultat ou trajectoire, environnements d’eval, pass^k et efficacité; couverture des citations, calcul de soutien, tests contrefactuels, vérification des effets externes. -->
 
 
 Comment découper l'évaluation d'un RAG ? <!--anki:486239767d48454b594b-->
@@ -173,6 +173,14 @@ Comment tester qu'un RAG utilise réellement le contexte fourni ? <!--anki:30636
 Construire des **tests contrefactuels contrôlés** : changer un fait dans un document fictif et vérifier que la réponse suit ce changement, puis retirer la preuve pour tester l'abstention.
 
 Garder question et configuration comparables ; éviter des transformations qui rendent le document incohérent. Ajouter une variante avec une source contradictoire et une règle de priorité explicite. Ces tests révèlent une dépendance au contexte sur les cas testés ; ils ne prouvent pas que toutes les réponses futures seront fidèles. Les compléter par des questions réelles.
+
+---
+
+Pourquoi une évaluation d'agent doit-elle vérifier ses effets externes, même si sa réponse finale est correcte ? <!--anki:3839373231623233343337383466363138343961656331653165313934303235-->
+?
+La **réponse finale** peut annoncer le bon résultat alors que l'agent a créé un doublon, consulté des données interdites ou omis une écriture. L'évaluation doit donc inspecter aussi l'état externe.
+
+Définir état initial, effets attendus et invariants à ne jamais violer. Après le run, interroger la source métier et vérifier les autorisations des appels effectués. Inclure les échecs et résultats inconnus. Un texte correct obtenu au prix d'une fuite ou d'un débit incorrect ne constitue pas une réussite de tâche.
 
 ---
 

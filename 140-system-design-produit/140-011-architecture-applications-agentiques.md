@@ -1,7 +1,7 @@
 # Applications agentiques — Architecture & cycle de vie — Flashcards
 Tags: #flashcards #ai-engineering #agents #production
 Vérifié le : 9 octobre 2026 — API citées confrontées aux documentations officielles ; limites explicitées dans les cartes.
-<!-- summary: choix des briques, contrats d’exécution, API et workers, admission, identité, approbations versionnées, annulation, événements, déploiement et capacité. -->
+<!-- summary: choix des briques, contrats d’exécution, API et workers, admission, identité, approbations versionnées, annulation, événements, déploiement et capacité, récupération d'une soumission après coupure réseau. -->
 
 
 Comment choisir les briques nécessaires à une application agentique ? <!--anki:6264333961356665313630323462663361383062303936656332656432666539-->
@@ -142,6 +142,14 @@ Comment choisir un indicateur de réussite pour une application agentique ? <!--
 Mesurer le **résultat métier vérifié**, avec coût et délai sur le même périmètre. Pour un agent support : dossier correctement résolu, sans action interdite, dans le délai prévu.
 
 Un run techniquement terminé peut avoir renvoyé une réponse inutilisable ; une escalade justifiée peut au contraire être le résultat attendu. Définir catégories, dénominateurs et segments avant lancement. Relier traces et états métier pour expliquer les échecs sans confondre succès HTTP et succès utilisateur.
+
+---
+
+Pourquoi le client doit-il pouvoir retrouver un run d'agent après avoir perdu la réponse à sa soumission ? <!--anki:3563613333373337636438313465376662346365616233363435316561363536-->
+?
+Une **coupure réseau** peut survenir après création durable du run mais avant réception de son identifiant. Le client ignore alors si sa demande a été acceptée.
+
+Fournir une clé de soumission stable et un mécanisme de consultation ou de resoumission qui retrouve le même run. Vérifier identité, empreinte du contenu et état public avant de relancer. Tester la panne juste après l'enregistrement. Créer un nouveau run à chaque timeout peut doubler les effets et la facture, même si chaque worker fonctionne correctement.
 
 ---
 

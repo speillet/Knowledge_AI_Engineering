@@ -1,6 +1,6 @@
 # Inférence causale & décisions produit — Flashcards
 Tags: #flashcards #ai-engineering #ml-classique #causalite #experimentation
-<!-- summary: prédiction ou intervention, ATE et CATE, graphe causal, confusion et collision, identification ou estimation, hypothèses, positivité, score de propension, différences de différences, uplift et analyses de sensibilité. -->
+<!-- summary: prédiction ou intervention, ATE et CATE, graphe causal, confusion et collision, identification ou estimation, hypothèses, positivité, score de propension, différences de différences, uplift et analyses de sensibilité, interférence entre unités traitées. -->
 
 
 Pourquoi prédire qui résiliera ne suffit-il pas à choisir qui aider ? <!--anki:3631623936393761336133623439396662323464393830633136303130383630-->
@@ -94,6 +94,14 @@ Ils peuvent **révéler un défaut**, pas exclure tous les défauts possibles. U
 Exemple : aucun effet détecté sur une issue supposée insensible au traitement est rassurant ; cela n'exclut pas un facteur non observé influençant uniquement l'issue principale. « Non significatif » peut aussi signifier trop peu de données.
 
 Choisir des contrôles justifiés par le domaine, vérifier ce qu'ils pourraient détecter et analyser la sensibilité à une confusion non observée. Rapporter hypothèses restantes et incertitude ; des diagnostics verts ne transforment pas une étude observationnelle en randomisation.
+
+---
+
+Pourquoi l'effet d'une intervention peut-il dépendre du traitement des autres personnes ? <!--anki:3965653663343938633262343433653362303863373135313337326665353333-->
+?
+L'**interférence** apparaît quand le résultat d'une unité dépend du traitement d'autres unités : entraide entre collègues, stock partagé ou concurrence sur les mêmes recommandations.
+
+Une comparaison qui suppose des unités indépendantes peut alors mesurer un effet différent de celui attendu après généralisation. Identifier les liens et choisir, si nécessaire, une randomisation par groupe ou un plan adapté. Définir l'effet recherché, notamment direct ou collectif. L'assignation aléatoire individuelle ne supprime pas cette interaction ; il faut la prendre en compte dans le design et l'analyse.
 
 ---
 

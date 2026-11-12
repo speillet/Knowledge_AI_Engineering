@@ -1,6 +1,6 @@
 # Évaluation des systèmes LLM — Méthodologie — Flashcards
 Tags: #flashcards #ai-engineering #evals #llm #qualite
-<!-- summary: benchmark ou eval applicative, analyse d'erreurs, golden dataset, taille des jeux, familles d'évaluateurs, critères binaires, avec ou sans référence, offline et online, eval-driven development, saturation, anti-patterns. -->
+<!-- summary: benchmark ou eval applicative, analyse d'erreurs, golden dataset, taille des jeux, familles d'évaluateurs, critères binaires, avec ou sans référence, offline et online, eval-driven development, saturation, anti-patterns, cas représentatifs et cas adversariaux. -->
 
 
 Pourquoi l'évaluation est-elle la compétence centrale d'un AI Engineer senior ? <!--anki:672b7a264c7763732b24-->
@@ -118,6 +118,14 @@ n ≈ 1,96² × p(1 − p) / marge²
 Diviser la marge par 2 demande 4 fois plus de cas. Pour départager deux versions à 2 ou 3 points d'écart, une comparaison **appariée** sur les mêmes cas est plus sensible.
 
 La formule suppose des cas **indépendants**. 900 questions tirées de 60 conversations d'un même client ne valent pas 900 observations : les réponses d'une même conversation se ressemblent, et l'incertitude réelle est plus large que la marge calculée.
+
+---
+
+Pourquoi réserver un ensemble de cas représentatifs et un ensemble de cas adversariaux distincts dans les evals ? <!--anki:6532653739316565393430643436316139653663346234666366386132313364-->
+?
+Les **cas représentatifs** estiment le comportement sur l'usage visé ; les **cas adversariaux** cherchent les limites et les défaillances. Mélanger leurs scores sans pondération explicite rend le résultat difficile à interpréter.
+
+Rapporter séparément performance courante, couverture des risques et violations critiques. Fixer les critères bloquants avant de comparer les variantes. Un ensemble adversarial volontairement difficile ne mesure pas la fréquence naturelle des incidents ; un échantillon courant peut ignorer une attaque rare. Les deux servent à décider, avec des rôles et des dénominateurs annoncés.
 
 ---
 

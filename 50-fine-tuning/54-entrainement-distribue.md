@@ -1,6 +1,6 @@
 # Entraînement distribué — Flashcards
 Tags: #flashcards #ai-engineering #fine-tuning #distributed-training #gpu
-<!-- summary: calcul de la mémoire d'un fine-tuning 7B avec Adam, data ou model parallelism, DDP, ZeRO et FSDP, tensor et pipeline parallelism, parallélisme 3D, gradient checkpointing, accumulation de gradients, précision mixte BF16, réseau, pannes et checkpoints. -->
+<!-- summary: calcul de la mémoire d'un fine-tuning 7B avec Adam, data ou model parallelism, DDP, ZeRO et FSDP, tensor et pipeline parallelism, parallélisme 3D, gradient checkpointing, accumulation de gradients, précision mixte BF16, réseau, pannes et checkpoints, calcul d'efficacité parallèle. -->
 
 
 Que faut-il stocker en mémoire GPU pendant l'entraînement ? <!--anki:4b3540475374235a42-->
@@ -142,6 +142,14 @@ Que se passe-t-il si un GPU tombe en panne au milieu d'un entraînement distribu
 L'entraînement est **synchrone** : chaque étape attend les gradients de tous les GPU, donc **tout le job s'arrête**. On le relance depuis le dernier **checkpoint**, et tout ce qui a été calculé depuis est perdu.
 
 À l'échelle de milliers de GPU, les pannes surviennent **plusieurs fois par jour** : on sauvegarde souvent (checkpoints asynchrones, pour ne pas bloquer le calcul), on relance automatiquement, et on garde des nœuds de rechange.
+
+---
+
+Calcul : quel taux d'accélération et quelle efficacité si un entraînement passe de 8 heures sur un GPU à 1,5 heure sur huit GPU ? <!--anki:3864636563343965616636333434366561396131656435613438323065633239-->
+?
+L'**accélération** vaut `8 / 1,5 ≈ 5,33`. L'**efficacité parallèle** vaut `5,33 / 8 ≈ 66,7 %`, pour le même travail et le même critère d'arrêt.
+
+Le temps écoulé baisse, mais la consommation passe de **8 à 12 GPU-heures**. Communications, déséquilibre et portions séquentielles peuvent expliquer l'écart à l'idéal. Vérifier aussi débit de données et convergence : changer le batch global peut modifier le nombre d'étapes nécessaire. Une mesure de tokens/s seule ne garantit pas un meilleur coût pour atteindre la qualité cible.
 
 ---
 

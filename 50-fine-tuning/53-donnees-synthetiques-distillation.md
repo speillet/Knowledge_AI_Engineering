@@ -1,7 +1,7 @@
 # Données synthétiques & distillation — Flashcards
 Tags: #flashcards #ai-engineering #fine-tuning #synthetic-data #distillation #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: génération variée, filtrage, model collapse, distillation sur les sorties ou sur les logits, distillation du raisonnement, contraintes juridiques, projet de distillation, jeux d'eval synthétiques. -->
+<!-- summary: génération variée, filtrage, model collapse, distillation sur les sorties ou sur les logits, distillation du raisonnement, contraintes juridiques, projet de distillation, jeux d'eval synthétiques, déduplication après génération. -->
 
 
 Qu'est-ce que les données synthétiques en AI Engineering ? <!--anki:4a7e713448475b3c212c-->
@@ -83,6 +83,14 @@ Comment générer des données synthétiques pour les evals sans biaiser le rés
 - Ne jamais **ré-entraîner** sur le jeu d'eval lui-même (contamination).
 
 Un générateur différent peut partager les mêmes biais ou avoir vu les mêmes données : cette séparation ne suffit pas. Fixer les compétences à tester avant génération, vérifier les références et réserver le jeu final. Examiner les performances par difficulté et par source pour repérer un benchmark artificiellement proche du style du générateur.
+
+---
+
+Pourquoi dédupliquer les données synthétiques après génération plutôt qu'uniquement avant ? <!--anki:3965633638376131383162613463373762363931623738643464613035613864-->
+?
+Des **prompts distincts** peuvent produire des réponses presque identiques, et une génération peut recopier un exemple déjà présent dans le test. La diversité des graines ne garantit donc pas celle des données finales.
+
+Dédupliquer et regrouper les exemples par origine, gabarit et proximité avant de former les partitions. Contrôler aussi le chevauchement avec l'évaluation protégée. Conserver la provenance du générateur et du filtrage pour retrouver un lot défectueux. Mesurer la diversité des situations et erreurs couvertes, pas seulement le nombre de lignes produites.
 
 ---
 

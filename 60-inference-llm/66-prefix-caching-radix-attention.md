@@ -1,7 +1,7 @@
 # Prefix caching & RadixAttention — Flashcards
 Tags: #flashcards #ai-engineering #inference #kv-cache #caching #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: prefix caching de vLLM, arbre radix de SGLang, éviction, ordonnancement et routage cache-aware, offloading du KV cache (LMCache), limites, canal auxiliaire temporel, métriques par requête et token, gain de TTFT réel, affinité et surcharge. -->
+<!-- summary: prefix caching de vLLM, arbre radix de SGLang, éviction, ordonnancement et routage cache-aware, offloading du KV cache (LMCache), limites, canal auxiliaire temporel, métriques par requête et token, gain de TTFT réel, affinité et surcharge, isolation par cache_salt. -->
 
 
 Qu'est-ce que le prefix caching côté serveur ? <!--anki:703830706b2926403428-->
@@ -121,6 +121,14 @@ Une politique purement fondée sur le hit rate peut concentrer le trafic sur que
 
 ---
 
+Comment isoler le prefix cache vLLM entre tenants sans perdre tout partage à l'intérieur d'un tenant ? <!--anki:3431366139336134386564663464613639396632653131333339366263386235-->
+?
+La version documentée de vLLM permet un **`cache_salt`** par requête : il participe au hash du premier bloc, ce qui sépare la réutilisation entre valeurs différentes.
+
+Faire attribuer par la gateway une valeur secrète stable pour chaque groupe de confiance, puis la transmettre à tous ses appels. Ne pas laisser un client choisir le sel d'un autre tenant. Un sel aléatoire à chaque requête supprimerait aussi le partage souhaité. Tester les hits et la séparation réelle ; ce mécanisme ne remplace pas les permissions sur les données et les autres caches.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton assistant multi-tours affichait 70 % de hits sur le prefix cache. Après une mise à jour, le taux tombe à 5 % et le TTFT double. Que cherches-tu ? <!--anki:7964774643443c5a3328-->
@@ -163,6 +171,8 @@ Mise en situation : ton service multi-clients partage un même modèle, et un cl
 
 - [vLLM — automatic prefix caching et limites](https://docs.vllm.ai/en/latest/features/automatic_prefix_caching/)
 - [SGLang — documentation du serveur et de ses optimisations](https://docs.sglang.io/)
+
+- [vLLM — isolation du cache et sécurité](https://docs.vllm.ai/en/latest/usage/security/) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
 
 ## Connexions
 - [[61-kv-cache-attention|KV cache & attention]] — PagedAttention et prefix caching

@@ -1,7 +1,7 @@
 # Modèles de raisonnement & test-time compute — Flashcards
 Tags: #flashcards #ai-engineering #fondamentaux #reasoning #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: modèle de raisonnement ou chain-of-thought par prompt, test-time compute, RLVR, budget de réflexion, facturation, quand ne pas les utiliser, prompting, fidélité de la chaîne de pensée, interleaved thinking, best-of-n. -->
+<!-- summary: modèle de raisonnement ou chain-of-thought par prompt, test-time compute, RLVR, budget de réflexion, facturation, quand ne pas les utiliser, prompting, fidélité de la chaîne de pensée, interleaved thinking, best-of-n, rendement du budget de raisonnement. -->
 
 
 Qu'est-ce qu'un modèle de raisonnement ? <!--anki:44457a7a766655556330-->
@@ -101,6 +101,14 @@ avec raisonnement :                                0,0675 € (× 9)
 par jour          : 750 € → 6 750 €
 ```
 La réponse visible est la même, mais le coût est multiplié par 9 et la latence s'allonge : on règle l'**effort de raisonnement** par type de requête, et on route les questions simples vers un mode sans raisonnement ([[82-routing-llm|routing]]).
+
+---
+
+Pourquoi augmenter le budget de raisonnement ne garantit-il pas une amélioration sur chaque tâche ? <!--anki:3065383566393065633661383465373162643766643663623739336164353863-->
+?
+Du **calcul supplémentaire** peut aider à explorer ou vérifier, mais aussi répéter une mauvaise hypothèse ou dépasser le délai utile. Le gain dépend de la tâche, du modèle et du mécanisme de contrôle.
+
+Comparer plusieurs budgets sur les mêmes cas, avec qualité, coût et latence ; identifier les segments où le gain se stabilise ou s'inverse. Réserver l'effort supplémentaire aux demandes qui en profitent selon une règle évaluée. Une longue justification n'est pas une preuve de résultat correct : utiliser un vérificateur ou une source externe quand cela est possible.
 
 ---
 

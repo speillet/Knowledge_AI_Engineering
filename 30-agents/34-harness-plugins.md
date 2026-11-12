@@ -1,7 +1,7 @@
 # Harness & plugins — Flashcards
 Tags: #flashcards #ai-engineering #agents #harness #llm
 Vérifié le : 17 octobre 2026 — comportement des hooks de Claude Code confronté à la documentation officielle.
-<!-- summary: rôle du harness, plugins, skills, hooks, permissions, sandbox, fichiers mémoire. -->
+<!-- summary: rôle du harness, plugins, skills, hooks, permissions, sandbox, fichiers mémoire, tests négatifs des politiques. -->
 
 
 Qu'est-ce que le harness (harnais) d'un agent ? <!--anki:7976774a57665d6f6958-->
@@ -111,6 +111,14 @@ Mettre les conventions générales, comme la commande de test, dans les instruct
 - **Plateforme** : le **service managé** qui l'héberge et la gouverne en production ([[38-plateformes-agents|plateformes]])
 
 Un harness peut être écrit sans framework, et déployé sans plateforme. Les trois répondent à des questions différentes : **qui exécute**, **avec quoi on l'écrit**, **où ça tourne**.
+
+---
+
+Comment tester qu'une politique de harness bloque réellement une action interdite ? <!--anki:3837633964313464636161303430343462333166643163356663636164646463-->
+?
+Écrire un **test négatif d'exécution** : demander une action interdite et vérifier qu'aucun effet n'a atteint le système cible. Un message « refusé » affiché après l'appel ne suffit pas.
+
+Essayer les chemins équivalents pertinents : outil direct, script, sous-processus et délégation. Enregistrer décision de politique, arguments normalisés et preuve d'absence d'effet. Répéter après une mise à jour du harness ou d'un plugin. Le test vérifie un périmètre précis ; il ne transforme pas une liste de commandes bloquées en isolation générale.
 
 ---
 

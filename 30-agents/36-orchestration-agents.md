@@ -1,7 +1,7 @@
 # Orchestration multi-agents — Flashcards
 Tags: #flashcards #ai-engineering #agents #multi-agent #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: orchestrator-workers, supervisor, handoffs, evaluator-optimizer, état partagé, coût du multi-agent, protocole A2A. -->
+<!-- summary: orchestrator-workers, supervisor, handoffs, evaluator-optimizer, état partagé, coût du multi-agent, protocole A2A, calcul du chemin critique parallèle. -->
 
 
 Qu'est-ce qu'un système multi-agents ? <!--anki:63233b336f5f4325367c-->
@@ -92,6 +92,14 @@ Qu'est-ce que le protocole A2A ? <!--anki:752355255f5525695870-->
 Exemple : un agent achats demande une analyse à un agent fournisseur sans connaître son modèle ni son orchestration interne. Le protocole décrit l'échange, pas la fiabilité de cette analyse.
 
 Vérifier authentification, capacités compatibles, délais et état terminal de la tâche. Une Agent Card décrit un service ; elle ne constitue ni une autorisation d'accès ni une certification de ses réponses.
+
+---
+
+Calcul : quel temps minimal pour trois workers parallèles de 2, 5 et 8 secondes suivis d'une synthèse de 3 secondes ? <!--anki:6266316666383433363938613435396238616562343635313338353734333963-->
+?
+Si les workers sont **indépendants**, démarrent ensemble et que la synthèse attend les trois, le chemin critique vaut `max(2, 5, 8) + 3 = 11 secondes`, hors orchestration et files.
+
+L'exécution séquentielle prendrait `2 + 5 + 8 + 3 = 18 secondes`. Le gain de latence n'implique pas une baisse du coût : le même travail est exécuté, avec éventuellement davantage de coordination. Une dépendance entre workers ou une limite de concurrence invalide ce calcul idéal.
 
 ---
 

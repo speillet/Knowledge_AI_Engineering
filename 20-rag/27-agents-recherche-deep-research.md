@@ -1,7 +1,7 @@
 # Agents de recherche (deep research) — Flashcards
 Tags: #flashcards #ai-engineering #rag #agents #deep-research #llm
 Vérifié le : 30 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: RAG ou agent de recherche, boucle de recherche, sous-agents parallèles, outils de recherche, citations fiables, risques (sources, injection, biais), évaluation (couverture, BrowseComp), calcul du coût d'un rapport, quand ne pas l'utiliser. -->
+<!-- summary: RAG ou agent de recherche, boucle de recherche, sous-agents parallèles, outils de recherche, citations fiables, risques (sources, injection, biais), évaluation (couverture, BrowseComp), calcul du coût d'un rapport, quand ne pas l'utiliser, indépendance des preuves web. -->
 
 
 Qu'est-ce qu'un agent de recherche (deep research) ? <!--anki:315f783362537c352a-->
@@ -113,6 +113,14 @@ Comparer à une recherche simple sur les mêmes questions : le surcoût doit ach
 
 ---
 
+Pourquoi dix pages web concordantes peuvent-elles ne représenter qu'une seule preuve indépendante ? <!--anki:3937643765346534316538323465366262303866373765623131346262306332-->
+?
+Plusieurs pages peuvent **recopier une même dépêche, étude ou communiqué**. Leur nombre mesure alors la diffusion d'une affirmation plutôt que sa corroboration indépendante.
+
+Remonter à la source originale, regrouper les reprises et distinguer déclaration d'un acteur et vérification indépendante. Pour une controverse, chercher aussi des éléments contradictoires et préciser la date des faits. Conserver la chaîne de provenance dans les notes de recherche. Une synthèse ne doit pas transformer dix copies d'une affirmation non vérifiée en dix confirmations.
+
+---
+
 ## Mises en situation
 
 Mise en situation : l'équipe juridique veut un agent qui prépare des notes de veille réglementaire à partir du web et de la base documentaire interne. Comment le conçois-tu ? <!--anki:6e2c4d595d2f65235548-->
@@ -142,6 +150,8 @@ Mise en situation : ton agent de recherche produit de bons rapports, mais coûte
 ## Sources
 
 - [Anthropic — architecture du système de recherche multi-agents](https://www.anthropic.com/engineering/multi-agent-research-system)
+
+- [W3C — modèle de provenance PROV](https://www.w3.org/TR/prov-overview/) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
 
 ## Connexions
 - [[21-rag-fondamentaux|RAG — Fondamentaux]] — la recherche en un coup

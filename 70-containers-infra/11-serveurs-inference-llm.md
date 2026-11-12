@@ -1,7 +1,7 @@
 # Serveurs d'inférence LLM — Flashcards
 Tags: #flashcards #ai-engineering #inference #serving #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: vLLM, API compatible OpenAI, multi-LoRA, SGLang, TensorRT-LLM et Triton, TGI, llama.cpp et Ollama. -->
+<!-- summary: vLLM, API compatible OpenAI, multi-LoRA, SGLang, TensorRT-LLM et Triton, TGI, llama.cpp et Ollama, tests des limites d'une API compatible. -->
 
 
 À quoi sert un serveur d'inférence LLM ? <!--anki:495d704d38615143496f-->
@@ -93,6 +93,14 @@ Quels critères utiliser pour choisir un serveur d'inférence LLM ? <!--anki:645
 **Support du modèle** et du matériel, débit et latence mesurés sur **votre** charge ([[64-metriques-slo-inference|benchmark]]), fonctionnalités (LoRA, guided generation, prefix caching), métriques exposées, maturité et facilité d'opération sur Kubernetes.
 
 Tester aussi démarrage, montée en charge, annulation des requêtes, reprise après panne et mises à jour. Une fonctionnalité annoncée peut n'être disponible que pour certaines combinaisons de modèle et de GPU. Retenir une version précise et publier les hypothèses du benchmark pour rendre la décision reproductible.
+
+---
+
+Pourquoi une API dite compatible OpenAI ne garantit-elle pas les mêmes comportements entre serveurs d'inférence ? <!--anki:3333356436343833623934393438616561613761653137316437343461323465-->
+?
+La **compatibilité d'API** peut porter sur les chemins et champs sans couvrir toutes les fonctions : outils, schémas, stop tokens, erreurs, annulation ou métriques d'usage.
+
+Définir les fonctionnalités utilisées par l'application et tester leurs cas limites sur chaque moteur. Comparer notamment une sortie incomplète, un refus et un appel d'outil en streaming. Fixer modèle, tokenizer et chat template avant d'attribuer une différence au serveur. Une requête simple qui répond avec HTTP 200 ne démontre pas l'interchangeabilité du contrat applicatif complet.
 
 ---
 

@@ -1,7 +1,7 @@
 # Text-to-SQL & données structurées — Flashcards
 Tags: #flashcards #ai-engineering #rag #text-to-sql #donnees #llm
 Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: text-to-SQL ou RAG, contenu du prompt, schema linking, couche sémantique, sécurisation de l'exécution, boucle de correction, exact match ou execution accuracy, benchmarks (Spider, BIRD, Spider 2.0), questions ambiguës. -->
+<!-- summary: text-to-SQL ou RAG, contenu du prompt, schema linking, couche sémantique, sécurisation de l'exécution, boucle de correction, exact match ou execution accuracy, benchmarks (Spider, BIRD, Spider 2.0), questions ambiguës, limites d'une validation SQL sur échantillon. -->
 
 
 Qu'est-ce que le text-to-SQL ? <!--anki:797b6930743e52773076-->
@@ -98,6 +98,14 @@ Comment un système text-to-SQL doit-il gérer une question ambiguë ? <!--anki:
 - **Montrer la requête** ou sa traduction en langage naturel, pour que l'utilisateur vérifie ce qui a été calculé
 
 Un chiffre faux présenté avec assurance est pire qu'une question de clarification ([[143-hallucinations-grounding|abstention]]).
+
+---
+
+Pourquoi LIMIT sans ordre défini ne constitue-t-il pas un échantillon représentatif pour valider un text-to-SQL ? <!--anki:6337346239313835376561633466663038303239616635643966326461323562-->
+?
+Un **LIMIT** retient un sous-ensemble dont l'ordre peut dépendre du plan et du stockage. Les premières lignes peuvent représenter une seule période ou un seul client, sans couvrir les cas qui font varier la réponse.
+
+Valider la requête sur des jeux contrôlés contenant cas limites, jointures multiples et valeurs manquantes, puis sur la population pertinente. Si un échantillon statistique est nécessaire, définir sa méthode et ses strates. Ajouter un ORDER BY stabilise une sélection, mais ne la rend pas automatiquement représentative ni correcte pour un agrégat global.
 
 ---
 

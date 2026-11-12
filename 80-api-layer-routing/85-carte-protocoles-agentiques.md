@@ -1,7 +1,7 @@
 # Carte des protocoles agentiques — Flashcards
 Tags: #flashcards #ai-engineering #agents #protocoles #mcp #a2a
 Vérifié le : 30 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: protocoles par frontière, MCP, A2A et AG-UI, Agent Card, cycle d'une tâche A2A, API compatible OpenAI, conventions OpenTelemetry GenAI, `AGENTS.md` et skills, paiements par agents (AP2, ACP), gouvernance des standards, quand ne pas exposer un agent en A2A, frontières de confiance. -->
+<!-- summary: protocoles par frontière, MCP, A2A et AG-UI, Agent Card, cycle d'une tâche A2A, API compatible OpenAI, conventions OpenTelemetry GenAI, `AGENTS.md` et skills, paiements par agents (AP2, ACP), gouvernance des standards, quand ne pas exposer un agent en A2A, frontières de confiance, annulation de tâche et compensation métier. -->
 
 
 Quels protocoles relient un agent à son environnement, et à quel niveau ? <!--anki:43777b6e472d742a3e38-->
@@ -90,9 +90,9 @@ Principe commun : l'agent ne manipule jamais les moyens de paiement bruts, et **
 
 Qui gouverne ces standards, et pourquoi est-ce important ? <!--anki:7a382370606173486134-->
 ?
-MCP, A2A et `AGENTS.md` sont passés sous la gouvernance de la **Linux Foundation**, notamment via l'**Agentic AI Foundation** créée fin 2025. Un protocole contrôlé par un seul éditeur peut changer ou disparaître selon ses intérêts ; une fondation neutre rend l'investissement plus sûr.
+La **gouvernance** détermine qui fait évoluer une spécification, comment les décisions sont prises et comment les implémentations restent compatibles. MCP, A2A et `AGENTS.md` s'inscrivent dans des initiatives de la Linux Foundation, avec des structures de projet distinctes.
 
-Critère de choix : préférer un protocole **ouvert, multi-éditeurs et versionné**, et suivre son calendrier de dépréciation ([[115-plateformes-agents-gouvernance|verrouillage]]).
+Examiner ouverture des décisions, versionnement, tests de conformité, support et dépréciations. Une fondation neutre peut réduire la dépendance à un fournisseur, mais ne garantit ni sécurité d'une implémentation ni pérennité d'un produit. Tester le contrat utile et prévoir une sortie ; ne pas confondre gouvernance du standard et garanties opérationnelles de l'outil choisi.
 
 ---
 
@@ -116,6 +116,14 @@ Quelle frontière de confiance chaque protocole introduit-il ? <!--anki:78263762
 - **`AGENTS.md` et skills** : des instructions venues d'un dépôt ou d'un catalogue tiers
 
 Chaque protocole ajouté est une **frontière à authentifier, journaliser et filtrer**.
+
+---
+
+Pourquoi une demande d'annulation A2A n'est-elle pas une preuve que tout effet métier a été annulé ? <!--anki:3061326435656534633331383465303238303330643130323939313863373635-->
+?
+L'**annulation de tâche** est une opération du protocole dont le succès dépend de l'état du serveur. La tâche peut déjà être terminée ou avoir produit un effet irréversible.
+
+Lire l'état retourné, vérifier les opérations externes et prévoir une compensation distincte si le métier le permet. Tester annulation pendant attente, exécution et confirmation. Le protocole normalise la demande et le suivi ; il ne fournit pas une transaction distribuée englobant paiement, réservation et messages déjà envoyés. Présenter à l'utilisateur le statut confirmé, y compris un résultat encore inconnu.
 
 ---
 
@@ -151,6 +159,8 @@ Mise en situation : trois équipes ont chacune construit des agents avec des fra
 - [A2A — spécification du protocole](https://a2a-protocol.org/latest/specification/)
 - [AG-UI — protocole d’interaction agent-interface](https://docs.ag-ui.com/introduction)
 - [OpenTelemetry — conventions sémantiques GenAI](https://github.com/open-telemetry/semantic-conventions-genai)
+
+- [A2A — annulation et états des tâches](https://a2a-protocol.org/latest/specification/) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
 
 ## Connexions
 - [[33-mcp|MCP]] — le protocole agent ↔ outils

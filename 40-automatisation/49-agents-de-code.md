@@ -1,7 +1,7 @@
 # Agents de code : usage & intégration — Flashcards
 Tags: #flashcards #ai-engineering #agents #agents-de-code #developpement #llm
 Vérifié le : 30 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: ACI (SWE-agent), boucle pilotée par les tests, `CLAUDE.md` et `AGENTS.md`, mode plan, worktrees et sous-agents, gestion du contexte, mode headless, SWE-bench et ses limites, tâches à déléguer, mesure de l'apport. -->
+<!-- summary: ACI (SWE-agent), boucle pilotée par les tests, `CLAUDE.md` et `AGENTS.md`, mode plan, worktrees et sous-agents, gestion du contexte, mode headless, SWE-bench et ses limites, tâches à déléguer, mesure de l'apport, tests indépendants du correctif. -->
 
 
 Qu'est-ce qu'un agent de code ? <!--anki:7773506d63697b387b3d-->
@@ -108,6 +108,14 @@ Comment mesurer l'apport des agents de code dans une équipe ? <!--anki:656d7249
 - **Perception** : enquêtes, mais à croiser avec les chiffres, car le gain ressenti peut différer du gain mesuré
 
 Comparer sur des **tâches comparables**, avant et après, plutôt que sur des impressions.
+
+---
+
+Pourquoi les tests proposés par un agent de code doivent-ils inclure une vérification indépendante du correctif ? <!--anki:3536636231393239623563373430366361366532323736383736306437333234-->
+?
+Un **test écrit à partir du correctif** peut reproduire sa logique et confirmer la même erreur. Définir d'abord le comportement attendu depuis le besoin et un cas qui expose le défaut.
+
+Vérifier que le test échoue avant le correctif et passe ensuite, puis examiner cas limites et effets voisins. Pour une régression, conserver l'entrée réelle sous une forme anonymisée ou synthétique. Les tests existants, la revue du diff et les invariants complètent les tests ajoutés. Un agent qui modifie simultanément code et attentes peut rendre la suite verte sans réparer le besoin.
 
 ---
 

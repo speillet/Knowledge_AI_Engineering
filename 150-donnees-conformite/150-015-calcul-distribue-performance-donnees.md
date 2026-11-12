@@ -1,7 +1,7 @@
 # Calcul distribué & performance des pipelines data — Flashcards
 Tags: #flashcards #ai-engineering #donnees #data-engineering
 Vérifié le : 9 octobre 2026 — références techniques et exemples de cette fiche.
-<!-- summary: choix local ou distribué, exécution paresseuse, partitions, shuffle, skew, broadcast, salting, mémoire driver, UDF, cache, agrégations, loi d’Amdahl et coût du traitement. -->
+<!-- summary: choix local ou distribué, exécution paresseuse, partitions, shuffle, skew, broadcast, salting, mémoire driver, UDF, cache, agrégations, loi d’Amdahl et coût du traitement, partition déséquilibrée et clé chaude. -->
 
 
 Quand distribuer un traitement de données plutôt que l’exécuter sur une machine ? <!--anki:6331663030656464613039623434643038353038613564656161386234653837-->
@@ -133,6 +133,14 @@ A = 2 × 0,80 × 45/60 = 1,20 €
 B = 4 × 0,80 × 30/60 = 1,60 €
 ```
 B termine quinze minutes plus tôt mais coûte environ **33 % de plus**. Le choix dépend du délai requis, de la réserve et de la valeur du temps gagné. Ajouter orchestration, stockage, transferts et échecs pour le coût complet. Une durée plus courte ne suffit pas à annoncer un pipeline moins cher.
+
+---
+
+Pourquoi une seule partition très volumineuse peut-elle limiter tout un calcul distribué ? <!--anki:3139343264316439366231383435323161363066616137353463313963613030-->
+?
+Le **temps de fin** dépend souvent de la tâche la plus lente. Une clé très fréquente peut concentrer le travail sur une partition pendant que les autres workers attendent.
+
+Mesurer distribution des tailles et durées par partition avant d'ajouter des workers. Selon l'algorithme, préagréger, traiter les clés chaudes séparément ou répartir leur travail avec une recombinaison correcte. Tester les égalités et l'exactitude des agrégats après changement. Plus de parallélisme n'accélère pas une clé indivisible ; une mauvaise répartition peut dominer CPU et réseau pourtant disponibles.
 
 ---
 

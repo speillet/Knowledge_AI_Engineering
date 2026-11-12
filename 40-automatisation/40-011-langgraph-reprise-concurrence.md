@@ -1,7 +1,7 @@
 # LangGraph — Reprise, concurrence & évolution — Flashcards
 Tags: #flashcards #ai-engineering #agents #production
 Vérifié le : 9 octobre 2026 — API citées confrontées aux documentations officielles ; limites explicitées dans les cartes.
-<!-- summary: durabilité sync/async/exit, pending writes, effets externes, interruptions, concurrence par thread, reducers, sous-graphes, migrations et diagnostics de reprise. -->
+<!-- summary: durabilité sync/async/exit, pending writes, effets externes, interruptions, concurrence par thread, reducers, sous-graphes, migrations et diagnostics de reprise, déterminisme des décisions lors du replay. -->
 
 
 À ne pas confondre : checkpoint LangGraph et transaction métier ? <!--anki:3363396132633461616334643439346639636339643337353264376462643830-->
@@ -178,6 +178,14 @@ Un checkpoint décrit un état passé du graphe ; il ne restaure pas le solde d'
 
 ---
 
+Pourquoi un replay LangGraph doit-il stabiliser les décisions fondées sur l'heure ou le hasard ? <!--anki:3832376533396539633534343435666262616534643332626536393538376165-->
+?
+Une **reprise** peut réexécuter le code depuis un point antérieur. Si une condition relit l'horloge ou tire un nouveau nombre aléatoire, elle peut choisir une autre branche et ne plus correspondre aux résultats déjà persistés.
+
+Dans l'API concernée, isoler les opérations non déterministes dans des tâches dont le résultat est conservé. Maintenir l'ordre des interruptions et tester la reprise de chaque branche. L'idempotence reste nécessaire pour une panne entre effet externe et persistance : enregistrer un résultat ne rend pas rétroactivement atomiques ces deux opérations.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton nœud LangGraph crée un avoir, puis plante avant l'enregistrement du checkpoint. Après reprise, deux avoirs existent. Que changes-tu ? <!--anki:3364353231383037663938313437336138383133303632303266383631343462-->
@@ -219,6 +227,8 @@ Mise en situation : un déploiement renomme le nœud LangGraph d'approbation alo
 - [LangGraph — interruptions et règles de reprise](https://docs.langchain.com/oss/python/langgraph/interrupts)
 - [LangGraph — graphes et migrations](https://docs.langchain.com/oss/python/langgraph/graph-api)
 - [LangGraph — politiques de retry](https://docs.langchain.com/oss/python/langgraph/use-graph-api)
+
+- [LangGraph — déterminisme et rejeu dans la Functional API](https://docs.langchain.com/oss/python/langgraph/functional-api) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
 
 ## Connexions
 - [[44-langgraph-fondamentaux|LangGraph — Fondamentaux]] — reducers et super-steps

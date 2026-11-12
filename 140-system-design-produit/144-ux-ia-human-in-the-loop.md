@@ -1,6 +1,6 @@
 # UX de l'IA & human-in-the-loop — Flashcards
 Tags: #flashcards #ai-engineering #ux #produit #human-in-the-loop #llm
-<!-- summary: copilote ou autopilote, validation humaine efficace, streaming, visibilité des agents, feedback, attentes, chat ou interface dédiée, automation bias, erreurs et refus. -->
+<!-- summary: copilote ou autopilote, validation humaine efficace, streaming, visibilité des agents, feedback, attentes, chat ou interface dédiée, automation bias, erreurs et refus, correction locale des résultats. -->
 
 
 Pourquoi l'UX est-elle un sujet d'AI Engineer et pas seulement de designer ? <!--anki:473c3c77237b4b533a6b-->
@@ -87,6 +87,14 @@ Comment gérer les erreurs et refus dans l'interface ? <!--anki:67445f4276753a4d
 Des messages **actionnables** : dire **pourquoi** (hors périmètre, information absente, contenu bloqué) et **quoi faire** (reformuler, contacter un humain). Éviter les refus secs sans explication, et prévoir une **escalade vers un humain** pour les cas bloquants.
 
 Exemple : « Je ne trouve pas cette information dans les conditions générales 2026 ; vous pouvez reformuler ou ouvrir une demande » plutôt que « Je ne peux pas répondre ». Distinguer aussi dans les métriques refus de sécurité, information absente et erreur technique : leurs causes diffèrent. Un taux de refus qui monte peut signaler un index vide plutôt qu'un modèle trop prudent.
+
+---
+
+Pourquoi une interface IA doit-elle permettre de corriger une erreur sans recommencer toute la tâche ? <!--anki:3365316434666337303934373462653139626332636363386462376661373636-->
+?
+Une **correction locale** réduit l'effort humain et évite de régénérer des parties déjà validées. Pour une extraction, permettre de corriger un montant en gardant sa page source est souvent plus utile qu'un bouton « réessayer » global.
+
+Identifier les champs et décisions validés, conserver leur provenance et montrer les conséquences d'une modification. Ne pas réutiliser une approbation si l'action change. Mesurer temps de correction et erreurs restantes avec des utilisateurs. Collecter la correction comme un signal à vérifier, avec une politique de données adaptée, avant de l'utiliser pour entraîner le système.
 
 ---
 

@@ -1,7 +1,7 @@
 # IA responsable : biais, équité & transparence — Flashcards
 Tags: #flashcards #ai-engineering #ia-responsable #biais #gouvernance
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: safety ou security, sources de biais, tests contrefactuels, métriques d'équité, model cards et system cards, datasheets, sycophancy, sécurité ou utilité, supervision humaine effective. -->
+<!-- summary: safety ou security, sources de biais, tests contrefactuels, métriques d'équité, model cards et system cards, datasheets, sycophancy, sécurité ou utilité, supervision humaine effective, équité des sous-groupes. -->
 
 
 Qu'est-ce que l'IA responsable, concrètement pour un AI Engineer ? <!--anki:4771215a794054786b55-->
@@ -91,6 +91,14 @@ Cela se mesure : un relecteur qui valide 400 décisions par heure leur consacre 
 Exemple : une recommandation erronée donnée spontanément relève de la safety ; une instruction externe qui détourne l'agent vers une fuite de données relève de la security. Une attaque peut aussi provoquer un dommage de safety : les périmètres se recouvrent.
 
 Définir scénarios, responsables et critères séparément, puis tester leurs interactions. Un filtre de contenu ne remplace pas les permissions ; une infrastructure protégée ne garantit pas des conseils exacts ou un traitement équitable.
+
+---
+
+Pourquoi un bon score d'équité global peut-il masquer un préjudice sur un sous-groupe ? <!--anki:3539636262663336343933613431383462316439343137326662396562303738-->
+?
+Une **moyenne par grand groupe** peut cacher une dégradation à l'intersection de plusieurs caractéristiques ou dans un contexte d'usage particulier.
+
+Définir les groupes pertinents pour le risque et le cadre de données, puis examiner erreurs, accès et conséquences avec leurs effectifs et incertitudes. Ne pas interpréter un très petit échantillon comme une mesure précise. Choisir une métrique d'équité reliée à la décision et documenter ses compromis. Une amélioration globale ne suffit pas si un sous-groupe subit une erreur systématique grave.
 
 ---
 

@@ -1,7 +1,7 @@
 # Sécurité des agents — Menaces & incidents — Flashcards
 Tags: #flashcards #ai-engineering #securite #agents #menaces #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: nouveau modèle de menace, entrées non fiables, détournement d'agent, limites des défenses par détection, incidents (MCP GitHub, EchoLeak, Supabase, Replit), empoisonnement de la mémoire, injection invisible, risques multi-agents, denial of wallet, exécution de code, attaquants équipés d'agents. -->
+<!-- summary: nouveau modèle de menace, entrées non fiables, détournement d'agent, limites des défenses par détection, incidents (MCP GitHub, EchoLeak, Supabase, Replit), empoisonnement de la mémoire, injection invisible, risques multi-agents, denial of wallet, exécution de code, attaquants équipés d'agents, injection dans un résultat d'outil valide. -->
 
 
 En quoi un agent change-t-il le modèle de menace par rapport à un chatbot ? <!--anki:4d2e2b794421754f344e-->
@@ -160,6 +160,14 @@ Les attaquants utilisent-ils eux-mêmes des agents ? <!--anki:74636f2c60696d682f
 **Oui.** En novembre 2025, Anthropic a révélé qu'un groupe étatique avait utilisé **Claude Code** pour automatiser **80 à 90 %** d'une campagne d'espionnage contre une trentaine de cibles : reconnaissance, recherche de failles, exploitation, tri des données volées. Les agents **abaissent le coût des attaques** ; la défense doit aussi s'automatiser (détection, tri des alertes, correctifs).
 
 Ces chiffres décrivent le cas rapporté, pas toutes les attaques ni leur taux de réussite. Côté défense, vérifier surtout délais de détection, révocation des accès et confinement lors d'exercices autorisés.
+
+---
+
+Pourquoi une réponse d'outil correcte peut-elle encore transporter une attaque indirecte ? <!--anki:6364646263393862623633663430633561363463343430376263613136313063-->
+?
+Un **résultat d'outil** peut contenir à la fois les données demandées et des instructions malveillantes dans un commentaire, un titre ou une description. La réussite technique de l'appel ne rend pas tout son contenu fiable.
+
+Conserver la provenance, limiter les champs transmis au modèle et empêcher ces données de modifier les droits d'action. Tester une injection dans un champ secondaire d'une réponse autrement valide. Vérifier aussi les étapes suivantes : une donnée archivée en mémoire peut déclencher l'attaque bien après l'appel initial.
 
 ---
 

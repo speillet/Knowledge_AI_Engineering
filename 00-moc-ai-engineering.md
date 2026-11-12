@@ -11,6 +11,8 @@ Pour appliquer les métriques, l’[atelier local de décision IA](examples/deci
 
 Pour construire des preuves vérifiables, l’[atelier RAG local](examples/rag-verifiable/README.md) compare deux politiques sur dix cas fictifs : droits, dates d'effet, conflits, retrait et abstention. Étudier [[22-rag-avance|la recherche avancée]], [[20-010-rag-droits-versions|les droits et versions]], puis [[96-evals-rag-agents|l'évaluation RAG]] ; produire un tableau affirmation/preuve et un rapport reproductible.
 
+La [revue transversale du 12 novembre 2026](docs/revue-transversale-2026-11-12.md) présente les 147 approfondissements, les corrections et les limites de la vérification des sources.
+
 ## Parcours de lecture
 Progression recommandée : **comprendre les modèles → les utiliser → construire des architectures → adapter → servir & déployer → industrialiser → gouverner → concevoir des systèmes.**
 - **Socle prédictif** : [[171-choisir-modele-ml|ML classique]] puis [[172-validation-metriques-ml|validation et métriques]] — choisir une approche avant de construire une chaîne LLM

@@ -1,7 +1,7 @@
 # Sécurité LLM & guardrails — Flashcards
 Tags: #flashcards #ai-engineering #securite #guardrails #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: OWASP Top 10 LLM, injection directe ou indirecte, « lethal trifecta », exfiltration, excessive agency, guardrails (Llama Guard, NeMo Guardrails), red teaming. -->
+<!-- summary: OWASP Top 10 LLM, injection directe ou indirecte, « lethal trifecta », exfiltration, excessive agency, guardrails (Llama Guard, NeMo Guardrails), red teaming, faux positifs des détecteurs d'injection. -->
 
 
 Qu'est-ce que l'OWASP Top 10 pour les applications LLM ? <!--anki:632c333a387a5244477d-->
@@ -121,6 +121,14 @@ Qu'est-ce que le red teaming LLM ? <!--anki:713e5f4c26353f69634e-->
 **Attaquer volontairement** son application (injections, jailbreaks, exfiltration) avant et après la mise en production, manuellement ou avec des outils comme **garak**, **PyRIT** ou **promptfoo**, et transformer les attaques réussies en **tests de régression**.
 
 Définir un périmètre autorisé, des objectifs d'attaque et des critères observables : accès indu, action non autorisée, fuite de données. Tester l'ensemble de l'application, y compris rendu, outils et mémoire. Une liste d'attaques toutes bloquées ne prouve pas l'absence de faille ; varier les scénarios et documenter les limites de couverture.
+
+---
+
+Pourquoi un détecteur de prompt injection doit-il être évalué aussi sur des contenus légitimes difficiles ? <!--anki:3865386563613238373064373438393562656535666265393033336335333833-->
+?
+Un **détecteur** peut bloquer à tort une citation d'attaque, du code ou un document de formation. Mesurer uniquement les attaques réussies ignore ce coût de faux positifs.
+
+Construire deux ensembles : attaques représentatives et contenus autorisés qui leur ressemblent. Mesurer contournements, blocages injustifiés et impact sur la tâche, avec le seuil déployé. Segmenter par langue et format. Un meilleur rappel d'attaques peut dégrader fortement l'utilité ; le contrôle d'autorisation doit rester indépendant du score du détecteur.
 
 ---
 

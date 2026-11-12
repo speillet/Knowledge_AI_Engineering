@@ -1,6 +1,6 @@
 # SRE : incidents & capacité des services IA — Flashcards
 Tags: #flashcards #ai-engineering #mlops #sre #incidents #capacite
-<!-- summary: SLI utilisateur, budgets d'erreur, burn rate, alertes multi-fenêtres, files bornées, admission, capacité de secours, propagation des délais, gestion d'incident, rollback, RTO et RPO, postmortem et reprise. -->
+<!-- summary: SLI utilisateur, budgets d'erreur, burn rate, alertes multi-fenêtres, files bornées, admission, capacité de secours, propagation des délais, gestion d'incident, rollback, RTO et RPO, postmortem et reprise, calcul du respect des RTO et RPO. -->
 
 
 Pourquoi un statut HTTP 200 ne suffit-il pas comme SLI d'un service IA ? <!--anki:3635323732333063663032383435633261333464373137376137633665346238-->
@@ -94,6 +94,14 @@ Le **RTO** est l'objectif de délai de reprise après interruption ; le **RPO** 
 Définir les objectifs par état : corpus, index reconstructible, checkpoints d'agents et journal d'effets métier. Une sauvegarde n'est utile que si restauration, clés, permissions et dépendances fonctionnent ensemble. Mesurer la reprise réelle lors d'un exercice et documenter les écarts aux objectifs.
 
 Exemple : un RPO de 15 minutes peut autoriser la perte de récents checkpoints, pas nécessairement celle de paiements déjà acceptés. Ces états exigent des objectifs distincts.
+
+---
+
+Calcul : une panne détruit les données des 12 dernières minutes et le service revient après 45 minutes. Respecte-t-on RPO 5 min et RTO 1 h ? <!--anki:6363373462356533313736353436373662663433343535376638356534363561-->
+?
+Le **RTO** est respecté : le rétablissement prend 45 minutes, sous l'objectif d'une heure. Le **RPO** ne l'est pas : 12 minutes de données perdues dépassent les cinq minutes acceptées.
+
+Préciser quelles données et fonctions sont couvertes : état des agents, opérations métier, preuves et index peuvent avoir des objectifs différents. Un service de nouveau accessible peut encore être incapable de réconcilier ses actions. Tester restauration et cohérence métier, pas seulement redémarrage des processus.
 
 ---
 

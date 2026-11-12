@@ -1,7 +1,7 @@
 # Plateformes d'agents — Flashcards
 Tags: #flashcards #ai-engineering #agents #platform #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: différence avec un framework, briques, niveaux d'abstraction (API, runtime, harness managé), offres cloud et des fournisseurs de modèles, open source, runtime et double texting, sandbox et services de sandbox, gateway d'outils, registre, identité, agent délégué ou autonome, mémoire, observabilité, evals, protocoles (MCP, A2A), build ou buy. La suite, niveau senior, est la fiche 115 de la section 110. -->
+<!-- summary: différence avec un framework, briques, niveaux d'abstraction (API, runtime, harness managé), offres cloud et des fournisseurs de modèles, open source, runtime et double texting, sandbox et services de sandbox, gateway d'outils, registre, identité, agent délégué ou autonome, mémoire, observabilité, evals, protocoles (MCP, A2A), build ou buy. La suite, niveau senior, est la fiche 115 de la section 110, quotas de travail et équité entre tenants. -->
 
 
 Qu'est-ce qu'une plateforme d'agents, par rapport à un framework ? <!--anki:66657538313d7a42737a-->
@@ -209,6 +209,14 @@ Build ou buy pour une plateforme d'agents ? <!--anki:68367e4b62543e7d4623-->
 - **Build** (framework + Kubernetes + briques open source) : contrôle et portabilité, mais tout le run est à votre charge
 
 En pratique, souvent **hybride** : acheter le runtime et les sandboxes, garder la **logique d'agent en code** et s'appuyer sur des **standards ouverts**. Critères détaillés : [[115-plateformes-agents-gouvernance|architecture & gouvernance]].
+
+---
+
+Pourquoi distinguer quota de requêtes et quota de travail sur une plateforme d'agents ? <!--anki:6263646439376433336134343437623861306231313036366164383439303561-->
+?
+Deux **requêtes** peuvent mobiliser des ressources très différentes : une classification courte et une enquête de 30 appels. Un quota en requêtes seules ne protège donc ni budget ni capacité.
+
+Combiner limites de sessions actives, tokens, appels d'outils et temps, selon le service. Réserver une enveloppe avant un travail coûteux et ajuster la consommation réelle. Mesurer l'attente et les rejets par équipe pour éviter qu'un tenant monopolise les workers. Les plafonds doivent être appliqués par la plateforme, même si le modèle ignore les consignes de budget.
 
 ---
 

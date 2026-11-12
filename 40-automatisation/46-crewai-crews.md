@@ -1,7 +1,7 @@
 # CrewAI — Crews — Flashcards
 Tags: #flashcards #ai-engineering #agents #crewai #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: agents (role, goal, backstory), tâches, process séquentiel ou hiérarchique, délégation, sorties structurées, guardrails de tâche, LLM et outils, mémoire unifiée, structure d'un projet. -->
+<!-- summary: agents (role, goal, backstory), tâches, process séquentiel ou hiérarchique, délégation, sorties structurées, guardrails de tâche, LLM et outils, mémoire unifiée, structure d'un projet, indépendance des validations entre agents. -->
 
 
 Qu'est-ce que CrewAI ? <!--anki:773073683f6e7832596e-->
@@ -136,6 +136,14 @@ Quelles sont les limites des crews de CrewAI ? <!--anki:4b30352368505d537624-->
 Le comportement repose sur des **prompts de rôle** : moins de contrôle fin que [[44-langgraph-fondamentaux|LangGraph]], exécution **moins prévisible** en mode hiérarchique, et **coût en tokens** élevé. D'où l'usage de **Flows** pour encadrer les crews en production.
 
 Un manager peut déléguer plusieurs fois, reformuler une tâche ou accepter un résultat insuffisant, ce qui rend coût et durée variables. Un Flow fixe des étapes et des contrôles autour de cette autonomie. Mesurer les appels réels, borner les tentatives et prévoir un état d'échec explicite lorsque la crew n'atteint pas le résultat attendu.
+
+---
+
+Pourquoi deux agents CrewAI qui s'accordent ne constituent-ils pas deux validations indépendantes ? <!--anki:3136336237333066633762393436623539376330326339336662616139373131-->
+?
+Les agents peuvent partager **modèle, contexte, outils et erreurs de source**. Le second peut aussi simplement reprendre la conclusion du premier.
+
+Pour une vérification utile, définir un critère observable et fournir au vérificateur les preuves nécessaires, avec un contrôle déterministe quand il existe. Par exemple, recalculer un total depuis les lignes de facture apporte davantage qu'un second avis sur le texte produit. Mesurer les erreurs communes et le coût ajouté. Des rôles ou backstories différents ne créent pas automatiquement une indépendance statistique.
 
 ---
 

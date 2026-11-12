@@ -1,6 +1,6 @@
 # Cas de system design LLM — Flashcards
 Tags: #flashcards #ai-engineering #system-design #entretien #llm
-<!-- summary: support client, recherche documentaire, assistant de code, analyse de données en langage naturel, extraction à grande échelle, agent qui agit, chatbot grand public, assistant vocal, trame de réponse, erreurs d'entretien. -->
+<!-- summary: support client, recherche documentaire, assistant de code, analyse de données en langage naturel, extraction à grande échelle, agent qui agit, chatbot grand public, assistant vocal, trame de réponse, erreurs d'entretien, calcul de capacité de revue humaine. -->
 
 
 Cas 1 — Assistant de support client : par quoi passe la requête ? <!--anki:765e30282f603b217430-->
@@ -125,6 +125,14 @@ Quelles erreurs éviter en entretien de system design LLM ? <!--anki:646e3f68777
 - Présenter le modèle comme **fiable** sans plan pour ses erreurs.
 
 Rendre les hypothèses révisables : « 10 requêtes/s, pointe ×3, réponse p95 sous 5 s » permet de discuter capacité et file. Séparer données connues, hypothèses de dimensionnement et mesures à réaliser au prototype.
+
+---
+
+Calcul : 200 dossiers quotidiens demandent une revue de 6 minutes, mais deux personnes n'y consacrent que 4 heures chacune. Quelle capacité et quel retard quotidien ? <!--anki:3265353363323565346531393436326539363135333830636365393034643539-->
+?
+La capacité disponible vaut `2 × 4 × 60 / 6 = 80 dossiers/jour`. Avec **200 arrivées quotidiennes**, le retard augmente de **120 dossiers/jour**, hors variation et reprises.
+
+Une revue humaine ne stabilise donc pas le système dans ce scénario. Réduire le volume, le temps par dossier ou augmenter la capacité ; réserver les contrôles selon le risque sans supprimer une validation indispensable. Inclure délais d'attente et charge de pointe dans le design. Une bonne précision du modèle ne compense pas une file humaine structurellement saturée.
 
 ---
 

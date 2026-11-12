@@ -1,6 +1,6 @@
 # Données : curation & annotation — Flashcards
 Tags: #flashcards #ai-engineering #donnees #annotation #qualite
-<!-- summary: dimensions de qualité, déduplication, guide d'annotation, accord inter-annotateurs, qui annote, active learning, séparation dev et test, données de production, préparation d'un fine-tuning. -->
+<!-- summary: dimensions de qualité, déduplication, guide d'annotation, accord inter-annotateurs, qui annote, active learning, séparation dev et test, données de production, préparation d'un fine-tuning, révision du guide après désaccords. -->
 
 
 Pourquoi les données restent-elles décisives à l'ère des LLM pré-entraînés ? <!--anki:7a61323b38504268346f-->
@@ -111,6 +111,14 @@ double (20 %) :   400 × 3 min =  20 h × 80 €/h = 1 600 €
 total                                          ≈ 9 600 €, plus le guide d'annotation
 ```
 C'est le prix d'un jeu d'eval de référence fiable : on réserve les experts aux cas où l'expertise compte, et on passe par des annotateurs formés ou un LLM pré-annotant pour le volume ([[94-evals-methodologie|golden dataset]]).
+
+---
+
+Pourquoi l'arbitrage des désaccords d'annotation doit-il parfois modifier le guide plutôt que seulement choisir un annotateur gagnant ? <!--anki:3163383032333537306164623436333138396332626664353630666139336637-->
+?
+Un **désaccord récurrent** peut révéler une définition ambiguë de la cible, pas une mauvaise performance des annotateurs. Trancher chaque cas sans revoir la règle reproduit le problème.
+
+Regrouper les désaccords par cause, clarifier les critères et ajouter des exemples limites au guide. Réannoter un échantillon concerné avec la nouvelle version et mesurer l'accord obtenu. Conserver la provenance des labels et distinguer ambiguïté réelle et erreur. Une référence de test peut admettre plusieurs réponses justifiées ; forcer un consensus artificiel masque l'incertitude que le modèle devra gérer.
 
 ---
 

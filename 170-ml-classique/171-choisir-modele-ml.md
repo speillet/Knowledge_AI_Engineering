@@ -1,6 +1,6 @@
 # ML classique : choisir et comprendre les modèles — Flashcards
 Tags: #flashcards #ai-engineering #ml-classique #modeles #baseline
-<!-- summary: règles ou ML ou LLM, formulation de la cible, baselines, régressions, régularisation, arbres, random forest et boosting, clustering, prétraitement, données manquantes et coût de possession. -->
+<!-- summary: règles ou ML ou LLM, formulation de la cible, baselines, régressions, régularisation, arbres, random forest et boosting, clustering, prétraitement, données manquantes et coût de possession, catégories inconnues en production. -->
 
 
 Comment choisir entre règles, ML classique et LLM pour un besoin métier ? <!--anki:6661353466646534356365313436373439663763316530386363633734333530-->
@@ -131,6 +131,14 @@ Les importances dépendent aussi des variables corrélées et de la méthode de 
 
 ---
 
+Pourquoi un pipeline ML doit-il prévoir les catégories jamais vues pendant l'entraînement ? <!--anki:3061306532383633346362333463316338626430386637666535643736336135-->
+?
+Une **nouvelle catégorie** apparaît naturellement en production : pays, produit ou canal inédit. Un encodage qui échoue ou lui attribue un sens arbitraire rend le pipeline fragile.
+
+Définir un comportement explicite : catégorie inconnue, représentation compatible ou rejet contrôlé selon la tâche. Apprendre le prétraitement sur l'entraînement, puis tester des catégories absentes et valeurs manquantes dans la validation de contrat. Surveiller leur fréquence par variable. Les traiter sans exception technique ne garantit pas une bonne prédiction ; une hausse peut nécessiter une revue des données ou du modèle.
+
+---
+
 ## Mises en situation
 
 Mise en situation : on te demande un agent LLM pour prédire le délai de livraison à partir de vingt colonnes et de deux ans d'historique. Que proposes-tu ? <!--anki:3364313230656333323766333463396362303563626536393361346335383130-->
@@ -174,6 +182,8 @@ Mise en situation : un modèle complexe gagne 0,3 point de qualité mais multipl
 - [scikit-learn — ensembles d'arbres](https://scikit-learn.org/stable/modules/ensemble.html)
 - [scikit-learn — prétraitement](https://scikit-learn.org/stable/modules/preprocessing.html)
 - [scikit-learn — clustering](https://scikit-learn.org/stable/modules/clustering.html)
+
+- [scikit-learn — prétraitement et erreurs de validation](https://scikit-learn.org/stable/common_pitfalls.html) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
 
 ## Connexions
 - [[172-validation-metriques-ml|Validation & métriques ML]] — comparer les méthodes sans biaiser l'évaluation

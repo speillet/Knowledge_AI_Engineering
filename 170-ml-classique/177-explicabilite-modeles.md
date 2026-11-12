@@ -1,7 +1,7 @@
 # Explicabilité & diagnostic des modèles — Flashcards
 Tags: #flashcards #ai-engineering #ml-classique #explicabilite #shap
 Vérifié le : 8 octobre 2026
-<!-- summary: explication locale ou globale, importance par permutation, variables corrélées, contributions SHAP, population de référence, log-odds, PDP et ICE, contrefactuels actionnables, justifications générées et fidélité de l'explication. -->
+<!-- summary: explication locale ou globale, importance par permutation, variables corrélées, contributions SHAP, population de référence, log-odds, PDP et ICE, contrefactuels actionnables, justifications générées et fidélité de l'explication, stabilité des explications. -->
 
 
 À ne pas confondre : explication locale et explication globale d'un modèle ? <!--anki:3236346461646234333634363465323038633662376664376335303433323061-->
@@ -102,6 +102,14 @@ Comment vérifier qu'une explication de modèle est utile et fidèle ? <!--anki:
 Tester la **fidélité à la sortie expliquée**, la stabilité dans le contexte pertinent et l'utilité pour la tâche humaine. Une décomposition additive correcte est un contrôle technique ; elle ne garantit ni causalité ni compréhension.
 
 Test possible : comparer l'effet du retrait des variables jugées importantes à un retrait aléatoire, avec une règle de remplacement plausible. Corrélations et interactions limitent ce test ; une perturbation hors distribution peut tromper. Mesurer aussi l'aide à détecter une erreur ou choisir une action, plutôt que le seul pouvoir de persuasion. Des prédictions proches peuvent avoir des raisons différentes : ne pas imposer une invariance aveugle.
+
+---
+
+Pourquoi tester la stabilité d'une explication sur des entrées proches avant de la montrer à un utilisateur ? <!--anki:3264383963343462373236353463343138316430373663346635663233336533-->
+?
+Une **explication instable** peut donner des raisons très différentes pour deux dossiers presque identiques, même si la prédiction varie peu. Elle devient difficile à utiliser pour décider d'une correction.
+
+Appliquer des perturbations plausibles qui préservent le sens et comparer prédiction, contributions et recommandations. Contrôler unités, population de référence et variables corrélées. Une variation peut être légitime près d'une frontière ; la documenter plutôt que promettre une stabilité absolue. Valider séparément fidélité au modèle et utilité pour l'utilisateur : une explication stable peut rester fausse ou non actionnable.
 
 ---
 

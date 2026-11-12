@@ -1,7 +1,7 @@
 # LLM locaux, on-prem & edge — Flashcards
 Tags: #flashcards #ai-engineering #edge #local #self-hosting #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: motivations, capacité ou bande passante mémoire, llama.cpp et GGUF, outils locaux, Ollama ou vLLM, Apple Silicon, small language models, hybride local et cloud, flotte d'appareils, rentabilité du on-prem. -->
+<!-- summary: motivations, capacité ou bande passante mémoire, llama.cpp et GGUF, outils locaux, Ollama ou vLLM, Apple Silicon, small language models, hybride local et cloud, flotte d'appareils, rentabilité du on-prem, mesure en régime thermique soutenu. -->
 
 
 Pourquoi faire tourner un LLM en local ou sur site ? <!--anki:68767b39524b69526735-->
@@ -18,15 +18,17 @@ Ces bénéfices exigent des contrôles : désactiver ou maîtriser télémétrie
 
 Quel est le facteur limitant sur un poste ou un appareil ? <!--anki:67755876354173497641-->
 ?
-La **mémoire** (VRAM, RAM unifiée) et sa **bande passante**. Le décodage lit **tous les poids actifs à chaque token** : débit ≈ bande passante mémoire / taille des poids. Un modèle de 8 B en 4 bits (~5 Go) sur 100 Go/s de bande passante donne au mieux ~**20 tokens/s**.
+La **capacité mémoire** détermine si poids, KV et allocations tiennent ; la **bande passante** peut ensuite limiter le decode, notamment à faible batch. Calcul, offload et température peuvent aussi devenir dominants.
+
+Exemple simplifié : un modèle dense occupant 5 Go de poids et relu entièrement par token, avec 100 Go/s réellement disponibles pour ces lectures, a un plafond lié aux poids de **20 tokens/s**. Ce n'est pas une prédiction du débit mesuré : KV, déquantification, kernels et mémoire partagée ajoutent des coûts. Un MoE, un batch ou plusieurs niveaux de mémoire demandent un modèle de performance adapté.
 
 ---
 
 Qu'est-ce que llama.cpp et le format GGUF ? <!--anki:647e555f4a2a7a723579-->
 ?
-**llama.cpp** : moteur d'inférence en C/C++ très portable (CPU, GPU NVIDIA/AMD, Apple Metal), référence du local. **GGUF** : son format de fichier, qui contient **poids quantizés + tokenizer + métadonnées** en un seul fichier, avec de nombreux niveaux de quantization (Q4_K_M, Q5_K_M, Q8_0…) ([[68-quantization|quantization]]).
+**llama.cpp** est un moteur d'inférence portable en C/C++, avec différents backends CPU et GPU. **GGUF** décrit un conteneur de poids et métadonnées ; les poids peuvent être quantifiés ou en précision flottante, et le modèle peut être réparti en shards.
 
-Le fichier embarque aussi le **chat template** : pratique, mais un template erroné dans le GGUF dégrade toutes les réponses sans erreur visible ; le comparer au template officiel du modèle. Lancement typique : `llama-server -m modele.gguf -c 8192 -ngl 99`, qui place toutes les couches sur le GPU et expose une API compatible OpenAI.
+Le tokenizer et le chat template doivent correspondre au modèle ; vérifier les métadonnées présentes. Exemple : `llama-server -m modele.gguf -c 8192 -ngl 99`. `-ngl 99` demande l'offload d'un nombre de couches ; le résultat dépend du modèle, du backend et de la mémoire. Vérifier les logs au lieu de supposer que tout le modèle tourne sur GPU.
 
 ---
 
@@ -83,10 +85,9 @@ Comparer plusieurs scénarios de volume et une réserve de panne, pas seulement 
 
 À ne pas confondre : capacité mémoire et bande passante mémoire ? <!--anki:782f576c373a7e467939-->
 ?
-- **Capacité** (Go) : décide **si le modèle tient**. Poids + KV cache doivent entrer en VRAM ou en RAM unifiée
-- **Bande passante** (Go/s) : décide **à quelle vitesse il génère**. Chaque token relit tous les poids actifs
+La **capacité** borne le volume de poids, KV cache et autres allocations qui peuvent résider dans une mémoire. La **bande passante** borne la vitesse des transferts ; elle contribue au débit lorsque ces transferts sont le goulot.
 
-Un Mac avec 128 Go de RAM unifiée charge un 70B en 4 bits, mais le génère plus lentement qu'un GPU de 24 Go ne génère un 8B. Pour comparer deux machines, regarder les **deux** chiffres ([[68-quantization|quantization]]).
+Comparer les deux sur le workload cible. Une grande mémoire permet de charger un modèle plus gros sans garantir une génération plus rapide ; une forte bande passante ne suffit pas si le modèle impose un offload coûteux. Calcul, batch, contexte, quantization et liens entre mémoires modifient le compromis. Les seuls Go annoncés ne permettent pas de classer les machines.
 
 ---
 
@@ -98,6 +99,14 @@ poids = 8e9 × 4,8 / 8 = 4,8 Go
 plafond dû aux poids = 400 / 4,8 ≈ 83 tokens/s
 ```
 Le débit mesuré peut être plus faible à cause du KV, des activations, des kernels, de la déquantification et du partage de bande passante avec le reste du système. Ce quotient ne garantit ni 50–60 tokens/s en pratique ni un goulot toujours mémoire. Vérifier également que le modèle complet tient dans la mémoire disponible et mesurer le workload réel.
+
+---
+
+Pourquoi un benchmark LLM local doit-il durer assez longtemps pour révéler les limites thermiques ? <!--anki:3434363562623530373734633439313261313463646438326364653463326538-->
+?
+Un **essai court** peut bénéficier d'une fréquence élevée que l'appareil ne maintient pas sous charge continue. Température, alimentation et tâches concurrentes peuvent réduire le débit après quelques minutes.
+
+Mesurer démarrage, régime soutenu, mémoire et consommation sur l'appareil cible, avec contexte et qualité comparables. Tester sur batterie si cet usage est prévu. Vérifier la latence après plusieurs requêtes longues et en présence des applications habituelles. Un débit maximal obtenu machine froide ne suffit pas à dimensionner une expérience locale quotidienne.
 
 ---
 
@@ -131,6 +140,8 @@ Mise en situation : un client industriel veut un assistant qui fonctionne sans I
 
 - [llama.cpp — formats, quantification et inférence locale](https://github.com/ggml-org/llama.cpp)
 - [vLLM — quantification et matériels compatibles](https://docs.vllm.ai/en/latest/features/quantization/)
+
+- [llama.cpp — options du serveur et offload des couches](https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md) — vérification ciblée du 12 novembre 2026, sans renouvellement de la date globale de la fiche.
 
 ## Connexions
 - [[68-quantization|Quantization]] — faire tenir le modèle

@@ -1,7 +1,7 @@
 # Langfuse & observabilité LLM — Flashcards
 Tags: #flashcards #ai-engineering #observability #langfuse #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: périmètre et alternatives (LangSmith, Phoenix, Braintrust), traces, spans et generations, sessions, prompt management, scores, LLM-as-judge, datasets. -->
+<!-- summary: périmètre et alternatives (LangSmith, Phoenix, Braintrust), traces, spans et generations, sessions, prompt management, scores, LLM-as-judge, datasets, biais d'échantillonnage des traces. -->
 
 
 Qu'est-ce que Langfuse ? <!--anki:66646977482431392c37-->
@@ -104,6 +104,14 @@ Relier recherche, outils, modèles et validations dans une trace applicative. Un
 - **Eval** : un **jugement de qualité** sur une sortie, attaché à une trace ou à un dataset. Sert à **décider** ([[94-evals-methodologie|méthodologie]])
 
 Les trois sont nécessaires : une métrique dit qu'il y a un problème, une trace dit lequel, une eval dit si un changement l'a corrigé.
+
+---
+
+Pourquoi échantillonner les traces Langfuse peut-il biaiser les statistiques de qualité et de coût ? <!--anki:3065343561616434623566633434343738353633313464353239386633626230-->
+?
+Un **échantillon de traces** favorisant erreurs ou lenteurs est utile au diagnostic mais n'est pas représentatif du trafic. Sa moyenne peut surestimer coût et latence, ou exclure certains segments.
+
+Documenter la règle d'échantillonnage et conserver des compteurs complets pour volumes et dépenses. Utiliser un échantillon représentatif ou une pondération justifiée pour les estimations globales. Distinguer taux sur traces observées et taux sur demandes éligibles. Les requêtes dont la télémétrie échoue ne doivent pas disparaître du dénominateur sans analyse.
 
 ---
 

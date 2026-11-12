@@ -1,6 +1,6 @@
 # Prévision de séries temporelles — Flashcards
 Tags: #flashcards #ai-engineering #ml-classique #forecasting #series-temporelles
-<!-- summary: horizon et cadence, baseline saisonnière, ETS ou ARIMA ou ML, backtesting à origines glissantes, variables futures, prévisions directes ou récursives, lags, MAPE et MASE, quantiles, intervalles et cohérence hiérarchique. -->
+<!-- summary: horizon et cadence, baseline saisonnière, ETS ou ARIMA ou ML, backtesting à origines glissantes, variables futures, prévisions directes ou récursives, lags, MAPE et MASE, quantiles, intervalles et cohérence hiérarchique, limites du MAPE avec des ventes nulles. -->
 
 
 Que faut-il définir avant de prévoir une série temporelle ? <!--anki:3832313262386130373438663432643761663164383138343564303065376431-->
@@ -106,6 +106,14 @@ Vérifier les contraintes métier, notamment non-négativité et changements de 
 
 ---
 
+Pourquoi le MAPE pose-t-il problème quand les ventes réelles sont nulles ou très faibles ? <!--anki:3837663635373238373463303465653661396663383366656463636532323762-->
+?
+Le **MAPE** divise l'erreur absolue par la valeur réelle. Il est indéfini à zéro et peut donner une importance extrême à une petite erreur sur une très faible vente.
+
+Choisir une métrique adaptée à la décision, par exemple MAE ou MASE avec ses hypothèses, et préciser pondération entre séries et horizons. Ne pas supprimer silencieusement les jours sans vente : ils peuvent être essentiels à la gestion du stock. Tester aussi les unités, intermittences et ruptures. Une protection numérique par epsilon ne résout pas à elle seule le problème d'interprétation.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton modèle prédit très bien à un jour, mais échoue pour le planning à quatre semaines. Que changes-tu ? <!--anki:6635623432376633633662643431663362353630316232346361666163333738-->
@@ -154,6 +162,8 @@ Mise en situation : la demande devient très intermittente et la MAPE explose ma
 - [Hyndman & Athanasopoulos — réconciliation](https://otexts.com/fpp3/reconciliation.html)
 - [scikit-learn — variables retardées et validation](https://scikit-learn.org/stable/auto_examples/applications/plot_time_series_lagged_features.html)
 - [scikit-learn — perte pinball](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.mean_pinball_loss.html)
+
+- [Hyndman et Athanasopoulos — évaluation des prévisions et erreurs en pourcentage](https://otexts.com/fpp3/toolbox.html) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
 
 ## Connexions
 - [[171-choisir-modele-ml|Choisir un modèle]] — construire les baselines prédictives

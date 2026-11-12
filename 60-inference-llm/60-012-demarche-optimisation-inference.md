@@ -1,7 +1,7 @@
 # Démarche d’optimisation de l’inférence LLM — Flashcards
 Tags: #flashcards #ai-engineering #inference #performance #profiling #finops
 Vérifié le : 8 octobre 2026
-<!-- summary: objectif sous contraintes, profilage CPU/GPU, graphes CUDA et compilation, kernels, loi d’Amdahl, interactions entre optimisations, quotas API, retries, routage, raisonnement et multimodal. -->
+<!-- summary: objectif sous contraintes, profilage CPU/GPU, graphes CUDA et compilation, kernels, loi d’Amdahl, interactions entre optimisations, quotas API, retries, routage, raisonnement et multimodal, coût marginal d'une optimisation. -->
 
 
 Que signifie maximiser l’inférence d’un LLM dans un produit ? <!--anki:3766383238393464336537333434323438393562383237363466353762663831-->
@@ -115,6 +115,14 @@ Pourquoi les tokens textuels ne suffisent-ils pas à dimensionner l’inférence
 Image, audio et vidéo ajoutent décodage, redimensionnement, encodage et représentations dont le coût dépend de résolution, durée, fréquence d'images et architecture. Une question de dix mots sur une vidéo de 60 s échantillonnée à 2 images/s fait encoder 120 images.
 
 Mesurer taille des médias, unités du processeur, temps d'encodage, mémoire de pointe et transferts, en plus du prefill/decode textuel. Distinguer unités facturées et unités réellement traitées par le moteur. Segmenter les benchmarks par modalité et tester les combinaisons : un frontend média ou un encodeur peut saturer avant le décodeur LLM.
+
+---
+
+Pourquoi mesurer le coût marginal d'une optimisation en plus de son gain de latence ? <!--anki:3933353536386638623666623438613239616663386637373939666533346635-->
+?
+Une **optimisation** peut réduire la latence en consommant davantage de GPU, de mémoire ou d'appels. Dupliquer une requête chez deux fournisseurs accélère parfois la première réponse tout en augmentant le coût et la charge.
+
+Comparer au même volume offert et au même niveau de qualité : latence, goodput, ressources et coût par tâche utile. Inclure appels perdants et annulations tardives. Tester le régime saturé ; une technique rentable à faible charge peut réduire la capacité de toute la plateforme. Fixer l'objectif produit avant de choisir le meilleur chiffre.
 
 ---
 

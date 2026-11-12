@@ -1,7 +1,7 @@
 # Stockage colonnaire, partitions & lakehouse — Flashcards
 Tags: #flashcards #ai-engineering #donnees #data-engineering
 Vérifié le : 9 octobre 2026 — références techniques et exemples de cette fiche.
-<!-- summary: warehouse, lake et lakehouse, stockage objet, JSONL/Avro/Parquet/Arrow, row groups, pruning, partitions, petits fichiers, formats de table, transactions, snapshots et suppressions. -->
+<!-- summary: warehouse, lake et lakehouse, stockage objet, JSONL/Avro/Parquet/Arrow, row groups, pruning, partitions, petits fichiers, formats de table, transactions, snapshots et suppressions, predicate pushdown et octets réellement lus. -->
 
 
 À ne pas confondre : data warehouse, data lake et lakehouse ? <!--anki:3030646666643563393464653462346261336265636638363463376338646433-->
@@ -143,6 +143,14 @@ Avec les unités binaires et des fichiers uniformes :
 512 × 1 024 / 256 = 2 048 fichiers
 ```
 Le nombre de fichiers est divisé par **256**, pas le volume de données. Le gain de durée n'est pas forcément du même facteur : lecture, compression, réseau et écriture restent à payer. La taille de 256 Mio est une hypothèse pédagogique, pas une règle universelle. Conserver suffisamment de parallélisme et vérifier les résultats après publication du nouveau snapshot.
+
+---
+
+Pourquoi un filtre logique sur une table Parquet ne garantit-il pas que le moteur évitera de lire les blocs inutiles ? <!--anki:3265386435343263333261653439353938353237386165356538383439383134-->
+?
+Le **predicate pushdown** dépend des statistiques disponibles et de la forme du filtre comprise par le moteur. Une conversion ou fonction opaque appliquée à une colonne peut empêcher l'élimination précoce des fichiers ou row groups.
+
+Examiner le plan et les octets réellement lus avec le moteur cible. Comparer une expression équivalente exploitable par les statistiques, sans changer fuseau, type ni traitement des valeurs nulles. Le filtrage du résultat peut être correct même si presque tout a été scanné. Tester la performance sur l'organisation physique réelle des données.
 
 ---
 

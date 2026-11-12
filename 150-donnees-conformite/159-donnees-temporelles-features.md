@@ -1,6 +1,6 @@
 # Données temporelles & variables de production — Flashcards
 Tags: #flashcards #ai-engineering #donnees #data-engineering #features
-<!-- summary: temps événement et traitement, disponibilité historique, jointures point-in-time, corrections bitemporelles, fenêtres et watermarks, labels retardés, cohérence entraînement-serving, feature store et fraîcheur, chemins offline/online et matérialisation sûre. -->
+<!-- summary: temps événement et traitement, disponibilité historique, jointures point-in-time, corrections bitemporelles, fenêtres et watermarks, labels retardés, cohérence entraînement-serving, feature store et fraîcheur, chemins offline/online et matérialisation sûre, date d'effet et date de connaissance. -->
 
 
 À ne pas confondre : temps de l'événement et temps de traitement ? <!--anki:6530353238343566646235653466306338396630383966326238633938343537-->
@@ -120,6 +120,14 @@ Comment matérialiser des features en ligne sans écraser une valeur récente pa
 Associer **clé d'entité, version de feature et ordre temporel pertinent**, puis écrire selon une politique qui refuse ou isole les mises à jour obsolètes. Les garanties du stockage et de son connecteur doivent être vérifiées.
 
 Séparer reconstruction offline et publication online lorsque leurs objectifs diffèrent. Un backfill historique ne doit pas remplacer la valeur courante simplement parce qu'il termine plus tard : recalculée pour le 1er mars et écrite le 10 octobre, `achats_30j` écraserait sinon la valeur du jour. Tester événement tardif, correction valide, suppression et rejeu. La règle « plus grand timestamp gagne » n'est correcte que si ce timestamp exprime réellement l'ordre métier attendu.
+
+---
+
+Pourquoi une jointure point-in-time doit-elle parfois prendre en compte la date de disponibilité en plus de la date d'effet ? <!--anki:6130613030393865366465373431653962616330383236343836393738343262-->
+?
+Une **valeur historique corrigée** peut avoir un effet métier ancien tout en n'étant connue que plus tard. La joindre uniquement sur sa date d'effet donne au modèle une information inaccessible lors de la décision passée.
+
+Conserver temps de validité et temps de connaissance, puis reconstruire la vue disponible à l'instant prédit. Par exemple, une correction publiée vendredi ne doit pas améliorer artificiellement une prédiction faite lundi. Tester arrivées tardives et révisions. Une évaluation réaliste utilise ce que le système pouvait réellement savoir, pas seulement la meilleure version historique connue aujourd'hui.
 
 ---
 

@@ -1,7 +1,7 @@
 # LangChain — Agents & middleware — Flashcards
 Tags: #flashcards #ai-engineering #agents #langchain #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: `create_agent`, mémoire par checkpointer et `thread_id`, `response_format`, hooks de middleware, middlewares fournis (human-in-the-loop, résumé, fallback, limites), runtime context, Deep Agents. -->
+<!-- summary: `create_agent`, mémoire par checkpointer et `thread_id`, `response_format`, hooks de middleware, middlewares fournis (human-in-the-loop, résumé, fallback, limites), runtime context, Deep Agents, multiplication des retries entre couches. -->
 
 
 Qu'est-ce que `create_agent` ? <!--anki:7a4b2e797a59726e6d3e-->
@@ -138,6 +138,14 @@ Quand descendre de `create_agent` vers LangGraph ? <!--anki:6c6473235e656b6e5743
 Quand le flux doit être **explicite** : étapes déterministes mêlées à des étapes agentiques, branches et boucles sur mesure, plusieurs agents coordonnés — c'est le domaine de [[44-langgraph-fondamentaux|LangGraph]].
 
 Exemple : récupérer des documents, demander une approbation, exécuter un traitement puis vérifier son résultat selon des branches prédéfinies. Un graphe rend les transitions et l'état inspectables. Garder `create_agent` dans les nœuds où une boucle autonome est utile ; il n'est pas nécessaire de réimplémenter chaque appel de modèle.
+
+---
+
+Pourquoi borner les tentatives dans chaque middleware LangChain ne suffit-il pas à borner l'agent entier ? <!--anki:6534353739633865653136303461376162653232616433636337396133366633-->
+?
+Des **boucles imbriquées** peuvent multiplier les tentatives : trois essais dans le SDK et trois dans un middleware permettent jusqu'à neuf appels pour une même demande logique.
+
+Fixer un budget global de temps, coût et appels, consommé par toutes les couches. Désigner la couche responsable de chaque reprise et propager l'échéance restante. Instrumenter tentative technique et tour d'agent séparément. Tester un fournisseur qui échoue systématiquement : les limites locales doivent conduire à une fin explicite avant l'épuisement du budget global.
 
 ---
 

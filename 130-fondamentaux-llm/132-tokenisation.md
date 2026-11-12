@@ -1,6 +1,6 @@
 # Tokenisation — Flashcards
 Tags: #flashcards #ai-engineering #fondamentaux #tokenisation #llm
-<!-- summary: token ou mot, BPE, byte-level, taille de vocabulaire, surcoût du français, limites au niveau des caractères, tokens spéciaux, chat templates, frontières de tokens, comptage, sécurité. -->
+<!-- summary: token ou mot, BPE, byte-level, taille de vocabulaire, surcoût du français, limites au niveau des caractères, tokens spéciaux, chat templates, frontières de tokens, comptage, sécurité, troncature structurée et budget de tokens. -->
 
 
 Qu'est-ce qu'un token ? <!--anki:3f72253a587d60376a-->
@@ -99,6 +99,14 @@ Inspecter à la fois **texte rendu et représentation réelle** lorsqu'un filtre
 - **Token** : l'unité du modèle, fixée par son tokenizer. Un mot courant fait souvent **1 token**, un mot rare, un nombre ou un nom propre **plusieurs**
 
 Repères : en anglais **≈ 0,75 mot par token**, en français plutôt **1,5 à 2 tokens par mot** selon le tokenizer. Les limites de contexte, les prix et les débits s'expriment en **tokens** : estimer « en mots » sous-estime la facture en français. Deux modèles n'ont pas le même tokenizer, donc pas le même compte pour un même texte.
+
+---
+
+Pourquoi une troncature en caractères peut-elle couper un prompt à un endroit différent de son budget de tokens ? <!--anki:3264306133343432643336313438623738323137323731623830646237353031-->
+?
+Le **nombre de tokens** varie avec langue, espaces, chiffres et contenu technique. Un plafond en caractères ne garantit donc pas de respecter une fenêtre de contexte ni de préserver la structure d'un message.
+
+Compter avec le tokenizer et le template réellement utilisés, réserver la sortie et retirer des unités cohérentes : messages, passages ou lignes de tableau. Conserver les consignes et références indispensables. Tester accents, emoji et code. Une troncature qui respecte la taille peut encore casser une preuve ou séparer un appel d'outil de son résultat.
 
 ---
 

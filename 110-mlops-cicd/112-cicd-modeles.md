@@ -1,6 +1,6 @@
 # CI/CD des modèles — Flashcards
 Tags: #flashcards #ai-engineering #mlops #cicd #llm
-<!-- summary: evals statistiques et tests déterministes, eval gates (exemple de seuils), artefact déployé, blue/green et canary, shadow deployment, rollback, GitOps, tests d'une app LLM, prompts en CI, pipeline complet. -->
+<!-- summary: evals statistiques et tests déterministes, eval gates (exemple de seuils), artefact déployé, blue/green et canary, shadow deployment, rollback, GitOps, tests d'une app LLM, prompts en CI, pipeline complet, rollback après migration de schéma. -->
 
 
 Qu'apporte le CI/CD d'une app LLM en plus du CI/CD classique ? <!--anki:4a6b3758755748575f5d-->
@@ -109,6 +109,14 @@ PR → tests + evals → build image → push registry
 Chaque passage doit avoir un critère : tests déterministes valides, seuils d'evals atteints, artefact identifié, puis observation du canary. Conserver le manifeste reliant code, modèle, prompt et données à cette validation. Une régression de qualité ou de SLO bloque la promotion et peut déclencher le rollback ; une simple réponse HTTP 200 ne suffit pas.
 
 Pour un modèle réentraîné régulièrement, on sépare deux chaînes : la **CI du pipeline**, qui teste les transformations et lance un entraînement de fumée sur quelques milliers de lignes, et l'**entraînement continu**, qui produit les candidats ([[117-pipelines-entrainement-continu|pipelines d'entraînement]]).
+
+---
+
+Pourquoi tester un rollback IA après une migration de schéma plutôt que supposer qu'il suffira de restaurer l'image ? <!--anki:6663393966663531373731653432323139326231386566643565363066333062-->
+?
+L'**ancienne application** peut ne plus comprendre l'état, les catégories ou les données produits par la nouvelle version. Restaurer son image peut donc aggraver l'incident.
+
+Déployer d'abord des lecteurs compatibles, migrer progressivement puis changer les producteurs selon une stratégie d'expansion et de retrait. Garder une fenêtre de compatibilité ou un chemin de restauration documenté. Tester le rollback avec des runs créés après migration. Inclure modèle, prompt, index et parseur : leur cohérence compte autant que celle du code.
 
 ---
 

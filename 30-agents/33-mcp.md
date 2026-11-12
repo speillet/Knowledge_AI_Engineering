@@ -1,7 +1,7 @@
 # MCP — Model Context Protocol — Flashcards
 Tags: #flashcards #ai-engineering #agents #mcp #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: problème M×N, host, client et serveur, tools, resources et prompts, transports stdio et HTTP, spec sans état 2026-07-28, serveur MCP ou API REST, risques. -->
+<!-- summary: problème M×N, host, client et serveur, tools, resources et prompts, transports stdio et HTTP, spec sans état 2026-07-28, serveur MCP ou API REST, risques, tests d'interopérabilité et compatibilité historique. -->
 
 
 Qu'est-ce que MCP ? <!--anki:516d532139606b765240-->
@@ -87,18 +87,24 @@ Une description d'outil peut prétendre qu'il faut envoyer un secret pour termin
 
 Comment un host MCP déclare-t-il un serveur local et un serveur distant ? <!--anki:3861633963323633363765663437353461356231323532633438386235333338-->
 ?
-Un serveur **local** est un processus que le host lance (`command`, transport **stdio**) ; un serveur **distant** est une **URL** (transport HTTP) avec son authentification :
+Un serveur **local** est un processus lancé par le host ; un serveur **distant** est joint par son URL et son mécanisme d'authentification. Exemple illustratif pour un host acceptant cette convention :
 ```json
 {
   "mcpServers": {
-    "github":   { "command": "npx", "args": ["-y", "@modelcontextprotocol/server-github@1.4.0"] },
-    "crm-interne": { "url": "https://mcp.interne/crm", "headers": { "Authorization": "Bearer …" } }
+    "crm-local": { "command": "/opt/mcp/crm/1.4.0/bin/mcp-crm", "args": ["--stdio"] },
+    "crm-distant": { "url": "https://mcp.example.org/crm" }
   }
 }
 ```
-Bonne pratique : **version épinglée** plutôt que `@latest`, et serveurs internes derrière une gateway ([[104-securite-mcp-skills|sécurité MCP]]).
+Le chemin est fictif et versionné ; adapter le format au host et fournir les secrets par son mécanisme sécurisé. MCP n'impose pas universellement ces clés de configuration. Vérifier origine du binaire, droits locaux, transport et version supportée avant connexion ; épingler un composant n'atteste pas sa sûreté.
 
-Cet exemple illustre une **convention de configuration du host**, pas un format imposé universellement par MCP. Vérifier les clés supportées et fournir les secrets par le mécanisme prévu, sans les versionner. Pour le processus local, une version épinglée améliore la reproductibilité mais ne dispense pas de vérifier le paquet et les permissions accordées.
+---
+
+Pourquoi déclarer une capacité MCP ne suffit-il pas à prouver son interopérabilité ? <!--anki:3566646134346631633966373436396262326430383834633532326234373666-->
+?
+Une **capacité annoncée** décrit ce qu'un participant prétend prendre en charge. Il faut encore vérifier version, transport, authentification et comportement réel avec le host retenu.
+
+Construire un test de contrat : découverte, appel valide, erreur métier, résultat volumineux et refus d'accès. Tester aussi une capacité absente pour vérifier la dégradation prévue. Dans la révision 2026-07-28, version et capacités accompagnent les requêtes ; les clients historiques peuvent nécessiter une adaptation. Fixer la révision testée au lieu de déduire la compatibilité du seul nom MCP.
 
 ---
 
@@ -132,6 +138,8 @@ Mise en situation : ton serveur MCP interne, écrit avant la spec 2026-07-28, ga
 
 - [MCP — spécification 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28)
 - [MCP — bonnes pratiques de sécurité, édition 2026-07-28](https://modelcontextprotocol.io/docs/2026-07-28/tutorials/security/security_best_practices)
+
+- [MCP 2026-07-28 — version et compatibilité](https://modelcontextprotocol.io/specification/2026-07-28/basic/versioning) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
 
 ## Connexions
 - [[32-tool-calling|Tool calling]] — le mécanisme sous-jacent

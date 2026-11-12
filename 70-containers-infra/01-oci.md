@@ -1,6 +1,6 @@
 # OCI — Flashcards
 Tags: #flashcards #conteneurs #oci
-<!-- summary: rôle de l'Open Container Initiative, spécifications image, runtime et distribution. -->
+<!-- summary: rôle de l'Open Container Initiative, spécifications image, runtime et distribution, index OCI multi-plateforme. -->
 
 
 Que signifie OCI ? <!--anki:6f362a5b606568722d5a-->
@@ -66,6 +66,14 @@ Le **Dockerfile** est une recette de build ; l'**image OCI** est un artefact nor
 Exemple : deux builds du même Dockerfile peuvent produire des digests différents si `FROM` ou des dépendances non épinglées ont changé. Conserver la recette ne suffit donc pas à retrouver l'artefact testé.
 
 Des outils comme Buildpacks, Bazel ou Nix peuvent produire une image OCI sans Dockerfile. En revanche, un build Apptainer produit généralement un SIF, autre format. La normalisation OCI ne garantit pas l'exécution partout : architecture, système et capacités du runtime doivent être compatibles.
+
+---
+
+Pourquoi un index OCI multi-plateforme ne rend-il pas un même binaire compatible avec tous les processeurs ? <!--anki:6136343765393966366536623466356339393539373435366166343332346539-->
+?
+Un **index OCI** peut référencer plusieurs manifestes correspondant à des plateformes différentes. Le runtime sélectionne une image adaptée ; il ne transforme pas automatiquement un binaire x86 en binaire ARM.
+
+Construire et tester chaque variante avec ses dépendances natives. Consigner plateforme et manifeste effectivement résolu pour reproduire le déploiement. L'émulation peut aider certains builds ou usages, mais ne garantit ni compatibilité des extensions GPU ni performances. Un tag multi-plateforme est donc un mécanisme de distribution de variantes, pas une compilation universelle du même programme.
 
 ---
 

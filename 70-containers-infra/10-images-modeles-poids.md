@@ -1,6 +1,6 @@
 # Images & poids de modèles — Flashcards
 Tags: #flashcards #conteneurs #modeles #stockage #infra
-<!-- summary: calcul du temps de chargement des poids d'un 70B, poids dans l'image ou séparés, cold start, safetensors ou pickle, safetensors ou GGUF, modèles distribués comme artefacts OCI. -->
+<!-- summary: calcul du temps de chargement des poids d'un 70B, poids dans l'image ou séparés, cold start, safetensors ou pickle, safetensors ou GGUF, modèles distribués comme artefacts OCI, publication atomique d'un cache de poids. -->
 
 
 Calcul : quel temps minimal de transfert réseau pour 140 Go de poids BF16 d’un 70B, à 1 puis 10 Gbit/s constants, hors stockage, désérialisation et initialisation du moteur ? <!--anki:4e2e2a7a3e49745e523f-->
@@ -113,6 +113,14 @@ Quelle tendance émerge pour distribuer les poids de modèles avec l'outillage d
 Distribuer les poids comme **artefacts OCI** dans un registry, puis les monter comme volumes (volumes d'image Kubernetes, KitOps) : même outillage que les images (versioning, cache, signature).
 
 Cela sépare l'artefact de modèle de l'image applicative tout en réutilisant le registry et les contrôles de livraison. Vérifier les fonctionnalités disponibles dans la version Kubernetes et le runtime choisis. L'emballage OCI ne résout pas à lui seul les temps de téléchargement, le format des poids ni leur compatibilité avec le moteur d'inférence.
+
+---
+
+Pourquoi un cache de poids partagé doit-il publier les modèles de façon atomique ? <!--anki:3635323430383338333738343462613261383363343139393730333133643561-->
+?
+Deux **workers** peuvent lire le même chemin pendant un téléchargement ou une mise à jour. Si les fichiers apparaissent progressivement, ils risquent de charger un mélange de versions ou des poids incomplets.
+
+Télécharger dans un emplacement temporaire, vérifier manifeste et checksums, puis publier une référence vers une version complète et immuable. Ne rendre le service prêt qu'après chargement validé. Nettoyer les versions avec une politique qui tient compte des lecteurs actifs. Un fichier présent ou une taille plausible ne garantit pas l'intégrité de tous les shards.
 
 ---
 

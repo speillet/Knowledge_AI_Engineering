@@ -1,7 +1,7 @@
 # Optimisation & diagnostic d'entraînement — Flashcards
 Tags: #flashcards #ai-engineering #fine-tuning #optimisation #deep-learning
 Vérifié le : 7 octobre 2026
-<!-- summary: perte et métrique métier, rétropropagation, learning rate, AdamW, courbes d'apprentissage, micro-lot de diagnostic, accumulation normalisée, clipping, précision mixte, modes PyTorch et masquage des labels. -->
+<!-- summary: perte et métrique métier, rétropropagation, learning rate, AdamW, courbes d'apprentissage, micro-lot de diagnostic, accumulation normalisée, clipping, précision mixte, modes PyTorch et masquage des labels, comparabilité des pertes train et validation. -->
 
 
 À ne pas confondre : perte d'entraînement et métrique métier ? <!--anki:3036653364613531613036643462383261306238306563643263626633323664-->
@@ -95,6 +95,14 @@ Pourquoi la précision mixte peut-elle produire des NaN pendant l'entraînement 
 Certaines opérations dépassent la plage numérique du format choisi, ou leurs gradients deviennent trop petits pour être représentés. Le **FP16** et le **BF16** n'ont pas la même plage d'exposants ; leur comportement dépend aussi des opérations conservées en FP32.
 
 Localiser la première valeur non finie et comparer un petit cas en FP32. Le gradient scaling aide notamment contre le sous-flux en FP16, mais ne corrige ni une division par zéro ni des données invalides. Réduire le taux sans identifier l'origine peut seulement masquer le problème.
+
+---
+
+Pourquoi une perte de validation inférieure à la perte d'entraînement ne prouve-t-elle pas une meilleure généralisation ? <!--anki:3763653538333863656465343437333961383633366164353439313430313531-->
+?
+Les **conditions de mesure** peuvent différer : dropout actif pendant l'entraînement, régularisation incluse dans une perte mais pas l'autre, augmentation de données ou populations de difficulté différente.
+
+Comparer les deux jeux avec la même définition de perte et un protocole d'évaluation cohérent, sans gradient. Examiner ensuite les métriques métier et la représentativité. Une inversion des courbes n'est ni automatiquement un bug ni une preuve d'absence de surapprentissage. Vérifier aussi que la perte d'entraînement affichée ne résume pas des étapes antérieures avec un modèle moins entraîné.
 
 ---
 

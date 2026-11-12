@@ -1,6 +1,6 @@
 # Recommandation & learning to rank — Flashcards
 Tags: #flashcards #ai-engineering #ml-classique #recommandation #ranking
-<!-- summary: objectif produit, génération de candidats et classement, filtrage collaboratif ou contenu, feedback implicite, modèles à deux tours, objectifs de ranking, négatifs, biais d'exposition, cold start, nDCG et diversité. -->
+<!-- summary: objectif produit, génération de candidats et classement, filtrage collaboratif ou contenu, feedback implicite, modèles à deux tours, objectifs de ranking, négatifs, biais d'exposition, cold start, nDCG et diversité, calcul du rappel entre candidats et classement. -->
 
 
 Pourquoi définir l'objectif produit avant d'entraîner un système de recommandation ? <!--anki:3961363434643038363137653430666262613063613338656334323464636161-->
@@ -92,6 +92,14 @@ Pourquoi ajouter diversité et contraintes métier après le score de pertinence
 Les meilleurs scores individuels peuvent produire une **liste redondante**, indisponible ou mal adaptée à la session : les cinq premiers résultats viennent tous de la même série de billets. Le reclassement applique exclusions, plafonds par catégorie, par exemple deux articles par série, diversité ou fraîcheur selon un contrat explicite.
 
 Mesurer le compromis entre pertinence et utilité de la liste, ainsi que les violations de contraintes. Les droits d'accès et exclusions impératives doivent être garantis par l'application. Une contrainte de diversité ne doit pas être présentée comme une amélioration universelle : sa valeur dépend de la tâche et de ce que l'utilisateur cherche à accomplir.
+
+---
+
+Calcul : un générateur de candidats retrouve 80 % des éléments pertinents et le ranking en conserve 75 %. Quel rappel final sous ces hypothèses ? <!--anki:3733653038643133353032623435336561616566623737366133616435333832-->
+?
+Si le **75 %** est la fraction des éléments pertinents récupérés qui restent dans la liste finale, le rappel final vaut `0,80 × 0,75 = 60 %`.
+
+Le classement ne peut pas promouvoir un élément absent des candidats. Mesurer séparément les pertes à chaque étape pour savoir où investir. Le produit porte ici sur des rappels conditionnels définis sur la même population ; il ne demande pas une hypothèse d'indépendance. Des moyennes calculées sur des utilisateurs avec pondérations différentes ne se multiplient pas nécessairement de cette façon.
 
 ---
 

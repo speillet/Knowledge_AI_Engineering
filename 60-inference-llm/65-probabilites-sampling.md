@@ -1,6 +1,6 @@
 # Probabilités & sampling — Flashcards
 Tags: #flashcards #ai-engineering #inference #sampling #probabilites #llm
-<!-- summary: logits, température, greedy, top-k, top-p et min-p, probabilités conditionnelles, logprobs, perplexité, exercices de renormalisation, sampling et limites de la confiance. -->
+<!-- summary: logits, température, greedy, top-k, top-p et min-p, probabilités conditionnelles, logprobs, perplexité, exercices de renormalisation, sampling et limites de la confiance, scores de classes à plusieurs tokens. -->
 
 
 Que produit un LLM à chaque pas de génération ? <!--anki:7a6f51326e26623f245b-->
@@ -152,6 +152,14 @@ P(séquence) = 0,5 × 0,25 = 0,125
 PPL = exp(−(ln 0,5 + ln 0,25)/2) = √8 ≈ 2,83
 ```
 Les probabilités sont déjà conditionnelles aux préfixes : leur multiplication ne suppose pas des tokens indépendants. La moyenne `(0,5 + 0,25)/2` n'est pas la probabilité de la séquence. La perplexité décrit la vraisemblance moyenne des tokens retenus pour ce calcul ; elle ne mesure pas la véracité de leur contenu.
+
+---
+
+Pourquoi les probabilités de deux libellés ne se comparent-elles pas naïvement s'ils utilisent des nombres de tokens différents ? <!--anki:6434633333356465383265343439653939643264326162663932313361633839-->
+?
+La **probabilité d'une séquence** multiplie les probabilités conditionnelles de ses tokens. Une classe écrite en trois tokens ne se compare pas directement à la seule probabilité du premier token d'une autre classe.
+
+Calculer les séquences complètes, définir le traitement des variantes et du token de fin, ou choisir des libellés contrôlés avec un protocole évalué. Une normalisation par longueur change le score et n'en fait pas automatiquement une probabilité de classe. Calibrer la décision sur des exemples annotés représentatifs avant d'utiliser ce score pour une abstention.
 
 ---
 

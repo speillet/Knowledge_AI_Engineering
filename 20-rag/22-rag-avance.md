@@ -1,6 +1,6 @@
 # RAG — Avancé — Flashcards
 Tags: #flashcards #ai-engineering #rag #retrieval #llm
-<!-- summary: recherche hybride (BM25, RRF), reranking, query rewriting, HyDE et ses limites, filtrage par métadonnées et ACL, GraphRAG, agentic RAG, « lost in the middle », problèmes de production (fraîcheur, droits, ré-indexation). -->
+<!-- summary: recherche hybride (BM25, RRF), reranking, query rewriting, HyDE et ses limites, filtrage par métadonnées et ACL, GraphRAG, agentic RAG, « lost in the middle », problèmes de production (fraîcheur, droits, ré-indexation), fusion RRF et échelles de scores. -->
 
 
 Qu'est-ce que la recherche hybride ? <!--anki:783b3a7d537e53723532-->
@@ -107,6 +107,14 @@ Pourquoi l'ordre des chunks dans le contexte compte-t-il ? <!--anki:6e6c68533674
 Certains modèles exploitent moins bien une preuve située **au milieu d'un long contexte** : c'est l'effet « lost in the middle ». L'ordre des passages peut donc changer la réponse, même si les sources sont identiques.
 
 Tester plusieurs ordres : rejouer 200 questions avec la preuve en position 1, 5 puis 10 sur 10 passages, et comparer l'exactitude. Placer ensuite les preuves importantes dans les positions bien exploitées par le modèle et supprimer les redondances. **Ce n'est pas une règle universelle début/fin** : l'effet dépend du modèle, de la tâche et de la longueur. Préserver aussi la cohérence des passages liés.
+
+---
+
+Pourquoi la fusion RRF résiste-t-elle aux échelles de scores différentes des moteurs de recherche ? <!--anki:6437333561303037353838643465623039383361623636653232656563323138-->
+?
+La **Reciprocal Rank Fusion** utilise les rangs plutôt que les scores bruts : un document reçoit une somme de termes `1 / (c + rang)`, avec une constante positive `c` fixée pour l'expérience.
+
+Un score BM25 de 12 et une similarité vectorielle de 0,8 ne sont pas directement comparables ; leurs positions peuvent l'être. Dédupliquer par document ou passage avant d'interpréter le résultat. La fusion ne crée pas les preuves absentes des listes candidates et n'annule pas l'effet de leur profondeur. Mesurer ensuite rappel et qualité finale.
 
 ---
 
