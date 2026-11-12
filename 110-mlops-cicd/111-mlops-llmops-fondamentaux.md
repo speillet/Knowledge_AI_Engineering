@@ -1,14 +1,14 @@
 # MLOps & LLMOps — Fondamentaux — Flashcards
 Tags: #flashcards #ai-engineering #mlops #llmops #llm
 Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: DevOps ou MLOps, spécificités du LLMOps, ce qu'il faut versionner (code et config, modèles et données), model registry, lineage, reproductibilité, environnements dev/staging/prod, rôle du Lead, manifeste cohérent de release. -->
+<!-- summary: DevOps ou MLOps, spécificités du LLMOps, ce qu'il faut versionner (code et config, modèles et données), model registry, lineage, reproductibilité, environnements dev/staging/prod, rôle du Lead, manifeste cohérent de release, CI/CD/CT, recette et run, validité technique, statistique et métier, dette de dépendances de données. -->
 
 
 Qu'est-ce que le MLOps ? <!--anki:72493079506c593c216d-->
 ?
-L'application des pratiques **DevOps au cycle de vie ML** : données → entraînement → évaluation → déploiement → monitoring, avec **automatisation et reproductibilité**.
+Le **MLOps** organise la construction, la livraison et l'exploitation de systèmes ML : données, entraînement, validation, prédiction, surveillance et retrait. Il associe automatisation, traçabilité et responsabilités opérationnelles pour maintenir un comportement utile dans la durée.
 
-Le but est de livrer un comportement mesurable et de pouvoir expliquer ce qui l'a produit. Par exemple, relier une version déployée à ses données d'entraînement, sa configuration et ses scores de validation. Le monitoring peut déclencher une investigation ou un nouvel entraînement ; il ne faut pas réentraîner automatiquement sans vérifier la cause d'une baisse de qualité.
+Par exemple, une nouvelle semaine de ventes peut produire un candidat avec le même code mais d'autres poids. Il faut retrouver ses données, sa recette, ses évaluations et les décisions de promotion. Le monitoring lance une investigation ; il ne commande pas automatiquement un réentraînement. Le succès se mesure aussi par délai de livraison, stabilité, coût et capacité de restauration, au-delà du score d'un notebook.
 
 ---
 
@@ -22,9 +22,9 @@ Une release ML doit relier les versions de code, données, entraînement et mod�
 
 Qu'est-ce que le LLMOps par rapport au MLOps classique ? <!--anki:4f587838485048773f3c-->
 ?
-On entraîne rarement from scratch : le cycle est centré sur **prompts, RAG, fine-tuning, evals et coûts** ; les artefacts sont des prompts versionnés, des adapters et des index.
+Le **LLMOps** applique cette discipline à un système dont le comportement dépend aussi des prompts, contextes, index, outils et modèles éventuellement fournis par API. L'équipe peut exploiter un modèle sans gérer son entraînement initial.
 
-Une release peut changer seulement le prompt ou le corpus tout en modifiant fortement les réponses. Tracer le système complet, y compris modèle fournisseur, outils et paramètres. Évaluer des tâches représentatives et surveiller coût par résultat utile ; l'absence d'entraînement interne ne supprime pas la responsabilité de validation et d'exploitation.
+Une modification du corpus ou d'une permission peut changer les résultats sans changer les poids. La release doit donc identifier la combinaison réellement exécutée et son protocole d'évaluation. Surveiller tâches accomplies, effets externes, latence et coût, avec gestion des changements fournisseur. Les invariants métier restent contrôlés par l'application ; la variabilité du texte ne justifie pas une variabilité des droits ou des montants.
 
 ---
 
@@ -54,25 +54,24 @@ Conserver aussi le split, les annotations et la politique de filtrage. Deux inde
 
 Qu'est-ce qu'un model registry ? <!--anki:726f4b36424a7d697952-->
 ?
-Un service qui **stocke et versionne les modèles** avec métadonnées, stages (staging/prod) et lineage — ex. **MLflow, W&B, Hugging Face Hub**. Distinct du [[10-images-modeles-poids|container registry]].
+Un **registre de modèles** catalogue des versions, leur provenance et les métadonnées utiles à leur cycle de vie : propriétaire, recette, évaluations, statut et références d'artefacts. Le stockage des fichiers peut être assuré par un service distinct.
 
-Il relie un artefact aux expériences, métriques et approbations qui justifient son déploiement. Les mécanismes de promotion varient selon l'outil : labels, aliases ou environnements. Il ne remplace pas le stockage des dépendances ni un protocole d'évaluation ; l'existence d'une version « production » ne prouve pas sa qualité.
+Ne pas confondre numéro de version, alias mutable et autorisation de déploiement. Un alias `champion` peut désigner une version approuvée sans que tous les réplicas l'aient chargée. Les mécanismes de promotion varient ; MLflow privilégie les alias et tags plutôt que ses anciens stages. L'inscription au registre ne prouve ni qualité, ni sûreté du fichier, ni compatibilité avec l'environnement de serving.
 
 ---
 
 Qu'est-ce que le lineage d'un modèle ? <!--anki:4a724a21746435493b53-->
 ?
-La **traçabilité complète** : quelles données, quel code et quels hyperparamètres ont produit cette version du modèle.
+Le **lineage** relie une version servie aux données, transformations, code, paramètres, exécution d'entraînement et validations qui l'ont produite. Sa couverture doit être vérifiée ; un outil ne découvre pas automatiquement toutes les dépendances.
 ```yaml
-# manifeste d'un artefact déployé : les 4 versions à tracer ensemble
-image:        registry.interne/assistant@sha256:9f2c…
-modele:       claude-sonnet-4-5-20250929     # identifiant daté, pas un alias
-prompts:      prompts/support@v14
-index_rag:    support-fr-2026-09-20 (embedding: e5-large@v2)
+release: retention-r17
+image: registry.example.org/scoring@sha256:empreinte-a-remplacer
+modele: models:/retention/17
+features: client-30j@v4
+train: retention-train@snapshot-042
+evaluation: retention-validation@v9
 ```
-Sans ce manifeste, une régression en production devient une enquête sans pièces à conviction ([[114-reproductibilite-variance|reproductibilité]]).
-
-Le manifeste doit désigner des versions récupérables, pas seulement des noms lisibles. Ajouter configuration de sampling, outils et éventuels adapters selon le système. Conserver les résultats d'evals associés et les empreintes des artefacts : cela permet de distinguer changement de modèle, changement de contexte et changement applicatif lors d'une régression.
+Cet extrait est illustratif : remplacer les références par des objets récupérables et leurs empreintes réelles. Pour enquêter, remonter d'une prédiction à cette release puis à son run. Les noms ne suffisent pas si les fichiers ont été réécrits ou supprimés. Conserver les accès et durées de rétention nécessaires à la reconstruction autorisée.
 
 ---
 
@@ -105,13 +104,9 @@ Associer cas représentatifs correctement dépersonnalisés et cas synthétiques
 
 Quel est le rôle du Lead sur le volet MLOps ? <!--anki:7a3e4144593a524b4139-->
 ?
-Imposer les **standards** plutôt que tout faire lui-même :
-- **Registry unique** et conventions de versioning
-- **Gates d'éval** obligatoires ([[112-cicd-modeles|CI/CD]])
-- **Ownership** : chaque modèle, prompt et index en production a un responsable nommé
-- **Runbooks** : que faire si la qualité chute ou si un fournisseur tombe
+Le Lead organise des **contrats et responsabilités vérifiables** : qui produit les données, valide le candidat, autorise la promotion, exploite le service et peut arrêter un traitement défaillant.
 
-Le but : qu'un changement risqué ne puisse pas partir en production **par accident**.
+Définir une nomenclature de releases, des gates fondées sur le risque, un responsable par système et des procédures de reprise testées. Prévoir la transmission à l'astreinte avec tableaux de bord, seuils et moyens de diagnostic. Un registre commun facilite l'inventaire, mais plusieurs outils peuvent coexister si les contrats restent cohérents. Mesurer délai de changement, échecs de déploiement et temps de rétablissement pour vérifier que les standards aident réellement les équipes.
 
 ---
 
@@ -120,6 +115,38 @@ Pourquoi un manifeste de release IA doit-il désigner un ensemble cohérent d'ar
 Une **release** doit relier code, modèle, tokenizer, prompt, index ou features et configuration par des versions immuables. Leurs alias courants peuvent évoluer indépendamment.
 
 Publier ce manifeste après validation de la combinaison, puis faire résoudre les références une seule fois pour le run. Conserver son identifiant dans les résultats et traces. Tester un redéploiement à partir du manifeste sans accès implicite à « latest ». Une collection d'artefacts versionnés ne suffit pas si personne ne sait quelle combinaison a réellement servi une décision.
+
+---
+
+À ne pas confondre : CI, CD et CT dans un système ML ? <!--anki:3635316166396234653463373430616639393564653836386162653462626165-->
+?
+La **CI** vérifie les changements de code et de composants ; la **CD** prépare et livre des artefacts validés vers les environnements ; la **CT**, entraînement continu, exécute la recette sur des données pour produire de nouveaux candidats.
+
+Un changement de code peut modifier la recette sans entraîner immédiatement un modèle complet. De nouvelles données peuvent déclencher un entraînement sans changer cette recette. Séparer identités, versions et critères de passage pour les deux chaînes. « Continu » ne signifie ni calcul ininterrompu ni promotion sans contrôle : fréquence et automatisation dépendent du besoin, du coût et de la disponibilité de labels fiables.
+
+---
+
+À ne pas confondre : recette de pipeline et exécution d'entraînement ? <!--anki:6165356234363933353831313433313539373466666136306362363563313131-->
+?
+La **recette** est le code et la configuration qui définissent les étapes ; une **exécution** applique cette recette à des entrées précises, à un moment donné, avec ses propres résultats et erreurs.
+
+Deux runs de la même recette peuvent produire des modèles différents à cause des données, paramètres ou opérations aléatoires. Chaque run doit référencer recette, snapshots, environnement et artefacts. Une reprise ne doit pas écraser l'identité de l'exécution précédente ni mélanger leurs sorties. Pour enquêter, retrouver le run effectivement déployé, plutôt que seulement le dernier commit du dépôt ou le dernier entraînement réussi.
+
+---
+
+Pourquoi distinguer validité technique, qualité prédictive et utilité métier dans une release ML ? <!--anki:6262356431636266633963363437326638356265373965363737626165313065-->
+?
+Un modèle peut **charger correctement**, prédire avec un bon score et néanmoins être inutile : délai trop long, coût excessif ou décision qui n'améliore pas le processus visé.
+
+Définir trois preuves séparées : contrats et fonctionnement, métriques sur population pertinente, puis conséquence métier avec ses hypothèses. Une prévision plus précise peut ne pas changer le stock si la décision ne l'utilise pas. Fixer le critère d'acceptation et le responsable de chaque niveau avant la promotion. Une réussite technique ne remplace pas l'évaluation statistique ; un score offline ne démontre pas à lui seul l'effet produit en conditions réelles.
+
+---
+
+Pourquoi inventorier les dépendances et consommateurs des données d'un modèle ? <!--anki:3865333039316664303630653438386639323064336336343361376237666330-->
+?
+Les **dépendances cachées** rendent les changements risqués : une colonne peut provenir d'un autre modèle, et un score devenir à son tour une variable consommée ailleurs sans contrat explicite.
+
+Documenter producteurs, transformations, finalités et consommateurs, avec versions et responsables. Avant de modifier une définition ou retirer une sortie, examiner ces usages et prévoir une migration. La traçabilité d'entraînement ne suffit pas à découvrir un consommateur qui lit directement une table de prédictions. Le MLOps inclut donc les contrats autour du modèle et les effets de chaîne, pas seulement le suivi de son propre run.
 
 ---
 
@@ -154,6 +181,9 @@ Mise en situation : trois équipes déploient chacune leurs modèles, avec leurs
 - [Google Cloud — MLOps, livraison et pipelines continus](https://docs.cloud.google.com/architecture/mlops-continuous-delivery-and-automation-pipelines-in-machine-learning)
 - [Langfuse — traces, évaluations et gestion des prompts](https://langfuse.com/docs)
 
+- [MLflow — versions, alias et gouvernance du registre](https://mlflow.org/docs/latest/ml/model-registry/workflow/)
+- [Google Research — Hidden Technical Debt in Machine Learning Systems](https://research.google/pubs/hidden-technical-debt-in-machine-learning-systems/)
+
 ## Connexions
 - [[112-cicd-modeles|CI/CD des modèles]] — le pipeline qui applique ces standards
 - [[113-monitoring-drift-feedback|Monitoring & drift]] — la boucle post-déploiement
@@ -167,4 +197,5 @@ Mise en situation : trois équipes déploient chacune leurs modèles, avec leurs
 - [[147-leadership-technique-ia|Leadership technique]] — rôle du senior
 - [[150-016-observabilite-lignage-donnees|Observabilité, lignage & exploitation des données]] — tracer les données jusqu’aux versions de modèles
 - [[117-pipelines-entrainement-continu|Pipelines d'entraînement & registre]] — alias champion, suivi d'expériences et entraînement continu
+- [[118-artefacts-registre-releases-ml|Artefacts, registre et releases ML]] — contrats et vérifications de production
 - [[00-moc-ai-engineering|MOC AI Engineering]]

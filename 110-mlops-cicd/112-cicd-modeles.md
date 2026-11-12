@@ -1,6 +1,6 @@
 # CI/CD des modèles — Flashcards
 Tags: #flashcards #ai-engineering #mlops #cicd #llm
-<!-- summary: evals statistiques et tests déterministes, eval gates (exemple de seuils), artefact déployé, blue/green et canary, shadow deployment, rollback, GitOps, tests d'une app LLM, prompts en CI, pipeline complet, rollback après migration de schéma. -->
+<!-- summary: evals statistiques et tests déterministes, eval gates (exemple de seuils), artefact déployé, blue/green et canary, shadow deployment, rollback, GitOps, tests d'une app LLM, prompts en CI, pipeline complet, rollback après migration de schéma, livraison ou déploiement continus, smoke training, même artefact promu, canary avec labels tardifs. -->
 
 
 Qu'apporte le CI/CD d'une app LLM en plus du CI/CD classique ? <!--anki:4a6b3758755748575f5d-->
@@ -15,32 +15,25 @@ Fixer jeux, versions, seuils et protocole de répétition avant les essais ([[11
 
 Qu'est-ce qu'un eval gate ? <!--anki:6a4b402e5157293d4533-->
 ?
-Un **seuil d'évaluation bloquant** dans la CI : si les scores régressent, le merge ou le déploiement est **refusé** ([[92-chainforge-evals-prompts|evals]]).
+Une **eval gate** décide si un candidat peut franchir une étape, selon des critères définis avant l'essai. Elle combine éventuellement contraintes absolues, comparaison à la référence et budgets de coût ou de latence.
 ```yaml
-eval_gate:
-  dataset: golden-support@v14       # 400 cas
-  criteres:
-    exactitude:      { min: 0.90, regression_max: 0.02 }
-    format_valide:   { min: 0.99 }
-    cout_par_requete: { max_hausse: 0.15 }
+# Politique illustrative, à implémenter et à versionner.
+gate:
+  jeu: support-validation@v14
+  reference: release-r16
+  exactitude_min: 0.90
+  perte_max_points: 0.02
+  action_non_autorisee_observee: 0
 ```
-On bloque sur la **régression** par rapport à la version en production, pas seulement sur un seuil absolu.
-
-Comparer candidat et référence sur les mêmes cas, avec des critères définis avant l'essai. Une baisse minime peut venir du bruit ; une moyenne stable peut cacher une régression sur un segment critique. Prévoir seuils par segment, répétitions utiles et revue des cas limites. Le YAML représente ici une politique à implémenter, pas un outil universel.
+Comparer sur les mêmes cas et examiner incertitude, segments et couverture. Une économie peut justifier une marge de non-infériorité préspécifiée ; toute version n'a pas à améliorer chaque score. Zéro violation observée bloque certains cas critiques sans démontrer un risque nul. Conserver rapport, évaluateur et décision avec la release.
 
 ---
 
 Que contient l'artefact déployé d'une app LLM ? <!--anki:695e35574c713148795a-->
 ?
-Quatre références distinctes, à tracer **ensemble** :
-- L'**image conteneur** de l'application
-- La **référence du modèle** (identifiant daté chez un fournisseur, ou poids et adapter dans un registry)
-- Les **prompts et la config** de génération
-- L'**index RAG** ou les données de retrieval, avec leur modèle d'embedding
+L'unité de release relie **application, modèle, configuration et dépendances de données** : image par digest, poids ou référence fournisseur, tokenizer et adapter éventuels, prompt, contrats d'outils et index ou features compatibles.
 
-Un manifeste de release qui les regroupe permet de redéployer ou d'annuler l'ensemble d'un coup.
-
-Exemple : image v7, prompt v12, poids révision R et index I4 forment une combinaison testée. Déplacer seulement le label du modèle peut casser un schéma d'outil attendu par cette image. Vérifier la compatibilité du manifeste entier.
+Pour un modèle tabulaire, inclure prétraitement, ordre et sémantique des entrées, calibrateur, classes et politique de décision. Une version de poids seule n'identifie pas ce service. Faire tester la combinaison puis promouvoir les mêmes objets. Un manifeste décrit ces liens ; il ne remplace pas leur disponibilité, les contrôles d'accès ni une migration nécessaire. Vérifier le résultat effectivement servi après chargement, pas seulement le manifeste publié.
 
 ---
 
@@ -73,29 +66,17 @@ Après bascule, tracer la version réellement servie : caches et réplicas peuve
 
 Qu'est-ce que le GitOps appliqué aux modèles ? <!--anki:423a6e24507a51415361-->
 ?
-L'**état désiré** (version du modèle, config du serveur d'inférence, prompts) est déclaré **dans Git** ; un opérateur comme **Argo CD** ou **Flux** réconcilie le cluster en continu avec cet état.
+Le **GitOps** déclare dans Git un état désiré, puis un contrôleur le compare à l'état exécuté et applique les changements autorisés. Version du service, références de modèles et configuration peuvent ainsi passer par revue.
 
-Avantages : chaque changement passe par une **pull request** revue, l'historique Git sert d'audit, et le rollback est un `git revert` ([[12-kubernetes-gpu-inference|Kubernetes GPU]]).
-```yaml
-# InferenceService KServe versionné dans Git, appliqué par Argo CD
-spec:
-  predictor:
-    model:
-      modelFormat: { name: sklearn }
-      storageUri: s3://modeles/fraude/v8   # passer de v7 à v8 = une pull request
-```
-Git décrit la configuration, pas les poids : l'URI doit désigner un artefact **immuable**. Si `v8` peut être réécrit dans le bucket, un même commit sert deux modèles et le `git revert` ne restaure rien. Avec `selfHeal` dans Argo CD, une modification manuelle du cluster est annulée : les correctifs d'urgence passent aussi par Git.
+Les références doivent désigner des artefacts contrôlés et immuables ; un chemin réécrit derrière le même nom casse la reproductibilité. Un `git revert` crée une nouvelle intention de retour, mais ne garantit pas compatibilité des schémas, restauration de données ou annulation d'effets métier. Définir le traitement des interventions d'urgence et des divergences. Tester convergence et version réellement chargée ; la présence d'un opérateur ne prouve pas la réussite du déploiement.
 
 ---
 
 Quels types de tests pour une app LLM en CI ? <!--anki:507d662a4f776c345758-->
 ?
-- **Unitaires** (parsing, outils)
-- **Intégration** (LLM mocké)
-- **Evals** (qualité sur golden dataset)
-- **Contrats** : validité des schémas de [[63-guided-generation|sorties structurées]]
+Combiner **tests unitaires**, contrats, intégrations et évaluations de comportement. Les premiers isolent parsing, transformations et autorisations ; les intégrations vérifient les frontières ; les evals mesurent la tâche sur des cas représentatifs.
 
-Les mocks rendent les tests rapides et reproductibles, mais ne vérifient pas le comportement du fournisseur réel. Prévoir aussi un petit ensemble d'intégrations réelles, borné en coût et en fréquence, et des evals sur cas difficiles. Les assertions doivent porter sur des contrats ou résultats utiles, pas seulement sur la présence d'un texte non vide.
+Pour le ML tabulaire, tester aussi prétraitement et modèle rechargés depuis le paquet destiné au serving. Les mocks réduisent coût et variance mais ne vérifient pas le fournisseur réel ni les dépendances de l'image finale. Prévoir quelques intégrations réelles bornées lorsque nécessaires, des cas négatifs et des essais de reprise. Une assertion « sortie non vide » ou « HTTP 200 » ne valide ni montant, ni preuve, ni absence de double effet.
 
 ---
 
@@ -117,6 +98,38 @@ Pourquoi tester un rollback IA après une migration de schéma plutôt que suppo
 L'**ancienne application** peut ne plus comprendre l'état, les catégories ou les données produits par la nouvelle version. Restaurer son image peut donc aggraver l'incident.
 
 Déployer d'abord des lecteurs compatibles, migrer progressivement puis changer les producteurs selon une stratégie d'expansion et de retrait. Garder une fenêtre de compatibilité ou un chemin de restauration documenté. Tester le rollback avec des runs créés après migration. Inclure modèle, prompt, index et parseur : leur cohérence compte autant que celle du code.
+
+---
+
+À ne pas confondre : livraison continue et déploiement continu de modèles ? <!--anki:3562653164393336616537353436616162323764373235623536663761363134-->
+?
+La **livraison continue** maintient une version prête à être déployée après les contrôles prévus, avec éventuellement une décision humaine finale. Le **déploiement continu** automatise aussi cette dernière transition lorsque ses conditions sont satisfaites.
+
+Les deux exigent artefacts identifiés, preuves de validation et procédure de retour. Pour un modèle dont les effets sont sensibles ou les labels tardifs, une promotion manuelle peut être un choix de maîtrise, sans renoncer aux tests ni à l'automatisation de préparation. Décrire clairement où s'arrête l'automate : l'expression « pipeline CI/CD » ne précise pas qui autorise la mise en service ni sous quelles preuves.
+
+---
+
+Que vérifie un entraînement de fumée dans la CI d'un pipeline ML ? <!--anki:3666383335663963356230343435363939616638333339373930356438363764-->
+?
+Un **entraînement de fumée** exécute rapidement le chemin complet sur un petit jeu contrôlé : ingestion, transformations, fit, prédiction et publication d'un artefact test. Il révèle notamment imports cassés, types incompatibles et sorties manquantes.
+
+Sa petite taille ne permet pas d'affirmer une qualité de généralisation ou une capacité de production. Employer des cas couvrant catégories, valeurs manquantes et erreurs attendues, puis réserver d'autres tests aux performances et à la validation statistique. Vérifier que les données de test n'atteignent pas le registre de production. Une CI rapide valide le fonctionnement de la recette ; le candidat complet passe ses propres gates.
+
+---
+
+Pourquoi promouvoir le même artefact testé plutôt que réentraîner à chaque environnement ? <!--anki:6536393566663039346134383433343338373761393062333930316163376632-->
+?
+Réentraîner en staging puis en production peut produire **deux modèles différents**, même avec le même code. Les preuves obtenues sur le premier ne s'appliquent plus automatiquement au second.
+
+Construire un candidat identifié, valider son paquet, puis promouvoir ces mêmes objets avec une configuration d'environnement contrôlée. Séparer les secrets sans changer silencieusement prétraitement ou paramètres métier. Si une adaptation impose un nouveau calcul, créer une nouvelle version et la valider. Enregistrer empreintes et version effectivement chargée ; un nom de release commun ou une recette identique ne démontre pas l'identité des poids et dépendances livrés.
+
+---
+
+Pourquoi un canary techniquement sain ne valide-t-il pas encore la qualité d'un modèle aux labels tardifs ? <!--anki:3135363933376136353963343430656639383631363035303637623639356631-->
+?
+Le **canary** donne rapidement des signaux de service : erreurs, latence, formats, volumes et coût. Si la cible est une issue à trente jours, ces premières minutes ne disent pas encore si les prédictions sont justes.
+
+Définir des garde-fous immédiats et un critère distinct fondé sur cohortes mûres. Conserver assignation, version et décisions pour rapprocher les résultats futurs. Une promotion partielle peut rester sous observation selon le risque ; ne pas remplacer l'issue par un proxy sans vérifier sa portée. La réussite du transport et l'absence d'incident visible ne prouvent ni calibration ni gain métier durable.
 
 ---
 
@@ -146,6 +159,11 @@ Mise en situation : tu dois déployer une nouvelle version de modèle sur un ser
 
 ---
 
+## Sources
+
+- [Google SRE — canary et contrôle des releases](https://sre.google/workbook/canarying-releases/)
+- [Google Cloud — CI/CD/CT et validation des pipelines ML](https://docs.cloud.google.com/architecture/mlops-continuous-delivery-and-automation-pipelines-in-machine-learning)
+
 ## Connexions
 - [[111-mlops-llmops-fondamentaux|MLOps fondamentaux]] — versioning & registry
 - [[92-chainforge-evals-prompts|Evals]] — le contenu des gates
@@ -163,4 +181,6 @@ Mise en situation : tu dois déployer une nouvelle version de modèle sur un ser
 - [[13-prompts-production|Prompts en production]] — structure, versioning et portabilité des prompts
 - [[116-sre-incidents-capacite-ia|SRE : incidents & capacité des services IA]] — rollback et compatibilité des artefacts
 - [[117-pipelines-entrainement-continu|Pipelines d'entraînement & entraînement continu]] — le pipeline qui produit les candidats à promouvoir
+- [[118-artefacts-registre-releases-ml|Artefacts, registre et releases ML]] — contrats et vérifications de production
+- [[119-contrats-prediction-features-batch|Contrats de prédiction, features et batch]] — contrats et vérifications de production
 - [[00-moc-ai-engineering|MOC AI Engineering]]

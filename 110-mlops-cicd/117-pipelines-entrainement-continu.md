@@ -1,12 +1,12 @@
 # Pipelines d'entraînement, registre & entraînement continu — Flashcards
 Tags: #flashcards #ai-engineering #mlops #ml-classique #pipelines
 Vérifié le : 20 octobre 2026 — cette fiche cite des produits et versions qui évoluent vite.
-<!-- summary: niveaux de maturité MLOps, pipeline déployé plutôt que modèle, réentraînement planifié ou déclenché, validation des données et du modèle, suivi d'expériences MLflow, signature, alias champion et challenger, alias de registre ou de fournisseur, cache des étapes, fenêtre d'entraînement, scoring batch ou en ligne, labels censurés par le modèle, calcul de performance attendue sans labels, promotions concurrentes des modèles. -->
+<!-- summary: niveaux de maturité MLOps, pipeline déployé plutôt que modèle, réentraînement planifié ou déclenché, validation des données et du modèle, suivi d'expériences MLflow, signature, alias champion et challenger, alias de registre ou de fournisseur, cache des étapes, fenêtre d'entraînement, scoring batch ou en ligne, labels censurés par le modèle, calcul de performance attendue sans labels, promotions concurrentes des modèles, regroupement des déclencheurs, calibrateur versionné, référence historique et cohorte récente, correction des labels. -->
 
 
 Que distinguent les niveaux 0, 1 et 2 de maturité MLOps décrits par Google Cloud ? <!--anki:6539373632343731336431643433643839373035386566393038353034396538-->
 ?
-- **Niveau 0** : étapes manuelles, souvent en notebook ; le modèle entraîné est remis à l'équipe qui le sert. Releases rares, sans CI/CD ni suivi de la qualité.
+- **Niveau 0** : étapes manuelles, souvent en notebook ; le modèle entraîné est transmis à l'équipe qui le sert. La validation peut exister sans automatisation ni suivi continu.
 - **Niveau 1** : un **pipeline automatisé** réentraîne le modèle sur de nouvelles données (*continuous training*), avec validation des données et du modèle et métadonnées d'exécution.
 - **Niveau 2** : une **CI/CD des composants du pipeline** teste et livre rapidement leurs nouvelles versions.
 
@@ -32,63 +32,63 @@ Le **déclenché** convient quand l'entraînement est coûteux ou que les labels
 
 Que vérifie la validation des données au début d'un pipeline de réentraînement automatique ? <!--anki:6439393237356164613533323463643762623336316662383761356533393561-->
 ?
-- **Écarts de schéma** : colonne absente, type changé, catégorie inconnue. Ce sont des anomalies d'entrée : le pipeline s'arrête.
-- **Écarts de valeurs** : distributions qui bougent, à signaler et à confronter aux changements connus.
-- **Volume, valeurs manquantes et fraîcheur** de chaque source.
-- **Maturité des labels** : une période trop récente contient de faux négatifs ([[159-donnees-temporelles-features|labels retardés]]).
+Contrôler **schéma, sémantique, volume, fraîcheur et disponibilité historique** des variables, ainsi que maturité, définition et couverture des labels. Comparer les règles de validation à l'usage prévu par le modèle.
 
-Sans cette étape, un pipeline automatique apprend un incident comme une nouvelle norme. Si une source passe des euros aux centimes, le modèle réentraîné intègre ce facteur 100 et la validation du modèle, calculée sur les mêmes données, peut ne rien voir ([[157-contrats-qualite-donnees|contrats de données]]).
+Une catégorie nouvelle n'impose pas toujours l'arrêt : le contrat peut prévoir un traitement de l'inconnu testé, avec seuil d'alerte. Une unité changée ou une clé incohérente peut en revanche bloquer la publication. Classer les anomalies en erreur bloquante, quarantaine ou signal à examiner, avec responsable et règle explicite. Valider les mêmes données corrompues dans train et test peut donner un score rassurant ; conserver des invariants indépendants et des références métier.
 
 ---
 
 Quels contrôles un modèle réentraîné doit-il passer avant de remplacer le modèle en production ? <!--anki:6639353939333063383366353465373861613231323564396266613433386230-->
 ?
-- **Métrique principale** sur le même jeu de test que le modèle en place, avec un gain supérieur au bruit ([[99-statistiques-decisions-experimentales|comparaison appariée]])
-- **Segments critiques** : aucune régression au-delà d'une tolérance fixée à l'avance
-- **Calibration**, si les probabilités servent à décider ([[173-calibration-incertitude-abstention|calibration]])
-- **Compatibilité de service** : signature, latence p95, mémoire, chargement réel dans l'image de serving
+Comparer **candidat et référence** sur des jeux indépendants de leur sélection, avec critères fixés avant l'essai : qualité utile, segments, calibration, contraintes métier, coût et service. Une marge de non-infériorité peut convenir à un candidat moins coûteux.
 
-Si un contrôle échoue, le modèle en place reste servi et le pipeline alerte. Ce découplage protège d'un réentraînement automatique sur des données dégradées. Garder aussi un jeu de test de référence figé : un test tiré de la même fenêtre que l'entraînement partage ses défauts.
+Tester chargement du paquet, prétraitement, signature et sorties dans l'image cible ; mesurer latence et mémoire au trafic visé. Associer référence historique et cohorte récente aux labels suffisamment mûrs. L'échec d'une gate conserve la version en place et ouvre une investigation. Le pipeline produit un candidat ; une fin d'entraînement sans erreur ne constitue ni approbation ni preuve que les réplicas servent la bonne version.
 
 ---
 
 Que faut-il enregistrer dans un run de suivi d'expériences pour qu'un score soit comparable et reproductible ? <!--anki:3530323230313931666636393436326239373363626566646335356361653532-->
 ?
+Relier **recette, données, environnement et résultats**, en distinguant entraînement, validation de sélection et test final. Conserver métriques par segment et artefact avec son prétraitement.
 ```python
-with mlflow.start_run(run_name="gbm-fraude"):
-    mlflow.log_params({"max_depth": 6, "seed": 42, "git_sha": sha,
-                       "train_snapshot": "fraude@2026-10-01"})
+# MLflow 3 ; pipeline déjà configuré, dont ses random_state.
+import mlflow
+import mlflow.sklearn
+from mlflow.models import infer_signature
+from sklearn.metrics import recall_score
+
+with mlflow.start_run(run_name="retention-gbm"):
+    mlflow.log_params({"seed": 42, "git_sha": sha,
+                       "train_snapshot": "retention@s042"})
     pipeline.fit(X_train, y_train)
-    mlflow.log_metrics({"auc_pr_valid": auc_pr, "rappel_gros_montants": rappel_gm})
-    mlflow.sklearn.log_model(pipeline, "model", signature=signature)
+    pred = pipeline.predict(X_valid)
+    mlflow.log_metric("rappel_validation", recall_score(y_valid, pred))
+    signature = infer_signature(X_valid, pred)
+    info = mlflow.sklearn.log_model(
+        pipeline, name="model", signature=signature,
+        input_example=X_valid.head(2),
+    )
 ```
-Le run doit relier le score à ce qui l'a produit : **hyperparamètres et graine**, **commit du code**, **identifiant du snapshot** d'entraînement et de validation, **métriques par segment**, et le modèle avec son prétraitement.
-
-`mlflow.autolog()` capture les paramètres et métriques du framework, mais ni la version des données ni les segments métier : il faut les ajouter. Deux runs sans snapshot identifié ne se comparent pas, même avec un code identique.
-
-Archiver aussi l'environnement et le protocole de split. Un artefact modèle rechargeable ne garantit pas que son score soit reproductible si la requête SQL source renvoie désormais d'autres lignes.
+Journaliser une seed ne configure pas les générateurs. La capture automatique dépend de l'intégration et de sa configuration ; elle peut inclure certaines données sans remplacer leur provenance métier. Compléter snapshots, splits, définition du label et dépendances. Utiliser l'URI retournée par la journalisation plutôt que supposer un ancien emplacement de fichier.
 
 ---
 
 À quoi sert la signature d'un modèle enregistré dans MLflow, et que ne vérifie-t-elle pas ? <!--anki:6239663931636263656563383439313061333262393861346664663238353164-->
 ?
-La **signature** décrit les entrées, les sorties et les paramètres d'inférence attendus : noms, types et formes. Elle se calcule avec `infer_signature(X_valid, pipeline.predict(X_valid))`, ou à partir d'un `input_example`. Au chargement en pyfunc ou en service REST, MLflow valide les entrées : une colonne requise absente fait échouer l'appel, un `int` peut devenir `double`, mais une chaîne n'est pas convertie en entier.
+La **signature MLflow** décrit un contrat de noms, types, formes et paramètres ; un exemple d'entrée aide à le documenter et à tester l'inférence. Le chemin de chargement ou de serving et le flavor déterminent les validations effectivement appliquées.
 
-Elle contrôle la forme, pas le sens. Un montant envoyé en centimes au lieu d'euros passe la validation. Piège classique : une colonne entière qui contient des valeurs manquantes devient flottante et ne respecte plus la signature ; la déclarer `double` dès l'entraînement.
+Cela ne démontre ni sens des unités, ni qualité, ni validité de toutes les sorties métier. Tester champs absents, valeurs nulles, catégories inconnues, ordre et types avec le paquet rechargé. L'inférence depuis un seul exemple peut manquer un cas important : une colonne entière devenue flottante à cause de valeurs manquantes mérite un choix de schéma réfléchi, pas un cast aveugle masquant l'erreur.
 
 ---
 
 Comment promouvoir un modèle avec les alias du registre MLflow plutôt qu'avec les stages ? <!--anki:6237353965653432306163353464366462386232306536656232646136313965-->
 ?
-Depuis MLflow 2.9, les **stages** (`Staging`, `Production`, `Archived`) sont dépréciés. Un **alias** est une référence nommée et modifiable vers une version : le service charge `models:/fraude@champion`, et la promotion consiste à déplacer l'alias.
+Un **alias MLflow** est une référence mutable vers une version enregistrée ; les anciens stages sont dépréciés depuis MLflow 2.9. Après validation, une autorité contrôlée peut déplacer cet alias :
 ```python
+from mlflow import MlflowClient
 client = MlflowClient()
-client.set_registered_model_alias("fraude", "champion", 8)
-modele = mlflow.pyfunc.load_model("models:/fraude@champion")
+client.set_registered_model_alias("retention", "champion", "8")
 ```
-Le rollback replace l'alias sur la version 7. Un service qui a chargé le modèle au démarrage garde cependant l'ancienne version jusqu'à son rechargement : prévoir ce rechargement et journaliser la **version résolue**, pas l'alias. Des tags comme `validation_status=approved` consignent les décisions.
-
-Un tag d'approbation n'est pas un contrôle d'accès. Limiter qui peut déplacer l'alias et tester la version chargée par chaque réplica après promotion.
+L'opération modifie une référence, pas tous les processus qui ont déjà chargé un modèle. Résoudre la version, charger ou déployer explicitement puis vérifier les réplicas. Journaliser version et release effectives ; un tag d'approbation n'accorde pas de droits. Sérialiser les promotions concurrentes et conserver une preuve de validation indépendante de l'alias courant.
 
 ---
 
@@ -131,19 +131,21 @@ Critère : la décision dépend-elle d'une information qui change entre deux lot
 
 Pourquoi un modèle anti-fraude qui bloque des transactions prive-t-il son successeur de labels fiables ? <!--anki:6331303431373561386338633430313738336436343962343634396137383666-->
 ?
-Une transaction bloquée ne produit jamais d'issue observable : on ne saura pas si elle aurait donné lieu à un impayé. Seules les transactions acceptées reçoivent un label. C'est le problème des **labels sélectifs** : le modèle en place décide quelles données d'évaluation existeront.
+Quand une décision détermine **quelles issues deviennent observables**, les labels sont sélectifs. Évaluer seulement les transactions acceptées décrit cette population filtrée ; cela ne révèle pas automatiquement le résultat qu'auraient eu les transactions bloquées.
 
-Un successeur entraîné et évalué sur ces seules données apprend une population filtrée, et son rappel sur les cas bloqués reste inconnu. Parades : faire revoir par des enquêteurs un échantillon aléatoire des blocages, conserver scores et décisions avec la version du modèle, et pondérer par la probabilité d'acceptation. Les journaux d'un recommender posent le même problème ([[174-recommandation-ranking|biais d'exposition]]).
+Une revue indépendante peut fournir un autre label ou des indices utiles, sans être nécessairement l'issue contrefactuelle recherchée. Documenter la politique d'observation et les hypothèses d'une collecte ou analyse adaptée. Une pondération exige notamment probabilités connues et recouvrement : si certains cas n'ont aucune chance d'être observés, elle ne crée pas l'information absente. Conserver limites et populations couvertes avant de promouvoir un successeur.
 
 ---
 
 Calcul : un modèle calibré évalue 100 000 transactions. La somme de toutes ses probabilités vaut 1 000 ; il en signale 2 000, de probabilité moyenne 0,35. Quelles précision et quel rappel attendre avant l'arrivée des labels ? <!--anki:6237633638313538633537333463346261373964633536353431323132653364-->
 ?
-Si les probabilités restent calibrées, le nombre attendu de fraudes parmi les signalements est la somme de leurs probabilités : 2 000 × 0,35 = **700**.
-- Précision attendue : 700 / 2 000 = **35 %**.
-- Rappel attendu : 700 / 1 000 = **70 %**, car 1 000 est le nombre attendu de fraudes sur l'ensemble.
-
-Hypothèse : la relation entre variables et fraude n'a pas changé. L'estimation tient sous une dérive des entrées, pas sous une dérive de concept : un nouveau mode de fraude, mal noté, ferait chuter le rappel réel sans changer l'estimation. C'est une alerte précoce, à confirmer avec les labels consolidés.
+Si les probabilités restent fiables **dans les groupes considérés**, leurs sommes donnent des effectifs attendus :
+```text
+fraudes attendues signalées = 2 000 × 0,35 = 700
+précision estimée = 700/2 000 = 35 %
+ratio estimé pour le rappel = 700/1 000 = 70 %
+```
+Le dernier chiffre est un **ratio d'effectifs attendus**, pas une identité générale pour l'espérance du rappel observé. Ces estimations ne remplacent pas les labels. La calibration globale peut masquer des segments mal calibrés et ne survit pas automatiquement à une dérive d'entrées. Vérifier sélection, population et définition du label, puis confirmer sur des cohortes consolidées avec incertitude.
 
 ---
 
@@ -152,6 +154,38 @@ Pourquoi un pipeline de réentraînement doit-il empêcher deux candidats concur
 Deux **runs de promotion** peuvent tous deux comparer leur candidat au même ancien champion, puis remplacer l'alias dans un ordre arbitraire. Le dernier écrit n'est pas nécessairement le meilleur validé.
 
 Sérialiser la promotion ou utiliser une mise à jour conditionnelle sur la version attendue du champion. Si celle-ci a changé, refaire la décision selon le protocole prévu. Conserver candidat, référence, critères et approbation dans un journal. L'alias du registre est un pointeur de déploiement ; sa simplicité ne fournit pas à elle seule un arbitrage entre expériences concurrentes.
+
+---
+
+Comment éviter qu'une rafale d'alertes lance trop de réentraînements simultanés ? <!--anki:3735376337636234366261643436336438666436383539303030636466363666-->
+?
+Un **déclencheur** peut recevoir plusieurs événements pour une même dérive ou fenêtre. Sans regroupement, il produit des entraînements concurrents, consomme le budget et multiplie les candidats difficiles à arbitrer.
+
+Définir une identité logique de demande, une règle de regroupement, une période de stabilisation et une concurrence maximale. Vérifier maturité des données et coût avant lancement. Conserver les signaux regroupés pour l'enquête ; une temporisation ne doit pas cacher un incident critique. La protection du déclenchement complète, sans la remplacer, la sérialisation de la promotion : limiter les entraînements ne décide pas quel candidat sera servi.
+
+---
+
+Pourquoi le calibrateur doit-il être intégré à la recette et à la promotion d'un modèle ? <!--anki:3166353763353636393139323430393162396232366330393366643063363832-->
+?
+Un **calibrateur** appris sur les scores d'un modèle donné ne reste pas automatiquement valide après réentraînement des poids. Les probabilités et les décisions prises à partir d'elles peuvent changer même si le classement s'améliore.
+
+Prévoir données d'ajustement distinctes selon le protocole, versionner modèle et calibrateur ensemble, puis évaluer la combinaison sur un jeu indépendant. Tester aussi le seuil et la capacité de revue résultante. Ne pas ajuster la calibration sur le test final pour réussir la gate. Une promotion doit identifier la chaîne réellement utilisée, pas seulement un modèle principal accompagné d'un fichier « calibrateur courant » mutable.
+
+---
+
+Pourquoi garder une référence historique et une cohorte récente dans la validation d'un réentraînement ? <!--anki:3838303336333435393930633465323138396133616264373736333963373363-->
+?
+La **référence historique** suit des régressions connues ; la **cohorte récente** renseigne sur la population actuelle, si ses labels sont suffisamment mûrs. L'une ne remplace pas l'autre.
+
+Comparer candidat et champion sur les mêmes cas de chaque jeu, avec critères préspécifiés et incertitude. Un bon score historique peut manquer un nouveau régime ; une fenêtre récente seule peut partager un incident de collecte et oublier des situations saisonnières. Versionner composition et règles d'éligibilité. Lorsque la cible évolue, documenter la portée des comparaisons au lieu de présenter toute variation comme une amélioration du modèle à objectif constant.
+
+---
+
+Comment traiter une correction de labels après l'approbation d'un modèle ? <!--anki:3036313832353639623031303437323039663333303933303166366661643731-->
+?
+Une **correction de labels** modifie les preuves qui ont soutenu la décision. Conserver le rapport historique et créer une nouvelle version du dataset corrigé, avec provenance, date et périmètre des changements.
+
+Recalculer les comparaisons nécessaires sur cette version et examiner si la promotion ou le seuil restent justifiés. Ne pas remplacer silencieusement les métriques de l'ancien run : l'audit doit retrouver ce qui était connu au moment de la décision. Si la correction révèle un défaut systématique, revoir collecte, annotation et futurs entraînements. Une nouvelle donnée peut déclencher une investigation sans imposer automatiquement le retrait du modèle.
 
 ---
 
@@ -183,13 +217,13 @@ Mise en situation : une alerte de dérive déclenche un réentraînement automat
 
 Mise en situation : un challenger anti-fraude gagne 3 points de précision en backtest, mais il a été entraîné et évalué uniquement sur les transactions acceptées par le champion. Le déploies-tu ? <!--anki:3063653432316631653734323433623761303564353037653962653835336561-->
 ?
-1. **Reconnaître les labels sélectifs** : le backtest ignore les transactions que le champion a bloquées.
-2. **Évaluer sur un échantillon non filtré** : blocages revus par des enquêteurs, tirés au hasard.
-3. **Scorer en shadow** sur le trafic réel : recouvrement des signalements, volume d'alertes face à la capacité d'enquête.
-4. **Lancer un canary limité** avec des métriques garde-fous : impayés, plaintes clients, file d'enquête ([[112-cicd-modeles|déploiement progressif]]).
-5. **Décider après la fenêtre de maturation** des impayés, sur des cohortes comparables.
+1. **Définir la population cible** et l'issue réellement évaluée : détection d'un indice, impayé observé ou effet d'une décision.
+2. **Identifier les labels manquants par construction**, notamment les cas systématiquement bloqués.
+3. **Étudier une collecte ou un plan d'analyse adapté** avec ses hypothèses ; une revue humaine n'est pas automatiquement l'issue contrefactuelle.
+4. **Utiliser le shadow pour les contrats et volumes**, sans lui attribuer des labels qu'il ne produit pas.
+5. **Décider dans le périmètre étayé**, après contrôle de risques, délais de labels et métriques métier.
 
-**Piège** : comparer deux modèles sur des labels produits par l'un d'eux.
+**Piège** : annoncer un gain généralisable de trois points sur une population filtrée, ou croire qu'une pondération répare une absence totale de recouvrement.
 
 ---
 
@@ -199,6 +233,9 @@ Mise en situation : un challenger anti-fraude gagne 3 points de précision en ba
 - [MLflow — signatures de modèles et validation des entrées](https://mlflow.org/docs/latest/ml/model/signatures/)
 - [Kubeflow Pipelines — cache des exécutions](https://www.kubeflow.org/docs/components/pipelines/user-guides/core-functions/caching/)
 - [Lakkaraju et al., The Selective Labels Problem, KDD 2017](https://pmc.ncbi.nlm.nih.gov/articles/PMC5958915)
+
+- [MLflow — migration vers MLflow 3](https://mlflow.org/docs/latest/ml/mlflow-3/) — `name=` et URI du modèle retournée par la journalisation.
+- [MLflow — API scikit-learn](https://mlflow.org/docs/latest/api_reference/python_api/mlflow.sklearn.html)
 
 ## Connexions
 - [[111-mlops-llmops-fondamentaux|MLOps & LLMOps — Fondamentaux]] — registre, lineage et versionnage appliqués ici au ML classique
@@ -211,4 +248,6 @@ Mise en situation : un challenger anti-fraude gagne 3 points de précision en ba
 - [[173-calibration-incertitude-abstention|Calibration]] — condition de l'estimation de performance sans labels
 - [[174-recommandation-ranking|Recommandation & ranking]] — biais d'exposition, cousin des labels sélectifs
 - [[99-statistiques-decisions-experimentales|Statistiques pour décider]] — gain significatif face au champion
+- [[118-artefacts-registre-releases-ml|Artefacts, registre et releases ML]] — contrats et vérifications de production
+- [[119-contrats-prediction-features-batch|Contrats de prédiction, features et batch]] — contrats et vérifications de production
 - [[00-moc-ai-engineering|MOC AI Engineering]]

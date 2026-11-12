@@ -1,6 +1,6 @@
 # Reproductibilité & variance — Flashcards
 Tags: #flashcards #ai-engineering #mlops #reproductibilite #evals #llm
-<!-- summary: non-déterminisme à température 0, invariance au batch, seed, appel rejouable, tests sur des sorties variables, erreur standard et intervalles de confiance, comparaison appariée, pass@k et pass^k, variance du LLM-as-judge, fine-tuning reproductible, stabilité par tâche répétée. -->
+<!-- summary: non-déterminisme à température 0, invariance au batch, seed, appel rejouable, tests sur des sorties variables, erreur standard et intervalles de confiance, comparaison appariée, pass@k et pass^k, variance du LLM-as-judge, fine-tuning reproductible, stabilité par tâche répétée, sélection des seeds, checkpoint ou artefact d’inférence, changement de dépendance isolé, audit sans replay possible. -->
 
 
 Une température à 0 garantit-elle des sorties identiques ? <!--anki:6354476e2a6372354e28-->
@@ -41,17 +41,17 @@ Distinguer prompt utilisateur identique et **entrée complète du modèle identi
 
 À quoi sert le paramètre seed ? <!--anki:4b30415a706a76365a43-->
 ?
-À **fixer le générateur aléatoire** du sampling pour rejouer le même tirage. vLLM l'accepte par requête ; côté API, c'est au mieux un **« best effort »** (OpenAI l'accompagne d'un `system_fingerprint` qui change quand le backend change). Le seed ne neutralise **ni les écarts numériques ni les changements de version**.
+La **graine** initialise un générateur pseudo-aléatoire dans le périmètre pris en charge par la bibliothèque ou le moteur. Elle aide à répéter certains tirages dans une pile fixée ; elle ne fige ni toutes les opérations ni tout le système.
 
-Utiliser plusieurs graines pour estimer la variabilité, tout en comparant les variantes sur les mêmes cas. Une amélioration observée avec une seule graine favorable ne démontre pas un gain robuste ; conserver aussi versions, paramètres et données.
+Plusieurs générateurs peuvent intervenir : préparation des données, sampler, modèle, workers ou GPU. Documenter ceux contrôlés et les versions utilisées, puis tester la répétabilité annoncée par l'environnement. En comparaison, répéter sur plusieurs graines prévues à l'avance et garder leurs résultats, y compris défavorables. Choisir après coup la meilleure graine revient à sélectionner une expérience, avec un risque de surapprentissage de l'évaluation.
 
 ---
 
 Comment rendre un appel LLM rejouable ? <!--anki:693e60316b3025562574-->
 ?
-Journaliser **tout ce qui le détermine** : identifiant **daté** du modèle, prompt **rendu** (après templating) et sa version, paramètres de sampling, seed, schémas d'outils, **documents injectés**, et la **réponse obtenue**. Les [[91-langfuse-observabilite|traces]] servent de journal pour rejouer et déboguer.
+Conserver, selon les droits et la rétention autorisés, **l'entrée effective, les versions et le résultat observé** : prompt rendu, contexte, paramètres, contrats d'outils et observations externes. Des références protégées peuvent remplacer certaines copies sensibles.
 
-Distinguer **rejouer la même entrée** et obtenir exactement la même sortie. Une API peut évoluer, un outil peut lire des données différentes et certains calculs rester non déterministes. Pour isoler le modèle, figer les observations d'outils ; pour tester le système réel, conserver leurs versions et accepter une comparaison statistique plutôt qu'une identité octet par octet.
+Distinguer replay d'observations enregistrées et nouvel appel aux services réels. Le premier isole l'orchestration ; le second peut rencontrer données, outils ou backend différents. Une référence inaccessible ou un modèle retiré empêche parfois la régénération. Pour une preuve historique, le résultat enregistré et son contexte restent donc distincts d'une promesse de recalcul identique. Tester régulièrement l'accès aux pièces nécessaires au diagnostic.
 
 ---
 
@@ -154,6 +154,38 @@ Répéter chaque tâche avec état initial contrôlé, puis rapporter succès mo
 
 ---
 
+Pourquoi conserver les graines défavorables dans une comparaison d'entraînements ? <!--anki:6664346537356230386264333462633938613036663063633866326266373665-->
+?
+Sélectionner seulement la **meilleure graine** transforme une répétition destinée à mesurer la variance en recherche de candidat. Le résultat rapporté devient favorablement sélectionné.
+
+Définir avant l'essai nombre de runs, métrique et règle d'agrégation ; conserver scores et échecs de chaque run. Si une sélection est assumée, compter son coût et confirmer le candidat sur des données non utilisées pour la choisir. Une variance importante peut indiquer un entraînement instable ou un jeu trop petit. La dispersion des résultats est une information opérationnelle : elle influence le risque de la prochaine exécution automatique, pas seulement la qualité d'une publication.
+
+---
+
+À ne pas confondre : checkpoint d'entraînement et modèle exporté pour l'inférence ? <!--anki:3063626564653532306165333462376562656131386565653235303237353961-->
+?
+Un **checkpoint d'entraînement** peut inclure poids, optimiseur, scheduler, états aléatoires et position de lecture nécessaires à la reprise. Un **artefact d'inférence** contient ce que le service doit charger pour prédire, avec son contrat et ses dépendances.
+
+Exporter les seuls poids n'assure pas une reprise fidèle du calcul ; garder tout l'état d'entraînement n'assure pas un paquet léger ou sûr pour le serving. Définir deux contrats et politiques de rétention, puis tester reprise et chargement séparément. Le format exact dépend du framework ; un fichier nommé `checkpoint` ne prouve pas à lui seul quels états il contient.
+
+---
+
+Pourquoi tester séparément une nouvelle dépendance et de nouveaux poids ? <!--anki:3831393435343162333339393463313962636361376334616639656532313664-->
+?
+Changer simultanément **bibliothèques et modèle** empêche d'attribuer facilement un écart. Une différence peut venir de la sérialisation, d'un calcul numérique, d'un prétraitement ou de l'apprentissage.
+
+Comparer, lorsque les combinaisons sont compatibles, ancien modèle/ancienne pile, ancien modèle/nouvelle pile et nouveau modèle/nouvelle pile sur les mêmes cas. Mesurer types, valeurs, décisions et coûts avec des tolérances explicites. Une pile ancienne peut ne pas charger le nouveau format : documenter cette limite plutôt que fabriquer un résultat comparable. Ce protocole ne supprime pas toute interaction, mais réduit l'enquête et donne un chemin de migration plus facile à valider.
+
+---
+
+Comment expliquer une décision historique si le modèle fournisseur utilisé a été retiré ? <!--anki:6365646334323839653266313462613362353134396131373965343638393331-->
+?
+Distinguer **preuve de ce qui s'est passé** et **capacité à le régénérer**. Sans accès au modèle d'origine, une nouvelle exécution identique peut être impossible, même avec prompt et paramètres conservés.
+
+S'appuyer sur résultat enregistré, contexte autorisé, référence fournisseur, version applicative et preuves d'actions externes, selon la politique de rétention. Une autre version peut servir à analyser le comportement, mais son résultat ne remplace pas celui observé historiquement. Prévoir cette limite avant le choix du service et tester la récupération des pièces d'audit. Archiver des données sensibles sans finalité ni contrôle n'est pas une solution universelle.
+
+---
+
 ## Mises en situation
 
 Mise en situation : un client exige par contrat que « le même document donne toujours la même extraction ». Que t'engages-tu à faire, et sur quoi refuses-tu de t'engager ? <!--anki:417a783d2b7d663c296b-->
@@ -184,6 +216,9 @@ Mise en situation : ton équipe teste un agent de correction de bugs. Il réussi
 
 - [NIST — test de McNemar pour observations binaires appariées](https://www.itl.nist.gov/div898/software/dataplot/refman1/auxillar/mcnemar.htm)
 
+- [PyTorch — reproductibilité et sources d’aléa](https://docs.pytorch.org/docs/stable/notes/randomness.html)
+- [scikit-learn — persistance et compatibilité des environnements](https://scikit-learn.org/stable/model_persistence.html)
+
 ## Connexions
 - [[65-probabilites-sampling|Probabilités & sampling]] — la source de la variabilité
 - [[111-mlops-llmops-fondamentaux|MLOps fondamentaux]] — versioning et lineage
@@ -205,4 +240,5 @@ Mise en situation : ton équipe teste un agent de correction de bugs. Il réussi
 - [[98-debogage-agents|Débogage des agents]] — trouver la cause d'un échec dans une trace
 - [[165-computer-use-agents-navigateur|Computer use & agents navigateur]] — agents qui utilisent des interfaces
 - [[55-rl-agentique|RL agentique]] — entraîner un modèle sur des tâches d'agent
+- [[118-artefacts-registre-releases-ml|Artefacts, registre et releases ML]] — contrats et vérifications de production
 - [[00-moc-ai-engineering|MOC AI Engineering]]

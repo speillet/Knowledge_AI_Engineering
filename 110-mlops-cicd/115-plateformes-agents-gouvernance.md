@@ -1,7 +1,7 @@
 # Plateformes d'agents — Architecture & gouvernance — Flashcards
 Tags: #flashcards #ai-engineering #agents #platform #gouvernance #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: plateforme interne (paved road), plan de contrôle et plan d'exécution, architecture de référence, séparation cerveau, mains et session, exécution durable, isolation multi-tenant, échange de jetons pour l'agent délégué, jetons hors du contexte, standards d'identité, moteur de politiques, human-in-the-loop, registre et cycle de vie, Top 10 OWASP agentique, rayon d'impact et kill switch, audit, SLO, evals continues, coûts, AI Act, lock-in, critères de choix, révocation d'une délégation active. -->
+<!-- summary: plateforme interne (paved road), plan de contrôle et plan d'exécution, architecture de référence, séparation cerveau, mains et session, exécution durable, isolation multi-tenant, échange de jetons pour l'agent délégué, jetons hors du contexte, standards d'identité, moteur de politiques, human-in-the-loop, registre et cycle de vie, Top 10 OWASP agentique, rayon d'impact et kill switch, audit, SLO, evals continues, coûts, AI Act, lock-in, critères de choix, révocation d'une délégation active, politiques versionnées, retrait vérifié, responsabilités métier et exploitation, dérogations temporaires. -->
 
 
 Pourquoi construire une plateforme d'agents interne plutôt que laisser chaque équipe se débrouiller ? <!--anki:736971307067364a5850-->
@@ -61,9 +61,9 @@ Cette séparation permet de recréer un processus de calcul à partir d'un histo
 
 Que gagne-t-on à séparer le cerveau, les mains et la session d'un agent ? <!--anki:422e7d317c6e3e4b662d-->
 ?
-- **Reprise** : un harness qui plante est relancé et reconstruit l'état depuis le journal ; une sandbox qui plante devient une simple erreur d'outil
-- **Sécurité** : les jetons ne sont **jamais accessibles depuis la sandbox** où tourne le code généré
-- **Latence** : plus de conteneur démarré à chaque session. Anthropic mesure un TTFT p50 réduit d'environ **60 %** et un p95 de plus de **90 %**
+Séparer **calcul, environnement d'outils et historique durable** permet d'allouer et restaurer ces composants selon des cycles différents. Un worker peut repartir d'un état conservé ; une sandbox peut être renouvelée sans perdre tout le dossier.
+
+Les bénéfices de latence et de coût dépendent de ce qui est effectivement préchauffé, transféré ou reconstruit. La séparation peut faciliter l'isolement des secrets, mais leur inaccessibilité n'est pas automatique : vérifier montages, proxy et droits des outils. Une panne après effet externe exige toujours idempotence ou réconciliation. Les gains mesurés par un fournisseur ne constituent pas une borne applicable à toute architecture qui reprend ces noms.
 
 ---
 
@@ -90,9 +90,9 @@ Comment isoler les clients et les équipes sur une plateforme partagée ? <!--an
 
 Comment un agent délégué obtient-il ses droits sans compte de service ? <!--anki:7859473c4b2c3479314d-->
 ?
-Par **échange de jetons** OAuth (RFC 8693) : le jeton de l'utilisateur est échangé contre un jeton **limité à ses droits**, qui porte **aussi l'identité de l'agent**. L'audit sait alors **qui a demandé** et **qui a agi**.
+Un mécanisme d'**échange de jetons**, comme OAuth Token Exchange, peut permettre d'obtenir un jeton pour une audience et un périmètre précis à partir d'une identité existante. La représentation du sujet et de l'acteur dépend du profil et du serveur d'autorisation.
 
-Un agent **autonome** a au contraire son propre compte (ex. les « autopilots » de Microsoft, avec un compte d'utilisateur Entra) et un humain propriétaire ([[38-plateformes-agents|délégué ou autonome]]).
+Le protocole n'accorde pas automatiquement tous les droits de l'utilisateur, ni une réduction correcte par simple présence de deux identités. Définir audience, scopes, durée et règles de délégation ; contrôler ensuite chaque action et conserver le lien demandeur/agent dans l'audit. Un agent autonome utilise une identité de service encadrée, avec un responsable, sans mandat utilisateur implicite.
 
 ---
 
@@ -142,12 +142,9 @@ Sans `permit` applicable, Cedar refuse ; un `forbid` applicable prime sur les au
 
 Comment organiser le human-in-the-loop à grande échelle ? <!--anki:65425e237c397e475a58-->
 ?
-On classe les actions par **niveau de risque** :
-- **Lecture** : automatique
-- **Écriture réversible** : automatique, avec audit
-- **Action irréversible, financière ou communication externe** : **approbation humaine**
+Classer les actions selon **conséquences, données et réversibilité réelle**, puis choisir automatisation, contrôle déterministe et approbation. Une lecture de secret peut être sensible ; une écriture réversible peut déjà avoir divulgué une information.
 
-L'approbation est **asynchrone** (notification, délai d'expiration) et montre **exactement ce qui va se passer** (diff, montant, destinataire). Trop d'approbations produit de la **fatigue** et des validations à l'aveugle, un risque classé par l'OWASP (confiance humain-agent abusée).
+Pour une approbation, montrer arguments et destination exacts, identité, portée et expiration. Lier l'accord à la proposition versionnée puis revérifier droits et préconditions avant l'effet. Mesurer charge et erreurs de revue : multiplier les demandes peut réduire l'attention. Certaines actions ne deviennent pas acceptables par un clic humain ; les interdictions et limites métier restent appliquées par le système, indépendamment du choix du modèle.
 
 ---
 
@@ -205,11 +202,9 @@ Voir [[102-menaces-agents|menaces & incidents]].
 
 Comment limiter le rayon d'impact d'un agent qui déraille ? <!--anki:482d267241512f7a7832-->
 ?
-- **Plafonds par run et par jour** : tokens, coût, nombre d'étapes, nombre d'appels d'outils
-- **Quotas par outil** et droits minimaux
-- **Détection d'anomalies** : boucles, pics d'appels, comportements inhabituels
-- **Coupe-circuits** entre agents, contre les défaillances en cascade
-- **Kill switch** : désactiver un agent, révoquer son identité ou bloquer un outil **à la gateway**, immédiatement et sans redéployer
+Limiter **droits, destinations et travail admis**, avec plafonds d'appels, durée, coût et concurrence. Un outil étroit et une politique externe au modèle bornent les actions même si les instructions sont détournées.
+
+Prévoir l'arrêt de nouvelles demandes, la révocation adaptée des credentials et le blocage d'une route ou d'un outil. Un kill switch ne retire pas automatiquement un message envoyé ni une opération déjà acceptée ailleurs. Tester délais de propagation, tâches en vol et réconciliation après arrêt. Les compteurs et anomalies aident au déclenchement ; la réduction du rayon d'impact doit reposer aussi sur les permissions effectives et les frontières techniques.
 
 ---
 
@@ -273,12 +268,9 @@ La qualification dépend de la **finalité du système et du rôle de l'organisa
 
 Comment limiter le verrouillage par un fournisseur ? <!--anki:754262562e752d547735-->
 ?
-Le cas d'école : l'**Agent Builder** d'OpenAI, lancé en octobre 2025, est déprécié en juin 2026 et **ferme le 30 novembre 2026**. Les parades :
-- **Logique d'agent en code**, versionnée dans Git, plutôt que dans un builder propriétaire
-- **Standards ouverts** : outils en MCP, agents exposés en A2A, traces en OpenTelemetry
-- **Modèles derrière une gateway** ([[81-litellm-api-layer|LiteLLM]])
-- **Données exportables** : mémoire, traces, datasets d'evals
-- **Coût de sortie** évalué dès le choix de la plateforme
+Identifier dès le choix d'une plateforme **ce qui coûte à déplacer** : logique, état, politiques, événements, données, observabilité et comportement des outils. Un protocole ouvert facilite une interface sans rendre portables tous les checkpoints ou formats internes.
+
+Versionner les contrats et garder une voie d'export documentée. Faire un essai sur un dossier représentatif : reconstruire son état utile et reprendre le parcours sur une autre implémentation. Mesurer travail, données perdues et revalidation nécessaire. Prévoir les dépréciations et la rétention des preuves. Une gateway seule n'efface pas les différences de modèles, d'authentification ou de fonctions propres à un service.
 
 ---
 
@@ -294,9 +286,9 @@ Quels critères pour choisir sa plateforme d'agents ? <!--anki:7a642525262b4e577
 
 Quelle architecture de plateforme d'agents est la plus fréquente ? <!--anki:7a6664363e28693c4c29-->
 ?
-Une architecture **hybride** : services managés **modulaires** pour le runtime et les sandboxes, plan de contrôle (registre, politiques, observabilité) aligné sur des **standards ouverts** (MCP, A2A, OpenTelemetry). On profite du managé là où il fait gagner du temps, sans y enfermer ce qui coûte cher à migrer.
+Sans **population et mesure de référence**, on ne peut pas établir ici une architecture la plus fréquente. Une combinaison de services managés et de contrôles internes constitue une option à évaluer, pas une statistique d'adoption.
 
-Cette combinaison est un choix d'architecture, pas une obligation. Décrire les contrats exportables : événements, identité, état et définitions d'outils, puis tester une sortie du service managé. Employer un protocole ouvert facilite certaines intégrations mais ne rend pas automatiquement portables les checkpoints, politiques ou fonctions spécifiques du fournisseur.
+On peut confier calcul ou sandboxes à un service tout en gardant identité, politiques et métadonnées sous des contrats maîtrisés. Tester échanges d'événements, export d'état, reprise et retrait avant de considérer cette combinaison comme portable. Comparer au besoin réel : autonomie des équipes, contraintes de données, capacité opérationnelle et coût de sortie. La popularité supposée n'est ni une preuve de compatibilité ni un critère suffisant de choix.
 
 ---
 
@@ -308,17 +300,49 @@ Associer chaque effet à une identité et un mandat, utiliser des credentials à
 
 ---
 
+Pourquoi associer la version de politique aux preuves d'une release agentique ? <!--anki:3064616336353863643238663463323439656438646134643839386565396461-->
+?
+Une **politique d'autorisation** ou un plafond peut changer le comportement sans modifier modèle ni prompt. Une évaluation faite avec des outils libres ne valide pas automatiquement la même tâche avec approbation ou refus supplémentaires.
+
+Associer politique, identité d'exécution et environnement aux rapports de test. Vérifier les actions permises comme interdites, puis mesurer leur effet sur réussite et délai. Une approbation d'ancienne version peut devoir être renouvelée selon le changement. La politique reste vérifiée au moment de l'action ; la tracer n'autorise pas à conserver indéfiniment des droits qui ont été révoqués depuis l'évaluation.
+
+---
+
+Comment vérifier qu'un agent retiré ne peut plus accepter de travail ? <!--anki:3662353336306432303361333466643038663431383833386461393832656233-->
+?
+Le **retrait** comprend admission, identités, tâches en cours et ressources dérivées. Désactiver seulement sa page dans un catalogue peut laisser un endpoint, un cron ou une file active.
+
+Inventorier ces chemins, arrêter les nouvelles soumissions, appliquer les révocations et décider du sort des runs existants. Tester un appel direct et une reprise avec les anciens identifiants. Vérifier effets externes encore incertains, puis conservation ou effacement des données selon leur contrat. Garder les preuves nécessaires à l'audit sans garder les privilèges. La fin administrative du projet n'est pas la preuve technique de son arrêt effectif.
+
+---
+
+Pourquoi distinguer propriétaire métier et responsable d'exploitation d'un système IA ? <!--anki:6336316664393635303835303435633038346437386638363966303863376666-->
+?
+Le **propriétaire métier** fixe l'objectif et les conséquences acceptables ; le **responsable d'exploitation** maintient le service et coordonne la réponse opérationnelle. Les mêmes personnes peuvent cumuler les rôles, mais leurs obligations doivent rester explicites.
+
+Définir qui décide d'une dégradation, autorise une promotion, finance la fiabilité et répond à une alerte de qualité. Prévoir un remplaçant et l'accès aux preuves nécessaires. Un nom dans le registre ne suffit pas si personne n'a capacité d'arrêter l'effet dangereux ou d'arbitrer le retour au service. Tester cette organisation lors d'un exercice d'incident représentatif.
+
+---
+
+Comment encadrer une exception temporaire aux standards de la plateforme IA ? <!--anki:3539363066646263363437393432623139636438656564663530313131613430-->
+?
+Une **exception** doit identifier besoin, périmètre, propriétaire, contrôles compensatoires, échéance et condition de sortie. Elle permet une dérogation visible plutôt qu'un service parallèle oublié.
+
+Relier la décision à la release et tester les garanties réellement conservées : droits, données, traces et reprise. À expiration, réexaminer explicitement ou retirer l'usage selon la politique ; ne pas transformer le silence en prolongation. Mesurer les exceptions récurrentes : elles peuvent révéler un socle inadapté et motiver une évolution commune. L'automatisation peut signaler ou appliquer les limites prévues, sans inventer une autorisation que les responsables n'ont pas donnée.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ta direction veut « 50 agents en production d'ici un an ». Tu en as trois aujourd'hui, chacun construit à sa façon. Que proposes-tu ? <!--anki:48635f77536c646d5f48-->
 ?
-1. **Poser un chemin balisé** avant de multiplier : runtime, identité, gateway d'outils, traces et evals fournis par défaut
-2. **Registre et cycle de vie** : propriétaire, objectif, droits, niveau de risque, recertification
-3. **Contrôles par défaut** : moindre privilège, politiques hors du modèle, approbation des actions à risque
-4. **Mesurer la valeur agent par agent** : coût par tâche réussie, taux d'escalade, gain réel
-5. **Rappeler le risque** : plus de 40 % des projets agentiques sont annulés, faute de valeur claire ou de contrôle des risques
+1. **Clarifier les résultats métier** attendus et mesurer la baseline, au-delà du nombre d'agents.
+2. **Établir un chemin balisé** pour identité, outils, exécution, traces et évaluations, à partir des besoins déjà observés.
+3. **Nommer les responsables** du comportement, de l'exploitation et des décisions de risque.
+4. **Livrer progressivement** avec coûts par tâche, contrôles d'effets et reprise testée.
+5. **Réexaminer la valeur** avant chaque extension ; une prévision sectorielle ne remplace pas les preuves du projet.
 
-**Piège** : viser un nombre d'agents plutôt que des processus effectivement automatisés.
+**Piège** : présenter la prévision Gartner d'annulations d'ici 2027 comme un taux déjà observé ou une probabilité attachée à chaque agent, puis choisir une plateforme sur ce seul chiffre.
 
 ---
 
@@ -354,6 +378,9 @@ Mise en situation : le fournisseur de ta plateforme d'agents annonce l'arrêt d'
 
 - [AWS — composants de Bedrock AgentCore](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/what-is-bedrock-agentcore.html)
 - [NIST — AI Risk Management Framework](https://www.nist.gov/itl/ai-risk-management-framework)
+
+- [RFC 8693 — OAuth 2.0 Token Exchange](https://www.rfc-editor.org/rfc/rfc8693.html) — sujet, acteur et politique d’émission des jetons.
+- [Gartner, 25 juin 2025 — prévision d’annulations pour fin 2027](https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027) — prévision, pas taux déjà observé.
 
 ## Connexions
 - [[38-plateformes-agents|Plateformes d'agents — Fondamentaux]] — les briques et les offres

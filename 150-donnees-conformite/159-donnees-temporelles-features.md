@@ -186,4 +186,5 @@ Mise en situation : un modèle de churn semble s'améliorer fortement sur les se
 - [[150-011-sql-transformations-analytiques|SQL pour les pipelines et datasets IA]] — empêcher les jointures qui révèlent le futur
 - [[150-014-streaming-traitements-evenements|Streaming & traitements d’événements]] — respecter temps événement, disponibilité et retards
 - [[117-pipelines-entrainement-continu|Pipelines d'entraînement]] — maturité des labels avant réentraînement
+- [[119-contrats-prediction-features-batch|Contrats de prédiction, features et batch]] — contrats et vérifications de production
 - [[00-moc-ai-engineering|MOC AI Engineering]]
