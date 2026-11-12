@@ -1,6 +1,6 @@
 # AI Act (règlement européen sur l'IA) — Flashcards
 Tags: #flashcards #ai-engineering #ai-act #conformite #reglementation
-Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+Vérifié le : 25 septembre 2026 — date globale conservée ; revue ciblée du 13 novembre 2026 détaillée dans les Sources.
 <!-- summary: approche par les risques, pratiques interdites, haut risque et obligations, fournisseur ou déployeur, transparence, modèles à usage général, calendrier, sanctions, plan d'action, limites d'une validation humaine pour la qualification. -->
 
 
@@ -61,29 +61,32 @@ Attention : **modifier substantiellement** un système ou l'utiliser pour une fi
 
 Quelles obligations de transparence pour les applications LLM courantes ? <!--anki:4a2a496d2b5769366f51-->
 ?
-L'article 50 distingue les **rôles et usages** : le fournisseur d'un chatbot doit permettre d'informer l'utilisateur de l'interaction avec une IA, sauf évidence ; les fournisseurs de génération synthétique sont concernés par le marquage détectable par machine.
+L'**article 50** distingue les rôles : information sur l'interaction avec une IA pour certains systèmes, marquage détectable par machine pour certains fournisseurs de génération synthétique, et divulgation de certains deepfakes ou textes d'information publique par les déployeurs.
 
-Les déployeurs doivent signaler notamment certains deepfakes et textes publiés pour informer le public. Il existe des exceptions et aménagements, par exemple pour une relecture humaine assortie d'une responsabilité éditoriale dans certains cas. Les règles s'appliquent depuis le 2 août 2026, avec dispositions transitoires à vérifier pour les systèmes existants ([[144-ux-ia-human-in-the-loop|UX]]).
+Les exceptions dépendent de la disposition et de l'usage ; une relecture humaine n'exonère pas universellement tous les contenus. L'application générale débute au **2 août 2026**. L'article 111(4) accorde jusqu'au **2 décembre 2026** pour respecter le marquage de l'article 50(2) aux systèmes déjà mis sur le marché avant le 2 août 2026. Ce report ciblé ne suspend pas toutes les obligations de transparence ni celles du RGPD.
 
 ---
 
 Quelles obligations pour les modèles d'IA à usage général (GPAI) ? <!--anki:465e51482b414f48404f-->
 ?
-Applicables depuis le **2 août 2025** aux **fournisseurs de modèles** : **documentation technique**, informations pour les intégrateurs en aval, **politique de respect du droit d'auteur** (dont les opt-out de fouille de textes), **résumé public** des données d'entraînement. Les modèles à **risque systémique** (présumé au-delà de **10²⁵ FLOPs** d'entraînement) doivent en plus : **évaluations** et tests adversariaux, gestion des risques, **signalement des incidents graves**, cybersécurité. Un **code de bonnes pratiques** sert de référence pour démontrer la conformité.
+Les **fournisseurs GPAI** sont concernés par documentation technique, informations aux intégrateurs, politique de droit d'auteur et résumé public des données d'entraînement, selon les obligations et exceptions applicables.
+
+L'application débute au **2 août 2025**, mais les modèles déjà mis sur le marché avant cette date disposent d'une transition jusqu'au **2 août 2027** selon l'article 111(3). Ne pas confondre date générale et échéance de chaque modèle.
+
+Le **risque systémique**, notamment présumé au-delà de 10²⁵ FLOPs d'entraînement, ajoute évaluations, gestion des risques, signalement d'incidents graves et cybersécurité. Identifier rôle, date et catégorie ; le code de bonnes pratiques aide à démontrer la conformité sans remplacer le règlement.
 
 ---
 
 Quel calendrier d'application de l'AI Act retenir au 6 octobre 2026 ? <!--anki:4c30777735412e43217c-->
 ?
-Calendrier vérifié au **6 octobre 2026**, tenant compte de l'AI Omnibus entré en vigueur le 27 juillet 2026 :
-
-- **1er août 2024** : entrée en vigueur du règlement initial.
+Calendrier **recontrôlé le 13 novembre 2026**, règlement (UE) 2026/1744 inclus :
 - **2 février 2025** : premières interdictions et maîtrise de l'IA.
-- **2 août 2025** : gouvernance et premières obligations GPAI, avec transitions selon les modèles.
-- **2 août 2026** : application générale, notamment transparence, sous réserve des dispositions transitoires.
-- **2 décembre 2027** : règles haut risque de l'annexe III ; **2 août 2028** pour les systèmes liés aux produits réglementés.
+- **2 août 2025** : gouvernance et obligations GPAI, selon transitions.
+- **2 août 2026** : application générale, dont transparence, sous réserves.
+- **2 décembre 2026** : nouvelles interdictions désignées à l'article 113(a), et fin de la transition de marquage de l'article 50(2) pour les systèmes antérieurs au 2 août 2026.
+- **2 décembre 2027** : sections 1 à 3 du chapitre III pour l'annexe III ; **2 août 2028** pour l'annexe I, hors article 6(5).
 
-Vérifier la disposition applicable au rôle, à l'usage et à la date de mise sur le marché.
+Vérifier disposition, rôle et date de mise sur le marché.
 
 ---
 
@@ -172,6 +175,12 @@ Revue ciblée du 6 octobre 2026 : calendrier, qualification du haut risque et ob
 - [Commission européenne — qualification du haut risque, article 6](https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-6) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
 
 - [Commission européenne — pratiques interdites, article 5](https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-5) — vérification ciblée du 12 novembre 2026, sans renouvellement de la date globale de la fiche.
+
+Revue ciblée du 13 novembre 2026 : affirmations précisées dans cette passe ; les autres contenus ne sont pas intégralement revérifiés.
+
+- [EUR-Lex — règlement modificatif (UE) 2026/1744](https://eur-lex.europa.eu/eli/reg/2026/1744/oj/eng) — texte normatif des amendements et calendrier.
+- [Commission européenne — article 111 amendé](https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-111) — transitions GPAI et marquage des systèmes existants.
+- [Commission européenne — article 113 amendé](https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-113) — dates d’application par dispositions.
 
 ## Connexions
 - [[154-rgpd-llm|RGPD appliqué aux LLM]] — le cadre de protection des données

@@ -1,14 +1,16 @@
 # Sécurité LLM & guardrails — Flashcards
 Tags: #flashcards #ai-engineering #securite #guardrails #llm
-Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: OWASP Top 10 LLM, injection directe ou indirecte, « lethal trifecta », exfiltration, excessive agency, guardrails (Llama Guard, NeMo Guardrails), red teaming, faux positifs des détecteurs d'injection. -->
+Vérifié le : 25 septembre 2026 — date globale conservée ; revue ciblée du 13 novembre 2026 détaillée dans les Sources.
+<!-- summary: OWASP Top 10 LLM 2026, exposition du contexte caché et changement des identifiants, injection directe ou indirecte, « lethal trifecta », exfiltration, excessive agency, guardrails (Llama Guard, NeMo Guardrails), red teaming, faux positifs des détecteurs d'injection. -->
 
 
 Qu'est-ce que l'OWASP Top 10 pour les applications LLM ? <!--anki:632c333a387a5244477d-->
 ?
-La liste de référence des **risques de sécurité propres aux LLM** : prompt injection, fuite de données sensibles, supply chain, empoisonnement de données, mauvaise gestion des sorties, **excessive agency**, fuite du system prompt, faiblesses des embeddings, désinformation, consommation non bornée.
+Une **grille de risques** pour les applications LLM. L'édition **2026** couvre injection, divulgation sensible, autonomie excessive, chaîne d'approvisionnement, empoisonnement, consommation non bornée, désinformation, exposition du contexte caché, vulnérabilités des embeddings et traitement incorrect des sorties.
 
-C'est une **grille de revue**, pas un certificat de sécurité ni un classement adapté automatiquement à chaque produit. Pour chaque risque, identifier l'entrée contrôlée par un attaquant, l'actif exposé et un contrôle testable. Une application de résumé sans outils n'a pas la même surface d'attaque qu'un agent autorisé à modifier des comptes.
+Les numéros changent entre éditions : **Excessive Agency est LLM03:2026**, contre LLM06:2025 ; **Hidden Context Exposure est LLM08:2026**, au-delà du seul system prompt. Citer l'édition avec l'identifiant et distinguer le référentiel agentique ASI.
+
+Ce n'est ni un certificat ni un classement adapté à chaque produit. Relier chaque risque pertinent à une entrée contrôlable, un actif, un contrôle et un test représentatif du système réel.
 
 ---
 
@@ -162,6 +164,11 @@ Mise en situation : un utilisateur publie sur un forum le system prompt complet 
 
 - [OWASP — Top 10 des risques des applications LLM](https://genai.owasp.org/llm-top-10/)
 - [MCP — bonnes pratiques de sécurité, édition 2026-07-28](https://modelcontextprotocol.io/docs/2026-07-28/tutorials/security/security_best_practices)
+
+Revue ciblée du 13 novembre 2026 : affirmations précisées dans cette passe ; les autres contenus ne sont pas intégralement revérifiés.
+
+- [OWASP — Top 10 LLM, édition 2026](https://genai.owasp.org/resource/owasp-genai-llm-top-10-2026/) — PDF officiel consulté ; l’index historique `/llm-top-10/` affiche encore l’édition 2025.
+- [OWASP — PDF 2026](https://genai.owasp.org/download/56857/) — numéros, libellés et changements de périmètre.
 
 ## Connexions
 - [[22-rag-avance|RAG avancé]] — injection via documents, ACL

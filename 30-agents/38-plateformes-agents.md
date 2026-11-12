@@ -1,6 +1,6 @@
 # Plateformes d'agents — Flashcards
 Tags: #flashcards #ai-engineering #agents #platform #llm
-Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+Vérifié le : 25 septembre 2026 — date globale conservée ; revue ciblée du 13 novembre 2026 détaillée dans les Sources.
 <!-- summary: différence avec un framework, briques, niveaux d'abstraction (API, runtime, harness managé), offres cloud et des fournisseurs de modèles, open source, runtime et double texting, sandbox et services de sandbox, gateway d'outils, registre, identité, agent délégué ou autonome, mémoire, observabilité, evals, protocoles (MCP, A2A), build ou buy. La suite, niveau senior, est la fiche 115 de la section 110, quotas de travail et équité entre tenants. -->
 
 
@@ -58,8 +58,10 @@ Les trois clouds couvrent les mêmes briques : runtime, mémoire, gateway d'outi
 
 Au-delà de leurs SDK, quelles offres d'agents proposent OpenAI et Anthropic ? <!--anki:4824477c257e78733d3a-->
 ?
-- **OpenAI** : **Agents SDK** pour le code, **Frontier** (février 2026) pour gérer des agents en entreprise, y compris ceux d'autres éditeurs, et les **Workspace Agents** de ChatGPT pour les non-développeurs ; le builder visuel **Agent Builder** est en fin de vie ([[115-plateformes-agents-gouvernance|lock-in]])
-- **Anthropic** : **Claude Agent SDK** pour le code, **Claude Managed Agents** (bêta depuis avril 2026) : un harness hébergé autour de 4 concepts, **agent**, **environment** (sandbox cloud ou auto-hébergée), **session** et **events**
+- **OpenAI** : Agents SDK, ChatGPT Workspace Agents et **OpenClaw Enterprise**, plan de contrôle open source encore en **pilote**. Agent Builder est déprécié depuis le 3 juin 2026, avec fermeture annoncée le **30 novembre 2026** ; l'export demande reconfiguration et validation.
+- **Anthropic** : Claude Agent SDK et Managed Agents ; le service hébergé reste en bêta, avec agent, environnement, session et événements.
+
+Distinguer **sandbox locale et service entièrement auto-hébergé** : ce dernier est accessible sur demande et modifie stockage et exploitation. Aucun de ces noms ne garantit que l'inférence soit locale ; vérifier le fournisseur de modèle effectivement appelé et les contrats applicables.
 
 ---
 
@@ -139,20 +141,17 @@ Exemples : AgentCore Gateway, Agent Gateway de Google, agentgateway en open sour
 
 Pourquoi tenir un registre centralisé des outils d'agents ? <!--anki:6f2a595b353e4852725a-->
 ?
-Pour **publier une fois** les agents, serveurs MCP, outils et skills de l'entreprise, avec un **circuit de revue et d'approbation**. Il sert à :
-- **Découvrir** ce qui existe (recherche sémantique), plutôt que de réintégrer les mêmes API dans chaque équipe
-- **Contrôler** qui peut utiliser quoi, et **épingler les versions** approuvées
-- Tenir l'**inventaire** : propriétaire, usage, niveau de risque
+Un **registre** facilite découverte, inventaire et gouvernance des agents ou outils : propriétaire, usage, contrat, version, risques et décision d'approbation. La publication d'une entrée n'accorde pas automatiquement de droits d'exécution.
 
-Exemples : AgentCore Registry, Agent Registry de Google, registre d'Agent 365, registre officiel MCP pour les serveurs publics.
+Exemples : **AWS Agent Registry**, Agent Registry de Google, registre d'Agent 365 ; le registre public MCP cible les serveurs MCP et ne remplace pas une revue interne. Ces périmètres ne sont pas identiques. Vérifier contenu réellement découvert, synchronisation, consommateurs et retrait. Épingler une référence approuvée, puis appliquer l'autorisation à l'appel. Un agent absent de l'inventaire ou une entrée obsolète doit être détectable par les contrôles d'exploitation.
 
 ---
 
 Pourquoi l'identité est-elle un sujet clé pour les agents ? <!--anki:627564286c41662c6a68-->
 ?
-Un agent **agit dans des systèmes réels** : il faut savoir **qui il est** et **au nom de qui** il agit, pour lui donner les bons droits et pour que l'audit sache qui a fait quoi.
+Un agent agit sur des **ressources réelles** : identifier l'acteur, l'utilisateur éventuellement représenté et le mandat permet de contrôler chaque opération et d'en conserver la preuve.
 
-Les plateformes donnent une identité à chaque agent (Entra Agent ID, AgentCore Identity, Agent Identity) et gardent les jetons **hors du code et du contexte de l'agent**. C'est le principe du **moindre privilège** ([[101-securite-llm-guardrails|sécurité LLM]]).
+Des produits comme Entra Agent ID ou AgentCore Identity fournissent des mécanismes d'identité et d'accès ; leur présence ne garantit pas que les secrets restent hors du contexte ou que les permissions soient minimales. Configurer coffre ou proxy, audiences, scopes, durée et révocation, puis tester ces frontières. Une authentification réussie n'autorise ni tous les outils ni toutes les ressources. Relier la décision de politique et l'effet observé à l'identité effective, pas seulement au nom affiché de l'agent.
 
 ---
 
@@ -251,6 +250,16 @@ Mise en situation : ta direction veut « une plateforme d'agents » en trois moi
 
 - [AWS — composants de Bedrock AgentCore](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/what-is-bedrock-agentcore.html)
 - [LangGraph — concepts et architecture](https://docs.langchain.com/oss/python/langgraph/overview)
+
+Revue ciblée du 13 novembre 2026 : affirmations précisées dans cette passe ; les autres contenus ne sont pas intégralement revérifiés.
+
+- [OpenAI — Agent Builder et échéance annoncée](https://developers.openai.com/api/docs/guides/agent-builder)
+- [OpenAI — export et migration depuis Agent Builder](https://developers.openai.com/api/docs/guides/agent-builder/migrate-from-agent-builder)
+- [Claude Platform — service hébergé et statut bêta](https://platform.claude.com/docs/en/managed-agents/overview)
+- [Claude Platform — service entièrement auto-hébergé, données et accès](https://platform.claude.com/docs/en/managed-agents/self-hosted-data-and-access)
+- [AWS — notes de version, AWS Agent Registry](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/release-notes.html)
+
+- [OpenAI — OpenClaw Enterprise, plan de contrôle en phase pilote](https://developers.openai.com/blog/securing-persistent-agents-like-openclaw-at-openai) — le billet distingue le pilote de l’objectif de version 1.0.
 
 ## Connexions
 - [[37-frameworks-agents|Frameworks d'agents]] — le code qu'on y déploie
