@@ -1,7 +1,7 @@
 # Parsing de documents (PDF, OCR, layout) — Flashcards
 Tags: #flashcards #ai-engineering #multimodal #document-parsing #rag
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: PDF natif ou scanné, analyse de layout, outils (Docling, Unstructured, services cloud, VLM), tableaux, figures, ColPali, chunking structurel, évaluation, exploitation. -->
+<!-- summary: PDF natif ou scanné, analyse de layout, outils (Docling, Unstructured, services cloud, VLM), tableaux, figures, ColPali, chunking structurel, évaluation, exploitation, unités et en-têtes des tableaux. -->
 
 
 Pourquoi le parsing de documents est-il souvent le goulot d'un RAG d'entreprise ? <!--anki:7038666a4c6a61724345-->
@@ -14,10 +14,9 @@ Exemple : un contrat scanné ingéré sans OCR produit des chunks vides ; une qu
 
 À ne pas confondre : PDF natif et PDF scanné ? <!--anki:4c4f575870682a745132-->
 ?
-- **Natif** (généré numériquement) : contient une **couche texte** extractible directement (pypdf, pdfplumber, PyMuPDF), mais **sans structure** fiable (ordre de lecture, tableaux).
-- **Scanné** : une **image** de page → nécessite de l'**OCR**.
+Un **PDF natif** contient généralement du texte extractible ; un **scan** représente la page par une image et peut déjà inclure une couche OCR. La structure logique et l'ordre de lecture ne sont pas garantis dans les deux cas.
 
-Beaucoup de PDF sont **mixtes** ; il faut détecter page par page. Exemple : si `page.get_text()` de PyMuPDF renvoie moins de 20 caractères sur une page occupée par une image, envoyer cette page à l'OCR.
+Détecter page par page le texte exploitable, les zones image et la qualité de l'extraction. Un seuil de 20 caractères n'est qu'une heuristique : une page presque vide peut être correcte, et une couche OCR longue peut être corrompue. Appliquer l'OCR aux zones nécessaires, puis contrôler texte, unités et mise en page plutôt que compter seulement les caractères.
 
 ---
 
@@ -96,6 +95,14 @@ Quels pièges d'exploitation dans une chaîne d'ingestion ? <!--anki:504a6b3c446
 
 ---
 
+Pourquoi conserver unités, en-têtes et notes lors de l'extraction d'un tableau de document ? <!--anki:6233393965666636343566303439663138303839333561343838623234376662-->
+?
+Une **cellule isolée** perd souvent son sens : `125` peut désigner euros, milliers d'euros ou pourcentage selon l'en-tête et les notes.
+
+Reconstruire lignes, colonnes et cellules fusionnées avec leur contexte, puis conserver page et coordonnées pour vérification. Tester tableaux sur plusieurs pages, parenthèses négatives et séparateurs décimaux. Vérifier des totaux connus sans supposer que toutes les lignes s'additionnent. Un texte OCR exact au caractère près peut produire une donnée métier fausse si l'unité ou le bon en-tête a été perdu.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton RAG répond mal sur les documents contenant des tableaux, alors que le retrieval semble correct. Où cherches-tu ? <!--anki:706d673e5b7368796370-->
@@ -125,6 +132,8 @@ Mise en situation : tu dois ingérer 500 000 PDF, dont beaucoup de scans, avec u
 ## Sources
 
 - [Docling — parsing et conversion de documents](https://docling-project.github.io/docling/)
+
+- [PyMuPDF — OCR complet ou partiel des pages](https://pymupdf.readthedocs.io/en/latest/page.html#Page.get_textpage_ocr) — vérification ciblée du 12 novembre 2026, sans renouvellement de la date globale de la fiche.
 
 ## Connexions
 - [[21-rag-fondamentaux|RAG — Fondamentaux]] — l'ingestion en amont du retrieval

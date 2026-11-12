@@ -1,6 +1,6 @@
 # Prompts en production — Flashcards
 Tags: #flashcards #ai-engineering #prompt-engineering #production #llm
-<!-- summary: briques d'un prompt, placement des longs documents, consignes motivées, limites des rôles, prompter un modèle de raisonnement, templates et données utilisateur, registre et versioning, prompt dans le code ou dans un registre, portabilité entre modèles, langue, contrôle de la longueur. -->
+<!-- summary: briques d'un prompt, placement des longs documents, consignes motivées, limites des rôles, prompter un modèle de raisonnement, templates et données utilisateur, registre et versioning, prompt dans le code ou dans un registre, portabilité entre modèles, langue, contrôle de la longueur, migration du contrat de sortie. -->
 
 
 Quelles sont les briques d'un prompt de production ? <!--anki:775f2e70434e484c4021-->
@@ -101,6 +101,14 @@ Comment contrôler la longueur des réponses ? <!--anki:477e60346d663b39685b-->
 - Montrer des **exemples** de la bonne longueur
 - Fixer `max_tokens` comme **garde-fou**, pas comme réglage : une coupure produit une réponse tronquée
 - Surveiller la **longueur moyenne en production**, qui dérive avec les changements de modèle et pèse sur coût et latence ([[121-couts-inference|coûts]])
+
+---
+
+Comment faire évoluer le contrat de sortie d'un prompt sans casser ses consommateurs ? <!--anki:3066623561633963316236663465616561663838316432386563373536343930-->
+?
+Traiter le **schéma de sortie** comme une interface versionnée. Ajouter un champ obligatoire, renommer une catégorie ou changer l'unité d'un montant peut casser un consommateur même si le texte du prompt semble peu modifié.
+
+Faire accepter la nouvelle version aux consommateurs avant de la produire ; valider schéma et règles métier des deux versions pendant la transition. Associer chaque résultat à sa version de contrat et tester les cas historiques. Prévoir le retour à une combinaison compatible de prompt, modèle et parseur.
 
 ---
 

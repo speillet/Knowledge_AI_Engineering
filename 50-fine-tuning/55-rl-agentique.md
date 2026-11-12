@@ -1,7 +1,7 @@
 # RL agentique & environnements d'entraînement — Flashcards
 Tags: #flashcards #ai-engineering #fine-tuning #reinforcement-learning #agents #llm
 Vérifié le : 30 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: RL sur trajectoires multi-tours, RLVR ou RL agentique, environnements d'entraînement, récompense de résultat ou de processus, reward hacking des agents, SFT sur trajectoires, GRPO, curriculum de tâches, outils (verl, OpenRLHF, TRL), quand une équipe produit doit s'y lancer. -->
+<!-- summary: RL sur trajectoires multi-tours, RLVR ou RL agentique, environnements d'entraînement, récompense de résultat ou de processus, reward hacking des agents, SFT sur trajectoires, GRPO, curriculum de tâches, outils (verl, OpenRLHF, TRL), quand une équipe produit doit s'y lancer, isolation des épisodes de RL. -->
 
 
 Qu'est-ce que le RL agentique ? <!--anki:6966466243243e466b26-->
@@ -98,6 +98,14 @@ Quand une baseline solide plafonne et que l'équipe possède **récompense véri
 Exemple : récompenser « ticket fermé » peut apprendre à fermer trop tôt ; vérifier résolution réelle, absence d'action interdite et coût total donne un objectif plus fidèle. Évaluer hors entraînement, avec un contrôle indépendant du vérificateur utilisé pour apprendre.
 
 Prévoir rollouts sans effets métier incontrôlés et surveillance des régressions. Un score de récompense en hausse ne justifie pas le déploiement si qualité réelle ou sûreté se dégradent.
+
+---
+
+Pourquoi faut-il réinitialiser et isoler l'environnement entre deux épisodes de RL agentique ? <!--anki:6662656236346433623535663432656561323933653532313638373161663234-->
+?
+Un **état résiduel** peut révéler une solution, faciliter la tâche suivante ou permettre de modifier le vérificateur. L'agent apprendrait alors un raccourci lié à l'environnement plutôt que la compétence visée.
+
+Réinitialiser fichiers, données et services selon un état de référence ; isoler les épisodes concurrents et garder le vérificateur hors des droits de l'agent. Rejouer des tâches dans un environnement vierge et varier leurs paramètres. Contrôler qu'un épisode ne peut lire les artefacts du précédent. Le gain de récompense doit survivre à cette séparation.
 
 ---
 

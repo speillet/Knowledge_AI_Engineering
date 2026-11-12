@@ -1,7 +1,7 @@
 # Sécurité de MCP, des outils & des skills — Flashcards
 Tags: #flashcards #ai-engineering #securite #mcp #supply-chain #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: surface d'attaque, tool poisoning, rug pull et tool shadowing (et leurs différences), postmark-mcp, ClawHub, ToxicSkills, règles d'autorisation de la spec, scopes minimaux, SSRF et URL piégées, serveurs locaux, évaluation avant autorisation, gateway MCP. -->
+<!-- summary: surface d'attaque, tool poisoning, rug pull et tool shadowing (et leurs différences), postmark-mcp, ClawHub, ToxicSkills, règles d'autorisation de la spec, scopes minimaux, SSRF et URL piégées, serveurs locaux, évaluation avant autorisation, gateway MCP, SSRF lors de la découverte. -->
 
 
 Pourquoi les serveurs MCP et les skills élargissent-ils la surface d'attaque ? <!--anki:67293130246a4855475a-->
@@ -153,6 +153,14 @@ Parades communes : versions épinglées, détection des changements de descripti
 
 ---
 
+Pourquoi la protection contre les SSRF compte-t-elle lors de la découverte d'un serveur MCP distant ? <!--anki:6332323163663433313564383463666539396361316533613239636439326337-->
+?
+Des **URL fournies par un serveur tiers** peuvent conduire le client vers un service interne, une adresse locale ou une destination différente après redirection. La découverte ne doit pas donner un accès réseau arbitraire.
+
+Valider schéma, destination et redirections selon la politique réseau ; traiter résolution DNS et accès aux métadonnées cloud comme des frontières sensibles. Ne pas transmettre automatiquement les jetons à une nouvelle origine. Tester la chaîne de découverte complète. La conformité OAuth annoncée par un serveur ne prouve pas la sûreté des destinations qu'il propose.
+
+---
+
 ## Mises en situation
 
 Mise en situation : une équipe veut brancher sur son agent de production un serveur MCP Jira trouvé sur GitHub, maintenu par un inconnu, parce qu'il a plus de fonctionnalités que le serveur officiel. Que réponds-tu ? <!--anki:7538415d29676a753d77-->
@@ -182,6 +190,8 @@ Mise en situation : la gateway MCP t'alerte. La description de l'outil `search_d
 ## Sources
 
 - [MCP — bonnes pratiques de sécurité, édition 2026-07-28](https://modelcontextprotocol.io/docs/2026-07-28/tutorials/security/security_best_practices)
+
+- [MCP — bonnes pratiques de sécurité](https://modelcontextprotocol.io/docs/2026-07-28/tutorials/security/security_best_practices) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
 
 ## Connexions
 - [[33-mcp|MCP]] — le protocole et ses primitives

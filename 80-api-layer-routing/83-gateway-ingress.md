@@ -1,7 +1,7 @@
 # Ingress & API gateway — Flashcards
 Tags: #flashcards #ai-engineering #kubernetes #ingress #networking
 Vérifié le : 17 octobre 2026 — retrait d'ingress-nginx confronté aux annonces du projet Kubernetes.
-<!-- summary: Ingress controller, retrait d'ingress-nginx, Ingress, API gateway et gateway LLM, TLS, Gateway API, rate limiting, streaming SSE, migration d'un controller. -->
+<!-- summary: Ingress controller, retrait d'ingress-nginx, Ingress, API gateway et gateway LLM, TLS, Gateway API, rate limiting, streaming SSE, migration d'un controller, timeout total et timeout d'inactivité. -->
 
 
 Qu'est-ce qu'un Ingress dans Kubernetes ? <!--anki:49586e334f397c2c6740-->
@@ -102,6 +102,14 @@ taille de requête    plafonnée selon les formats réellement acceptés
 quotas               requêtes, tokens et concurrence
 ```
 Distinguer délai de connexion, délai entre lectures et durée totale. Tester un stream long, une période sans émission et une déconnexion client. Un timeout très élevé sans annulation peut laisser tourner du GPU inutilement ([[142-fiabilite-resilience-llm|fiabilité]]).
+
+---
+
+Pourquoi les timeouts d'une gateway doivent-ils distinguer silence du flux et durée totale de la requête ? <!--anki:6562323839386164636138663463356638316234363465383235343735313262-->
+?
+Un **timeout d'inactivité** limite le temps sans données ; un **timeout total** limite toute la durée de l'opération. Un flux peut rester actif pendant dix minutes et dépasser un budget produit de trente secondes.
+
+Aligner ces délais entre client, proxy, gateway et backend, puis propager une échéance globale. Tester un modèle qui raisonne longtemps avant le premier octet et un flux qui envoie régulièrement de petites données. Vérifier buffering et propagation de l'annulation. Un heartbeat réseau ne prouve pas qu'un contenu utile progresse.
 
 ---
 

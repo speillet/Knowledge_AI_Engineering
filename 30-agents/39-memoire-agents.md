@@ -1,7 +1,7 @@
 # Mémoire des agents — Flashcards
 Tags: #flashcards #ai-engineering #agents #memoire #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: mémoire de travail, sémantique, épisodique et procédurale, thread ou long terme, écriture pendant ou après la conversation, consolidation, score de rappel, réflexion, faits qui changent, stockage, Letta, outils, risques, évaluation, mémoire d'agent ou RAG, quand ne pas donner de mémoire long terme. -->
+<!-- summary: mémoire de travail, sémantique, épisodique et procédurale, thread ou long terme, écriture pendant ou après la conversation, consolidation, score de rappel, réflexion, faits qui changent, stockage, Letta, outils, risques, évaluation, mémoire d'agent ou RAG, quand ne pas donner de mémoire long terme, distinction entre faits et préférences inférées. -->
 
 
 Pourquoi un agent a-t-il besoin d'une mémoire externe ? <!--anki:4771475b312e6378352c-->
@@ -155,6 +155,14 @@ La mémoire long terme se justifie par un **gain mesuré**, pas par principe.
 - **Mémoire d'agent** : des informations **écrites par l'agent lui-même** au fil des interactions (préférences, faits, décisions), souvent **propres à un utilisateur**, qui évoluent et se contredisent
 
 Techniquement, la mémoire utilise souvent un retrieval ; la difficulté propre est **quoi écrire, quand mettre à jour et quoi oublier** ([[21-rag-fondamentaux|RAG]]).
+
+---
+
+Pourquoi le silence d'un utilisateur ne doit-il pas devenir un fait permanent dans la mémoire d'un agent ? <!--anki:3363343063626564623963643438386262646466333736623262653833336565-->
+?
+Une **absence de correction** n'est pas une confirmation. Le modèle peut avoir supposé une préférence et l'utilisateur simplement être passé à autre chose.
+
+Distinguer fait déclaré, observation et inférence ; conserver provenance, date et degré de validation. Par exemple, une réservation végétarienne pour un invité ne prouve pas que l'utilisateur est végétarien. Prévoir confirmation pour les préférences durables, correction et expiration. À la récupération, présenter une inférence comme telle. Répéter une supposition dans plusieurs résumés ne la transforme pas en preuve.
 
 ---
 

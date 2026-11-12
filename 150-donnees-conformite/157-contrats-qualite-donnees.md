@@ -1,6 +1,6 @@
 # Contrats, schémas & qualité des données — Flashcards
 Tags: #flashcards #ai-engineering #donnees #data-engineering #qualite
-<!-- summary: contrat producteur-consommateur, contraintes de schéma et métier, fraîcheur et complétude, compatibilité, migrations, quarantaine, dérive ou incident, publication atomique et lignage opérationnel. -->
+<!-- summary: contrat producteur-consommateur, contraintes de schéma et métier, fraîcheur et complétude, compatibilité, migrations, quarantaine, dérive ou incident, publication atomique et lignage opérationnel, contrats sémantiques et unités. -->
 
 
 Que doit garantir un contrat de données pour un système IA ? <!--anki:6465333362376365616461653439353861633730323038363164306534316230-->
@@ -94,6 +94,14 @@ Calcul : 9 800 documents sont publiés sur 10 000 attendus. Peut-on annoncer un 
 On peut annoncer une **complétude de 98 % pour ce lot**, si le dénominateur est établi et si les identifiants sont uniques. Ce chiffre ne mesure ni fraîcheur, ni exactitude, ni disponibilité du service.
 
 Les 200 absents peuvent appartenir au même client et rendre son expérience inutilisable. Examiner leur répartition et la criticité des documents, puis décider si la publication partielle est acceptable. Compter uniquement les documents reçus aurait caché les absents ; il faut une référence des objets attendus, pas seulement des succès traités.
+
+---
+
+Pourquoi un contrat de données doit-il préciser l'unité et la sémantique d'un champ, au-delà de son type ? <!--anki:6239376566623337313135623433366261316261346337393161366465653632-->
+?
+Un **champ numérique valide** peut changer de sens sans casser le schéma : euros devenus centimes, montant TTC devenu HT ou timestamp local devenu UTC.
+
+Documenter unité, convention de temps, règles de nullité et domaine métier ; ajouter des contrôles sur exemples connus et changements de distribution. Versionner les changements sémantiques et prévenir les consommateurs avant publication. Une validation `float` ou `timestamp` ne détectera pas ces ruptures. Le contrat doit rendre observable ce que les utilisateurs supposent, et désigner le responsable d'une ambiguïté ou d'une migration.
 
 ---
 

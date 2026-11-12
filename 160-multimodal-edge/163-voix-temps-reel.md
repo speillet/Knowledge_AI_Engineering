@@ -1,7 +1,7 @@
 # Voix & agents temps réel — Flashcards
 Tags: #flashcards #ai-engineering #multimodal #voix #temps-reel #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: cascade ou speech-to-speech, latence et chemin critique, fin de tour, barge-in, STT et limites du WER, interruptions et effets métier, évaluation et risques. -->
+<!-- summary: cascade ou speech-to-speech, latence et chemin critique, fin de tour, barge-in, STT et limites du WER, interruptions et effets métier, évaluation et risques, interruption audio et annulation métier. -->
 
 
 Quelles sont les deux architectures d'un agent vocal ? <!--anki:4e5654346978386b257c-->
@@ -104,6 +104,14 @@ gain = 200 ms, soit 20 %
 Une détection plus rapide peut couper une pause qui appartenait encore au tour utilisateur. Mesurer donc délai et interruptions involontaires ensemble. En streaming réel, identifier les intervalles qui se chevauchent avant d'additionner leurs durées.
 
 Le poste le plus lourd n'est pas forcément le plus sûr à réduire : la détection pèse ici 40 % du délai, mais la raccourcir augmente les coupures. Réduire le temps jusqu'au premier texte, avec un modèle plus petit ou un prompt plus court, ne présente pas ce risque.
+
+---
+
+Pourquoi l'interruption vocale d'un agent ne doit-elle pas être confondue avec l'annulation d'une action métier ? <!--anki:6236306134626232376239633434326539393234646266396564653232653864-->
+?
+Le **barge-in** arrête ou remplace une réponse audio, mais un outil peut déjà avoir effectué la réservation ou le paiement annoncé.
+
+Distinguer lecture audio, génération et opération métier. Quand l'utilisateur interrompt, vérifier le statut de l'action avant d'affirmer qu'elle est annulée ; appliquer une compensation si elle existe et reste autorisée. Ne pas répéter une action seulement parce que son annonce n'a pas été entendue. Tester une interruption avant l'appel, pendant son attente et après confirmation. L'interface doit restituer l'état confirmé du système.
 
 ---
 

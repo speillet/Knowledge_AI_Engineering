@@ -1,7 +1,7 @@
 # LangGraph — Fondamentaux — Flashcards
 Tags: #flashcards #ai-engineering #agents #langgraph #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: `StateGraph`, state et reducers, `MessagesState`, nodes et edges conditionnelles, boucle ReAct en graphe, super-steps, `Send` (map-reduce), `Command`, Functional API. -->
+<!-- summary: `StateGraph`, state et reducers, `MessagesState`, nodes et edges conditionnelles, boucle ReAct en graphe, super-steps, `Send` (map-reduce), `Command`, Functional API, ordre explicite des agrégations parallèles. -->
 
 
 Qu'est-ce que LangGraph ? <!--anki:6c283f532b7b414f4e78-->
@@ -127,6 +127,14 @@ Existe-t-il dans LangGraph une alternative au graphe explicite ? <!--anki:4d6557
 **Oui** : la **Functional API** (décorateurs `@entrypoint` et `@task`) écrit le flux en **Python classique** (if, boucles) tout en profitant de la persistance et des interruptions de LangGraph.
 
 Elle convient lorsque le flux existant est déjà lisible en Python et qu'on veut lui ajouter des points de persistance. Encapsuler les opérations concernées dans des tâches facilite la reprise. Il faut toujours réfléchir aux actions qui peuvent être rejouées : une syntaxe impérative ne fournit pas automatiquement une exécution exactement une fois.
+
+---
+
+Pourquoi une agrégation parallèle LangGraph doit-elle expliciter l'ordre des résultats ? <!--anki:3435393033623231663763383434383238386637643133363639396534333563-->
+?
+L'**ordre d'achèvement** des branches dépend de leur durée et peut varier entre exécutions. Accumuler simplement les résultats dans une liste ne leur donne pas un ordre métier fiable.
+
+Associer chaque résultat à une clé stable, vérifier l'absence de doublons, puis trier explicitement avant la synthèse si l'ordre importe. Tester les mêmes branches avec des délais inversés. Un reducer doit définir comment combiner les écritures concurrentes ; il ne doit pas faire dépendre le sens du résultat d'une course entre appels réseau.
 
 ---
 

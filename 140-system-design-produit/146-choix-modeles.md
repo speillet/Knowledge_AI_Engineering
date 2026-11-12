@@ -1,7 +1,7 @@
 # Choisir un modèle — Flashcards
 Tags: #flashcards #ai-engineering #choix-modele #benchmarks #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: critères et contraintes, benchmarks, hébergement et ouverture des poids, définition OSI, coût par succès, protocole comparable, front de Pareto, migration et lock-in. -->
+<!-- summary: critères et contraintes, benchmarks, hébergement et ouverture des poids, définition OSI, coût par succès, protocole comparable, front de Pareto, migration et lock-in, frontière de Pareto. -->
 
 
 Quels critères techniques pour choisir un modèle ? <!--anki:4e76712b43634b3a5168-->
@@ -141,6 +141,14 @@ A : coût par succès = 0,010 / 0,94 ≈ 0,01064 €
 B : coût par succès = 0,008 / 0,95 ≈ 0,00842 €
 ```
 Ces rapports répartissent le coût total entre les succès ; ils ne modélisent pas une politique de retries. En pratique, vérifier incertitude, segments critiques et comparabilité de charge avant de conclure. Les seuils et tarifs sont fictifs.
+
+---
+
+Pourquoi comparer des modèles sur une frontière de Pareto plutôt qu'avec un score composite arbitraire ? <!--anki:3934343434383434336531633462333962363364656662316538383934623238-->
+?
+Un modèle est **dominé** si un autre est au moins aussi bon sur tous les critères retenus et meilleur sur l'un d'eux. Écarter ces options simplifie la comparaison sans imposer d'emblée une pondération arbitraire.
+
+Sur la frontière restante, décider selon contraintes de qualité, coût, latence et données. Mesurer les critères dans des conditions comparables et tenir compte de l'incertitude. Un score unique peut cacher un dépassement de délai ou une régression critique. La frontière rend l'arbitrage visible ; elle ne choisit pas les priorités produit à la place de l'équipe.
 
 ---
 

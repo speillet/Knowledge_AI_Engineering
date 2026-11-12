@@ -1,7 +1,7 @@
 # Cognee — Flashcards
 Tags: #flashcards #ai-engineering #rag #knowledge-graph #memoire #cognee #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: mémoire d'agent en knowledge graph, opérations remember, recall, improve et forget, mémoire permanente ou de session, stratégies de recherche, ontologie OWL, intégrations (plugin, MCP), limites. -->
+<!-- summary: mémoire d'agent en knowledge graph, opérations remember, recall, improve et forget, mémoire permanente ou de session, stratégies de recherche, ontologie OWL, intégrations (plugin, MCP), limites, test de réversibilité d'une mémoire. -->
 
 
 Qu'est-ce que Cognee ? <!--anki:7924302d43443778695b-->
@@ -98,6 +98,14 @@ Quelles limites de Cognee garder en tête ? <!--anki:4a404e6c463832774659-->
 - Une API **jeune** qui évolue vite : la 1.0 a renommé les opérations, à revérifier avant chaque mise à jour
 
 Sur un corpus témoin, mesurer faits correctement extraits, relations inventées et réponses effectivement soutenues. Un graphe plus dense n'est pas automatiquement meilleur. Inclure une modification de fait et une suppression dans le test de mise à niveau.
+
+---
+
+Comment tester la réversibilité d'une mémoire Cognee avant d'y confier un corpus ? <!--anki:6530643134333066346436643433666561356237373835333963633362323662-->
+?
+Faire un **essai de sortie** sur un petit corpus synthétique : ingérer des faits avec leur provenance, exporter les données accessibles et reconstruire les réponses utiles dans un environnement vierge.
+
+Vérifier séparément documents, relations, métadonnées, droits et versions des transformations. Un export de textes seuls peut perdre les liens ou les règles d'accès. Tester aussi suppression et réingestion d'un document. Ce protocole évalue les garanties de la version déployée ; il ne suppose pas qu'une commande d'export universelle préserve automatiquement toute la mémoire.
 
 ---
 

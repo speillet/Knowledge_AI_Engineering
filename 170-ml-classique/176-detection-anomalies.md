@@ -1,7 +1,7 @@
 # Détection d'anomalies — Flashcards
 Tags: #flashcards #ai-engineering #ml-classique #anomalies #monitoring
 Vérifié le : 8 octobre 2026
-<!-- summary: rareté et erreur métier, outlier ou nouveauté, scores non probabilistes, baseline contextuelle, Isolation Forest, LOF, autoencodeurs, capacité de revue, prévalence, évaluation par incident, labels manquants et dérive. -->
+<!-- summary: rareté et erreur métier, outlier ou nouveauté, scores non probabilistes, baseline contextuelle, Isolation Forest, LOF, autoencodeurs, capacité de revue, prévalence, évaluation par incident, labels manquants et dérive, limites d'un quota fixe d'alertes. -->
 
 
 Pourquoi une observation rare n'est-elle pas automatiquement une anomalie métier ? <!--anki:3262626534616237356331383432303561333862383131383336643362343139-->
@@ -99,6 +99,14 @@ Comment évaluer un détecteur d'anomalies quand les labels sont incomplets ? <!
 Faire relire les alertes et un **échantillon de non-alertes**, avec une stratégie et des probabilités de sélection documentées. Examiner uniquement les alertes permet d'approcher leur précision, mais pas de compter les incidents manqués dans toute la population.
 
 Exemple : si 3 non-alertes sur 300, tirées au hasard parmi 50 000, sont des incidents, on estime environ 500 incidents manqués, avec un intervalle large ; chaque cas relu pèse ici 50 000 / 300. Des anomalies injectées testent certains mécanismes, sans représenter automatiquement les incidents réels. Séparer cas confirmés, inconnus et labels retardés ; l'absence de signalement ne constitue pas une preuve de normalité.
+
+---
+
+Pourquoi un quota fixe d'alertes quotidiennes peut-il masquer une vraie crise d'anomalies ? <!--anki:3830383530663263393566323466653439313635386661313663313631376637-->
+?
+Un **top-k quotidien** garantit une charge maximale mais fixe artificiellement le nombre d'alertes. Si les incidents réels se multiplient, beaucoup restent invisibles ; en période calme, le quota peut pousser des cas normaux.
+
+Combiner capacité d'investigation, seuils de gravité et surveillance du volume au-dessus de seuils stables. Regrouper les points par incident et prévoir une escalade lors d'une hausse majeure. Mesurer rappel d'incidents et retard de détection. Une politique de triage contrôle le travail humain ; elle ne doit pas faire croire que le risque métier est resté constant.
 
 ---
 

@@ -1,7 +1,7 @@
 # Langfuse — Instrumentation en production — Flashcards
 Tags: #flashcards #ai-engineering #agents #production
 Vérifié le : 9 octobre 2026 — API citées confrontées aux documentations officielles ; limites explicitées dans les cartes.
-<!-- summary: traces applicatives complètes, observations, corrélation distribuée, async, tokens et coûts, streaming, sampling, masquage, export, doublons et diagnostic. -->
+<!-- summary: traces applicatives complètes, observations, corrélation distribuée, async, tokens et coûts, streaming, sampling, masquage, export, doublons et diagnostic, propagation des traces entre workers. -->
 
 
 Pourquoi tracer seulement la gateway LLM ne suffit-il pas pour observer un agent ? <!--anki:6135383431373137353435663462366261663235326663333433313134666563-->
@@ -141,6 +141,14 @@ Attendre l'export asynchrone avec un délai borné adapté, puis signaler toute 
 
 ---
 
+Pourquoi la propagation du contexte de trace doit-elle être testée dans les tâches asynchrones instrumentées avec Langfuse ? <!--anki:3137376338393334323039363436373039356462323831343533376361353036-->
+?
+Une **frontière asynchrone** ou un worker séparé peut perdre le contexte qui relie les spans au run parent. Les appels restent visibles mais semblent appartenir à des requêtes indépendantes.
+
+Transmettre les identifiants de corrélation par un mécanisme documenté, puis vérifier parenté et chronologie après passage par la file. Tester aussi retries et erreurs. Ne pas placer de secrets dans le baggage ou les métadonnées propagées. Une trace complète permet d'attribuer coût et panne à la bonne tâche ; elle ne doit pas dépendre seulement du contexte implicite d'un thread.
+
+---
+
 ## Mises en situation
 
 Mise en situation : Langfuse montre tous les appels au modèle, mais aucun remboursement ni temps d'attente humaine. Comment complètes-tu l'instrumentation ? <!--anki:6163366532316136613164383464323439643835326132653139666237653865-->
@@ -183,6 +191,8 @@ Mise en situation : le coût affiché dans Langfuse a doublé après activation 
 - [Langfuse — masquage](https://langfuse.com/docs/observability/features/masking)
 - [Langfuse — échantillonnage](https://langfuse.com/docs/observability/features/sampling)
 - [Langfuse — fonctionnalités avancées du SDK](https://langfuse.com/docs/observability/sdk/advanced-features)
+
+- [OpenTelemetry — traces et contexte de corrélation](https://opentelemetry.io/docs/concepts/signals/traces/) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
 
 ## Connexions
 - [[91-langfuse-observabilite|Langfuse — Fondamentaux]] — instrumentation des traces

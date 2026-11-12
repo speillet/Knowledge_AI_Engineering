@@ -1,6 +1,6 @@
 # Docker, images et registries — Flashcards
 Tags: #flashcards #conteneurs #docker
-<!-- summary: rôle de Docker et différence avec OCI, image ou conteneur (instance, état, volumes), compatibilité « Docker/OCI », registries et workflow push/pull. -->
+<!-- summary: rôle de Docker et différence avec OCI, image ou conteneur (instance, état, volumes), compatibilité « Docker/OCI », registries et workflow push/pull, secrets dans les couches d'image. -->
 
 
 Docker et OCI sont-ils la même chose ? <!--anki:473c39416b3845714e37-->
@@ -112,6 +112,14 @@ Un digest peut identifier un manifeste mono-plateforme ou un index multi-platefo
 
 ---
 
+Pourquoi supprimer un secret dans une instruction Dockerfile ultérieure ne suffit-il pas à l'effacer de l'image ? <!--anki:6165643235633165666534333464373161616533643535326134616162353564-->
+?
+Les **couches précédentes** peuvent encore contenir le fichier ou la valeur sensible. Une suppression dans une nouvelle couche masque le chemin dans la vue finale sans réécrire l'historique de l'image.
+
+Fournir les secrets de build par les mécanismes dédiés, éviter leur copie et vérifier aussi journaux et artefacts produits. Si un secret a été publié, le révoquer et reconstruire sans lui ; supprimer seulement le dernier tag ne répare pas les copies déjà distribuées. Un montage de secret protège son passage au build, mais le programme exécuté peut encore le recopier.
+
+---
+
 ## Mises en situation
 
 Mise en situation : le déploiement de ton serveur d'inférence prend 20 minutes, dont 18 de pull d'image, parce que les poids du modèle sont dans l'image. Que changes-tu ? <!--anki:794e496a3e5e64635b5a-->
@@ -137,6 +145,10 @@ Mise en situation : une équipe pousse ses images sur Docker Hub avec le tag `la
 **Piège** : croire qu'un tag est immuable. Il peut être réécrit à tout moment.
 
 ---
+
+## Sources
+
+- [Docker — secrets de build et limites de ARG/ENV](https://docs.docker.com/build/building/secrets/) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
 
 ## Connexions
 - [[01-oci|OCI]] — les standards derrière Docker

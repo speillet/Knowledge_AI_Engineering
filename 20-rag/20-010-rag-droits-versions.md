@@ -1,7 +1,7 @@
 # RAG en production : droits, versions & abstention — Flashcards
 Tags: #flashcards #ai-engineering #rag #securite #donnees #retrieval
 Vérifié le : 13 octobre 2026
-<!-- summary: identité et permissions, filtrage avant exposition, rappel sous filtres, validité temporelle, priorité des sources, suppressions et caches, citations versionnées, abstention et tests de régression. -->
+<!-- summary: identité et permissions, filtrage avant exposition, rappel sous filtres, validité temporelle, priorité des sources, suppressions et caches, citations versionnées, abstention et tests de régression, révocation de droits en cours de génération. -->
 
 
 Pourquoi la pertinence d'un passage RAG ne suffit-elle pas à l'utiliser comme preuve ? <!--anki:3961663861303264376631323462373538363333643236643561653032313563-->
@@ -132,6 +132,14 @@ Ajouter des tests contrefactuels : passer dans une copie du corpus le délai con
 
 ---
 
+Pourquoi une preuve autorisée au début d'une tâche RAG peut-elle devenir inutilisable avant sa réponse ? <!--anki:6539326538393637363436393436626161393465366239363130613034326534-->
+?
+Les **droits peuvent changer pendant l'exécution** : départ d'un salarié, changement de groupe ou retrait d'un document. Une autorisation vérifiée à la recherche n'est pas une permission valable indéfiniment.
+
+Pour les données sensibles, revérifier l'accès avant restitution et avant tout effet externe, selon une politique explicite de fraîcheur. Associer preuves et caches à l'identité et à la version de politique. Tester une révocation pendant une génération longue. Une réponse déjà affichée ne peut pas être retirée rétroactivement par un simple contrôle final.
+
+---
+
 ## Mises en situation
 
 Mise en situation : un assistant de support répond « remboursement sous 14 jours » alors que le contrat courant indique 30 jours ; la FAQ à 14 jours a été réingérée hier. Comment diagnostiques-tu et corriges-tu le problème ? <!--anki:3761663539396461613832623464333938306135626664363733656239303366-->
@@ -174,6 +182,8 @@ Mise en situation : un RAG s'abstient sur 40 % des questions et affiche 100 % de
 - [PostgreSQL 18 — politiques de sécurité par ligne et limites des rôles privilégiés](https://www.postgresql.org/docs/18/ddl-rowsecurity.html)
 - [pgvector 0.8.1 — filtrage et parcours itératif des index approximatifs](https://github.com/pgvector/pgvector/blob/v0.8.1/README.md#filtering)
 - [Liu, Zhang et Liang — soutien et couverture des citations](https://arxiv.org/abs/2304.09848)
+
+- [PostgreSQL — sécurité par ligne et périmètre des politiques](https://www.postgresql.org/docs/current/ddl-rowsecurity.html) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
 
 ## Connexions
 - [[22-rag-avance|RAG avancé]] — appliquer filtres et règles de sélection aux passages

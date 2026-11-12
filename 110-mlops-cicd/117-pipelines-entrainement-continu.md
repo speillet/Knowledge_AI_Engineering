@@ -1,7 +1,7 @@
 # Pipelines d'entraînement, registre & entraînement continu — Flashcards
 Tags: #flashcards #ai-engineering #mlops #ml-classique #pipelines
 Vérifié le : 20 octobre 2026 — cette fiche cite des produits et versions qui évoluent vite.
-<!-- summary: niveaux de maturité MLOps, pipeline déployé plutôt que modèle, réentraînement planifié ou déclenché, validation des données et du modèle, suivi d'expériences MLflow, signature, alias champion et challenger, alias de registre ou de fournisseur, cache des étapes, fenêtre d'entraînement, scoring batch ou en ligne, labels censurés par le modèle, calcul de performance attendue sans labels. -->
+<!-- summary: niveaux de maturité MLOps, pipeline déployé plutôt que modèle, réentraînement planifié ou déclenché, validation des données et du modèle, suivi d'expériences MLflow, signature, alias champion et challenger, alias de registre ou de fournisseur, cache des étapes, fenêtre d'entraînement, scoring batch ou en ligne, labels censurés par le modèle, calcul de performance attendue sans labels, promotions concurrentes des modèles. -->
 
 
 Que distinguent les niveaux 0, 1 et 2 de maturité MLOps décrits par Google Cloud ? <!--anki:6539373632343731336431643433643839373035386566393038353034396538-->
@@ -144,6 +144,14 @@ Si les probabilités restent calibrées, le nombre attendu de fraudes parmi les 
 - Rappel attendu : 700 / 1 000 = **70 %**, car 1 000 est le nombre attendu de fraudes sur l'ensemble.
 
 Hypothèse : la relation entre variables et fraude n'a pas changé. L'estimation tient sous une dérive des entrées, pas sous une dérive de concept : un nouveau mode de fraude, mal noté, ferait chuter le rappel réel sans changer l'estimation. C'est une alerte précoce, à confirmer avec les labels consolidés.
+
+---
+
+Pourquoi un pipeline de réentraînement doit-il empêcher deux candidats concurrents de se promouvoir simultanément ? <!--anki:3263663864393330636534653433386561653262663231393031643637376462-->
+?
+Deux **runs de promotion** peuvent tous deux comparer leur candidat au même ancien champion, puis remplacer l'alias dans un ordre arbitraire. Le dernier écrit n'est pas nécessairement le meilleur validé.
+
+Sérialiser la promotion ou utiliser une mise à jour conditionnelle sur la version attendue du champion. Si celle-ci a changé, refaire la décision selon le protocole prévu. Conserver candidat, référence, critères et approbation dans un journal. L'alias du registre est un pointeur de déploiement ; sa simplicité ne fournit pas à elle seule un arbitrage entre expériences concurrentes.
 
 ---
 

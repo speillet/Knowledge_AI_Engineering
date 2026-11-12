@@ -1,7 +1,7 @@
 # Quantization — Flashcards
 Tags: #flashcards #ai-engineering #inference #quantization #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: intérêt en mémoire et en vitesse, quantization des poids, des activations ou du KV cache, formats (FP8, INT8, INT4, NVFP4, MXFP4), weight-only ou W8A8, granularité des échelles, outliers d'activation (SmoothQuant, rotations), PTQ ou QAT, GPTQ, AWQ, GGUF, NF4, choix de la méthode selon le matériel, calibration, mesure de la perte, divergence KL et flips, validation avant déploiement, suivi en production, outils (llm-compressor, Model Optimizer, vLLM). -->
+<!-- summary: intérêt en mémoire et en vitesse, quantization des poids, des activations ou du KV cache, formats (FP8, INT8, INT4, NVFP4, MXFP4), weight-only ou W8A8, granularité des échelles, outliers d'activation (SmoothQuant, rotations), PTQ ou QAT, GPTQ, AWQ, GGUF, NF4, choix de la méthode selon le matériel, calibration, mesure de la perte, divergence KL et flips, validation avant déploiement, suivi en production, outils (llm-compressor, Model Optimizer, vLLM), représentativité du corpus de calibration. -->
 
 
 Qu'est-ce que la quantization (quantification) d'un LLM ? <!--anki:723d7149494058234777-->
@@ -225,6 +225,14 @@ Vérifier la compatibilité entre checkpoint, GPU et kernels avant lancement. Le
 - **KV cache** (FP8) : réduit la mémoire **par requête**, donc augmente la **concurrence** et la longueur de contexte servable ([[61-kv-cache-attention|KV cache]])
 
 Trois réglages indépendants, à valider séparément : aucun nom de schéma ne garantit une accélération sans kernels adaptés au matériel ([[69-roofline-prefill-decode|roofline]]).
+
+---
+
+Pourquoi une calibration de quantization doit-elle couvrir les entrées difficiles plutôt qu'un simple échantillon de textes courts ? <!--anki:3735386235616339656430373466393838633835336137626335636231623064-->
+?
+La **distribution des activations** dépend des langues, longueurs, structures et tâches. Une calibration limitée aux textes courts peut mal représenter les valeurs extrêmes rencontrées dans du code ou des documents longs.
+
+Choisir un corpus distinct du test final, couvrant les segments de production et les cas sensibles. Comparer qualité et erreurs par segment avant et après quantization, avec le même protocole. Versionner corpus et paramètres de calibration. Un bon score global peut cacher une dégradation sur les montants rares ou les langues minoritaires ; augmenter le corpus sans diversifier ses cas peut ne rien corriger.
 
 ---
 

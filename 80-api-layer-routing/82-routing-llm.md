@@ -1,6 +1,6 @@
 # Routing LLM — Flashcards
 Tags: #flashcards #ai-engineering #routing #api-layer #llm
-<!-- summary: routage statique, par règles ou sémantique, RouteLLM, cascade, routage selon la charge, cache sémantique. -->
+<!-- summary: routage statique, par règles ou sémantique, RouteLLM, cascade, routage selon la charge, cache sémantique, calcul du coût moyen d'une cascade. -->
 
 
 Pourquoi router les requêtes entre plusieurs modèles ? <!--anki:6a5b33407a5a3140415e-->
@@ -105,6 +105,14 @@ Retry     → APRÈS une erreur transitoire, réessayer       (fiabilité)
 Les deux premiers visent le **coût et la qualité**, les deux derniers la **disponibilité**. Ils vivent souvent dans le même composant, la [[81-litellm-api-layer|gateway]], mais répondent à des questions différentes ([[142-fiabilite-resilience-llm|fiabilité]]).
 
 Par exemple, router une extraction vers un petit modèle, escalader si le contrôle qualité échoue, basculer si le fournisseur est indisponible et réessayer brièvement sur une erreur transitoire. Partager un budget global entre ces mécanismes : leur composition peut sinon multiplier les appels et dépasser le délai utilisateur.
+
+---
+
+Calcul : une cascade utilise A à 0,002 € puis B à 0,020 € pour 25 % des demandes. Quel coût moyen avant autres reprises ? <!--anki:3866303963663363386636343466323261316261666166396462353135303736-->
+?
+A est appelé pour toutes les demandes et B pour un quart : `0,002 + 0,25 × 0,020 = 0,007 €`, soit **7 € pour 1 000 demandes**.
+
+Le calcul suppose coûts constants et une seule escalade. Ajouter le coût du routeur, des vérifications et des retries s'ils existent. Mesurer aussi la qualité des demandes qui restent sur A : une cascade bon marché peut sous-détecter les cas difficiles. Le taux d'escalade seul ne démontre ni qualité préservée ni économie nette.
 
 ---
 

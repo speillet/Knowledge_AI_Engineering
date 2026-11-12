@@ -1,7 +1,7 @@
 # Roofline, prefill/decode & désagrégation — Flashcards
 Tags: #flashcards #ai-engineering #inference #gpu #performance #llm
 Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: intensité arithmétique, modèle roofline, memory-bound ou compute-bound, calculs de débit de decode et de durée de prefill, batch en decode, limites de l'utilisation GPU, interférence prefill/decode, chunked prefill ou désagrégation, déploiement désagrégé (Dynamo, llm-d), quand désagréger, coût et recouvrement des transferts KV. -->
+<!-- summary: intensité arithmétique, modèle roofline, memory-bound ou compute-bound, calculs de débit de decode et de durée de prefill, batch en decode, limites de l'utilisation GPU, interférence prefill/decode, chunked prefill ou désagrégation, déploiement désagrégé (Dynamo, llm-d), quand désagréger, coût et recouvrement des transferts KV, hiérarchie mémoire et limites du roofline. -->
 
 
 Qu'est-ce que l'intensité arithmétique ? <!--anki:4e682e414f26342b616d-->
@@ -119,6 +119,14 @@ Calcul : quel coût minimal pour transférer 2 Gio de KV sur un lien à 25 Gio/s
 Sans recouvrement ni contention, la composante de transfert vaut `2 / 25 = 0,08 s`, soit **80 ms**. Ajouter préparation, synchronisation et attente avant de comparer à un gain de calcul.
 
 Si la séparation économise seulement 50 ms sur le chemin critique, un transfert supplémentaire non masqué de 80 ms annule ce gain. Avec recouvrement, mesurer la partie réellement exposée plutôt qu'additionner aveuglément les durées. À plusieurs requêtes simultanées, la bande passante est partagée : le temps d'une requête isolée ne démontre pas le comportement sous charge.
+
+---
+
+Pourquoi le roofline doit-il préciser quelle mémoire fournit la bande passante utilisée ? <!--anki:3135363239353633323937393464313238633233663931653162653536323638-->
+?
+Le **plafond mémoire** dépend du niveau considéré : HBM du GPU, mémoire hôte ou transfert entre GPU. Utiliser la bande passante HBM pour un modèle partiellement offloadé peut surestimer fortement le débit.
+
+Identifier les octets déplacés sur chaque lien et le chemin critique ; inclure KV cache et communications selon le workload. Le calcul poids divisés par bande passante donne une borne simplifiée de decode à faible batch, pas une promesse de performance. Mesurer les débits réellement soutenus et réévaluer le goulot quand batch, contexte ou parallélisme changent.
 
 ---
 

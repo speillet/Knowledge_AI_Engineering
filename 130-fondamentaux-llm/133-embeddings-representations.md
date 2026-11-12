@@ -1,6 +1,6 @@
 # Embeddings & représentations — Flashcards
 Tags: #flashcards #ai-engineering #fondamentaux #embeddings #rag
-<!-- summary: apprentissage contrastif, similarités, bi-encoder ou cross-encoder, ColBERT, Matryoshka, préfixes, choix (MTEB), fine-tuning d'embeddings, changement de modèle, SPLADE, limites. -->
+<!-- summary: apprentissage contrastif, similarités, bi-encoder ou cross-encoder, ColBERT, Matryoshka, préfixes, choix (MTEB), fine-tuning d'embeddings, changement de modèle, SPLADE, limites, calcul du lien entre cosinus et distance L2. -->
 
 
 Qu'est-ce qu'un modèle d'embedding ? <!--anki:6b565249636a404c3878-->
@@ -21,11 +21,9 @@ Un bon négatif est plausible mais ne répond pas à la question, par exemple un
 
 Quelles mesures de similarité utiliser entre embeddings ? <!--anki:716c647e42323e3f283e-->
 ?
-- **Cosinus** : angle entre vecteurs, insensible à la norme.
-- **Produit scalaire** : identique au cosinus si les vecteurs sont **normalisés** (le cas le plus courant, et le plus rapide).
-- **Distance euclidienne (L2)** : équivalente en classement pour des vecteurs normalisés.
+Le **cosinus** compare les directions, le **produit scalaire** dépend aussi des normes et la **distance euclidienne** mesure l'écart géométrique. Utiliser la mesure et la normalisation recommandées pour le modèle et vérifier leur prise en charge par l'index.
 
-Il faut utiliser **la mesure pour laquelle le modèle a été entraîné**.
+Pour des vecteurs de norme 1, produit scalaire et cosinus coïncident ; la distance L2 donne le même classement par la relation `L2² = 2 − 2 × cosinus`. Sans normalisation, cette équivalence disparaît. Le coût de calcul dépend du moteur et des données : aucune mesure n'est universellement la plus rapide ni un score de confiance métier.
 
 ---
 
@@ -103,6 +101,14 @@ Un vecteur dense compresse le texte : il peut perdre détails, contraintes ou di
 Exemple : `AB-120` et `AB-102` peuvent sembler proches tout en désignant deux pièces incompatibles ; « autorisé » et « non autorisé » partagent aussi beaucoup de contexte. Combiner recherche lexicale, filtres exacts et reranking selon la tâche.
 
 Un long document dilue parfois un fait local : utiliser le [[21-rag-fondamentaux|chunking]]. Tester négations, identifiants et vocabulaire métier sur ses données ; un bon score général ne garantit pas le rappel dans un domaine différent.
+
+---
+
+Calcul : pour deux vecteurs normalisés de cosinus 0,8, quelle distance euclidienne obtient-on et pourquoi le classement peut-il être équivalent ? <!--anki:6465313239333534643634613465343862643836633239383463356235386337-->
+?
+Pour deux vecteurs de norme 1, `||u − v||² = 2 − 2 × cos(u,v)`. Avec un cosinus de 0,8, la distance vaut `√0,4 ≈ 0,632`.
+
+Minimiser cette distance revient donc à maximiser le cosinus **si tous les vecteurs sont effectivement normalisés**. Sans cette hypothèse, les normes influencent le produit scalaire et la distance, et les classements peuvent changer. Vérifier la normalisation à l'indexation et à la requête ; un seuil de similarité n'est pas directement un seuil de probabilité de pertinence.
 
 ---
 

@@ -1,7 +1,7 @@
 # Chunking avancé & contextual retrieval — Flashcards
 Tags: #flashcards #ai-engineering #rag #chunking #retrieval #llm
 Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: chunks sans contexte, contextual retrieval (gain, coût, prompt caching), late chunking, taille des chunks, small-to-big, chunking sémantique et par propositions, fil d'Ariane et métadonnées, comparaison de stratégies au recall@k. -->
+<!-- summary: chunks sans contexte, contextual retrieval (gain, coût, prompt caching), late chunking, taille des chunks, small-to-big, chunking sémantique et par propositions, fil d'Ariane et métadonnées, comparaison de stratégies au recall@k, calcul du surcoût de l'overlap. -->
 
 
 Pourquoi un chunk isolé est-il souvent introuvable ? <!--anki:7a544f517c5831297e3c-->
@@ -114,6 +114,14 @@ sortie inchangée  : 160 000 × 75 / 1e6 × 5 = 60 €
 total sans cache  : 1 436 € ; avec cache : 376 €
 ```
 Les 80 M tokens représentent les documents ; les 96 M restants, chunks et consignes. Le gain suppose les quinze relectures réellement servies depuis le cache. Expiration, préfixes différents et tentatives supplémentaires changent la facture. C'est un coût d'ingestion, à réévaluer lors des modifications.
+
+---
+
+Calcul : quel surcoût approximatif crée un overlap de 100 tokens pour des chunks de 500 tokens sur un long document ? <!--anki:3966666139393564316138613438393938636261386464333563666635393730-->
+?
+Le **pas de découpage** vaut `500 − 100 = 400` tokens. Pour un document très long, le volume total indexé est approximativement multiplié par `500 / 400 = 1,25`, soit **25 % de tokens supplémentaires**.
+
+Le coût d'embedding et le nombre de vecteurs augmentent à peu près dans ce rapport si les autres réglages restent fixes. Les bords du document et le découpage structurel modifient le résultat exact. Dédupliquer les passages voisins à l'évaluation : retrouver plusieurs chunks presque identiques ne signifie pas couvrir davantage de preuves.
 
 ---
 

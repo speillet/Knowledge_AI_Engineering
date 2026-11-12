@@ -1,7 +1,7 @@
 # CrewAI — Exécution fiable & intégration — Flashcards
 Tags: #flashcards #ai-engineering #agents #production
 Vérifié le : 9 octobre 2026 — API citées confrontées aux documentations officielles ; limites explicitées dans les cartes.
-<!-- summary: contrats de tâches, dépendances, guardrails bornés, budgets, async, persistance et checkpointing, délégation, isolation, instrumentation et tests. -->
+<!-- summary: contrats de tâches, dépendances, guardrails bornés, budgets, async, persistance et checkpointing, délégation, isolation, instrumentation et tests, effets externes après rejet d'un guardrail. -->
 
 
 Comment découper une crew CrewAI en tâches vérifiables ? <!--anki:3437303864316466363737393435623261313739336130656362623036353132-->
@@ -122,6 +122,14 @@ Ce calcul montre le coût de coordination : le manager ajoute ici 0,03 €, soit
 
 ---
 
+Pourquoi un guardrail CrewAI ne doit-il pas annuler implicitement les effets déjà produits par une tâche ? <!--anki:6366333137643237366565623432636338653464373831373437326333333465-->
+?
+Un **guardrail de sortie** juge le résultat d'une tâche. Son rejet peut provoquer une nouvelle tentative, mais ne restaure pas automatiquement les systèmes externes modifiés par les outils.
+
+Faire produire une proposition avant l'action, puis valider et exécuter avec une clé d'idempotence. Si l'effet a déjà eu lieu, vérifier son statut et appliquer une compensation métier explicite si nécessaire. Tester le rejet après un effet et borner les tentatives. Un guardrail qui relance une tâche de facturation peut autrement créer plusieurs factures.
+
+---
+
 ## Mises en situation
 
 Mise en situation : une crew CrewAI cite des pages accessibles mais qui ne soutiennent pas ses conclusions. Quel contrôle ajoutes-tu ? <!--anki:3764323465323664373863393434656439306430393163616162623163623465-->
@@ -163,6 +171,8 @@ Mise en situation : une crew hiérarchique produit de meilleurs rapports mais d�
 - [CrewAI — Flows et restauration](https://docs.crewai.com/v1.15.26/en/concepts/flows)
 - [CrewAI — checkpointing](https://docs.crewai.com/v1.15.26/en/concepts/checkpointing)
 - [CrewAI — architecture de production](https://docs.crewai.com/v1.15.26/en/concepts/production-architecture)
+
+- [CrewAI — tâches et guardrails de sortie](https://docs.crewai.com/en/concepts/tasks) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
 
 ## Connexions
 - [[46-crewai-crews|CrewAI — Crews]] — contrats et exécution des tâches

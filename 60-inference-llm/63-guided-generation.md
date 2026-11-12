@@ -1,6 +1,6 @@
 # Guided generation (sorties structurées) — Flashcards
 Tags: #flashcards #ai-engineering #inference #structured-output #llm
-<!-- summary: masquage des logits, JSON Schema, regex et grammaires, XGrammar et Outlines, structured outputs des API, mode JSON ou structured outputs, validation métier. -->
+<!-- summary: masquage des logits, JSON Schema, regex et grammaires, XGrammar et Outlines, structured outputs des API, mode JSON ou structured outputs, validation métier, représentation explicite des informations absentes. -->
 
 
 Qu'est-ce que la guided generation ? <!--anki:574e547021574d687c-->
@@ -114,6 +114,14 @@ Ne pas ajouter simplement une accolade pour « réparer » : des champs peuvent 
 
 ---
 
+Comment représenter une information absente sans forcer une invention dans une sortie structurée ? <!--anki:3130346635353232626539313463353039653464373832316366393237326666-->
+?
+Prévoir dans le **contrat de sortie** un état explicite : valeur absente, non applicable, ambiguë ou extraction impossible, selon le besoin. Un champ obligatoire sans représentation de l'inconnu peut pousser le modèle à remplir une valeur plausible.
+
+Par exemple, distinguer `montant: null` d'un montant égal à zéro et associer une raison contrôlée. Valider séparément refus, sortie incomplète et résultat conforme ; les garanties de schéma ont des conditions. Une structure valide ne prouve pas que le document contient l'information ni que la valeur extraite est correcte.
+
+---
+
 ## Mises en situation
 
 Mise en situation : depuis que tu contrains la sortie par un JSON Schema, le JSON est toujours valide mais les réponses sont devenues moins bonnes. Que corriges-tu ? <!--anki:4b54485521782c4c4a72-->
@@ -139,6 +147,10 @@ Mise en situation : ton extraction de factures renvoie toujours un JSON conforme
 **Piège** : écrire en comptabilité un objet dont seul le format a été vérifié.
 
 ---
+
+## Sources
+
+- [OpenAI — sorties structurées, refus et limites](https://developers.openai.com/api/docs/guides/structured-outputs) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
 
 ## Connexions
 - [[90-010-evaluation-reponses-llm|Évaluation des réponses]] — vérifier le contenu au-delà du format et du schéma

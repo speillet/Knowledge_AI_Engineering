@@ -1,7 +1,7 @@
 # Agents — Tests de contrats, pannes & reprises — Flashcards
 Tags: #flashcards #ai-engineering #agents #production
 Vérifié le : 9 octobre 2026 — API citées confrontées aux documentations officielles ; limites explicitées dans les cartes.
-<!-- summary: pyramide de tests, modèles simulés, invariants métier, fenêtres de panne, doubles commandes, concurrence, migrations, traces, évaluations et qualification de release. -->
+<!-- summary: pyramide de tests, modèles simulés, invariants métier, fenêtres de panne, doubles commandes, concurrence, migrations, traces, évaluations et qualification de release, injection de panne après effet métier. -->
 
 
 Comment répartir les tests d'une application agentique ? <!--anki:3039663565653632366637393463383639616232376264373038636630623864-->
@@ -124,6 +124,14 @@ Calcul : 60 dossiers sont chacun évalués 4 fois pour deux versions d'agent. Ch
 **60 × 4 × 2 = 480 essais**, soit **480 × 0,03 = 14,40 €**. Ajouter séparément le coût des juges, de l'environnement et des tentatives supplémentaires.
 
 Les répétitions renseignent la variabilité, mais ne créent pas 480 dossiers indépendants. Pour comparer les versions, garder les résultats regroupés par dossier et utiliser une analyse adaptée à cette dépendance. Prévoir un plafond de budget et une politique pour les essais interrompus.
+
+---
+
+Comment un test par injection de panne peut-il vérifier l'idempotence réelle d'un agent ? <!--anki:6433373732643039336232633436346562316133313332623731636161396437-->
+?
+Placer une **panne contrôlée juste après l'effet métier**, avant son acquittement ou son checkpoint, puis reprendre la même opération avec la même identité logique.
+
+Vérifier l'état final dans le système cible : un seul effet, résultat récupérable et statut cohérent. Répéter avant l'effet et après l'acquittement pour couvrir les frontières. Tester aussi deux reprises concurrentes. Compter seulement les appels d'outils ne suffit pas : plusieurs appels peuvent correctement retrouver le même effet, tandis qu'un seul appel peut en produire plusieurs si le service aval est mal conçu.
 
 ---
 

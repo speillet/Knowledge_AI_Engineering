@@ -1,6 +1,6 @@
 # LLM-as-a-judge — Flashcards
 Tags: #flashcards #ai-engineering #evals #llm-as-judge #llm
-<!-- summary: formats pointwise et pairwise, biais (position, verbosité, auto-préférence), prompt de juge, validation contre des humains (TPR, TNR, kappa), correction du taux mesuré, choix du modèle juge, juges spécialisés, limites, quand ne pas utiliser de juge; injection du juge, échecs de parsing, échantillonnage pondéré. -->
+<!-- summary: formats pointwise et pairwise, biais (position, verbosité, auto-préférence), prompt de juge, validation contre des humains (TPR, TNR, kappa), correction du taux mesuré, choix du modèle juge, juges spécialisés, limites, quand ne pas utiliser de juge; injection du juge, échecs de parsing, échantillonnage pondéré, contre-exemples de style pour les juges. -->
 
 
 Qu'est-ce que le LLM-as-a-judge ? <!--anki:68706a2847612b4c514c-->
@@ -165,6 +165,14 @@ Pourquoi suréchantillonner les échecs pour une revue humaine peut-il biaiser l
 Le lot relu ne représente plus nécessairement le **trafic réel**. Relire davantage de cas suspects aide au diagnostic, mais leur proportion brute ne mesure pas la fréquence des erreurs en production.
 
 Pour estimer un taux global, conserver les probabilités d'inclusion ou échantillonner aléatoirement dans des strates dont les poids de trafic sont connus. Pondérer ensuite les taux par strate et quantifier l'incertitude. Sans ce plan, présenter la revue comme une analyse ciblée, pas comme une estimation représentative.
+
+---
+
+Pourquoi tester un juge LLM avec des réponses volontairement longues, flatteuses ou faussement sourcées ? <!--anki:3263643337653934623337653431633638336466643363663433323838366435-->
+?
+Ces **contre-exemples** vérifient si le juge récompense l'apparence plutôt que le critère demandé. Une réponse longue et assurée peut obtenir une bonne note malgré une erreur factuelle.
+
+Créer des paires où la réponse sobre est correcte et la réponse séduisante est fausse ; inverser leur ordre et masquer le modèle auteur. Mesurer les désaccords avec une référence humaine et leur répartition par type d'erreur. Une forte corrélation globale ne suffit pas si le juge manque précisément les erreurs critiques du produit.
 
 ---
 

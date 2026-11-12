@@ -1,7 +1,7 @@
 # CrewAI — Flows — Flashcards
 Tags: #flashcards #ai-engineering #agents #crewai #workflow #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: `@start`, `@listen`, `@router`, état structuré, `@persist`, `@human_feedback`, mémoire, CLI, crew ou flow, Flows ou LangGraph. -->
+<!-- summary: `@start`, `@listen`, `@router`, état structuré, `@persist`, `@human_feedback`, mémoire, CLI, crew ou flow, Flows ou LangGraph, confidentialité des états persistés. -->
 
 
 Qu'est-ce qu'un Flow CrewAI ? <!--anki:48705b4d433b4b7c7339-->
@@ -131,6 +131,14 @@ Flows CrewAI ou LangGraph ? <!--anki:632943237e5a313c346d-->
 Les deux orchestrent des étapes avec état. **Flows** : méthodes Python décorées, très lisibles, intégrées aux crews. **[[45-langgraph-production|LangGraph]]** : graphe explicite plus bas niveau, avec un écosystème plus riche de checkpointers, time travel et outils de déploiement.
 
 Comparer surtout un cas de reprise réel : interruption avant écriture, panne après écriture et redémarrage avec le même état. Examiner ensuite la gestion des branches concurrentes et la facilité d'inspection. Le style de déclaration ne suffit pas à décider ; les garanties nécessaires dépendent des versions, du stockage et de l'architecture autour du framework.
+
+---
+
+Pourquoi la persistance d'un Flow CrewAI doit-elle être testée avec des données sensibles ? <!--anki:3236656464376563623865393464396339303537643166643337313638303638-->
+?
+Un **état persistant** peut conserver entrées, sorties et données intermédiaires au-delà de la requête. Stocker cet état sans politique dédiée prolonge l'exposition des informations sensibles.
+
+Identifier les champs réellement nécessaires à la reprise, préférer des références protégées aux secrets bruts et contrôler accès, rétention et suppression. Tester qu'un autre tenant ne peut pas restaurer un état par son seul identifiant. Vérifier aussi sauvegardes et journaux. La reprise fonctionnelle d'un Flow et la confidentialité de son stockage sont deux garanties à valider séparément.
 
 ---
 

@@ -1,6 +1,6 @@
 # Coûts d'inférence — Flashcards
 Tags: #flashcards #ai-engineering #finops #couts #inference #llm
-<!-- summary: structure du coût d'un appel, calcul du coût d'un agent de 20 tours avec et sans cache, prix input et output, prompt caching, coût du self-hosting, break-even API ou self-host, batch API, leviers techniques, contexte long, unit economics, GPU idle, coût par réponse conforme et énergie par tâche utile. -->
+<!-- summary: structure du coût d'un appel, calcul du coût d'un agent de 20 tours avec et sans cache, prix input et output, prompt caching, coût du self-hosting, break-even API ou self-host, batch API, leviers techniques, contexte long, unit economics, GPU idle, coût par réponse conforme et énergie par tâche utile, calcul d'économie nette d'un cache. -->
 
 
 Comment se structure le coût d'un appel LLM API ? <!--anki:4f444670265626663e6d-->
@@ -171,6 +171,14 @@ Calcul : un serveur consomme en moyenne 600 W pendant 60 s et livre 120 tâches 
 Sur une fenêtre de 60 secondes, une puissance moyenne de **600 W** représente `600 × 60 = 36 000 J`. Si 120 tâches conformes sont livrées, cela donne **300 J par tâche utile**.
 
 Préciser le périmètre : GPU seul, serveur ou installation complète ; intégrer toute l'énergie du périmètre, y compris échecs et attente. Les watts instantanés ne suffisent pas à comparer deux variantes. Mesurer qualité et délai à charge comparable. Passer des joules au carbone nécessite en plus une intensité électrique située dans le temps et l'espace, avec hypothèses explicites.
+
+---
+
+Calcul : un cache fait passer 40 % de 10 000 demandes de 0,01 € à 0,001 €, avec 15 € de frais fixes. Quelle économie nette ? <!--anki:3032306430336164656136323439346638616530636535313139306331643730-->
+?
+Sans cache : `10 000 × 0,01 = 100 €`. Avec cache : `4 000 × 0,001 + 6 000 × 0,01 + 15 = 79 €`, soit **21 € économisés**.
+
+Le hit rate doit porter sur ces demandes comparables et les réponses doivent rester valides. Ajouter les coûts d'invalidation, de stockage ou de vérification s'ils ne sont pas inclus. Un taux de hit élevé n'est pas une économie en soi : il faut comparer les coûts complets et vérifier que les erreurs ou réponses périmées n'augmentent pas le coût métier.
 
 ---
 

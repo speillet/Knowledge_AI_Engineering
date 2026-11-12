@@ -1,6 +1,6 @@
 # Statistiques pour décider en IA — Flashcards
 Tags: #flashcards #ai-engineering #evals #statistiques #experimentation
-<!-- summary: effet utile et significativité, p-valeur, intervalle de confiance, comparaison appariée, unité indépendante, zéro échec, tests multiples, puissance, causalité, biais de sélection et sample ratio mismatch. -->
+<!-- summary: effet utile et significativité, p-valeur, intervalle de confiance, comparaison appariée, unité indépendante, zéro échec, tests multiples, puissance, causalité, biais de sélection et sample ratio mismatch, arrêt opportuniste et tests séquentiels. -->
 
 
 À ne pas confondre : significativité statistique et importance pratique ? <!--anki:6261623137333138643566323438393961653766356166626633366465653635-->
@@ -98,6 +98,14 @@ Pourquoi une amélioration avant/après ne prouve-t-elle pas l'effet causal d'un
 Entre deux périodes changent souvent **population, saison, interface ou procédure métier**. Une hausse du taux de résolution peut venir de demandes plus simples plutôt que du modèle déployé.
 
 Un groupe contrôle contemporain randomisé aide à isoler l'effet, si les hypothèses d'assignation et d'absence d'interférence sont plausibles. Sinon, documenter les facteurs concurrents et les hypothèses d'une méthode quasi expérimentale. Une corrélation entre un score offline et le résultat produit fournit un indice, pas une preuve que toute hausse de ce score créera de la valeur.
+
+---
+
+Pourquoi consulter chaque jour une p-valeur puis arrêter dès qu'elle passe sous 0,05 change-t-il le risque d'erreur ? <!--anki:6564643966326165313463643432613939356636376339393536623230623232-->
+?
+Des **tests répétés avec arrêt opportuniste** multiplient les occasions d'observer un résultat favorable. Le seuil d'un test prévu pour un effectif fixe ne contrôle pas automatiquement le risque de ce protocole séquentiel.
+
+Fixer l'effectif et la règle d'arrêt avant l'essai, ou utiliser une méthode séquentielle adaptée dont les garanties correspondent au suivi prévu. Rapporter durée, lectures intermédiaires et métriques surveillées. Continuer jusqu'à significativité puis ne montrer que la dernière p-valeur masque le processus de sélection. Une contrainte produit peut arrêter l'expérience, mais l'inférence doit en tenir compte.
 
 ---
 

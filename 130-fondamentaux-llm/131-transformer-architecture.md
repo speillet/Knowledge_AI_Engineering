@@ -1,6 +1,6 @@
 # Architecture Transformer — Flashcards
 Tags: #flashcards #ai-engineering #fondamentaux #transformer #llm
-<!-- summary: attention et somme pondérée, masque causal, teacher forcing, multi-head, GQA/MQA et mémoire KV, MLP, résiduelles, normalisation, RoPE, coûts, poids d’un 70B, modèle de base ou assistant. -->
+<!-- summary: attention et somme pondérée, masque causal, teacher forcing, multi-head, GQA/MQA et mémoire KV, MLP, résiduelles, normalisation, RoPE, coûts, poids d’un 70B, modèle de base ou assistant, limites explicatives des poids d'attention. -->
 
 
 Qu'est-ce qu'un LLM, mécaniquement ? <!--anki:7074663b5a51392c4f44-->
@@ -150,6 +150,14 @@ C'est une division par quatre, soit une réduction de 75 %, hors surcoûts. Le n
 À l'entraînement avec **teacher forcing**, les tokens de référence sont déjà connus. Le modèle peut calculer les prédictions de plusieurs positions en parallèle dans une couche, tout en masquant les positions futures : chaque cible est prédite à partir du préfixe autorisé.
 
 En génération autorégressive classique, le token suivant dépend du token réellement choisi à l'étape précédente, encore inconnu avant son calcul. Le KV cache évite de recalculer les états passés, mais ne supprime pas cette dépendance. Le prefill du prompt connu reste parallélisable ; plusieurs requêtes peuvent aussi avancer ensemble.
+
+---
+
+Pourquoi les poids d'attention ne constituent-ils pas automatiquement une explication fidèle d'une réponse LLM ? <!--anki:3566613130323866333934323435636438363664613433656433386232306363-->
+?
+L'**attention** est un calcul interne parmi plusieurs couches, têtes et transformations. Un poids élevé indique une contribution à cette opération locale, pas une preuve que le token est la cause suffisante de la réponse finale.
+
+Distinguer visualisation interne et explication vérifiée. Tester des interventions sur les entrées et comparer le comportement, sans oublier qu'une modification peut changer plusieurs facteurs à la fois. Pour justifier une réponse métier, fournir des preuves externes vérifiables. Une carte de chaleur convaincante ne valide ni exactitude ni causalité.
 
 ---
 

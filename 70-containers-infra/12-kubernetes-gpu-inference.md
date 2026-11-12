@@ -1,7 +1,7 @@
 # Kubernetes GPU & inférence — Flashcards
 Tags: #flashcards #kubernetes #gpu #llm #inference
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: device plugin, ressource `nvidia.com/gpu`, MIG, time-slicing, KServe, autoscaling (HPA, KEDA). -->
+<!-- summary: device plugin, ressource `nvidia.com/gpu`, MIG, time-slicing, KServe, autoscaling (HPA, KEDA), pression du scale-out sur le stockage. -->
 
 
 Comment [[04-kubernetes-kubelet-cri|Kubernetes]] alloue-t-il les GPU aux Pods ? <!--anki:782d706f674268736979-->
@@ -113,6 +113,14 @@ Que se passe-t-il si un Pod demande un GPU alors qu'aucun node n'en a de libre ?
 Le Pod reste **Pending** (événement `Insufficient nvidia.com/gpu`). Si un autoscaler de cluster est configuré, il ajoute un node GPU, mais cela prend **plusieurs minutes** : démarrage de la VM, driver, pull de l'image, chargement des poids ([[10-images-modeles-poids|cold start]]).
 
 Pendant ce temps, les requêtes attendent ou échouent. Parades : une **marge** de capacité, une montée en charge anticipée sur la file d'attente, et des GPU réservés aux services critiques.
+
+---
+
+Pourquoi ajouter un réplica GPU peut-il d'abord augmenter la pression sur le stockage partagé ? <!--anki:3633656237613561353231363462316561643930626139386334333439633130-->
+?
+Un **nouveau réplica** doit souvent lire les mêmes poids volumineux avant de servir. Plusieurs démarrages simultanés se disputent le réseau et le stockage, ce qui peut allonger le chargement de tous les Pods.
+
+Mesurer le démarrage à froid sous concurrence, prévoir un cache local ou une préparation contrôlée et adapter la vitesse de scale-out. La readiness doit refléter le chargement réel. Inclure cette durée dans le dimensionnement : une capacité théorique disponible après dix minutes ne résout pas une rafale qui dure trente secondes.
 
 ---
 

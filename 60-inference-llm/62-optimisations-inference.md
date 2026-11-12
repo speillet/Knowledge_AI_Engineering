@@ -1,6 +1,6 @@
 # Optimisations d'inférence — Flashcards
 Tags: #flashcards #ai-engineering #inference #optimisation #llm
-<!-- summary: prefill et decode, continuous batching, quantization (AWQ, GPTQ, FP8), FlashAttention, parallélisme tensor et pipeline, chunked prefill, désagrégation prefill/decode. -->
+<!-- summary: prefill et decode, continuous batching, quantization (AWQ, GPTQ, FP8), FlashAttention, parallélisme tensor et pipeline, chunked prefill, désagrégation prefill/decode, équité du chunked prefill. -->
 
 
 Quelles sont les deux phases de l'inférence d'un LLM ? <!--anki:482678244d584c28753b-->
@@ -74,6 +74,14 @@ Qu'est-ce que la désagrégation prefill/decode ? <!--anki:51242a2437253078482b-
 Exécuter prefill et decode sur des **pools de GPU séparés**, avec transfert du KV cache entre eux : chaque pool est dimensionné pour son goulot et on optimise **TTFT et TPOT** indépendamment.
 
 Cette séparation réduit certaines interférences entre gros prompts et générations en cours : les résumés de longs documents occupent le pool de prefill, dimensionné en calcul, tandis que les générations longues restent sur le pool de decode, dimensionné en mémoire et en bande passante. Son coût est le transfert du cache et la coordination des pools, qui peuvent annuler le gain si le réseau est insuffisant. Évaluer taille des K/V, arrivées et déséquilibres avant de complexifier le déploiement.
+
+---
+
+Pourquoi le chunked prefill peut-il améliorer l'interactivité sans accélérer chaque prompt pris isolément ? <!--anki:3136393361393564306336303464623661303538643765393034303230653665-->
+?
+Découper le **prefill long** permet au scheduler de l'entrelacer avec le decode de requêtes déjà actives. Il limite ainsi les pauses imposées à ces utilisateurs par un nouveau document volumineux.
+
+Cette équité peut améliorer l'ITL au prix d'un prefill plus fragmenté et d'un TTFT différent pour le long prompt. Mesurer ensemble les deux populations et le débit utile. Le réglage dépend du budget de tokens par batch et du matériel ; aucun chunk universel ne minimise simultanément toutes les latences.
 
 ---
 

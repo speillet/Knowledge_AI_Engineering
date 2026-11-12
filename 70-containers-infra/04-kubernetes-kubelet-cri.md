@@ -1,6 +1,6 @@
 # Kubernetes, kubelet & CRI — Flashcards
 Tags: #flashcards #kubernetes #conteneurs #infra
-<!-- summary: Pod, Deployment, Service, control plane, kubelet, CRI (containerd, CRI-O), scheduler, requests et limits, probes. -->
+<!-- summary: Pod, Deployment, Service, control plane, kubelet, CRI (containerd, CRI-O), scheduler, requests et limits, probes, startup, readiness et liveness. -->
 
 
 Qu'est-ce que Kubernetes ? <!--anki:727e3f4d405d3b296743-->
@@ -115,6 +115,14 @@ Pour diagnostiquer un échec, tester d'abord le Pod, puis le Service, puis l'ent
 
 ---
 
+Pourquoi distinguer startup, readiness et liveness pour un modèle long à charger sur Kubernetes ? <!--anki:3538313238666534653361363464643138313138343637633839656364613939-->
+?
+La **startup probe** protège la phase de démarrage ; la **readiness probe** détermine si le Pod peut recevoir le trafic du Service ; la **liveness probe** déclenche un redémarrage lorsque son échec dépasse le seuil configuré.
+
+Un modèle peut avoir besoin de plusieurs minutes avant d'accepter une requête. Utiliser une liveness trop agressive pendant cette phase peut provoquer une boucle de redémarrages. Après démarrage, tester une readiness liée à la capacité de servir et éviter qu'une dépendance momentanément lente entraîne des redémarrages en cascade.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton Pod vLLM est tué et redémarré en boucle au démarrage, avant même d'avoir répondu à une requête. Que vérifies-tu ? <!--anki:46422c54432f78477a62-->
@@ -143,6 +151,8 @@ Mise en situation : une équipe demande pourquoi ses Pods GPU restent en attente
 
 ## Sources
 - [Kubernetes — Pods, mises à jour et remplacement](https://kubernetes.io/docs/concepts/workloads/pods/) — consultation ciblée du 6 novembre 2026.
+
+- [Kubernetes — cycle de vie et sondes des Pods](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
 
 ## Connexions
 - [[00-index|Index Conteneurs]] — conteneurs, OCI, Docker

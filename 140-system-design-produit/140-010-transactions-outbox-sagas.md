@@ -1,6 +1,6 @@
 # Transactions, outbox & sagas pour les agents — Flashcards
 Tags: #flashcards #ai-engineering #system-design #distribue #transactions
-<!-- summary: invariants métier, double écriture, outbox et inbox, périmètre transactionnel, sagas et compensation, isolation des workflows, états inconnus, checkpoints, validation humaine et tests de panne. -->
+<!-- summary: invariants métier, double écriture, outbox et inbox, périmètre transactionnel, sagas et compensation, isolation des workflows, états inconnus, checkpoints, validation humaine et tests de panne, âge des événements bloqués dans l'outbox. -->
 
 
 Pourquoi commencer un workflow d'agent par ses invariants métier ? <!--anki:6130323438373235613561633435303762363666336239313661613163346336-->
@@ -110,6 +110,14 @@ Comment tester les garanties d'un workflow distribué au-delà du chemin heureux
 Injecter des pannes **aux frontières entre effet, persistance et acquittement**. Rejouer le même événement, perdre une réponse, arrêter un worker après un commit, désordonner les messages et exécuter deux tentatives simultanées.
 
 Vérifier les invariants métier et la capacité à retrouver un état terminal ou un état inconnu explicite. Exemple : un point d'injection `os._exit(1)` juste après le commit simule un arrêt qu'aucun `finally` n'intercepte ; un proxy comme Toxiproxy coupe la réponse du broker après réception. Un test qui contrôle seulement la réponse HTTP manque les doubles effets, et un mock parfait peut masquer les limites réelles du fournisseur.
+
+---
+
+Pourquoi surveiller l'âge du plus ancien événement non publié d'une outbox ? <!--anki:3636643839336264316663613435313338653061666336363664653033633631-->
+?
+Un **petit nombre d'événements en attente** peut cacher un événement bloqué depuis des heures. Le volume seul ne révèle ni le retard métier ni une ligne qui échoue à chaque tentative.
+
+Suivre âge, débit de publication et erreurs par catégorie. Prévoir reprise bornée, quarantaine inspectable et réconciliation avec les effets attendus. Tester un événement invalide au milieu d'un flux sain : il ne doit pas disparaître ni bloquer silencieusement tous les suivants. La transaction d'outbox garantit l'enregistrement conjoint ; elle ne garantit pas à elle seule que le relais publiera à temps.
 
 ---
 

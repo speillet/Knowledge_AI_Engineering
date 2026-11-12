@@ -1,6 +1,6 @@
 # Evals online & A/B testing — Flashcards
 Tags: #flashcards #ai-engineering #evals #ab-testing #production #llm
-<!-- summary: signaux explicites et implicites, A/B test, guardrail metrics, shadow testing, canary ou A/B, peeking, effet de nouveauté, métriques produit, boucle online-offline, confidentialité, calcul de la taille d'échantillon. -->
+<!-- summary: signaux explicites et implicites, A/B test, guardrail metrics, shadow testing, canary ou A/B, peeking, effet de nouveauté, métriques produit, boucle online-offline, confidentialité, calcul de la taille d'échantillon, intention de traiter et biais d'exposition. -->
 
 
 Pourquoi les evals offline ne suffisent-elles pas ? <!--anki:6b62287a2a6d53773a7b-->
@@ -100,6 +100,14 @@ Règle de Lehr (risque α 5 %, puissance 80 %) :
 n ≈ 16 × p(1 − p) / δ²  =  16 × 0,7 × 0,3 / 0,02²  ≈ 8 400 par bras
 ```
 Diviser l'effet cherché par 2 **multiplie par 4** l'échantillon : détecter +1 point demande ≈ 34 000 par bras. Si le trafic ne le permet pas, viser un effet plus gros, une métrique moins bruitée, ou s'appuyer sur les evals offline ([[114-reproductibilite-variance|variance]]).
+
+---
+
+Pourquoi distinguer intention de traiter et analyse des seuls utilisateurs effectivement exposés dans un A/B test IA ? <!--anki:3034633733303261663164643439653661666532656332373862333265623635-->
+?
+L'**intention de traiter** compare les unités selon leur assignation initiale. Restreindre après coup aux utilisateurs exposés peut introduire un biais si la variante influence justement l'exposition ou les erreurs de chargement.
+
+Conserver assignation, éligibilité et exposition comme événements distincts ; définir la population d'analyse avant l'essai. Rapporter les échecs d'exposition et analyser leurs causes. Une analyse des exposés peut répondre à une question précise avec des hypothèses supplémentaires, mais ne remplace pas automatiquement l'estimation causale liée à la randomisation.
 
 ---
 

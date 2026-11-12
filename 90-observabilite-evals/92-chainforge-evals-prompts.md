@@ -1,6 +1,6 @@
 # ChainForge & évaluation de prompts — Flashcards
 Tags: #flashcards #ai-engineering #evals #prompts #llm
-<!-- summary: comparer prompts et modèles, evals automatiques, tests de régression et cas qui basculent, evals comme prérequis au déploiement. -->
+<!-- summary: comparer prompts et modèles, evals automatiques, tests de régression et cas qui basculent, evals comme prérequis au déploiement, ordre des variantes et biais d'expérience. -->
 
 
 Qu'est-ce que ChainForge ? <!--anki:50782b535f40475d557e-->
@@ -65,6 +65,14 @@ Sans mesure, impossible de **choisir un modèle**, de **[[82-routing-llm|router]
 Un jeu d'eval de quelques centaines de cas représentatifs est le premier livrable d'un projet LLM, avant le prompt définitif.
 
 Ce volume est un point de départ, pas une preuve suffisante pour les événements rares. Compléter par des cas critiques ciblés et déclarer les limites : zéro erreur observée sur 100 essais ne démontre pas une fiabilité de 100 %.
+
+---
+
+Pourquoi une expérience ChainForge doit-elle mélanger l'ordre des variantes évaluées ? <!--anki:6236646337323261653233373463363638373461373934616261353138313063-->
+?
+Un **ordre fixe** peut confondre variante et conditions d'exécution : cache chaud, charge fournisseur, dérive temporelle ou fatigue de l'annotateur.
+
+Apparier les entrées entre variantes, randomiser ou entrelacer leur ordre et enregistrer les conditions utiles. Pour un juge comparatif, inverser aussi la position des réponses et masquer leur origine. Refaire les essais nécessaires avec un protocole fixé. Une interface d'expérimentation organise les résultats ; elle ne supprime pas automatiquement les biais dus à la manière dont les appels et les jugements sont exécutés.
 
 ---
 

@@ -1,7 +1,7 @@
 # Benchmarks de charge pour l’inférence LLM — Flashcards
 Tags: #flashcards #ai-engineering #inference #benchmark #performance
 Vérifié le : 8 octobre 2026
-<!-- summary: protocole reproductible, boucle ouverte ou fermée, omission coordonnée, mix de requêtes, cache froid/chaud, saturation, incertitude, limites du générateur, capacité sous SLO. -->
+<!-- summary: protocole reproductible, boucle ouverte ou fermée, omission coordonnée, mix de requêtes, cache froid/chaud, saturation, incertitude, limites du générateur, capacité sous SLO, tests de rafales. -->
 
 
 Quel contrat fixer avant un benchmark d’inférence LLM ? <!--anki:3464663735636264643633333437376238393536656231303262323632633333-->
@@ -112,6 +112,14 @@ A fournit 70 réussites utiles/s, B 85. B a un meilleur goodput, mais son taux d
 Le **synthétique** contrôle longueurs, arrivées et paramètres ; il isole un effet et révèle les limites du moteur. Avec `--ignore-eos`, chaque requête produit exactement son `max_tokens`, par exemple 256 : le decode devient comparable entre variantes, mais la tâche n'est plus celle du produit.
 
 Le **replay applicatif** garde davantage de distributions, préfixes et dépendances, mais doit être sécurisé et versionné. Réévaluer la qualité si modèle ou génération changent : le nombre de tokens réellement produits peut varier. Utiliser les deux ; ni débit à longueur forcée ni replay isolé ne prouvent à eux seuls la capacité d'un agent complet.
+
+---
+
+Pourquoi un benchmark LLM doit-il inclure les rafales plutôt que seulement un débit moyen constant ? <!--anki:3166643239346430383165613463623662663138323636363561653966396463-->
+?
+La **file d'attente** dépend de la variabilité des arrivées et du travail, pas seulement de leur moyenne. Une rafale peut dépasser la capacité disponible avant que l'autoscaling n'ait chargé le modèle.
+
+Comparer plusieurs profils conservant le même volume : régulier, rafales et replay temporel. Mesurer attente, rejets, délais dépassés et temps de récupération, avec le même mix de tokens. Éviter de moyenner les percentiles de fenêtres. Un service stable à dix requêtes par seconde constantes n'est pas nécessairement prêt pour cent requêtes arrivant ensemble toutes les dix secondes.
 
 ---
 

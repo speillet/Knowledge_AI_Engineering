@@ -1,6 +1,6 @@
 # ML classique : validation, fuites & métriques — Flashcards
 Tags: #flashcards #ai-engineering #ml-classique #validation #metriques
-<!-- summary: train-validation-test, fuites, validation croisée, groupes et temps, pipelines, classes rares, ROC et PR, calcul de précision selon la prévalence, seuils et incertitude. -->
+<!-- summary: train-validation-test, fuites, validation croisée, groupes et temps, pipelines, classes rares, ROC et PR, calcul de précision selon la prévalence, seuils et incertitude, calcul de balanced accuracy. -->
 
 
 À ne pas confondre : entraînement, validation et test final en ML supervisé ? <!--anki:6663653365326138306266653464653739373832333133616230333730393964-->
@@ -149,6 +149,14 @@ Le rappel reste 90 % dans cette hypothèse. La précision d'un test rééquilibr
 
 ---
 
+Calcul : sur 900 négatifs et 100 positifs, un modèle prédit toujours négatif. Quelle accuracy et quelle balanced accuracy ? <!--anki:3735383766303134313734613432326439613833376139313931656163613638-->
+?
+L'**accuracy** vaut `900 / 1 000 = 90 %`. La **balanced accuracy**, moyenne des rappels de chaque classe, vaut `(100 % + 0 %) / 2 = 50 %`.
+
+La seconde métrique donne ici un poids égal aux deux classes et révèle l'échec complet sur les positifs. Elle ne représente pas automatiquement le coût métier : la gravité des faux négatifs et la capacité d'investigation restent à préciser. Rapporter la matrice de confusion et choisir la métrique avant de sélectionner le modèle, plutôt que retenir celle qui présente le meilleur chiffre.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton classifieur de documents atteint 98 % sur un split aléatoire mais échoue chez de nouveaux clients. Que vérifies-tu ? <!--anki:6332393032336432653936623461356261323834363962633030343933643733-->
@@ -192,6 +200,8 @@ Mise en situation : après 200 essais, le meilleur modèle gagne un point sur va
 - [scikit-learn — validation croisée](https://scikit-learn.org/stable/modules/cross_validation.html)
 - [scikit-learn — métriques](https://scikit-learn.org/stable/modules/model_evaluation.html)
 - [scikit-learn — choix du seuil de décision](https://scikit-learn.org/stable/modules/classification_threshold.html)
+
+- [scikit-learn — métriques et balanced accuracy](https://scikit-learn.org/stable/modules/model_evaluation.html) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
 
 ## Connexions
 - [[171-choisir-modele-ml|Choisir un modèle ML]] — comparer les baselines et familles de modèles

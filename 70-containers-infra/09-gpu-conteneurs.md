@@ -1,6 +1,6 @@
 # GPU en conteneur — Flashcards
 Tags: #flashcards #conteneurs #gpu #cuda #infra
-<!-- summary: NVIDIA Container Toolkit, driver et CUDA, images CUDA, GPU Operator, Apptainer `--nv`, ROCm. -->
+<!-- summary: NVIDIA Container Toolkit, driver et CUDA, images CUDA, GPU Operator, Apptainer `--nv`, ROCm, topologie et communications entre GPU. -->
 
 
 Un conteneur voit-il le GPU de l'hôte par défaut ? <!--anki:7278436c2c57552b3c74-->
@@ -114,6 +114,14 @@ en FP8 (poids et KV cache)       ≈ 19 Go → budget nominal compatible avec 24
 On dimensionne sur la **concurrence** et la **longueur de contexte**, pas seulement sur la taille du modèle ([[61-kv-cache-attention|KV cache]]).
 
 Les 128 Ko sont ici environ **128 Kio**, pour une architecture précise et un cache BF16 ; tous les 8B n'ont pas cette taille de cache. Ajouter les tokens de sortie et les marges. Le total FP8 de 19 Go suggère une faisabilité mémoire, mais ne garantit ni le pic de chargement ni le respect de la latence cible.
+
+---
+
+Pourquoi disposer de deux GPU ne garantit-il pas un lien rapide entre eux pour l'inférence ? <!--anki:6635636635313233633834643434323339666663326664646563363864366161-->
+?
+La **topologie matérielle** détermine les chemins entre GPU : interconnexion dédiée, PCIe, passage par le CPU ou réseau entre nœuds. Additionner leur VRAM ne décrit pas ces échanges.
+
+Vérifier les liens réellement accessibles au conteneur et mesurer les communications du parallélisme choisi. Comparer un modèle sur plusieurs GPU avec des réplicas indépendants lorsqu'il tient sur une carte. Inclure placement et affinité dans le manifeste de benchmark. Une inférence limitée par les transferts peut ralentir malgré davantage de GPU et une mémoire totale suffisante.
 
 ---
 

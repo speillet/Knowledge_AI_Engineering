@@ -1,7 +1,7 @@
 # Langfuse — Prompts, datasets & expériences — Flashcards
 Tags: #flashcards #ai-engineering #agents #production
 Vérifié le : 9 octobre 2026 — API citées confrontées aux documentations officielles ; limites explicitées dans les cartes.
-<!-- summary: labels et versions, cache de prompts, fallback, promotion, jeux d’évaluation, exécutions comparables, scores manquants, coûts par réussite et feedback. -->
+<!-- summary: labels et versions, cache de prompts, fallback, promotion, jeux d’évaluation, exécutions comparables, scores manquants, coûts par réussite et feedback, indépendance du jeu de confirmation. -->
 
 
 À ne pas confondre : version et label d'un prompt Langfuse ? <!--anki:6132653866646365356530343433393639353338323563656432313331306364-->
@@ -131,6 +131,14 @@ Comment éviter que le feedback utilisateur manipule les scores d'une applicatio
 Rattacher le feedback à une **exécution appartenant à l'utilisateur authentifié**, borner la fréquence et définir une règle de remplacement ou de déduplication. Ne pas accepter librement un `trace_id` externe comme preuve de propriété : `POST /feedback` n'enregistre une note que si la trace appartient à l'utilisateur du jeton, une note par trace, la dernière remplaçant la précédente.
 
 Séparer satisfaction, correction factuelle et réussite métier. Le silence ne vaut pas approbation, et certains utilisateurs répondent plus souvent que d'autres. Garder ce feedback comme un signal à croiser avec des contrôles objectifs et des annotations ciblées.
+
+---
+
+Pourquoi conserver un test protégé en dehors des expériences répétées dans Langfuse ? <!--anki:3562306161366262306531393439376262643566643137613462373036333636-->
+?
+Un **dataset consulté à chaque expérience** devient un outil de développement, même si son nom contient « test ». Les choix de prompts et de modèles finissent par s'adapter à ses particularités.
+
+Garder un jeu de développement pour itérer et une évaluation indépendante pour confirmer la décision finale. Versionner les cas, les références et le protocole, puis tracer le nombre de variantes comparées. Faire examiner les échecs sans recopier leurs réponses dans les exemples d'entraînement. L'outil d'expérimentation facilite les comparaisons ; il ne garantit pas leur indépendance.
 
 ---
 

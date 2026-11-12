@@ -1,6 +1,6 @@
 # Long contexte — Flashcards
 Tags: #flashcards #ai-engineering #fondamentaux #long-context #llm
-<!-- summary: extension de RoPE, lost in the middle, needle in a haystack et RULER, context rot, long contexte ou RAG, coût, techniques de serving, limite de sortie, test sur sa tâche. -->
+<!-- summary: extension de RoPE, lost in the middle, needle in a haystack et RULER, context rot, long contexte ou RAG, coût, techniques de serving, limite de sortie, test sur sa tâche, évaluation de la réconciliation de preuves. -->
 
 
 Qu'est-ce que la fenêtre de contexte ? <!--anki:6d7324252c743d7a6c7d-->
@@ -76,6 +76,14 @@ Comment tester si un modèle gère son long contexte sur ma tâche ? <!--anki:6c
 Construire une eval où l'on fait **varier la longueur du contexte** et la **position** de l'information utile, avec des **distracteurs réalistes** tirés de son corpus, et tracer la qualité en fonction de la longueur. On en déduit une **longueur de travail sûre** à respecter dans l'application ([[94-evals-methodologie|méthodologie d'évaluation]]).
 
 Maintenir la difficulté de la question et les preuves nécessaires comparables entre longueurs. Ajouter des cas où plusieurs passages doivent être combinés, car retrouver une phrase unique ne teste pas toute la compréhension. Rapporter erreurs, coût et latence par position et longueur ; la borne de travail retenue dépend aussi de la tolérance métier aux échecs.
+
+---
+
+Pourquoi retrouver une information dans un long contexte ne prouve-t-il pas qu'un modèle sait en réconcilier plusieurs ? <!--anki:6237333161663733326535383433666562636337363336313634646166616536-->
+?
+La **récupération d'un fait isolé** teste une capacité différente du rapprochement de plusieurs preuves, du calcul ou de la résolution de contradictions.
+
+Construire des cas demandant deux passages éloignés, une version applicable et un distracteur plausible. Varier leur position et le nombre de documents en gardant une référence vérifiable. Mesurer exactitude et couverture des étapes nécessaires. Un modèle peut retrouver chaque montant séparément et produire un total faux. Le succès sur une aiguille unique ne justifie donc pas de supprimer retrieval, structuration ou vérification métier.
 
 ---
 

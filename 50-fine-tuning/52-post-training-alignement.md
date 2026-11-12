@@ -1,7 +1,7 @@
 # Post-training & alignement — Flashcards
 Tags: #flashcards #ai-engineering #fine-tuning #alignement #rlhf #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: étapes du RLHF, pénalité KL, reward hacking, DPO et variantes, GRPO, RLVR, RLAIF et Constitutional AI, jeux de préférences, taxe d'alignement, reward model ou vérificateur, quand faire soi-même du DPO ou du RL. -->
+<!-- summary: étapes du RLHF, pénalité KL, reward hacking, DPO et variantes, GRPO, RLVR, RLAIF et Constitutional AI, jeux de préférences, taxe d'alignement, reward model ou vérificateur, quand faire soi-même du DPO ou du RL, biais des paires de préférences. -->
 
 
 Qu'est-ce que le post-training ? <!--anki:73335f71655f3f304837-->
@@ -119,6 +119,14 @@ Exemple : des paires « réponse corrigée par un conseiller / réponse initiale
 - **Vérificateur** : un contrôle **programmatique** (résultat mathématique, tests unitaires, schéma). Fiable et difficile à tromper, mais limité aux tâches **vérifiables**
 
 Le RLHF repose sur le premier, le RLVR sur le second ([[55-rl-agentique|RL agentique]]).
+
+---
+
+Pourquoi le nombre d'annotations de préférence ne suffit-il pas à juger un dataset DPO ? <!--anki:6638613561323336333662663465323262663330383531356138363263343838-->
+?
+Une **paire de préférences** doit comparer des réponses au même contexte avec un critère pertinent. Si la réponse choisie est toujours plus longue, le modèle peut apprendre la longueur plutôt que la qualité.
+
+Examiner désaccords, égalités, erreurs factuelles et biais de style par segment. Conserver des cas où une réponse courte et exacte bat une réponse longue et séduisante. Séparer les contextes entre entraînement et validation, puis contrôler les régressions de capacité. Des milliers de préférences faciles ou redondantes ne compensent pas une supervision systématiquement biaisée.
 
 ---
 

@@ -1,7 +1,7 @@
 # Modélisation des données analytiques — Flashcards
 Tags: #flashcards #ai-engineering #donnees #data-engineering
 Vérifié le : 9 octobre 2026 — références techniques et exemples de cette fiche.
-<!-- summary: grain, OLTP et OLAP, faits et dimensions, clés, normalisation, cardinalités de jointure, mesures additives, SCD, identité métier et définitions de métriques. -->
+<!-- summary: grain, OLTP et OLAP, faits et dimensions, clés, normalisation, cardinalités de jointure, mesures additives, SCD, identité métier et définitions de métriques, calcul d'une moyenne globale pondérée. -->
 
 
 Pourquoi définir le grain d’une table avant de construire des variables ML ? <!--anki:3062336464623832353838383439306261643964313533396439623630623261-->
@@ -126,6 +126,14 @@ denominateur: tickets fermés
 periode: semaine ISO, fuseau Europe/Paris
 ```
 Une couche sémantique centralise ces règles, mais doit encore respecter droits d'accès, fraîcheur et disponibilité des dimensions. Tester un petit jeu comprenant remboursements, inconnus et frontières temporelles aide à révéler les divergences avant qu'elles ne deviennent des labels ou des réponses utilisateur.
+
+---
+
+Calcul : un groupe de deux commandes vaut 10 € en moyenne et un groupe de huit vaut 20 €. Quelle moyenne globale ? <!--anki:3637656264373331393639323430333362646136346661343661313165363738-->
+?
+Reconstituer d'abord les sommes : `2 × 10 + 8 × 20 = 180 €` pour dix commandes. La **moyenne globale vaut 18 €**, et non la moyenne non pondérée `(10 + 20) / 2 = 15 €`.
+
+Conserver effectif et somme avec une moyenne agrégée pour pouvoir la recombiner correctement. Vérifier que les populations sont disjointes, les unités identiques et les valeurs manquantes traitées selon la même règle. Le même piège apparaît dans un dashboard qui moyenne les scores moyens de clients de tailles très différentes.
 
 ---
 

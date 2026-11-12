@@ -1,7 +1,7 @@
 # LangGraph — Production (persistance, HITL, multi-agents) — Flashcards
 Tags: #flashcards #ai-engineering #agents #langgraph #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: checkpointers, threads, `interrupt` et `Command(resume=...)`, time travel, Store long terme, durable execution, streaming, subgraphs, patterns multi-agents, déploiement. -->
+<!-- summary: checkpointers, threads, `interrupt` et `Command(resume=...)`, time travel, Store long terme, durable execution, streaming, subgraphs, patterns multi-agents, déploiement, validité des approbations à la reprise. -->
 
 
 Qu'est-ce qu'un checkpointer dans LangGraph ? <!--anki:73715178653d54644d38-->
@@ -125,6 +125,14 @@ Le déploiement doit aussi couvrir migrations de checkpoints, isolation des thre
 
 ---
 
+Pourquoi une approbation humaine LangGraph doit-elle expirer si la proposition métier change ? <!--anki:3666396463386164343636323466306561393138333166636635363339326133-->
+?
+L'**approbation** doit porter sur des arguments précis, une version d'objet et un périmètre d'action. Après deux jours de suspension, un prix ou un destinataire peut avoir changé.
+
+À la reprise, vérifier identité, droits, expiration et version de la proposition avant l'effet. Si un élément décisif change, produire une nouvelle proposition et une nouvelle validation. Garder la décision et sa référence dans l'audit. Un `Command(resume=...)` transporte une réponse ; il ne constitue pas à lui seul une autorisation métier toujours valable.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton agent de traitement de commandes s'arrête pour une validation humaine qui arrive parfois deux jours plus tard. Il tourne aujourd'hui avec `InMemorySaver`. Que changes-tu ? <!--anki:4d2f6936553058693334-->
@@ -170,6 +178,8 @@ Mise en situation : ton système à quatre agents devient impossible à débogue
 - [LangGraph — persistance et threads](https://docs.langchain.com/oss/python/langgraph/persistence)
 
 - [LangGraph — checkpointers et durabilité](https://docs.langchain.com/oss/python/langgraph/checkpointers)
+
+- [LangGraph — interruptions et reprise](https://docs.langchain.com/oss/python/langgraph/interrupts) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
 
 ## Connexions
 - [[44-langgraph-fondamentaux|LangGraph — Fondamentaux]] — state, nodes, edges

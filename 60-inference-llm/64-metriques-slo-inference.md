@@ -1,6 +1,6 @@
 # Métriques d'inférence & SLO — Flashcards
 Tags: #flashcards #ai-engineering #inference #slo #llm
-<!-- summary: TTFT, TPOT et ITL, contenu utile et raisonnement, débits offert/admis/utile, SLO conjoints, timeouts, burn rate, loi de Little, autoscaling et benchmarks. -->
+<!-- summary: TTFT, TPOT et ITL, contenu utile et raisonnement, débits offert/admis/utile, SLO conjoints, timeouts, burn rate, loi de Little, autoscaling et benchmarks, calcul de durée jusqu'au dernier token. -->
 
 
 Qu'est-ce que le TTFT ? <!--anki:68355e7b7b31743d5d46-->
@@ -159,6 +159,14 @@ Calcul : quel burn rate pour 4 % de violations avec un SLO à 99 % ? <!--anki:38
 Le budget autorisé est **1 %** d'événements non conformes. Un taux observé de 4 % donne `4 / 1 = 4` : consommation quatre fois plus rapide que le rythme compatible avec l'objectif, à trafic et périmètre comparables.
 
 Ce calcul utilise les événements éligibles, y compris les erreurs prévues au contrat, pas la valeur du p95. Combiner fenêtres courte et longue pour distinguer incident rapide et dégradation persistante. Le temps jusqu'à épuisement dépend du budget restant et du trafic futur ; il ne se déduit pas du seul ratio.
+
+---
+
+Calcul : le premier de 400 tokens arrive après 0,8 seconde, puis chaque intervalle entre tokens dure 20 ms. Quelle durée jusqu'au dernier token ? <!--anki:6231653834363131386530393437303338363562623430383161366235353138-->
+?
+Il reste **399 intervalles** après l'arrivée du premier token. La durée totale vaut `0,8 + 399 × 0,020 = 8,78 secondes`, hors traitement supplémentaire après le dernier token.
+
+Un TTFT inférieur à une seconde ne signifie donc pas une réponse complète en une seconde. Le calcul suppose des intervalles constants et un token émis par événement observé. En pratique, le transport peut regrouper des tokens ; mesurer la réception côté client et distinguer token, chunk réseau et contenu utile. La cadence moyenne ne décrit pas à elle seule les pauses ressenties.
 
 ---
 

@@ -1,6 +1,6 @@
 # Pré-entraînement & scaling laws — Flashcards
 Tags: #flashcards #ai-engineering #fondamentaux #pretraining #scaling #llm
-<!-- summary: étapes de fabrication, pré-entraînement ou post-training, données, scaling laws, Chinchilla, sur-entraînement pour l'inférence, 6ND, MFU, contamination, knowledge cutoff, capacités émergentes, mur des données. -->
+<!-- summary: étapes de fabrication, pré-entraînement ou post-training, données, scaling laws, Chinchilla, sur-entraînement pour l'inférence, 6ND, MFU, contamination, knowledge cutoff, capacités émergentes, mur des données, limites d'extrapolation des scaling laws. -->
 
 
 Quelles sont les grandes étapes de fabrication d'un LLM ? <!--anki:7a3f3d7a4d61366e7263-->
@@ -125,6 +125,14 @@ Llama 3 70B : ≈ 15 000 milliards de tokens → ≈ 200 tokens par paramètre, 
 Chinchilla minimise le coût d'**entraînement** ; on va bien au-delà pour obtenir, à qualité égale, un modèle plus petit et donc moins cher à **servir**.
 
 Avec 15 000/70, le ratio est d'environ **214 tokens par paramètre** ; « 200 » est un arrondi. Plus de tokens ne garantit pas un gain proportionnel : qualité, diversité et répétitions du corpus comptent. L'arbitrage se fait sur le cycle complet entraînement puis inférence, selon le volume de requêtes attendu.
+
+---
+
+Pourquoi extrapoler une scaling law hors de son domaine mesuré peut-il conduire à un mauvais investissement ? <!--anki:3065383665653361623066633437313661313563373633656139633864613534-->
+?
+Une **scaling law** ajuste une relation empirique dans certaines conditions de données, architecture et calcul. Elle n'est pas une garantie universelle de gain métier pour toute augmentation de paramètres ou de tokens.
+
+Vérifier plage mesurée, définition de la perte et hypothèses avant d'extrapoler. Comparer avec des expériences intermédiaires et inclure coût d'inférence, qualité des données et objectif produit. Une baisse de perte prédite peut ne pas résoudre une erreur rare ou un défaut d'outil. Présenter l'extrapolation comme une hypothèse chiffrée avec incertitude, puis prévoir un point de décision expérimental.
 
 ---
 

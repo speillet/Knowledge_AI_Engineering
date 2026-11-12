@@ -1,7 +1,7 @@
 # containerd & runc — Flashcards
 Tags: #flashcards #conteneurs #containerd #runc
 Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: rôle de containerd, rôle de runc, relation entre les deux, containerd ou CRI-O, crun, RuntimeClass, outils `ctr`, `nerdctl` et `crictl`, place du GPU dans la chaîne. -->
+<!-- summary: rôle de containerd, rôle de runc, relation entre les deux, containerd ou CRI-O, crun, RuntimeClass, outils `ctr`, `nerdctl` et `crictl`, place du GPU dans la chaîne, distinction entre panne du shim et panne applicative. -->
 
 
 Qu'est-ce que containerd ? <!--anki:482f38677a352a716331-->
@@ -62,7 +62,9 @@ La standardisation [[01-oci|OCI]] facilite la portabilité des images ; les fonc
 
 Qu'est-ce que crun ? <!--anki:736d6a51574d495f543d-->
 ?
-Un **runtime OCI bas niveau écrit en C**, alternative à runc (écrit en Go) : même rôle, même `config.json`, mais **démarrage plus rapide** et empreinte mémoire plus faible. Il est le défaut de **Podman** sur Fedora et RHEL. Il illustre l'intérêt de la spec OCI : on remplace le runtime sans changer ni les images ni containerd.
+Un **runtime OCI bas niveau écrit en C**, alternative à runc, écrit en Go. Il vise un faible coût de lancement et une empreinte réduite, avec une implémentation de l'interface OCI.
+
+Les gains de performance et le runtime choisi par défaut dépendent de la distribution, de la version et du workload. Mesurer sur l'environnement cible plutôt que promettre un démarrage toujours plus rapide. Le remplacer demande aussi une configuration correcte du gestionnaire de conteneurs ; la conformité OCI facilite l'interopérabilité sans rendre toutes les options et extensions automatiquement interchangeables.
 
 ---
 
@@ -112,6 +114,14 @@ Diagnostiquer driver hôte, intégration containerd/CDI et allocation du périph
 
 ---
 
+Pourquoi la disparition d'un shim containerd doit-elle être distinguée d'un plantage du modèle ? <!--anki:3663326538306332623332653463633862643738366632393739393033346634-->
+?
+Le **shim** participe au suivi du processus conteneur et à ses entrées-sorties, tandis que le modèle s'exécute dans le processus applicatif. Une erreur à ces niveaux demande des diagnostics différents.
+
+Corréler état du conteneur, événements du runtime, code de sortie et logs applicatifs avant de relancer le modèle. Vérifier si le processus a été tué par une limite mémoire ou si la communication avec le runtime a échoué. Une relance aveugle efface parfois les indices et peut rejouer un travail dont le résultat était déjà produit.
+
+---
+
 ## Mises en situation
 
 Mise en situation : tu veux exécuter du code généré par un agent avec une isolation plus forte que le conteneur classique. Où intervient le runtime ? <!--anki:6a563a3e753231586361-->
@@ -141,6 +151,8 @@ Mise en situation : un incident mentionne « containerd ne répond plus » et l'
 ## Sources
 
 - [containerd — documentation du projet et architecture](https://github.com/containerd/containerd)
+
+- [crun — implémentation OCI et mesures de performance](https://github.com/containers/crun) — vérification ciblée du 12 novembre 2026, sans renouvellement de la date globale de la fiche.
 
 ## Connexions
 - [[01-oci|OCI]] — runc implémente l'OCI Runtime Spec

@@ -1,6 +1,6 @@
 # RAG — Fondamentaux — Flashcards
 Tags: #flashcards #ai-engineering #rag #retrieval #llm
-<!-- summary: RAG ou fine-tuning, pipeline d'ingestion et de requête, stratégies de chunking, embeddings, bases vectorielles (HNSW, pgvector, Qdrant), top-k, grounding et citations, recall@k, quand ne pas faire de RAG. -->
+<!-- summary: RAG ou fine-tuning, pipeline d'ingestion et de requête, stratégies de chunking, embeddings, bases vectorielles (HNSW, pgvector, Qdrant), top-k, grounding et citations, recall@k, quand ne pas faire de RAG, diagnostic avec contexte de référence. -->
 
 
 Qu'est-ce que le RAG ? <!--anki:45677223625926775b30-->
@@ -156,6 +156,14 @@ vecteurs : 250 millions / 500 = 500 000
 valeurs : 500 000 × 1 024 × 4 = 2 048 000 000 octets = 2,048 Go
 ```
 Le tarif est fictif ; ce n'est pas le coût total d'indexation. Ajouter parsing, métadonnées, structure d'index, stockage, exploitation et réindexations éventuelles. Un chevauchement répète des tokens et augmente ces volumes ; des documents mal extraits restent inutilisables malgré des embeddings peu coûteux.
+
+---
+
+Comment une expérience avec contexte de référence aide-t-elle à diagnostiquer un RAG ? <!--anki:3335616337333837333331363434633339343062323136336363653033613664-->
+?
+Fournir au générateur les **passages de référence annotés**, à la place du résultat de recherche, puis comparer avec le pipeline complet sur les mêmes questions.
+
+Si la réponse reste fausse avec ces passages, examiner génération, contradictions, format et critères d'évaluation. Si elle devient correcte, chercher plutôt dans ingestion, recherche, filtrage ou classement. Vérifier que les passages suffisent effectivement à répondre. Cette expérience isole un composant dans des conditions contrôlées ; elle ne mesure pas la performance réelle du retrieval et ne remplace pas une évaluation bout en bout.
 
 ---
 

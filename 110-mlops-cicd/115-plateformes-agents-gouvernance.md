@@ -1,7 +1,7 @@
 # Plateformes d'agents — Architecture & gouvernance — Flashcards
 Tags: #flashcards #ai-engineering #agents #platform #gouvernance #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: plateforme interne (paved road), plan de contrôle et plan d'exécution, architecture de référence, séparation cerveau, mains et session, exécution durable, isolation multi-tenant, échange de jetons pour l'agent délégué, jetons hors du contexte, standards d'identité, moteur de politiques, human-in-the-loop, registre et cycle de vie, Top 10 OWASP agentique, rayon d'impact et kill switch, audit, SLO, evals continues, coûts, AI Act, lock-in, critères de choix. -->
+<!-- summary: plateforme interne (paved road), plan de contrôle et plan d'exécution, architecture de référence, séparation cerveau, mains et session, exécution durable, isolation multi-tenant, échange de jetons pour l'agent délégué, jetons hors du contexte, standards d'identité, moteur de politiques, human-in-the-loop, registre et cycle de vie, Top 10 OWASP agentique, rayon d'impact et kill switch, audit, SLO, evals continues, coûts, AI Act, lock-in, critères de choix, révocation d'une délégation active. -->
 
 
 Pourquoi construire une plateforme d'agents interne plutôt que laisser chaque équipe se débrouiller ? <!--anki:736971307067364a5850-->
@@ -295,6 +295,14 @@ Quelle architecture de plateforme d'agents est la plus fréquente ? <!--anki:7a6
 Une architecture **hybride** : services managés **modulaires** pour le runtime et les sandboxes, plan de contrôle (registre, politiques, observabilité) aligné sur des **standards ouverts** (MCP, A2A, OpenTelemetry). On profite du managé là où il fait gagner du temps, sans y enfermer ce qui coûte cher à migrer.
 
 Cette combinaison est un choix d'architecture, pas une obligation. Décrire les contrats exportables : événements, identité, état et définitions d'outils, puis tester une sortie du service managé. Employer un protocole ouvert facilite certaines intégrations mais ne rend pas automatiquement portables les checkpoints, politiques ou fonctions spécifiques du fournisseur.
+
+---
+
+Pourquoi une plateforme d'agents doit-elle prévoir la révocation d'une délégation pendant un run actif ? <!--anki:3535646463323738376438373436303061363636343138396164646562666265-->
+?
+Un **run long** peut conserver un droit qui n'est plus valide : utilisateur désactivé, mandat retiré ou politique modifiée. Vérifier seulement au lancement laisse une fenêtre d'action indue.
+
+Associer chaque effet à une identité et un mandat, utiliser des credentials à durée limitée et revérifier les autorisations aux frontières sensibles. Prévoir suspension ou arrêt des runs concernés et invalidation des jetons selon le mécanisme d'identité. Tester une révocation entre deux étapes. Un kill switch du worker ne supprime pas les opérations déjà confiées à un service externe.
 
 ---
 

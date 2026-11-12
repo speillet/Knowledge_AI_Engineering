@@ -1,7 +1,7 @@
 # LangChain — Fondamentaux — Flashcards
 Tags: #flashcards #ai-engineering #agents #langchain #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: paquets de la v1, `init_chat_model`, messages, outils `@tool` et `bind_tools`, sorties structurées, Runnables et LCEL, briques RAG, LangSmith. -->
+<!-- summary: paquets de la v1, `init_chat_model`, messages, outils `@tool` et `bind_tools`, sorties structurées, Runnables et LCEL, briques RAG, LangSmith, conservation des messages structurés. -->
 
 
 Qu'est-ce que LangChain aujourd'hui ? <!--anki:6d5e30397b5f6e244140-->
@@ -121,6 +121,14 @@ Quelle critique revient souvent sur LangChain ? <!--anki:4f6a534f5b2a36356f23-->
 Des **abstractions épaisses** qui masquent le prompt réellement envoyé et des **API qui ont beaucoup changé** entre versions. La v1 a répondu en **simplifiant** (un seul `create_agent`, anciennes chains déplacées dans `langchain-classic`).
 
 Pour limiter ce risque, épingler les versions, consulter les guides de migration et conserver des tests de contrat sur les messages et sorties. Examiner une trace réelle lors d'un comportement inattendu. La simplification de l'API ne supprime pas la nécessité de comprendre la boucle et les transformations appliquées aux données.
+
+---
+
+Pourquoi normaliser un message LangChain en simple texte peut-il perdre une information essentielle ? <!--anki:3135383764613266326130633439613861313436346434623534366638663263-->
+?
+Un **message** peut contenir texte, appels d'outils, identifiants de corrélation, contenu multimodal et métadonnées. Convertir tout en chaîne peut faire disparaître le lien entre demande d'outil et résultat ou confondre texte final et contenu intermédiaire.
+
+Conserver les objets structurés jusqu'aux frontières qui exigent du texte, puis choisir explicitement les blocs à afficher. Tester une réponse sans texte mais avec appel d'outil et un message contenant plusieurs blocs. La portabilité dépend du contrat conservé, pas seulement d'une méthode d'appel commune.
 
 ---
 

@@ -1,6 +1,6 @@
 # Débogage & analyse d'échecs des agents — Flashcards
 Tags: #flashcards #ai-engineering #agents #evals #observabilite #debogage
-<!-- summary: error analysis (open et axial coding), symptôme ou cause, catégories d'échec, taxonomie MAST, détection des boucles, reproduction par rejeu, de l'échec au cas de non-régression, signaux de production, quand ne pas accuser le modèle. -->
+<!-- summary: error analysis (open et axial coding), symptôme ou cause, catégories d'échec, taxonomie MAST, détection des boucles, reproduction par rejeu, de l'échec au cas de non-régression, signaux de production, quand ne pas accuser le modèle, ablations contrôlées. -->
 
 
 Pourquoi un agent est-il plus difficile à déboguer qu'un appel LLM ? <!--anki:63762b3d6f2b7d677546-->
@@ -108,6 +108,14 @@ Quand un échec d'agent ne doit-il pas être attribué au modèle ? <!--anki:757
 Tant que la trace montre un problème **en amont** : l'information n'était pas dans le contexte, l'outil a renvoyé une erreur illisible, deux consignes se contredisaient, ou le critère de fin n'existait pas. Changer de modèle masque parfois ces défauts, sans les corriger.
 
 On accuse le modèle quand il échoue **avec** un contexte correct et des outils clairs, et que d'autres modèles réussissent sur le même cas ([[146-choix-modeles|choix de modèle]]).
+
+---
+
+Pourquoi désactiver temporairement un composant aide-t-il à déboguer un agent complexe ? <!--anki:3635373532666164616663643431336438616566303266333030316237333432-->
+?
+Une **ablation contrôlée** retire ou remplace un composant pour tester une hypothèse : mémoire, reranker, compaction ou outil. Si le défaut disparaît, le composant ou son interaction devient une piste, pas une cause déjà prouvée.
+
+Rejouer les mêmes entrées avec un état initial et des effets externes maîtrisés. Modifier une dimension à la fois et conserver traces, versions et résultats. Répéter si le système est stochastique. Une ablation qui change simultanément le budget et le contexte peut expliquer l'amélioration par ces changements plutôt que par le composant retiré.
 
 ---
 

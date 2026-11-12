@@ -1,6 +1,6 @@
 # FinOps LLM — Flashcards
 Tags: #flashcards #ai-engineering #finops #gouvernance #llm
-<!-- summary: quatre temps du FinOps, visibilité des coûts, attribution aux équipes, budgets et garde-fous, routage comme premier levier, caches, pratiques GPU, arbitrage coût-qualité-latence, rôle du Lead. -->
+<!-- summary: quatre temps du FinOps, visibilité des coûts, attribution aux équipes, budgets et garde-fous, routage comme premier levier, caches, pratiques GPU, arbitrage coût-qualité-latence, rôle du Lead, réservation budgétaire des appels en vol. -->
 
 
 Qu'est-ce que le FinOps appliqué aux LLM ? <!--anki:7438516d555137566925-->
@@ -96,6 +96,14 @@ Quel est le rôle du Lead sur le FinOps ? <!--anki:4d55412c6953465d317e-->
 Suivre les **unit economics par produit**, imposer les **standards d'attribution**, tenir des **revues de coûts** régulières — le coût est une métrique de premier ordre, pas une surprise de fin de mois.
 
 Définir des budgets par usage et les arbitrages autorisés quand ils sont dépassés : ralentir, traiter en batch ou router différemment. Partager coût et qualité dans la même revue évite de récompenser une baisse de facture qui détériore le service. Attribuer un responsable et une mesure de résultat à chaque optimisation.
+
+---
+
+Pourquoi un plafond budgétaire d'agent doit-il réserver les dépenses des appels encore en vol ? <!--anki:6330623233643561396138313436373362346630323731633633323963373734-->
+?
+Si plusieurs **appels parallèles** lisent le même solde disponible, chacun peut démarrer avant que les autres dépenses soient comptabilisées. Un budget contrôlé seulement après réponse peut donc être largement dépassé.
+
+Réserver une enveloppe avant lancement, plafonner les sorties et réconcilier l'usage réel à la fin. Libérer les réserves seulement selon une règle qui tient compte des appels encore potentiellement facturables. Tester concurrence et coupure réseau. Une alerte de facture est utile au suivi, mais ne constitue pas un contrôle synchrone du budget d'exécution.
 
 ---
 

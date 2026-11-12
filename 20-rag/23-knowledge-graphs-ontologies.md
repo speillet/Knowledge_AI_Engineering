@@ -1,7 +1,7 @@
 # Knowledge graphs & ontologies — Flashcards
 Tags: #flashcards #ai-engineering #rag #knowledge-graph #ontologie #llm
 Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: triplets, RDF ou property graph (Cypher, GQL), ontologie et taxonomie, extraction par LLM sous schéma, résolution d'entités, graphe ou vecteurs, GraphRAG local et global, Text2Cypher, context graph, coûts. -->
+<!-- summary: triplets, RDF ou property graph (Cypher, GQL), ontologie et taxonomie, extraction par LLM sous schéma, résolution d'entités, graphe ou vecteurs, GraphRAG local et global, Text2Cypher, context graph, coûts, provenance des relations. -->
 
 
 Qu'est-ce qu'un knowledge graph ? <!--anki:75794e4c4c3a65215f7b-->
@@ -119,6 +119,14 @@ Démarrer avec une **ontologie restreinte** ; mesurer qualité des entités, des
 
 ---
 
+Pourquoi conserver la provenance de chaque relation extraite dans un knowledge graph ? <!--anki:3866343838343766326361623433336262323237373366623366393334363032-->
+?
+Une **relation extraite** reste une affirmation issue d'une source, parfois incertaine. Conserver document, passage, date de validité et version d'extracteur permet de vérifier, corriger ou retirer cette affirmation.
+
+Si deux rapports attribuent des dirigeants différents à une société, garder leurs périodes et preuves évite d'écraser arbitrairement l'une des relations. Une suppression doit pouvoir retrouver les relations dérivées du document. Le graphe gagne en traçabilité ; il ne devient pas vrai par construction. Distinguer relation observée, relation inférée et fait validé.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton graphe extrait par LLM contient « Société Générale », « Societe Generale » et « SG » comme trois entités distinctes, et les requêtes multi-hop échouent. Comment corriges-tu ? <!--anki:6670413d484e4a557b4d-->
@@ -148,6 +156,8 @@ Mise en situation : un chef de projet veut exposer Text2Cypher aux utilisateurs 
 ## Sources
 
 - [Microsoft — GraphRAG, indexation et recherche](https://microsoft.github.io/graphrag/)
+
+- [W3C — modèle de provenance PROV](https://www.w3.org/TR/prov-overview/) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
 
 ## Connexions
 - [[21-rag-fondamentaux|RAG — Fondamentaux]] — la recherche vectorielle de base

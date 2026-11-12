@@ -1,6 +1,6 @@
 # Livraison, idempotence & concurrence — Flashcards
 Tags: #flashcards #ai-engineering #system-design #distribue #idempotence
-<!-- summary: garanties de livraison, limites du exactement une fois, timeout ambigu, identité des opérations, déduplication atomique, rétention, ack, ordre par entité, concurrence optimiste, isolation et fencing tokens. -->
+<!-- summary: garanties de livraison, limites du exactement une fois, timeout ambigu, identité des opérations, déduplication atomique, rétention, ack, ordre par entité, concurrence optimiste, isolation et fencing tokens, atomicité de la déduplication et de l'effet. -->
 
 
 À ne pas confondre : livraison au plus une fois et au moins une fois ? <!--anki:6338323339363635373833343438333462316232386335666330386265396435-->
@@ -118,6 +118,14 @@ Le nombre de tentatives n'est donc pas le nombre de succès métier. Mesurer sé
 
 ---
 
+Pourquoi la déduplication doit-elle partager la transaction de l'effet qu'elle protège ? <!--anki:3665613635623338613763623466643061636337343935323739356535333435-->
+?
+Si le **marquage comme traité** et l'effet métier sont deux écritures séparées, une panne peut produire un effet sans marque, ou une marque sans effet. La reprise créera alors un doublon ou perdra le travail.
+
+Lorsque les données sont dans la même base, enregistrer identifiant d'opération et modification métier dans une transaction avec contrainte d'unicité. Pour un service externe, utiliser son contrat d'idempotence et réconcilier les statuts inconnus. Tester les coupures entre chaque étape. Un simple cache d'identifiants déjà vus ne fournit pas cette atomicité.
+
+---
+
 ## Mises en situation
 
 Mise en situation : deux workers consomment le même événement et débitent chacun un crédit client. Comment rends-tu ce traitement sûr ? <!--anki:6333323763313939336238633437323939313639663864663431656265343862-->
@@ -162,6 +170,8 @@ Mise en situation : deux agents modifient la même proposition commerciale et l'
 - [PostgreSQL — contraintes](https://www.postgresql.org/docs/current/ddl-constraints.html)
 - [PostgreSQL — isolation des transactions](https://www.postgresql.org/docs/current/transaction-iso.html)
 - [Hazelcast — baux et fencing tokens](https://docs.hazelcast.com/hazelcast/5.5/data-structures/fencedlock)
+
+- [PostgreSQL — isolation et transactions concurrentes](https://www.postgresql.org/docs/current/transaction-iso.html) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
 
 ## Connexions
 - [[140-010-transactions-outbox-sagas|Transactions, outbox & sagas]] — assembler ces garanties dans un workflow

@@ -1,6 +1,6 @@
 # Conteneurs — Synthèse
 Tags: #flashcards #conteneurs #revision
-<!-- summary: cartes de révision transverses (OCI, CRI et SIF, chaînes Kubernetes et image, accès GPU, serveurs d'inférence, stockage des poids). -->
+<!-- summary: cartes de révision transverses (OCI, CRI et SIF, chaînes Kubernetes et image, accès GPU, serveurs d'inférence, stockage des poids), localisation d'une panne dans la chaîne de lancement. -->
 
 
 OCI, CRI et SIF désignent-ils le même type de chose ? <!--anki:6d445f2c347a236f5d4c-->
@@ -106,6 +106,14 @@ Comment distinguer Apptainer, le runtime, et SIF, le format d'image ? <!--anki:7
 - **SIF** : le format d'image d'Apptainer, un **fichier unique** et immuable
 
 Le runtime lance les processus, tandis que SIF transporte leur environnement sous une forme facile à copier et vérifier. Un SIF est généralement utilisé en lecture seule ; les sorties peuvent aller dans des montages externes. Ne pas confondre image en lecture seule et impossibilité d'écrire sur l'hôte : les droits et montages de l'utilisateur restent déterminants.
+
+---
+
+Comment localiser une panne de conteneur avant d'accuser le serveur d'inférence ? <!--anki:3233383666316631666239633465346238326230353930666366396538653532-->
+?
+Suivre la **chaîne de lancement** jusqu'au dernier événement réussi : ordonnanceur, kubelet, runtime, création du processus, initialisation GPU puis chargement du modèle.
+
+Un téléchargement d'image refusé précède tout code applicatif ; un OOM hôte diffère d'une erreur de VRAM ; une readiness fausse diffère d'un processus arrêté. Conserver événements, codes de sortie et chronologie avant de relancer. Ce découpage réduit les hypothèses à tester et évite de modifier les paramètres du modèle pour un problème de registre ou de droits.
 
 ---
 

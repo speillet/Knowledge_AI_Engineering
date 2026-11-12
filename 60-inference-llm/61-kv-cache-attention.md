@@ -1,6 +1,6 @@
 # KV cache & attention — Flashcards
 Tags: #flashcards #ai-engineering #inference #kv-cache #llm
-<!-- summary: rôle et taille du cache, KV cache, prefix caching et prompt caching, calcul de la concurrence sur un H100, PagedAttention et continuous batching, KV cache en FP8, coût des contextes longs. -->
+<!-- summary: rôle et taille du cache, KV cache, prefix caching et prompt caching, calcul de la concurrence sur un H100, PagedAttention et continuous batching, KV cache en FP8, coût des contextes longs, blocs physiques et préfixes partagés. -->
 
 
 Qu'est-ce que le KV cache ? <!--anki:4b502378625b2b7e6f5e-->
@@ -119,6 +119,14 @@ La nouvelle limite peut aussi dépasser la capacité vérifiée au démarrage, s
 
 ---
 
+Pourquoi le partage de préfixe ne doit-il pas faire compter deux fois la même mémoire KV ? <!--anki:3739386333386638663161633437653661656437336639386432393534653266-->
+?
+Des **séquences partageant un préfixe** peuvent référencer les mêmes blocs KV physiques. Additionner naïvement tous leurs tokens logiques surestime alors la mémoire réellement allouée.
+
+Séparer blocs partagés, suffixes propres, blocs partiellement remplis et réserves du moteur. À l'inverse, une estimation supposant un partage parfait devient trop optimiste quand les préfixes divergent ou sont évincés. Vérifier les métriques du moteur avec un workload représentatif. Le nombre de tokens du contexte reste une grandeur logique ; la capacité dépend des blocs physiques et de leur politique de réutilisation.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton service vLLM tient 60 requêtes simultanées avec des prompts de 2 000 tokens, mais plus que 8 quand tu passes à 32 000 tokens de contexte. Pourquoi, et que fais-tu ? <!--anki:793e766f644d6c763c68-->
@@ -149,6 +157,8 @@ Mise en situation : ton équipe veut activer la quantization FP8 du KV cache pou
 
 - [PagedAttention — mémoire et attention](https://arxiv.org/abs/2309.06180)
 - [vLLM — cache KV quantifié](https://docs.vllm.ai/en/latest/features/quantization/quantized_kvcache/)
+
+- [vLLM — blocs KV et cache de préfixes](https://docs.vllm.ai/en/latest/design/prefix_caching/) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
 
 ## Connexions
 - [[62-optimisations-inference|Optimisations d'inférence]] — prefill/decode, batching

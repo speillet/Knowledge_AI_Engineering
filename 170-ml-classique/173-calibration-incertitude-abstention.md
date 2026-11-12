@@ -1,6 +1,6 @@
 # Calibration, incertitude & abstention — Flashcards
 Tags: #flashcards #ai-engineering #ml-classique #calibration #incertitude
-<!-- summary: discrimination et calibration, Brier score, calibrateur séparé, temperature scaling, incertitudes, risque-couverture, prédiction conforme, coût de décision avec revue et erreurs humaines. -->
+<!-- summary: discrimination et calibration, Brier score, calibrateur séparé, temperature scaling, incertitudes, risque-couverture, prédiction conforme, coût de décision avec revue et erreurs humaines, limites d'un ECE agrégé. -->
 
 
 À ne pas confondre : discrimination et calibration d'un classifieur ? <!--anki:6337616261653836306433623432636261323934336534393832663635306633-->
@@ -139,6 +139,14 @@ Sur un même ensemble de demandes, compter séparément erreurs automatiques, er
 
 ---
 
+Pourquoi un ECE faible ne prouve-t-il pas qu'un classifieur est bien calibré sur chaque population ? <!--anki:3266616136613230636533393436656138393832393936663930646635336233-->
+?
+L'**Expected Calibration Error** résume des écarts entre confiance moyenne et fréquence observée dans des groupes de scores. Son résultat dépend notamment du découpage et peut masquer des écarts internes ou des groupes peu représentés.
+
+Examiner courbe de fiabilité, effectifs et incertitude, puis les segments utiles à la décision. Comparer aussi une métrique probabiliste comme Brier ou log loss selon l'objectif. Une moyenne de calibration favorable n'implique ni bonne discrimination ni calibration conditionnelle partout. Éviter de choisir le nombre de bins uniquement pour améliorer le score affiché.
+
+---
+
 ## Mises en situation
 
 Mise en situation : un classifieur annonce 95 % de confiance mais se trompe sur un cas sur quatre dans cette tranche. Que changes-tu ? <!--anki:6234383262333736643935613465303538336135323536366232333930313163-->
@@ -185,6 +193,8 @@ Mise en situation : un intervalle conforme calibré sur les clients historiques 
 
 - [Kendall & Gal — incertitudes aléatoire et épistémique](https://arxiv.org/abs/1703.04977)
 - [Lipton et al. — hypothèses et correction du label shift](https://proceedings.mlr.press/v80/lipton18a.html)
+
+- [scikit-learn — calibration et diagrammes de fiabilité](https://scikit-learn.org/stable/modules/calibration.html) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
 
 ## Connexions
 - [[172-validation-metriques-ml|Validation ML]] — probabilités et seuils métier

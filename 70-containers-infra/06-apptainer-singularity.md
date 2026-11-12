@@ -1,6 +1,6 @@
 # Apptainer & Singularity — Flashcards
 Tags: #flashcards #conteneurs #apptainer #singularity #hpc
-<!-- summary: usage en HPC, filiation Singularity → Apptainer, format SIF et conversion des images Docker, `--nv`. -->
+<!-- summary: usage en HPC, filiation Singularity → Apptainer, format SIF et conversion des images Docker, `--nv`, permissions des bind mounts. -->
 
 
 Dans quel environnement Apptainer est-il particulièrement utilisé ? <!--anki:755e35286742334e2d28-->
@@ -68,6 +68,14 @@ apptainer exec --nv model.sif python inference.py
 ```
 
 L'option rend accessibles les périphériques et les bibliothèques NVIDIA nécessaires, tandis que le module noyau reste celui de l'hôte. Elle n'installe pas un driver manquant et ne réserve pas un GPU dans Slurm. Il faut une allocation valide, une compatibilité CUDA/driver et les dépendances applicatives dans l'image.
+
+---
+
+Pourquoi un bind mount Apptainer doit-il être revu comme une permission d'accès aux données hôtes ? <!--anki:6663353433363966343166303438636461383836343031343864373330346366-->
+?
+Un **bind mount** rend un chemin de l'hôte visible dans le conteneur avec les droits effectifs applicables. L'image SIF ne suffit donc pas à décrire les données accessibles pendant le job.
+
+Inspecter montages explicites et automatiques, limiter les chemins et utiliser la lecture seule lorsque l'écriture n'est pas nécessaire. Tester avec l'identité du job et le système de fichiers partagé réel. Un montage trop large peut exposer résultats d'autres expériences ou secrets du répertoire personnel. L'immutabilité de l'image ne protège pas un répertoire hôte monté en écriture.
 
 ---
 

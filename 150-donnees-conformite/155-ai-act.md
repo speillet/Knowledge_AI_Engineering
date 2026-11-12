@@ -1,7 +1,7 @@
 # AI Act (règlement européen sur l'IA) — Flashcards
 Tags: #flashcards #ai-engineering #ai-act #conformite #reglementation
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: approche par les risques, pratiques interdites, haut risque et obligations, fournisseur ou déployeur, transparence, modèles à usage général, calendrier, sanctions, plan d'action. -->
+<!-- summary: approche par les risques, pratiques interdites, haut risque et obligations, fournisseur ou déployeur, transparence, modèles à usage général, calendrier, sanctions, plan d'action, limites d'une validation humaine pour la qualification. -->
 
 
 Qu'est-ce que l'AI Act ? <!--anki:4a5b34484f4550646148-->
@@ -119,6 +119,14 @@ Pour un système à haut risque, les journaux doivent permettre de retracer le f
 
 ---
 
+Pourquoi ajouter une validation humaine ne suffit-il pas à soustraire un système de recrutement au régime de haut risque de l'AI Act ? <!--anki:6531323530623364343638393435333738346366373835306438383866336637-->
+?
+La **classification** dépend de la finalité et des conditions de l'article 6 et de l'annexe III, pas simplement de la présence d'un clic humain. Un classement de candidatures peut influencer fortement la décision même si un recruteur la confirme.
+
+Décrire l'usage réel, les exceptions éventuelles et le rôle de chaque acteur avec le juridique. Concevoir une supervision effective et conserver les preuves de qualification. Le contrôle humain fait partie des mesures de maîtrise ; il ne constitue pas une exemption générale ni une garantie que la décision reste indépendante du score.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton entreprise déploie trois systèmes IA : un assistant de rédaction interne, un chatbot client et un outil de présélection de candidatures. Comment les classes-tu ? <!--anki:4943714a5b34316b7d70-->
@@ -135,13 +143,13 @@ Mise en situation : ton entreprise déploie trois systèmes IA : un assistant de
 
 Mise en situation : une équipe veut utiliser la détection d'émotions sur les appels d'un centre de contact, pour évaluer les conseillers. Que réponds-tu ? <!--anki:66633f6f37312a535b6a-->
 ?
-1. **Signal d'alerte immédiat** : l'inférence d'émotions de salariés à partir de données biométriques, par exemple la voix, relève de l'interdiction au travail, sauf exceptions médicales ou de sécurité
-2. **Interdiction applicable** depuis février 2025, avec les sanctions les plus élevées du règlement
-3. **Proposer une alternative** : analyse **agrégée et anonyme** de la satisfaction client, sans évaluation individuelle des salariés
-4. **Impliquer** juridique et représentants du personnel avant toute décision
-5. **Vérifier aussi le RGPD** : base légale, information, décisions automatisées ([[154-rgpd-llm|RGPD]])
+1. **Qualifier la fonction réelle** : inférer les émotions de salariés à partir de signaux biométriques, dont la voix, relève de l'interdiction au travail, sauf exception médicale ou de sécurité applicable.
+2. **Suspendre ce dispositif** et faire confirmer la qualification par le juridique ; une agrégation finale n'efface pas une inférence interdite en amont.
+3. **Étudier une autre collecte**, par exemple un questionnaire de satisfaction, sans réintroduire cette inférence ni une surveillance disproportionnée.
+4. **Vérifier les obligations restantes** : finalité, base légale, information, minimisation et consultation des instances compétentes.
+5. **Documenter la décision** et tester que le produit ne conserve pas une fonction équivalente sous un autre nom.
 
-**Piège** : traiter l'interdiction comme un risque de conformité à arbitrer, alors que c'est une interdiction pure et simple.
+**Piège** : présenter anonymisation ou consentement comme une exemption automatique à une interdiction.
 
 ---
 
@@ -160,6 +168,10 @@ Revue ciblée du 6 octobre 2026 : calendrier, qualification du haut risque et ob
 
 - [Union européenne — règlement (UE) 2024/1689, AI Act](https://eur-lex.europa.eu/eli/reg/2024/1689/oj/fra)
 - [Commission européenne — cadre réglementaire et calendrier AI Act](https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai)
+
+- [Commission européenne — qualification du haut risque, article 6](https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-6) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
+
+- [Commission européenne — pratiques interdites, article 5](https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-5) — vérification ciblée du 12 novembre 2026, sans renouvellement de la date globale de la fiche.
 
 ## Connexions
 - [[154-rgpd-llm|RGPD appliqué aux LLM]] — le cadre de protection des données

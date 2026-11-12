@@ -1,6 +1,6 @@
 # Hallucinations, grounding & abstention — Flashcards
 Tags: #flashcards #ai-engineering #hallucinations #grounding #qualite #llm
-<!-- summary: types d'hallucinations, leviers, citations vérifiées, abstention, arbitrage avec la couverture, détection, communication de l'incertitude; température et factualité, conflits de sources, réponses partielles. -->
+<!-- summary: types d'hallucinations, leviers, citations vérifiées, abstention, arbitrage avec la couverture, détection, communication de l'incertitude; température et factualité, conflits de sources, réponses partielles, citation réelle et preuve applicable. -->
 
 
 Qu'est-ce qu'une hallucination ? <!--anki:43342c5e784379766728-->
@@ -98,6 +98,14 @@ Quand une réponse partielle est-elle préférable à une abstention complète e
 Lorsque certaines parties sont **étayées et utiles indépendamment** des informations manquantes. Répondre à ces parties en citant leurs preuves et identifier précisément ce qui reste inconnu.
 
 Exemple : la procédure décrit le délai de retour, mais pas les frais ; donner le délai sans inventer le tarif. Si l'information manquante conditionne toute la décision, une réponse partielle peut induire en erreur : demander une précision ou escalader. Évaluer séparément utilité de la réponse et respect des limites du contexte.
+
+---
+
+Pourquoi une citation existante peut-elle ne pas justifier l'affirmation qui la précède ? <!--anki:3563393233643462643064633463376138666562376238376237373263663536-->
+?
+Une **citation valide** peut pointer vers un document réel qui ne soutient pas le détail annoncé : autre période, autre population ou simple hypothèse transformée en fait.
+
+Vérifier la correspondance entre affirmation et passage, puis ses conditions d'application. Par exemple, une politique de remboursement pour particuliers ne justifie pas le délai d'un contrat entreprise. Distinguer preuve directe, déduction explicitée et information absente. Tester des documents proches mais incompatibles. Le contrôle de l'URL ou du numéro de page garantit la localisation, pas l'implication logique.
 
 ---
 

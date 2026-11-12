@@ -1,7 +1,7 @@
 # Automatisation code & no-code — Flashcards
 Tags: #flashcards #ai-engineering #automatisation #workflow #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: n8n, triggers, Zapier et Make, Airflow, Prefect et Temporal, durable execution, limites du no-code. -->
+<!-- summary: n8n, triggers, Zapier et Make, Airflow, Prefect et Temporal, durable execution, limites du no-code, doublons et désordre des webhooks. -->
 
 
 Qu'est-ce que n8n ? <!--anki:5074357b48742c717130-->
@@ -83,6 +83,14 @@ Quelles limites du no-code en production ? <!--anki:4169365566313b657b25-->
 **Versioning et diff** difficiles, **tests automatisés** limités, gestion des erreurs et des secrets à surveiller, et risque de **workflows « shadow IT »** que personne ne maintient.
 
 Nommer un responsable, documenter les dépendances et prévoir sauvegarde, alertes et procédure de reprise. Tester la panne d'un connecteur et les notifications dupliquées. Un workflow visuellement simple peut engager des droits importants. Exemple : il utilise le jeton personnel d'un employé parti, révoqué un vendredi, et échoue chaque nuit sans alerte. Utiliser des identifiants de service limités et renouvelables, comme pour une application développée en code.
+
+---
+
+Pourquoi un webhook de workflow doit-il tolérer les événements livrés plusieurs fois ou dans le désordre ? <!--anki:6534373461653763386561313461363339656563643065393662616630623736-->
+?
+La **livraison d'un webhook** peut être répétée après une erreur ou retardée par le réseau. L'ordre d'arrivée ne garantit donc pas l'ordre métier.
+
+Vérifier signature et fraîcheur, enregistrer un identifiant d'événement, puis dédupliquer avant l'effet. Pour un événement ancien, comparer la version de l'objet ou relire son état courant. Répondre après une prise en charge durable, selon le contrat du fournisseur. Tester doublon, retard et panne pendant l'écriture ; un workflow visuellement linéaire ne supprime pas ces cas distribués.
 
 ---
 

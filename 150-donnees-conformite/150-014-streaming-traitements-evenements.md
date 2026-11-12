@@ -1,7 +1,7 @@
 # Streaming & traitements d’événements — Flashcards
 Tags: #flashcards #ai-engineering #donnees #data-engineering
 Vérifié le : 9 octobre 2026 — références techniques et exemples de cette fiche.
-<!-- summary: batch et micro-batch, partitions et ordre, groupes de consommateurs, fenêtres, triggers, watermarks, jointures de flux, changelog, état, checkpoints, backpressure et reprise. -->
+<!-- summary: batch et micro-batch, partitions et ordre, groupes de consommateurs, fenêtres, triggers, watermarks, jointures de flux, changelog, état, checkpoints, backpressure et reprise, calcul de taille d'état à forte cardinalité. -->
 
 
 Quand choisir batch, micro-batch ou traitement continu d’événements ? <!--anki:3032656162643734663865393465663462333830356134323166643563383435-->
@@ -132,6 +132,14 @@ En unités décimales :
 avec facteur 2 = 640 Mo
 ```
 Le facteur deux est pédagogique, pas une caractéristique garantie d'un moteur. Ajouter buffers, sérialisation, index, checkpoints et état temporaire de restauration selon l'implémentation. La taille des clés actives, leur durée de vie et les événements sans correspondance déterminent l'évolution. Une mémoire stable en régime normal ne suffit pas à garantir une reprise après plusieurs heures de retard.
+
+---
+
+Calcul : un flux reçoit 500 clés nouvelles/s et conserve chacune 2 heures. Combien d'entrées d'état faut-il prévoir sans expiration anticipée ? <!--anki:6334616264306235323361353463623462333633343833323961323431373665-->
+?
+La rétention vaut `2 × 3 600 = 7 200 s`. Avec **500 clés nouvelles par seconde**, l'état atteint `500 × 7 200 = 3 600 000 entrées` en régime établi, sous ces hypothèses.
+
+Multiplier ensuite par la taille réelle d'une entrée, y compris index, sérialisation et réplication. Les événements tardifs, timers et checkpoints ajoutent des besoins. Si les clés sont réutilisées, l'évolution diffère ; annoncer leur taux de création plutôt que le débit de messages seul. Une fenêtre logique courte peut encore produire un état volumineux à forte cardinalité.
 
 ---
 

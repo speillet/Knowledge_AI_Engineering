@@ -1,6 +1,6 @@
 # Fine-tuning & adaptation de modèles — Flashcards
 Tags: #flashcards #ai-engineering #fine-tuning #llm
-<!-- summary: quand adapter, SFT, PEFT, LoRA et QLoRA, ressources, distillation, multi-LoRA, régressions, calcul de rang et d’amortissement, versions d’un adapter. -->
+<!-- summary: quand adapter, SFT, PEFT, LoRA et QLoRA, ressources, distillation, multi-LoRA, régressions, calcul de rang et d’amortissement, versions d’un adapter, teacher forcing et génération libre. -->
 
 
 Qu'est-ce que le fine-tuning ? <!--anki:71447a6c7b502c78475d-->
@@ -142,6 +142,14 @@ volume d'amortissement = 1 200 / 0,004 = 300 000 requêtes
 délai = 1 200 / 200 = 6 mois
 ```
 Ce calcul n'est valable que si qualité, volume et économie restent comparables. Ajouter réentraînements, validation, exploitation et régressions au scénario réel. Si les gains mensuels ne dépassent pas les coûts récurrents, aucun délai d'amortissement fini n'existe dans ce modèle.
+
+---
+
+Pourquoi une faible perte en teacher forcing ne remplace-t-elle pas l'évaluation en génération libre après SFT ? <!--anki:3731356531646565346666643466623661633664633865663533633131653436-->
+?
+En **teacher forcing**, chaque prédiction reçoit les tokens précédents de la réponse de référence. En génération libre, le modèle poursuit à partir de ses propres sorties, y compris leurs erreurs.
+
+Un petit écart peut donc changer toute la suite, les appels d'outils ou la terminaison. Évaluer des réponses complètes avec le format et les budgets du serving, puis mesurer réussite métier et erreurs par segment. Garder la perte comme diagnostic d'apprentissage, sans l'assimiler au taux de tâches réussies. La comparaison doit utiliser des exemples indépendants de l'entraînement.
 
 ---
 

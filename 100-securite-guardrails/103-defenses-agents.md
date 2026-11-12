@@ -1,7 +1,7 @@
 # Sécurité des agents — Architecture défensive — Flashcards
 Tags: #flashcards #ai-engineering #securite #agents #defense #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: supposer la compromission, Agents Rule of Two, six design patterns, Dual LLM et CaMeL, moindre privilège, réseau sortant, secrets, validation des appels d'outils, approbation humaine fiable, guardrail de contenu ou politique d'autorisation, mémoire, échanges entre agents, défense en profondeur. -->
+<!-- summary: supposer la compromission, Agents Rule of Two, six design patterns, Dual LLM et CaMeL, moindre privilège, réseau sortant, secrets, validation des appels d'outils, approbation humaine fiable, guardrail de contenu ou politique d'autorisation, mémoire, échanges entre agents, défense en profondeur, approbation liée aux arguments exécutés. -->
 
 
 Quel principe directeur pour sécuriser un agent face à l'injection ? <!--anki:645a6e42336b243f6424-->
@@ -202,6 +202,14 @@ Les validations humaines doivent porter sur une action compréhensible, les filt
 Un **guardrail de contenu** classe un texte ou une sortie selon un risque ; s'il repose sur un modèle, il peut produire faux positifs et faux négatifs. Une **politique d'autorisation** vérifie hors du LLM une règle précise sur l'identité, l'action, la ressource et le contexte.
 
 La politique peut bloquer de façon déterministe une action interdite **si toutes les exécutions passent par ce contrôle**, avec données fiables et implémentation correcte. Ni sa présence ni un bon score de filtre ne prouvent une sécurité absolue. Tester les chemins de contournement et le refus par défaut ([[115-plateformes-agents-gouvernance|moteur de politiques]]).
+
+---
+
+Pourquoi une approbation humaine doit-elle être liée à l'empreinte des arguments réellement exécutés ? <!--anki:6232666231613063386665633464613561353962656139633065393133613064-->
+?
+Une **approbation** portant sur « envoyer ce message » devient insuffisante si destinataire ou contenu change ensuite. L'accord doit identifier la proposition exacte et ses paramètres décisifs.
+
+Conserver une version ou une empreinte des arguments normalisés, l'identité de l'approbateur et une expiration. Au moment de l'exécution, comparer ces éléments et revérifier les droits ; tout changement pertinent exige une nouvelle validation. Tester une modification entre approbation et appel. Une fenêtre de confirmation utile n'est pas une autorisation générale pour les prochains choix du modèle.
 
 ---
 

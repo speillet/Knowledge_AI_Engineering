@@ -1,6 +1,6 @@
 # Ingestion incrémentale, CDC & backfills — Flashcards
 Tags: #flashcards #ai-engineering #donnees #data-engineering #ingestion
-<!-- summary: snapshot ou incrémental, CDC, cohérence snapshot-journal, checkpoints, identités et versions, suppressions, rejeu historique, capacité de rattrapage, quarantaine, réconciliation et index RAG, pagination API et cohérence des extractions. -->
+<!-- summary: snapshot ou incrémental, CDC, cohérence snapshot-journal, checkpoints, identités et versions, suppressions, rejeu historique, capacité de rattrapage, quarantaine, réconciliation et index RAG, pagination API et cohérence des extractions, tombstones et anciens événements rejoués. -->
 
 
 Quand choisir une ingestion complète plutôt qu'incrémentale ? <!--anki:3366623837653530383437383462643961383764376337666362306263306237-->
@@ -102,6 +102,14 @@ Comment paginer une extraction API qui continue d’évoluer pendant la lecture 
 Utiliser le **protocole documenté** : token de continuation, curseur stable ou export de snapshot lorsqu'il existe. Une pagination par offset sur une liste mutable peut répéter ou manquer des objets : si une insertion en tête survient entre `offset=0` et `offset=100`, l'ancien 100e objet revient en page 2 ; une suppression ferait sauter le 101e.
 
 Conserver les paramètres de requête et le curseur après persistance, gérer expiration et relivraisons, puis réconcilier les identités. Une pagination par clé avec ordre total ne garantit pas à elle seule un snapshot cohérent. Ne pas reconstruire un token opaque ; une page courte ou vide n'indique pas la fin si une continuation est fournie.
+
+---
+
+Pourquoi un tombstone de suppression doit-il résister à la réapparition d'une ancienne mise à jour CDC ? <!--anki:3435613532346230393762333464396362393565623130393434343061643937-->
+?
+Un **événement retardé** peut arriver après la suppression du même objet. Si la destination a seulement effacé la ligne, elle risque d'accepter cet ancien événement et de ressusciter les données.
+
+Conserver une version de suppression ou un état équivalent selon le contrat source, puis refuser les événements antérieurs. Définir une rétention compatible avec les retards et replays possibles. Tester suppression, mise à jour ancienne et backfill concurrent. Une réconciliation peut révéler l'écart, mais la règle de version doit empêcher sa réintroduction lors du prochain replay.
 
 ---
 

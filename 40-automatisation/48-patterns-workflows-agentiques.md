@@ -1,6 +1,6 @@
 # Patterns de workflows agentiques — Flashcards
 Tags: #flashcards #ai-engineering #agents #workflows #patterns #llm
-<!-- summary: prompt chaining, routing, parallélisation (sectioning, voting), evaluator-optimizer, plan-and-execute ou ReAct, Reflexion, calcul de fiabilité d'une chaîne, workflow ou agent, implémentation sans framework. -->
+<!-- summary: prompt chaining, routing, parallélisation (sectioning, voting), evaluator-optimizer, plan-and-execute ou ReAct, Reflexion, calcul de fiabilité d'une chaîne, workflow ou agent, implémentation sans framework, conservation du meilleur candidat admissible. -->
 
 
 Quels sont les patterns de base pour composer des appels LLM ? <!--anki:794e6f356a4c61743f5b-->
@@ -122,6 +122,14 @@ async def repondre(ticket):
 Un framework devient utile pour la **persistance**, la reprise et la supervision humaine ([[44-langgraph-fondamentaux|LangGraph]]).
 
 Cet extrait suppose des fonctions déjà définies et un import d'`asyncio`. Les deux appels parallèles doivent être indépendants. Ajouter timeouts, annulation et gestion des exceptions ; `gather` ne constitue pas une politique de reprise. Enregistrer le résultat de chaque étape utile permet de diagnostiquer un échec sans relancer toute la tâche.
+
+---
+
+Quand une boucle evaluator-optimizer doit-elle conserver le meilleur candidat au lieu du dernier ? <!--anki:3064373864333466376237613435653438666364303263616337636134613833-->
+?
+Une **révision** peut améliorer un critère tout en dégradant une réponse déjà correcte. Le dernier candidat n'est donc pas nécessairement le meilleur.
+
+Conserver chaque proposition avec son score, ses violations et son coût. N'accepter une révision que selon une règle définie : contraintes impératives satisfaites puis amélioration mesurable. Arrêter sur budget, stagnation ou réussite, et conserver le meilleur candidat admissible. Si l'évaluateur est bruité, confirmer les écarts utiles ; multiplier les révisions peut seulement suradapter le texte à son juge.
 
 ---
 

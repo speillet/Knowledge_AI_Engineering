@@ -1,7 +1,7 @@
 # Docker & Kubernetes — Flashcards
 Tags: #flashcards #docker #kubernetes
 Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: dockershim et sa suppression, architecture actuelle, images Docker exécutées sans Docker Engine, cri-dockerd, vérifications avant de retirer Docker Engine, construction d'images sans démon (BuildKit rootless, Buildah). -->
+<!-- summary: dockershim et sa suppression, architecture actuelle, images Docker exécutées sans Docker Engine, cri-dockerd, vérifications avant de retirer Docker Engine, construction d'images sans démon (BuildKit rootless, Buildah), validation des conditions d'exécution Kubernetes. -->
 
 
 Historiquement, comment Kubernetes communiquait-il avec Docker Engine ? <!--anki:41645a73796a5a6f502a-->
@@ -73,6 +73,14 @@ Avec un constructeur qui **n'a pas besoin du démon Docker** ni du socket du nod
 - **Buildah**, sans démon, courant dans l'écosystème Red Hat
 
 Tous produisent des **images OCI** standard, poussées dans le registry comme avant ([[02-docker-images-registries|registries]]). On évite ainsi de monter `docker.sock`, qui donne en pratique un accès root au node.
+
+---
+
+Pourquoi un test Docker local ne suffit-il pas à valider un déploiement Kubernetes ? <!--anki:3361376364343835653661643437306539636330343432366538643933663831-->
+?
+Le **contexte d'exécution** change : identité, système de fichiers, réseau, ressources et cycle de vie. Un conteneur local lancé avec tous les privilèges peut échouer dans un Pod restreint.
+
+Rejouer les conditions prévues : utilisateur non privilégié, volumes et droits réels, limites mémoire, secrets injectés et arrêt gracieux. Tester téléchargement des poids et accès GPU sur le cluster cible. Vérifier enfin Service et probes. Une image commune facilite le transfert, mais ne reproduit pas automatiquement les contrats que Kubernetes impose autour du processus.
 
 ---
 

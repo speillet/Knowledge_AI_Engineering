@@ -1,6 +1,6 @@
 # Leadership technique en AI Engineering — Flashcards
 Tags: #flashcards #ai-engineering #leadership #senior #produit
-<!-- summary: ce qui fait un senior, choix des cas d'usage, ROI, échec des POC, RFC et ADR, build ou buy, go / no-go, standards d'équipe, mentorat, revue de conception, dette technique, communication et veille. -->
+<!-- summary: ce qui fait un senior, choix des cas d'usage, ROI, échec des POC, RFC et ADR, build ou buy, go / no-go, standards d'équipe, mentorat, revue de conception, dette technique, communication et veille, conditions de réexamen d'une décision d'architecture. -->
 
 
 Qu'est-ce qui distingue un AI Engineer senior d'un confirmé ? <!--anki:684c3732252364496938-->
@@ -149,6 +149,14 @@ Comment prioriser une dette technique IA face à une nouvelle fonctionnalité ? 
 Décrire la **conséquence mesurable** de la dette : incidents récurrents, temps de migration, coût d'exploitation, erreurs non détectées ou dépendance à une personne. Comparer son coût de maintien et son risque à l'effort de correction et à la valeur de la fonctionnalité.
 
 Une dépendance non versionnée qui invalide les evals peut justifier une action immédiate ; une abstraction imparfaite sans impact peut attendre. Préférer une correction limitée et vérifiable à une refonte générale. Associer responsable, échéance et preuve d'amélioration à la décision.
+
+---
+
+Que doit contenir une décision d'architecture IA pour pouvoir être réexaminée utilement ? <!--anki:6465623364613265393236623466376661376434376261626335623334336665-->
+?
+Une **décision d'architecture** consigne le problème, les options réellement comparées, les contraintes et les preuves qui motivent le choix. Ajouter hypothèses, responsable et conditions de réexamen.
+
+Par exemple : choisir une API tant que volume, confidentialité et coût restent dans une enveloppe définie ; réévaluer si elle est dépassée. Relier benchmarks et expériences au lieu d'affirmer qu'un outil est « meilleur ». Décrire les conséquences opérationnelles et le coût de sortie. La date et les déclencheurs évitent de traiter une décision contextuelle comme une vérité permanente.
 
 ---
 

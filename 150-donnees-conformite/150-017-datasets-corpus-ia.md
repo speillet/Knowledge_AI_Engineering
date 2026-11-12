@@ -1,7 +1,7 @@
 # Construction de datasets & corpus IA — Flashcards
 Tags: #flashcards #ai-engineering #donnees #data-engineering
 Vérifié le : 9 octobre 2026 — références techniques et exemples de cette fiche.
-<!-- summary: manifestes, identité documentaire, parsing, déduplication et splits, shards, streaming de datasets, shuffle, workers, mélange des sources, filtrage, packing et reprise d’entraînement. -->
+<!-- summary: manifestes, identité documentaire, parsing, déduplication et splits, shards, streaming de datasets, shuffle, workers, mélange des sources, filtrage, packing et reprise d’entraînement, propagation des retraits aux caches d'entraînement. -->
 
 
 Que doit identifier le manifeste d’un dataset d’entraînement ou d’évaluation ? <!--anki:6435646437656139346162653431616139653838636163636131313631653832-->
@@ -137,6 +137,14 @@ Pourquoi packing et troncature font-ils partie du contrat de données d’entra�
 Le **packing** regroupe plusieurs exemples dans une séquence ; la **troncature** retire des tokens au-delà d'une limite. Ils modifient frontières, proportions et parfois cible réellement apprise.
 
 Vérifier séparateurs, masques de loss et d'attention selon l'objectif. Sans isolation prévue, un exemple peut utiliser le contexte d'un autre. Une troncature à 2 048 tokens retire 252 des 400 tokens de réponse d'un exemple dont la question en compte 1 900 : le modèle apprend une réponse coupée. Mesurer tokens utiles, exemples tronqués et segments touchés. Une meilleure occupation GPU ne garantit pas un dataset équivalent : comparer apprentissage et évaluation après changement de préparation.
+
+---
+
+Pourquoi conserver un jeu de données supprimé dans un cache d'entraînement peut-il invalider la traçabilité du corpus ? <!--anki:6564663938306139626230623464333338323732346261393465373838323565-->
+?
+Un **cache dérivé** peut continuer à fournir des exemples retirés des sources ou exclus d'une nouvelle version. Le dataset effectivement lu ne correspond alors plus au manifeste annoncé.
+
+Inclure version du corpus, transformations et règles de filtrage dans les clés de cache. Propager les retraits aux shards, données tokenisées et artefacts concernés selon une politique vérifiable. Faire un essai avec un exemple sentinelle supprimé, puis inspecter ce que le dataloader consomme réellement. Recalculer le manifeste sans invalider les dérivés ne prouve pas leur mise à jour.
 
 ---
 

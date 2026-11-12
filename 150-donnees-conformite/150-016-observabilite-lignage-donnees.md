@@ -1,7 +1,7 @@
 # Observabilité, lignage & exploitation des données — Flashcards
 Tags: #flashcards #ai-engineering #donnees #data-engineering
 Vérifié le : 9 octobre 2026 — références techniques et exemples de cette fiche.
-<!-- summary: SLO de données, fraîcheur, complétude par segment, réconciliation, couverture des tests, lignage déclaré ou exécuté, catalogue, impact, incidents et coût de surveillance. -->
+<!-- summary: SLO de données, fraîcheur, complétude par segment, réconciliation, couverture des tests, lignage déclaré ou exécuté, catalogue, impact, incidents et coût de surveillance, surveillance de la présence des contrôles. -->
 
 
 Comment définir un SLO de données utile à un produit IA ? <!--anki:6338353835303661393538373438626139353234656232346339623536373631-->
@@ -136,6 +136,14 @@ Comment éviter que les contrôles de qualité coûtent plus cher que le pipelin
 Classer les contrôles selon **criticité, fréquence et volume nécessaire**. Vérifier à chaque publication les invariants essentiels sur les partitions modifiées ; réserver certains scans complets à une cadence justifiée. Exemple : unicité des clés sur la partition du jour, 20 Go, à chaque publication, et sur l'historique de 8 To une fois par semaine.
 
 Réutiliser des statistiques fiables lorsqu'elles répondent réellement à la question, et préciser ce que l'échantillonnage peut manquer. Mesurer coût, durée et erreurs détectées. Une optimisation de contrôle ne doit pas supprimer silencieusement sa garantie, par exemple remplacer une recherche exhaustive de doublons par une estimation sans changer le contrat de publication.
+
+---
+
+Pourquoi un contrôle de fraîcheur doit-il vérifier aussi que sa propre mesure arrive encore ? <!--anki:3830663439336238663338653432363038396330656436633833666432616339-->
+?
+Une **dernière valeur conforme** peut rester affichée après l'arrêt du pipeline ou du collecteur. Sans surveillance du contrôle, le dashboard peut sembler sain indéfiniment.
+
+Associer mesure et heure d'observation, définir la fréquence attendue et traiter l'absence comme un état explicite. Comparer fraîcheur source, publication et disponibilité au consommateur. Tester interruption du pipeline puis du collecteur. Un timestamp maximal dans les données ne suffit pas si personne ne vérifie régulièrement sa progression et la présence de toutes les partitions attendues.
 
 ---
 

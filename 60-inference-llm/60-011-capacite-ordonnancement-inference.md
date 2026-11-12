@@ -1,7 +1,7 @@
 # Capacité & ordonnancement de l’inférence LLM — Flashcards
 Tags: #flashcards #ai-engineering #inference #capacity #scheduling #gpu
 Vérifié le : 8 octobre 2026
-<!-- summary: budgets de séquences et de tokens, mémoire KV réelle, GQA et sharding, préemption, admission, priorités, files, réplication et parallélismes, capacité de secours et annulation. -->
+<!-- summary: budgets de séquences et de tokens, mémoire KV réelle, GQA et sharding, préemption, admission, priorités, files, réplication et parallélismes, capacité de secours et annulation, réservation KV pour les sorties. -->
 
 
 À ne pas confondre : limite de contexte, budget de batch et capacité KV ? <!--anki:3362373534643136313937303463623238346633646336363064366238343532-->
@@ -116,6 +116,14 @@ Pourquoi l’annulation fait-elle partie de l’optimisation de capacité ? <!--
 Après abandon, timeout ou choix d'une autre réponse, un moteur peut continuer à générer si l'annulation ne lui parvient pas. Il consomme alors calcul, KV et quota sans produire de valeur.
 
 Exemple : un utilisateur ferme l'onglet après 2 s ; sans propagation, le moteur produit encore les 1 500 tokens prévus, soit 30 s d'une place de decode à 50 tokens/s. Propager un budget de temps et un signal d'annulation à travers application, gateway et serveur, puis mesurer les tokens produits après abandon. Une limite de sortie évite aussi les générations sans fin, mais sa réduction excessive augmente troncatures et reprises.
+
+---
+
+Pourquoi réserver seulement les tokens d'entrée sous-estime-t-il la capacité KV nécessaire ? <!--anki:3530333337623339643261663432313238653438316232343661303830626135-->
+?
+Le **KV cache grandit pendant la génération**. Admettre les séquences uniquement selon leur prompt peut saturer la mémoire quand elles produisent simultanément leurs sorties.
+
+Estimer une enveloppe entrée plus sortie, selon les longueurs observées et les limites contractuelles, puis conserver une marge pour les autres allocations. Suivre préemptions, sorties longues et distribution par requête. Une réservation maximale partout peut être trop conservatrice ; choisir une politique d'admission mesurée, avec préemption ou refus explicites. La mémoire libre au début n'est pas une garantie de capacité jusqu'à la fin.
 
 ---
 

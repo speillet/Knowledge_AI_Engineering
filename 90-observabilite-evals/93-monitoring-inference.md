@@ -1,7 +1,7 @@
 # Monitoring de l'inférence & de l'usage — Flashcards
 Tags: #flashcards #ai-engineering #observability #monitoring #inference #llm
 Vérifié le : 8 octobre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: monitoring ou observabilité, couches à monitorer, métriques vLLM et GPU (DCGM), usage par équipe, finish_reason, validations de chaque réponse, signaux de qualité sans vérité terrain, erreurs et disponibilité, traces OpenTelemetry GenAI, dashboard, alertes, contrôles avant mise en production, détection de régression, journalisation des prompts, agrégation des histogrammes, buckets SLO, périmètres de mesure, débit global et segmentation. -->
+<!-- summary: monitoring ou observabilité, couches à monitorer, métriques vLLM et GPU (DCGM), usage par équipe, finish_reason, validations de chaque réponse, signaux de qualité sans vérité terrain, erreurs et disponibilité, traces OpenTelemetry GenAI, dashboard, alertes, contrôles avant mise en production, détection de régression, journalisation des prompts, agrégation des histogrammes, buckets SLO, périmètres de mesure, débit global et segmentation, mesures manquantes et panne de télémétrie. -->
 
 
 Quelles couches faut-il monitorer pour un service d'inférence ? <!--anki:4f41512c3177716b6679-->
@@ -242,6 +242,14 @@ Comment éviter qu’un dashboard masque la dégradation d’une catégorie de r
 Conserver une vue globale et des segments stables : modèle, route, classe de longueur, modalité et niveau de service. Une hausse de demandes faciles peut améliorer le p95 global alors que chaque tâche difficile ralentit.
 
 Comparer les distributions et volumes des segments avant d'attribuer un gain à une optimisation. Borner les catégories ; garder les identifiants fins dans les traces. Publier aussi refus et délais par segment pour détecter une politique d'admission qui avantage systématiquement les requêtes courtes ou un client particulier.
+
+---
+
+Pourquoi surveiller le taux de métriques manquantes sur un service d'inférence ? <!--anki:3833393266373365613931313430646439373662323962356531316233333337-->
+?
+Une **panne de télémétrie** peut faire disparaître précisément les requêtes les plus lentes ou interrompues. Le dashboard s'améliore alors que le service se dégrade.
+
+Comparer compteurs d'entrée, requêtes terminées et observations de durée ; alerter sur les écarts inexpliqués. Distinguer valeur nulle, absence de mesure et absence de trafic. Tester un redémarrage du collecteur et une réponse coupée avant l'usage final. Utiliser les logs ou métriques de la couche d'entrée comme point de rapprochement, sans supposer que chaque système perd les mêmes événements.
 
 ---
 

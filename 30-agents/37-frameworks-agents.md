@@ -1,7 +1,7 @@
 # Frameworks d'agents — Flashcards
 Tags: #flashcards #ai-engineering #agents #frameworks #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: LangChain, LangGraph, CrewAI, Google ADK, OpenAI Agents SDK, Claude Agent SDK, LlamaIndex, framework ou code maison. -->
+<!-- summary: LangChain, LangGraph, CrewAI, Google ADK, OpenAI Agents SDK, Claude Agent SDK, LlamaIndex, framework ou code maison, prototype comparatif avec pannes. -->
 
 
 À quoi sert un framework d'agents ? <!--anki:7a3f7e4b6f3a367c3e6e-->
@@ -106,6 +106,14 @@ LangSmith   → la plateforme : traces, evals, datasets, et le déploiement
 Autrement dit : **avec quoi** on écrit, **quoi** exécute le flux, **où** on l'observe et le déploie. Les trois sont indépendants : on peut utiliser LangGraph sans LangChain, ou tracer une application maison dans LangSmith.
 
 Une application peut ainsi assembler ses outils dans LangChain, reprendre son exécution grâce à LangGraph et analyser ses traces dans LangSmith. Ne pas confondre présence d'un graphe avec hébergement managé, ni instrumentation avec évaluation automatique de qualité. Le choix de chaque couche dépend d'un besoin distinct : intégration, exécution ou exploitation.
+
+---
+
+Comment comparer deux frameworks d'agents avec un prototype qui révèle leurs limites ? <!--anki:6536353766656666336530613437393238346666616539336430346463666634-->
+?
+Implémenter la **même petite tâche représentative** avec un contrat identique : outil métier, sortie typée, interruption humaine et panne après effet externe.
+
+Comparer résultat, reprise, traces, isolation et effort de maintenance, en fixant modèle et données. Inclure un cas d'erreur et un changement de version d'état ; une démonstration sans panne teste peu les garanties d'exécution. Documenter le code spécifique au framework et les possibilités d'export. Le nombre de lignes du scénario heureux ne suffit pas à choisir une dépendance de production.
 
 ---
 

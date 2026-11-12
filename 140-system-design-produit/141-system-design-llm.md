@@ -1,6 +1,6 @@
 # System design d'applications LLM — Méthode — Flashcards
 Tags: #flashcards #ai-engineering #system-design #architecture #llm
-<!-- summary: démarche, cadrage, échelle de complexité, triangle qualité-latence-coût, estimation de charge, composants, latence réelle ou perçue, synchrone ou asynchrone, multi-tenant, modes de défaillance, présentation des arbitrages. -->
+<!-- summary: démarche, cadrage, échelle de complexité, triangle qualité-latence-coût, estimation de charge, composants, latence réelle ou perçue, synchrone ou asynchrone, multi-tenant, modes de défaillance, présentation des arbitrages, coût des erreurs métier. -->
 
 
 Par quoi commence la démarche de system design d'une application LLM ? <!--anki:62787568774b543e5144-->
@@ -163,6 +163,14 @@ Préciser charge, jeu d'évaluation et incertitude derrière les chiffres ; dist
 - **Latence perçue** : le temps pendant lequel l'utilisateur **attend sans rien voir**, réduit côté interface (**streaming**, premier token rapide, étapes affichées, travail en arrière-plan)
 
 Un agent de 40 secondes qui montre ses étapes peut paraître plus rapide qu'une réponse de 8 secondes sur écran blanc. Le **TTFT** pilote la perception, la durée totale pilote le coût ([[64-metriques-slo-inference|métriques]]).
+
+---
+
+Pourquoi chiffrer le coût d'une erreur métier avant de choisir l'architecture IA ? <!--anki:6164346231356564623330633437313938373461383063356139633636356164-->
+?
+Le **coût de l'erreur** détermine les contrôles utiles : suggestion de titre et virement bancaire ne demandent pas le même niveau de preuve, de supervision ou de reprise.
+
+Décrire erreurs possibles, fréquence estimée, réversibilité et personnes affectées. Comparer ensuite règles, modèle, vérification et revue humaine sur leur coût total et leur délai. Commencer par un volume limité lorsque l'incertitude est forte. Une architecture plus complexe peut réduire certaines erreurs tout en créant de nouveaux modes de panne ; l'arbitrage doit porter sur le résultat métier complet.
 
 ---
 

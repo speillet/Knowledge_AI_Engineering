@@ -1,7 +1,7 @@
 # Computer use & agents navigateur — Flashcards
 Tags: #flashcards #ai-engineering #agents #computer-use #multimodal #securite
 Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: image ou structure (DOM, arbre d'accessibilité), grounding visuel, benchmarks (OSWorld, WebArena), coût et latence, injection par le contenu web, isolation, quand ne pas l'utiliser, computer use ou RPA, outils. -->
+<!-- summary: image ou structure (DOM, arbre d'accessibilité), grounding visuel, benchmarks (OSWorld, WebArena), coût et latence, injection par le contenu web, isolation, quand ne pas l'utiliser, computer use ou RPA, outils, revérification de l'écran avant un clic sensible. -->
 
 
 Quelles sont les deux façons pour un agent d'utiliser une interface ? <!--anki:6b51676a79395d336043-->
@@ -99,6 +99,14 @@ Pour qu'un agent pilote un navigateur, quand choisir une bibliothèque open sour
 - **Computer use natif d'un modèle** (Claude, OpenAI, Gemini) : pour les interfaces **sans DOM exploitable** (applications de bureau, canvas), au prix d'une capture d'écran par étape
 
 On juge sur **ses propres tâches**, pas sur une démo.
+
+---
+
+Pourquoi un agent d'interface doit-il revérifier l'écran avant un clic à effet sensible ? <!--anki:6631656566363937646463323431306362353639373238316435653539376330-->
+?
+Entre **observation et action**, la page peut changer : chargement, fenêtre modale ou déplacement d'un bouton. Les anciennes coordonnées peuvent alors viser une autre commande.
+
+Réobserver l'état, privilégier un identifiant sémantique fiable quand il existe et vérifier cible et paramètres avant l'effet. Après l'action, contrôler sa confirmation dans le système. Si l'état devient ambigu, arrêter et demander une clarification utile. Tester un déplacement de contenu entre capture et clic. Un historique de captures explique l'intention, mais ne garantit pas ce que l'interface affichait exactement à l'instant de l'action.
 
 ---
 

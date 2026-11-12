@@ -1,7 +1,7 @@
 # Mixture of Experts (MoE) — Flashcards
 Tags: #flashcards #ai-engineering #fondamentaux #moe #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: paramètres totaux et actifs, routeur, load balancing, expert partagé, spécialisation réelle, coût mémoire, expert parallelism, MoE ou dense. -->
+<!-- summary: paramètres totaux et actifs, routeur, load balancing, expert partagé, spécialisation réelle, coût mémoire, expert parallelism, MoE ou dense, calcul des experts distincts actifs dans un batch. -->
 
 
 Qu'est-ce qu'un modèle Mixture of Experts ? <!--anki:6a3348243e4677414e52-->
@@ -100,6 +100,14 @@ poids résidents : 235e9 × 1 octet = 235 Go décimaux
 calcul linéaire : 2 × 22e9 = 44 GFLOP par token
 ```
 Le stockage dépend des paramètres **totaux**, le calcul activé des paramètres **actifs**. Ajouter mémoire du runtime, KV cache et marge avant de dimensionner les GPU. Les 44 GFLOP excluent notamment le coût dépendant du contexte, le routage et les communications : ce n'est ni une latence, ni la garantie d'une vitesse identique à un dense 22B. Mesurer débit utile et [[121-couts-inference|coût]] sur la charge visée.
+
+---
+
+Calcul : 16 tokens choisissent chacun deux experts parmi huit, sans expert partagé. Combien d'experts distincts le batch peut-il solliciter ? <!--anki:3236363137376135636562633431303039616636623536663639353433646331-->
+?
+Le minimum est **deux experts**, si tous les tokens choisissent la même paire. Le maximum est **huit**, si les 32 affectations couvrent tous les experts disponibles.
+
+Le nombre d'experts actifs par token reste deux dans les deux cas. La couverture du batch change pourtant les poids sollicités et la répartition des communications. Le calcul suppose deux experts distincts par token et ignore toute contrainte de capacité ou routage supplémentaire. Il illustre pourquoi « deux experts actifs » ne signifie pas que seuls deux experts du modèle sont nécessaires en mémoire pour tout le batch.
 
 ---
 

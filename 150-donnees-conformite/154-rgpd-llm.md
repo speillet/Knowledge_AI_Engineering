@@ -1,7 +1,7 @@
 # RGPD appliqué aux LLM — Flashcards
 Tags: #flashcards #ai-engineering #rgpd #conformite #donnees
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: champ d'application, RGPD ou AI Act, principes, base légale de la réutilisation, responsable et sous-traitant, transferts hors UE, droit à l'effacement, AIPD, décisions automatisées, données dans le modèle, mesures concrètes. -->
+<!-- summary: champ d'application, RGPD ou AI Act, principes, base légale de la réutilisation, responsable et sous-traitant, transferts hors UE, droit à l'effacement, AIPD, décisions automatisées, données dans le modèle, mesures concrètes, finalités distinctes entre service et entraînement. -->
 
 
 Quand le RGPD s'applique-t-il à une application LLM ? <!--anki:75213c515379246a5375-->
@@ -117,6 +117,14 @@ Les deux se cumulent : un chatbot RH traitant des CV relève du **haut risque** 
 
 ---
 
+Pourquoi un consentement à utiliser un assistant ne couvre-t-il pas automatiquement la réutilisation de ses conversations pour entraîner un modèle ? <!--anki:3363333634366361656363663462656538636164636262626435666335626363-->
+?
+L'**usage du service** et l'**amélioration par entraînement** peuvent constituer des finalités distinctes. Il faut déterminer et documenter la base légale adaptée à chacune, puis informer les personnes conformément au cadre applicable.
+
+Si le consentement est retenu, vérifier ses conditions de validité et son retrait ; ne pas supposer qu'une case générale règle tous les traitements. Examiner minimisation, données sensibles, conservation et droits avec le DPO. Une clause fournisseur « pas d'entraînement » ne règle pas, à elle seule, la licéité de la collecte ni celle des traitements internes.
+
+---
+
 ## Mises en situation
 
 Mise en situation : un client exerce son droit à l'effacement. Tes données sont dans l'index RAG, la mémoire de l'agent, les traces, les caches et un modèle fine-tuné. Que réponds-tu ? <!--anki:782b47475664446d4a32-->
@@ -152,6 +160,8 @@ Mise en situation : le métier veut automatiser le tri des candidatures, avec re
 - [Union européenne — règlement (UE) 2016/679, RGPD](https://eur-lex.europa.eu/eli/reg/2016/679/oj/fra)
 - [CNIL — texte des articles 12 à 23, dont décisions automatisées](https://www.cnil.fr/fr/reglement-europeen-protection-donnees/chapitre3) — article 22 consulté le 6 novembre 2026 ; vérification limitée à cette carte.
 - [CNIL — ressources sur l’IA et les données personnelles](https://www.cnil.fr/fr/intelligence-artificielle)
+
+- [Union européenne — RGPD, articles 5 à 7 et 13](https://eur-lex.europa.eu/eli/reg/2016/679/oj/fra) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
 
 ## Connexions
 - [[152-pii-confidentialite|PII & confidentialité]] — les mesures techniques

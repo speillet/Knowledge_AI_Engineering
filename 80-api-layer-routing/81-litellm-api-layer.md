@@ -1,7 +1,7 @@
 # LiteLLM (API layer) — Flashcards
 Tags: #flashcards #ai-engineering #api-layer #litellm #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: SDK ou proxy, virtual keys, budgets, rate limits, fallbacks, load balancing, callbacks d'observabilité, alternatives (gateways auto-hébergées, services des clouds, agrégateurs). -->
+<!-- summary: SDK ou proxy, virtual keys, budgets, rate limits, fallbacks, load balancing, callbacks d'observabilité, alternatives (gateways auto-hébergées, services des clouds, agrégateurs), réconciliation avec la facturation fournisseur. -->
 
 
 Qu'est-ce qu'une API layer (LLM gateway) ? <!--anki:79752c38462d5a6c3765-->
@@ -113,6 +113,14 @@ Le proxy **refuse** les requêtes suivantes avec une erreur explicite, jusqu'à 
 Pour l'application, c'est une **panne** : il faut gérer cette erreur (message clair, mode dégradé), et **alerter avant** le plafond, par exemple à 80 % ([[122-finops-llm|FinOps]]).
 
 Ne pas réessayer en boucle une requête refusée pour budget : sans changement de plafond ou de période, elle restera refusée. Tester le comportement sous concurrence ; un plafond logique ne promet pas une facture exactement égale au centime près.
+
+---
+
+Pourquoi la comptabilité d'une gateway LiteLLM doit-elle être réconciliée avec la facturation fournisseur ? <!--anki:6639383364663265646234383438656239373038373831616361663038656233-->
+?
+La **gateway** observe ses appels, mais des retries, réponses interrompues, outils ou différences de comptage peuvent créer un écart avec la facture. Le coût client déclaré n'est pas toujours le coût facturé définitif.
+
+Corréler identifiants d'appels, modèle effectif, usage renvoyé et tarif versionné. Inclure les tentatives échouées facturables et distinguer estimation et montant réconcilié. Tester un flux interrompu avant son événement final d'usage. Une attribution budgétaire utile conserve ces incertitudes au lieu de transformer une donnée manquante en coût nul.
 
 ---
 

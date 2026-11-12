@@ -1,7 +1,7 @@
 # Transformations & orchestration des pipelines data — Flashcards
 Tags: #flashcards #ai-engineering #donnees #data-engineering
 Vérifié le : 9 octobre 2026 — références techniques et exemples de cette fiche.
-<!-- summary: ETL/ELT, couches de données, tâches et assets, intervalles logiques, dépendances, incrémental, retries, publication, CI, ressources et chemin critique d’un DAG. -->
+<!-- summary: ETL/ELT, couches de données, tâches et assets, intervalles logiques, dépendances, incrémental, retries, publication, CI, ressources et chemin critique d’un DAG, publication concurrente d'un même intervalle. -->
 
 
 À ne pas confondre : ETL et ELT dans un pipeline de données IA ? <!--anki:3335323665353333336238353433396662366239393935376130313139346330-->
@@ -130,6 +130,14 @@ durée critique = 2 + max(10, 4) + 3 = 15 minutes
 travail cumulé = 2 + 10 + 4 + 3 = 19 minutes de tâche
 ```
 Réduire la branche de quatre minutes n'accélère pas ce chemin critique tant qu'elle reste plus courte que l'autre. Le parallélisme consomme cependant des ressources simultanées. Inclure files, démarrage, transferts et validation pour prévoir la durée réelle. Ces minutes de tâche ne sont pas directement des minutes facturées si les tâches utilisent des ressources différentes.
+
+---
+
+Pourquoi deux orchestrations du même intervalle de données doivent-elles publier un résultat cohérent ? <!--anki:6534393565393834363234353437613639393530393536613330666130653565-->
+?
+Un **retry, backfill ou lancement manuel** peut recalculer le même intervalle en parallèle. Si chaque run écrit directement dans la destination finale, les lecteurs peuvent voir des résultats mélangés.
+
+Définir une identité de partition logique, écrire dans une version isolée, valider puis publier avec un contrôle de concurrence. Décider si une seconde exécution retrouve le résultat existant ou le remplace selon une règle explicite. Tester deux runs simultanés. Le succès de toutes les tâches d'un DAG ne garantit pas que leur publication concurrente respecte le contrat de données.
 
 ---
 

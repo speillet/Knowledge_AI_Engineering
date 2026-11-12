@@ -1,6 +1,6 @@
 # Monitoring, drift & boucle de feedback — Flashcards
 Tags: #flashcards #ai-engineering #mlops #monitoring #drift #llm
-<!-- summary: data drift et concept drift, PSI et calcul, test KS sur gros volumes, dérive multivariée, distribution des scores, drift d'une app LLM et d'un RAG, qualité en production, boucle de feedback, quand ré-entraîner, annotation régulière, mises à jour des modèles API, alertes sur tendance et par segment. -->
+<!-- summary: data drift et concept drift, PSI et calcul, test KS sur gros volumes, dérive multivariée, distribution des scores, drift d'une app LLM et d'un RAG, qualité en production, boucle de feedback, quand ré-entraîner, annotation régulière, mises à jour des modèles API, alertes sur tendance et par segment, biais des labels tardifs. -->
 
 
 À ne pas confondre : data drift et concept drift ? <!--anki:693a4558422d7246257a-->
@@ -152,6 +152,14 @@ Comme sur la disponibilité : des **seuils** sur les scores de qualité, les tau
 Précautions : alerter sur une **tendance** (moyenne glissante sur plusieurs heures) plutôt que sur un point isolé, car les scores d'échantillons sont bruités, et joindre à l'alerte des **exemples de traces** pour diagnostiquer vite.
 
 Inclure effectif évalué et couverture : une moyenne stable calculée sur la moitié des requêtes peut masquer une panne du juge. Les incidents critiques, comme une fuite de données confirmée, exigent une réaction sans attendre une tendance.
+
+---
+
+Pourquoi la qualité d'un modèle peut-elle sembler monter quand ses labels arrivent en retard ? <!--anki:3239653832366562656333633434616662636365653761303833633064313739-->
+?
+Les **labels disponibles tôt** peuvent concerner les cas faciles, tandis que fraudes contestées ou résiliations tardives restent sans résultat. Évaluer seulement les labels déjà arrivés sélectionne alors une population favorable.
+
+Former des cohortes selon la date de décision et attendre une maturité définie pour la métrique finale. Suivre séparément délai d'arrivée et proportion de labels manquants par segment. Des indicateurs précoces restent utiles, mais doivent être identifiés comme tels. Une amélioration apparente peut refléter le changement de disponibilité des labels plutôt qu'un meilleur modèle.
 
 ---
 

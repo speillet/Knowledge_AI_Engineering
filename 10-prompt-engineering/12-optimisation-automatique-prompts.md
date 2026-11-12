@@ -1,7 +1,7 @@
 # Optimisation automatique de prompts (DSPy) — Flashcards
 Tags: #flashcards #ai-engineering #prompt-engineering #dspy #evals #llm
 Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: meta-prompting ou optimisation guidée par une métrique, DSPy (signatures, modules, optimiseurs BootstrapFewShot, MIPROv2, GEPA), APE, OPRO, TextGrad, quand l'utiliser ou non, sur-apprentissage, transfert entre modèles, optimisation de prompts ou fine-tuning. -->
+<!-- summary: meta-prompting ou optimisation guidée par une métrique, DSPy (signatures, modules, optimiseurs BootstrapFewShot, MIPROv2, GEPA), APE, OPRO, TextGrad, quand l'utiliser ou non, sur-apprentissage, transfert entre modèles, optimisation de prompts ou fine-tuning, contraintes critiques d'optimisation. -->
 
 
 Qu'est-ce que l'optimisation automatique de prompts ? <!--anki:4e78672b25565b49213f-->
@@ -114,6 +114,14 @@ Par exemple, une formulation qui réduit les omissions chez A peut augmenter les
 - **Fine-tuning** : modifie les **poids**. Demande un modèle ouvert ou une API de fine-tuning, plus de données, et produit un modèle à servir ([[51-fine-tuning-adaptation|fine-tuning]])
 
 Ils se combinent : DSPy peut aussi **distiller** un programme optimisé vers un petit modèle fine-tuné (`BootstrapFinetune`).
+
+---
+
+Pourquoi optimiser un prompt sur une moyenne peut-il dégrader un cas métier critique ? <!--anki:6365663032613936633638383436633362333636373262666539396166366561-->
+?
+Une **métrique moyenne** permet de compenser une régression rare par de nombreux petits gains. Un extracteur peut ainsi améliorer les adresses tout en dégradant les montants, pourtant décisifs.
+
+Définir une métrique de sélection et des **contraintes par segment** : montant exact, langue rare, refus nécessaire. Évaluer chaque candidat sur ces contraintes avant de comparer sa moyenne. Garder une validation indépendante et un budget d'essais explicite. Un optimiseur améliore l'objectif fourni ; il ne découvre pas automatiquement le coût métier des erreurs.
 
 ---
 
