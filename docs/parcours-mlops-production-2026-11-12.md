@@ -114,3 +114,5 @@ Les anciennes dates générales de vérification restent conservées : cette pas
 Les **2 372 questions et identifiants Anki préexistants** sont conservés. Les nouvelles cartes reçoivent de nouveaux identifiants ; aucune carte n'est retirée. Les vérifications de contenu, de liens, des catalogues et de l'export Anki accompagnent la livraison.
 
 Validation locale : `make check` réussit, dont **54 tests**, ruff, mypy et les deux ateliers. Le lint signale **zéro erreur et zéro avertissement**. L'inspection du paquet exporté retrouve **2 440 cartes actives** avec les identifiants attendus et les **71 anciennes cartes retirées toujours suspendues**. Les calculs ajoutés et la syntaxe des snippets Python ont également été contrôlés ; cela ne remplace pas un essai MLflow dans un environnement cible.
+
+La [vérification d’actualité complémentaire](verification-actualite-2026-11-13.md) contrôle ensuite les annonces, modes d’hébergement, référentiels et transitions réglementaires encore cités dans ces fiches et leurs voisines.

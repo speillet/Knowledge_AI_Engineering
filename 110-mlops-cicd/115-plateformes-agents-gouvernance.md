@@ -1,6 +1,6 @@
 # Plateformes d'agents — Architecture & gouvernance — Flashcards
 Tags: #flashcards #ai-engineering #agents #platform #gouvernance #llm
-Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+Vérifié le : 25 septembre 2026 — date globale conservée ; revue ciblée du 13 novembre 2026 détaillée dans les Sources.
 <!-- summary: plateforme interne (paved road), plan de contrôle et plan d'exécution, architecture de référence, séparation cerveau, mains et session, exécution durable, isolation multi-tenant, échange de jetons pour l'agent délégué, jetons hors du contexte, standards d'identité, moteur de politiques, human-in-the-loop, registre et cycle de vie, Top 10 OWASP agentique, rayon d'impact et kill switch, audit, SLO, evals continues, coûts, AI Act, lock-in, critères de choix, révocation d'une délégation active, politiques versionnées, retrait vérifié, responsabilités métier et exploitation, dérogations temporaires. -->
 
 
@@ -22,10 +22,9 @@ C'est une **prévision publiée**, pas une mesure d'échecs déjà observés ni 
 
 À ne pas confondre : plan de contrôle et plan d'exécution d'une plateforme d'agents ? <!--anki:4b303c326a415821624f-->
 ?
-- **Plan de contrôle** : ce qui **décide** : registre des agents, identités, politiques d'accès, versions et configurations, budgets, approbations
-- **Plan d'exécution** : ce qui **fait tourner** : runtime, sandboxes, gateways LLM et outils, mémoire, émission des traces
+Le **plan de contrôle** gère inventaire, identités, politiques, versions et décisions de déploiement ; le **plan d'exécution** traite les sessions, appels de modèles et outils, mémoire et traces.
 
-Les séparer permet de **gouverner des agents construits n'importe où**, y compris chez d'autres éditeurs. Exemple : chez Microsoft, **Foundry** construit et exécute les agents, et **Agent 365** (disponible depuis mai 2026) sert de plan de contrôle pour tous les agents de l'entreprise, y compris les agents « fantômes » découverts dans le tenant.
+Il s'agit de responsabilités, pas nécessairement de deux produits : une offre peut couvrir les deux. Chez Microsoft, Foundry Agent Service fournit l'exécution et Agent 365 la gouvernance organisationnelle des agents intégrés ou découverts. Agent 365 est disponible commercialement depuis le 1er mai 2026, avec conditions de licence et d'intégration. Ne pas en déduire une visibilité ou un contrôle automatique sur tout agent inconnu du système ; tester découverte, droits et couverture réelle.
 
 ---
 
@@ -106,10 +105,13 @@ Utiliser des droits minimaux, une durée limitée et une révocation adaptée. N
 
 Quels standards émergent pour l'identité des agents ? <!--anki:6c754254776647366b4d-->
 ?
-- **Enterprise-Managed Authorization** de MCP (stable depuis juin 2026) : l'**IdP de l'entreprise** décide quels clients MCP accèdent à quels serveurs pour quels utilisateurs, sans écran de consentement par utilisateur (mécanisme ID-JAG, dit **Cross-App Access**)
-- **Client ID Metadata Documents** : remplacent l'enregistrement dynamique des clients dans la spec MCP 2026-07-28
-- **SPIFFE / WIMSE** : identités de workload attestées, proposées pour les agents par un brouillon de l'IETF (2026)
-- **Identités d'agents** dans les annuaires (**Entra Agent ID**), avec revues d'accès et **attestation par le propriétaire**
+Distinguer **protocole, extension, projet de standard et produit** :
+- **MCP Enterprise-Managed Authorization** : extension stable, activée explicitement ; l'IdP centralise les politiques via ID-JAG. Le support des participants reste nécessaire.
+- **Client ID Metadata Documents**, recommandés dans MCP 2026-07-28 ; l'enregistrement dynamique est déprécié mais conservé pour compatibilité, avec pré-enregistrement possible.
+- **SPIFFE** : identité de workload ; **AIMS/WIMSE**, notamment `draft-ietf-wimse-aims-01`, reste un Internet-Draft, pas un RFC final.
+- **Entra Agent ID** : identités d'agents et cycle de vie dans l'annuaire.
+
+Identifier révision, support et politique effective. Une identité attestée n'autorise pas, seule, une action métier ni une délégation utilisateur.
 
 ---
 
@@ -160,9 +162,11 @@ On inventorie aussi les **agents fantômes**, créés hors du circuit, et on **�
 
 Top 10 OWASP agentique : que sont le détournement de l'objectif et les agents hors de contrôle ? <!--anki:4826364a4d7941746038-->
 ?
-Deux des dix risques du Top 10 OWASP des applications agentiques (décembre 2025) :
-- **Détournement de l'objectif** (ASI01) : une injection fait poursuivre à l'agent les buts de l'attaquant. Parade : Rule of Two, outils étroits, politiques appliquées hors du modèle ([[103-defenses-agents|architecture défensive]])
-- **Agents hors de contrôle** (ASI10) : un agent compromis ou qui dérive continue d'agir sans qu'on s'en aperçoive. Parade : surveillance du comportement, recertification, **kill switch**
+Deux risques de l'édition **Top 10 for Agentic Applications 2026**, publiée le 9 décembre 2025 :
+- **Détournement de l'objectif** (ASI01) : une injection fait poursuivre les buts de l'attaquant. Réduire les privilèges et appliquer les politiques hors du modèle.
+- **Agents hors de contrôle** (ASI10) : un agent compromis ou déviant continue d'agir. Surveiller comportement, identités, tâches admises et moyens d'arrêt.
+
+Ne pas confondre ce référentiel **ASI** avec le Top 10 des applications LLM, dont l'édition 2026 possède d'autres identifiants. Associer la version du référentiel aux scénarios et contrôles testés ; ni sa publication ni une checklist remplie ne démontrent la sécurité du produit.
 
 ---
 
@@ -232,11 +236,12 @@ Le SLO porte sur la **tâche de bout en bout** (réussite et durée), pas seulem
 
 Comment évaluer et améliorer un agent en continu ? <!--anki:71255944386074307b6c-->
 ?
-- **Avant déploiement** : simulation avec des utilisateurs synthétiques et des outils virtualisés, datasets de régression issus des traces de production, **eval gate** ([[112-cicd-modeles|CI/CD]])
-- **En production** : scoring d'un échantillon de traces (LLM-as-judge), feedback, dérive ([[113-monitoring-drift-feedback|monitoring & drift]])
-- **Boucle d'optimisation** : regrouper les échecs par cause, proposer des changements de prompt ou de description d'outil, les valider par **A/B test**
+Organiser une **boucle de changement contrôlée** :
+- Avant déploiement : cas représentatifs, outils simulés, régressions et critères de promotion versionnés.
+- En production : traces, échantillons évalués, couverture, retours et issues métier suffisamment mûres.
+- Optimisation : analyser les causes, proposer prompt ou description d'outil, puis valider la variante indépendamment.
 
-AWS (AgentCore Optimization) et Google (Agent Optimizer) proposent cette boucle en service managé.
+AgentCore documente recommandations, bundles et A/B tests ; Google présente Agent Optimizer pour suggérer des améliorations à partir des échecs. Vérifier disponibilité, région et prérequis de chaque fonction, plutôt que déduire son statut de celui de toute la plateforme. Une recommandation automatique n'est ni une preuve de gain, ni une autorisation de promotion.
 
 ---
 
@@ -276,11 +281,14 @@ Versionner les contrats et garder une voie d'export documentée. Faire un essai 
 
 Quels critères pour choisir sa plateforme d'agents ? <!--anki:7a642525262b4e577b43-->
 ?
-- **Écosystème existant** : où sont déjà les données et l'identité (AWS → AgentCore, Microsoft 365 et Entra → Foundry et Agent 365, GCP → Gemini Enterprise Agent Platform)
-- **Souveraineté et rétention** : les harness managés **stockent l'état** des sessions (ex. Claude Managed Agents n'est pas éligible au zero data retention)
-- **Agents multi-éditeurs** à gouverner, ou un seul
-- **Maturité de l'équipe** et volume
-- **Coût de sortie**
+Examiner **écosystème, données, compatibilité et exploitation** :
+- Intégration aux données, identités et outils existants.
+- Localisation et rétention des sessions, traces, fichiers et appels de modèles.
+- Agents et protocoles effectivement pris en charge.
+- Capacité de l'équipe à exploiter et reprendre le service.
+- Coût par tâche utile et coût de sortie testé.
+
+Exemple : le **Managed Agents hébergé par Anthropic** n'est pas éligible au ZDR, même avec sandboxes auto-hébergées. Dans le service entièrement auto-hébergé, accessible sur demande, l'organisation conserve les sessions ; les appels de modèles suivent leur contrat fournisseur. Auto-héberger la sandbox, le service ou le modèle représente trois périmètres différents.
 
 ---
 
@@ -381,6 +389,21 @@ Mise en situation : le fournisseur de ta plateforme d'agents annonce l'arrêt d'
 
 - [RFC 8693 — OAuth 2.0 Token Exchange](https://www.rfc-editor.org/rfc/rfc8693.html) — sujet, acteur et politique d’émission des jetons.
 - [Gartner, 25 juin 2025 — prévision d’annulations pour fin 2027](https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027) — prévision, pas taux déjà observé.
+
+Revue ciblée du 13 novembre 2026 : produits, identité, rétention et référentiels.
+
+- [Microsoft Learn — Agent 365, disponibilité et prérequis](https://learn.microsoft.com/en-us/microsoft-agent-365/overview)
+- [MCP 2026-07-28 — enregistrement des clients](https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization/client-registration) — mécanisme dynamique déprécié, conservé pour compatibilité.
+- [MCP — extension Enterprise-Managed Authorization](https://modelcontextprotocol.io/extensions/auth/enterprise-managed-authorization) — support explicite et flux ID-JAG.
+- [IETF — AIMS, draft-ietf-wimse-aims-01 du 2 novembre 2026](https://datatracker.ietf.org/doc/html/draft-ietf-wimse-aims-01) — document de travail, pas RFC final.
+- [Microsoft Learn — identités Entra Agent ID](https://learn.microsoft.com/en-us/entra/agent-id/agent-identities)
+- [Anthropic — séparation du cerveau, des outils et de la session](https://www.anthropic.com/research/managed-agents)
+- [Claude Platform — Managed Agents hébergé et rétention](https://platform.claude.com/docs/en/managed-agents/overview)
+- [Claude Platform — données et accès du service entièrement auto-hébergé](https://platform.claude.com/docs/en/managed-agents/self-hosted-data-and-access) — accès sur demande ; distinct des seules sandboxes auto-hébergées.
+- [AWS — notes de version AgentCore](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/release-notes.html) — disponibilité des fonctions, à distinguer des annonces de preview historiques.
+- [AWS — recommandations, bundles et A/B tests](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/optimization.html)
+- [Google Cloud — Agent Platform et Agent Optimizer](https://cloud.google.com/blog/products/ai-machine-learning/introducing-gemini-enterprise-agent-platform/)
+- [OWASP — Top 10 agentique 2026, publication du 9 décembre 2025](https://genai.owasp.org/2025/12/09/owasp-top-10-for-agentic-applications-the-benchmark-for-agentic-security-in-the-age-of-autonomous-ai/)
 
 ## Connexions
 - [[38-plateformes-agents|Plateformes d'agents — Fondamentaux]] — les briques et les offres

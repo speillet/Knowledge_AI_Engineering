@@ -1,6 +1,6 @@
 # Pipelines d'entraînement, registre & entraînement continu — Flashcards
 Tags: #flashcards #ai-engineering #mlops #ml-classique #pipelines
-Vérifié le : 20 octobre 2026 — cette fiche cite des produits et versions qui évoluent vite.
+Vérifié le : 20 octobre 2026 — date globale conservée ; revue ciblée du 13 novembre 2026 détaillée dans les Sources.
 <!-- summary: niveaux de maturité MLOps, pipeline déployé plutôt que modèle, réentraînement planifié ou déclenché, validation des données et du modèle, suivi d'expériences MLflow, signature, alias champion et challenger, alias de registre ou de fournisseur, cache des étapes, fenêtre d'entraînement, scoring batch ou en ligne, labels censurés par le modèle, calcul de performance attendue sans labels, promotions concurrentes des modèles, regroupement des déclencheurs, calibrateur versionné, référence historique et cohorte récente, correction des labels. -->
 
 
@@ -104,9 +104,9 @@ Le premier est un mécanisme de promotion ; le second est une dépendance à ép
 
 Pourquoi le cache des étapes d'un pipeline ML peut-il entraîner un modèle sur des données périmées ? <!--anki:3037633031353233366638363432623838343764343563303136666137613632-->
 ?
-Des orchestrateurs comme Kubeflow Pipelines **réutilisent la sortie d'une étape** déjà exécutée avec les mêmes entrées et paramètres ; ce cache y est activé par défaut. Si l'étape reçoit le chemin `s3://data/fraude/latest/`, ce paramètre ne change pas quand le contenu change : l'étape est sautée et l'ancien dataset est réutilisé.
+Le **cache d'exécution** peut réutiliser une sortie quand la clé calculée à partir des entrées et paramètres paraît inchangée. Dans Kubeflow Pipelines, il est activé par défaut mais configurable à la compilation, à l'exécution ou par tâche.
 
-Passer en entrée un **identifiant immuable** : partition datée, version de table ou empreinte du manifeste ([[150-013-orchestration-pipelines-donnees|références de datasets]]). Désactiver le cache des étapes qui lisent une source externe, avec `.set_caching_options(enable_caching=False)` dans KFP. Le cache reste utile pour les étapes déterministes et coûteuses.
+Un chemin mutable comme `s3://data/fraude/latest/` peut rester identique alors que son contenu change : une étape peut réutiliser un ancien dataset. Fournir snapshot ou manifeste immuable et expliciter les dépendances. Pour une tâche qui doit relire une source externe, désactiver son cache, par exemple `.set_caching_options(enable_caching=False)`. Vérifier aussi les overrides du run ; un réglage dans le code ne prouve pas le comportement de l'exécution effectivement lancée.
 
 ---
 
@@ -236,6 +236,10 @@ Mise en situation : un challenger anti-fraude gagne 3 points de précision en ba
 
 - [MLflow — migration vers MLflow 3](https://mlflow.org/docs/latest/ml/mlflow-3/) — `name=` et URI du modèle retournée par la journalisation.
 - [MLflow — API scikit-learn](https://mlflow.org/docs/latest/api_reference/python_api/mlflow.sklearn.html)
+
+Revue ciblée du 13 novembre 2026 : affirmations précisées dans cette passe ; les autres contenus ne sont pas intégralement revérifiés.
+
+- [Kubeflow — réglages et priorités du cache](https://www.kubeflow.org/docs/components/pipelines/user-guides/core-functions/caching/) — un paramètre à la soumission peut écraser le réglage par tâche.
 
 ## Connexions
 - [[111-mlops-llmops-fondamentaux|MLOps & LLMOps — Fondamentaux]] — registre, lineage et versionnage appliqués ici au ML classique

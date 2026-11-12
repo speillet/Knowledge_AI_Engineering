@@ -1,6 +1,6 @@
 # DevSecOps pour l'IA agentique — Flashcards
 Tags: #flashcards #ai-engineering #securite #devsecops #agents #llm
-Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
+Vérifié le : 25 septembre 2026 — date globale conservée ; revue ciblée du 13 novembre 2026 détaillée dans les Sources.
 <!-- summary: threat modeling (MAESTRO, ATLAS), référentiels (OWASP, NIST, ISO 42001), AI-BOM, SBOM ou AI-BOM, supply chain des modèles, contrôles en CI, tests adversariaux (promptfoo, garak, PyRIT), red teaming, security eval gate, prompts comme du code, environnements, journalisation, détection, réponse à incident, vulnérabilités, responsabilités, vérification des attestations au déploiement. -->
 
 
@@ -26,10 +26,9 @@ Comment faire le threat modeling d'un agent ? <!--anki:5f6043506c24217b64-->
 
 Quels référentiels décrivent les attaques contre l'IA et les agents ? <!--anki:414b466a5e572f687153-->
 ?
-- **OWASP** : Top 10 LLM (2025), Top 10 des applications agentiques (décembre 2025), AI Exchange
-- **MITRE ATLAS** : tactiques et techniques d'attaque contre l'IA, sur le modèle d'ATT&CK
+**OWASP** propose le Top 10 LLM **2026**, le Top 10 des applications agentiques **2026** publié en décembre 2025, et AI Exchange. **MITRE ATLAS** décrit tactiques et techniques d'attaque contre l'IA.
 
-Ces référentiels servent de vocabulaire et de point de départ pour les scénarios de menace, pas de preuve de sécurité. Relier chaque menace pertinente à un composant réel, une mesure et un test. Conserver la version du référentiel utilisée afin de pouvoir expliquer la couverture et les évolutions de l'analyse.
+Versionner la référence : les identifiants LLM ont été réordonnés en 2026, tandis que les identifiants agentiques ASI appartiennent à une autre liste. Une ancienne analyse peut rester utile si son édition est explicite ; elle ne devient pas une couverture de la nouvelle édition par simple changement d'étiquette. Ces référentiels servent au raisonnement sur les menaces. Relier chaque risque pertinent à un composant, une mesure et une preuve de test.
 
 ---
 
@@ -277,6 +276,11 @@ Mise en situation : ton fournisseur annonce que le modèle utilisé par tes agen
 
 - [NIST — AI Risk Management Framework](https://www.nist.gov/itl/ai-risk-management-framework)
 - [MITRE ATLAS — techniques d’attaque contre les systèmes IA](https://atlas.mitre.org/)
+
+Revue ciblée du 13 novembre 2026 : affirmations précisées dans cette passe ; les autres contenus ne sont pas intégralement revérifiés.
+
+- [OWASP — Top 10 LLM, édition 2026](https://genai.owasp.org/resource/owasp-genai-llm-top-10-2026/) — PDF officiel consulté ; l’index historique `/llm-top-10/` affiche encore l’édition 2025.
+- [OWASP — PDF 2026](https://genai.owasp.org/download/56857/) — numéros, libellés et changements de périmètre.
 
 ## Connexions
 - [[102-menaces-agents|Menaces & incidents]] — ce que le threat model doit couvrir

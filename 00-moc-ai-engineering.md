@@ -17,6 +17,8 @@ La [revue transversale du 12 novembre 2026](docs/revue-transversale-2026-11-12.m
 
 Pour industrialiser un modèle prédictif, le [parcours MLOps de bout en bout](docs/parcours-mlops-production-2026-11-12.md) relie données, entraînement, paquet d’inférence, promotion, scoring et reprise. Il complète [[117-pipelines-entrainement-continu|les pipelines]] avec [[118-artefacts-registre-releases-ml|les releases]] et [[119-contrats-prediction-features-batch|les contrats de prédiction]].
 
+L’[audit d’actualité du 13 novembre 2026](docs/verification-actualite-2026-11-13.md) distingue références confirmées et corrections sur les services managés, MCP, OWASP et AI Act ; il ne constitue pas une certification de toutes les informations du vault.
+
 ## Parcours de lecture
 Progression recommandée : **comprendre les modèles → les utiliser → construire des architectures → adapter → servir & déployer → industrialiser → gouverner → concevoir des systèmes.**
 - **Socle prédictif** : [[171-choisir-modele-ml|ML classique]] puis [[172-validation-metriques-ml|validation et métriques]] — choisir une approche avant de construire une chaîne LLM
