@@ -133,7 +133,7 @@ Pourquoi un modèle anti-fraude qui bloque des transactions prive-t-il son succe
 ?
 Quand une décision détermine **quelles issues deviennent observables**, les labels sont sélectifs. Évaluer seulement les transactions acceptées décrit cette population filtrée ; cela ne révèle pas automatiquement le résultat qu'auraient eu les transactions bloquées.
 
-Une revue indépendante peut fournir un autre label ou des indices utiles, sans être nécessairement l'issue contrefactuelle recherchée. Documenter la politique d'observation et les hypothèses d'une collecte ou analyse adaptée. Une pondération exige notamment probabilités connues et recouvrement : si certains cas n'ont aucune chance d'être observés, elle ne crée pas l'information absente. Conserver limites et populations couvertes avant de promouvoir un successeur.
+Une revue indépendante peut fournir un autre label ou des indices utiles, sans être nécessairement l'issue contrefactuelle recherchée. Documenter la politique d'observation et les hypothèses d'une collecte ou analyse adaptée. Une pondération exige probabilités d'observation connues ou estimables et recouvrement : si certains cas n'ont aucune chance d'être observés, elle ne crée pas l'information absente. Conserver limites et populations couvertes avant de promouvoir un successeur.
 
 ---
 
