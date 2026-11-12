@@ -134,4 +134,5 @@ Mise en situation : on te propose de passer de 2 GPU à 4 GPU en tensor parallel
 - [[148-pipelines-batch-llm|Pipelines batch]] — traiter des millions d'items à moindre coût
 - [[60-012-demarche-optimisation-inference|Démarche d’optimisation]] — prioriser et vérifier les gains sous contraintes de service
 - [[66-prefix-caching-radix-attention|Prefix caching]] — réduire le prefill selon la réutilisation réelle
+- [[60-013-prefill-decode-pas-a-pas|Prefill & decode pas à pas]] — suivre les positions calculées, le cache et les délais
 - [[00-moc-ai-engineering|MOC AI Engineering]]

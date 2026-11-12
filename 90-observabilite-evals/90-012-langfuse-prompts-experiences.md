@@ -153,6 +153,8 @@ Mise en situation : après rollback du label production dans Langfuse, certains 
 
 **Piège** : déclarer le rollback terminé sur la seule base du label affiché.
 
+Définir le délai maximal de propagation attendu et un test sur chaque chemin critique. Un label est une référence mutable ; seuls les identifiants des versions réellement consommées permettent de confirmer que toutes les instances ont changé.
+
 ---
 
 Mise en situation : un candidat gagne cinq points dans Langfuse mais 20 % de ses évaluations sont absentes. Peut-on conclure à une amélioration ? <!--anki:3137333733343833613539313431383561346636306330353234306435613561-->
@@ -174,6 +176,8 @@ Mise en situation : le prompt s'améliore sur les incidents historiques mais dé
 4. Exiger les garanties critiques tout en vérifiant la performance du trafic habituel.
 
 **Piège** : supprimer les cas difficiles pour embellir la moyenne ou ne tester qu'eux.
+
+Fixer la pondération cible avant de comparer les variantes et vérifier les segments critiques séparément. Une moyenne d'incidents et de trafic courant sans proportions annoncées peut changer simplement parce que le jeu de test a été recomposé.
 
 ---
 

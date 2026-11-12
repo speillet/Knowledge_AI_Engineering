@@ -32,6 +32,8 @@ Avec la règle pédagogique indiquée :
 ```
 Diviser chaque dimension par deux divise l'aire par quatre. Les vrais fournisseurs utilisent des règles propres au modèle : redimensionnement, tuiles, minimums et unités facturées peuvent changer le calcul. Ajouter texte et sorties pour le coût complet. Réduire l'image peut aussi rendre un petit texte illisible ; valider l'extraction, pas seulement la facture.
 
+Ce rapport de quatre repose uniquement sur la règle fictive proportionnelle à l'aire. Avec un minimum de facturation ou des tuiles arrondies, diviser la résolution peut produire un autre rapport, voire aucune économie.
+
 ---
 
 Qu'est-ce que CLIP et pourquoi est-il important ? <!--anki:72534c43653d506e2567-->
@@ -112,6 +114,8 @@ P(document correct) = 0,99^20 ≈ 0,818 = 81,8 %
 P(au moins une erreur) ≈ 18,2 %
 ```
 Un score de 99 % par champ ne signifie donc pas 99 % de documents corrects. L'indépendance est une hypothèse pédagogique : une même erreur de lecture peut affecter plusieurs champs. Mesurer directement le succès complet sur des documents représentatifs plutôt que transformer une moyenne globale en garantie.
+
+La formule concerne la probabilité d'un document entièrement correct, pas le nombre moyen de champs corrects. Celui-ci reste 19,8 sur 20 sous ces hypothèses : les deux indicateurs répondent à des questions différentes.
 
 ---
 

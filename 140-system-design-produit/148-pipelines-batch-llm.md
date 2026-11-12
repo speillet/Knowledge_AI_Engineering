@@ -48,15 +48,14 @@ Le nombre de workers se règle sur le **quota du fournisseur**, pas sur la taill
 
 Calcul : 2 millions de documents demandent chacun 3 000 tokens d’entrée et 300 de sortie, à 3 €/M et 15 €/M. Quel coût, puis quel coût avec une remise batch fictive de 50 % sur les deux postes ? <!--anki:797842345d605833776e-->
 ?
-Hypothèses : 3 000 tokens d'entrée (dont 1 000 d'instructions communes), 300 en sortie, 3 €/M en entrée, 15 €/M en sortie.
+Convertir d'abord les volumes en millions de tokens, car les tarifs sont exprimés dans cette unité :
 ```text
-entrée : 2 M × 3 000 = 6 G tokens  × 3 €/M  = 18 000 €
-sortie : 2 M ×   300 = 0,6 G       × 15 €/M =  9 000 €
-en ligne                                    ≈ 27 000 €
-batch API (−50 %)                           ≈ 13 500 €
-+ petit modèle 5 fois moins cher, si l'eval le permet ≈ 2 700 €
+entrée = 2 000 000 × 3 000 = 6 000 M tokens → 18 000 €
+sortie = 2 000 000 ×   300 =   600 M tokens →  9 000 €
+total standard = 27 000 €
+remise batch fictive de 50 % sur les deux postes → 13 500 €
 ```
-Le choix du **modèle** pèse plus que tout le reste : on le valide sur un échantillon avant le lancement ([[146-choix-modeles|choix de modèle]]).
+Les instructions communes sont incluses dans les 3 000 tokens, sans remise de cache supplémentaire dans cet énoncé. Ne pas cumuler implicitement cache, batch et changement de modèle. Ajouter retries, parsing et stockage au budget opérationnel, puis vérifier que les délais et quotas du batch conviennent. Le calcul donne un coût sous hypothèses, pas un tarif fournisseur actuel.
 
 ---
 

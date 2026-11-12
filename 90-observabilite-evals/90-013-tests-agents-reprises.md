@@ -157,6 +157,8 @@ Mise en situation : la reprise d'un agent passe en test, mais un arrêt du worke
 
 **Piège** : vérifier seulement que le graphe finit par retourner `success`.
 
+Détruire l'instance du worker, puis la reconstruire comme en production, avec le même stockage et la même clé d'opération. Un test qui garde les variables en mémoire peut masquer précisément la fenêtre où naissent les doublons.
+
 ---
 
 Mise en situation : une nouvelle version d'agent améliore la qualité moyenne mais échoue au test « aucun effet avant approbation ». Peut-elle être promue ? <!--anki:6165633863326538636231313465336539633436316263376365613762663839-->

@@ -30,6 +30,8 @@ Cas 1 — Quels risques spécifiques au support client ? <!--anki:6f2e25642c397d
 - **Fuite de données** d'un autre client → filtre d'identité **côté serveur**.
 - **Ton** inadapté sur un client en colère → détection et escalade.
 
+Tester les frontières de droits avec deux comptes et des pièces jointes hostiles. Pour les gestes commerciaux, vérifier montant, destinataire et historique directement dans le système métier ; une réponse rassurante ne prouve pas un remboursement correct.
+
 ---
 
 Cas 2 — Recherche documentaire interne (« chat avec nos documents ») : les points durs ? <!--anki:474f652b735665542c6c-->

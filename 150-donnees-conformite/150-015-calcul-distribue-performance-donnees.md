@@ -123,6 +123,8 @@ limite avec une infinité de workers = 1 / 0,20 = 5
 ```
 Dix workers ne donnent donc pas un gain de dix. Coordination, réseau et déséquilibre peuvent encore réduire ce résultat. Cette formule suppose une charge fixe et une fraction séquentielle inchangée ; elle ne décrit pas une augmentation simultanée du volume traité. Localiser la partie séquentielle peut être plus utile que multiplier les machines.
 
+Par exemple, accélérer seulement la lecture parallèle laisse les 20 % séquentiels intacts. Profiler le pipeline entier avant d'acheter des workers ; le composant amélioré doit appartenir au chemin qui limite réellement l'exécution.
+
 ---
 
 Calcul : A utilise deux workers à 0,80 €/h pendant 45 minutes ; B en utilise quatre au même tarif pendant 30 minutes. Quel coût par exécution, hors stockage et autres frais ? <!--anki:3934646165636233323435323432313562363964633731333233346165653930-->

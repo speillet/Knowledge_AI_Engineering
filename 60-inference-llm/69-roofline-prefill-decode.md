@@ -173,4 +173,5 @@ Mise en situation : sur ton RAG, les réponses « bégaient » : le texte s'arr�
 - [[12-kubernetes-gpu-inference|Kubernetes GPU & inférence]] — llm-d et l'autoscaling par pool
 - [[11-serveurs-inference-llm|Serveurs d'inférence]] — vLLM, SGLang, TensorRT-LLM et leur réglage
 - [[22-rag-avance|RAG — Avancé]] — recherche hybride, reranking et filtres
+- [[60-013-prefill-decode-pas-a-pas|Prefill & decode pas à pas]] — suivre les positions calculées, le cache et les délais
 - [[00-moc-ai-engineering|MOC AI Engineering]]

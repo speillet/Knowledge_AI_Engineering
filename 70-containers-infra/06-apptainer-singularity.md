@@ -69,6 +69,8 @@ apptainer exec --nv model.sif python inference.py
 
 L'option rend accessibles les périphériques et les bibliothèques NVIDIA nécessaires, tandis que le module noyau reste celui de l'hôte. Elle n'installe pas un driver manquant et ne réserve pas un GPU dans Slurm. Il faut une allocation valide, une compatibilité CUDA/driver et les dépendances applicatives dans l'image.
 
+Tester un petit calcul avec le framework du modèle puis une inférence représentative. Voir le GPU avec un outil système ne prouve pas que tous les kernels nécessaires fonctionnent ni qu'il reste assez de VRAM pour le contexte prévu.
+
 ---
 
 Pourquoi un bind mount Apptainer doit-il être revu comme une permission d'accès aux données hôtes ? <!--anki:6663353433363966343166303438636461383836343031343864373330346366-->

@@ -147,6 +147,8 @@ précision = 90 / 585 ≈ 15,4 %
 ```
 Le rappel reste 90 % dans cette hypothèse. La précision d'un test rééquilibré n'est pas celle du trafic réel. Une dérive peut aussi changer TPR et FPR : les mesurer au lieu de supposer leur stabilité.
 
+À prévalence faible, même un faible FPR s'applique à beaucoup de négatifs. Pour améliorer la précision, comparer les seuils sur la population cible, en contrôlant la baisse de rappel et la capacité de revue.
+
 ---
 
 Calcul : sur 900 négatifs et 100 positifs, un modèle prédit toujours négatif. Quelle accuracy et quelle balanced accuracy ? <!--anki:3735383766303134313734613432326439613833376139313931656163613638-->

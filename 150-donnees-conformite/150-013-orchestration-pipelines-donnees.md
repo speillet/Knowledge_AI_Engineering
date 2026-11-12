@@ -131,6 +131,8 @@ travail cumulé = 2 + 10 + 4 + 3 = 19 minutes de tâche
 ```
 Réduire la branche de quatre minutes n'accélère pas ce chemin critique tant qu'elle reste plus courte que l'autre. Le parallélisme consomme cependant des ressources simultanées. Inclure files, démarrage, transferts et validation pour prévoir la durée réelle. Ces minutes de tâche ne sont pas directement des minutes facturées si les tâches utilisent des ressources différentes.
 
+Si les deux branches partagent une ressource saturée, elles ne sont plus indépendantes en temps d'exécution. Mesurer leurs durées simultanées plutôt que réutiliser leurs temps isolés pour promettre les quinze minutes.
+
 ---
 
 Pourquoi deux orchestrations du même intervalle de données doivent-elles publier un résultat cohérent ? <!--anki:6534393565393834363234353437613639393530393536613330666130653565-->

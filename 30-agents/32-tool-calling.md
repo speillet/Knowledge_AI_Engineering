@@ -114,6 +114,8 @@ avec prompt caching (≈ 0,1×)  ≈ 0,09 €, mais le contexte reste occupé
 ```
 Au-delà du coût, 12 000 tokens de schémas occupent du contexte et peuvent compliquer le choix d'outil : on n'expose que les outils utiles à la tâche, ou on les charge à la demande ([[35-context-engineering|context engineering]]).
 
+Le scénario chaud exclut le coût d'amorçage et suppose tous les tokens concernés éligibles à chaque lecture. Un schéma changé ou réordonné peut casser le préfixe ; comparer les compteurs réels d'usage au coût estimé.
+
 ---
 
 Que doit exposer le résultat d'un outil pour éviter un faux succès d'agent ? <!--anki:6464383461663535363034323436316639313236656439633664643934316637-->

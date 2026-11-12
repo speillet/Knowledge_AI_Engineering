@@ -47,11 +47,15 @@ Pour savoir ce qui tourne réellement, `kubectl get nodes -o wide` affiche dans 
 
 C'est la confusion la plus fréquente sur le sujet : elle porte sur le **runtime**, pas sur le **format d'image**.
 
+Docker Engine reste utilisable avec un adaptateur CRI externe approprié. Vérifier architecture, système et accès GPU avant de promettre qu'une image fonctionne : compatibilité du format ne signifie pas compatibilité avec toute machine ou configuration.
+
 ---
 
 Qu'est-ce que cri-dockerd ? <!--anki:45314f337346634d2a34-->
 ?
-Un **adaptateur externe**, maintenu par Mirantis, qui reprend le rôle de dockershim **hors de Kubernetes** : il traduit la CRI en appels à Docker Engine. Il permet de garder Docker Engine sur les nodes après Kubernetes 1.24, par exemple pour un outil qui dépend du socket Docker. C'est une **solution de transition**, pas une architecture cible.
+**cri-dockerd** est un adaptateur externe qui traduit les demandes CRI de Kubernetes vers Docker Engine. Il permet de continuer à utiliser ce moteur après le retrait du dockershim intégré à Kubernetes.
+
+Cette option peut répondre à une dépendance existante ; elle ajoute un composant à configurer et maintenir. Comparer avec containerd ou une autre implémentation CRI selon support, exploitation et besoin réel. Un outil qui utilise le socket Docker ne fonctionne pas automatiquement dans tous les environnements Kubernetes. Le choix du runtime n'impose pas de reconstruire une image compatible OCI, mais les contraintes de plateforme et dépendances externes restent à tester.
 
 ---
 

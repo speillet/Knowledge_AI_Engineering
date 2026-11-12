@@ -141,6 +141,8 @@ Mise en situation : une crew CrewAI cite des pages accessibles mais qui ne souti
 
 **Piège** : assimiler HTTP 200 à une vérification de vérité.
 
+Distinguer source absente, source contradictoire et inférence non explicitée. Pour une affirmation critique, comparer au passage original et à sa date de validité ; une référence bien formatée ou un second agent d'accord ne constitue pas une preuve supplémentaire.
+
 ---
 
 Mise en situation : après un redéploiement, un Flow CrewAI retrouve ses variables mais recommence une étape de facturation. Comment diagnostiques-tu le problème ? <!--anki:3034633234356663346161353435373038616332643537383230346561396235-->

@@ -31,6 +31,8 @@ Quelle est la « triade RAG » ? <!--anki:6a653b4e2d6648756538-->
 
 C'est la base de [[22-rag-avance|RAGAS]] et des évaluateurs équivalents.
 
+Une réponse peut être fidèle à un contexte faux ou périmé et rester incorrecte. Ajouter exactitude des références métier, complétude et droits ; les trois dimensions de la triade isolent des défauts mais ne couvrent pas toutes les garanties produit.
+
 ---
 
 Comment mesurer la faithfulness ? <!--anki:775151472b433d507b78-->
@@ -55,6 +57,8 @@ Qu'évalue-t-on dans un agent ? <!--anki:4c60365159432332473a-->
 - **Trajectoire** : bons outils, bons arguments, pas d'étapes inutiles ni dangereuses.
 - **Efficacité** : nombre d'étapes, tokens, coût, durée.
 - **Sécurité** : actions interdites évitées, demandes de confirmation respectées.
+
+Définir avant l'essai les effets autorisés et l'état attendu, puis les contrôler dans les systèmes cibles. Une bonne réponse finale obtenue après une fuite ou un double paiement est un échec, même si la formulation paraît parfaite.
 
 ---
 
@@ -165,6 +169,8 @@ proportion d'affirmations soutenues = 4 / 8 = 50 %
 soutien parmi les affirmations citées = 4 / 6 ≈ 66,7 %
 ```
 Le premier score mesure la présence d'une citation, pas sa qualité. Le troisième porte sur les **affirmations citées**, pas sur chaque lien individuel : il ne faut pas le rebaptiser précision des citations sans définir cette unité. Les quatre affirmations non soutenues exigent vérification, correction ou retrait.
+
+Une citation couvrant deux affirmations doit être vérifiée pour chacune. Conserver la décomposition des assertions et les passages attendus rend ces dénominateurs auditables ; une métrique unique ne distingue pas absence de référence et référence trompeuse.
 
 ---
 

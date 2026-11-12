@@ -121,6 +121,8 @@ revue parfaite : 1
 ```
 **Revoir** minimise le coût attendu sous ces hypothèses. Sans revue, positif et négatif sont à égalité ; le seuil binaire vaut 4/(4+36) = 0,10. Ajouter le coût des erreurs humaines et du délai avant d'appliquer cette règle au réel. Le meilleur choix individuel peut devenir impossible si la file de revue sature.
 
+L'égalité des coûts binaires au seuil ne départage pas automatiquement les dossiers à revoir. Avec une capacité limitée, prioriser le bénéfice attendu de la revue en tenant compte des erreurs humaines et des contraintes du service.
+
 ---
 
 À ne pas confondre : couverture conforme et couverture d'automatisation ? <!--anki:6230396632636661386366613437323438656166333638343762346139643533-->

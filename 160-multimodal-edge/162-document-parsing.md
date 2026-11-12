@@ -50,6 +50,8 @@ Tableau 3 — Tarifs 2026
 ```
 On peut aussi générer un **résumé textuel** du tableau pour l'embedding et fournir le tableau complet au LLM.
 
+Conserver aussi unités, notes et coordonnées source. Vérifier cellules fusionnées et ruptures de page : un nombre correctement reconnu peut appartenir à la mauvaise ligne ou changer de sens si son unité disparaît.
+
 ---
 
 Comment traiter les images et graphiques d'un document ? <!--anki:62734f492d5f7a4c7026-->

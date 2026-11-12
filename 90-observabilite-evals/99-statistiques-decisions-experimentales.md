@@ -57,6 +57,8 @@ Approximation : 3/n ; viser 0,1 % demande environ 3 000 essais sans échec.
 ```
 Ce calcul ne garantit rien sur un scénario absent des essais. Des variantes quasi identiques d'une même question n'apportent pas nécessairement autant d'information que des cas indépendants.
 
+Le protocole doit être fixé avant les essais : multiplier les observations jusqu'à obtenir une borne favorable change l'inférence. Pour des tâches regroupées ou des risques variables, préférer une analyse compatible avec ces dépendances et ce suivi.
+
 ---
 
 Quel risque crée la recherche du meilleur résultat parmi 20 tests ? <!--anki:3937313162656165326133633434623638303530316139656434323565313036-->

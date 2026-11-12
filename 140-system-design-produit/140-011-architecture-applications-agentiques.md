@@ -164,6 +164,8 @@ Mise en situation : un utilisateur approuve un remboursement de 20 €, mais le 
 
 **Piège** : stocker seulement `approved=True` dans un état librement modifiable.
 
+Tester aussi une modification du destinataire, de la devise et de l'identité du demandeur. L'accord référence les paramètres significatifs et expire selon une règle définie ; un montant inchangé ne suffit pas à prouver l'équivalence.
+
 ---
 
 Mise en situation : l'API renvoie 202, puis le serveur redémarre et le dossier disparaît. Comment rends-tu la garantie d'acceptation réelle ? <!--anki:3062336239386663313035623463643338353637616334373362363466323865-->
@@ -185,6 +187,8 @@ Mise en situation : après une reconnexion SSE, le client reçoit de nouveau l'�
 4. Dédupliquer aussi l'opération métier, indépendamment du transport SSE.
 
 **Piège** : déclencher un effet irréversible à chaque réception d'un événement de progression.
+
+Tester une coupure après l'effet, avant l'acquittement : le run repris doit retrouver le remboursement existant. Le serveur métier conserve la clé d'opération avec son résultat ; dédupliquer seulement l'affichage ne protège pas l'argent.
 
 ---
 

@@ -88,6 +88,8 @@ Sur-prévision de 20  : 0,1 × 20 = 2
 ```
 Le quantile élevé pénalise davantage la sous-prévision. Choisir α selon la décision et le coût asymétrique, puis vérifier les fréquences de dépassement. Une prévision au quantile 0,9 n'est pas une moyenne augmentée arbitrairement de 10 % et ne garantit pas une couverture identique dans chaque segment.
 
+Pour une évaluation au même quantile, moyenner cette perte sur des prévisions hors entraînement et comparer à une baseline. Changer le quantile change l'objectif : les pertes ne deviennent pas comparables sans préciser la décision visée.
+
 ---
 
 Comment évaluer un intervalle de prévision à 90 % ? <!--anki:3338646162346561396133623437363039336565343761306533316638636330-->

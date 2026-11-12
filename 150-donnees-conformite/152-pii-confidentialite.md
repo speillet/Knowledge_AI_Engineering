@@ -19,13 +19,15 @@ Comment détecter les PII ? <!--anki:4f4c4432325f3e343633-->
 
 Aucune méthode n'est parfaite : combiner et **mesurer le rappel** sur ses données.
 
+Construire un jeu annoté couvrant langues, formats et identifiants indirects. Mesurer aussi les faux positifs : masquer un code produit utile peut dégrader le RAG, tandis qu'un nom non détecté peut rester dans les traces.
+
 ---
 
 À ne pas confondre : masquage, pseudonymisation et anonymisation ? <!--anki:4f25732d4e2c39303178-->
 ?
-- **Masquage / suppression** : remplacer par `[EMAIL]` — l'information est perdue.
-- **Pseudonymisation** : remplacer par un **jeton réversible** (`PERSON_1`) avec une table de correspondance protégée — **reste une donnée personnelle** au sens du RGPD.
-- **Anonymisation** : **ré-identification impossible**, même en croisant — sort du champ du RGPD, mais bien plus difficile à atteindre qu'on ne le croit.
+Le **masquage** cache ou supprime une valeur visible, mais les autres attributs peuvent encore identifier la personne. La **pseudonymisation** remplace des identifiants et protège les informations supplémentaires permettant le rapprochement ; les données restent personnelles.
+
+L'**anonymisation** exige une évaluation du risque de réidentification avec les moyens raisonnablement susceptibles d'être utilisés, y compris par recoupement. Elle ne se résume pas à retirer le nom ni à prouver une impossibilité mathématique absolue. Par exemple, une date et un lieu rares peuvent identifier quelqu'un derrière `PERSON_1`. Réévaluer ce risque quand de nouvelles données ou techniques rendent les rapprochements plus faciles.
 
 ---
 
@@ -39,11 +41,9 @@ Conserver la table de correspondance localement, borner sa portée et réidentif
 
 Quels engagements vérifier chez un fournisseur de modèle ? <!--anki:4f3e476d2856386f6c4e-->
 ?
-- **Pas d'entraînement** sur vos données (par défaut sur les offres entreprise/API, à vérifier contractuellement).
-- **Durée de rétention** des requêtes (abus, sécurité), option **zero data retention**.
-- **Localisation** du traitement (région UE) et sous-traitants.
-- **DPA** (accord de traitement des données), certifications (SOC 2, ISO 27001).
-- Conditions spécifiques des fonctions **stockées côté fournisseur** (fichiers, assistants, mémoire, batch).
+Examiner **le contrat et le fonctionnement de l'offre réellement utilisée** : finalités de traitement, éventuel entraînement, rétention, suppression, localisation et sous-traitants. Une promesse commerciale générale ne couvre pas nécessairement chaque fonctionnalité.
+
+Vérifier DPA, paramètres de compte, accès des opérateurs et exceptions de conservation. Fichiers, traitements batch et fonctions persistantes peuvent avoir des règles différentes des appels éphémères. Tester les options techniques disponibles et conserver la version des engagements approuvés. Une région de calcul UE ou une certification ne suffit pas à démontrer à elle seule l'absence de transfert ni la conformité de votre propre usage.
 
 ---
 
@@ -129,6 +129,8 @@ Mise en situation : un développeur demande l'accès aux traces de production po
 ## Sources
 
 - [CNIL — données personnelles et identification indirecte](https://www.cnil.fr/fr/rgpd-de-quoi-parle-t-on) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
+
+- [CNIL — anonymisation de données personnelles](https://cnil.fr/fr/technologies/lanonymisation-de-donnees-personnelles) — revue ciblée du 12 novembre 2026 : masquage, pseudonymisation et moyens raisonnables de réidentification.
 
 ## Connexions
 - [[154-rgpd-llm|RGPD appliqué aux LLM]] — le cadre légal

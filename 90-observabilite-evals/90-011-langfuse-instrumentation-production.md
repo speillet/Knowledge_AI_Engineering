@@ -160,6 +160,8 @@ Mise en situation : Langfuse montre tous les appels au modèle, mais aucun rembo
 
 **Piège** : assimiler couverture des appels LLM et couverture de l'application.
 
+Distinguer temps actif et attente humaine dans les métriques de délai. Une reprise deux jours plus tard se relie au même dossier, tout en démarrant des observations adaptées ; un span unique ouvert ne suffit pas à décrire ce cycle.
+
 ---
 
 Mise en situation : deux utilisateurs simultanés apparaissent dans le même arbre Langfuse après un passage par des threads. Comment corriges-tu ? <!--anki:3961393232326663653466383464623262376133316338316133663136326436-->
@@ -181,6 +183,8 @@ Mise en situation : le coût affiché dans Langfuse a doublé après activation 
 4. Rejouer un scénario à usage connu avant de conclure à une hausse réelle.
 
 **Piège** : diviser arbitrairement tous les coûts par deux au lieu de corriger leur provenance.
+
+Distinguer coût estimé, usage fournisseur et facture réconciliée. Une trace parent peut agréger ses enfants : sommer les deux crée un double comptage même si chaque appel a été instrumenté une seule fois.
 
 ---
 

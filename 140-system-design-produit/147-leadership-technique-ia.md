@@ -43,6 +43,8 @@ Pourquoi tant de POC IA n'atteignent-ils jamais la production ? <!--anki:693a524
 
 Le senior pose ces questions **dès le cadrage**.
 
+Définir avant le POC un critère de passage : gain utile, qualité par segment, coût complet et responsable opérationnel. Tester un volume réaliste et les erreurs ; une démonstration réussie ne révèle pas la charge de correction humaine.
+
 ---
 
 Qu'est-ce qu'un RFC / design doc pour une fonctionnalité IA doit contenir de spécifique ? <!--anki:4268716c3f7a326a2e6b-->
@@ -68,6 +70,8 @@ Options écartées : vecteurs seuls (rappel@10 = 0,71), BM25 seul (0,64).
 Décision : BM25 + vecteurs fusionnés par RRF (0,86).
 Réexaminer si : un modèle d'embedding seul dépasse 0,85, ou si le coût d'index double.
 ```
+
+Les scores d'exemple demandent un protocole comparable et une incertitude pour devenir des preuves de décision. Associer une date et un responsable au réexamen ; l'ADR explique le choix sans empêcher sa révision.
 
 ---
 

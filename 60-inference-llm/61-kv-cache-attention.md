@@ -177,4 +177,5 @@ Mise en situation : ton équipe veut activer la quantization FP8 du KV cache pou
 - [[67-speculative-decoding|Speculative decoding]] — générer plusieurs tokens par passage
 - [[84-streaming-integration-applicative|Streaming & intégration]] — SSE, annulation et tâches longues
 - [[60-011-capacite-ordonnancement-inference|Capacité & ordonnancement]] — relier mémoire, budgets et débit utile sous charge
+- [[60-013-prefill-decode-pas-a-pas|Prefill & decode pas à pas]] — suivre les positions calculées, le cache et les délais
 - [[00-moc-ai-engineering|MOC AI Engineering]]

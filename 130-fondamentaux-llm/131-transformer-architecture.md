@@ -203,4 +203,5 @@ Mise en situation : en entretien, on te demande pourquoi un modèle de base rép
 - [[133-embeddings-representations|Embeddings]] — représenter le sens par des vecteurs
 - [[161-modeles-vision-langage|Modèles vision-langage]] — images et écrans en entrée
 - [[22-rag-avance|RAG — Avancé]] — recherche hybride, reranking et filtres
+- [[60-013-prefill-decode-pas-a-pas|Prefill & decode pas à pas]] — appliquer projections et masque causal à une requête réelle
 - [[00-moc-ai-engineering|MOC AI Engineering]]

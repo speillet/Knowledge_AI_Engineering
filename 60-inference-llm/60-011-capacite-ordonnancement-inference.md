@@ -45,6 +45,8 @@ capacité mémoire idéale = 40 Gio / 1 Gio = 40 séquences
 ```
 Les 8 192 tokens incluent le contexte déjà généré. Si chaque séquence doit encore produire 1 024 tokens, compter 1,125 Gio et au plus 35 séquences, avant marge. La capacité respectant les délais peut être inférieure à ce plafond mémoire.
 
+La sortie supplémentaire réduit la concurrence maximale même si l'entrée reste identique. Pour une admission sûre, tenir compte de l'enveloppe générée, de l'arrondi par blocs et des allocations du moteur ; le quotient mémoire brut ne définit pas le SLO.
+
 ---
 
 Pourquoi GQA et le tensor parallelism ne divisent-ils pas toujours le KV comme prévu ? <!--anki:6562633831303763333161303431626638326462383633366439346333303435-->

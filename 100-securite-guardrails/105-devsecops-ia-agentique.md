@@ -132,6 +132,8 @@ Un **seuil de sécurité qui bloque le déploiement**, comme l'[[112-cicd-modele
 
 Il est rejoué à **chaque changement de modèle, de prompt, d'outil ou de skill** : une simple montée de version du modèle peut changer sa robustesse.
 
+ASR désigne le taux de réussite des attaques sur un ensemble défini. Zéro violation observée sur des essais finis n'établit pas un risque nul ; conserver scénarios, effectifs et gravité des échecs pour interpréter le seuil.
+
 ---
 
 Comment gérer les prompts et configurations d'agents de manière sécurisée ? <!--anki:497c4871785959714777-->
@@ -143,6 +145,8 @@ Comment gérer les prompts et configurations d'agents de manière sécurisée ? 
 - **Détection des écarts** entre la configuration déclarée et celle qui tourne (registre, [[115-plateformes-agents-gouvernance|gouvernance]])
 
 Une ligne de prompt qui ajoute un outil, c'est **un changement de droits**.
+
+Comparer les droits effectifs avant et après déploiement. Une consigne seule n'accorde pas de permission ; c'est l'exposition d'un outil et l'autorisation appliquée par son serveur qui rendent l'action possible.
 
 ---
 

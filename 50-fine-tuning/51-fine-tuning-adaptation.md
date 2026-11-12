@@ -123,6 +123,8 @@ fraction : 131 072 / 16 777 216 = 0,0078125 ≈ 0,78 %
 ```
 Cette réduction concerne les paramètres entraînés de **cette matrice**. Elle ne divise pas toute la mémoire ni le temps de calcul par le même facteur : base, activations et autres modules restent présents. Le rang est un choix à valider sur la tâche.
 
+Adapter plusieurs projections dans plusieurs couches multiplie le total LoRA. Compter les matrices effectivement visées et les éventuels modules entraînés supplémentaires ; le pourcentage d'une seule matrice ne décrit pas automatiquement tout le modèle adapté.
+
 ---
 
 Que faut-il versionner pour redéployer fidèlement un adapter LoRA ? <!--anki:3161663637373437313135313434343738373861323137353861636533393538-->
@@ -142,6 +144,8 @@ volume d'amortissement = 1 200 / 0,004 = 300 000 requêtes
 délai = 1 200 / 200 = 6 mois
 ```
 Ce calcul n'est valable que si qualité, volume et économie restent comparables. Ajouter réentraînements, validation, exploitation et régressions au scénario réel. Si les gains mensuels ne dépassent pas les coûts récurrents, aucun délai d'amortissement fini n'existe dans ce modèle.
+
+À 25 000 requêtes mensuelles, le même investissement demanderait douze mois, toutes choses égales. Cette sensibilité au volume aide à décider s'il faut adapter maintenant ou attendre une demande plus stable.
 
 ---
 

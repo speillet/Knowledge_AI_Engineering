@@ -19,6 +19,8 @@ Quelles sont les étapes classiques du RLHF ? <!--anki:6e65685b71755b4e5f2c-->
 3. **Reward model** entraîné à prédire la réponse préférée.
 4. **Optimisation RL** (PPO) du modèle pour maximiser la récompense, avec une **pénalité KL** qui l'empêche de trop s'éloigner du modèle SFT.
 
+Le reward model est une approximation des préférences, pas une vérité métier. Surveiller exploitation de ses biais et régressions de capacité ; la pénalité KL limite le déplacement, sans garantir à elle seule un comportement sûr ou correct.
+
 ---
 
 Pourquoi une pénalité KL pendant le RL ? <!--anki:6f333c253e66767e7635-->
@@ -55,6 +57,8 @@ DPOTrainer(model=model, args=DPOConfig(beta=0.1), train_dataset=paires,
 Qu'est-ce que GRPO ? <!--anki:7a7b5346495648755428-->
 ?
 **Group Relative Policy Optimization** : pour chaque prompt, on génère **un groupe de réponses**, on les note, et l'avantage de chaque réponse est calculé **par rapport à la moyenne du groupe**. Pas besoin de **value model** (critique) comme dans PPO → moins de mémoire. Popularisé par DeepSeek pour l'entraînement au **raisonnement** avec récompenses vérifiables ([[138-modeles-raisonnement|modèles de raisonnement]]).
+
+Si toutes les réponses du groupe reçoivent la même récompense, leur classement ne fournit pas de signal relatif utile. Examiner diversité des tâches, qualité du vérificateur et groupes sans variance avant d'augmenter le budget d'échantillonnage.
 
 ---
 
@@ -160,6 +164,8 @@ Mise en situation : ton modèle entraîné à corriger du code obtient d'excelle
 
 - [Rafailov et al. — Direct Preference Optimization (2023)](https://arxiv.org/abs/2305.18290)
 - [Hugging Face — TRL, entraînement et alignement](https://huggingface.co/docs/trl/index)
+
+- [Shao et al. — DeepSeekMath et GRPO](https://arxiv.org/abs/2402.03300) — revue ciblée du 12 novembre 2026 : signal de récompense relatif au groupe.
 
 ## Connexions
 - [[51-fine-tuning-adaptation|Fine-tuning & adaptation]] — SFT, LoRA, DPO en bref

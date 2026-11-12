@@ -133,6 +133,8 @@ Les métriques donnent l'**agrégat** (le p95 a doublé), les traces donnent l'*
 - les **conventions OpenTelemetry GenAI** pour nommer les attributs : `gen_ai.request.model`, `gen_ai.usage.input_tokens`, `gen_ai.usage.output_tokens`, `gen_ai.response.finish_reasons`
 - des traces émises par le serveur lui-même (vLLM : `--otlp-traces-endpoint`)
 
+Éviter un identifiant de requête comme label de chaque métrique : cela crée une forte cardinalité. Utiliser corrélation ou exemplars lorsque disponibles, et appliquer aux attributs de trace la même politique de confidentialité qu'aux données métier.
+
 ---
 
 Que contient un dashboard minimal d'inférence ? <!--anki:4c4c2d5a2c6c683f564b-->
