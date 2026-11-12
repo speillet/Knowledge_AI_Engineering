@@ -1,6 +1,6 @@
 # Monitoring, drift & boucle de feedback — Flashcards
 Tags: #flashcards #ai-engineering #mlops #monitoring #drift #llm
-<!-- summary: data drift et concept drift, PSI et calcul, test KS sur gros volumes, dérive multivariée, distribution des scores, drift d'une app LLM et d'un RAG, qualité en production, boucle de feedback, quand ré-entraîner, annotation régulière, mises à jour des modèles API, alertes sur tendance et par segment, biais des labels tardifs. -->
+<!-- summary: data drift et concept drift, PSI et calcul, test KS sur gros volumes, dérive multivariée, distribution des scores, drift d'une app LLM et d'un RAG, qualité en production, boucle de feedback, quand ré-entraîner, annotation régulière, mises à jour des modèles API, alertes sur tendance et par segment, biais des labels tardifs, références fixe et glissante, définition versionnée du label, calcul de couverture, panne de la mesure. -->
 
 
 À ne pas confondre : data drift et concept drift ? <!--anki:693a4558422d7246257a-->
@@ -14,13 +14,13 @@ Exemple de data drift : davantage de demandes dans une nouvelle langue. Exemple 
 
 Comment le Population Stability Index (PSI) mesure-t-il la dérive d'une variable ? <!--anki:3839353839393939643139353462396362656138386437353365636534333832-->
 ?
-On découpe la variable en classes, souvent les déciles de la période de référence, puis on compare la proportion de référence *e* et la proportion actuelle *a* de chaque classe :
+Le **PSI** compare les proportions de référence `e_i` et courantes `a_i` dans des classes définies :
 ```text
-PSI = Σ (a_i − e_i) × ln(a_i / e_i)
+PSI = Σ (a_i − e_i) × ln(a_i/e_i)
 ```
-Repères usuels, hérités du scoring crédit : sous 0,1, population stable ; de 0,1 à 0,25, à surveiller ; au-delà de 0,25, dérive marquée. Ce sont des conventions, pas un test statistique.
+Fixer bornes et traitement des valeurs manquantes pour rendre les périodes comparables. Les repères 0,1 et 0,25 sont des conventions de certains usages, pas des seuils statistiques universels ni des preuves de qualité.
 
-Le résultat dépend du découpage. Une classe vide rend le logarithme infini : lisser les proportions par une petite constante. Le PSI est univarié : il ne voit ni un changement de corrélation entre variables, ni une baisse de performance.
+Une proportion nulle exige une règle explicite : regroupement ou lissage documenté, avec normalisation cohérente. L'indice dépend de ce choix et du découpage. Inspecter quelles classes changent et leur impact ; le PSI univarié ne détecte pas toute dérive de corrélation ni de relation entre entrée et label.
 
 ---
 
@@ -51,9 +51,9 @@ Un écart maximal de **0,6 point** entre les deux fonctions de répartition suff
 
 Comment détecter une dérive multivariée que les contrôles variable par variable ne voient pas ? <!--anki:3963393735306536386535613433613239383466366437643030343639303937-->
 ?
-Entraîner un **classifieur de domaine** : étiqueter 0 les exemples de la période de référence et 1 ceux de la période récente, puis mesurer son AUC en validation croisée. Une AUC proche de 0,5 signifie que les deux périodes sont indiscernables. Une AUC nettement supérieure signale un changement, et les importances de variables indiquent lesquelles le portent.
+Un **classifieur de domaine** apprend à distinguer période de référence et période récente. Une bonne séparation hors entraînement indique un changement détectable avec les variables et le modèle choisis.
 
-Exemple : l'âge et le revenu gardent chacun leur distribution, mais la combinaison « jeune et revenu élevé » triple. Exclure identifiants, horodatages et compteurs, qui séparent trivialement les périodes. L'AUC mesure la détectabilité du changement, pas son effet sur la performance.
+Une AUC proche de 0,5 ne prouve pas l'identité des populations : faible puissance ou modèle inadapté peuvent masquer une différence. Retirer identifiants et dates qui rendent le problème trivial ; respecter groupes et dépendances temporelles dans la validation. Examiner les interactions et des exemples responsables de la séparation. L'AUC mesure la détectabilité de la différence, pas son coût métier ni une baisse certaine de précision ; la qualité demande une mesure complémentaire.
 
 ---
 
@@ -67,27 +67,17 @@ Suivre en particulier la **part au-dessus du seuil de décision** : si elle pass
 
 Comment le drift se manifeste-t-il sur une app LLM ? <!--anki:4477547a5d582b2a403a-->
 ?
-Par une **dégradation silencieuse** : aucune erreur technique, mais des réponses de moins en moins pertinentes. Causes typiques :
-- **Nouvelles questions** hors du périmètre prévu
-- **Documents sources** qui changent
-- **Modèle du fournisseur** mis à jour derrière un alias
+Une application LLM peut changer de **population de demandes, de contexte ou de comportement** sans erreur technique : nouveaux sujets, documents modifiés, droits retirés, outil différent ou révision fournisseur.
 
-Invisible sans **evals continues** sur des échantillons de production.
-
-Pour repérer les nouveaux sujets avant la baisse des scores, suivre la **part des questions éloignées de tous les groupes connus** dans l'espace des embeddings : de 3 à 12 % après un lancement, le périmètre a changé. Un changement de modèle chez le fournisseur se voit plutôt dans la forme : longueur, JSON invalide, refus.
+Décomposer la chaîne avant de conclure à une dégradation du modèle. Comparer entrées, passages récupérés, versions, décisions d'outils et résultats, par segment. Un déplacement d'embeddings ou un taux de refus nouveau est un signal d'investigation ; il ne mesure pas directement l'exactitude. Des sondes connues et une annotation représentative complètent les indicateurs automatiques. Ni scores stables ni disponibilité intacte ne prouvent que les réponses restent utiles et autorisées.
 
 ---
 
 Comment monitorer la qualité d'une application LLM en production ? <!--anki:786d2e5876493b586624-->
 ?
-- **Scores sur échantillons** par un juge calibré ([[95-llm-as-judge|LLM-as-a-judge]])
-- **Feedback utilisateur** explicite et implicite (reformulations, abandons)
-- **Taux de refus** et d'**erreurs d'outils**
-- **Validations automatiques** : format, citations présentes
+Combiner **contrôles complets peu coûteux** et **échantillons annotés** : formats, erreurs d'outils, citations et effets vérifiables d'un côté ; exactitude et satisfaction utile de l'autre. Relier les résultats à la version réellement exécutée.
 
-Tout est rattaché aux [[91-langfuse-observabilite|traces]], et **segmenté** (par sujet, langue, client) : une moyenne stable peut cacher un segment qui s'effondre.
-
-Dimensionner l'échantillon jugé **par segment**, pas globalement. 1 000 jugements par semaine répartis sur 20 segments n'en laissent que 50 chacun : sur un taux de 80 %, l'incertitude atteint environ ±11 points ([[114-reproductibilite-variance|variance]]). Concentrer les jugements sur les segments à fort risque, et compléter par les validations automatiques, qui couvrent tout le trafic.
+Annoncer population, mode d'échantillonnage, couverture et incertitude par segment. Un juge peut manquer de références ou tomber en panne ; son absence de score n'est pas une réussite. Séparer taux observé sur traces jugées et estimation du trafic. Les cas ciblés sur incidents servent au diagnostic, sans devenir automatiquement représentatifs. Compléter avec sondes et retours humains, dont les biais et délais restent à mesurer.
 
 ---
 
@@ -163,6 +153,38 @@ Former des cohortes selon la date de décision et attendre une maturité défini
 
 ---
 
+Pourquoi comparer à la fois une référence fixe et une référence glissante pour surveiller le drift ? <!--anki:3635343665373535313233633435373362376662623331643838346536646130-->
+?
+Une **référence fixe** conserve un point de comparaison historique ; une **référence glissante** décrit davantage le régime récent. Chacune peut masquer un problème si elle est utilisée seule.
+
+La référence fixe peut alerter sur une saisonnalité attendue ; une fenêtre glissante peut absorber progressivement une dégradation et la rendre invisible. Définir populations, saisons et règles de renouvellement, puis versionner les références. Conserver aussi métriques métier et contrôles de données : la proximité avec hier n'établit pas que le modèle reste utile. Modifier la référence doit être une décision explicite, pas un moyen automatique de faire disparaître les alertes.
+
+---
+
+Pourquoi versionner la définition du label dans le monitoring ML ? <!--anki:3861343533633232386536363433666538366139313866616231663766336262-->
+?
+Un **label** dépend d'une règle : horizon de résiliation, définition d'un incident ou procédure d'arbitrage. Si cette règle change, les métriques peuvent changer même avec les mêmes prédictions et sans nouveau défaut du modèle.
+
+Associer définition, version et délai de consolidation aux résultats. Par exemple, comparer churn à trente jours et churn à soixante jours mélange deux cibles ; un dossier non encore mûr ne devient pas un négatif. Recalculer une série historique sous une nouvelle définition exige une nouvelle version de mesure. Garder les anciens rapports pour comprendre quelle décision de promotion reposait sur quelle cible.
+
+---
+
+Calcul : sur 1 000 prédictions, 600 labels sont disponibles et 480 de ces prédictions sont correctes. Quelle exactitude et quelle couverture peut-on annoncer ? <!--anki:3839653031333039646534393465306138653939383964656161363736653766-->
+?
+L'**exactitude observée sur les cas labellisés** vaut `480/600 = 80 %`. La **couverture de labels** vaut `600/1 000 = 60 %`.
+
+On ne peut pas annoncer directement 80 % sur tout le trafic : les 400 cas sans label peuvent être plus difficiles, plus récents ou sélectionnés par la décision du modèle. Rapporter les deux dénominateurs et la maturité des cohortes. Examiner la règle d'observation et l'incertitude, puis attendre ou collecter des informations adaptées. Traiter les absences comme des succès, des échecs ou des négatifs fabrique une vérité terrain qui n'a pas été observée.
+
+---
+
+Comment surveiller un modèle lorsque l'évaluateur ou la collecte de labels tombe en panne ? <!--anki:6231626434613731653764313430353038373839363464643631313564663063-->
+?
+Surveiller aussi la **chaîne de mesure** : nombre de prédictions, labels attendus et reçus, évaluations tentées et terminées, âge des dernières observations et erreurs de rapprochement.
+
+Distinguer état sain, non conforme et inconnu. Une métrique figée peut refléter l'arrêt du calcul plutôt qu'une stabilité de qualité. Prévoir une alerte et une politique d'exploitation pour cette perte de visibilité, selon la criticité. Continuer les contrôles disponibles, comme formats et latence, sans les présenter comme une preuve de performance prédictive. Tester panne du juge ou retard de labels avec des sondes dont le résultat attendu est connu.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton assistant RH fonctionnait bien depuis six mois. Depuis trois semaines, les utilisateurs le trouvent « à côté de la plaque », sans qu'aucun déploiement n'ait eu lieu. Quelles causes explores-tu ? <!--anki:433d3b33593952674f29-->
@@ -201,6 +223,12 @@ Mise en situation : ton tableau de bord de dérive affiche quarante variables en
 
 ---
 
+## Sources
+
+- [Rabanser et al. — Failing Loudly, NeurIPS 2019](https://papers.neurips.cc/paper_files/paper/2019/hash/846c260d715e5b854ffad5f70a516c88-Abstract.html) — détection de changements de distribution et limites.
+- [Taplin et Hunt — limites du Population Stability Index, 2019](https://www.econstor.eu/bitstream/10419/257891/1/risks-07-00053.pdf) — sensibilité aux fréquences proches de zéro.
+- [Google SRE — concevoir la mesure et les alertes](https://sre.google/workbook/monitoring/)
+
 ## Connexions
 - [[91-langfuse-observabilite|Langfuse]] — traces, scores et datasets de prod
 - [[92-chainforge-evals-prompts|Evals]] — les instruments de mesure
@@ -218,4 +246,5 @@ Mise en situation : ton tableau de bord de dérive affiche quarante variables en
 - [[173-calibration-incertitude-abstention|Calibration, incertitude & abstention]] — surveiller la validité des probabilités
 - [[176-detection-anomalies|Détection d'anomalies]] — distinguer incident et évolution de la référence
 - [[117-pipelines-entrainement-continu|Pipelines d'entraînement & entraînement continu]] — du signal de dérive au réentraînement contrôlé
+- [[119-contrats-prediction-features-batch|Contrats de prédiction, features et batch]] — contrats et vérifications de production
 - [[00-moc-ai-engineering|MOC AI Engineering]]

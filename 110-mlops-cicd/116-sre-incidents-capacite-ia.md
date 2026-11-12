@@ -1,6 +1,6 @@
 # SRE : incidents & capacité des services IA — Flashcards
 Tags: #flashcards #ai-engineering #mlops #sre #incidents #capacite
-<!-- summary: SLI utilisateur, budgets d'erreur, burn rate, alertes multi-fenêtres, files bornées, admission, capacité de secours, propagation des délais, gestion d'incident, rollback, RTO et RPO, postmortem et reprise, calcul du respect des RTO et RPO. -->
+<!-- summary: SLI utilisateur, budgets d'erreur, burn rate, alertes multi-fenêtres, files bornées, admission, capacité de secours, propagation des délais, gestion d'incident, rollback, RTO et RPO, postmortem et reprise, calcul du respect des RTO et RPO, dépendance au registre au démarrage, isolation entraînement-service, calcul de résorption du backlog, impact ML après restauration. -->
 
 
 Pourquoi un statut HTTP 200 ne suffit-il pas comme SLI d'un service IA ? <!--anki:3635323732333063663032383435633261333464373137376137633665346238-->
@@ -55,17 +55,17 @@ Si les arrivées restent à 30 par seconde, la file continue de grandir. Ajouter
 
 Pourquoi un fournisseur de secours doit-il être testé sous la charge de bascule ? <!--anki:6531346435636635326466663433376339363634623839333639643936336631-->
 ?
-Un fallback qui réussit une requête peut échouer quand il reçoit **tout le trafic du fournisseur principal**. Quotas partagés, capacité disponible, démarrage à froid et longueur des demandes déterminent la capacité réelle de secours.
+Un **secours** doit supporter la charge transférée avec les mêmes contrats utiles : identité, formats, outils, délais et données autorisées. Une réponse correcte à un seul appel ne prouve pas cette capacité.
 
-Tester un profil représentatif, y compris les quotas autorisés et les dépendances communes. Prévoir une admission réduite ou une priorité aux usages critiques si le secours ne peut tout absorber. Mesurer aussi la qualité du modèle de repli : une réponse disponible mais inutilisable ne restaure pas forcément le service attendu.
+Exercer la bascule avec trafic représentatif, quotas disponibles, cache froid et dépendances communes. Vérifier ce qui reste si DNS, gateway, registre ou système d'identité tombe aussi ; deux fournisseurs ne sont pas indépendants de toute l'application. Prévoir admission et mode dégradé si la capacité de secours est moindre. Après retour, réconcilier les opérations incertaines et observer les signaux utilisateur, sans compter toute réponse de secours comme une réussite.
 
 ---
 
 Pourquoi propager une échéance globale aux étapes d'un agent ? <!--anki:3530653465313534336237653439306262633736383030316637353661646634-->
 ?
-Chaque appel doit consommer le **budget de temps restant**, au lieu de recevoir un timeout neuf qui rallonge indéfiniment le parcours. Un agent avec 10 secondes restantes ne devrait pas lancer un outil pouvant bloquer 60 secondes sans stratégie adaptée.
+Une **échéance de bout en bout** borne le délai encore utile pour l'utilisateur. Chaque étape et retry consomme le reste, au lieu de recevoir à nouveau son timeout maximal.
 
-Propager annulation et échéance à la file, au fournisseur et aux outils lorsque possible. Une annulation locale ne prouve pas l'arrêt d'une action distante déjà engagée. Réconcilier alors le résultat métier avant un retry, surtout pour les effets non idempotents.
+Si trois étapes ont chacune droit à trente secondes, la tâche peut durer bien plus que le budget produit. Propager le temps restant aux files, outils et fournisseurs qui le permettent ; avant une nouvelle tentative, vérifier qu'elle peut encore servir la décision. Annuler ou réconcilier les travaux en vol selon leurs effets. L'expiration côté client n'arrête pas automatiquement une écriture distante, et une tâche expirée ne doit pas rester facturable sans suivi.
 
 ---
 
@@ -102,6 +102,38 @@ Calcul : une panne détruit les données des 12 dernières minutes et le service
 Le **RTO** est respecté : le rétablissement prend 45 minutes, sous l'objectif d'une heure. Le **RPO** ne l'est pas : 12 minutes de données perdues dépassent les cinq minutes acceptées.
 
 Préciser quelles données et fonctions sont couvertes : état des agents, opérations métier, preuves et index peuvent avoir des objectifs différents. Un service de nouveau accessible peut encore être incapable de réconcilier ses actions. Tester restauration et cohérence métier, pas seulement redémarrage des processus.
+
+---
+
+Pourquoi une inférence déjà chargée et un démarrage à froid n'ont-ils pas les mêmes dépendances au registre ? <!--anki:3238626562356633316432383463323362396666343938393030333433326133-->
+?
+Un service ayant **chargé son modèle** peut continuer à prédire pendant une panne du registre, si son contrat ne requiert pas de résolution distante à chaque appel. Un nouveau réplica peut rester bloqué faute de métadonnées ou d'artefacts.
+
+Tester ces deux états : service stable, redémarrage, scale-out et restauration. Prévoir références épinglées, cache contrôlé et règles de validité ; ne pas contourner une révocation ou servir un artefact non vérifié pour gagner en disponibilité. Une API de prédiction saine ne prouve pas que la capacité peut être reconstruite après la perte des processus déjà chauds.
+
+---
+
+Pourquoi isoler les ressources d'entraînement et d'inférence même si elles utilisent le même modèle ? <!--anki:3831376531326636343762373432333039306333316461353432343866626331-->
+?
+L'**entraînement** peut saturer GPU, CPU, réseau et stockage pendant des heures ; l'inférence doit respecter un délai utilisateur. Partager sans quota peut faire d'un réentraînement normal un incident de production.
+
+Définir pools, priorités ou enveloppes de ressources, puis tester les pics simultanés. Inclure téléchargement des données, checkpoints et lecture des poids, qui sollicitent parfois des dépendances communes malgré des GPU séparés. Le partage peut rester rentable avec admission et préemption adaptées, mais le modèle identique ne rend pas leurs profils de charge interchangeables. Relier planification du réentraînement, SLO et coût de la capacité de réserve.
+
+---
+
+Calcul : après une panne, 9 000 tâches attendent ; 20 nouvelles arrivent par seconde et le service en termine 30/s. Quel temps idéal pour résorber la file ? <!--anki:6530633837383164306337393462383161353736396132373165616466376537-->
+?
+La **capacité nette de rattrapage** vaut `30 − 20 = 10 tâches/s`. Le retard demande donc `9 000/10 = 900 s`, soit **15 minutes**, sous ces hypothèses.
+
+Diviser par 30 oublierait les nouvelles arrivées. Si service et arrivées s'égalisent, le retard ne diminue pas ; si les arrivées dominent, il grossit. Le calcul suppose tâches comparables, débits constants et aucune expiration ni reprise. Examiner aussi âge des éléments, délais utiles et classes de priorité : retrouver un débit normal ne signifie pas que toutes les demandes anciennes peuvent encore produire un résultat valable.
+
+---
+
+À ne pas confondre : rétablissement technique et fin d'analyse d'impact d'un incident ML ? <!--anki:3437366430366262333834333433356362326232336537386465653239343336-->
+?
+Le **rétablissement technique** remet le service dans son contrat opérationnel. L'**analyse d'impact** identifie les décisions, personnes et systèmes affectés pendant la dégradation, puis les corrections nécessaires.
+
+Un modèle de nouveau disponible peut avoir laissé des scores faux dans une table batch ou des actions déjà exécutées. Utiliser versions, périodes, identifiants de décisions et journaux pour délimiter ce périmètre. Prévoir recalcul, réconciliation ou traitement métier approprié, avec responsables distincts si nécessaire. Clore l'alerte de disponibilité ne clôt pas automatiquement ces actions ; conserver le suivi et vérifier qu'une remise en service ne propage pas de nouveau les résultats corrompus.
 
 ---
 
@@ -153,6 +185,8 @@ Mise en situation : le même incident de saturation revient chaque mois malgré 
 
 - [AWS Well-Architected — objectifs et tests de reprise](https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/plan-for-disaster-recovery-dr.html)
 
+- [MLflow — métadonnées, artefacts et serveur de tracking](https://mlflow.org/docs/latest/self-hosting/architecture/overview/) — distinguer dépendance de démarrage et service déjà chargé.
+
 ## Connexions
 - [[142-fiabilite-resilience-llm|Fiabilité & résilience]] — passer des mécanismes à leur exploitation
 - [[64-metriques-slo-inference|Métriques & SLO]] — relier capacité et expérience utilisateur
@@ -160,4 +194,6 @@ Mise en situation : le même incident de saturation revient chaque mois malgré 
 - [[147-leadership-technique-ia|Leadership technique]] — responsabilités et suivi des corrections
 - [[60-011-capacite-ordonnancement-inference|Capacité & ordonnancement]] — relier mémoire, budgets et débit utile sous charge
 - [[150-016-observabilite-lignage-donnees|Observabilité, lignage & exploitation des données]] — réagir aux ruptures de garanties et valider les reprises
+- [[118-artefacts-registre-releases-ml|Artefacts, registre et releases ML]] — contrats et vérifications de production
+- [[119-contrats-prediction-features-batch|Contrats de prédiction, features et batch]] — contrats et vérifications de production
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -181,4 +181,5 @@ Mise en situation : deux agents modifient la même proposition commerciale et l'
 - [[150-014-streaming-traitements-evenements|Streaming & traitements d’événements]] — délimiter les garanties de bout en bout
 - [[40-011-langgraph-reprise-concurrence|LangGraph — Reprise, concurrence & évolution]] — effets externes et exécutions concurrentes
 - [[140-011-architecture-applications-agentiques|Applications agentiques — Architecture & cycle de vie]] — soumissions et effets métier
+- [[119-contrats-prediction-features-batch|Contrats de prédiction, features et batch]] — contrats et vérifications de production
 - [[00-moc-ai-engineering|MOC AI Engineering]]

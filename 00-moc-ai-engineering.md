@@ -15,6 +15,8 @@ Pour comprendre l’exécution d’une requête LLM, le [parcours prefill → Ra
 
 La [revue transversale du 12 novembre 2026](docs/revue-transversale-2026-11-12.md) présente les 147 approfondissements, les corrections et les limites de la vérification des sources.
 
+Pour industrialiser un modèle prédictif, le [parcours MLOps de bout en bout](docs/parcours-mlops-production-2026-11-12.md) relie données, entraînement, paquet d’inférence, promotion, scoring et reprise. Il complète [[117-pipelines-entrainement-continu|les pipelines]] avec [[118-artefacts-registre-releases-ml|les releases]] et [[119-contrats-prediction-features-batch|les contrats de prédiction]].
+
 ## Parcours de lecture
 Progression recommandée : **comprendre les modèles → les utiliser → construire des architectures → adapter → servir & déployer → industrialiser → gouverner → concevoir des systèmes.**
 - **Socle prédictif** : [[171-choisir-modele-ml|ML classique]] puis [[172-validation-metriques-ml|validation et métriques]] — choisir une approche avant de construire une chaîne LLM
@@ -114,11 +116,17 @@ Après [[171-choisir-modele-ml|le choix des modèles]], [[172-validation-metriqu
 Le [bilan des cinq nouveaux sujets](docs/nouvelles-competences-ia-2026-10-08.md) précise leurs apports et un exercice pour chacun. Ces branches complètent le parcours LLM et agents ; elles se travaillent selon les responsabilités du poste visé.
 
 ### Parcours MLOps : entraîner, livrer et surveiller un modèle
+
+Le [cas filé de résiliation](docs/parcours-mlops-production-2026-11-12.md) propose un livrable et un critère de passage à chaque étape.
+
 1. [[111-mlops-llmops-fondamentaux|Versionner et tracer]] — artefacts, registre, lineage et environnements
 2. [[117-pipelines-entrainement-continu|Automatiser l'entraînement]] — pipeline, validation des données et du modèle, alias champion et labels sélectifs
-3. [[112-cicd-modeles|Livrer progressivement]] — eval gates, shadow, canary, GitOps et rollback
-4. [[113-monitoring-drift-feedback|Surveiller la dérive]] — PSI, tests sur gros volumes, dérive multivariée, distribution des scores et boucle de feedback
-5. [[114-reproductibilite-variance|Comparer sans se tromper]] puis [[116-sre-incidents-capacite-ia|exploiter]] — variance, SLO et incidents
+3. [[114-reproductibilite-variance|Comparer sans se tromper]] — variance, sélection des runs, environnement et preuve historique
+4. [[118-artefacts-registre-releases-ml|Publier un paquet chargeable]] — transformations, URI, contrat des sorties, intégrité et restauration
+5. [[119-contrats-prediction-features-batch|Produire des prédictions exploitables]] — features, disponibilité temporelle, fraîcheur, batch idempotent et publication
+6. [[112-cicd-modeles|Livrer progressivement]] — eval gates, shadow, canary, GitOps et rollback
+7. [[113-monitoring-drift-feedback|Surveiller la dérive et la mesure]] — PSI, dérive multivariée, couverture des labels et boucle de feedback
+8. [[116-sre-incidents-capacite-ia|Exploiter et reprendre]] puis [[115-plateformes-agents-gouvernance|gouverner les systèmes agentiques]] — SLO, dépendances, incidents, responsabilités et retrait
 
 ### Parcours mesurer et optimiser l’inférence LLM
 
@@ -260,6 +268,8 @@ L’[audit d’inférence du 8 octobre](docs/audit-inference-llm-2026-10-08.md) 
 - [[115-plateformes-agents-gouvernance|Plateformes d'agents — Architecture & gouvernance]]
 - [[116-sre-incidents-capacite-ia|SRE : incidents & capacité des services IA]]
 - [[117-pipelines-entrainement-continu|Pipelines d'entraînement, registre & entraînement continu]]
+- [[118-artefacts-registre-releases-ml|Artefacts, registre & releases ML]]
+- [[119-contrats-prediction-features-batch|Contrats de prédiction, features & scoring batch]]
 
 ## 120 — Coûts & FinOps
 

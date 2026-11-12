@@ -41,7 +41,7 @@
   },
   "110-mlops-cicd": {
     "title": "MLOps & CI/CD",
-    "intro": ""
+    "intro": "Industrialiser le cycle de vie des modèles et des applications LLM : données, entraînement, artefacts, registre, releases, contrats de prédiction, CI/CD, monitoring, gouvernance et reprise après incident."
   },
   "120-couts-finops": {
     "title": "Coûts & FinOps",
