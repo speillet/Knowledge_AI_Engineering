@@ -211,4 +211,5 @@ Mise en situation : ton eval principale affiche 99 % depuis trois mois, alors qu
 - [[99-statistiques-decisions-experimentales|Statistiques pour décider en IA]] — passer d'un score à une décision justifiée
 - [[146-choix-modeles|Choix de modèles]] — départager les candidats sur la tâche
 - [[90-013-tests-agents-reprises|Agents — Tests de contrats, pannes & reprises]] — jeux et critères de réussite
+- [[90-014-evaluation-skills-agents|Évaluer des skills d'agent]] — une eval appariée appliquée aux skills d'agent
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -186,4 +186,5 @@ Mise en situation : parmi 40 prompts, un seul progresse de deux points sur le te
 - [[60-010-benchmarks-charge-inference|Benchmarks de charge LLM]] — mesurer la capacité sans masquer files et échecs
 - [[90-012-langfuse-prompts-experiences|Langfuse — Prompts, datasets & expériences]] — décider à partir des expériences
 - [[117-pipelines-entrainement-continu|Pipelines d'entraînement]] — comparer un challenger au champion
+- [[90-014-evaluation-skills-agents|Évaluer des skills d'agent]] — décider sur un eval de skill à peu de cas
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -257,4 +257,5 @@ Mise en situation : ton équipe teste un agent de correction de bugs. Il réussi
 - [[165-computer-use-agents-navigateur|Computer use & agents navigateur]] — agents qui utilisent des interfaces
 - [[55-rl-agentique|RL agentique]] — entraîner un modèle sur des tâches d'agent
 - [[118-artefacts-registre-releases-ml|Artefacts, registre et releases ML]] — contrats et vérifications de production
+- [[90-016-harbor-evaluation-agents|Harbor]] — pass@k et essais répétés calculés par un harness d'eval
 - [[00-moc-ai-engineering|MOC AI Engineering]]

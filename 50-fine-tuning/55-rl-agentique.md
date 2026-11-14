@@ -166,4 +166,5 @@ Mise en situation : pendant un entraînement RL d'un agent de code, le taux de r
 - [[114-reproductibilite-variance|Reproductibilité & variance]] — non-déterminisme et statistiques d'evals
 - [[138-modeles-raisonnement|Modèles de raisonnement]] — test-time compute et budget de réflexion
 - [[135-pretraining-scaling-laws|Pré-entraînement & scaling laws]] — comment on fabrique un LLM
+- [[90-016-harbor-evaluation-agents|Harbor]] — environnements en conteneurs, rollouts et reward hacking
 - [[00-moc-ai-engineering|MOC AI Engineering]]

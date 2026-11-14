@@ -278,4 +278,6 @@ Mise en situation : ton RAG fournit toujours des liens valides, mais invente enc
 - [[55-rl-agentique|RL agentique]] — entraîner un modèle sur des tâches d'agent
 - [[174-recommandation-ranking|Recommandation & learning to rank]] — mesurer rappel et ordre des résultats
 - [[90-013-tests-agents-reprises|Agents — Tests de contrats, pannes & reprises]] — mesurer les résultats métier
+- [[90-014-evaluation-skills-agents|Évaluer des skills d'agent]] — évaluer un agent avec et sans une skill
+- [[90-016-harbor-evaluation-agents|Harbor]] — exécuter des evals d'agents en conteneurs
 - [[00-moc-ai-engineering|MOC AI Engineering]]
