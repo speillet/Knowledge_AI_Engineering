@@ -1,7 +1,7 @@
 # Frameworks d'agents — Flashcards
 Tags: #flashcards #ai-engineering #agents #frameworks #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: LangChain, LangGraph, CrewAI, Google ADK, OpenAI Agents SDK, Claude Agent SDK, LlamaIndex, framework ou code maison, prototype comparatif avec pannes. -->
+<!-- summary: LangChain, LangGraph, CrewAI, Google ADK, OpenAI Agents SDK, Claude Agent SDK, LlamaIndex, framework ou code maison, prototype comparatif avec pannes, portabilité des états, frontière métier. -->
 
 
 À quoi sert un framework d'agents ? <!--anki:7a3f7e4b6f3a367c3e6e-->
@@ -114,6 +114,22 @@ Comment comparer deux frameworks d'agents avec un prototype qui révèle leurs l
 Implémenter la **même petite tâche représentative** avec un contrat identique : outil métier, sortie typée, interruption humaine et panne après effet externe.
 
 Comparer résultat, reprise, traces, isolation et effort de maintenance, en fixant modèle et données. Inclure un cas d'erreur et un changement de version d'état ; une démonstration sans panne teste peu les garanties d'exécution. Documenter le code spécifique au framework et les possibilités d'export. Le nombre de lignes du scénario heureux ne suffit pas à choisir une dépendance de production.
+
+---
+
+Pourquoi isoler le modèle d'état métier des objets internes d'un framework d'agents ? <!--anki:3835373738346661303839383439653362333061663462666461336566356231-->
+?
+Cela limite le **couplage aux formats et cycles de vie du framework**. Une décision, une facture ou une autorisation doit rester interprétable sans charger toute la bibliothèque d'orchestration.
+
+Utiliser des contrats explicites aux frontières et conserver la provenance des données. Les messages et checkpoints internes peuvent rester spécifiques au framework ; prévoir leur migration ou leur extinction lors d'un changement. Une API uniforme pour appeler un modèle ne garantit pas la portabilité des exécutions suspendues.
+
+---
+
+Comment vérifier le coût d'une migration de framework avant de l'adopter ? <!--anki:3564623037616165333333633437366239313934303962336233306535613233-->
+?
+Faire sortir du prototype **une trace, un état métier et un jeu de tâches rejouables**, puis implémenter une petite variante avec une autre orchestration ou du code simple.
+
+Repérer ce qui dépend des sérialiseurs, interruptions, stockages et mécanismes de reprise. Mesurer l'effort sur ces frontières plutôt que compter les lignes du premier exemple. L'objectif n'est pas de garantir une migration gratuite, mais de rendre les dépendances coûteuses explicites avant généralisation.
 
 ---
 

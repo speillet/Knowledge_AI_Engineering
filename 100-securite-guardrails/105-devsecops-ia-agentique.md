@@ -1,7 +1,7 @@
 # DevSecOps pour l'IA agentique — Flashcards
 Tags: #flashcards #ai-engineering #securite #devsecops #agents #llm
 Vérifié le : 25 septembre 2026 — date globale conservée ; revue ciblée du 13 novembre 2026 détaillée dans les Sources.
-<!-- summary: threat modeling (MAESTRO, ATLAS), référentiels (OWASP, NIST, ISO 42001), AI-BOM, SBOM ou AI-BOM, supply chain des modèles, contrôles en CI, tests adversariaux (promptfoo, garak, PyRIT), red teaming, security eval gate, prompts comme du code, environnements, journalisation, détection, réponse à incident, vulnérabilités, responsabilités, vérification des attestations au déploiement. -->
+<!-- summary: threat modeling (MAESTRO, ATLAS), référentiels (OWASP, NIST, ISO 42001), AI-BOM, SBOM ou AI-BOM, supply chain des modèles, contrôles en CI, tests adversariaux (promptfoo, garak, PyRIT), red teaming, security eval gate, prompts comme du code, environnements, journalisation, détection, réponse à incident, vulnérabilités, responsabilités, vérification des attestations au déploiement, inventaire actif, preuve de correction. -->
 
 
 Qu'est-ce que le DevSecOps appliqué à l'IA agentique ? <!--anki:44494a704c554b4f3d6c-->
@@ -233,6 +233,22 @@ Au déploiement, contrôler identité du signataire, digest exact, source et con
 
 ---
 
+Pourquoi un inventaire des composants IA doit-il être relié aux déploiements actifs ? <!--anki:3932666439636163303636343464323062663833643835323537643532386237-->
+?
+Un catalogue théorique ne permet pas de savoir **où une version vulnérable tourne encore**. Relier modèle, tokenizer, outils, dépendances et configuration aux instances et propriétaires.
+
+Lors d'une alerte, identifier les chemins exposés et vérifier le retrait effectif après correction. Inclure jobs planifiés et environnements oubliés. Un artefact corrigé dans le registre n'implique pas que tous les workers l'ont chargé.
+
+---
+
+Comment transformer un incident de prompt injection en contrôle de non-régression utile ? <!--anki:3137393766646234376266363436613361366330373836383533633164663463-->
+?
+Extraire **la frontière violée et l'effet interdit**, puis créer un cas reproduisant ce mécanisme avec des données factices. Vérifier que le contrôle bloque l'effet, pas seulement une phrase précise.
+
+Ajouter des variantes de forme et conserver une tâche légitime voisine pour mesurer les faux positifs. Versionner le cas, son résultat attendu et la politique concernée. Un filtre qui mémorise uniquement le payload historique ne démontre pas une défense générale.
+
+---
+
 ## Mises en situation
 
 Mise en situation : tu dois mettre en place la CI/CD d'un nouvel agent qui lit le CRM et envoie des e-mails aux clients. Que mets-tu dans le pipeline ? <!--anki:715f364056525f595273-->
@@ -281,6 +297,8 @@ Revue ciblée du 13 novembre 2026 : affirmations précisées dans cette passe ; 
 
 - [OWASP — Top 10 LLM, édition 2026](https://genai.owasp.org/resource/owasp-genai-llm-top-10-2026/) — PDF officiel consulté ; l’index historique `/llm-top-10/` affiche encore l’édition 2025.
 - [OWASP — PDF 2026](https://genai.owasp.org/download/56857/) — numéros, libellés et changements de périmètre.
+
+- Complément du 14 novembre 2026 — Provenance des artefacts : [SLSA v1.2 — Provenance](https://slsa.dev/spec/v1.2/provenance).
 
 ## Connexions
 - [[102-menaces-agents|Menaces & incidents]] — ce que le threat model doit couvrir

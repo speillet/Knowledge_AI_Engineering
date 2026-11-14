@@ -1,7 +1,7 @@
 # LangChain — Fondamentaux — Flashcards
 Tags: #flashcards #ai-engineering #agents #langchain #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: paquets de la v1, `init_chat_model`, messages, outils `@tool` et `bind_tools`, sorties structurées, Runnables et LCEL, briques RAG, LangSmith, conservation des messages structurés. -->
+<!-- summary: paquets de la v1, `init_chat_model`, messages, outils `@tool` et `bind_tools`, sorties structurées, Runnables et LCEL, briques RAG, LangSmith, conservation des messages structurés, streaming d'arguments, concurrence des appels. -->
 
 
 Qu'est-ce que LangChain aujourd'hui ? <!--anki:6d5e30397b5f6e244140-->
@@ -132,6 +132,22 @@ Conserver les objets structurés jusqu'aux frontières qui exigent du texte, pui
 
 ---
 
+Pourquoi attendre la fin d'un appel d'outil streamé avant de valider ses arguments LangChain ? <!--anki:6662636636353065353964633434646161633862653765666138343033376234-->
+?
+Les fragments reçus peuvent former **un JSON incomplet**, et une valeur commencée peut encore être prolongée. Ne pas exécuter une action sur le premier fragment qui semble plausible.
+
+Assembler les fragments par identifiant d'appel, vérifier la fin, puis parser, valider et autoriser. Tester plusieurs appels entremêlés et une déconnexion en milieu d'argument. L'affichage progressif peut être utile, mais la validation d'une proposition complète reste une étape distincte de son exécution.
+
+---
+
+Pourquoi lancer de nombreux appels LangChain asynchrones ne garantit-il pas un débit utile supérieur ? <!--anki:6562386234363234623234663439393261343064383361623338656565363132-->
+?
+La concurrence peut saturer **quotas fournisseur, connexions, CPU ou mémoire**. Les erreurs et reprises augmentent alors plus vite que les résultats valides.
+
+Borner les appels en vol et mesurer débit utile, attente et taux de 429. Les lots de tâches doivent partager les limites de la dépendance appelée. Une fonction asynchrone facilite l'attente concurrente ; elle n'augmente ni la capacité du fournisseur ni celle d'un composant local bloquant.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ta direction veut pouvoir changer de fournisseur de modèle en cas de hausse de prix, sans réécrire l'application. Comment structures-tu le code ? <!--anki:6c2447527d2a5d675f62-->
@@ -161,6 +177,8 @@ Mise en situation : ton extraction de données renvoie parfois du JSON invalide,
 ## Sources
 
 - [LangChain — documentation Python](https://docs.langchain.com/oss/python/langchain/overview)
+
+- Complément du 14 novembre 2026 — Fragments d’appels d’outils : [LangChain — modèles et streaming](https://docs.langchain.com/oss/python/langchain/models).
 
 ## Connexions
 - [[43-langchain-agents|LangChain — Agents & middleware]] — `create_agent`

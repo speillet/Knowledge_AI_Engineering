@@ -1,7 +1,7 @@
 # Carte des protocoles agentiques — Flashcards
 Tags: #flashcards #ai-engineering #agents #protocoles #mcp #a2a
 Vérifié le : 30 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: protocoles par frontière, MCP, A2A et AG-UI, Agent Card, cycle d'une tâche A2A, API compatible OpenAI, conventions OpenTelemetry GenAI, `AGENTS.md` et skills, paiements par agents (AP2, ACP), gouvernance des standards, quand ne pas exposer un agent en A2A, frontières de confiance, annulation de tâche et compensation métier. -->
+<!-- summary: protocoles par frontière, MCP, A2A et AG-UI, Agent Card, cycle d'une tâche A2A, API compatible OpenAI, conventions OpenTelemetry GenAI, `AGENTS.md` et skills, paiements par agents (AP2, ACP), gouvernance des standards, quand ne pas exposer un agent en A2A, frontières de confiance, annulation de tâche et compensation métier, négociation des capacités, évolution des contrats. -->
 
 
 Quels protocoles relient un agent à son environnement, et à quel niveau ? <!--anki:43777b6e472d742a3e38-->
@@ -124,6 +124,22 @@ Pourquoi une demande d'annulation A2A n'est-elle pas une preuve que tout effet m
 L'**annulation de tâche** est une opération du protocole dont le succès dépend de l'état du serveur. La tâche peut déjà être terminée ou avoir produit un effet irréversible.
 
 Lire l'état retourné, vérifier les opérations externes et prévoir une compensation distincte si le métier le permet. Tester annulation pendant attente, exécution et confirmation. Le protocole normalise la demande et le suivi ; il ne fournit pas une transaction distribuée englobant paiement, réservation et messages déjà envoyés. Présenter à l'utilisateur le statut confirmé, y compris un résultat encore inconnu.
+
+---
+
+Pourquoi négocier une capacité ne suffit-il pas à garantir sa sémantique entre agents ? <!--anki:3865346436316138376665353433656438373932346236373136646538663133-->
+?
+Deux participants peuvent reconnaître **le même nom de capacité** mais différer sur limites, erreurs ou conditions de reprise.
+
+Versionner les contrats et exécuter des tests d'interopérabilité sur les parcours utiles, y compris les refus et annulations. Une capacité facultative doit avoir un comportement de repli explicite. Ne pas déduire de la seule compatibilité protocolaire que les identités et autorisations sont équivalentes.
+
+---
+
+Pourquoi conserver un identifiant métier au-delà des identifiants MCP, A2A et de trace ? <!--anki:3062623362633330353738643461333662613333366166643733373863346264-->
+?
+Chaque couche identifie **un échange ou une exécution différente**. Une même opération métier peut traverser plusieurs protocoles, appels et reprises.
+
+Un identifiant métier stable permet de réconcilier effets, facturation et résultat utilisateur. Les identifiants techniques restent utiles pour le diagnostic et doivent être reliés à celui-ci. Éviter d'utiliser l'identifiant de trace comme clé d'idempotence si une reprise crée une nouvelle trace.
 
 ---
 

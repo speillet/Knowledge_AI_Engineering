@@ -1,13 +1,15 @@
 # Tokenisation — Flashcards
 Tags: #flashcards #ai-engineering #fondamentaux #tokenisation #llm
-<!-- summary: token ou mot, BPE, byte-level, taille de vocabulaire, surcoût du français, limites au niveau des caractères, tokens spéciaux, chat templates, frontières de tokens, comptage, sécurité, troncature structurée et budget de tokens. -->
+<!-- summary: token ou mot, BPE, byte-level, taille de vocabulaire, surcoût du français, limites au niveau des caractères, tokens spéciaux, chat templates, frontières de tokens, comptage, sécurité, troncature structurée et budget de tokens, Unicode et normalisation, tokens spéciaux. -->
 
 
 Qu'est-ce qu'un token ? <!--anki:3f72253a587d60376a-->
 ?
-L'**unité de texte** que le modèle lit et produit : un mot fréquent, un morceau de mot, un signe de ponctuation ou un octet. En anglais, **1 token ≈ 4 caractères ≈ 0,75 mot** ; c'est l'unité de **facturation**, de **limite de contexte** et de **vitesse** de génération.
+L'**unité de texte** lue et produite par le modèle : mot fréquent, morceau de mot, ponctuation ou octet selon le tokenizer. Elle sert au comptage du contexte, de la génération et souvent de la facturation.
 
-Le découpage dépend du **tokenizer du modèle**, de la langue et du type de contenu. Un identifiant rare, du code ou des caractères inhabituels peuvent coûter davantage de tokens qu'une phrase courante de même longueur. Pour un budget précis, compter le texte avec le bon tokenizer plutôt que convertir systématiquement caractères ou mots.
+Le repère anglais « environ quatre caractères par token » n'est pas une règle universelle. Langue, code et caractères inhabituels changent le découpage ; deux textes de même longueur peuvent consommer des budgets différents.
+
+Pour un budget précis, utiliser le tokenizer et le template effectifs du modèle, en incluant les marqueurs de rôles et les autres éléments sérialisés. Vérifier les compteurs d'usage de l'API lorsque disponibles.
 
 ---
 
@@ -107,6 +109,14 @@ Pourquoi une troncature en caractères peut-elle couper un prompt à un endroit 
 Le **nombre de tokens** varie avec langue, espaces, chiffres et contenu technique. Un plafond en caractères ne garantit donc pas de respecter une fenêtre de contexte ni de préserver la structure d'un message.
 
 Compter avec le tokenizer et le template réellement utilisés, réserver la sortie et retirer des unités cohérentes : messages, passages ou lignes de tableau. Conserver les consignes et références indispensables. Tester accents, emoji et code. Une troncature qui respecte la taille peut encore casser une preuve ou séparer un appel d'outil de son résultat.
+
+---
+
+Pourquoi deux chaînes visuellement identiques peuvent-elles avoir des tokenisations différentes ? <!--anki:6631653066366138383836303434313562373831376539363362656530343364-->
+?
+Un caractère accentué peut avoir **plusieurs représentations Unicode**, par exemple un caractère précomposé ou une lettre suivie d'un accent combinant. La normalisation appliquée dépend du tokenizer.
+
+Comparer les chaînes et tokens réellement envoyés, notamment pour recherche exacte et cache. Normaliser peut aider, mais doit préserver le sens et les exigences du domaine. Une égalité visuelle n'est pas une égalité d'octets ni nécessairement une égalité de tokens.
 
 ---
 

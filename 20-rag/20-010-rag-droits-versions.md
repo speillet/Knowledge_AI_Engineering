@@ -1,7 +1,7 @@
 # RAG en production : droits, versions & abstention — Flashcards
 Tags: #flashcards #ai-engineering #rag #securite #donnees #retrieval
 Vérifié le : 13 octobre 2026
-<!-- summary: identité et permissions, filtrage avant exposition, rappel sous filtres, validité temporelle, priorité des sources, suppressions et caches, citations versionnées, abstention et tests de régression, révocation de droits en cours de génération. -->
+<!-- summary: identité et permissions, filtrage avant exposition, rappel sous filtres, validité temporelle, priorité des sources, suppressions et caches, citations versionnées, abstention et tests de régression, révocation de droits en cours de génération, preuve d'absence, cohérence des instantanés. -->
 
 
 Pourquoi la pertinence d'un passage RAG ne suffit-elle pas à l'utiliser comme preuve ? <!--anki:3961663861303264376631323462373538363333643236643561653032313563-->
@@ -137,6 +137,22 @@ Pourquoi une preuve autorisée au début d'une tâche RAG peut-elle devenir inut
 Les **droits peuvent changer pendant l'exécution** : départ d'un salarié, changement de groupe ou retrait d'un document. Une autorisation vérifiée à la recherche n'est pas une permission valable indéfiniment.
 
 Pour les données sensibles, revérifier l'accès avant restitution et avant tout effet externe, selon une politique explicite de fraîcheur. Associer preuves et caches à l'identité et à la version de politique. Tester une révocation pendant une génération longue. Une réponse déjà affichée ne peut pas être retirée rétroactivement par un simple contrôle final.
+
+---
+
+Quand un RAG peut-il soutenir qu'aucun document ne contient une information ? <!--anki:3133393031306264656362633431303962646166363363336235633935663039-->
+?
+Une recherche top-k vide prouve seulement que **cette recherche n'a rien trouvé**. Une affirmation d'absence exige un périmètre explicite et une couverture suffisante : corpus autorisé, période, versions et index complet.
+
+Pour « aucune facture impayée », une requête exhaustive sur un registre structuré convient mieux qu'une recherche sémantique. Si la couverture est inconnue, formuler « aucune preuve retrouvée dans les sources consultées ». Distinguer dans les métriques absence réelle, défaut d'accès et échec d'indexation.
+
+---
+
+Pourquoi l'index, les métadonnées et les textes d'un RAG doivent-ils partager une version cohérente ? <!--anki:3637316138303530343961663434653439353535333663316331636338383766-->
+?
+Un vecteur calculé sur la version A peut pointer vers un texte B dont le sens ou les droits ont changé. Le moteur retrouve alors **une représentation qui ne correspond plus à la preuve affichée**.
+
+Construire un instantané identifiable, valider ses références puis basculer sa visibilité. Conserver l'identité de la version pendant recherche et génération. Cela ne dispense pas de revérifier les autorisations courantes : cohérence documentaire et droit d'accès sont deux conditions distinctes.
 
 ---
 

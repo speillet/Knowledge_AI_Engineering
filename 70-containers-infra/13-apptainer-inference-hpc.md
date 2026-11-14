@@ -1,7 +1,7 @@
 # Apptainer & inférence HPC — Flashcards
 Tags: #flashcards #conteneurs #apptainer #hpc #llm #inference
 Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: Apptainer ou Docker en HPC, modèle de sécurité, intégration Slurm, `--nv`, poids montés depuis le système de fichiers partagé, images SIF, fichier de définition, service multi-nœuds (Ray, InfiniBand, NCCL), exposition d'un serveur lancé dans un job, drainage avant walltime. -->
+<!-- summary: Apptainer ou Docker en HPC, modèle de sécurité, intégration Slurm, `--nv`, poids montés depuis le système de fichiers partagé, images SIF, fichier de définition, service multi-nœuds (Ray, InfiniBand, NCCL), exposition d'un serveur lancé dans un job, drainage avant walltime, allocation Slurm, caches locaux. -->
 
 
 Pourquoi préfère-t-on Apptainer à Docker en environnement HPC ? <!--anki:632d364048502c312858-->
@@ -107,6 +107,22 @@ Pourquoi un job Slurm qui arrive à son walltime doit-il cesser d'accepter de no
 Le **walltime** impose une échéance indépendante de la durée des requêtes. Continuer à accepter du travail jusqu'à la dernière seconde augmente les réponses interrompues.
 
 Prévoir une phase de drainage : retirer l'instance de la découverte, refuser les nouvelles demandes et laisser finir celles qui tiennent dans le délai restant. Rendre les travaux longs reprenables ou annoncer explicitement leur interruption. Tester l'arrêt avec des clients actifs. Une resoumission automatique restaure éventuellement la capacité, mais ne garantit ni la continuité du flux ni la conservation des requêtes en mémoire.
+
+---
+
+Pourquoi un serveur lancé dans un job Slurm doit-il utiliser uniquement les ressources allouées ? <!--anki:6132383733303833396236383437646262643863643366383465313163363838-->
+?
+Le nœud peut être **partagé avec d'autres jobs**. Détecter tous les GPU de la machine puis les utiliser ignore l'allocation et peut provoquer conflits ou violation de politique.
+
+Respecter les mécanismes d'exposition et contraintes du scheduler, puis vérifier rangs, GPU et ports effectivement utilisés. Ne pas lancer de calcul lourd sur un nœud de connexion. Tester le lancement multi-processus dans la configuration autorisée par le centre.
+
+---
+
+Quand copier les poids vers le stockage local d'un nœud HPC avant l'inférence ? <!--anki:6437383938313230643938333461646539666538353739623765666236383430-->
+?
+Lorsque plusieurs lectures sur le stockage partagé deviennent **un goulot mesuré** et que le job dispose d'assez d'espace et de temps. La copie ajoute un coût initial qui doit être amorti.
+
+Vérifier l'intégrité, isoler les caches par version et gérer leur durée de vie. Une copie par rang peut multiplier inutilement les transferts ; coordonner au niveau du nœud. Tenir compte du nettoyage et de la confidentialité des données locales.
 
 ---
 

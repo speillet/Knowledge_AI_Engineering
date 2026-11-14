@@ -1,6 +1,6 @@
 # Docker, images et registries — Flashcards
 Tags: #flashcards #conteneurs #docker
-<!-- summary: rôle de Docker et différence avec OCI, image ou conteneur (instance, état, volumes), compatibilité « Docker/OCI », registries et workflow push/pull, secrets dans les couches d'image. -->
+<!-- summary: rôle de Docker et différence avec OCI, image ou conteneur (instance, état, volumes), compatibilité « Docker/OCI », registries et workflow push/pull, secrets dans les couches d'image, cache de build, dépendances reproductibles. -->
 
 
 Docker et OCI sont-ils la même chose ? <!--anki:473c39416b3845714e37-->
@@ -120,6 +120,22 @@ Fournir les secrets de build par les mécanismes dédiés, éviter leur copie et
 
 ---
 
+Pourquoi un build Docker réussi avec cache ne prouve-t-il pas que l'image est reconstructible ? <!--anki:3732663139326236383830383431316338613639636332623234326166626438-->
+?
+Le cache peut masquer **une dépendance supprimée ou une étape désormais défectueuse**. Une reconstruction sur une machine neuve exécutera réellement cette étape.
+
+Tester périodiquement un build propre avec dépendances verrouillées et sources disponibles. Un tag de base mutable peut produire une autre image même avec le même Dockerfile. Comparer les artefacts et conserver leur provenance ; reproductibilité du contenu et réussite fonctionnelle sont deux contrôles distincts.
+
+---
+
+Pourquoi distinguer image téléchargée et image approuvée dans un registry ? <!--anki:3835656663643731313731613464333862353939656363333462626634303563-->
+?
+La présence dans le registre prouve seulement **la disponibilité de l'artefact**. Elle ne prouve pas revue, tests ni conformité à la politique de déploiement.
+
+Promouvoir un digest après validation et faire appliquer cette sélection au déploiement. Si un tag est déplacé, vérifier quel digest chaque instance a réellement chargé. Les permissions de publication doivent être séparées des permissions de promotion lorsqu'elles portent des responsabilités différentes.
+
+---
+
 ## Mises en situation
 
 Mise en situation : le déploiement de ton serveur d'inférence prend 20 minutes, dont 18 de pull d'image, parce que les poids du modèle sont dans l'image. Que changes-tu ? <!--anki:794e496a3e5e64635b5a-->
@@ -149,6 +165,8 @@ Mise en situation : une équipe pousse ses images sur Docker Hub avec le tag `la
 ## Sources
 
 - [Docker — secrets de build et limites de ARG/ENV](https://docs.docker.com/build/building/secrets/) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
+
+- Complément du 14 novembre 2026 — Invalidation du cache de build : [Docker — Build cache invalidation](https://docs.docker.com/build/cache/invalidation/).
 
 ## Connexions
 - [[01-oci|OCI]] — les standards derrière Docker

@@ -1,6 +1,6 @@
 # Fiabilité & résilience des applications LLM — Flashcards
 Tags: #flashcards #ai-engineering #system-design #fiabilite #production #llm
-<!-- summary: timeouts, retries, fallbacks, circuit breaker, retry, fallback ou circuit breaker, retries multipliés entre couches, sorties mal formées, dégradation gracieuse, rate limits, tâches longues, épinglage de version, SLO, chaos testing, classification des erreurs d'un circuit breaker. -->
+<!-- summary: timeouts, retries, fallbacks, circuit breaker, retry, fallback ou circuit breaker, retries multipliés entre couches, sorties mal formées, dégradation gracieuse, rate limits, tâches longues, épinglage de version, SLO, chaos testing, classification des erreurs d'un circuit breaker, jitter, reprise après 429. -->
 
 
 Pourquoi une application LLM est-elle plus fragile qu'une application classique ? <!--anki:47364949697173294a73-->
@@ -156,6 +156,22 @@ Classer erreurs récupérables, erreurs de contrat et décisions métier ; chois
 
 ---
 
+Pourquoi ajouter du jitter au backoff des appels LLM ? <!--anki:3736666163636631366537653431623561336232663632636162656237323438-->
+?
+Des clients qui échouent ensemble peuvent **réessayer exactement au même moment**, créant des vagues répétées. Le jitter répartit les tentatives dans le temps.
+
+Borner nombre d'essais et durée totale, respecter les indications du fournisseur et partager le budget de reprises. Le jitter ne crée pas de capacité : si la charge normale dépasse durablement le quota, réduire l'admission ou augmenter la capacité autorisée.
+
+---
+
+Pourquoi ne pas reprendre automatiquement tous les codes HTTP 4xx d'une API LLM ? <!--anki:6465643931316238303865353431633138376339363063323066616264393533-->
+?
+Beaucoup indiquent **un problème permanent pour cette requête**, comme un schéma invalide ou une autorisation absente. Réessayer à l'identique gaspille budget et quota.
+
+Classifier selon le contrat : corriger la requête, renouveler un accès de manière contrôlée ou attendre pour certains 429. Vérifier le statut d'une opération si l'effet est incertain. Le code seul ne décrit pas toujours toute la cause ; conserver les détails utiles sans secrets.
+
+---
+
 ## Mises en situation
 
 Mise en situation : pendant un pic, ton application renvoie massivement des 429 et tes retries aggravent la situation. Que corriges-tu dans l'ordre ? <!--anki:64417942635e45495449-->
@@ -184,6 +200,8 @@ Mise en situation : ton équipe veut « tester la résilience » avant une mise 
 
 ## Sources
 - [Google SRE — surcharge et admission](https://sre.google/sre-book/handling-overload/)
+
+- Complément du 14 novembre 2026 — Sémantique des erreurs HTTP : [IETF — RFC 9110](https://www.rfc-editor.org/rfc/rfc9110.html).
 
 ## Connexions
 - [[141-system-design-llm|System design LLM]] — la méthode d'ensemble

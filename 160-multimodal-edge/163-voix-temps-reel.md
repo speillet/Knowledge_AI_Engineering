@@ -1,7 +1,7 @@
 # Voix & agents temps réel — Flashcards
 Tags: #flashcards #ai-engineering #multimodal #voix #temps-reel #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: cascade ou speech-to-speech, latence et chemin critique, fin de tour, barge-in, STT et limites du WER, interruptions et effets métier, évaluation et risques, interruption audio et annulation métier. -->
+<!-- summary: cascade ou speech-to-speech, latence et chemin critique, fin de tour, barge-in, STT et limites du WER, interruptions et effets métier, évaluation et risques, interruption audio et annulation métier, transcription provisoire, mots critiques. -->
 
 
 Quelles sont les deux architectures d'un agent vocal ? <!--anki:4e5654346978386b257c-->
@@ -93,6 +93,8 @@ Le **WER** compte substitutions, suppressions et insertions, divisées par le no
 
 Confondre « quinze » et « cinquante » peut modifier un paiement, alors que plusieurs erreurs sur des mots de liaison changent peu la décision. Mesurer aussi exactitude des entités critiques, négations, succès de tâche et besoin de clarification. Préciser normalisation et segmentation ; accents et ponctuation peuvent changer les scores sans modifier l'information utile.
 
+Segmenter aussi par bruit et accent ; une moyenne stable peut masquer la dégradation d’une population.
+
 ---
 
 Calcul : après la fin de parole, une cascade attend 400 ms de détection, puis 100 ms de transcription finale, 250 ms jusqu'au premier texte, 150 ms jusqu'au premier audio et 100 ms de transport/lecture. Sans chevauchement, quel délai total et quel gain si la détection passe à 200 ms ? <!--anki:6662626634333464636239313431373162343964303064316365666535616166-->
@@ -114,6 +116,14 @@ Pourquoi l'interruption vocale d'un agent ne doit-elle pas être confondue avec 
 Le **barge-in** arrête ou remplace une réponse audio, mais un outil peut déjà avoir effectué la réservation ou le paiement annoncé.
 
 Distinguer lecture audio, génération et opération métier. Quand l'utilisateur interrompt, vérifier le statut de l'action avant d'affirmer qu'elle est annulée ; appliquer une compensation si elle existe et reste autorisée. Ne pas répéter une action seulement parce que son annonce n'a pas été entendue. Tester une interruption avant l'appel, pendant son attente et après confirmation. L'interface doit restituer l'état confirmé du système.
+
+---
+
+Pourquoi ne pas déclencher une action métier sur une transcription vocale encore provisoire ? <!--anki:6564653832373462386165363432353738376461353538316533383332303136-->
+?
+Le moteur STT peut **réviser les mots déjà affichés**, notamment négations, noms ou montants. « Ne valide pas » ne doit pas être traité à partir du seul fragment « valide ».
+
+Attendre une condition de finalisation adaptée et une confirmation lorsque l'action l'exige. Séparer affichage progressif et exécution. Tester hésitations, autocorrections et interruptions, avec vérification de l'effet réellement produit.
 
 ---
 

@@ -1,7 +1,7 @@
 # CrewAI — Flows — Flashcards
 Tags: #flashcards #ai-engineering #agents #crewai #workflow #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: `@start`, `@listen`, `@router`, état structuré, `@persist`, `@human_feedback`, mémoire, CLI, crew ou flow, Flows ou LangGraph, confidentialité des états persistés. -->
+<!-- summary: `@start`, `@listen`, `@router`, état structuré, `@persist`, `@human_feedback`, mémoire, CLI, crew ou flow, Flows ou LangGraph, confidentialité des états persistés, état des branches, transitions autorisées. -->
 
 
 Qu'est-ce qu'un Flow CrewAI ? <!--anki:48705b4d433b4b7c7339-->
@@ -142,6 +142,22 @@ Identifier les champs réellement nécessaires à la reprise, préférer des ré
 
 ---
 
+Pourquoi un Flow CrewAI doit-il distinguer une branche ignorée d'une branche échouée ? <!--anki:6535356363313562323563393438313862343635633535386261613934326638-->
+?
+Ces états ont des **conséquences différentes pour la suite** : une branche non requise peut être normale, tandis qu'une branche échouée peut rendre la publication invalide.
+
+Représenter explicitement résultat, erreur et raison d'absence dans l'état métier. Tester les conditions du routeur et la complétude attendue avant fusion. Un champ vide ne permet pas de savoir si une tâche n'a pas démarré, n'a rien trouvé ou a subi une panne.
+
+---
+
+Comment empêcher une transition métier impossible dans un Flow CrewAI ? <!--anki:3166326335366265373766373464376238356638316531346361643639663936-->
+?
+Définir **les états et transitions autorisés**, puis vérifier la transition avant mutation. Un remboursement ne doit pas passer de « proposé » à « payé » sans les validations prévues.
+
+Le routeur choisit une branche, mais le service métier doit aussi appliquer les invariants. Tester des états invalides injectés lors d'une reprise et des événements reçus dans le désordre. Un schéma typé vérifie la forme de l'état ; il ne prouve pas la légalité de son évolution.
+
+---
+
 ## Mises en situation
 
 Mise en situation : tu dois automatiser le traitement des réclamations : classer, enquêter, proposer un geste commercial, puis faire valider au-delà de 100 €. Comment structures-tu le Flow ? <!--anki:717a535a5a6058473b4e-->
@@ -175,6 +191,8 @@ Mise en situation : ton Flow tourne depuis un mois, mais après chaque redéploi
 - [CrewAI — Flows, documentation v1.15.23](https://docs.crewai.com/v1.15.23/en/concepts/flows)
 
 - [CrewAI — checkpointing, documentation 1.15.26](https://docs.crewai.com/v1.15.26/en/concepts/checkpointing)
+
+- Complément du 14 novembre 2026 — État et routage des Flows : [CrewAI — Flows, v1.15.41](https://docs.crewai.com/v1.15.41/en/concepts/flows).
 
 ## Connexions
 - [[46-crewai-crews|CrewAI — Crews]] — les équipes d'agents orchestrées par le Flow

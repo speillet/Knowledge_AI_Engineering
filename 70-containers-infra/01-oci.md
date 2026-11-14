@@ -1,6 +1,6 @@
 # OCI — Flashcards
 Tags: #flashcards #conteneurs #oci
-<!-- summary: rôle de l'Open Container Initiative, spécifications image, runtime et distribution, index OCI multi-plateforme. -->
+<!-- summary: rôle de l'Open Container Initiative, spécifications image, runtime et distribution, index OCI multi-plateforme, intégrité et authenticité, manifestes et couches. -->
 
 
 Que signifie OCI ? <!--anki:6f362a5b606568722d5a-->
@@ -77,6 +77,22 @@ Construire et tester chaque variante avec ses dépendances natives. Consigner pl
 
 ---
 
+À ne pas confondre : digest OCI et preuve d'origine d'une image ? <!--anki:3239616261323537623133393462613038633763336131666432363035353565-->
+?
+Le digest identifie **un contenu par son empreinte** et permet de détecter sa modification. Il ne dit pas à lui seul qui l'a produit ni si le producteur est digne de confiance.
+
+Une signature ou attestation doit être vérifiée selon une politique d'identités autorisées. Une image malveillante possède aussi un digest valide. Combiner intégrité, provenance et analyse du contenu ; aucune de ces vérifications ne remplace les autres.
+
+---
+
+Pourquoi copier uniquement les couches ne suffit-il pas à reproduire une image OCI ? <!--anki:3331623530313466326136623437623462363162306533366135386332336664-->
+?
+Le manifeste et la configuration décrivent **l'assemblage et les paramètres de l'image**. Les couches seules ne donnent pas nécessairement leur ordre, le processus à lancer ou les métadonnées requises.
+
+Conserver le graphe d'objets référencés avec ses digests et vérifier la plateforme visée. Un registre distribue des artefacts structurés, pas simplement une archive de fichiers. Une copie doit être validée par récupération et exécution sur la cible prévue.
+
+---
+
 ## Mises en situation
 
 Mise en situation : un client impose Podman, alors que vos images de serveurs d'inférence sont construites avec Docker. Faut-il tout refaire ? <!--anki:4f616e4634712154307d-->
@@ -102,6 +118,10 @@ Mise en situation : un audit demande de prouver que vos conteneurs de production
 **Piège** : présenter OCI comme un logiciel, alors que c'est un ensemble de spécifications.
 
 ---
+
+## Sources
+
+- Complément du 14 novembre 2026 — Manifestes, configuration et couches : [OCI — Image Manifest](https://github.com/opencontainers/image-spec/blob/main/manifest.md).
 
 ## Connexions
 - [[02-docker-images-registries|Docker, images & registries]] — implémentation concrète des standards

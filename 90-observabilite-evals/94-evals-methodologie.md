@@ -1,6 +1,6 @@
 # Évaluation des systèmes LLM — Méthodologie — Flashcards
 Tags: #flashcards #ai-engineering #evals #llm #qualite
-<!-- summary: benchmark ou eval applicative, analyse d'erreurs, golden dataset, taille des jeux, familles d'évaluateurs, critères binaires, avec ou sans référence, offline et online, eval-driven development, saturation, anti-patterns, cas représentatifs et cas adversariaux. -->
+<!-- summary: benchmark ou eval applicative, analyse d'erreurs, golden dataset, taille des jeux, familles d'évaluateurs, critères binaires, avec ou sans référence, offline et online, eval-driven development, saturation, anti-patterns, cas représentatifs et cas adversariaux, désaccord d'annotation, maintenance du test. -->
 
 
 Pourquoi l'évaluation est-elle la compétence centrale d'un AI Engineer senior ? <!--anki:672b7a264c7763732b24-->
@@ -126,6 +126,22 @@ Pourquoi réserver un ensemble de cas représentatifs et un ensemble de cas adve
 Les **cas représentatifs** estiment le comportement sur l'usage visé ; les **cas adversariaux** cherchent les limites et les défaillances. Mélanger leurs scores sans pondération explicite rend le résultat difficile à interpréter.
 
 Rapporter séparément performance courante, couverture des risques et violations critiques. Fixer les critères bloquants avant de comparer les variantes. Un ensemble adversarial volontairement difficile ne mesure pas la fréquence naturelle des incidents ; un échantillon courant peut ignorer une attaque rare. Les deux servent à décider, avec des rôles et des dénominateurs annoncés.
+
+---
+
+Pourquoi mesurer l'accord des annotateurs avant de comparer finement deux modèles ? <!--anki:6339316436623763363333613432373762353239333065366336613533373861-->
+?
+Si la consigne d'évaluation est ambiguë, **le bruit des labels peut dépasser l'écart entre modèles**. Des notes différentes ne révèlent alors pas nécessairement une différence de qualité.
+
+Faire annoter un sous-ensemble commun, analyser les désaccords et clarifier les critères. Conserver les ambiguïtés irréductibles avec une politique explicite. L'accord élevé ne garantit pas la vérité : les annotateurs peuvent partager le même biais ou une mauvaise référence.
+
+---
+
+Quand renouveler un jeu d'évaluation devenu trop familier à l'équipe ? <!--anki:6430343661666538316263613464333962646666306635386164346166306437-->
+?
+Lorsque les décisions successives ont **suradapté le système aux mêmes exemples**, ou que les usages réels changent. Garder un historique pour mesurer les régressions et ajouter un jeu récent indépendant.
+
+Ne pas effacer les cas difficiles pour embellir le score. Versionner composition, annotations et critères afin d'expliquer une variation. Un nouveau score n'est comparable à l'ancien que si le changement de population et de protocole est pris en compte.
 
 ---
 

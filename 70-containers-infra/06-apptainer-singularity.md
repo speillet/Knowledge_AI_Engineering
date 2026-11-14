@@ -1,6 +1,6 @@
 # Apptainer & Singularity — Flashcards
 Tags: #flashcards #conteneurs #apptainer #singularity #hpc
-<!-- summary: usage en HPC, filiation Singularity → Apptainer, format SIF et conversion des images Docker, `--nv`, permissions des bind mounts. -->
+<!-- summary: usage en HPC, filiation Singularity → Apptainer, format SIF et conversion des images Docker, `--nv`, permissions des bind mounts, environnement hôte, image immuable. -->
 
 
 Dans quel environnement Apptainer est-il particulièrement utilisé ? <!--anki:755e35286742334e2d28-->
@@ -81,6 +81,22 @@ Inspecter montages explicites et automatiques, limiter les chemins et utiliser l
 
 ---
 
+Pourquoi une image SIF identique peut-elle produire des résultats différents sur deux machines ? <!--anki:3938383534356265633737633432303239393435333238653530333532393636-->
+?
+L'exécution dépend aussi **du kernel, des bibliothèques exposées, de l'environnement et des fichiers montés**. L'image ne fige pas tout l'hôte.
+
+Documenter les dépendances nécessaires et vérifier les variables et montages effectifs. Pour le GPU, tester la compatibilité sur chaque cible. La reproductibilité demande un manifeste d'exécution ; conserver seulement le fichier SIF ne suffit pas à reproduire tous les résultats numériques et accès aux données.
+
+---
+
+Pourquoi séparer les sorties d'un calcul Apptainer du contenu immuable de l'image SIF ? <!--anki:3137663866346338343435643437373039326464663731313666353061323330-->
+?
+Les résultats et caches sont **des données d'exécution**, tandis que l'image décrit l'environnement. Utiliser des répertoires de sortie explicitement montés facilite traçabilité, permissions et conservation.
+
+Attribuer un espace par job pour éviter les collisions. Vérifier les droits réels de l'utilisateur et les montages automatiques. Une image en lecture seule ne rend pas les répertoires hôtes montés en écriture inoffensifs.
+
+---
+
 ## Mises en situation
 
 Mise en situation : tes expérimentations tournent dans une image Docker, mais le cluster de calcul de ton laboratoire n'autorise que Apptainer. Comment procèdes-tu ? <!--anki:714676425960586c7734-->
@@ -111,6 +127,8 @@ Mise en situation : un collègue veut stocker les poids d'un modèle de 40 Go da
 
 - [Apptainer — accès aux périphériques et bibliothèques GPU](https://apptainer.org/docs/user/main/gpu.html)
 - [Apptainer — publication de SIF avec push et ORAS](https://apptainer.org/docs/user/latest/cli/apptainer_push.html) — consultation ciblée du 6 novembre 2026.
+
+- Complément du 14 novembre 2026 — Montages et dépendances hôtes : [Apptainer — Bind Paths and Mounts](https://apptainer.org/docs/user/latest/bind_paths_and_mounts.html).
 
 ## Connexions
 - [[13-apptainer-inference-hpc|Apptainer & inférence HPC]] — usage avancé pour le serving LLM

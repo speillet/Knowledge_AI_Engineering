@@ -1,7 +1,7 @@
 # Streaming & traitements d’événements — Flashcards
 Tags: #flashcards #ai-engineering #donnees #data-engineering
 Vérifié le : 9 octobre 2026 — références techniques et exemples de cette fiche.
-<!-- summary: batch et micro-batch, partitions et ordre, groupes de consommateurs, fenêtres, triggers, watermarks, jointures de flux, changelog, état, checkpoints, backpressure et reprise, calcul de taille d'état à forte cardinalité. -->
+<!-- summary: batch et micro-batch, partitions et ordre, groupes de consommateurs, fenêtres, triggers, watermarks, jointures de flux, changelog, état, checkpoints, backpressure et reprise, calcul de taille d'état à forte cardinalité, watermark et partition inactive, état tardif. -->
 
 
 Quand choisir batch, micro-batch ou traitement continu d’événements ? <!--anki:3032656162643734663865393465663462333830356134323166643563383435-->
@@ -143,6 +143,22 @@ Multiplier ensuite par la taille réelle d'une entrée, y compris index, sérial
 
 ---
 
+Pourquoi une partition inactive peut-elle empêcher l'avancement d'un watermark global ? <!--anki:3164663130616562346535373461663861623133383038316233333934316132-->
+?
+Un opérateur peut attendre **le minimum des watermarks de ses entrées**. Si une partition ne produit plus de données ni de progression, elle peut retenir la fermeture des fenêtres.
+
+Configurer et tester la détection d'inactivité selon le moteur, avec une politique pour les événements qui reviennent tardivement. Déclarer une partition inactive trop vite peut fermer des fenêtres prématurément. Le choix dépend du retard acceptable, pas seulement du débit observé.
+
+---
+
+Pourquoi purger l'état d'une fenêtre de streaming impose-t-il une politique pour les événements tardifs ? <!--anki:3961326237383934616162373462313238326635313336383236313563313937-->
+?
+Après purge, le système n'a plus nécessairement **les données nécessaires pour corriger l'agrégat**. Un événement ancien peut être rejeté, envoyé ailleurs ou déclencher un recalcul.
+
+Définir durée de conservation, lateness autorisée et mode de correction. Publier des versions ou rétractions si le résultat peut évoluer. Un watermark est une estimation opérationnelle de progression, pas une preuve qu'aucun événement ancien n'arrivera jamais.
+
+---
+
 ## Mises en situation
 
 Mise en situation : un agrégat de ventes vaut dix, puis douze après un événement tardif ; le dashboard affiche vingt-deux. Où cherches-tu l’erreur ? <!--anki:3339623237376533666462643433313438653133366233376430313762376233-->
@@ -185,6 +201,10 @@ Mise en situation : les checkpoints réussissent, mais un redémarrage du job du
 - [Apache Beam — fenêtres, watermarks, triggers et état](https://beam.apache.org/documentation/programming-guide/)
 - [Apache Kafka — partitions et groupes de consommateurs](https://kafka.apache.org/10/documentation/)
 - [Apache Flink — état et tolérance aux pannes](https://nightlies.apache.org/flink/flink-docs-stable/docs/learn-flink/fault_tolerance/)
+
+- Complément du 14 novembre 2026 — Temps événement et watermarks : [Apache Flink — Timely Stream Processing](https://nightlies.apache.org/flink/flink-docs-stable/docs/concepts/time/).
+
+- Complément du 14 novembre 2026 — Partitions inactives et watermark minimal : [Apache Flink — Generating Watermarks](https://nightlies.apache.org/flink/flink-docs-stable/docs/dev/datastream/event-time/generating_watermarks/).
 
 ## Connexions
 - [[159-donnees-temporelles-features|Données temporelles]] — respecter temps événement, disponibilité et retards

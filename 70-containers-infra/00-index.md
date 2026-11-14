@@ -1,6 +1,6 @@
 # Conteneurs & infra — Index — Flashcards
 Tags: #flashcards #moc #conteneurs #docker #kubernetes #gpu
-<!-- summary: sommaire des 13 fiches de la section, chaînes à retenir, et une carte sur l'intérêt des conteneurs pour servir des modèles, test de démarrage sur la cible réelle. -->
+<!-- summary: sommaire des 13 fiches de la section, chaînes à retenir, et des cartes sur l'intérêt des conteneurs pour servir des modèles, test de démarrage sur la cible réelle, responsabilités de déploiement, contrôle de configuration. -->
 
 
 Sous-carte de la section **70 — Conteneurs & Infra** : du conteneur au GPU, pour déployer des modèles.
@@ -57,6 +57,19 @@ Quel test de démarrage distingue une image de conteneur valide d'un service d'i
 Faire un **démarrage sur la cible réelle**, puis une inférence représentative. Vérifier chargement des poids, accès GPU, tokenizer, sortie attendue et marge mémoire ; un processus vivant ne prouve pas que le modèle est prêt.
 
 Mesurer séparément téléchargement, initialisation et première requête, puis tester le redémarrage avec un cache froid. Conserver les versions de l'image, du modèle et du driver. Ce test de bout en bout complète la conformité du conteneur : une image correcte peut rester inutilisable faute de poids, de capacité ou de compatibilité matérielle.
+
+---
+
+## Mises en situation
+
+Mise en situation : la même image d’inférence donne deux comportements différents en recette et en production. Comment organises-tu le diagnostic entre équipes ? <!--anki:6165623633333832373235303465666639636633613166303333613962623238-->
+?
+1. **Comparer les manifestes effectifs** : digest, poids, tokenizer, configuration et montages, pas seulement le tag annoncé.
+2. **Rejouer une requête identique** et localiser la première divergence : entrée sérialisée, chargement, calcul ou sortie réseau.
+3. **Attribuer la vérification au bon propriétaire** : packaging, infrastructure ou application, en partageant les identifiants de l’exécution.
+4. **Confirmer la correction** sur la cible et ajouter le cas au contrôle de release.
+
+Un statut « running » ne prouve ni que les bons artefacts sont chargés ni que leur comportement est identique.
 
 ---
 

@@ -1,7 +1,7 @@
 # Chunking avancé & contextual retrieval — Flashcards
 Tags: #flashcards #ai-engineering #rag #chunking #retrieval #llm
 Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: chunks sans contexte, contextual retrieval (gain, coût, prompt caching), late chunking, taille des chunks, small-to-big, chunking sémantique et par propositions, fil d'Ariane et métadonnées, comparaison de stratégies au recall@k, calcul du surcoût de l'overlap. -->
+<!-- summary: chunks sans contexte, contextual retrieval (gain, coût, prompt caching), late chunking, taille des chunks, small-to-big, chunking sémantique et par propositions, fil d'Ariane et métadonnées, comparaison de stratégies au recall@k, calcul du surcoût de l'overlap, tableaux et unités, parent-child sous budget. -->
 
 
 Pourquoi un chunk isolé est-il souvent introuvable ? <!--anki:7a544f517c5831297e3c-->
@@ -126,6 +126,22 @@ Calcul : quel surcoût approximatif crée un overlap de 100 tokens pour des chun
 Le **pas de découpage** vaut `500 − 100 = 400` tokens. Pour un document très long, le volume total indexé est approximativement multiplié par `500 / 400 = 1,25`, soit **25 % de tokens supplémentaires**.
 
 Le coût d'embedding et le nombre de vecteurs augmentent à peu près dans ce rapport si les autres réglages restent fixes. Les bords du document et le découpage structurel modifient le résultat exact. Dédupliquer les passages voisins à l'évaluation : retrouver plusieurs chunks presque identiques ne signifie pas couvrir davantage de preuves.
+
+---
+
+Pourquoi un tableau découpé par nombre de tokens peut-il produire des preuves RAG trompeuses ? <!--anki:3030656130313936623438653432646338343636623266383061336363353564-->
+?
+La valeur peut être séparée de **son en-tête, son unité ou sa période**. « 12,5 » sans savoir s'il s'agit de millions d'euros ou d'un pourcentage n'est pas une preuve exploitable.
+
+Préserver la structure ligne/colonne et répliquer les en-têtes utiles dans les morceaux, avec provenance. Pour un tableau multipage, vérifier les en-têtes répétés et les notes. Tester la reconstruction d'une cellule avec son sens complet, pas seulement la présence du chiffre dans l'index.
+
+---
+
+Comment borner le contexte lorsque plusieurs petits chunks pointent vers le même parent ? <!--anki:6336393762333634343536653463656139346339613366386364366661333266-->
+?
+**Dédupliquer les parents avant expansion**, puis limiter le volume total. Cinq enfants pertinents d'un même chapitre ne doivent pas conduire à injecter cinq fois ce chapitre.
+
+Si le parent est trop grand, sélectionner des fenêtres autour des passages avec les titres et références nécessaires. Mesurer la couverture des preuves après expansion : un gain de rappel au niveau enfant peut être annulé par une troncature du contexte final. Conserver les localisations fines pour les citations.
 
 ---
 

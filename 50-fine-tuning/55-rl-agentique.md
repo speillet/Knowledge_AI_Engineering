@@ -1,7 +1,7 @@
 # RL agentique & environnements d'entraînement — Flashcards
 Tags: #flashcards #ai-engineering #fine-tuning #reinforcement-learning #agents #llm
 Vérifié le : 30 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: RL sur trajectoires multi-tours, RLVR ou RL agentique, environnements d'entraînement, récompense de résultat ou de processus, reward hacking des agents, SFT sur trajectoires, GRPO, curriculum de tâches, outils (verl, OpenRLHF, TRL), quand une équipe produit doit s'y lancer, isolation des épisodes de RL. -->
+<!-- summary: RL sur trajectoires multi-tours, RLVR ou RL agentique, environnements d'entraînement, récompense de résultat ou de processus, reward hacking des agents, SFT sur trajectoires, GRPO, curriculum de tâches, outils (verl, OpenRLHF, TRL), quand une équipe produit doit s'y lancer, isolation des épisodes de RL, récompense terminale, décalage de politique. -->
 
 
 Qu'est-ce que le RL agentique ? <!--anki:6966466243243e466b26-->
@@ -106,6 +106,22 @@ Pourquoi faut-il réinitialiser et isoler l'environnement entre deux épisodes d
 Un **état résiduel** peut révéler une solution, faciliter la tâche suivante ou permettre de modifier le vérificateur. L'agent apprendrait alors un raccourci lié à l'environnement plutôt que la compétence visée.
 
 Réinitialiser fichiers, données et services selon un état de référence ; isoler les épisodes concurrents et garder le vérificateur hors des droits de l'agent. Rejouer des tâches dans un environnement vierge et varier leurs paramètres. Contrôler qu'un épisode ne peut lire les artefacts du précédent. Le gain de récompense doit survivre à cette séparation.
+
+---
+
+Pourquoi une récompense terminale rare complique-t-elle le RL d'un agent ? <!--anki:3861626235663165323035633437363761636561313465303536616436636333-->
+?
+De nombreuses trajectoires reçoivent **le même score nul**, sans indiquer quelle décision a causé l'échec. L'exploration et l'attribution du mérite deviennent difficiles.
+
+Commencer par des tâches accessibles, des démonstrations ou un curriculum peut fournir un signal utile. Des récompenses intermédiaires doivent rester alignées avec le résultat final : récompenser le nombre d'outils appelés peut apprendre à multiplier les actions. Mesurer la réussite complète sur des tâches non vues.
+
+---
+
+Pourquoi des trajectoires collectées avec une ancienne politique peuvent-elles poser problème à un entraînement RL ? <!--anki:3434666562393736623330383434373038326638643531343438343738323331-->
+?
+Elles reflètent **une autre distribution d'actions et d'états visités**. Un algorithme conçu pour des données proches de la politique courante peut recevoir un signal biaisé si ces trajectoires sont trop anciennes.
+
+Tracer la version de collecte, borner la staleness et utiliser une méthode compatible avec des données hors politique lorsque nécessaire. Plus de trajectoires n'est pas toujours mieux si elles ne correspondent pas aux hypothèses de l'algorithme ni aux outils actuels.
 
 ---
 

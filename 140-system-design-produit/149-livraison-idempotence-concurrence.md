@@ -1,6 +1,6 @@
 # Livraison, idempotence & concurrence — Flashcards
 Tags: #flashcards #ai-engineering #system-design #distribue #idempotence
-<!-- summary: garanties de livraison, limites du exactement une fois, timeout ambigu, identité des opérations, déduplication atomique, rétention, ack, ordre par entité, concurrence optimiste, isolation et fencing tokens, atomicité de la déduplication et de l'effet. -->
+<!-- summary: garanties de livraison, limites du exactement une fois, timeout ambigu, identité des opérations, déduplication atomique, rétention, ack, ordre par entité, concurrence optimiste, isolation et fencing tokens, atomicité de la déduplication et de l'effet, clé et paramètres, durée de déduplication. -->
 
 
 À ne pas confondre : livraison au plus une fois et au moins une fois ? <!--anki:6338323339363635373833343438333462316232386335666330386265396435-->
@@ -123,6 +123,14 @@ Pourquoi la déduplication doit-elle partager la transaction de l'effet qu'elle 
 Si le **marquage comme traité** et l'effet métier sont deux écritures séparées, une panne peut produire un effet sans marque, ou une marque sans effet. La reprise créera alors un doublon ou perdra le travail.
 
 Lorsque les données sont dans la même base, enregistrer identifiant d'opération et modification métier dans une transaction avec contrainte d'unicité. Pour un service externe, utiliser son contrat d'idempotence et réconcilier les statuts inconnus. Tester les coupures entre chaque étape. Un simple cache d'identifiants déjà vus ne fournit pas cette atomicité.
+
+---
+
+Que doit faire une API si la même clé d'idempotence est réutilisée avec des paramètres différents ? <!--anki:6230353163353364626131383436303838353939363261363636343632666335-->
+?
+**Rejeter le conflit**, selon le contrat prévu, plutôt qu'exécuter silencieusement une nouvelle action ou renvoyer un ancien résultat trompeur. La clé identifie une intention précise.
+
+Associer la clé à une empreinte canonique des paramètres pertinents et au périmètre d'identité. Vérifier atomiquement la réservation. Documenter les champs ignorés et la durée de conservation pour éviter des collisions logiques entre opérations distinctes.
 
 ---
 

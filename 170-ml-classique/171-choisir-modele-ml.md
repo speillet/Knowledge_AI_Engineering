@@ -1,6 +1,6 @@
 # ML classique : choisir et comprendre les modèles — Flashcards
 Tags: #flashcards #ai-engineering #ml-classique #modeles #baseline
-<!-- summary: règles ou ML ou LLM, formulation de la cible, baselines, régressions, régularisation, arbres, random forest et boosting, clustering, prétraitement, données manquantes et coût de possession, catégories inconnues en production. -->
+<!-- summary: règles ou ML ou LLM, formulation de la cible, baselines, régressions, régularisation, arbres, random forest et boosting, clustering, prétraitement, données manquantes et coût de possession, catégories inconnues en production, baseline métier, capacité et données. -->
 
 
 Comment choisir entre règles, ML classique et LLM pour un besoin métier ? <!--anki:6661353466646534356365313436373439663763316530386363633734333530-->
@@ -136,6 +136,22 @@ Pourquoi un pipeline ML doit-il prévoir les catégories jamais vues pendant l'e
 Une **nouvelle catégorie** apparaît naturellement en production : pays, produit ou canal inédit. Un encodage qui échoue ou lui attribue un sens arbitraire rend le pipeline fragile.
 
 Définir un comportement explicite : catégorie inconnue, représentation compatible ou rejet contrôlé selon la tâche. Apprendre le prétraitement sur l'entraînement, puis tester des catégories absentes et valeurs manquantes dans la validation de contrat. Surveiller leur fréquence par variable. Les traiter sans exception technique ne garantit pas une bonne prédiction ; une hausse peut nécessiter une revue des données ou du modèle.
+
+---
+
+Pourquoi une baseline « dernière valeur connue » peut-elle battre un modèle complexe ? <!--anki:3535336630643661316437323436356162346130316134633462646136303831-->
+?
+Si le phénomène est **très persistant**, la valeur récente contient déjà une grande partie du signal. Un modèle plus flexible peut surtout ajouter variance et coût.
+
+Comparer sur le même horizon et avec les mêmes informations disponibles. Examiner les segments où la baseline échoue, puis justifier la complexité par un gain hors entraînement. Une baseline forte aide aussi à repérer les fuites lorsqu'un modèle semble anormalement performant.
+
+---
+
+Pourquoi augmenter la capacité du modèle n'est-il pas la première réponse à des labels incohérents ? <!--anki:3230656631393938656439643434653839376639373163653837346538643464-->
+?
+Un modèle plus flexible peut **mémoriser les contradictions** sans apprendre une règle utile. La performance de validation ne progressera pas nécessairement.
+
+Analyser les désaccords, la définition de la cible et les features disponibles au moment de la prédiction. Corriger le processus d'annotation ou représenter l'incertitude quand elle est réelle. La complexité du modèle ne remplace pas une cible mesurable et cohérente.
 
 ---
 

@@ -1,7 +1,7 @@
 # Calcul distribué & performance des pipelines data — Flashcards
 Tags: #flashcards #ai-engineering #donnees #data-engineering
 Vérifié le : 9 octobre 2026 — références techniques et exemples de cette fiche.
-<!-- summary: choix local ou distribué, exécution paresseuse, partitions, shuffle, skew, broadcast, salting, mémoire driver, UDF, cache, agrégations, loi d’Amdahl et coût du traitement, partition déséquilibrée et clé chaude. -->
+<!-- summary: choix local ou distribué, exécution paresseuse, partitions, shuffle, skew, broadcast, salting, mémoire driver, UDF, cache, agrégations, loi d’Amdahl et coût du traitement, partition déséquilibrée et clé chaude, shuffle évitable, agrégation partielle. -->
 
 
 Quand distribuer un traitement de données plutôt que l’exécuter sur une machine ? <!--anki:6331663030656464613039623434643038353038613564656161386234653837-->
@@ -143,6 +143,14 @@ Pourquoi une seule partition très volumineuse peut-elle limiter tout un calcul 
 Le **temps de fin** dépend souvent de la tâche la plus lente. Une clé très fréquente peut concentrer le travail sur une partition pendant que les autres workers attendent.
 
 Mesurer distribution des tailles et durées par partition avant d'ajouter des workers. Selon l'algorithme, préagréger, traiter les clés chaudes séparément ou répartir leur travail avec une recombinaison correcte. Tester les égalités et l'exactitude des agrégats après changement. Plus de parallélisme n'accélère pas une clé indivisible ; une mauvaise répartition peut dominer CPU et réseau pourtant disponibles.
+
+---
+
+Pourquoi préagréger avant un shuffle peut-il réduire le coût d'un calcul distribué ? <!--anki:6263653130633862633564333438313838623766336563373131386132323566-->
+?
+Lorsque l'opération le permet, chaque partition peut **combiner localement ses lignes** et envoyer moins de données au regroupement global. Une somme se combine facilement ; une médiane exacte exige davantage d'information.
+
+Vérifier les propriétés de l'agrégat et la cardinalité des clés. Si presque chaque clé est unique, le gain est limité. Mesurer les octets échangés et la mémoire, pas seulement le nombre de tâches.
 
 ---
 

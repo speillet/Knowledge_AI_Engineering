@@ -1,7 +1,7 @@
 # Mémoire des agents — Flashcards
 Tags: #flashcards #ai-engineering #agents #memoire #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: mémoire de travail, sémantique, épisodique et procédurale, thread ou long terme, écriture pendant ou après la conversation, consolidation, score de rappel, réflexion, faits qui changent, stockage, Letta, outils, risques, évaluation, mémoire d'agent ou RAG, quand ne pas donner de mémoire long terme, distinction entre faits et préférences inférées. -->
+<!-- summary: mémoire de travail, sémantique, épisodique et procédurale, thread ou long terme, écriture pendant ou après la conversation, consolidation, score de rappel, réflexion, faits qui changent, stockage, Letta, outils, risques, évaluation, mémoire d'agent ou RAG, quand ne pas donner de mémoire long terme, distinction entre faits et préférences inférées, correction et suppression logique, provenance des souvenirs. -->
 
 
 Pourquoi un agent a-t-il besoin d'une mémoire externe ? <!--anki:4771475b312e6378352c-->
@@ -168,6 +168,16 @@ Pourquoi le silence d'un utilisateur ne doit-il pas devenir un fait permanent da
 Une **absence de correction** n'est pas une confirmation. Le modèle peut avoir supposé une préférence et l'utilisateur simplement être passé à autre chose.
 
 Distinguer fait déclaré, observation et inférence ; conserver provenance, date et degré de validation. Par exemple, une réservation végétarienne pour un invité ne prouve pas que l'utilisateur est végétarien. Prévoir confirmation pour les préférences durables, correction et expiration. À la récupération, présenter une inférence comme telle. Répéter une supposition dans plusieurs résumés ne la transforme pas en preuve.
+
+Tester ces statuts après consolidation : le résumé ne doit pas effacer la distinction entre observation et inférence.
+
+---
+
+Comment empêcher qu'un souvenir corrigé réapparaisse après consolidation de la mémoire d'un agent ? <!--anki:6366383263346234346265353435316462646532366634396138353038326364-->
+?
+La correction doit porter sur **les sources et les dérivés**, pas seulement sur le texte affiché. Marquer l'ancien fait comme remplacé et conserver une relation vers la version valide.
+
+La consolidation doit respecter ce statut et ne pas reconstruire l'ancienne valeur depuis un résumé historique. Tester le rappel après consolidation, réindexation et restauration. Une suppression logique peut aider à prévenir la réapparition, mais sa conservation et son contenu doivent eux-mêmes respecter la politique de données.
 
 ---
 

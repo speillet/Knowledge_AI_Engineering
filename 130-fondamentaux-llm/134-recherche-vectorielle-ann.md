@@ -1,6 +1,6 @@
 # Recherche vectorielle & index ANN — Flashcards
 Tags: #flashcards #ai-engineering #fondamentaux #vector-search #rag
-<!-- summary: brute force ou ANN, rappel de l'index ou rappel du retrieval, calcul de la mémoire d'un index HNSW, HNSW et ses paramètres, IVF, Product Quantization, quantization scalaire et binaire, DiskANN, filtrage, recall de l'index, pgvector ou base dédiée, exploitation, dimensionnement, traitement des ex æquo dans un benchmark ANN. -->
+<!-- summary: brute force ou ANN, rappel de l'index ou rappel du retrieval, calcul de la mémoire d'un index HNSW, HNSW et ses paramètres, IVF, Product Quantization, quantization scalaire et binaire, DiskANN, filtrage, recall de l'index, pgvector ou base dédiée, exploitation, dimensionnement, traitement des ex æquo dans un benchmark ANN, rappel sous filtrage, exactitude du baseline. -->
 
 
 Pourquoi ne pas faire une recherche exacte (brute force) des plus proches voisins ? <!--anki:434b37366f67544e55-->
@@ -131,6 +131,22 @@ Pourquoi deux top-k exacts différents peuvent-ils être également valides pour
 Des **distances ex æquo** à la frontière du top-k peuvent admettre plusieurs listes exactes. Comparer leurs seuls identifiants à une unique liste de référence peut pénaliser un résultat géométriquement équivalent.
 
 Définir le traitement des égalités avant le benchmark : départage déterministe ou règle d'équivalence par distance avec tolérance justifiée. Garder identiques normalisation, précision et filtres. Inspecter les doublons de vecteurs et la sensibilité numérique. Cette convention concerne le rappel de l'index ; elle ne prouve pas que tous les documents équidistants sont également pertinents pour l'utilisateur.
+
+---
+
+Pourquoi mesurer le rappel ANN avec les mêmes filtres que la production ? <!--anki:3036616333353232343233303430663239366537653930333632333766373733-->
+?
+Les filtres peuvent **réduire fortement l'ensemble admissible et modifier le parcours de l'index**. Un bon rappel sans filtre ne garantit pas celui d'un tenant peu représenté.
+
+Comparer à une recherche exacte sur le sous-ensemble autorisé, avec même métrique et même k. Varier la sélectivité et la taille des segments. Mesurer aussi la latence : augmenter l'effort de recherche pour restaurer le rappel peut changer la capacité utile.
+
+---
+
+Calcul : une recherche exacte retourne 10 voisins ; l'index ANN en retrouve 8 dans ses 10 résultats, sans ex æquo. Quel recall@10 de l'index et que ne mesure-t-il pas ? <!--anki:6165303139393730663630393431636462636562633332383237663365633538-->
+?
+Le rappel est **8 / 10 = 0,8**. Il mesure la fidélité à la recherche exacte avec cette représentation et cette métrique.
+
+Il ne dit pas si les dix voisins exacts sont pertinents pour l'utilisateur. Un index parfait peut servir un mauvais modèle d'embedding. Évaluer séparément approximation de l'index, qualité de retrieval et réponse finale, puis agréger sur des requêtes représentatives.
 
 ---
 

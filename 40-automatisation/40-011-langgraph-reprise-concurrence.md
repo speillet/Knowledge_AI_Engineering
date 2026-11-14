@@ -1,7 +1,7 @@
 # LangGraph — Reprise, concurrence & évolution — Flashcards
 Tags: #flashcards #ai-engineering #agents #production
 Vérifié le : 9 octobre 2026 — API citées confrontées aux documentations officielles ; limites explicitées dans les cartes.
-<!-- summary: durabilité sync/async/exit, pending writes, effets externes, interruptions, concurrence par thread, reducers, sous-graphes, migrations et diagnostics de reprise, déterminisme des décisions lors du replay. -->
+<!-- summary: durabilité sync/async/exit, pending writes, effets externes, interruptions, concurrence par thread, reducers, sous-graphes, migrations et diagnostics de reprise, déterminisme des décisions lors du replay, baux et fencing, rétention des checkpoints. -->
 
 
 À ne pas confondre : checkpoint LangGraph et transaction métier ? <!--anki:3363396132633461616334643439346639636339643337353264376462643830-->
@@ -190,6 +190,22 @@ Dans l'API concernée, isoler les opérations non déterministes dans des tâche
 
 ---
 
+Pourquoi un verrou expirant peut-il laisser deux workers reprendre le même thread LangGraph ? <!--anki:6563373234323231626435353436356461633762343335393633303562336639-->
+?
+Un worker lent peut **continuer après expiration de son bail**, tandis qu'un second devient propriétaire. Le verrou seul n'empêche pas le premier d'écrire tardivement.
+
+Un mécanisme de fencing attribue une génération croissante au propriétaire ; le stockage ou service d'écriture rejette les générations anciennes. Cette protection doit être appliquée à la frontière concernée, pas seulement enregistrée dans l'état du graphe. Tester pauses longues, partitions réseau et reprise tardive de l'ancien worker.
+
+---
+
+Comment choisir une politique de rétention des checkpoints LangGraph ? <!--anki:6631383164306266656430663437323762373238386463306463373265323630-->
+?
+Partir des **besoins de reprise, de débogage et de conservation des données**. Garder éternellement chaque état peut accumuler documents privés, sorties d'outils et anciennes autorisations.
+
+Distinguer threads actifs, suspendus et terminés ; préserver les dépendances nécessaires à une reprise supportée. Tester restauration et suppression avec le checkpointer choisi. Un checkpoint supprimé peut rendre un ancien identifiant de reprise inutilisable : l'application doit répondre explicitement, sans recréer silencieusement une tâche vide.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton nœud LangGraph crée un avoir, puis plante avant l'enregistrement du checkpoint. Après reprise, deux avoirs existent. Que changes-tu ? <!--anki:3364353231383037663938313437336138383133303632303266383631343462-->
@@ -235,6 +251,8 @@ Conserver un échantillon anonymisé de checkpoints couvrant les versions déjà
 - [LangGraph — politiques de retry](https://docs.langchain.com/oss/python/langgraph/use-graph-api)
 
 - [LangGraph — déterminisme et rejeu dans la Functional API](https://docs.langchain.com/oss/python/langgraph/functional-api) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
+
+- Complément du 14 novembre 2026 — Checkpoints et mémoire persistée : [LangGraph — persistence](https://docs.langchain.com/oss/python/langgraph/persistence).
 
 ## Connexions
 - [[44-langgraph-fondamentaux|LangGraph — Fondamentaux]] — reducers et super-steps

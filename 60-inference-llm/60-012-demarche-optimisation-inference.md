@@ -1,7 +1,7 @@
 # Démarche d’optimisation de l’inférence LLM — Flashcards
 Tags: #flashcards #ai-engineering #inference #performance #profiling #finops
 Vérifié le : 8 octobre 2026
-<!-- summary: objectif sous contraintes, profilage CPU/GPU, graphes CUDA et compilation, kernels, loi d’Amdahl, interactions entre optimisations, quotas API, retries, routage, raisonnement et multimodal, coût marginal d'une optimisation. -->
+<!-- summary: objectif sous contraintes, profilage CPU/GPU, graphes CUDA et compilation, kernels, loi d’Amdahl, interactions entre optimisations, quotas API, retries, routage, raisonnement et multimodal, coût marginal d'une optimisation, attribution causale du gain, coût du rollback. -->
 
 
 Que signifie maximiser l’inférence d’un LLM dans un produit ? <!--anki:3766383238393464336537333434323438393562383237363466353762663831-->
@@ -125,6 +125,22 @@ Pourquoi mesurer le coût marginal d'une optimisation en plus de son gain de lat
 Une **optimisation** peut réduire la latence en consommant davantage de GPU, de mémoire ou d'appels. Dupliquer une requête chez deux fournisseurs accélère parfois la première réponse tout en augmentant le coût et la charge.
 
 Comparer au même volume offert et au même niveau de qualité : latence, goodput, ressources et coût par tâche utile. Inclure appels perdants et annulations tardives. Tester le régime saturé ; une technique rentable à faible charge peut réduire la capacité de toute la plateforme. Fixer l'objectif produit avant de choisir le meilleur chiffre.
+
+---
+
+Comment éviter d'attribuer au kernel un gain provenant d'un changement de longueur de sortie ? <!--anki:3464356562623239616664383439363738373838613436386130346537366638-->
+?
+Comparer **travail effectué et qualité**, pas seulement durée totale. Un modèle qui produit deux fois moins de tokens peut finir plus vite sans aucune accélération du calcul par token.
+
+Conserver le mix de requêtes, mesurer longueur, TTFT, ITL et critères métier, puis isoler l'effet du kernel avec un protocole contrôlé. Si la modification change volontairement les sorties, présenter le gain comme un changement de système complet et vérifier les omissions.
+
+---
+
+Pourquoi préparer un rollback avant une optimisation du serving LLM ? <!--anki:3464356662656137646531663439353862616433323533393039656639653731-->
+?
+Une optimisation peut échouer sur **une forme rare, un contexte long ou un matériel différent** malgré un gain moyen. Garder une configuration connue, ses artefacts et la procédure de retour permet de limiter l'incident.
+
+Valider d'abord sur un échantillon représentatif et définir les seuils d'arrêt. Un rollback peut provoquer rechargement des poids et cache froid : inclure ce coût dans le plan. La réversibilité doit être testée dans les conditions de capacité prévues.
 
 ---
 

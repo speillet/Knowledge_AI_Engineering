@@ -1,7 +1,7 @@
 # Roofline, prefill/decode & désagrégation — Flashcards
 Tags: #flashcards #ai-engineering #inference #gpu #performance #llm
 Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: intensité arithmétique, modèle roofline, memory-bound ou compute-bound, calculs de débit de decode et de durée de prefill, batch en decode, limites de l'utilisation GPU, interférence prefill/decode, chunked prefill ou désagrégation, déploiement désagrégé (Dynamo, llm-d), quand désagréger, coût et recouvrement des transferts KV, hiérarchie mémoire et limites du roofline. -->
+<!-- summary: intensité arithmétique, modèle roofline, memory-bound ou compute-bound, calculs de débit de decode et de durée de prefill, batch en decode, limites de l'utilisation GPU, interférence prefill/decode, chunked prefill ou désagrégation, déploiement désagrégé (Dynamo, llm-d), quand désagréger, coût et recouvrement des transferts KV, hiérarchie mémoire et limites du roofline, point de bascule, plafond et mesure. -->
 
 
 Qu'est-ce que l'intensité arithmétique ? <!--anki:4e682e414f26342b616d-->
@@ -130,6 +130,22 @@ Identifier les octets déplacés sur chaque lien et le chemin critique ; inclure
 
 ---
 
+Calcul : un GPU fournit théoriquement 120 TFLOP/s et 3 To/s de bande passante mémoire, en unités décimales. À quelle intensité arithmétique se croisent les deux plafonds roofline ? <!--anki:3934646633393730663064383461663939633037326264643536333130633735-->
+?
+Le point de bascule vaut **120 × 10¹² / (3 × 10¹²) = 40 FLOP/octet**.
+
+En dessous, le plafond mémoire est le plus bas ; au-dessus, le plafond de calcul devient limitant dans ce modèle simplifié. Les performances réelles restent inférieures selon accès, kernels et communications. Il faut utiliser les plafonds du format numérique et du matériel concernés, pas mélanger une performance FP8 avec un calcul BF16.
+
+---
+
+Pourquoi un kernel situé loin sous les deux plafonds roofline n'est-il pas forcément memory-bound ? <!--anki:6438653233386537663532663432353462336566376262383137333161613335-->
+?
+Il peut être limité par **les lancements, les synchronisations, une faible occupation ou des accès inefficaces**. Le roofline donne des bornes, pas un diagnostic exhaustif.
+
+Profiler temps de kernels, transferts et périodes d'inactivité, puis comparer les formes réellement traitées. Pour de très petites opérations, les coûts fixes dominent parfois. Changer de GPU ou réduire la précision ne corrige pas nécessairement un chemin principalement limité par l'orchestration CPU.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton serveur vLLM affiche 100 % d'utilisation GPU, mais un seul utilisateur obtient 25 tokens/s sur un 70B en BF16, sur deux H100 en tensor parallelism. Ton responsable demande deux GPU de plus. Qu'analyses-tu ? <!--anki:67466b7a5a43452e713c-->
@@ -161,6 +177,8 @@ Mise en situation : sur ton RAG, les réponses « bégaient » : le texte s'arr�
 - [DistServe — séparation et coût des transferts](https://arxiv.org/abs/2401.09670)
 
 - [NVIDIA — Dynamo, inférence distribuée](https://docs.nvidia.com/dynamo/latest/)
+
+- Complément du 14 novembre 2026 — Plafonds de calcul et de bande passante : [NVIDIA — GPU Performance Background](https://docs.nvidia.com/deeplearning/performance/dl-performance-gpu-background/index.html).
 
 ## Connexions
 - [[62-optimisations-inference|Optimisations d'inférence]] — les leviers par phase

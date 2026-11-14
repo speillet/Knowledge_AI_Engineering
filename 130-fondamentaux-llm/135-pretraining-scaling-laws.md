@@ -1,6 +1,6 @@
 # Pré-entraînement & scaling laws — Flashcards
 Tags: #flashcards #ai-engineering #fondamentaux #pretraining #scaling #llm
-<!-- summary: étapes de fabrication, pré-entraînement ou post-training, données, scaling laws, Chinchilla, sur-entraînement pour l'inférence, 6ND, MFU, contamination, knowledge cutoff, capacités émergentes, mur des données, limites d'extrapolation des scaling laws. -->
+<!-- summary: étapes de fabrication, pré-entraînement ou post-training, données, scaling laws, Chinchilla, sur-entraînement pour l'inférence, 6ND, MFU, contamination, knowledge cutoff, capacités émergentes, mur des données, limites d'extrapolation des scaling laws, coût de cycle de vie, qualité des tokens. -->
 
 
 Quelles sont les grandes étapes de fabrication d'un LLM ? <!--anki:7a3f3d7a4d61366e7263-->
@@ -137,6 +137,14 @@ Pourquoi extrapoler une scaling law hors de son domaine mesuré peut-il conduire
 Une **scaling law** ajuste une relation empirique dans certaines conditions de données, architecture et calcul. Elle n'est pas une garantie universelle de gain métier pour toute augmentation de paramètres ou de tokens.
 
 Vérifier plage mesurée, définition de la perte et hypothèses avant d'extrapoler. Comparer avec des expériences intermédiaires et inclure coût d'inférence, qualité des données et objectif produit. Une baisse de perte prédite peut ne pas résoudre une erreur rare ou un défaut d'outil. Présenter l'extrapolation comme une hypothèse chiffrée avec incertitude, puis prévoir un point de décision expérimental.
+
+---
+
+Pourquoi doubler le nombre de tokens d'entraînement ne signifie-t-il pas doubler l'information utile ? <!--anki:3439626436636162353930613435383039323762326335303139616664633665-->
+?
+Les nouveaux tokens peuvent être **des doublons, du bruit ou des données très proches**. Leur valeur marginale dépend de diversité, qualité et adéquation à l'objectif.
+
+Tracer les sources, les répétitions et la contamination des évaluations. Répéter des données peut parfois aider, mais ne doit pas être présenté comme l'ajout de faits indépendants. Les lois empiriques dépendent du régime de données utilisé pour les établir.
 
 ---
 

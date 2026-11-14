@@ -1,6 +1,6 @@
 # Leadership technique en AI Engineering — Flashcards
 Tags: #flashcards #ai-engineering #leadership #senior #produit
-<!-- summary: ce qui fait un senior, choix des cas d'usage, ROI, échec des POC, RFC et ADR, build ou buy, go / no-go, standards d'équipe, mentorat, revue de conception, dette technique, communication et veille, conditions de réexamen d'une décision d'architecture. -->
+<!-- summary: ce qui fait un senior, choix des cas d'usage, ROI, échec des POC, RFC et ADR, build ou buy, go / no-go, standards d'équipe, mentorat, revue de conception, dette technique, communication et veille, conditions de réexamen d'une décision d'architecture, arrêt d'un POC, critères de transfert. -->
 
 
 Qu'est-ce qui distingue un AI Engineer senior d'un confirmé ? <!--anki:684c3732252364496938-->
@@ -161,6 +161,22 @@ Que doit contenir une décision d'architecture IA pour pouvoir être réexaminé
 Une **décision d'architecture** consigne le problème, les options réellement comparées, les contraintes et les preuves qui motivent le choix. Ajouter hypothèses, responsable et conditions de réexamen.
 
 Par exemple : choisir une API tant que volume, confidentialité et coût restent dans une enveloppe définie ; réévaluer si elle est dépassée. Relier benchmarks et expériences au lieu d'affirmer qu'un outil est « meilleur ». Décrire les conséquences opérationnelles et le coût de sortie. La date et les déclencheurs évitent de traiter une décision contextuelle comme une vérité permanente.
+
+---
+
+Quand arrêter un POC IA malgré une démonstration convaincante ? <!--anki:3735626339626135336634353466323139653531373535363564636533383036-->
+?
+Lorsque les tests représentatifs montrent **une valeur insuffisante ou une contrainte fondamentale non résolue** : erreurs trop coûteuses, données indisponibles ou exploitation non soutenable.
+
+Comparer à une baseline simple et aux critères fixés avant le POC. Documenter ce qui a été appris et les conditions qui justifieraient une reprise. Le temps déjà investi ne doit pas remplacer l'évaluation des bénéfices futurs.
+
+---
+
+Que doit contenir le transfert d'un prototype IA vers l'équipe qui l'exploite ? <!--anki:3433316132303863383863333437303138353737626232313163326462656131-->
+?
+Transmettre **contrat de service, manifeste de release, évaluations, modes de panne et procédures de reprise**, avec responsables identifiés.
+
+Faire exécuter une installation et un incident simulé par l'équipe destinataire. Une présentation du code ne démontre pas l'autonomie d'exploitation. Conserver les limites connues, coûts et conditions de réexamen ; le transfert doit permettre de décider et d'agir sans dépendre du concepteur initial.
 
 ---
 

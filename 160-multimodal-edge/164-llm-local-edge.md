@@ -1,7 +1,7 @@
 # LLM locaux, on-prem & edge — Flashcards
 Tags: #flashcards #ai-engineering #edge #local #self-hosting #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: motivations, capacité ou bande passante mémoire, llama.cpp et GGUF, outils locaux, Ollama ou vLLM, Apple Silicon, small language models, hybride local et cloud, flotte d'appareils, rentabilité du on-prem, mesure en régime thermique soutenu. -->
+<!-- summary: motivations, capacité ou bande passante mémoire, llama.cpp et GGUF, outils locaux, Ollama ou vLLM, Apple Silicon, small language models, hybride local et cloud, flotte d'appareils, rentabilité du on-prem, mesure en régime thermique soutenu, autonomie énergétique, mode hors ligne. -->
 
 
 Pourquoi faire tourner un LLM en local ou sur site ? <!--anki:68767b39524b69526735-->
@@ -113,6 +113,22 @@ Pourquoi un benchmark LLM local doit-il durer assez longtemps pour révéler les
 Un **essai court** peut bénéficier d'une fréquence élevée que l'appareil ne maintient pas sous charge continue. Température, alimentation et tâches concurrentes peuvent réduire le débit après quelques minutes.
 
 Mesurer démarrage, régime soutenu, mémoire et consommation sur l'appareil cible, avec contexte et qualité comparables. Tester sur batterie si cet usage est prévu. Vérifier la latence après plusieurs requêtes longues et en présence des applications habituelles. Un débit maximal obtenu machine froide ne suffit pas à dimensionner une expérience locale quotidienne.
+
+---
+
+Calcul : un appareil consomme 18 W supplémentaires pendant une génération de 20 secondes. Quelle énergie marginale par tâche, puis pour 1 000 tâches, hors autres coûts ? <!--anki:6330383966326132613062373437306361643934613863616438323632343864-->
+?
+Une tâche consomme **18 × 20 = 360 joules**, soit **0,1 Wh**. Mille tâches représentent **100 Wh**, ou **0,1 kWh**.
+
+C'est une énergie marginale dans des conditions fixes, sans veille, refroidissement ni autres composants. Mesurer aussi chauffe et débit soutenu : une baisse de fréquence peut augmenter la durée et modifier cette estimation sur de longues sessions.
+
+---
+
+Pourquoi tester une application LLM locale avec le réseau effectivement coupé ? <!--anki:3536646538376337393335363461313939346362373037326130383232626165-->
+?
+Elle peut encore dépendre **d'un téléchargement de tokenizer, d'une licence, d'une télémétrie bloquante ou d'un service distant**. « Modèle local » ne signifie pas nécessairement « application autonome ».
+
+Préparer les artefacts, lancer depuis un environnement propre et tester démarrage, tâches utiles et erreurs. Documenter les fonctions indisponibles hors ligne. Vérifier également les mises à jour et la gestion des fichiers temporaires.
 
 ---
 

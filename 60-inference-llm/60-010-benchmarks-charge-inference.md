@@ -1,7 +1,7 @@
 # Benchmarks de charge pour l’inférence LLM — Flashcards
 Tags: #flashcards #ai-engineering #inference #benchmark #performance
 Vérifié le : 8 octobre 2026
-<!-- summary: protocole reproductible, boucle ouverte ou fermée, omission coordonnée, mix de requêtes, cache froid/chaud, saturation, incertitude, limites du générateur, capacité sous SLO, tests de rafales. -->
+<!-- summary: protocole reproductible, boucle ouverte ou fermée, omission coordonnée, mix de requêtes, cache froid/chaud, saturation, incertitude, limites du générateur, capacité sous SLO, tests de rafales, biais de survivants, durée du plateau. -->
 
 
 Quel contrat fixer avant un benchmark d’inférence LLM ? <!--anki:3464663735636264643633333437376238393536656231303262323632633333-->
@@ -120,6 +120,22 @@ Pourquoi un benchmark LLM doit-il inclure les rafales plutôt que seulement un d
 La **file d'attente** dépend de la variabilité des arrivées et du travail, pas seulement de leur moyenne. Une rafale peut dépasser la capacité disponible avant que l'autoscaling n'ait chargé le modèle.
 
 Comparer plusieurs profils conservant le même volume : régulier, rafales et replay temporel. Mesurer attente, rejets, délais dépassés et temps de récupération, avec le même mix de tokens. Éviter de moyenner les percentiles de fenêtres. Un service stable à dix requêtes par seconde constantes n'est pas nécessairement prêt pour cent requêtes arrivant ensemble toutes les dix secondes.
+
+---
+
+Pourquoi exclure les requêtes échouées embellit-il artificiellement un benchmark d'inférence ? <!--anki:6166363136636533363765373438646462653062333331636161356134613666-->
+?
+Les requêtes les plus lentes peuvent disparaître du calcul après timeout. Le p95 des seules réussites s'améliore alors pendant que **le service se dégrade réellement**.
+
+Publier taux d'erreur, dépassements de délai et distribution des réussites avec leurs dénominateurs. Classer les timeouts comme violations du contrat sans inventer leur durée de complétion. Conserver le nombre de demandes offertes : une politique de rejet ne doit pas transformer une faible couverture en apparente performance parfaite.
+
+---
+
+Pourquoi prolonger le plateau de charge après la fin du warmup d'un serveur LLM ? <!--anki:6433383531343066356233633437303438313164346262653230623833346237-->
+?
+Un court test peut manquer **l'accumulation de file, la croissance mémoire ou l'éviction du cache**. Le système paraît stable tant que ses réserves absorbent le déséquilibre.
+
+Observer la pente du backlog et de la mémoire pendant un plateau suffisamment long, puis vérifier le retour au repos. La durée pertinente dépend du cycle d'exploitation étudié. Une file qui augmente continûment indique une charge non soutenable, même si le débit de sortie reste constant.
 
 ---
 

@@ -1,6 +1,6 @@
 # Recommandation & learning to rank — Flashcards
 Tags: #flashcards #ai-engineering #ml-classique #recommandation #ranking
-<!-- summary: objectif produit, génération de candidats et classement, filtrage collaboratif ou contenu, feedback implicite, modèles à deux tours, objectifs de ranking, négatifs, biais d'exposition, cold start, nDCG et diversité, calcul du rappel entre candidats et classement. -->
+<!-- summary: objectif produit, génération de candidats et classement, filtrage collaboratif ou contenu, feedback implicite, modèles à deux tours, objectifs de ranking, négatifs, biais d'exposition, cold start, nDCG et diversité, calcul du rappel entre candidats et classement, négatifs non exposés, diversité de catalogue. -->
 
 
 Pourquoi définir l'objectif produit avant d'entraîner un système de recommandation ? <!--anki:3961363434643038363137653430666262613063613338656334323464636161-->
@@ -102,6 +102,14 @@ Calcul : un générateur de candidats retrouve 80 % des éléments pertinents et
 Si le **75 %** est la fraction des éléments pertinents récupérés qui restent dans la liste finale, le rappel final vaut `0,80 × 0,75 = 60 %`.
 
 Le classement ne peut pas promouvoir un élément absent des candidats. Mesurer séparément les pertes à chaque étape pour savoir où investir. Le produit porte ici sur des rappels conditionnels définis sur la même population ; il ne demande pas une hypothèse d'indépendance. Des moyennes calculées sur des utilisateurs avec pondérations différentes ne se multiplient pas nécessairement de cette façon.
+
+---
+
+Pourquoi compléter nDCG par une mesure de couverture du catalogue ? <!--anki:3034383265623630386665623430666462636465623362613132333237633365-->
+?
+Un système peut bien classer **un petit groupe d'items populaires** tout en rendant le reste du catalogue invisible. nDCG seul ne décrit pas cette concentration.
+
+Mesurer exposition, diversité et résultats par segment, avec l'objectif produit. Plus de couverture n'est pas automatiquement mieux si les recommandations deviennent hors sujet. Évaluer les compromis en ligne et surveiller les effets sur nouveaux items et nouveaux utilisateurs.
 
 ---
 

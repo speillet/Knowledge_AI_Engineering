@@ -1,7 +1,7 @@
 # Agents de code : usage & intégration — Flashcards
 Tags: #flashcards #ai-engineering #agents #agents-de-code #developpement #llm
 Vérifié le : 30 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: ACI (SWE-agent), boucle pilotée par les tests, `CLAUDE.md` et `AGENTS.md`, mode plan, worktrees et sous-agents, gestion du contexte, mode headless, SWE-bench et ses limites, tâches à déléguer, mesure de l'apport, tests indépendants du correctif. -->
+<!-- summary: ACI (SWE-agent), boucle pilotée par les tests, `CLAUDE.md` et `AGENTS.md`, mode plan, worktrees et sous-agents, gestion du contexte, mode headless, SWE-bench et ses limites, tâches à déléguer, mesure de l'apport, tests indépendants du correctif, localisation des changements, preuve de correctif. -->
 
 
 Qu'est-ce qu'un agent de code ? <!--anki:7773506d63697b387b3d-->
@@ -116,6 +116,22 @@ Pourquoi les tests proposés par un agent de code doivent-ils inclure une vérif
 Un **test écrit à partir du correctif** peut reproduire sa logique et confirmer la même erreur. Définir d'abord le comportement attendu depuis le besoin et un cas qui expose le défaut.
 
 Vérifier que le test échoue avant le correctif et passe ensuite, puis examiner cas limites et effets voisins. Pour une régression, conserver l'entrée réelle sous une forme anonymisée ou synthétique. Les tests existants, la revue du diff et les invariants complètent les tests ajoutés. Un agent qui modifie simultanément code et attentes peut rendre la suite verte sans réparer le besoin.
+
+---
+
+Pourquoi limiter la surface d'un correctif produit par un agent de code ? <!--anki:3462333639613938376133323466303761666636306366356231636161363961-->
+?
+Une modification étendue rend **la cause du résultat et la revue plus difficiles à établir**. Pour un bug local, mêler refactorisation, mise à jour de dépendances et changement de comportement augmente les risques.
+
+Définir le défaut observable, corriger les chemins concernés et examiner le diff complet. Un petit diff n'est pas une garantie de qualité ; il doit couvrir les cas limites. Mesurer aussi les changements involontaires et les fichiers générés.
+
+---
+
+Comment prouver qu'un test de régression d'agent de code détecte réellement le bug initial ? <!--anki:6263356664383437633933363466303338633364383137353132326562313434-->
+?
+Vérifier qu'il **échoue sur la version défectueuse et réussit après correction**, pour la raison attendue. Un test qui passe dans les deux versions ne démontre pas la réparation.
+
+Le test doit observer le contrat externe ou l'invariant concerné, sans recopier l'algorithme proposé par l'agent. Contrôler son assertion et ses fixtures. Lorsque reproduire l'environnement initial est impossible, documenter cette limite au lieu de présenter le test comme une preuve complète.
 
 ---
 

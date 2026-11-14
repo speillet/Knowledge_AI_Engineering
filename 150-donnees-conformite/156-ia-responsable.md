@@ -1,7 +1,7 @@
 # IA responsable : biais, équité & transparence — Flashcards
 Tags: #flashcards #ai-engineering #ia-responsable #biais #gouvernance
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: safety ou security, sources de biais, tests contrefactuels, métriques d'équité, model cards et system cards, datasheets, sycophancy, sécurité ou utilité, supervision humaine effective, équité des sous-groupes. -->
+<!-- summary: safety ou security, sources de biais, tests contrefactuels, métriques d'équité, model cards et system cards, datasheets, sycophancy, sécurité ou utilité, supervision humaine effective, équité des sous-groupes, intersection des groupes, arbitrage documenté. -->
 
 
 Qu'est-ce que l'IA responsable, concrètement pour un AI Engineer ? <!--anki:4771215a794054786b55-->
@@ -99,6 +99,22 @@ Pourquoi un bon score d'équité global peut-il masquer un préjudice sur un sou
 Une **moyenne par grand groupe** peut cacher une dégradation à l'intersection de plusieurs caractéristiques ou dans un contexte d'usage particulier.
 
 Définir les groupes pertinents pour le risque et le cadre de données, puis examiner erreurs, accès et conséquences avec leurs effectifs et incertitudes. Ne pas interpréter un très petit échantillon comme une mesure précise. Choisir une métrique d'équité reliée à la décision et documenter ses compromis. Une amélioration globale ne suffit pas si un sous-groupe subit une erreur systématique grave.
+
+---
+
+Pourquoi une métrique d'équité par genre et une autre par âge peuvent-elles manquer une disparité ? <!--anki:6465346539376632346334323438663462383833323934653964643632383639-->
+?
+Un sous-groupe **à l'intersection des deux attributs** peut subir de mauvaises performances alors que chaque moyenne séparée paraît acceptable.
+
+Analyser les groupes pertinents avec effectifs et incertitude, sans publier des statistiques qui facilitent la réidentification. De très petits groupes demandent prudence et parfois collecte complémentaire. L'absence de différence significative n'est pas une preuve d'absence de dommage.
+
+---
+
+Pourquoi documenter le choix d'une métrique d'équité plutôt que chercher un score unique universel ? <!--anki:6630653961653333306332623430343839663734343835373935303531326233-->
+?
+Différentes métriques expriment **des objectifs parfois incompatibles**, notamment lorsque les prévalences diffèrent. Égaliser un taux peut en déplacer un autre.
+
+Relier le choix aux personnes touchées, au coût des erreurs et au contexte de décision. Publier plusieurs vues et les compromis retenus. Une mesure statistique ne remplace pas l'analyse du processus, des données et des possibilités de recours.
 
 ---
 

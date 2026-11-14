@@ -1,7 +1,7 @@
 # Speculative decoding — Flashcards
 Tags: #flashcards #ai-engineering #inference #speculative-decoding #llm
 Vérifié le : 12 novembre 2026 — mécanismes et limites confrontés aux articles et documentations cités ; performances à mesurer sur la cible.
-<!-- summary: brouillon et vérification en une passe, conditions d’amortissement des lectures, règle d'acceptation sans perte, gain selon le taux d'acceptation, choix de k, types de brouillons (petit modèle, n-grammes, EAGLE, Medusa, MTP), vérification en arbre, quand ça aide ou nuit, configuration vLLM, coûts, métriques d'acceptation, validation d'un déploiement, calcul d'amortissement de la spéculation, vérification causale parallèle, exemple p/q, démonstration de correction, restauration du cache, compteurs et streaming par groupes. -->
+<!-- summary: brouillon et vérification en une passe, conditions d’amortissement des lectures, règle d'acceptation sans perte, gain selon le taux d'acceptation, choix de k, types de brouillons (petit modèle, n-grammes, EAGLE, Medusa, MTP), vérification en arbre, quand ça aide ou nuit, configuration vLLM, coûts, métriques d'acceptation, validation d'un déploiement, calcul d'amortissement de la spéculation, vérification causale parallèle, exemple p/q, démonstration de correction, restauration du cache, compteurs et streaming par groupes, borne probabiliste du gain, EOS dans un bloc. -->
 
 
 Quel est le principe du speculative decoding ? <!--anki:735b235457367c524b6a-->
@@ -240,6 +240,22 @@ Un meilleur temps moyen par token ne garantit donc pas une cadence parfaitement 
 
 ---
 
+Calcul : un draft propose 3 tokens, chacun accepté avec probabilité conditionnelle constante 0,8 ; la procédure émet aussi un token cible après rejet ou acceptation complète. Quel nombre moyen de tokens émis par cycle ? <!--anki:3836646662373061396236313466613138613031353765616331366635666330-->
+?
+L'espérance vaut **1 + 0,8 + 0,8² + 0,8³ = 2,952 tokens**. Chaque terme correspond à la probabilité d'atteindre une position supplémentaire.
+
+Cela suppose absence d'EOS et de limite de sortie dans le bloc. Le facteur de vitesse n'est pas automatiquement 2,952 : il faut diviser par le coût du draft, de la vérification et de la gestion du cache, puis comparer au decode de référence.
+
+---
+
+Pourquoi un serveur ne doit-il pas publier tout un bloc spéculatif avant validation ? <!--anki:6231396365323963363534383463616139306266633165623535313165363136-->
+?
+Les tokens du brouillon peuvent être **rejetés ou se situer après un EOS accepté**. Les envoyer au client révélerait un texte que la génération finale ne doit pas contenir.
+
+Publier seulement le préfixe validé, respecter les conditions d'arrêt et retirer les états rejetés. Tester refus au premier token, EOS au milieu et budget de sortie presque épuisé. Le streaming doit suivre la séquence cible validée, même si le calcul interne travaille par groupes.
+
+---
+
 ## Mises en situation
 
 Mise en situation : tu actives le speculative decoding sur ton assistant. En test à un utilisateur, la génération est deux fois plus rapide ; en production aux heures de pointe, le débit total baisse. Pourquoi ? <!--anki:72653f2439376372473a-->
@@ -289,6 +305,8 @@ Mise en situation : un responsable qualité s'inquiète que le speculative decod
 - [vLLM — configuration et garanties du décodage spéculatif](https://docs.vllm.ai/en/latest/features/speculative_decoding/) — revue ciblée du 12 novembre 2026 : schéma exact, variantes approximatives et commande n-gram.
 
 - [vLLM — métriques d’acceptation par requête](https://docs.vllm.ai/en/latest/features/speculative_decoding/acceptance_metrics/) — revue ciblée du 12 novembre 2026 : propositions acceptées, tokens bonus et longueur émise.
+
+- Complément du 14 novembre 2026 — Espérance de tokens validés par cycle : [Leviathan et al. — Speculative Decoding](https://arxiv.org/abs/2211.17192).
 
 ## Connexions
 - [[62-optimisations-inference|Optimisations d'inférence]] — prefill, decode et bande passante mémoire

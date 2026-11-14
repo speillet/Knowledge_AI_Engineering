@@ -1,6 +1,6 @@
 # Context engineering — Flashcards
 Tags: #flashcards #ai-engineering #agents #context-engineering #llm
-<!-- summary: le contexte comme budget, context rot, compaction, sous-agents, prompt caching, contexte chargé au besoin (just-in-time), invariants de compaction. -->
+<!-- summary: le contexte comme budget, context rot, compaction, sous-agents, prompt caching, contexte chargé au besoin (just-in-time), invariants de compaction, sélection de contexte, budget de réserve. -->
 
 
 Qu'est-ce que le context engineering ? <!--anki:6d7964697b53773a6a7e-->
@@ -121,6 +121,22 @@ Tester une reprise qui exige un fait ancien, un refus utilisateur et l'identifia
 
 ---
 
+Pourquoi charger tous les résultats d'outils dans le contexte peut-il réduire la fiabilité d'un agent ? <!--anki:3561363434313836306434663432613262653062303131313334386239633239-->
+?
+Chaque résultat consomme du budget et peut **diluer les preuves utiles** ou introduire des instructions non fiables. La présence d'une information dans la fenêtre ne garantit pas son utilisation correcte.
+
+Conserver un résumé fidèle avec références, puis charger les détails à la demande. Ne pas résumer les nombres ou contraintes dont l'exactitude est nécessaire sans accès à l'original. Évaluer les réponses après cette sélection, notamment les cas où une exception rare change la décision.
+
+---
+
+Calcul : un agent dispose d'une fenêtre de 32 000 tokens, de 6 000 tokens fixes, de 14 000 d'historique et réserve 4 000 pour la sortie. Quelle place reste-t-il pour les résultats d'outils ? <!--anki:6365636234373061643263313435613062356436623936653764386635363161-->
+?
+Il reste **32 000 − 6 000 − 14 000 − 4 000 = 8 000 tokens** dans cette convention de comptage.
+
+Un résultat de 12 000 tokens exige donc pagination, sélection ou compaction avant le prochain appel. Prévoir une marge pour les nouveaux messages et les schémas éventuels. Le calcul suppose que la sortie partage ce plafond ; les limites d'entrée et de sortie peuvent être distinctes selon le modèle et l'API.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton agent de support donne de bonnes réponses au début des conversations, puis se dégrade et se contredit au bout d'une heure. Que fais-tu ? <!--anki:463a55674e31642c4634-->
@@ -162,6 +178,8 @@ Mise en situation : ton agent doit analyser 300 pages de documentation technique
 ## Sources
 
 - [Anthropic — gestion du contexte et compaction des agents](https://www.anthropic.com/research/effective-context-engineering-for-ai-agents) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
+
+- Complément du 14 novembre 2026 — Position et sélection du contexte : [Liu et al. — Lost in the Middle](https://arxiv.org/abs/2307.03172).
 
 ## Connexions
 - [[11-prompt-engineering-avance|Prompt engineering]] — le prompt dans son budget global

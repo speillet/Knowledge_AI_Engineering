@@ -1,6 +1,6 @@
 # Prévision de séries temporelles — Flashcards
 Tags: #flashcards #ai-engineering #ml-classique #forecasting #series-temporelles
-<!-- summary: horizon et cadence, baseline saisonnière, ETS ou ARIMA ou ML, backtesting à origines glissantes, variables futures, prévisions directes ou récursives, lags, MAPE et MASE, quantiles, intervalles et cohérence hiérarchique, limites du MAPE avec des ventes nulles. -->
+<!-- summary: horizon et cadence, baseline saisonnière, ETS ou ARIMA ou ML, backtesting à origines glissantes, variables futures, prévisions directes ou récursives, lags, MAPE et MASE, quantiles, intervalles et cohérence hiérarchique, limites du MAPE avec des ventes nulles, horizon et fuite, validation des intervalles. -->
 
 
 Que faut-il définir avant de prévoir une série temporelle ? <!--anki:3832313262386130373438663432643761663164383138343564303065376431-->
@@ -116,6 +116,14 @@ Choisir une métrique adaptée à la décision, par exemple MAE ou MASE avec ses
 
 ---
 
+Pourquoi évaluer une prévision séparément pour chaque horizon ? <!--anki:3262356133353062356330303466383061303666306433643236313361633661-->
+?
+L'incertitude et les mécanismes utiles changent **entre demain et dans trois mois**. Une moyenne peut masquer un modèle excellent à court terme mais inutilisable pour la planification lointaine.
+
+Construire le backtest aux dates de décision réelles et comparer des baselines par horizon. Les variables futures doivent être connues ou prévues dans les mêmes conditions. Une valeur réalisée disponible seulement après coup créerait une fuite.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton modèle prédit très bien à un jour, mais échoue pour le planning à quatre semaines. Que changes-tu ? <!--anki:6635623432376633633662643431663362353630316232346361666163333738-->
@@ -166,6 +174,8 @@ Mise en situation : la demande devient très intermittente et la MAPE explose ma
 - [scikit-learn — perte pinball](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.mean_pinball_loss.html)
 
 - [Hyndman et Athanasopoulos — évaluation des prévisions et erreurs en pourcentage](https://otexts.com/fpp3/toolbox.html) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
+
+- Complément du 14 novembre 2026 — Évaluation des prévisions et horizons : [Hyndman et Athanasopoulos — Forecasting, chapitre 5](https://otexts.com/fpp3/toolbox.html).
 
 ## Connexions
 - [[171-choisir-modele-ml|Choisir un modèle]] — construire les baselines prédictives

@@ -1,6 +1,6 @@
 # Routing LLM — Flashcards
 Tags: #flashcards #ai-engineering #routing #api-layer #llm
-<!-- summary: routage statique, par règles ou sémantique, RouteLLM, cascade, routage selon la charge, cache sémantique, calcul du coût moyen d'une cascade. -->
+<!-- summary: routage statique, par règles ou sémantique, RouteLLM, cascade, routage selon la charge, cache sémantique, calcul du coût moyen d'une cascade, biais du routeur, décision contrefactuelle. -->
 
 
 Pourquoi router les requêtes entre plusieurs modèles ? <!--anki:6a5b33407a5a3140415e-->
@@ -113,6 +113,22 @@ Calcul : une cascade utilise A à 0,002 € puis B à 0,020 € pour 25 % des de
 A est appelé pour toutes les demandes et B pour un quart : `0,002 + 0,25 × 0,020 = 0,007 €`, soit **7 € pour 1 000 demandes**.
 
 Le calcul suppose coûts constants et une seule escalade. Ajouter le coût du routeur, des vérifications et des retries s'ils existent. Mesurer aussi la qualité des demandes qui restent sur A : une cascade bon marché peut sous-détecter les cas difficiles. Le taux d'escalade seul ne démontre ni qualité préservée ni économie nette.
+
+---
+
+Pourquoi évaluer seulement les requêtes envoyées au grand modèle biaise-t-il la comparaison avec le petit ? <!--anki:3263313832643862306231643463323239323936326437353831666638656334-->
+?
+Le routeur peut lui réserver **les cas les plus difficiles**. Une qualité moyenne inférieure du grand modèle sur ce sous-ensemble ne signifie pas qu'il est moins capable.
+
+Comparer les deux sur un échantillon commun représentatif ou organiser une exploration contrôlée, avec coûts et règles de données respectés. Conserver la décision de routage et ses critères. Les résultats observés après sélection ne suffisent pas à estimer ce qu'aurait fait l'autre modèle.
+
+---
+
+Quand une cascade doit-elle s'abstenir au lieu d'escalader vers un modèle plus puissant ? <!--anki:3762313434376663653134363435636561306137643237353333663638333038-->
+?
+Lorsque le problème vient **d'une preuve absente, d'une permission refusée ou d'une ambiguïté utilisateur**, et non d'un manque de capacité du premier modèle.
+
+L'escalade peut augmenter le coût sans résoudre la cause. Classer les motifs d'échec et prévoir recherche complémentaire, clarification ou revue humaine. Mesurer le taux de résolution par motif : une cascade utile améliore le résultat final, pas seulement le nombre de réponses produites.
 
 ---
 

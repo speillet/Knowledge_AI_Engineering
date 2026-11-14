@@ -1,6 +1,6 @@
 # Prompts en production — Flashcards
 Tags: #flashcards #ai-engineering #prompt-engineering #production #llm
-<!-- summary: briques d'un prompt, placement des longs documents, consignes motivées, limites des rôles, prompter un modèle de raisonnement, templates et données utilisateur, registre et versioning, prompt dans le code ou dans un registre, portabilité entre modèles, langue, contrôle de la longueur, migration du contrat de sortie. -->
+<!-- summary: briques d'un prompt, placement des longs documents, consignes motivées, limites des rôles, prompter un modèle de raisonnement, templates et données utilisateur, registre et versioning, prompt dans le code ou dans un registre, portabilité entre modèles, langue, contrôle de la longueur, migration du contrat de sortie, rendu effectif, données manquantes. -->
 
 
 Quelles sont les briques d'un prompt de production ? <!--anki:775f2e70434e484c4021-->
@@ -109,6 +109,22 @@ Comment faire évoluer le contrat de sortie d'un prompt sans casser ses consomma
 Traiter le **schéma de sortie** comme une interface versionnée. Ajouter un champ obligatoire, renommer une catégorie ou changer l'unité d'un montant peut casser un consommateur même si le texte du prompt semble peu modifié.
 
 Faire accepter la nouvelle version aux consommateurs avant de la produire ; valider schéma et règles métier des deux versions pendant la transition. Associer chaque résultat à sa version de contrat et tester les cas historiques. Prévoir le retour à une combinaison compatible de prompt, modèle et parseur.
+
+---
+
+Pourquoi journaliser une empreinte du prompt effectivement rendu en production ? <!--anki:3366343964336161313136313434356539663664376433623533336362393662-->
+?
+La version du template ne détermine pas seule l'entrée : **variables, exemples récupérés, ordre des documents et règles de sérialisation** interviennent aussi. Une empreinte du rendu aide à distinguer deux exécutions annoncées sous la même version.
+
+Conserver également les versions de ces composants et les paramètres utiles à la reproduction. Un hash ne permet pas de reconstruire le texte ; stocker les données nécessaires selon les règles de confidentialité. Éviter de journaliser systématiquement tous les prompts bruts.
+
+---
+
+Comment un prompt d'extraction doit-il traiter une valeur absente sans la confondre avec zéro ? <!--anki:6635313136333832333237323464633538336464623662343237643662383435-->
+?
+Définir explicitement **valeur trouvée, absente et illisible**, avec une preuve lorsque disponible. Une facture sans montant de taxe lisible ne justifie pas `taxe: 0` : zéro affirme une valeur, alors que `null` peut signaler l'absence.
+
+Prévoir ce contrat dans le schéma et dans les exemples, puis tester documents incomplets et contradictoires. Le consommateur décide ensuite s'il peut continuer, demander une pièce ou transmettre à un humain ; le modèle ne doit pas inventer la valeur par défaut.
 
 ---
 

@@ -1,7 +1,7 @@
 # Harness & plugins — Flashcards
 Tags: #flashcards #ai-engineering #agents #harness #llm
 Vérifié le : 17 octobre 2026 — comportement des hooks de Claude Code confronté à la documentation officielle.
-<!-- summary: rôle du harness, plugins, skills, hooks, permissions, sandbox, fichiers mémoire, tests négatifs des politiques. -->
+<!-- summary: rôle du harness, plugins, skills, hooks, permissions, sandbox, fichiers mémoire, tests négatifs des politiques, répertoire de travail, tests des capacités. -->
 
 
 Qu'est-ce que le harness (harnais) d'un agent ? <!--anki:7976774a57665d6f6958-->
@@ -119,6 +119,22 @@ Comment tester qu'une politique de harness bloque réellement une action interdi
 Écrire un **test négatif d'exécution** : demander une action interdite et vérifier qu'aucun effet n'a atteint le système cible. Un message « refusé » affiché après l'appel ne suffit pas.
 
 Essayer les chemins équivalents pertinents : outil direct, script, sous-processus et délégation. Enregistrer décision de politique, arguments normalisés et preuve d'absence d'effet. Répéter après une mise à jour du harness ou d'un plugin. Le test vérifie un périmètre précis ; il ne transforme pas une liste de commandes bloquées en isolation générale.
+
+---
+
+Pourquoi le répertoire de travail fait-il partie du périmètre de sécurité d'un harness ? <!--anki:3364383238343635386333363435623862303662313166633063393730373839-->
+?
+Il détermine **les fichiers lus, les configurations découvertes et les chemins relatifs** des commandes. Lancer un test depuis le mauvais dépôt peut charger une configuration différente ou écrire au mauvais endroit.
+
+Fixer le projet explicitement, résoudre les chemins sensibles et vérifier les accès réels de la sandbox. Un chemin apparent peut traverser un lien symbolique. Les consignes textuelles sur le périmètre aident l'agent, mais les restrictions nécessaires doivent être appliquées par l'environnement d'exécution.
+
+---
+
+Comment vérifier qu'un plugin désactivé n'a plus de capacités utilisables par un agent ? <!--anki:6262313565396236353736343438316262363038636230636338343133643936-->
+?
+Tester **l'inventaire visible et l'exécution effective** : disparition des outils, invalidation des sessions ou autorisations concernées et absence de route alternative via un proxy.
+
+Inclure un agent déjà en cours, car il peut conserver un ancien schéma dans son contexte. Le runtime doit refuser l'appel devenu interdit même si le modèle le propose encore. Une interface qui masque le plugin sans retirer ses droits ne constitue pas une révocation complète.
 
 ---
 

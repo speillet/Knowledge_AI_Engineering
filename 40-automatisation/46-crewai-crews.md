@@ -1,7 +1,7 @@
 # CrewAI — Crews — Flashcards
 Tags: #flashcards #ai-engineering #agents #crewai #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: agents (role, goal, backstory), tâches, process séquentiel ou hiérarchique, délégation, sorties structurées, guardrails de tâche, LLM et outils, mémoire unifiée, structure d'un projet, indépendance des validations entre agents. -->
+<!-- summary: agents (role, goal, backstory), tâches, process séquentiel ou hiérarchique, délégation, sorties structurées, guardrails de tâche, LLM et outils, mémoire unifiée, structure d'un projet, indépendance des validations entre agents, critères de tâches, contamination du contexte. -->
 
 
 Qu'est-ce que CrewAI ? <!--anki:773073683f6e7832596e-->
@@ -147,6 +147,22 @@ Pour une vérification utile, définir un critère observable et fournir au vér
 
 ---
 
+Pourquoi séparer les critères d'acceptation d'une tâche CrewAI de la personnalité de l'agent ? <!--anki:3031373362386464393336633433303762623439346630613163363735383933-->
+?
+Un rôle comme « analyste rigoureux » influence le style mais ne définit pas **un résultat vérifiable**. La tâche doit préciser champs attendus, sources utilisables et conditions de rejet.
+
+Un rapport élégant sans preuves peut satisfaire le rôle tout en échouant à la tâche. Évaluer les sorties avec une grille indépendante et tester des entrées incomplètes. La description de l'agent aide l'exécution ; elle ne remplace ni contrat métier ni contrôle du livrable.
+
+---
+
+Comment limiter la propagation d'une erreur entre tâches d'une crew ? <!--anki:3936393663396130636265623461653838333534386134313965376336393466-->
+?
+Transmettre **les éléments validés avec leurs preuves et incertitudes**, plutôt qu'un long récit présenté comme certain. Une hypothèse d'une tâche ne doit pas devenir un fait pour toutes les suivantes.
+
+Ajouter un contrôle aux frontières où une erreur change la décision finale. Conserver la possibilité de revenir à la source. Une tâche de synthèse doit signaler les contradictions entre sorties ; les reformuler de façon fluide ne les résout pas.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ta crew de veille produit de bons résultats en démonstration, mais en production elle invente parfois des sources et coûte trois fois le budget prévu. Que corriges-tu ? <!--anki:654e6e2d6840715d293c-->
@@ -178,6 +194,8 @@ Mise en situation : un collègue propose de passer ta crew en mode hiérarchique
 - [CrewAI — crews](https://docs.crewai.com/en/concepts/crews)
 
 - [CrewAI — Crews, documentation v1.15.23](https://docs.crewai.com/v1.15.23/en/concepts/crews)
+
+- Complément du 14 novembre 2026 — Contrats et contexte des tâches : [CrewAI — Tasks, v1.15.41](https://docs.crewai.com/v1.15.41/en/concepts/tasks).
 
 ## Connexions
 - [[47-crewai-flows|CrewAI — Flows]] — orchestrer les crews en production

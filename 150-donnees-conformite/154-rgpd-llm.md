@@ -1,7 +1,7 @@
 # RGPD appliqué aux LLM — Flashcards
 Tags: #flashcards #ai-engineering #rgpd #conformite #donnees
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: champ d'application, RGPD ou AI Act, principes, base légale de la réutilisation, responsable et sous-traitant, transferts hors UE, droit à l'effacement, AIPD, décisions automatisées, données dans le modèle, mesures concrètes, finalités distinctes entre service et entraînement. -->
+<!-- summary: champ d'application, RGPD ou AI Act, principes, base légale de la réutilisation, responsable et sous-traitant, transferts hors UE, droit à l'effacement, AIPD, décisions automatisées, données dans le modèle, mesures concrètes, finalités distinctes entre service et entraînement, conservation par finalité, preuve d'effacement. -->
 
 
 Quand le RGPD s'applique-t-il à une application LLM ? <!--anki:75213c515379246a5375-->
@@ -127,6 +127,22 @@ Si le consentement est retenu, vérifier ses conditions de validité et son retr
 
 ---
 
+Pourquoi définir des durées de conservation distinctes pour conversations, traces et datasets d'amélioration ? <!--anki:6332656330653866386531333463623962356663663839623061333439363366-->
+?
+Ces données peuvent servir **des finalités différentes**, avec des besoins et risques distincts. La commodité technique ne justifie pas une conservation indéfinie de tout le contenu.
+
+Définir les durées selon chaque finalité, limiter les données conservées et appliquer la suppression aux copies concernées. La CNIL souligne que la mesure de performance ne suffit pas, à elle seule, à justifier une longue conservation de toutes les données. Documenter les choix avec les responsables compétents.
+
+---
+
+Pourquoi une restauration de sauvegarde doit-elle tenir compte des demandes d’effacement déjà traitées ? <!--anki:3866336236393332376539633461626262353539613064373362636534373939-->
+?
+Une sauvegarde ancienne peut **réintroduire une donnée supprimée du système actif**. Prévoir, dans le cadre applicable, un registre minimal des retraits et une procédure pour les réappliquer avant remise en service.
+
+Limiter l’accès aux sauvegardes, leur durée et les usages permis ; tester la restauration sans republier les données concernées. Conserver seulement les informations nécessaires pour prévenir cette réintroduction. Les obligations et exceptions précises dépendent du traitement : les documenter avec les responsables de la protection des données.
+
+---
+
 ## Mises en situation
 
 Mise en situation : un client exerce son droit à l'effacement. Tes données sont dans l'index RAG, la mémoire de l'agent, les traces, les caches et un modèle fine-tuné. Que réponds-tu ? <!--anki:782b47475664446d4a32-->
@@ -166,6 +182,8 @@ Mise en situation : le métier veut automatiser le tri des candidatures, avec re
 - [Union européenne — RGPD, articles 5 à 7 et 13](https://eur-lex.europa.eu/eli/reg/2016/679/oj/fra) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
 
 - [CEPD — avis 28/2024 sur les modèles d’IA](https://www.edpb.europa.eu/system/files/documents/2024-12/edpb_opinion_202428_ai-models_en.pdf) — revue ciblée du 12 novembre 2026 : anonymat apprécié au cas par cas, extraction et obtention par requêtes.
+
+- Complément du 14 novembre 2026 — Finalités, conservation et droits ; les procédures de restauration sont des implications de conception : [CNIL — IA et RGPD](https://www.cnil.fr/fr/intelligence-artificielle/ia-comment-etre-en-conformite-avec-le-rgpd).
 
 ## Connexions
 - [[152-pii-confidentialite|PII & confidentialité]] — les mesures techniques

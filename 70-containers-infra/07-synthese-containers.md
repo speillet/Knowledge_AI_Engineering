@@ -1,6 +1,6 @@
 # Conteneurs — Synthèse
 Tags: #flashcards #conteneurs #revision
-<!-- summary: cartes de révision transverses (OCI, CRI et SIF, chaînes Kubernetes et image, accès GPU, serveurs d'inférence, stockage des poids), localisation d'une panne dans la chaîne de lancement. -->
+<!-- summary: cartes de révision transverses (OCI, CRI et SIF, chaînes Kubernetes et image, accès GPU, serveurs d'inférence, stockage des poids), localisation d'une panne dans la chaîne de lancement, preuves de portabilité, diagnostic cold start. -->
 
 
 OCI, CRI et SIF désignent-ils le même type de chose ? <!--anki:6d445f2c347a236f5d4c-->
@@ -116,6 +116,22 @@ Comment localiser une panne de conteneur avant d'accuser le serveur d'inférence
 Suivre la **chaîne de lancement** jusqu'au dernier événement réussi : ordonnanceur, kubelet, runtime, création du processus, initialisation GPU puis chargement du modèle.
 
 Un téléchargement d'image refusé précède tout code applicatif ; un OOM hôte diffère d'une erreur de VRAM ; une readiness fausse diffère d'un processus arrêté. Conserver événements, codes de sortie et chronologie avant de relancer. Ce découpage réduit les hypothèses à tester et évite de modifier les paramètres du modèle pour un problème de registre ou de droits.
+
+---
+
+Comment démontrer qu'un déploiement d'inférence est portable entre deux environnements ? <!--anki:3664306439363933373464333434383238373633613563663337643466313935-->
+?
+Rejouer **le même manifeste d'artefacts et le même jeu de requêtes** sur les deux cibles, avec leurs différences documentées de matériel et configuration.
+
+Comparer démarrage, fonctions API, qualité, mémoire et latence. Une image acceptée par deux runtimes prouve une compatibilité de packaging, pas une performance ni un comportement identiques. Inclure les modes dégradés et la récupération des poids pour tester le chemin complet.
+
+---
+
+Pourquoi décomposer le cold start d'un conteneur d'inférence avant de l'optimiser ? <!--anki:6637366636363565626165353462616362656666346464313933626161316263-->
+?
+Il peut être dominé par **le téléchargement de l'image, celui des poids, leur chargement ou l'initialisation des kernels**. Réduire la taille de l'image aide peu si le coût vient des poids.
+
+Horodater chaque phase et comparer démarrage à froid et à chaud. Choisir ensuite cache, préchargement ou capacité déjà prête selon le coût dominant. Un cache local efficace sur un nœud existant peut disparaître lors d'un scale-out sur un nœud neuf.
 
 ---
 

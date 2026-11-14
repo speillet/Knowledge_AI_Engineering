@@ -1,6 +1,6 @@
 # Entraînement distribué — Flashcards
 Tags: #flashcards #ai-engineering #fine-tuning #distributed-training #gpu
-<!-- summary: calcul de la mémoire d'un fine-tuning 7B avec Adam, data ou model parallelism, DDP, ZeRO et FSDP, tensor et pipeline parallelism, parallélisme 3D, gradient checkpointing, accumulation de gradients, précision mixte BF16, réseau, pannes et checkpoints, calcul d'efficacité parallèle. -->
+<!-- summary: calcul de la mémoire d'un fine-tuning 7B avec Adam, data ou model parallelism, DDP, ZeRO et FSDP, tensor et pipeline parallelism, parallélisme 3D, gradient checkpointing, accumulation de gradients, précision mixte BF16, réseau, pannes et checkpoints, calcul d'efficacité parallèle, stragglers, microbatches et synchronisation. -->
 
 
 Que faut-il stocker en mémoire GPU pendant l'entraînement ? <!--anki:4b3540475374235a42-->
@@ -155,6 +155,22 @@ Le temps écoulé baisse, mais la consommation passe de **8 à 12 GPU-heures**. 
 
 ---
 
+Pourquoi le worker le plus lent peut-il limiter un entraînement DDP synchrone ? <!--anki:3133663064333432323037663439313961343661346363323462306130313465-->
+?
+Les répliques doivent participer aux **collectives de gradients dans un ordre compatible**. Un worker ralenti par ses données, son réseau ou des séquences plus longues retarde les autres.
+
+Comparer temps de chargement, calcul et communication par rang. Équilibrer le travail réel plutôt que seulement le nombre d'exemples. Une utilisation GPU moyenne masque ces attentes. Augmenter le nombre de GPU sans corriger le worker lent peut aggraver l'efficacité et le coût.
+
+---
+
+Pourquoi accumuler des gradients ne supprime-t-il pas automatiquement toutes les communications DDP ? <!--anki:6561386466336266636463613465383762666463383237363964626335653661-->
+?
+Sans mécanisme adapté, **chaque backward peut déclencher des synchronisations**. L'accumulation augmente le batch effectif, mais ne garantit donc pas la réduction du trafic réseau.
+
+Vérifier la configuration de synchronisation et la normalisation des pertes, puis profiler les collectives. Tous les rangs doivent suivre une séquence compatible. Une optimisation qui évite des synchronisations intermédiaires doit conserver la synchronisation nécessaire avant la mise à jour des paramètres.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton modèle de 7 milliards de paramètres tourne sans problème en inférence sur un GPU de 80 Go, mais le fine-tuning complet échoue en mémoire. Explique et propose une solution. <!--anki:4b2b71595771393f3e60-->
@@ -180,6 +196,10 @@ Mise en situation : ton entraînement sur 32 GPU n'utilise que 20 % de leur puis
 **Piège** : augmenter la taille du batch pour « occuper les GPU », et se heurter à la mémoire d'activations.
 
 ---
+
+## Sources
+
+- Complément du 14 novembre 2026 — Synchronisation DDP : [PyTorch 2.15 — DDP](https://docs.pytorch.org/docs/2.15/notes/ddp.html).
 
 ## Connexions
 - [[51-fine-tuning-adaptation|Fine-tuning & adaptation]] — LoRA pour éviter le distribué

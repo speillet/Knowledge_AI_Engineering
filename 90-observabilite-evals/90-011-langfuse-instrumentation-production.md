@@ -1,7 +1,7 @@
 # Langfuse — Instrumentation en production — Flashcards
 Tags: #flashcards #ai-engineering #agents #production
 Vérifié le : 9 octobre 2026 — API citées confrontées aux documentations officielles ; limites explicitées dans les cartes.
-<!-- summary: traces applicatives complètes, observations, corrélation distribuée, async, tokens et coûts, streaming, sampling, masquage, export, doublons et diagnostic, propagation des traces entre workers. -->
+<!-- summary: traces applicatives complètes, observations, corrélation distribuée, async, tokens et coûts, streaming, sampling, masquage, export, doublons et diagnostic, propagation des traces entre workers, export en panne, horloges distribuées. -->
 
 
 Pourquoi tracer seulement la gateway LLM ne suffit-il pas pour observer un agent ? <!--anki:6135383431373137353435663462366261663235326663333433313134666563-->
@@ -146,6 +146,22 @@ Pourquoi la propagation du contexte de trace doit-elle être testée dans les t�
 Une **frontière asynchrone** ou un worker séparé peut perdre le contexte qui relie les spans au run parent. Les appels restent visibles mais semblent appartenir à des requêtes indépendantes.
 
 Transmettre les identifiants de corrélation par un mécanisme documenté, puis vérifier parenté et chronologie après passage par la file. Tester aussi retries et erreurs. Ne pas placer de secrets dans le baggage ou les métadonnées propagées. Une trace complète permet d'attribuer coût et panne à la bonne tâche ; elle ne doit pas dépendre seulement du contexte implicite d'un thread.
+
+---
+
+Comment empêcher une panne d'export Langfuse de bloquer les réponses de l'application ? <!--anki:6433626534616566363138643439313739306133333730643230313061313562-->
+?
+Découpler l'export avec **buffers bornés, délais et politique explicite de perte ou de reprise**. L'observabilité ne doit pas devenir une file infinie ni prolonger indéfiniment la réponse.
+
+Surveiller les événements non exportés et tester un service de collecte indisponible. Certains événements d'audit exigent une durabilité plus forte que des traces échantillonnées : les traiter selon leur contrat, sans supposer que tout peut être abandonné.
+
+---
+
+Pourquoi des horloges désynchronisées peuvent-elles rendre une trace distribuée trompeuse ? <!--anki:6334636130313261303437333435613662386166623634323663653364626532-->
+?
+Des spans sur plusieurs machines peuvent sembler **se chevaucher ou se terminer avant leur début** si les timestamps sont comparés sans tenir compte du décalage.
+
+Synchroniser les horloges, conserver la parenté causale et mesurer localement les durées avec une horloge appropriée. Ne pas conclure à une latence négative ou à un ordre métier à partir du seul affichage temporel. Un identifiant de corrélation relie les événements sans corriger leurs horloges.
 
 ---
 

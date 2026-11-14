@@ -1,6 +1,6 @@
 # Débogage & analyse d'échecs des agents — Flashcards
 Tags: #flashcards #ai-engineering #agents #evals #observabilite #debogage
-<!-- summary: error analysis (open et axial coding), symptôme ou cause, catégories d'échec, taxonomie MAST, détection des boucles, reproduction par rejeu, de l'échec au cas de non-régression, signaux de production, quand ne pas accuser le modèle, ablations contrôlées. -->
+<!-- summary: error analysis (open et axial coding), symptôme ou cause, catégories d'échec, taxonomie MAST, détection des boucles, reproduction par rejeu, de l'échec au cas de non-régression, signaux de production, quand ne pas accuser le modèle, ablations contrôlées, première divergence, débogage sans effets. -->
 
 
 Pourquoi un agent est-il plus difficile à déboguer qu'un appel LLM ? <!--anki:63762b3d6f2b7d677546-->
@@ -118,6 +118,22 @@ Pourquoi désactiver temporairement un composant aide-t-il à déboguer un agent
 Une **ablation contrôlée** retire ou remplace un composant pour tester une hypothèse : mémoire, reranker, compaction ou outil. Si le défaut disparaît, le composant ou son interaction devient une piste, pas une cause déjà prouvée.
 
 Rejouer les mêmes entrées avec un état initial et des effets externes maîtrisés. Modifier une dimension à la fois et conserver traces, versions et résultats. Répéter si le système est stochastique. Une ablation qui change simultanément le budget et le contexte peut expliquer l'amélioration par ces changements plutôt que par le composant retiré.
+
+---
+
+Pourquoi chercher la première divergence d'une trajectoire d'agent plutôt que corriger sa dernière phrase ? <!--anki:6435306363396665373432303462653962333034383330643231633564336262-->
+?
+La réponse finale peut être **la conséquence d'une erreur antérieure** : mauvais outil, document tronqué ou filtre incorrect. Retoucher la formulation masque alors la cause.
+
+Comparer observation, décision et résultat à chaque étape avec une trajectoire attendue ou un invariant. Rejouer les composants isolément et remplacer un résultat d'outil par une référence contrôlée. Vérifier ensuite le parcours complet pour confirmer la correction.
+
+---
+
+Comment rejouer une trace d'agent sans reproduire ses écritures externes ? <!--anki:6639316666383162353833303437343262646431383839633230646438383538-->
+?
+Remplacer les frontières à effets par **des doubles contrôlés ou un environnement isolé**, tout en conservant les contrats et réponses nécessaires au diagnostic.
+
+Identifier tous les chemins d'écriture, y compris logs applicatifs, messages et callbacks. Un drapeau « dry run » n'est fiable que si chaque frontière le respecte. Tester qu'aucune connexion de production n'est utilisable pendant le replay.
 
 ---
 

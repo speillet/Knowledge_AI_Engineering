@@ -1,7 +1,7 @@
 # Prefill & decode — Exécution pas à pas — Flashcards
 Tags: #flashcards #ai-engineering #inference #prefill #decode #attention #kv-cache
 Vérifié le : 12 novembre 2026 — mécanismes du Transformer causal et ordonnancement documenté ; les calculs sont pédagogiques.
-<!-- summary: positions connues et masque causal, projections Q/K/V, premier token, chronologie du cache, coût de l'attention, prefill partiel, mémoire temporaire, batching, chunked prefill, transfert KV et diagnostic de latence. -->
+<!-- summary: positions connues et masque causal, projections Q/K/V, premier token, chronologie du cache, coût de l'attention, prefill partiel, mémoire temporaire, batching, chunked prefill, transfert KV et diagnostic de latence, logits du prochain token, masquage du padding. -->
 
 
 Que fait exactement une passe de prefill sur quatre tokens connus ? <!--anki:3831643765326339613135663432333761376634353336326166366334353465-->
@@ -55,9 +55,11 @@ Les K/V restent utiles à chaque couche pour les positions encore accessibles. L
 
 D'où vient le tout premier token de sortie après le prefill ? <!--anki:3664356139383039343138393434346661356237343537393333376434353639-->
 ?
-L'état final de la **dernière position du prompt** est projeté vers les logits du vocabulaire. Les transformations de sampling ou le choix greedy sélectionnent ensuite le premier token de sortie.
+L'état de la **dernière position du prompt** est projeté vers les logits du vocabulaire. Sampling ou choix greedy sélectionne ensuite le premier token de sortie.
 
-Le token choisi n'a pas encore nécessairement été réinjecté dans le modèle : son propre état KV sera calculé quand il servira d'entrée à la prochaine étape. Distinguer prompt encodé, distribution calculée et token sélectionné évite de compter une passe supplémentaire systématique pour produire ce premier token. En cas de prefix cache intégral, des K/V seules peuvent toutefois ne pas suffire à retrouver les logits finaux sans un peu de recalcul.
+Après `[A,B,C]`, les logits de C proposent D ; traiter D permet ensuite de proposer E. Le KV du token choisi n'est calculé que lorsqu'il est traité comme entrée. Il n'y a donc pas systématiquement une passe supplémentaire avant de sélectionner le premier token.
+
+Distinguer prompt encodé, distribution calculée et token sélectionné. Avec un prefix cache intégral, des K/V seules peuvent ne pas suffire à retrouver les logits finaux sans un peu de recalcul.
 
 ---
 
@@ -169,6 +171,14 @@ Comment distinguer une lenteur de prefill d'une lenteur de decode sur un cas con
 Comparer d'abord **temps avant première sortie utile** et **cadence après cette sortie**, puis décomposer l'attente. Si le délai croît fortement avec le prompt et le calcul d'entrée domine, examiner prefill, contexte et réutilisation du KV.
 
 Si le premier token arrive vite mais les suivants tardent, examiner decode, contexte lu, batch et éventuelle spéculation. Une file peut ralentir les deux et une sortie de raisonnement cachée peut retarder l'information utile. Utiliser traces et tests contrôlés ; une seule mesure de durée totale ne permet pas d'attribuer la cause ni de choisir entre RadixAttention et speculative decoding.
+
+---
+
+Pourquoi le padding d'un batch de prefill ne doit-il pas devenir une preuve dans l'attention ? <!--anki:3632343765333864346336653433633739336566646366373338353431393736-->
+?
+Les tokens de remplissage servent à **aligner les formes**, pas à ajouter du contenu. Le masque d'attention et la gestion des positions doivent empêcher qu'ils modifient le sens des entrées utiles.
+
+Vérifier les conventions du modèle et du moteur, notamment padding gauche/droite et sélection de la dernière position utile. Un test pertinent compare une requête seule et dans un batch avec longueurs différentes, en tolérant les variations numériques attendues.
 
 ---
 

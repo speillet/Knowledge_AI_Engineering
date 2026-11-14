@@ -1,6 +1,6 @@
 # Cas de system design LLM — Flashcards
 Tags: #flashcards #ai-engineering #system-design #entretien #llm
-<!-- summary: support client, recherche documentaire, assistant de code, analyse de données en langage naturel, extraction à grande échelle, agent qui agit, chatbot grand public, assistant vocal, trame de réponse, erreurs d'entretien, calcul de capacité de revue humaine. -->
+<!-- summary: support client, recherche documentaire, assistant de code, analyse de données en langage naturel, extraction à grande échelle, agent qui agit, chatbot grand public, assistant vocal, trame de réponse, erreurs d'entretien, calcul de capacité de revue humaine, estimation de stockage, validation d'hypothèses. -->
 
 
 Cas 1 — Assistant de support client : par quoi passe la requête ? <!--anki:765e30282f603b217430-->
@@ -135,6 +135,22 @@ Calcul : 200 dossiers quotidiens demandent une revue de 6 minutes, mais deux per
 La capacité disponible vaut `2 × 4 × 60 / 6 = 80 dossiers/jour`. Avec **200 arrivées quotidiennes**, le retard augmente de **120 dossiers/jour**, hors variation et reprises.
 
 Une revue humaine ne stabilise donc pas le système dans ce scénario. Réduire le volume, le temps par dossier ou augmenter la capacité ; réserver les contrôles selon le risque sans supprimer une validation indispensable. Inclure délais d'attente et charge de pointe dans le design. Une bonne précision du modèle ne compense pas une file humaine structurellement saturée.
+
+---
+
+Calcul : un assistant traite 40 000 tâches par jour et conserve 25 Kio de traces par tâche pendant 30 jours, sans réplication ni compression. Quel stockage brut approximatif prévoir ? <!--anki:3461646137363162356432333432366561323263306433663165356365633737-->
+?
+Le volume vaut **40 000 × 25 × 30 = 30 000 000 Kio**, soit environ **28,6 Gio**.
+
+Ajouter index, réplication, sauvegardes et marge selon l'architecture. Le contenu brut des documents peut changer fortement l'ordre de grandeur. Relier cette estimation à la politique de rétention et au besoin réel de diagnostic, plutôt que conserver tout par défaut.
+
+---
+
+Pourquoi annoncer les hypothèses les plus risquées avant de dessiner une architecture IA complète ? <!--anki:3263306334643337343939303466303661623161613538373836306438393564-->
+?
+Elles déterminent **ce qu'il faut tester en premier** : qualité atteignable, disponibilité des preuves, droit d'accès ou capacité de revue. Une architecture détaillée ne compense pas une hypothèse métier fausse.
+
+Proposer une expérience courte avec critère de succès et d'arrêt pour chaque inconnue majeure. Mettre ensuite à jour le dimensionnement et les choix de composants. Distinguer ce qui est mesuré de ce qui reste une estimation.
 
 ---
 

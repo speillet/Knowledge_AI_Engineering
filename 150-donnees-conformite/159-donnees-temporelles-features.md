@@ -1,6 +1,6 @@
 # Données temporelles & variables de production — Flashcards
 Tags: #flashcards #ai-engineering #donnees #data-engineering #features
-<!-- summary: temps événement et traitement, disponibilité historique, jointures point-in-time, corrections bitemporelles, fenêtres et watermarks, labels retardés, cohérence entraînement-serving, feature store et fraîcheur, chemins offline/online et matérialisation sûre, date d'effet et date de connaissance. -->
+<!-- summary: temps événement et traitement, disponibilité historique, jointures point-in-time, corrections bitemporelles, fenêtres et watermarks, labels retardés, cohérence entraînement-serving, feature store et fraîcheur, chemins offline/online et matérialisation sûre, date d'effet et date de connaissance, fuite par agrégat, retard de disponibilité. -->
 
 
 À ne pas confondre : temps de l'événement et temps de traitement ? <!--anki:6530353238343566646235653466306338396630383966326238633938343537-->
@@ -131,6 +131,22 @@ Conserver temps de validité et temps de connaissance, puis reconstruire la vue 
 
 ---
 
+Pourquoi une moyenne mensuelle calculée après la fin du mois peut-elle faire fuiter le futur dans un modèle quotidien ? <!--anki:6333383864393733643534313461623162646662653361376665313939643664-->
+?
+Pour une prédiction du 10, elle peut intégrer **des événements du 11 au 31**, indisponibles au moment de la décision. La date associée à la feature ne rend pas ce calcul causalement disponible.
+
+Construire les agrégats avec une borne temporelle correcte et tenir compte du délai de publication. Tester le pipeline en simulant les données connues à chaque instant. Un split temporel seul ne corrige pas une feature déjà contaminée.
+
+---
+
+Calcul : un événement a lieu à 09 h 00, arrive à 09 h 20 et est disponible au service de features à 09 h 25. Peut-il servir à reconstruire une prédiction faite à 09 h 10 sans fuite ? <!--anki:6633656661626137633734323431663238383963363332353333306536613734-->
+?
+**Non**, si le service de prédiction ne pouvait pas le connaître avant 09 h 25. Son temps d'événement antérieur à 09 h 10 ne suffit pas.
+
+La reconstruction doit respecter le temps de disponibilité pertinent pour le système réel. Conserver les corrections et délais permet de distinguer ce qui était vrai dans le monde de ce qui était effectivement connu au moment de la décision.
+
+---
+
 ## Mises en situation
 
 Mise en situation : un modèle historique est excellent, mais ses performances chutent dès son lancement malgré les mêmes colonnes. Que recherches-tu ? <!--anki:6131633734393433356463633438363239396262626138313536326561376135-->
@@ -175,6 +191,8 @@ Mise en situation : un modèle de churn semble s'améliorer fortement sur les se
 - [Feast — jointures point-in-time](https://docs.feast.dev/getting-started/concepts/point-in-time-joins)
 - [Apache Beam — temps des événements, watermarks et données tardives](https://beam.apache.org/documentation/programming-guide/#watermarks-and-late-data)
 - [TensorFlow Data Validation — écarts entraînement et serving](https://www.tensorflow.org/tfx/guide/tfdv)
+
+- Complément du 14 novembre 2026 — Rattachement temporel des features : [Feast — Point-in-time joins](https://docs.feast.dev/getting-started/concepts/point-in-time-joins).
 
 ## Connexions
 - [[157-contrats-qualite-donnees|Contrats & qualité]] — exprimer fraîcheur, unités et disponibilité

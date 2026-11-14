@@ -1,6 +1,6 @@
 # Fine-tuning & adaptation de modèles — Flashcards
 Tags: #flashcards #ai-engineering #fine-tuning #llm
-<!-- summary: quand adapter, SFT, PEFT, LoRA et QLoRA, ressources, distillation, multi-LoRA, régressions, calcul de rang et d’amortissement, versions d’un adapter, teacher forcing et génération libre. -->
+<!-- summary: quand adapter, SFT, PEFT, LoRA et QLoRA, ressources, distillation, multi-LoRA, régressions, calcul de rang et d’amortissement, versions d’un adapter, teacher forcing et génération libre, masquage de supervision, fusion LoRA. -->
 
 
 Qu'est-ce que le fine-tuning ? <!--anki:71447a6c7b502c78475d-->
@@ -157,6 +157,22 @@ Un petit écart peut donc changer toute la suite, les appels d'outils ou la term
 
 ---
 
+Pourquoi masquer les tokens utilisateur dans certains fine-tunings conversationnels ? <!--anki:3265383336656438663736333438666262646666363563636532386139636133-->
+?
+Si l'objectif est d'apprendre **les réponses de l'assistant**, calculer la perte sur tous les tokens entraîne aussi la reproduction des questions et documents fournis. Cela modifie l'objectif et le poids relatif des exemples longs.
+
+Vérifier le masque réellement produit par le template et le collator, y compris les appels d'outils. Le masquage ne supprime pas les tokens du contexte ; il retire leur contribution directe à la perte. Évaluer ensuite en génération libre.
+
+---
+
+Pourquoi fusionner un adapter LoRA dans les poids ne dispense-t-il pas d'une validation ? <!--anki:3436376631646333626161383437373462346531323039396136333035306266-->
+?
+La fusion matérialise **W + ΔW** dans une représentation donnée. Arrondis, quantization, échelles ou mauvaise base peuvent rendre le modèle servi différent de celui évalué avec l'adapter séparé.
+
+Vérifier identité de la base, paramètres de fusion et tokenizer, puis comparer sorties et métriques après export. La fusion peut simplifier le serving d'un adapter unique, mais retire la souplesse de basculer entre plusieurs adapters sur une même base partagée.
+
+---
+
 ## Mises en situation
 
 Mise en situation : le métier veut fine-tuner un modèle « pour qu'il connaisse nos procédures internes », qui changent chaque mois. Que réponds-tu ? <!--anki:6e332d72382e3d3f492e-->
@@ -190,6 +206,8 @@ Mise en situation : ton modèle fine-tuné est excellent sur l'extraction visée
 - [Hu et al. — LoRA et paramètres de bas rang](https://arxiv.org/abs/2106.09685)
 - [Hugging Face TRL — masquage, troncature et SFT](https://huggingface.co/docs/trl/sft_trainer)
 - [Hugging Face PEFT — configuration et chargement LoRA](https://huggingface.co/docs/peft/package_reference/lora)
+
+- Complément du 14 novembre 2026 — Masquage des tokens supervisés : [Hugging Face TRL — SFT Trainer](https://huggingface.co/docs/trl/sft_trainer).
 
 ## Connexions
 - [[21-rag-fondamentaux|RAG]] — connaissances vs comportement

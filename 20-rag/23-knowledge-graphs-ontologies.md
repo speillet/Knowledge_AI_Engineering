@@ -1,7 +1,7 @@
 # Knowledge graphs & ontologies — Flashcards
 Tags: #flashcards #ai-engineering #rag #knowledge-graph #ontologie #llm
 Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: triplets, RDF ou property graph (Cypher, GQL), ontologie et taxonomie, extraction par LLM sous schéma, résolution d'entités, graphe ou vecteurs, GraphRAG local et global, Text2Cypher, context graph, coûts, provenance des relations. -->
+<!-- summary: triplets, RDF ou property graph (Cypher, GQL), ontologie et taxonomie, extraction par LLM sous schéma, résolution d'entités, graphe ou vecteurs, GraphRAG local et global, Text2Cypher, context graph, coûts, provenance des relations, monde ouvert, négation des relations. -->
 
 
 Qu'est-ce qu'un knowledge graph ? <!--anki:75794e4c4c3a65215f7b-->
@@ -127,6 +127,22 @@ Si deux rapports attribuent des dirigeants différents à une société, garder 
 
 ---
 
+À ne pas confondre : absence de relation dans un graphe et preuve que la relation est fausse ? <!--anki:6665303530386666656164313464313162653766626631376135653063313662-->
+?
+Dans une sémantique de **monde ouvert**, ne pas connaître une relation ne signifie pas sa négation. Un graphe sans lien « possède » entre une société et une filiale peut simplement être incomplet.
+
+Une règle de monde fermé n'est défendable que pour un périmètre déclaré complet, avec date et provenance. Un agent doit donc distinguer relation confirmée, réfutée et inconnue. La convention du moteur de requête ne transforme pas l'incomplétude des sources en certitude métier.
+
+---
+
+Comment éviter de transformer une relation hypothétique extraite par LLM en fait du knowledge graph ? <!--anki:3934356638626430663463313466363138326637623836653834353263613063-->
+?
+Conserver **modalité, négation et attribution** : « envisage de racheter » ne signifie pas « possède ». Modéliser l'affirmation avec sa source, sa date et son statut avant d'en dériver une relation exploitable.
+
+Valider les règles de promotion sur des exemples négatifs et conditionnels. Deux mentions répétées d'une même rumeur ne constituent pas deux confirmations indépendantes. Une relation sans ces qualifications peut rendre les parcours multi-hop cohérents en apparence mais factuellement faux.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton graphe extrait par LLM contient « Société Générale », « Societe Generale » et « SG » comme trois entités distinctes, et les requêtes multi-hop échouent. Comment corriges-tu ? <!--anki:6670413d484e4a557b4d-->
@@ -158,6 +174,8 @@ Mise en situation : un chef de projet veut exposer Text2Cypher aux utilisateurs 
 - [Microsoft — GraphRAG, indexation et recherche](https://microsoft.github.io/graphrag/)
 
 - [W3C — modèle de provenance PROV](https://www.w3.org/TR/prov-overview/) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
+
+- Complément du 14 novembre 2026 — Monde ouvert et assertions : [W3C — OWL 2 Primer](https://www.w3.org/TR/owl2-primer/).
 
 ## Connexions
 - [[21-rag-fondamentaux|RAG — Fondamentaux]] — la recherche vectorielle de base

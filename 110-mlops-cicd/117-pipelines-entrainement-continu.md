@@ -1,7 +1,7 @@
 # Pipelines d'entraînement, registre & entraînement continu — Flashcards
 Tags: #flashcards #ai-engineering #mlops #ml-classique #pipelines
 Vérifié le : 20 octobre 2026 — date globale conservée ; revue ciblée du 13 novembre 2026 détaillée dans les Sources.
-<!-- summary: niveaux de maturité MLOps, pipeline déployé plutôt que modèle, réentraînement planifié ou déclenché, validation des données et du modèle, suivi d'expériences MLflow, signature, alias champion et challenger, alias de registre ou de fournisseur, cache des étapes, fenêtre d'entraînement, scoring batch ou en ligne, labels censurés par le modèle, calcul de performance attendue sans labels, promotions concurrentes des modèles, regroupement des déclencheurs, calibrateur versionné, référence historique et cohorte récente, correction des labels. -->
+<!-- summary: niveaux de maturité MLOps, pipeline déployé plutôt que modèle, réentraînement planifié ou déclenché, validation des données et du modèle, suivi d'expériences MLflow, signature, alias champion et challenger, alias de registre ou de fournisseur, cache des étapes, fenêtre d'entraînement, scoring batch ou en ligne, labels censurés par le modèle, calcul de performance attendue sans labels, promotions concurrentes des modèles, regroupement des déclencheurs, calibrateur versionné, référence historique et cohorte récente, correction des labels, annulation des runs obsolètes, nettoyage du test. -->
 
 
 Que distinguent les niveaux 0, 1 et 2 de maturité MLOps décrits par Google Cloud ? <!--anki:6539373632343731336431643433643839373035386566393038353034396538-->
@@ -186,6 +186,22 @@ Comment traiter une correction de labels après l'approbation d'un modèle ? <!-
 Une **correction de labels** modifie les preuves qui ont soutenu la décision. Conserver le rapport historique et créer une nouvelle version du dataset corrigé, avec provenance, date et périmètre des changements.
 
 Recalculer les comparaisons nécessaires sur cette version et examiner si la promotion ou le seuil restent justifiés. Ne pas remplacer silencieusement les métriques de l'ancien run : l'audit doit retrouver ce qui était connu au moment de la décision. Si la correction révèle un défaut systématique, revoir collecte, annotation et futurs entraînements. Une nouvelle donnée peut déclencher une investigation sans imposer automatiquement le retrait du modèle.
+
+---
+
+Quand annuler un entraînement devenu obsolète pendant son exécution ? <!--anki:3334333934383032323661323463373861623566393337316538643036323537-->
+?
+Lorsqu'une **correction de données ou une nouvelle contrainte rend son résultat inutilisable**, poursuivre peut gaspiller le budget et risquer une promotion dépassée.
+
+Marquer le run comme obsolète avec la raison, arrêter les ressources lorsque possible et empêcher sa promotion. Conserver les métadonnées utiles au diagnostic. Ne pas annuler systématiquement tout run ancien : un candidat reproductible peut rester utile comme référence si son contrat reste valide.
+
+---
+
+Pourquoi réentraîner sur les erreurs du jeu de test impose-t-il de changer le protocole d'évaluation ? <!--anki:3633626438623034313736353432303562383961633935356237646365616261-->
+?
+Ces exemples deviennent **des données de développement ou d'entraînement**. Leur amélioration ne mesure plus une généralisation indépendante.
+
+Conserver les cas pour la non-régression, mais réserver un nouveau jeu de confirmation séparé et versionné. Tracer les exemples utilisés dans chaque étape. Une boucle continue peut accumuler une fuite progressivement, même sans copie explicite du test entier dans l'entraînement.
 
 ---
 

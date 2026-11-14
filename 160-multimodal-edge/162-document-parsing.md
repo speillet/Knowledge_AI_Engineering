@@ -1,7 +1,7 @@
 # Parsing de documents (PDF, OCR, layout) — Flashcards
 Tags: #flashcards #ai-engineering #multimodal #document-parsing #rag
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: PDF natif ou scanné, analyse de layout, outils (Docling, Unstructured, services cloud, VLM), tableaux, figures, ColPali, chunking structurel, évaluation, exploitation, unités et en-têtes des tableaux. -->
+<!-- summary: PDF natif ou scanné, analyse de layout, outils (Docling, Unstructured, services cloud, VLM), tableaux, figures, ColPali, chunking structurel, évaluation, exploitation, unités et en-têtes des tableaux, ordre de lecture, calcul de qualité globale. -->
 
 
 Pourquoi le parsing de documents est-il souvent le goulot d'un RAG d'entreprise ? <!--anki:7038666a4c6a61724345-->
@@ -102,6 +102,22 @@ Pourquoi conserver unités, en-têtes et notes lors de l'extraction d'un tableau
 Une **cellule isolée** perd souvent son sens : `125` peut désigner euros, milliers d'euros ou pourcentage selon l'en-tête et les notes.
 
 Reconstruire lignes, colonnes et cellules fusionnées avec leur contexte, puis conserver page et coordonnées pour vérification. Tester tableaux sur plusieurs pages, parenthèses négatives et séparateurs décimaux. Vérifier des totaux connus sans supposer que toutes les lignes s'additionnent. Un texte OCR exact au caractère près peut produire une donnée métier fausse si l'unité ou le bon en-tête a été perdu.
+
+---
+
+Pourquoi l'ordre de lecture d'un PDF à deux colonnes est-il critique pour un RAG ? <!--anki:3738653362353834353462303436663762313138386431353965623437623235-->
+?
+Une extraction ligne par ligne peut **entrelacer deux paragraphes indépendants**. Le texte paraît grammaticalement fragmenté et les relations entre phrases deviennent fausses.
+
+Reconstruire les blocs de layout avant de linéariser, conserver pages et coordonnées, puis tester des exemples multicolonnes. Une bonne reconnaissance des caractères ne prouve pas un bon ordre de lecture. Le chunking ne répare pas automatiquement cette corruption amont.
+
+---
+
+Comment détecter une erreur de parsing qui conserve tous les mots mais rattache une note au mauvais tableau ? <!--anki:3765633565353666653438313436346538326132353732383535633635613239-->
+?
+Contrôler **les relations de structure**, pas seulement le texte extrait : tableau, légende, note et unité doivent rester associés. Une note « montants en milliers » rattachée au tableau voisin peut multiplier les valeurs interprétées par mille.
+
+Constituer des cas annotés avec liens entre blocs et coordonnées de page. Vérifier le rendu et la reconstruction de cellules avec leurs qualificatifs. Un score OCR excellent ne mesure ni ces associations ni la fidélité du document structuré.
 
 ---
 

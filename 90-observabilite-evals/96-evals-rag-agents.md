@@ -1,6 +1,6 @@
 # Évaluation des RAG & des agents — Flashcards
 Tags: #flashcards #ai-engineering #evals #rag #agents #llm
-<!-- summary: retrieval et génération, calculs precision/recall@k et MRR, nDCG, fidélité ou exactitude, contexte oracle, jeux synthétiques, résultat ou trajectoire, environnements d’eval, pass^k et efficacité; couverture des citations, calcul de soutien, tests contrefactuels, vérification des effets externes. -->
+<!-- summary: retrieval et génération, calculs precision/recall@k et MRR, nDCG, fidélité ou exactitude, contexte oracle, jeux synthétiques, résultat ou trajectoire, environnements d’eval, pass^k et efficacité; couverture des citations, calcul de soutien, tests contrefactuels, vérification des effets externes, preuve minimale, pollution du contexte. -->
 
 
 Comment découper l'évaluation d'un RAG ? <!--anki:486239767d48454b594b-->
@@ -180,6 +180,8 @@ Construire des **tests contrefactuels contrôlés** : changer un fait dans un do
 
 Garder question et configuration comparables ; éviter des transformations qui rendent le document incohérent. Ajouter une variante avec une source contradictoire et une règle de priorité explicite. Ces tests révèlent une dépendance au contexte sur les cas testés ; ils ne prouvent pas que toutes les réponses futures seront fidèles. Les compléter par des questions réelles.
 
+Tester également une citation changée sans modification du fait pour distinguer fidélité sémantique et copie de référence.
+
 ---
 
 Pourquoi une évaluation d'agent doit-elle vérifier ses effets externes, même si sa réponse finale est correcte ? <!--anki:3839373231623233343337383466363138343961656331653165313934303235-->
@@ -187,6 +189,14 @@ Pourquoi une évaluation d'agent doit-elle vérifier ses effets externes, même 
 La **réponse finale** peut annoncer le bon résultat alors que l'agent a créé un doublon, consulté des données interdites ou omis une écriture. L'évaluation doit donc inspecter aussi l'état externe.
 
 Définir état initial, effets attendus et invariants à ne jamais violer. Après le run, interroger la source métier et vérifier les autorisations des appels effectués. Inclure les échecs et résultats inconnus. Un texte correct obtenu au prix d'une fuite ou d'un débit incorrect ne constitue pas une réussite de tâche.
+
+---
+
+Pourquoi évaluer un RAG avec des passages plausibles mais non pertinents ? <!--anki:6537383437663232363139643435346338613265626238343537623730303636-->
+?
+Ils testent sa capacité à **ignorer des distracteurs**, ce qu'un contexte composé seulement de bonnes preuves ne mesure pas. Des passages proches lexicalement peuvent contenir une autre date, entité ou version.
+
+Comparer au contexte sans distracteurs et relever les affirmations contaminées. Un bon recall peut coexister avec une mauvaise résistance au bruit. Faire varier le nombre et la position des distracteurs sans changer la preuve nécessaire.
 
 ---
 

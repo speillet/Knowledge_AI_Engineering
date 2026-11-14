@@ -1,6 +1,6 @@
 # Reproductibilité & variance — Flashcards
 Tags: #flashcards #ai-engineering #mlops #reproductibilite #evals #llm
-<!-- summary: non-déterminisme à température 0, invariance au batch, seed, appel rejouable, tests sur des sorties variables, erreur standard et intervalles de confiance, comparaison appariée, pass@k et pass^k, variance du LLM-as-judge, fine-tuning reproductible, stabilité par tâche répétée, sélection des seeds, checkpoint ou artefact d’inférence, changement de dépendance isolé, audit sans replay possible. -->
+<!-- summary: non-déterminisme à température 0, invariance au batch, seed, appel rejouable, tests sur des sorties variables, erreur standard et intervalles de confiance, comparaison appariée, pass@k et pass^k, variance du LLM-as-judge, fine-tuning reproductible, stabilité par tâche répétée, sélection des seeds, checkpoint ou artefact d’inférence, changement de dépendance isolé, audit sans replay possible, ordre des données, variance entre runs. -->
 
 
 Une température à 0 garantit-elle des sorties identiques ? <!--anki:6354476e2a6372354e28-->
@@ -183,6 +183,22 @@ Comment expliquer une décision historique si le modèle fournisseur utilisé a 
 Distinguer **preuve de ce qui s'est passé** et **capacité à le régénérer**. Sans accès au modèle d'origine, une nouvelle exécution identique peut être impossible, même avec prompt et paramètres conservés.
 
 S'appuyer sur résultat enregistré, contexte autorisé, référence fournisseur, version applicative et preuves d'actions externes, selon la politique de rétention. Une autre version peut servir à analyser le comportement, mais son résultat ne remplace pas celui observé historiquement. Prévoir cette limite avant le choix du service et tester la récupération des pièces d'audit. Archiver des données sensibles sans finalité ni contrôle n'est pas une solution universelle.
+
+---
+
+Pourquoi fixer la seed sans fixer l'ordre des données ne suffit-il pas à reproduire un entraînement ? <!--anki:6233663861326235336162393432636338626661336130616236373134643839-->
+?
+Les mises à jour dépendent **des exemples regroupés et de leur ordre**. Workers, shuffling, reprise du dataloader et transformations peuvent modifier cette séquence.
+
+Conserver manifestes, états aléatoires et position de lecture nécessaires à la reprise, puis distinguer reproductibilité exacte et stabilité statistique. Une seed unique ne fige ni les kernels ni les dépendances. Vérifier les métriques sur plusieurs runs lorsque les décisions reposent sur de petits écarts.
+
+---
+
+Pourquoi ne pas présenter le meilleur run parmi dix comme la performance attendue d'un entraînement ? <!--anki:3264313837386665633039353464323938363737353733396133313136646331-->
+?
+La sélection favorise **une réalisation chanceuse** de la variance. Elle surestime la performance d'un futur entraînement si cette sélection n'est pas intégrée au protocole.
+
+Publier distribution, règle de sélection et évaluation indépendante du candidat retenu. Le coût des dix runs fait partie de la méthode. Une moyenne et un intervalle approprié sont plus informatifs qu'un unique record lorsqu'on veut estimer la stabilité.
 
 ---
 

@@ -1,6 +1,6 @@
 # Tool calling — Flashcards
 Tags: #flashcards #ai-engineering #agents #tool-calling #llm
-<!-- summary: définition des outils, appels parallèles contrôlés, tool calling ou MCP, validation des arguments, erreurs et timeouts, statuts d’opération, pagination et coût des schémas, séparation proposition et exécution. -->
+<!-- summary: définition des outils, appels parallèles contrôlés, tool calling ou MCP, validation des arguments, erreurs et timeouts, statuts d’opération, pagination et coût des schémas, séparation proposition et exécution, résultats volumineux, préconditions d'écriture. -->
 
 
 Qu'est-ce que le tool calling (function calling) ? <!--anki:4c434c62492628352f4a-->
@@ -141,6 +141,22 @@ Pourquoi un outil de proposition doit-il être séparé d'un outil d'exécution 
 La **proposition** calcule et décrit une action ; l'**exécution** applique un effet autorisé. Cette séparation permet de valider destinataire, montant et conséquences avant l'écriture.
 
 Par exemple, préparer un remboursement renvoie une proposition versionnée ; l'exécution exige son identifiant, une autorisation encore valide et une clé d'idempotence. Si les paramètres changent, refaire la validation au lieu de réutiliser un accord ancien. La séparation des outils aide l'interface ; le serveur doit malgré tout vérifier les droits et l'état métier au moment d'agir.
+
+---
+
+Comment un outil doit-il renvoyer un résultat trop volumineux pour le contexte du modèle ? <!--anki:3963323033653962613033633439663062383330633566363862356238616530-->
+?
+Renvoyer **un résumé borné, un identifiant stable et un moyen de consulter les détails** par page, filtre ou plage. Signaler explicitement toute troncature et le volume total lorsqu'il est connu.
+
+Le modèle peut alors demander les parties nécessaires sans conclure à tort qu'il a tout vu. Conserver les preuves originales hors du prompt. Une chaîne coupée silencieusement peut supprimer une erreur, une exception ou les dernières lignes d'un tableau et inverser la conclusion.
+
+---
+
+Pourquoi inclure une version attendue dans un outil qui modifie un objet métier ? <!--anki:6432393932303366323035303434336639353639306363343762326134333566-->
+?
+La version permet une **écriture conditionnelle** : appliquer la modification seulement si l'objet n'a pas changé depuis sa lecture. Par exemple, mettre à jour le dossier en version 7 doit échouer si sa version courante est 8.
+
+Le service doit vérifier cette condition atomiquement. L'agent relit ensuite le dossier et réévalue la proposition. L'idempotence évite de répéter la même opération ; elle ne protège pas à elle seule contre une décision fondée sur un état ancien.
 
 ---
 

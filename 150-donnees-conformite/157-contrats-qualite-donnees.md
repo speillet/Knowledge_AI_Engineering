@@ -1,6 +1,6 @@
 # Contrats, schémas & qualité des données — Flashcards
 Tags: #flashcards #ai-engineering #donnees #data-engineering #qualite
-<!-- summary: contrat producteur-consommateur, contraintes de schéma et métier, fraîcheur et complétude, compatibilité, migrations, quarantaine, dérive ou incident, publication atomique et lignage opérationnel, contrats sémantiques et unités. -->
+<!-- summary: contrat producteur-consommateur, contraintes de schéma et métier, fraîcheur et complétude, compatibilité, migrations, quarantaine, dérive ou incident, publication atomique et lignage opérationnel, contrats sémantiques et unités, compatibilité des valeurs, quarantine et population. -->
 
 
 Que doit garantir un contrat de données pour un système IA ? <!--anki:6465333362376365616461653439353861633730323038363164306534316230-->
@@ -102,6 +102,22 @@ Pourquoi un contrat de données doit-il préciser l'unité et la sémantique d'u
 Un **champ numérique valide** peut changer de sens sans casser le schéma : euros devenus centimes, montant TTC devenu HT ou timestamp local devenu UTC.
 
 Documenter unité, convention de temps, règles de nullité et domaine métier ; ajouter des contrôles sur exemples connus et changements de distribution. Versionner les changements sémantiques et prévenir les consommateurs avant publication. Une validation `float` ou `timestamp` ne détectera pas ces ruptures. Le contrat doit rendre observable ce que les utilisateurs supposent, et désigner le responsable d'une ambiguïté ou d'une migration.
+
+---
+
+Pourquoi ajouter une nouvelle valeur à un enum peut-il casser un consommateur sans changer le schéma physique ? <!--anki:3064666331323964336435633437373062633434353033363261333536643330-->
+?
+Le consommateur peut supposer **un ensemble fermé de catégories** et ne pas savoir traiter la nouvelle. Les colonnes et types restent identiques, mais le contrat sémantique change.
+
+Définir gestion de l'inconnu, compatibilité et migration avant publication. Tester les consommateurs critiques avec la nouvelle valeur. La validation du type `string` ne suffit pas à garantir l'acceptation métier.
+
+---
+
+Pourquoi la quarantaine de lignes invalides peut-elle biaiser un dataset publié ? <!--anki:6234353435333338383539363463613538626564363238396535306566323134-->
+?
+Les erreurs peuvent se concentrer **sur une source, un pays ou un type de client**. Retirer ces lignes améliore la conformité technique mais modifie la population.
+
+Mesurer taux de rejet et couverture par segment, puis décider si le lot reste publiable. Conserver les causes pour correction et reprise. Un dataset sans ligne invalide n'est pas nécessairement complet ni représentatif.
 
 ---
 

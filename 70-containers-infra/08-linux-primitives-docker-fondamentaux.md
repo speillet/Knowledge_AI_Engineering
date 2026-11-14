@@ -1,6 +1,6 @@
 # Primitives Linux & fondamentaux Docker — Flashcards
 Tags: #flashcards #conteneurs #linux #docker
-<!-- summary: namespaces et cgroups, conteneur ou VM, layers, ordre du Dockerfile et cache, volumes et bind mounts, port mapping, distinction entre RAM et VRAM. -->
+<!-- summary: namespaces et cgroups, conteneur ou VM, layers, ordre du Dockerfile et cache, volumes et bind mounts, port mapping, distinction entre RAM et VRAM, PID 1 et signaux, disque et inodes. -->
 
 
 Sur quelles primitives du kernel Linux reposent les conteneurs ? <!--anki:6c342463685269653428-->
@@ -116,6 +116,22 @@ Pourquoi une limite mémoire de conteneur ne réserve-t-elle pas automatiquement
 Les **limites de mémoire habituelles du conteneur** portent sur la mémoire gérée par le système hôte. La VRAM et son allocation dépendent du GPU, du runtime et des mécanismes de partage retenus.
 
 Un processus peut respecter sa limite RAM tout en échouant en VRAM, ou l'inverse pendant le chargement des poids. Surveiller séparément RAM, mémoire épinglée et VRAM. Définir les limites et l'isolation GPU avec les composants adaptés, puis tester plusieurs workloads concurrents. Le seul champ mémoire du conteneur ne constitue pas un quota de VRAM.
+
+---
+
+Pourquoi le processus PID 1 d'un conteneur doit-il gérer les signaux et les processus enfants ? <!--anki:3936306633333238653437373432333838636536373861303462626437633234-->
+?
+Il joue un rôle particulier dans **l'arrêt et la récupération des enfants terminés**. Un wrapper shell qui ne transmet pas les signaux peut empêcher le serveur de drainer ses requêtes.
+
+Utiliser une chaîne de lancement qui transmet correctement les signaux, avec remplacement du shell ou init adapté. Tester SIGTERM et la fin du délai de grâce. Un conteneur qui s'arrête uniquement par SIGKILL n'a pas démontré un arrêt applicatif propre.
+
+---
+
+Pourquoi un conteneur peut-il recevoir « no space left on device » alors qu'il reste des gigaoctets libres ? <!--anki:3437363633656433316261643465626361353738613764333135623132353538-->
+?
+Le système de fichiers peut manquer **d'inodes**, nécessaires pour représenter les fichiers, ou une autre partition peut être pleine. De très nombreux petits caches peuvent épuiser les inodes avant les octets.
+
+Examiner espace et inodes du montage concerné, y compris couches inscriptibles et volumes. Identifier le producteur de fichiers avant nettoyage. Ajouter de la RAM ou agrandir une autre partition ne corrige pas cette saturation.
 
 ---
 

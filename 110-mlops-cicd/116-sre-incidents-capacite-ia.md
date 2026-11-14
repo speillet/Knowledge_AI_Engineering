@@ -1,6 +1,6 @@
 # SRE : incidents & capacité des services IA — Flashcards
 Tags: #flashcards #ai-engineering #mlops #sre #incidents #capacite
-<!-- summary: SLI utilisateur, budgets d'erreur, burn rate, alertes multi-fenêtres, files bornées, admission, capacité de secours, propagation des délais, gestion d'incident, rollback, RTO et RPO, postmortem et reprise, calcul du respect des RTO et RPO, dépendance au registre au démarrage, isolation entraînement-service, calcul de résorption du backlog, impact ML après restauration. -->
+<!-- summary: SLI utilisateur, budgets d'erreur, burn rate, alertes multi-fenêtres, files bornées, admission, capacité de secours, propagation des délais, gestion d'incident, rollback, RTO et RPO, postmortem et reprise, calcul du respect des RTO et RPO, dépendance au registre au démarrage, isolation entraînement-service, calcul de résorption du backlog, impact ML après restauration, charge de reprise, exercices de restauration. -->
 
 
 Pourquoi un statut HTTP 200 ne suffit-il pas comme SLI d'un service IA ? <!--anki:3635323732333063663032383435633261333464373137376137633665346238-->
@@ -134,6 +134,22 @@ Diviser par 30 oublierait les nouvelles arrivées. Si service et arrivées s'ég
 Le **rétablissement technique** remet le service dans son contrat opérationnel. L'**analyse d'impact** identifie les décisions, personnes et systèmes affectés pendant la dégradation, puis les corrections nécessaires.
 
 Un modèle de nouveau disponible peut avoir laissé des scores faux dans une table batch ou des actions déjà exécutées. Utiliser versions, périodes, identifiants de décisions et journaux pour délimiter ce périmètre. Prévoir recalcul, réconciliation ou traitement métier approprié, avec responsables distincts si nécessaire. Clore l'alerte de disponibilité ne clôt pas automatiquement ces actions ; conserver le suivi et vérifier qu'une remise en service ne propage pas de nouveau les résultats corrompus.
+
+---
+
+Pourquoi la reprise après incident peut-elle provoquer une seconde panne d'un service IA ? <!--anki:3331626336333933363063303465363562336463646439306233323766633239-->
+?
+Le retour simultané des clients et workers libère **un backlog plus les nouvelles demandes**, alors que les caches sont froids et les dépendances encore fragiles.
+
+Réouvrir progressivement l'admission, répartir les reprises et prioriser les tâches utiles. Mesurer la capacité de résorption au-delà du trafic courant. Rejouer toutes les tâches expirées peut consommer la réserve sans apporter de valeur ; appliquer leur politique d'expiration et d'annulation.
+
+---
+
+Pourquoi un backup réussi ne prouve-t-il pas la capacité de restaurer un service ML ? <!--anki:3832336262373161353465393431386362343562653862393963393665313136-->
+?
+La restauration dépend de **l'intégrité, des clés, des versions et des dépendances externes**. Une base restaurée sans ses artefacts ou son tokenizer ne reconstitue pas le service.
+
+Exécuter un exercice isolé jusqu'à des prédictions validées, mesurer la durée et comparer les données perdues aux objectifs. Inclure registre, configurations et droits. La présence de fichiers de sauvegarde n'est qu'une étape de cette preuve.
 
 ---
 

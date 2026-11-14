@@ -1,7 +1,7 @@
 # Détection d'anomalies — Flashcards
 Tags: #flashcards #ai-engineering #ml-classique #anomalies #monitoring
 Vérifié le : 8 octobre 2026
-<!-- summary: rareté et erreur métier, outlier ou nouveauté, scores non probabilistes, baseline contextuelle, Isolation Forest, LOF, autoencodeurs, capacité de revue, prévalence, évaluation par incident, labels manquants et dérive, limites d'un quota fixe d'alertes. -->
+<!-- summary: rareté et erreur métier, outlier ou nouveauté, scores non probabilistes, baseline contextuelle, Isolation Forest, LOF, autoencodeurs, capacité de revue, prévalence, évaluation par incident, labels manquants et dérive, limites d'un quota fixe d'alertes, durée des incidents, seuil contextuel. -->
 
 
 Pourquoi une observation rare n'est-elle pas automatiquement une anomalie métier ? <!--anki:3262626534616237356331383432303561333862383131383336643362343139-->
@@ -109,6 +109,14 @@ Pourquoi un quota fixe d'alertes quotidiennes peut-il masquer une vraie crise d'
 Un **top-k quotidien** garantit une charge maximale mais fixe artificiellement le nombre d'alertes. Si les incidents réels se multiplient, beaucoup restent invisibles ; en période calme, le quota peut pousser des cas normaux.
 
 Combiner capacité d'investigation, seuils de gravité et surveillance du volume au-dessus de seuils stables. Regrouper les points par incident et prévoir une escalade lors d'une hausse majeure. Mesurer rappel d'incidents et retard de détection. Une politique de triage contrôle le travail humain ; elle ne doit pas faire croire que le risque métier est resté constant.
+
+---
+
+Pourquoi un seuil unique d'anomalie peut-il saturer la revue sur certains segments ? <!--anki:3331653661616237303235343437626562633265313031343930663563383561-->
+?
+Les scores peuvent avoir **des distributions différentes selon le contexte**, même sans incident. Un seuil global produit alors des volumes très inégaux de faux positifs.
+
+Examiner les taux et coûts par segment, puis calibrer une politique adaptée sans masquer les vrais incidents. Un quota identique par groupe ne garantit pas une qualité comparable. Valider les changements sur des périodes indépendantes et suivre la charge humaine.
 
 ---
 

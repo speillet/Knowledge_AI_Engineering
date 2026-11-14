@@ -1,7 +1,7 @@
 # SQL pour les pipelines et datasets IA — Flashcards
 Tags: #flashcards #ai-engineering #donnees #data-engineering
 Vérifié le : 9 octobre 2026 — références techniques et exemples de cette fiche.
-<!-- summary: jointures et filtres, NULL, agrégations, fenêtres, déduplication déterministe, anti-jointures, CTE, SQL temporel, plans de requête et contrôles de transformations, déduplication déterministe et égalités. -->
+<!-- summary: jointures et filtres, NULL, agrégations, fenêtres, déduplication déterministe, anti-jointures, CTE, SQL temporel, plans de requête et contrôles de transformations, déduplication déterministe et égalités, fenêtres ROWS et RANGE, filtre de jointure. -->
 
 
 Dans quel ordre logique raisonner sur une requête SQL analytique ? <!--anki:3638393465633964663639633434613639363865613739346437383030623434-->
@@ -14,16 +14,16 @@ Un filtre `WHERE` retire des lignes avant une moyenne ; `HAVING` filtre des grou
 
 Pourquoi un filtre WHERE sur la table droite peut-il changer le sens d’un LEFT JOIN ? <!--anki:3264633139653733613066663461666639323533666230303465336132353434-->
 ?
-Les lignes sans correspondance reçoivent des `NULL` à droite. Un filtre comme `WHERE t.statut = 'ouvert'` les exclut, car cette comparaison n'est pas vraie pour `NULL`.
+Les lignes sans correspondance reçoivent des `NULL` à droite. `WHERE t.statut = 'ouvert'` les exclut, car la comparaison n'est pas vraie pour `NULL`.
 ```sql
 SELECT c.id, t.id AS ticket_id
 FROM clients c
 LEFT JOIN tickets t
   ON t.client_id = c.id AND t.statut = 'ouvert';
 ```
-Placer ce critère dans `ON` conserve ici les clients sans ticket ouvert. Cela ne garantit pas une ligne par client : plusieurs tickets ouverts créent plusieurs correspondances. Choisir ensuite une agrégation ou une sélection cohérente avec le grain souhaité.
+Ce critère dans `ON` conserve les clients sans ticket ouvert. Tester un client sans ticket, un avec un ticket fermé et un avec deux ouverts : le résultat compte quatre lignes, dont deux avec un ticket nul.
 
-Tester trois clients : sans ticket, avec un ticket fermé, avec deux ouverts. Le résultat attendu doit préserver les trois clients tout en rendant explicite la multiplicité du dernier.
+Une variante `WHERE ... OR t.id IS NULL` ne suffit pas : le client ayant uniquement un ticket fermé a une correspondance, ensuite éliminée. Respecter le grain attendu.
 
 ---
 
@@ -74,9 +74,11 @@ Si la dernière version est un marqueur de suppression, le garder pendant le cla
 
 À ne pas confondre : cadre ROWS et cadre RANGE dans une fenêtre SQL ? <!--anki:3931653737313039383438393439353861626639663739373237303066636532-->
 ?
-**ROWS** délimite le cadre par positions dans l'ordre des lignes ; **RANGE** le définit selon les valeurs de tri et inclut les pairs selon ses bornes. Des timestamps égaux peuvent donc recevoir le même cumul avec RANGE, mais des cumuls successifs avec ROWS.
+**ROWS** délimite le cadre par positions ; **RANGE** le définit selon les valeurs de tri et ses bornes, en tenant compte des pairs.
 
-Déclarer le cadre et un ordre suffisamment précis lorsque cela compte. `ROWS BETWEEN 6 PRECEDING AND CURRENT ROW` désigne jusqu'à sept lignes, pas sept jours. Les syntaxes d'intervalles et valeurs par défaut varient selon le moteur ; tester doublons de dates et jours absents.
+Exemple : deux lignes de même date portent 10 et 20. Pour un cumul depuis le début, RANGE jusqu'à la valeur courante peut donner 30 aux deux ; ROWS donne 10 puis 30 si un identifiant départage les lignes dans cet ordre.
+
+Déclarer cadre et ordre explicitement. `ROWS BETWEEN 6 PRECEDING AND CURRENT ROW` signifie jusqu'à sept lignes, pas sept jours. Les syntaxes et valeurs par défaut varient selon le moteur ; tester ex æquo et jours absents.
 
 ---
 
@@ -205,6 +207,8 @@ Mise en situation : une moyenne de satisfaction augmente après une migration SQ
 - [PostgreSQL — IN, NOT IN et valeurs nulles](https://www.postgresql.org/docs/current/functions-comparisons.html)
 - [PostgreSQL — lecture des plans EXPLAIN](https://www.postgresql.org/docs/current/using-explain.html)
 - [dbt — modèles incrémentaux et clés](https://docs.getdbt.com/docs/build/incremental-models)
+
+- Complément du 14 novembre 2026 — Cadres ROWS/RANGE et agrégations : [PostgreSQL 18 — Value Expressions](https://www.postgresql.org/docs/18/sql-expressions.html).
 
 ## Connexions
 - [[150-010-modelisation-donnees-analytiques|Modélisation analytique]] — préserver le grain et la cardinalité des transformations

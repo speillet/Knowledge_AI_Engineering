@@ -1,6 +1,6 @@
 # RAG — Fondamentaux — Flashcards
 Tags: #flashcards #ai-engineering #rag #retrieval #llm
-<!-- summary: RAG ou fine-tuning, pipeline d'ingestion et de requête, stratégies de chunking, embeddings, bases vectorielles (HNSW, pgvector, Qdrant), top-k, grounding et citations, recall@k, quand ne pas faire de RAG, diagnostic avec contexte de référence. -->
+<!-- summary: RAG ou fine-tuning, pipeline d'ingestion et de requête, stratégies de chunking, embeddings, bases vectorielles (HNSW, pgvector, Qdrant), top-k, grounding et citations, recall@k, quand ne pas faire de RAG, diagnostic avec contexte de référence, budget de preuves, couverture des sous-questions. -->
 
 
 Qu'est-ce que le RAG ? <!--anki:45677223625926775b30-->
@@ -166,6 +166,22 @@ Comment une expérience avec contexte de référence aide-t-elle à diagnostique
 Fournir au générateur les **passages de référence annotés**, à la place du résultat de recherche, puis comparer avec le pipeline complet sur les mêmes questions.
 
 Si la réponse reste fausse avec ces passages, examiner génération, contradictions, format et critères d'évaluation. Si elle devient correcte, chercher plutôt dans ingestion, recherche, filtrage ou classement. Vérifier que les passages suffisent effectivement à répondre. Cette expérience isole un composant dans des conditions contrôlées ; elle ne mesure pas la performance réelle du retrieval et ne remplace pas une évaluation bout en bout.
+
+---
+
+Pourquoi compter les documents pertinents ne suffit-il pas pour répondre à une question RAG composée ? <!--anki:3632303937383862646565363461633562313937343666343865303661316162-->
+?
+Une question peut demander **plusieurs preuves complémentaires** : montant, date d'effet et exception. Dix passages sur le montant ne couvrent pas les deux autres éléments.
+
+Décomposer la réponse attendue en affirmations vérifiables, puis vérifier la présence d'une preuve pour chacune. Mesurer cette couverture en plus du rappel documentaire. Si une preuve manque, rechercher spécifiquement ou produire une réponse partielle explicite ; augmenter indistinctement top-k peut surtout ajouter des répétitions.
+
+---
+
+Calcul : un contexte RAG accepte 8 000 tokens ; consignes et question en prennent 1 000, la sortie réservée 2 000. Chaque passage avec ses métadonnées fait 500 tokens. Combien de passages peut-on fournir au maximum ? <!--anki:3431366164306331356236643432656462356135346161633139353062613033-->
+?
+Le budget documentaire est **8 000 − 1 000 − 2 000 = 5 000 tokens**, donc **10 passages** dans ces hypothèses.
+
+Il s'agit d'un plafond, pas d'un top-k optimal. Dédupliquer et sélectionner des preuves complémentaires peut être préférable à remplir toute la fenêtre. Compter aussi les séparateurs et autres messages s'ils ne sont pas inclus dans les données de départ ; vérifier les règles de comptage de l'API utilisée.
 
 ---
 

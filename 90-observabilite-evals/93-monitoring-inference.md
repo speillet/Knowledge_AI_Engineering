@@ -1,7 +1,7 @@
 # Monitoring de l'inférence & de l'usage — Flashcards
 Tags: #flashcards #ai-engineering #observability #monitoring #inference #llm
 Vérifié le : 8 octobre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: monitoring ou observabilité, couches à monitorer, métriques vLLM et GPU (DCGM), usage par équipe, finish_reason, validations de chaque réponse, signaux de qualité sans vérité terrain, erreurs et disponibilité, traces OpenTelemetry GenAI, dashboard, alertes, contrôles avant mise en production, détection de régression, journalisation des prompts, agrégation des histogrammes, buckets SLO, périmètres de mesure, débit global et segmentation, mesures manquantes et panne de télémétrie. -->
+<!-- summary: monitoring ou observabilité, couches à monitorer, métriques vLLM et GPU (DCGM), usage par équipe, finish_reason, validations de chaque réponse, signaux de qualité sans vérité terrain, erreurs et disponibilité, traces OpenTelemetry GenAI, dashboard, alertes, contrôles avant mise en production, détection de régression, journalisation des prompts, agrégation des histogrammes, buckets SLO, périmètres de mesure, débit global et segmentation, mesures manquantes et panne de télémétrie, métriques de file, alertes actionnables. -->
 
 
 Quelles couches faut-il monitorer pour un service d'inférence ? <!--anki:4f41512c3177716b6679-->
@@ -255,6 +255,22 @@ Comparer compteurs d'entrée, requêtes terminées et observations de durée ; a
 
 ---
 
+Pourquoi mesurer l'âge de la plus ancienne requête en file en plus de la longueur de file ? <!--anki:3839653062623265336561393466396138653932623033373739656465363766-->
+?
+Une petite file peut contenir **une requête bloquée depuis longtemps**, tandis qu'une grande file peut se résorber rapidement. La longueur décrit un volume ; l'âge révèle un risque de délai ou de starvation.
+
+Suivre aussi arrivées, départs et distribution d'attente par priorité. Une alerte doit préciser le périmètre et l'action attendue. Ne pas remettre l'âge à zéro lors d'une reprise si l'utilisateur attend toujours la même tâche.
+
+---
+
+Comment distinguer une alerte utile d'un simple indicateur intéressant pour l'inférence ? <!--anki:3338653035626532626437653432663639363965356535633935373963323163-->
+?
+Une alerte utile signale **un impact ou un risque concret nécessitant une action**, avec propriétaire et procédure. « GPU à 90 % » peut être normal ; « délais dépassés et file croissante » décrit un problème utilisateur.
+
+Garder les autres signaux dans les dashboards pour le diagnostic. Tester l'alerte, son routage et son retour à l'état normal. Trop d'alertes sans action augmente le bruit et retarde la détection des incidents importants.
+
+---
+
 ## Mises en situation
 
 Mise en situation : on te signale « l'assistant est lent ce matin ». Tu n'as que cette phrase. Dans quel ordre regardes-tu ? <!--anki:7a24417a6c476d607978-->
@@ -301,6 +317,8 @@ Mise en situation : le responsable conformité demande si vous journalisez les c
 
 - [vLLM — métriques de production](https://docs.vllm.ai/en/latest/usage/metrics/)
 - [OpenTelemetry — conventions sémantiques GenAI](https://github.com/open-telemetry/semantic-conventions-genai)
+
+- Complément du 14 novembre 2026 — Alertes et impact utilisateur : [Google SRE — Monitoring Distributed Systems](https://sre.google/sre-book/monitoring-distributed-systems/).
 
 ## Connexions
 - [[64-metriques-slo-inference|Métriques d'inférence & SLO]] — TTFT, TPOT, goodput, percentiles

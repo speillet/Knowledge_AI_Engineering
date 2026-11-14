@@ -1,7 +1,7 @@
 # Optimisation automatique de prompts (DSPy) — Flashcards
 Tags: #flashcards #ai-engineering #prompt-engineering #dspy #evals #llm
 Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: meta-prompting ou optimisation guidée par une métrique, DSPy (signatures, modules, optimiseurs BootstrapFewShot, MIPROv2, GEPA), APE, OPRO, TextGrad, quand l'utiliser ou non, sur-apprentissage, transfert entre modèles, optimisation de prompts ou fine-tuning, contraintes critiques d'optimisation. -->
+<!-- summary: meta-prompting ou optimisation guidée par une métrique, DSPy (signatures, modules, optimiseurs BootstrapFewShot, MIPROv2, GEPA), APE, OPRO, TextGrad, quand l'utiliser ou non, sur-apprentissage, transfert entre modèles, optimisation de prompts ou fine-tuning, contraintes critiques d'optimisation, objectif contraint, budget de recherche. -->
 
 
 Qu'est-ce que l'optimisation automatique de prompts ? <!--anki:4e78672b25565b49213f-->
@@ -122,6 +122,16 @@ Pourquoi optimiser un prompt sur une moyenne peut-il dégrader un cas métier cr
 Une **métrique moyenne** permet de compenser une régression rare par de nombreux petits gains. Un extracteur peut ainsi améliorer les adresses tout en dégradant les montants, pourtant décisifs.
 
 Définir une métrique de sélection et des **contraintes par segment** : montant exact, langue rare, refus nécessaire. Évaluer chaque candidat sur ces contraintes avant de comparer sa moyenne. Garder une validation indépendante et un budget d'essais explicite. Un optimiseur améliore l'objectif fourni ; il ne découvre pas automatiquement le coût métier des erreurs.
+
+Un zéro observé sur quelques cas critiques ne garantit pas un taux réel nul : préciser effectif et incertitude.
+
+---
+
+Calcul : un optimiseur teste 24 prompts sur 80 entrées avec 2 tirages, à 0,003 € par génération et 0,001 € par jugement. Quel budget d'évaluation prévoir, hors génération des prompts ? <!--anki:6365366138663130386563653431666462336530643362656231313532396239-->
+?
+Il faut **24 × 80 × 2 = 3 840 évaluations**. Chaque couple génération/jugement coûte 0,004 €, soit **15,36 €**.
+
+Ce montant ne couvre ni les propositions de l'optimiseur, ni les reprises, ni le test final. Le nombre de tirages améliore l'estimation de la variabilité, mais multiplier les candidats augmente aussi le risque de sélectionner une variante chanceuse. Réserver une part du budget à une confirmation indépendante.
 
 ---
 

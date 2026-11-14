@@ -1,7 +1,7 @@
 # Langfuse — Prompts, datasets & expériences — Flashcards
 Tags: #flashcards #ai-engineering #agents #production
 Vérifié le : 9 octobre 2026 — API citées confrontées aux documentations officielles ; limites explicitées dans les cartes.
-<!-- summary: labels et versions, cache de prompts, fallback, promotion, jeux d’évaluation, exécutions comparables, scores manquants, coûts par réussite et feedback, indépendance du jeu de confirmation. -->
+<!-- summary: labels et versions, cache de prompts, fallback, promotion, jeux d’évaluation, exécutions comparables, scores manquants, coûts par réussite et feedback, indépendance du jeu de confirmation, scores absents, cache des versions. -->
 
 
 À ne pas confondre : version et label d'un prompt Langfuse ? <!--anki:6132653866646365356530343433393639353338323563656432313331306364-->
@@ -98,6 +98,8 @@ Pourquoi distinguer score nul, score absent et erreur d'évaluateur dans Langfus
 
 Publier la couverture d'évaluation et les erreurs avec les scores : « 0,8 de moyenne sur 150 cas évalués sur 200, soit 75 % de couverture, et 10 erreurs du juge ». Si un candidat produit des réponses qui font échouer le juge, les exclure silencieusement peut le favoriser. Fixer à l'avance le traitement des exécutions invalides et analyser leur fréquence par candidat.
 
+Suivre aussi le délai de scoring : une comparaison trop précoce mélange absence temporaire et échec définitif.
+
 ---
 
 Comment versionner un juge sans casser la lecture des scores historiques ? <!--anki:6232656333363865326132613465666539363735653837383336623266623561-->
@@ -139,6 +141,14 @@ Pourquoi conserver un test protégé en dehors des expériences répétées dans
 Un **dataset consulté à chaque expérience** devient un outil de développement, même si son nom contient « test ». Les choix de prompts et de modèles finissent par s'adapter à ses particularités.
 
 Garder un jeu de développement pour itérer et une évaluation indépendante pour confirmer la décision finale. Versionner les cas, les références et le protocole, puis tracer le nombre de variantes comparées. Faire examiner les échecs sans recopier leurs réponses dans les exemples d'entraînement. L'outil d'expérimentation facilite les comparaisons ; il ne garantit pas leur indépendance.
+
+---
+
+Comment vérifier qu'une promotion de prompt est réellement appliquée à tous les workers ? <!--anki:6334356461353433336635393465633938333436643930383636363362343834-->
+?
+Tracer **la version résolue pour chaque appel**, pas seulement le label demandé. Des caches locaux peuvent continuer à servir l'ancienne version après déplacement d'un label.
+
+Mesurer la distribution des versions, tester expiration et redémarrage, puis confirmer la bascule. Pour une expérience contrôlée, résoudre et fixer une version immuable. Un changement de label dans le registre ne constitue pas une preuve de changement immédiat sur toutes les instances.
 
 ---
 

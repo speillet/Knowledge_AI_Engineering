@@ -1,20 +1,22 @@
 # Caching agressif — Flashcards
 Tags: #flashcards #ai-engineering #finops #caching #couts #llm
 Vérifié le : 17 octobre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: prompt caching (TTL, prix d'écriture et de lecture), structure de prompt stable, ce qui casse le cache, contexte append-only, requêtes parallèles et pré-chauffage, caches de réponses, d'embeddings et d'outils, prompt caching, cache exact ou sémantique, invalidation, sécurité, pilotage, faux équivalents du cache sémantique. -->
+<!-- summary: prompt caching (TTL, prix d'écriture et de lecture), structure de prompt stable, ce qui casse le cache, contexte append-only, requêtes parallèles et pré-chauffage, caches de réponses, d'embeddings et d'outils, prompt caching, cache exact ou sémantique, invalidation, sécurité, pilotage, faux équivalents du cache sémantique, stampede, fraîcheur vérifiée. -->
 
 
 Qu'est-ce que le caching agressif pour une application LLM ? <!--anki:48792f4f3f4d7031763c-->
 ?
-**Ne jamais payer deux fois le même travail** : réutiliser à chaque niveau ce qui a déjà été calculé (KV cache des préfixes, réponses, embeddings, résultats d'outils et de retrieval), et **concevoir prompts et architecture** pour maximiser le taux de hit. Pour un agent en production, le taux de hit du KV cache est souvent la métrique qui pilote le plus le coût et la latence.
+Réutiliser **un travail encore valide et autorisé** : préfixes KV, réponses, embeddings ou résultats d'outils. Choisir chaque cache selon le calcul évité, la fréquence de réutilisation et le coût de stockage et d'invalidation.
+
+Le meilleur taux de hit n'est pas nécessairement le meilleur coût par succès : de petits hits fréquents peuvent économiser moins qu'un rare calcul lourd. Mesurer économie nette, latence et qualité. Ne pas conserver une donnée périmée ou interdite pour protéger le taux de hit ; la correction reste une condition de réutilisation.
 
 ---
 
 Pourquoi les agents profitent-ils autant du prompt caching ? <!--anki:7a26753c6f77592c2f51-->
 ?
-Leur ratio **entrée / sortie** est énorme : à chaque tour, tout l'historique est renvoyé pour quelques centaines de tokens générés. Avec un préfixe stable, **presque tout l'input** est lu depuis le cache, facturé une fraction du prix normal et sans prefill.
+Les agents peuvent renvoyer **un long historique et des consignes stables à chaque tour**. La réutilisation des préfixes admissibles évite une partie du prefill et peut réduire la facturation selon le fournisseur.
 
-Le gain dépend du **préfixe réellement identique**, de sa durée de vie et des règles de facturation. Les nouveaux résultats d'outils et la sortie restent à traiter ; le cache n'efface donc pas toute la latence. Mesurer tokens lus et écrits en cache ainsi que le TTFT, notamment au premier tour et après une compaction.
+Le bénéfice dépend des tokens réellement identiques, de l'alignement du cache, de sa durée de vie et des tarifs. Les nouveaux résultats d'outils et la sortie restent à traiter ; les suffixes lisent encore les états du préfixe. Mesurer tokens réutilisés, écrits et nouveaux, ainsi que le TTFT, notamment au premier tour et après compaction. Un contexte stable ne garantit pas un hit intégral.
 
 ---
 
@@ -59,13 +61,11 @@ Comment structurer un prompt pour le cache ? <!--anki:4f51376957666f576324-->
 
 Qu'est-ce qui invalide silencieusement le cache de préfixe d'un LLM ? <!--anki:6e785d3b6e524c4f7c69-->
 ?
-- **Un seul octet modifié** dans le préfixe (horodatage, UUID, JSON non trié)
-- Ajouter, retirer ou **réordonner un outil**
-- **Changer de modèle** : les caches sont propres à chaque modèle
-- **Réécrire l'historique** (supprimer ou résumer des messages passés)
-- Changer certains paramètres en cours de route (thinking, effort)
+Une modification peut **réduire le préfixe commun à partir du point de divergence**, sans nécessairement supprimer tout le cache réutilisable. Cela dépend des tokens, blocs et règles du moteur.
 
-Symptôme : les tokens **lus en cache tombent à zéro** dans les champs `usage`, sans aucune erreur.
+Horodatage en tête, outils réordonnés ou historique réécrit réduisent souvent le partage. Un changement de poids, d'adapter ou de configuration affectant les états exige un espace de cache compatible. Certains fournisseurs imposent d'autres règles d'admissibilité.
+
+Observer les tokens lus et écrits, pas seulement un booléen : le hit peut devenir partiel ou nul. Un changement d'octet ne se traduit pas universellement par une invalidation totale ; vérifier la sérialisation et la tokenisation effectives.
 
 ---
 
@@ -151,6 +151,22 @@ Construire des paires sur négation, montant, date, identité et version de cont
 
 ---
 
+Qu'est-ce qu'un cache stampede dans une application LLM et comment le limiter ? <!--anki:3337623436326133643763393434623438636330656630663764376432666530-->
+?
+À l'expiration d'une entrée populaire, **de nombreuses requêtes recalculent simultanément le même résultat**. Le cache réduit la charge moyenne mais crée une pointe coûteuse.
+
+Regrouper les calculs concurrents d'une même clé, répartir les expirations et prévoir des délais bornés. Servir une ancienne valeur n'est acceptable que si fraîcheur et autorisations le permettent. Tester la panne du worker propriétaire pour ne pas laisser tous les clients bloqués.
+
+---
+
+Pourquoi la clé d'un cache de réponse doit-elle inclure davantage que la question textuelle ? <!--anki:6664316432633939336130663463326138313965396364376135653234363266-->
+?
+La réponse dépend aussi **du tenant, des droits, des versions de sources et de la configuration pertinente**. Une clé fondée sur le seul texte peut réutiliser une réponse privée ou périmée.
+
+Choisir une clé et une invalidation correspondant à ces dépendances, puis revérifier les droits lorsque nécessaire. Trop détailler la clé réduit le partage ; l'optimisation vient après la correction. Un hash de question ne rend pas le contenu du cache anonyme.
+
+---
+
 ## Mises en situation
 
 Mise en situation : le coût de ton agent a doublé du jour au lendemain, sans hausse du trafic, et aucune erreur n'apparaît. Quelle est ta première hypothèse ? <!--anki:632335685b6277747a4b-->
@@ -193,6 +209,8 @@ Mise en situation : un cache de réponses te fait économiser 30 %, mais le supp
 
 - [Anthropic — fonctionnement et limites du prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching)
 - [vLLM — Automatic Prefix Caching](https://docs.vllm.ai/en/latest/features/automatic_prefix_caching/)
+
+- Complément du 14 novembre 2026 — Blocs complets, divergence et identité du cache : [vLLM — Automatic Prefix Caching](https://docs.vllm.ai/en/latest/design/prefix_caching/).
 
 ## Connexions
 - [[20-010-rag-droits-versions|RAG : droits & versions]] — invalider les réponses après mise à jour ou révocation

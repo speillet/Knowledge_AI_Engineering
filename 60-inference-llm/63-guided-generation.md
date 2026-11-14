@@ -1,6 +1,6 @@
 # Guided generation (sorties structurées) — Flashcards
 Tags: #flashcards #ai-engineering #inference #structured-output #llm
-<!-- summary: masquage des logits, JSON Schema, regex et grammaires, XGrammar et Outlines, structured outputs des API, mode JSON ou structured outputs, validation métier, représentation explicite des informations absentes. -->
+<!-- summary: masquage des logits, JSON Schema, regex et grammaires, XGrammar et Outlines, structured outputs des API, mode JSON ou structured outputs, validation métier, représentation explicite des informations absentes, refus et schéma, contraintes croisées. -->
 
 
 Qu'est-ce que la guided generation ? <!--anki:574e547021574d687c-->
@@ -119,6 +119,22 @@ Comment représenter une information absente sans forcer une invention dans une 
 Prévoir dans le **contrat de sortie** un état explicite : valeur absente, non applicable, ambiguë ou extraction impossible, selon le besoin. Un champ obligatoire sans représentation de l'inconnu peut pousser le modèle à remplir une valeur plausible.
 
 Par exemple, distinguer `montant: null` d'un montant égal à zéro et associer une raison contrôlée. Valider séparément refus, sortie incomplète et résultat conforme ; les garanties de schéma ont des conditions. Une structure valide ne prouve pas que le document contient l'information ni que la valeur extraite est correcte.
+
+---
+
+Pourquoi prévoir un état de refus dans un schéma de sortie contrainte ? <!--anki:3531326435383766363035323463653538663239306535303964386137663663-->
+?
+Si le schéma exige toujours une réponse affirmative, le modèle peut être **forcé de remplir des champs sans preuve**. Prévoir une variante explicite « indisponible » ou « refus », avec motif adapté.
+
+Le consommateur doit traiter cette variante comme une issue prévue. Vérifier aussi les refus et erreurs propres à l'API, qui peuvent suivre un autre contrat que la sortie demandée. Un schéma admissible ne garantit pas que la réponse utile existe.
+
+---
+
+Pourquoi une grammaire JSON ne garantit-elle pas que date_debut précède date_fin ? <!--anki:3437316165623139306465363464653239613762343766353733353866363535-->
+?
+La grammaire contraint surtout **la forme des sorties autorisées**. Une relation métier entre champs exige une validation adaptée, même si chaque date est syntaxiquement valide.
+
+Contrôler la relation après parsing et renvoyer une erreur ciblée ou une abstention. Éviter une correction automatique qui inverse les dates sans preuve. Les sous-ensembles de JSON Schema supportés varient ; ne pas supposer qu'une contrainte déclarée est effectivement appliquée par le moteur.
 
 ---
 

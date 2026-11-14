@@ -1,7 +1,7 @@
 # LangChain — Contrats, outils & middleware en production — Flashcards
 Tags: #flashcards #ai-engineering #agents #production
 Vérifié le : 9 octobre 2026 — API citées confrontées aux documentations officielles ; limites explicitées dans les cartes.
-<!-- summary: contrats métier, ToolRuntime, ToolMessage, sorties structurées, erreurs, async, middleware, budgets, isolation, tests et mises à niveau, refus d'autorisation et fallback. -->
+<!-- summary: contrats métier, ToolRuntime, ToolMessage, sorties structurées, erreurs, async, middleware, budgets, isolation, tests et mises à niveau, refus d'autorisation et fallback, délais propagés, typage des erreurs. -->
 
 
 Pourquoi séparer un service métier de son outil LangChain ? <!--anki:3135346462363938313364363461623739393665643963303534346663363931-->
@@ -127,6 +127,22 @@ Pourquoi une exception d'autorisation ne doit-elle pas déclencher le fallback t
 Un **refus d'autorisation** est une décision de contrôle, pas une indisponibilité à contourner. Un fallback vers un autre outil ou compte pourrait exécuter l'action que le premier chemin a correctement refusée.
 
 Classer les erreurs avant les middlewares de retry et de fallback. Réserver les reprises aux erreurs récupérables, avec le même périmètre d'identité et un budget borné. Tester explicitement qu'un refus ne provoque aucun appel alternatif avec davantage de droits. La chaîne doit expliquer le refus ou demander l'information permise, sans transformer la résilience en élévation de privilèges.
+
+---
+
+Pourquoi propager une échéance absolue à travers les outils et middlewares LangChain ? <!--anki:3061393739326664653036363431646561616636393065393565343430373765-->
+?
+Chaque couche peut respecter son timeout tout en dépassant **le délai total utilisateur**. Une échéance commune permet de calculer le temps restant avant chaque appel ou reprise.
+
+Si le budget restant est insuffisant, arrêter proprement ou produire un résultat partiel prévu. Ne pas relancer un appel avec un timeout complet après avoir presque épuisé le budget. L'annulation doit atteindre les opérations sous-jacentes lorsque c'est possible ; interrompre l'attente locale ne garantit pas leur arrêt.
+
+---
+
+Comment éviter qu'une erreur technique d'outil LangChain soit traitée comme une donnée métier ? <!--anki:3434633035396431666562653438316161663366376266326234316533623639-->
+?
+Utiliser un **résultat discriminé** : succès avec données, refus, erreur temporaire ou résultat indéterminé. « Erreur 503 » ne doit pas devenir le texte d'un document à résumer.
+
+Préserver l'identifiant d'appel et des détails utiles sans exposer de secrets. Le middleware décide des reprises autorisées ; le modèle reçoit un statut qui lui permet de demander une correction ou de signaler l'échec. Tester notamment une liste vide légitime face à une recherche indisponible.
 
 ---
 

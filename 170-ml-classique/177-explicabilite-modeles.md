@@ -1,7 +1,7 @@
 # Explicabilité & diagnostic des modèles — Flashcards
 Tags: #flashcards #ai-engineering #ml-classique #explicabilite #shap
 Vérifié le : 8 octobre 2026
-<!-- summary: explication locale ou globale, importance par permutation, variables corrélées, contributions SHAP, population de référence, log-odds, PDP et ICE, contrefactuels actionnables, justifications générées et fidélité de l'explication, stabilité des explications. -->
+<!-- summary: explication locale ou globale, importance par permutation, variables corrélées, contributions SHAP, population de référence, log-odds, PDP et ICE, contrefactuels actionnables, justifications générées et fidélité de l'explication, stabilité des explications, importance et causalité, explication des transformations. -->
 
 
 À ne pas confondre : explication locale et explication globale d'un modèle ? <!--anki:3236346461646234333634363465323038633662376664376335303433323061-->
@@ -112,6 +112,22 @@ Pourquoi tester la stabilité d'une explication sur des entrées proches avant d
 Une **explication instable** peut donner des raisons très différentes pour deux dossiers presque identiques, même si la prédiction varie peu. Elle devient difficile à utiliser pour décider d'une correction.
 
 Appliquer des perturbations plausibles qui préservent le sens et comparer prédiction, contributions et recommandations. Contrôler unités, population de référence et variables corrélées. Une variation peut être légitime près d'une frontière ; la documenter plutôt que promettre une stabilité absolue. Valider séparément fidélité au modèle et utilité pour l'utilisateur : une explication stable peut rester fausse ou non actionnable.
+
+---
+
+Pourquoi un contrefactuel explicatif doit-il respecter les contraintes de faisabilité entre variables ? <!--anki:3962633839386534383734373434373161323965303633623037383630303135-->
+?
+Une modification peut améliorer le score tout en décrivant **une situation impossible** : réduire l’âge en conservant trente ans d’ancienneté, ou changer un revenu sans respecter ses composantes.
+
+Contraindre les variables immuables et leurs dépendances, puis distinguer suggestion mathématique et intervention réellement disponible. Vérifier la stabilité de la proposition. Un contrefactuel plausible pour le modèle n’est pas automatiquement causal, légal ou réalisable pour la personne concernée.
+
+---
+
+Pourquoi expliquer le pipeline complet plutôt que seulement l'estimateur final ? <!--anki:6264373666653338663361363435323338626662386334353164306333393436-->
+?
+L'estimateur reçoit souvent **des variables transformées, imputées ou encodées**. Une contribution sur ces colonnes peut être incompréhensible ou trompeuse pour l'utilisateur.
+
+Relier les transformations aux entrées métier, vérifier leur cohérence et préciser le point de référence de l'explication. Tester les valeurs manquantes et catégories inconnues. Une explication fidèle au modèle final doit encore être traduite correctement pour expliquer la décision du système.
 
 ---
 

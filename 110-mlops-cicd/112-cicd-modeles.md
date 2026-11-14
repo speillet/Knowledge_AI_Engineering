@@ -1,6 +1,6 @@
 # CI/CD des modèles — Flashcards
 Tags: #flashcards #ai-engineering #mlops #cicd #llm
-<!-- summary: evals statistiques et tests déterministes, eval gates (exemple de seuils), artefact déployé, blue/green et canary, shadow deployment, rollback, GitOps, tests d'une app LLM, prompts en CI, pipeline complet, rollback après migration de schéma, livraison ou déploiement continus, smoke training, même artefact promu, canary avec labels tardifs. -->
+<!-- summary: evals statistiques et tests déterministes, eval gates (exemple de seuils), artefact déployé, blue/green et canary, shadow deployment, rollback, GitOps, tests d'une app LLM, prompts en CI, pipeline complet, rollback après migration de schéma, livraison ou déploiement continus, smoke training, même artefact promu, canary avec labels tardifs, shadow sans écriture, contrôle de promotion. -->
 
 
 Qu'apporte le CI/CD d'une app LLM en plus du CI/CD classique ? <!--anki:4a6b3758755748575f5d-->
@@ -130,6 +130,22 @@ Pourquoi un canary techniquement sain ne valide-t-il pas encore la qualité d'un
 Le **canary** donne rapidement des signaux de service : erreurs, latence, formats, volumes et coût. Si la cible est une issue à trente jours, ces premières minutes ne disent pas encore si les prédictions sont justes.
 
 Définir des garde-fous immédiats et un critère distinct fondé sur cohortes mûres. Conserver assignation, version et décisions pour rapprocher les résultats futurs. Une promotion partielle peut rester sous observation selon le risque ; ne pas remplacer l'issue par un proxy sans vérifier sa portée. La réussite du transport et l'absence d'incident visible ne prouvent ni calibration ni gain métier durable.
+
+---
+
+Pourquoi neutraliser les effets métier d'un shadow deployment de modèle ? <!--anki:3039386261623230326530373465626362373232353531646665663633353561-->
+?
+Le shadow doit permettre **la comparaison sur du trafic réel sans doubler les décisions exécutées**. Un second remboursement ou une seconde notification transformerait le test en action de production.
+
+Envoyer les entrées vers une voie d'évaluation avec destinations contrôlées, puis comparer résultats et latence. Vérifier quotas, données sensibles et charge ajoutée. Un label « shadow » dans la configuration ne suffit pas si les outils conservent leurs accès d'écriture.
+
+---
+
+Comment éviter qu'un résultat d'évaluation ancien autorise une release modifiée depuis ? <!--anki:6438363066366237643932363431313462336133643131353534393436363636-->
+?
+Lier l'approbation à **l'empreinte exacte du manifeste évalué** : modèle, code, données de référence, seuils et configuration. Toute modification pertinente invalide ou renouvelle cette validation.
+
+Vérifier ce lien au moment de la promotion, pas seulement dans la CI initiale. Un badge vert associé à une branche mutable ne prouve pas que l'artefact déployé a passé les tests. Conserver la preuve et ses limites avec la release.
 
 ---
 

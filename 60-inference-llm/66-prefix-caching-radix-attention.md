@@ -1,7 +1,7 @@
 # Prefix caching & RadixAttention — Flashcards
 Tags: #flashcards #ai-engineering #inference #kv-cache #caching #llm
 Vérifié le : 12 novembre 2026 — mécanismes et limites confrontés aux articles et documentations cités ; performances à mesurer sur la cible.
-<!-- summary: prefix caching de vLLM, arbre radix de SGLang, éviction, ordonnancement et routage cache-aware, offloading du KV cache (LMCache), limites, canal auxiliaire temporel, métriques par requête et token, gain de TTFT réel, affinité et surcharge, isolation par cache_salt, arbre compressé pas à pas, références et séparation des branches, calcul de partage, cache hybride et logits. -->
+<!-- summary: prefix caching de vLLM, arbre radix de SGLang, éviction, ordonnancement et routage cache-aware, offloading du KV cache (LMCache), limites, canal auxiliaire temporel, métriques par requête et token, gain de TTFT réel, affinité et surcharge, isolation par cache_salt, arbre compressé pas à pas, références et séparation des branches, calcul de partage, cache hybride et logits, alignement des blocs, invalidation du modèle. -->
 
 
 Qu'est-ce que le prefix caching côté serveur ? <!--anki:703830706b2926403428-->
@@ -220,6 +220,22 @@ Recherche du cache, contrôles de compatibilité, allocation et éventuel transf
 
 ---
 
+Calcul : un cache ne partage que des blocs complets de 16 tokens. Deux prompts partagent exactement leurs 30 premiers tokens puis divergent. Combien de tokens peuvent-ils réutiliser selon cette règle ? <!--anki:3161306464643963313063623438326561303738653264613238313339313939-->
+?
+Un seul bloc complet appartient au préfixe commun : **16 tokens**. Les 14 suivants ne constituent pas un second bloc entièrement identique.
+
+Ce calcul décrit une règle d'alignement donnée, pas tous les moteurs radix ou caches hybrides. Le préfixe textuel peut donc surestimer le travail réutilisable. Mesurer les tokens effectivement servis depuis le cache et distinguer correspondance logique, allocation physique et calcul évité.
+
+---
+
+Pourquoi faut-il invalider ou séparer le prefix cache lors d'un changement de poids ou d'adapter ? <!--anki:3365366634333865316139353433306362386365323563643562386563303538-->
+?
+Les K/V dépendent **du calcul du modèle**, pas seulement des identifiants de tokens. Un même prompt traité avec des poids différents ne produit généralement pas les mêmes états.
+
+La clé et le périmètre du cache doivent distinguer les configurations qui changent ces états, dont l'adapter applicable. Tester une bascule de modèle avec cache chaud. Partager des préfixes entre variantes incompatibles peut produire des sorties erronées sans erreur de format visible.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton assistant multi-tours affichait 70 % de hits sur le prefix cache. Après une mise à jour, le taux tombe à 5 % et le TTFT double. Que cherches-tu ? <!--anki:7964774643443c5a3328-->
@@ -270,6 +286,8 @@ Mise en situation : ton service multi-clients partage un même modèle, et un cl
 - [SGLang — politiques d’éviction du cache radix](https://github.com/sgl-project/sglang/blob/main/docs/docs/advanced_features/radix_eviction_policy.mdx) — revue ciblée du 12 novembre 2026 : politiques actuelles, à distinguer du mécanisme classique.
 
 - [SGLang — cache radix unifié](https://www.sglang.io/blog/unified-radix-cache) — revue ciblée du 12 novembre 2026 : frontière de réutilisation commune aux composants des modèles hybrides.
+
+- Complément du 14 novembre 2026 — Blocs complets, divergence et identité du cache : [vLLM — Automatic Prefix Caching](https://docs.vllm.ai/en/latest/design/prefix_caching/).
 
 ## Connexions
 - [[61-kv-cache-attention|KV cache & attention]] — PagedAttention et prefix caching

@@ -1,6 +1,6 @@
 # Probabilités & sampling — Flashcards
 Tags: #flashcards #ai-engineering #inference #sampling #probabilites #llm
-<!-- summary: logits, température, greedy, top-k, top-p et min-p, probabilités conditionnelles, logprobs, perplexité, exercices de renormalisation, sampling et limites de la confiance, scores de classes à plusieurs tokens. -->
+<!-- summary: logits, température, greedy, top-k, top-p et min-p, probabilités conditionnelles, logprobs, perplexité, exercices de renormalisation, sampling et limites de la confiance, scores de classes à plusieurs tokens, entropie, ordre des filtres. -->
 
 
 Que produit un LLM à chaque pas de génération ? <!--anki:7a6f51326e26623f245b-->
@@ -160,6 +160,22 @@ Pourquoi les probabilités de deux libellés ne se comparent-elles pas naïvemen
 La **probabilité d'une séquence** multiplie les probabilités conditionnelles de ses tokens. Une classe écrite en trois tokens ne se compare pas directement à la seule probabilité du premier token d'une autre classe.
 
 Calculer les séquences complètes, définir le traitement des variantes et du token de fin, ou choisir des libellés contrôlés avec un protocole évalué. Une normalisation par longueur change le score et n'en fait pas automatiquement une probabilité de classe. Calibrer la décision sur des exemples annotés représentatifs avant d'utiliser ce score pour une abstention.
+
+---
+
+À ne pas confondre : faible entropie des tokens et vérité de la réponse ? <!--anki:3233396432613335333961613464666661333865616339393038343738303032-->
+?
+Une faible entropie indique une **distribution concentrée sur quelques tokens possibles** dans le contexte. Le modèle peut être très certain de compléter une phrase fausse ou une expression familière.
+
+La vérité nécessite une vérification externe ou une calibration empirique sur la tâche. L'entropie peut aider à détecter certains comportements inhabituels, mais ne constitue pas un certificat factuel. Une réponse correcte peut aussi admettre plusieurs formulations et donc une forte diversité lexicale.
+
+---
+
+Pourquoi l'ordre d'application de température, top-k et top-p peut-il changer le sampling ? <!--anki:3164333733653231663935393461643462396164323033363133356364336434-->
+?
+La température modifie les probabilités relatives ; **top-p choisit un ensemble selon leur masse cumulée**. Appliquer top-p avant ou après cette transformation peut donc retenir des tokens différents.
+
+Les renormalisations et pénalités ajoutent d'autres dépendances à l'ordre. Pour reproduire une expérience, conserver le pipeline effectif du moteur, pas seulement les valeurs des paramètres. Deux APIs acceptant les mêmes noms de réglages ne garantissent pas une distribution identique.
 
 ---
 
