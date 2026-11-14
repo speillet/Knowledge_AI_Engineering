@@ -222,4 +222,6 @@ Mise en situation : la gateway MCP t'alerte. La description de l'outil `search_d
 - [[34-harness-plugins|Harness & plugins]] — skills et plugins
 - [[85-carte-protocoles-agentiques|Carte des protocoles]] — chaque protocole est une frontière de confiance
 - [[101-securite-llm-guardrails|Sécurité LLM]] — injection, exfiltration et guardrails
+- [[90-014-evaluation-skills-agents|Évaluer des skills d'agent]] — tester une skill avant de la partager
+- [[90-015-agent-skills-format-skills-ref|Agent Skills & skills-ref]] — ce que la validation du format vérifie, et ce qu'elle ignore
 - [[00-moc-ai-engineering|MOC AI Engineering]]

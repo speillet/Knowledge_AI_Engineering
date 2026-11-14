@@ -259,4 +259,6 @@ Mise en situation : après une modification de format, ton juge passe de 82 % à
 - [[68-quantization|Quantization]] — réduire la précision pour gagner mémoire et vitesse
 - [[93-monitoring-inference|Monitoring de l'inférence]] — métriques, validations et signaux de production
 - [[90-012-langfuse-prompts-experiences|Langfuse — Prompts, datasets & expériences]] — calibrer les évaluateurs
+- [[90-014-evaluation-skills-agents|Évaluer des skills d'agent]] — noter avec preuves les assertions d'un eval de skill
+- [[90-016-harbor-evaluation-agents|Harbor]] — des juges LLM dans les vérificateurs de tâches
 - [[00-moc-ai-engineering|MOC AI Engineering]]

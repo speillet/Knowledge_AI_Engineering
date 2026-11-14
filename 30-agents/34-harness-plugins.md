@@ -184,4 +184,6 @@ Mise en situation : tu veux garantir qu'aucun agent de ton équipe ne puisse lan
 - [[39-memoire-agents|Mémoire des agents]] — ce que l'agent retient d'une session à l'autre
 - [[43-langchain-agents|LangChain — Agents]] — agents et middleware LangChain
 - [[44-langgraph-fondamentaux|LangGraph]] — graphes d'états pour agents et workflows
+- [[90-014-evaluation-skills-agents|Évaluer des skills d'agent]] — mesurer le déclenchement et l'utilité d'une skill
+- [[90-015-agent-skills-format-skills-ref|Agent Skills & skills-ref]] — le format ouvert des skills et sa validation
 - [[00-moc-ai-engineering|MOC AI Engineering]]

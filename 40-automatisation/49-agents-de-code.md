@@ -182,4 +182,5 @@ Mise en situation : tu veux que l'agent de code mette à jour chaque semaine les
 - [[145-cas-system-design|Cas de system design]] — des architectures types commentées
 - [[38-plateformes-agents|Plateformes d'agents]] — runtime, sandbox, gateway d'outils et identité
 - [[94-evals-methodologie|Évaluation — méthodologie]] — construire un jeu d'eval et des métriques fiables
+- [[90-016-harbor-evaluation-agents|Harbor]] — évaluer un agent de code sur Terminal-Bench ou ses propres tâches
 - [[00-moc-ai-engineering|MOC AI Engineering]]

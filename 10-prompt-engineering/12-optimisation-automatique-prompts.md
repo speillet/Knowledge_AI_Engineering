@@ -173,4 +173,5 @@ Mise en situation : ton équipe veut migrer vers un modèle deux fois moins cher
 - [[92-chainforge-evals-prompts|ChainForge]] — comparer des variantes à la main
 - [[53-donnees-synthetiques-distillation|Distillation]] — du programme optimisé au petit modèle
 - [[146-choix-modeles|Choix de modèles]] — recompiler à chaque migration
+- [[90-014-evaluation-skills-agents|Évaluer des skills d'agent]] — optimiser la description d'une skill sans sur-ajuster
 - [[00-moc-ai-engineering|MOC AI Engineering]]

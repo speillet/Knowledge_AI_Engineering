@@ -48,7 +48,7 @@ Pour se concentrer sur les agents, à travers les sections :
 2. [[32-tool-calling|Tool calling]], [[33-mcp|MCP]] et [[85-carte-protocoles-agentiques|carte des protocoles]] — relier l'agent au monde
 3. [[35-context-engineering|Context engineering]] et [[39-memoire-agents|mémoire]] — ce que l'agent sait à chaque tour
 4. [[36-orchestration-agents|Multi-agents]], [[27-agents-recherche-deep-research|agents de recherche]] et [[49-agents-de-code|agents de code]] — les grands cas d'usage
-5. [[96-evals-rag-agents|Évaluer]] puis [[98-debogage-agents|déboguer]] un agent
+5. [[96-evals-rag-agents|Évaluer]] puis [[98-debogage-agents|déboguer]] un agent ; mesurer ses [[90-014-evaluation-skills-agents|skills]] et l'exécuter sur des tâches [[90-016-harbor-evaluation-agents|Harbor]]
 6. [[102-menaces-agents|Menaces]] et [[103-defenses-agents|défenses]] — sécuriser
 7. [[84-streaming-integration-applicative|Intégration applicative]] et [[38-plateformes-agents|plateformes]] — mettre en production
 8. [[115-plateformes-agents-gouvernance|Gouvernance]] et [[55-rl-agentique|RL agentique]] — niveau senior
@@ -253,6 +253,9 @@ L’[audit d’inférence du 8 octobre](docs/audit-inference-llm-2026-10-08.md) 
 - [[90-011-langfuse-instrumentation-production|Langfuse — Instrumentation en production]]
 - [[90-012-langfuse-prompts-experiences|Langfuse — Prompts, datasets & expériences]]
 - [[90-013-tests-agents-reprises|Agents — Tests de contrats, pannes & reprises]]
+- [[90-014-evaluation-skills-agents|Évaluer des skills d'agent]]
+- [[90-015-agent-skills-format-skills-ref|Agent Skills : format & validation avec skills-ref]]
+- [[90-016-harbor-evaluation-agents|Harbor : évaluer des agents en conteneurs]]
 
 ## 100 — Sécurité & guardrails
 

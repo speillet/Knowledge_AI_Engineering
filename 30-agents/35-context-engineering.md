@@ -198,4 +198,6 @@ Mise en situation : ton agent doit analyser 300 pages de documentation technique
 - [[45-langgraph-production|LangGraph — Production]] — persistance, reprise et supervision humaine
 - [[49-agents-de-code|Agents de code]] — utiliser et intégrer les agents de code
 - [[115-plateformes-agents-gouvernance|Plateformes d'agents — gouvernance]] — identité, politiques, audit et coûts d'une flotte d'agents
+- [[90-014-evaluation-skills-agents|Évaluer des skills d'agent]] — vérifier qu'une skill chargée au besoin sert vraiment
+- [[90-015-agent-skills-format-skills-ref|Agent Skills & skills-ref]] — le coût du catalogue de skills dans le contexte
 - [[00-moc-ai-engineering|MOC AI Engineering]]

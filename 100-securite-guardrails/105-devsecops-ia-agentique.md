@@ -313,4 +313,5 @@ Revue ciblée du 13 novembre 2026 : affirmations précisées dans cette passe ; 
 - [[101-securite-llm-guardrails|Sécurité LLM & guardrails]] — OWASP LLM et red teaming
 - [[155-ai-act|AI Act]] — obligations réglementaires
 - [[33-mcp|MCP]] — le protocole standard entre agents et outils
+- [[90-015-agent-skills-format-skills-ref|Agent Skills & skills-ref]] — valider en CI un dépôt de skills
 - [[00-moc-ai-engineering|MOC AI Engineering]]
