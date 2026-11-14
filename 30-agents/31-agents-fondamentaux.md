@@ -1,6 +1,6 @@
 # Fondamentaux des agents — Flashcards
 Tags: #flashcards #ai-engineering #agents #llm
-<!-- summary: workflow ou agent, pattern ReAct, composants d'un agent minimal, trois formes de human-in-the-loop, risques et parades, ordres de grandeur de coût, conditions d'arrêt, preuve de fin de tâche. -->
+<!-- summary: workflow ou agent, pattern ReAct, composants d'un agent minimal, trois formes de human-in-the-loop, risques et parades, ordres de grandeur de coût, conditions d'arrêt, preuve de fin de tâche, observabilité de l'environnement, succès et trajectoire. -->
 
 
 Qu'est-ce qu'un agent LLM ? <!--anki:502c4c3f7a7c7b624a33-->
@@ -100,6 +100,22 @@ Quelle preuve faut-il demander avant qu'un agent annonce qu'une tâche métier e
 Définir une **condition de fin observable** dans le système métier : commande enregistrée, document publié ou test effectivement passé. Une phrase du modèle, un plan achevé ou un appel d'outil envoyé ne suffit pas.
 
 Associer l'opération à un identifiant et vérifier son état final auprès de la source faisant autorité. Distinguer succès, échec et résultat encore inconnu. Si un traitement est asynchrone, annoncer son lancement puis suivre sa confirmation. Cette distinction évite qu'un agent transforme une intention ou un accusé de réception en succès utilisateur.
+
+---
+
+Pourquoi un agent doit-il parfois observer à nouveau l'environnement avant d'agir ? <!--anki:3965376432336139613537373436316138636330643939343863623164313430-->
+?
+Son état interne peut être **périmé ou incomplet**. Entre la lecture d'un stock et une réservation, une autre transaction peut consommer la dernière unité.
+
+Réobserver les données importantes et faire vérifier les préconditions par le service métier au moment de l'écriture. Un raisonnement correct sur une ancienne observation ne garantit pas une action correcte maintenant. Prévoir un résultat explicite « précondition devenue fausse » qui entraîne une nouvelle décision, sans boucle de reprises aveugles.
+
+---
+
+Pourquoi évaluer la trajectoire d'un agent en plus de sa réponse finale ? <!--anki:3962636638383665376237303433306439633864616433656136373234383330-->
+?
+Une réponse juste peut avoir été obtenue avec **une action interdite, une dépense excessive ou une fuite de données**. Le résultat final ne révèle pas ces défauts.
+
+Évaluer les transitions importantes : autorisations, appels réellement exécutés, effets, budget et preuve de terminaison. Ne pas imposer un chemin unique si plusieurs sont valides ; vérifier des propriétés et des résultats. Un agent qui s'abstient correctement après refus d'accès peut mieux respecter le contrat qu'un agent qui « réussit » en contournant ce refus.
 
 ---
 

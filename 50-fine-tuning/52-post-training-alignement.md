@@ -1,7 +1,7 @@
 # Post-training & alignement — Flashcards
 Tags: #flashcards #ai-engineering #fine-tuning #alignement #rlhf #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: étapes du RLHF, pénalité KL, reward hacking, DPO et variantes, GRPO, RLVR, RLAIF et Constitutional AI, jeux de préférences, taxe d'alignement, reward model ou vérificateur, quand faire soi-même du DPO ou du RL, biais des paires de préférences. -->
+<!-- summary: étapes du RLHF, pénalité KL, reward hacking, DPO et variantes, GRPO, RLVR, RLAIF et Constitutional AI, jeux de préférences, taxe d'alignement, reward model ou vérificateur, quand faire soi-même du DPO ou du RL, biais des paires de préférences, signal DPO, récompense et longueur. -->
 
 
 Qu'est-ce que le post-training ? <!--anki:73335f71655f3f304837-->
@@ -134,6 +134,22 @@ Examiner désaccords, égalités, erreurs factuelles et biais de style par segme
 
 ---
 
+Pourquoi une paire de préférences DPO doit-elle comparer deux réponses à la même demande ? <!--anki:6131316432646462306437393461316162333263353465326164333237646264-->
+?
+Le signal cherche à **préférer une réponse à une autre conditionnellement à une même entrée**. Changer simultanément question et réponse mélange difficulté de la demande et qualité de la réponse.
+
+Conserver le contexte exact et une règle d'annotation cohérente. Si les deux réponses sont mauvaises, une préférence relative ne prouve pas que la gagnante est acceptable. Prévoir un filtre de qualité et des évaluations absolues après entraînement.
+
+---
+
+Comment détecter qu'un modèle de récompense privilégie la longueur plutôt que la qualité ? <!--anki:6438333462636462336465373431623938333437333166646534356432303237-->
+?
+Comparer des réponses de **contenu équivalent mais de longueurs différentes**, puis des réponses longues contenant des erreurs face à des réponses courtes correctes. Examiner les scores à qualité contrôlée.
+
+Si le score suit surtout la verbosité, corriger les annotations ou le protocole d'apprentissage et réévaluer. Une pénalité de longueur seule peut pousser à omettre des preuves nécessaires. La cible reste la qualité de la tâche, avec une contrainte de concision adaptée.
+
+---
+
 ## Mises en situation
 
 Mise en situation : tu as collecté 20 000 pouces haut/bas sur ton assistant. Comment les exploites-tu pour améliorer un petit modèle open source ? <!--anki:662b6070394656757737-->
@@ -166,6 +182,8 @@ Mise en situation : ton modèle entraîné à corriger du code obtient d'excelle
 - [Hugging Face — TRL, entraînement et alignement](https://huggingface.co/docs/trl/index)
 
 - [Shao et al. — DeepSeekMath et GRPO](https://arxiv.org/abs/2402.03300) — revue ciblée du 12 novembre 2026 : signal de récompense relatif au groupe.
+
+- Complément du 14 novembre 2026 — Comparaisons conditionnelles DPO : [Rafailov et al. — DPO](https://arxiv.org/abs/2305.18290).
 
 ## Connexions
 - [[51-fine-tuning-adaptation|Fine-tuning & adaptation]] — SFT, LoRA, DPO en bref

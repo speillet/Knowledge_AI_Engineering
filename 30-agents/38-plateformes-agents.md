@@ -1,7 +1,7 @@
 # Plateformes d'agents — Flashcards
 Tags: #flashcards #ai-engineering #agents #platform #llm
 Vérifié le : 25 septembre 2026 — date globale conservée ; revue ciblée du 13 novembre 2026 détaillée dans les Sources.
-<!-- summary: différence avec un framework, briques, niveaux d'abstraction (API, runtime, harness managé), offres cloud et des fournisseurs de modèles, open source, runtime et double texting, sandbox et services de sandbox, gateway d'outils, registre, identité, agent délégué ou autonome, mémoire, observabilité, evals, protocoles (MCP, A2A), build ou buy. La suite, niveau senior, est la fiche 115 de la section 110, quotas de travail et équité entre tenants. -->
+<!-- summary: différence avec un framework, briques, niveaux d'abstraction (API, runtime, harness managé), offres cloud et des fournisseurs de modèles, open source, runtime et double texting, sandbox et services de sandbox, gateway d'outils, registre, identité, agent délégué ou autonome, mémoire, observabilité, evals, protocoles (MCP, A2A), build ou buy. La suite, niveau senior, est la fiche 115 de la section 110, quotas de travail et équité entre tenants, plan de contrôle indisponible, isolation des quotas. -->
 
 
 Qu'est-ce qu'une plateforme d'agents, par rapport à un framework ? <!--anki:66657538313d7a42737a-->
@@ -217,6 +217,14 @@ Pourquoi distinguer quota de requêtes et quota de travail sur une plateforme d'
 Deux **requêtes** peuvent mobiliser des ressources très différentes : une classification courte et une enquête de 30 appels. Un quota en requêtes seules ne protège donc ni budget ni capacité.
 
 Combiner limites de sessions actives, tokens, appels d'outils et temps, selon le service. Réserver une enveloppe avant un travail coûteux et ajuster la consommation réelle. Mesurer l'attente et les rejets par équipe pour éviter qu'un tenant monopolise les workers. Les plafonds doivent être appliqués par la plateforme, même si le modèle ignore les consignes de budget.
+
+---
+
+Comment une plateforme d'agents doit-elle réagir à une panne de son plan de contrôle ? <!--anki:6263653632663963643566343436646462336332633733383232383933383563-->
+?
+Définir séparément le sort des **exécutions existantes et des nouvelles admissions**. Certaines tâches peuvent continuer avec une politique locale encore valide ; d'autres doivent attendre une autorisation fraîche.
+
+Éviter qu'un registre inaccessible soit interprété comme une permission universelle. Prévoir durée de validité des politiques, révocation et mode dégradé. Tester la panne avec des agents actifs et suspendus : la disponibilité du runtime ne suffit pas à garantir une gouvernance correcte.
 
 ---
 

@@ -1,6 +1,6 @@
 # Long contexte — Flashcards
 Tags: #flashcards #ai-engineering #fondamentaux #long-context #llm
-<!-- summary: extension de RoPE, lost in the middle, needle in a haystack et RULER, context rot, long contexte ou RAG, coût, techniques de serving, limite de sortie, test sur sa tâche, évaluation de la réconciliation de preuves. -->
+<!-- summary: extension de RoPE, lost in the middle, needle in a haystack et RULER, context rot, long contexte ou RAG, coût, techniques de serving, limite de sortie, test sur sa tâche, évaluation de la réconciliation de preuves, position des preuves, longueur utile. -->
 
 
 Qu'est-ce que la fenêtre de contexte ? <!--anki:6d7324252c743d7a6c7d-->
@@ -87,6 +87,22 @@ Construire des cas demandant deux passages éloignés, une version applicable et
 
 ---
 
+Comment mesurer la longueur de contexte réellement utile pour une tâche ? <!--anki:3036633738666338316566353463316661633161356334386430373933663138-->
+?
+Faire varier **longueur, position des preuves et quantité de distracteurs**, tout en conservant une réponse vérifiable. Inclure plusieurs preuves à combiner, pas seulement une chaîne à retrouver.
+
+Tracer qualité, coût et latence selon ces axes. La fenêtre maximale acceptée indique une limite technique ; elle ne garantit pas une qualité uniforme. Retenir le budget où la tâche respecte ses critères, éventuellement avec retrieval ou sélection de contexte.
+
+---
+
+Pourquoi une précision élevée sur une aiguille unique ne prouve-t-elle pas la capacité à résumer un long dossier ? <!--anki:3339643232366631363935643466626139343837356364633236646165613939-->
+?
+Retrouver un fait isolé demande moins que **couvrir plusieurs thèmes, résoudre des contradictions et hiérarchiser les preuves**. Le résumé peut omettre des éléments importants malgré une bonne recherche ponctuelle.
+
+Tester couverture des décisions, fidélité et exceptions sur des documents représentatifs. Comparer le résultat complet à une grille structurée. Un benchmark de localisation reste utile, mais son succès ne doit pas être généralisé à toutes les tâches longues.
+
+---
+
 ## Mises en situation
 
 Mise en situation : un chef de produit veut supprimer le RAG et « tout mettre dans le contexte », puisque le modèle accepte un million de tokens. Que réponds-tu ? <!--anki:432957427b36502e3f52-->
@@ -112,6 +128,10 @@ Mise en situation : ton assistant d'analyse de contrats devient lent et cher dè
 **Piège** : augmenter la fenêtre autorisée sans mesurer l'effet sur la qualité et sur la concurrence tenue par GPU.
 
 ---
+
+## Sources
+
+- Complément du 14 novembre 2026 — Position et sélection du contexte : [Liu et al. — Lost in the Middle](https://arxiv.org/abs/2307.03172).
 
 ## Connexions
 - [[35-context-engineering|Context engineering]] — gérer le budget de contexte

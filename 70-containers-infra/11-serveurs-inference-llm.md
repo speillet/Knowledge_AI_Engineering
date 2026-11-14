@@ -1,7 +1,7 @@
 # Serveurs d'inférence LLM — Flashcards
 Tags: #flashcards #ai-engineering #inference #serving #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: vLLM, API compatible OpenAI, multi-LoRA, SGLang, TensorRT-LLM et Triton, TGI, llama.cpp et Ollama, tests des limites d'une API compatible. -->
+<!-- summary: vLLM, API compatible OpenAI, multi-LoRA, SGLang, TensorRT-LLM et Triton, TGI, llama.cpp et Ollama, tests des limites d'une API compatible, tokenizer effectif, tests de terminaison. -->
 
 
 À quoi sert un serveur d'inférence LLM ? <!--anki:495d704d38615143496f-->
@@ -101,6 +101,22 @@ Pourquoi une API dite compatible OpenAI ne garantit-elle pas les mêmes comporte
 La **compatibilité d'API** peut porter sur les chemins et champs sans couvrir toutes les fonctions : outils, schémas, stop tokens, erreurs, annulation ou métriques d'usage.
 
 Définir les fonctionnalités utilisées par l'application et tester leurs cas limites sur chaque moteur. Comparer notamment une sortie incomplète, un refus et un appel d'outil en streaming. Fixer modèle, tokenizer et chat template avant d'attribuer une différence au serveur. Une requête simple qui répond avec HTTP 200 ne démontre pas l'interchangeabilité du contrat applicatif complet.
+
+---
+
+Pourquoi vérifier le chat template lors du remplacement d'un serveur d'inférence ? <!--anki:3465343563336131366662373437643061383466343266333736373631353232-->
+?
+Le template transforme les messages en **tokens de rôles, séparateurs et marqueurs attendus par le modèle**. Un serveur compatible au niveau HTTP peut sérialiser différemment les mêmes messages.
+
+Comparer le rendu effectif et les tokens spéciaux, puis tester réponses, appels d'outils et conditions d'arrêt. Une dégradation peut venir du template plutôt que des poids ou du kernel. Conserver sa version avec le tokenizer dans la release.
+
+---
+
+Comment tester les conditions de fin d'un serveur d'inférence LLM ? <!--anki:3235393432653462633963653439393361656635373435376339666562386363-->
+?
+Couvrir **EOS, séquence d'arrêt, limite de tokens, annulation et erreur**. Vérifier texte retourné, motif de fin et libération des ressources pour chaque cas.
+
+Une réponse tronquée ne doit pas être présentée comme complète. Tester les marqueurs d'arrêt qui traversent plusieurs fragments du stream et le traitement des tokens spéciaux. Des réponses correctes sur des prompts courts ne valident pas ces frontières.
 
 ---
 

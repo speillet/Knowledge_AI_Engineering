@@ -1,6 +1,6 @@
 # Data flywheel & versioning des données — Flashcards
 Tags: #flashcards #ai-engineering #donnees #flywheel #versioning #mlops
-<!-- summary: boucle d'amélioration, étapes, versioning des données, outils (DVC, lakeFS, Iceberg), lineage d'une eval, versioning d'un index, signaux implicites, pièges, priorisation, représentativité des retours de production. -->
+<!-- summary: boucle d'amélioration, étapes, versioning des données, outils (DVC, lakeFS, Iceberg), lineage d'une eval, versioning d'un index, signaux implicites, pièges, priorisation, représentativité des retours de production, feedback et politique, priorité des exemples. -->
 
 
 Qu'est-ce qu'une data flywheel ? <!--anki:452f4c54795042304253-->
@@ -85,9 +85,11 @@ Comparer les populations avec et sans feedback. Si seuls les utilisateurs expert
 
 Comment prioriser les améliorations issues de la flywheel ? <!--anki:7649423b5a6439217743-->
 ?
-Par **fréquence × gravité** de chaque catégorie d'échec, rapportées au **coût** de la correction. Une erreur rare mais grave (engagement financier) peut passer avant une erreur fréquente mais bénigne (ton). Tenir un **tableau des modes de défaillance** mis à jour à chaque tour.
+Comparer **fréquence, gravité et coût de correction** par famille d'échecs. Une erreur rare mais coûteuse peut passer avant un défaut de style fréquent. Conserver un tableau des modes de défaillance.
 
-Exemple : un ton inapproprié touche 8 % des réponses, avec une gravité de 1 ; des montants erronés en touchent 0,5 %, avec une gravité de 50 car ils engagent l'entreprise. Scores : 8 contre 25. Les montants passent d'abord, bien que seize fois moins fréquents. Les poids de gravité se fixent avec le métier, et le coût de correction départage les cas proches.
+Exemple : ton inapproprié dans 8 % des réponses, gravité 1 ; montant faux dans 0,5 %, gravité 50. Les scores illustratifs fréquence × gravité donnent 8 contre 25 : les montants passent d'abord, bien que seize fois moins fréquents.
+
+Fixer les poids avec le métier et préciser l'incertitude. Un danger interdit reste bloquant malgré un score faible. Conserver un échantillon représentatif pour mesurer les effets des corrections.
 
 ---
 
@@ -96,6 +98,14 @@ Pourquoi une data flywheel doit-elle garder des exemples de réussites ordinaire
 Les **signalements** surreprésentent souvent utilisateurs actifs, erreurs visibles et situations irritantes. Entraîner uniquement sur ces retours peut déplacer le modèle au détriment des usages courants.
 
 Conserver, avec une politique de données adaptée, un échantillon représentatif des demandes et un ensemble ciblé de cas difficiles. Tracer la règle de collecte et les corrections apportées. Évaluer séparément amélioration des échecs et régressions sur le trafic ordinaire. Une boucle de feedback utile augmente l'information disponible ; elle ne doit pas confondre fréquence des plaintes et fréquence des situations réelles.
+
+---
+
+Pourquoi un feedback positif n'est-il pas toujours une preuve d'exactitude ? <!--anki:6162366339623162656337343464636161353938633831343865643534636332-->
+?
+L'utilisateur peut apprécier **le style, la rapidité ou une réponse qui confirme son opinion**, sans vérifier les faits. Un clic ou un pouce mesure un comportement, pas directement la vérité.
+
+Relier ce signal à la tâche et le compléter par preuves ou annotations. Examiner les faux positifs du feedback avant de l'utiliser pour entraîner. Une boucle d'amélioration mal définie peut renforcer la complaisance plutôt que l'utilité.
 
 ---
 

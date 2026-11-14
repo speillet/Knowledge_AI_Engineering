@@ -1,7 +1,7 @@
 # Sécurité des agents — Architecture défensive — Flashcards
 Tags: #flashcards #ai-engineering #securite #agents #defense #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: supposer la compromission, Agents Rule of Two, six design patterns, Dual LLM et CaMeL, moindre privilège, réseau sortant, secrets, validation des appels d'outils, approbation humaine fiable, guardrail de contenu ou politique d'autorisation, mémoire, échanges entre agents, défense en profondeur, approbation liée aux arguments exécutés. -->
+<!-- summary: supposer la compromission, Agents Rule of Two, six design patterns, Dual LLM et CaMeL, moindre privilège, réseau sortant, secrets, validation des appels d'outils, approbation humaine fiable, guardrail de contenu ou politique d'autorisation, mémoire, échanges entre agents, défense en profondeur, approbation liée aux arguments exécutés, validation de destination, révocation en vol. -->
 
 
 Quel principe directeur pour sécuriser un agent face à l'injection ? <!--anki:645a6e42336b243f6424-->
@@ -218,6 +218,22 @@ Conserver une version ou une empreinte des arguments normalisés, l'identité de
 
 ---
 
+Pourquoi valider une destination réseau après résolution et à chaque redirection ? <!--anki:3433656332376538383931643463316661616434643161663666343464373163-->
+?
+Une URL initialement acceptable peut conduire vers **une adresse interne ou une autre destination** après résolution DNS ou redirection. Valider seulement le texte initial laisse cette frontière ouverte.
+
+Appliquer la politique aux destinations réellement contactées, limiter protocoles et redirections, et protéger le réseau sortant. Vérifier les bibliothèques utilisées et les cas de changement DNS. Une allowlist de noms doit être reliée à un contrôle d'accès effectif.
+
+---
+
+Comment vérifier qu'un kill switch arrête réellement les actions d'un agent ? <!--anki:6638313637663366383537663431636461383436343938326438336531316630-->
+?
+Tester **les nouvelles admissions, les tâches en file et les exécutions déjà actives**. Bloquer seulement le prochain appel utilisateur laisse des workers continuer.
+
+Révoquer les capacités concernées à la frontière d'exécution et réconcilier les opérations déjà engagées. Mesurer le délai d'arrêt réel. Certains effets ne sont plus annulables ; les identifier et prévoir compensation ou suivi plutôt que promettre leur disparition.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton équipe veut un agent qui lit les e-mails des clients et déclenche lui-même les remboursements dans l'ERP. Comment le concevoir ? <!--anki:4c3d5d547e52786e6c4c-->
@@ -261,6 +277,8 @@ Mise en situation : ton agent de code tourne dans un conteneur avec les identifi
 - [MCP — bonnes pratiques de sécurité, édition 2026-07-28](https://modelcontextprotocol.io/docs/2026-07-28/tutorials/security/security_best_practices)
 
 - [Debenedetti et al. — CaMeL](https://arxiv.org/abs/2503.18813) — revue ciblée du 12 novembre 2026 : provenance des données et politiques d’appels d’outils.
+
+- Complément du 14 novembre 2026 — Contrôle des destinations réseau : [OWASP — SSRF](https://community.owasp.org/attacks/Server_Side_Request_Forgery).
 
 ## Connexions
 - [[102-menaces-agents|Menaces & incidents]] — ce contre quoi on se défend

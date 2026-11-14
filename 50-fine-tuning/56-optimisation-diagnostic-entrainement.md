@@ -1,7 +1,7 @@
 # Optimisation & diagnostic d'entraînement — Flashcards
 Tags: #flashcards #ai-engineering #fine-tuning #optimisation #deep-learning
 Vérifié le : 7 octobre 2026
-<!-- summary: perte et métrique métier, rétropropagation, learning rate, AdamW, courbes d'apprentissage, micro-lot de diagnostic, accumulation normalisée, clipping, précision mixte, modes PyTorch et masquage des labels, comparabilité des pertes train et validation. -->
+<!-- summary: perte et métrique métier, rétropropagation, learning rate, AdamW, courbes d'apprentissage, micro-lot de diagnostic, accumulation normalisée, clipping, précision mixte, modes PyTorch et masquage des labels, comparabilité des pertes train et validation, tokens supervisés, ordre des transformations. -->
 
 
 À ne pas confondre : perte d'entraînement et métrique métier ? <!--anki:3036653364613531613036643462383261306238306563643263626633323664-->
@@ -106,6 +106,22 @@ Comparer les deux jeux avec la même définition de perte et un protocole d'éva
 
 ---
 
+Pourquoi suivre le nombre de tokens supervisés en plus du nombre de batches pendant un fine-tuning ? <!--anki:6465353133363566666366653438323262663334386433306630343933613330-->
+?
+Deux batches de même taille peuvent contenir **des quantités très différentes de signal d'apprentissage**, selon longueur et masquage. Un batch presque entièrement masqué peut contribuer très peu.
+
+Suivre tokens utiles, perte normalisée et progression du scheduler aide à interpréter les courbes. Comparer les expériences avec une convention de normalisation identique. Un nombre d'étapes égal ne signifie pas une exposition égale aux données ni une quantité égale de calcul.
+
+---
+
+Pourquoi l'ordre entre unscale et gradient clipping compte-t-il en précision mixte avec loss scaling ? <!--anki:3136656537643034393662383436323939626635353162346661616239643663-->
+?
+Le clipping doit porter sur **les gradients à leur échelle réelle**. Appliquer le seuil aux gradients encore multipliés par le facteur de scaling revient à utiliser un seuil effectif différent.
+
+Défaire le scaling avant le clipping, selon l'API utilisée, puis effectuer l'étape d'optimisation. Vérifier les gradients non finis et les étapes sautées. Cette remarque concerne les entraînements utilisant effectivement un loss scaler ; elle ne signifie pas que tout entraînement BF16 en requiert un.
+
+---
+
 ## Mises en situation
 
 Mise en situation : la perte de ton fine-tuning baisse, mais les montants extraits deviennent moins exacts. Que vérifies-tu ? <!--anki:3266386265386562656466353437306239653631353866313939313538303162-->
@@ -152,6 +168,8 @@ Mise en situation : un entraînement ne mémorise même pas 16 exemples propres.
 - [Loshchilov & Hutter — Decoupled Weight Decay Regularization](https://arxiv.org/abs/1711.05101)
 
 - [PyTorch — accumulation des gradients en précision mixte](https://docs.pytorch.org/docs/main/notes/amp_examples.html)
+
+- Complément du 14 novembre 2026 — Unscale avant clipping : [PyTorch 2.15 — AMP examples](https://docs.pytorch.org/docs/2.15/notes/amp_examples.html).
 
 ## Connexions
 - [[51-fine-tuning-adaptation|Fine-tuning]] — diagnostiquer une adaptation avant de la complexifier

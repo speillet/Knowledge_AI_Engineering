@@ -1,7 +1,7 @@
 # Modèles de raisonnement & test-time compute — Flashcards
 Tags: #flashcards #ai-engineering #fondamentaux #reasoning #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: modèle de raisonnement ou chain-of-thought par prompt, test-time compute, RLVR, budget de réflexion, facturation, quand ne pas les utiliser, prompting, fidélité de la chaîne de pensée, interleaved thinking, best-of-n, rendement du budget de raisonnement. -->
+<!-- summary: modèle de raisonnement ou chain-of-thought par prompt, test-time compute, RLVR, budget de réflexion, facturation, quand ne pas les utiliser, prompting, fidélité de la chaîne de pensée, interleaved thinking, best-of-n, rendement du budget de raisonnement, budget et vérificateur, résultat intermédiaire. -->
 
 
 Qu'est-ce qu'un modèle de raisonnement ? <!--anki:44457a7a766655556330-->
@@ -109,6 +109,16 @@ Pourquoi augmenter le budget de raisonnement ne garantit-il pas une amélioratio
 Du **calcul supplémentaire** peut aider à explorer ou vérifier, mais aussi répéter une mauvaise hypothèse ou dépasser le délai utile. Le gain dépend de la tâche, du modèle et du mécanisme de contrôle.
 
 Comparer plusieurs budgets sur les mêmes cas, avec qualité, coût et latence ; identifier les segments où le gain se stabilise ou s'inverse. Réserver l'effort supplémentaire aux demandes qui en profitent selon une règle évaluée. Une longue justification n'est pas une preuve de résultat correct : utiliser un vérificateur ou une source externe quand cela est possible.
+
+Un arrêt déclenché par un résultat vérifié doit rester distinct d’un arrêt imposé par épuisement du budget.
+
+---
+
+Pourquoi un vérificateur fiable peut-il être plus utile que davantage de candidats dans un best-of-n ? <!--anki:6363666432646462306663313464383161366363656438393461316539386633-->
+?
+Produire plus de réponses n'aide que si le système sait **sélectionner une bonne réponse parmi elles**. Un mauvais vérificateur peut favoriser une solution convaincante mais fausse.
+
+Mesurer séparément la présence d'une bonne solution dans le lot et la qualité de la sélection. Pour du code ou des calculs, des contrôles exécutables peuvent apporter une preuve ciblée. Ils doivent couvrir les exigences réelles, pas seulement des cas faciles.
 
 ---
 

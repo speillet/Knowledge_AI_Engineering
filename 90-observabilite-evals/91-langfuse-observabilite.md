@@ -1,7 +1,7 @@
 # Langfuse & observabilité LLM — Flashcards
 Tags: #flashcards #ai-engineering #observability #langfuse #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: périmètre et alternatives (LangSmith, Phoenix, Braintrust), traces, spans et generations, sessions, prompt management, scores, LLM-as-judge, datasets, biais d'échantillonnage des traces. -->
+<!-- summary: périmètre et alternatives (LangSmith, Phoenix, Braintrust), traces, spans et generations, sessions, prompt management, scores, LLM-as-judge, datasets, biais d'échantillonnage des traces, traces et audit, cardinalité des métadonnées. -->
 
 
 Qu'est-ce que Langfuse ? <!--anki:66646977482431392c37-->
@@ -115,6 +115,22 @@ Documenter la règle d'échantillonnage et conserver des compteurs complets pour
 
 ---
 
+À ne pas confondre : trace de diagnostic et journal d'audit métier ? <!--anki:3833623237623636373862383465373839353631343234613930653234633365-->
+?
+Une trace facilite **la compréhension d'une exécution** et peut être échantillonnée. Un journal d'audit doit satisfaire les exigences de complétude, intégrité et rétention définies pour les décisions importantes.
+
+Les relier par identifiants permet d'expliquer une action sans confondre leurs garanties. Vérifier qui peut modifier ou supprimer les événements. La présence d'une interface de traces ne prouve pas que toutes les approbations et actions sont durablement enregistrées.
+
+---
+
+Pourquoi choisir soigneusement les métadonnées utilisées pour agréger les traces LLM ? <!--anki:6536626139353632653430303433643562626661343334656563363263666561-->
+?
+Des valeurs presque uniques, comme chaque texte de prompt, créent **une très forte cardinalité** et compliquent requêtes, coûts et protection des données.
+
+Utiliser des dimensions stables : type de tâche, version, classe de longueur ou statut. Conserver les identifiants détaillés là où ils sont utiles à la recherche d'un cas. Une dimension de regroupement doit permettre une décision opérationnelle, pas simplement reproduire tout le contexte brut.
+
+---
+
 ## Mises en situation
 
 Mise en situation : un utilisateur signale « une réponse fausse hier après-midi ». Tu n'as que les logs applicatifs classiques. Que te manque-t-il, et que mets-tu en place ? <!--anki:7375784c423966706d21-->
@@ -146,6 +162,8 @@ Mise en situation : ton équipe veut passer des impressions (« ça marche plut�
 - [Langfuse — traces, évaluations et gestion des prompts](https://langfuse.com/docs)
 
 - [Langfuse — structure des traces et instrumentation](https://langfuse.com/docs/observability/best-practices)
+
+- Complément du 14 novembre 2026 — Échantillonnage des traces et limites de couverture : [Langfuse — Sampling](https://langfuse.com/docs/observability/features/sampling).
 
 ## Connexions
 - [[92-chainforge-evals-prompts|ChainForge & evals]] — l'évaluation hors production

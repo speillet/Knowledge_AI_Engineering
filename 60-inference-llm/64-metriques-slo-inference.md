@@ -1,6 +1,6 @@
 # Métriques d'inférence & SLO — Flashcards
 Tags: #flashcards #ai-engineering #inference #slo #llm
-<!-- summary: TTFT, TPOT et ITL, contenu utile et raisonnement, débits offert/admis/utile, SLO conjoints, timeouts, burn rate, loi de Little, autoscaling et benchmarks, calcul de durée jusqu'au dernier token. -->
+<!-- summary: TTFT, TPOT et ITL, contenu utile et raisonnement, débits offert/admis/utile, SLO conjoints, timeouts, burn rate, loi de Little, autoscaling et benchmarks, calcul de durée jusqu'au dernier token, agrégation des percentiles, budget de latence. -->
 
 
 Qu'est-ce que le TTFT ? <!--anki:68355e7b7b31743d5d46-->
@@ -167,6 +167,22 @@ Calcul : le premier de 400 tokens arrive après 0,8 seconde, puis chaque interva
 Il reste **399 intervalles** après l'arrivée du premier token. La durée totale vaut `0,8 + 399 × 0,020 = 8,78 secondes`, hors traitement supplémentaire après le dernier token.
 
 Un TTFT inférieur à une seconde ne signifie donc pas une réponse complète en une seconde. Le calcul suppose des intervalles constants et un token émis par événement observé. En pratique, le transport peut regrouper des tokens ; mesurer la réception côté client et distinguer token, chunk réseau et contenu utile. La cadence moyenne ne décrit pas à elle seule les pauses ressenties.
+
+---
+
+Calcul : un service satisfait son SLO sur 990 requêtes sur 1 000 le matin et 50 sur 100 le soir. Quel taux global obtient-on, et que masquerait la moyenne des deux pourcentages ? <!--anki:3766383130653632316132383438306339313731636661303061353934643562-->
+?
+Le taux global vaut **(990 + 50) / (1 000 + 100) = 94,55 %** environ. La moyenne non pondérée de 99 % et 50 % donne 74,5 %, qui ne représente pas la fraction des requêtes conformes.
+
+Le taux global masque aussi la forte dégradation du soir. Publier volume et conformité par fenêtre en plus de l’agrégat. Définir si le SLO porte sur les requêtes ou sur des fenêtres de temps : les dénominateurs correspondent à des contrats différents.
+
+---
+
+Calcul : un budget TTFT de 1 000 ms réserve 120 ms au réseau, 80 ms aux contrôles et 300 ms au prefill. Quelle attente maximale reste-t-il, en supposant ces étapes séquentielles et ces durées fixes ? <!--anki:3765303163383935336466343436356238343661333635663661393235666463-->
+?
+Le budget de file vaut **1 000 − 120 − 80 − 300 = 500 ms**.
+
+C'est un budget de conception sous hypothèses fixes. Additionner les p95 de chaque composant ne donne pas en général le p95 bout en bout. Mesurer les durées corrélées par requête et vérifier le SLO complet, particulièrement en présence de reprises et de cache froid.
 
 ---
 

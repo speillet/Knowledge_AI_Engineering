@@ -1,7 +1,7 @@
 # Sécurité LLM & guardrails — Flashcards
 Tags: #flashcards #ai-engineering #securite #guardrails #llm
 Vérifié le : 25 septembre 2026 — date globale conservée ; revue ciblée du 13 novembre 2026 détaillée dans les Sources.
-<!-- summary: OWASP Top 10 LLM 2026, exposition du contexte caché et changement des identifiants, injection directe ou indirecte, « lethal trifecta », exfiltration, excessive agency, guardrails (Llama Guard, NeMo Guardrails), red teaming, faux positifs des détecteurs d'injection. -->
+<!-- summary: OWASP Top 10 LLM 2026, exposition du contexte caché et changement des identifiants, injection directe ou indirecte, « lethal trifecta », exfiltration, excessive agency, guardrails (Llama Guard, NeMo Guardrails), red teaming, faux positifs des détecteurs d'injection, fail-open, coût des faux positifs. -->
 
 
 Qu'est-ce que l'OWASP Top 10 pour les applications LLM ? <!--anki:632c333a387a5244477d-->
@@ -131,6 +131,22 @@ Pourquoi un détecteur de prompt injection doit-il être évalué aussi sur des 
 Un **détecteur** peut bloquer à tort une citation d'attaque, du code ou un document de formation. Mesurer uniquement les attaques réussies ignore ce coût de faux positifs.
 
 Construire deux ensembles : attaques représentatives et contenus autorisés qui leur ressemblent. Mesurer contournements, blocages injustifiés et impact sur la tâche, avec le seuil déployé. Segmenter par langue et format. Un meilleur rappel d'attaques peut dégrader fortement l'utilité ; le contrôle d'autorisation doit rester indépendant du score du détecteur.
+
+---
+
+Pourquoi définir explicitement le comportement d'une application lorsque son guardrail est indisponible ? <!--anki:6133313236613031306334643437313662663839316437643437616234393535-->
+?
+Une exception technique peut sinon conduire à **autoriser silencieusement tout le trafic** ou à bloquer inutilement le service entier.
+
+Choisir le comportement selon l'action : bloquer une écriture sensible, proposer une lecture limitée ou signaler l'indisponibilité. Tester timeout, sortie invalide et panne du détecteur. Un guardrail probabiliste reste distinct de l'autorisation déterministe appliquée au service métier.
+
+---
+
+Calcul : un filtre analyse 10 000 entrées dont 1 % sont malveillantes. Sa sensibilité est 90 % et son taux de faux positifs 2 %. Combien d'alertes sont vraies et quelle est leur précision approximative ? <!--anki:3835373465633030666661613435656138373631616531303637386331346164-->
+?
+Sur 100 attaques, **90 sont détectées**. Sur 9 900 entrées bénignes, **198 déclenchent une fausse alerte**. La précision vaut **90 / 288 ≈ 31,25 %**.
+
+Malgré une bonne sensibilité, la majorité des alertes est fausse dans ce trafic. Dimensionner la revue et mesurer l'impact des blocages. Ce calcul suppose des taux stables et un échantillon représentatif.
 
 ---
 

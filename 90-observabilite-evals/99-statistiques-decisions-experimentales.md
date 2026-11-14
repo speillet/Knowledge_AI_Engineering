@@ -1,6 +1,6 @@
 # Statistiques pour décider en IA — Flashcards
 Tags: #flashcards #ai-engineering #evals #statistiques #experimentation
-<!-- summary: effet utile et significativité, p-valeur, intervalle de confiance, comparaison appariée, unité indépendante, zéro échec, tests multiples, puissance, causalité, biais de sélection et sample ratio mismatch, arrêt opportuniste et tests séquentiels. -->
+<!-- summary: effet utile et significativité, p-valeur, intervalle de confiance, comparaison appariée, unité indépendante, zéro échec, tests multiples, puissance, causalité, biais de sélection et sample ratio mismatch, arrêt opportuniste et tests séquentiels, paradoxe de Simpson, dépendance des observations. -->
 
 
 À ne pas confondre : significativité statistique et importance pratique ? <!--anki:6261623137333138643566323438393961653766356166626633366465653635-->
@@ -108,6 +108,22 @@ Pourquoi consulter chaque jour une p-valeur puis arrêter dès qu'elle passe sou
 Des **tests répétés avec arrêt opportuniste** multiplient les occasions d'observer un résultat favorable. Le seuil d'un test prévu pour un effectif fixe ne contrôle pas automatiquement le risque de ce protocole séquentiel.
 
 Fixer l'effectif et la règle d'arrêt avant l'essai, ou utiliser une méthode séquentielle adaptée dont les garanties correspondent au suivi prévu. Rapporter durée, lectures intermédiaires et métriques surveillées. Continuer jusqu'à significativité puis ne montrer que la dernière p-valeur masque le processus de sélection. Une contrainte produit peut arrêter l'expérience, mais l'inférence doit en tenir compte.
+
+---
+
+Comment une moyenne globale peut-elle inverser la comparaison entre deux modèles pourtant meilleurs par segment ? <!--anki:6531363461623337326537333466316662313266636335623763336263323165-->
+?
+Si les modèles sont évalués sur **des proportions différentes de cas faciles et difficiles**, l'agrégation peut inverser le classement : c'est le paradoxe de Simpson.
+
+Comparer sur une population commune, publier les résultats par segment et appliquer une pondération correspondant à l'usage cible. Une hausse globale peut provenir d'un changement de mix plutôt que du modèle. Ne pas choisir les segments après coup uniquement pour justifier le résultat préféré.
+
+---
+
+Pourquoi mille réponses issues de dix documents ne valent-elles pas nécessairement mille observations indépendantes ? <!--anki:3365646130306535643339613462363738383366346532393665303539333235-->
+?
+Les erreurs peuvent être **corrélées à l'intérieur de chaque document** : même format, vocabulaire ou problème de parsing. Traiter toutes les réponses comme indépendantes sous-estime alors l'incertitude.
+
+Séparer entraînement et test par document ou source lorsque pertinent, et utiliser une estimation qui respecte ces groupes. Augmenter le nombre de questions par document n'apporte pas la même information qu'augmenter le nombre de documents indépendants.
 
 ---
 

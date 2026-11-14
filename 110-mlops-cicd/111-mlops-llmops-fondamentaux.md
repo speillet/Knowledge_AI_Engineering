@@ -1,7 +1,7 @@
 # MLOps & LLMOps — Fondamentaux — Flashcards
 Tags: #flashcards #ai-engineering #mlops #llmops #llm
 Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: DevOps ou MLOps, spécificités du LLMOps, ce qu'il faut versionner (code et config, modèles et données), model registry, lineage, reproductibilité, environnements dev/staging/prod, rôle du Lead, manifeste cohérent de release, CI/CD/CT, recette et run, validité technique, statistique et métier, dette de dépendances de données. -->
+<!-- summary: DevOps ou MLOps, spécificités du LLMOps, ce qu'il faut versionner (code et config, modèles et données), model registry, lineage, reproductibilité, environnements dev/staging/prod, rôle du Lead, manifeste cohérent de release, CI/CD/CT, recette et run, validité technique, statistique et métier, dette de dépendances de données, propriétaire du modèle, dette de labels. -->
 
 
 Qu'est-ce que le MLOps ? <!--anki:72493079506c593c216d-->
@@ -147,6 +147,22 @@ Pourquoi inventorier les dépendances et consommateurs des données d'un modèle
 Les **dépendances cachées** rendent les changements risqués : une colonne peut provenir d'un autre modèle, et un score devenir à son tour une variable consommée ailleurs sans contrat explicite.
 
 Documenter producteurs, transformations, finalités et consommateurs, avec versions et responsables. Avant de modifier une définition ou retirer une sortie, examiner ces usages et prévoir une migration. La traçabilité d'entraînement ne suffit pas à découvrir un consommateur qui lit directement une table de prédictions. Le MLOps inclut donc les contrats autour du modèle et les effets de chaîne, pas seulement le suivi de son propre run.
+
+---
+
+Pourquoi attribuer un propriétaire opérationnel à chaque modèle déployé ? <!--anki:3466306535656434323732623435323938396466616266343034313862323539-->
+?
+Il faut quelqu'un pour **interpréter les alertes, décider d'une suspension et maintenir les données et seuils**. Un modèle sans propriétaire peut continuer à produire des décisions après disparition de son équipe d'origine.
+
+Documenter contacts, contrat de service, dépendances et procédure de retrait. Le propriétaire métier et l'exploitant peuvent être différents ; expliciter leurs responsabilités. Une fiche de modèle n'est utile que si elle correspond encore au déploiement actif.
+
+---
+
+Pourquoi l'absence de labels fiables constitue-t-elle une dette MLOps ? <!--anki:6232613363623536353139393465383438353034636364373861383336306234-->
+?
+Sans résultats observables, il devient difficile de **mesurer les régressions et choisir un réentraînement**. Ajouter du monitoring technique ne remplace pas cette mesure.
+
+Définir dès la conception comment le label sera obtenu, relié à la prédiction et corrigé, avec délai et coût. Prévoir un échantillonnage lorsque l'annotation exhaustive est impossible. Les scores de confiance ne deviennent pas une vérité terrain parce que les labels manquent.
 
 ---
 

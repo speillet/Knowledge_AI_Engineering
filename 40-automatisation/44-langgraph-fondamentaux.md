@@ -1,7 +1,7 @@
 # LangGraph — Fondamentaux — Flashcards
 Tags: #flashcards #ai-engineering #agents #langgraph #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: `StateGraph`, state et reducers, `MessagesState`, nodes et edges conditionnelles, boucle ReAct en graphe, super-steps, `Send` (map-reduce), `Command`, Functional API, ordre explicite des agrégations parallèles. -->
+<!-- summary: `StateGraph`, state et reducers, `MessagesState`, nodes et edges conditionnelles, boucle ReAct en graphe, super-steps, `Send` (map-reduce), `Command`, Functional API, ordre explicite des agrégations parallèles, reducers et doublons, état minimal. -->
 
 
 Qu'est-ce que LangGraph ? <!--anki:6c283f532b7b414f4e78-->
@@ -138,6 +138,22 @@ Associer chaque résultat à une clé stable, vérifier l'absence de doublons, p
 
 ---
 
+Pourquoi un reducer de concaténation LangGraph peut-il accumuler des résultats en double ? <!--anki:6130373437346434643134303465346138306465383238613339346432356535-->
+?
+La concaténation est associative, mais **pas idempotente** : ajouter deux fois le même résultat produit deux entrées. Une livraison répétée ou une branche réexécutée peut donc gonfler la liste.
+
+Si chaque résultat logique ne doit apparaître qu'une fois, utiliser un identifiant stable et une fusion par clé, avec une règle explicite en cas de versions différentes. Ne pas confondre déduplication et ordre d'affichage. Le reducer ne remplace pas l'idempotence des effets externes.
+
+---
+
+Pourquoi conserver des références d'artefacts plutôt que de gros documents dans l'état LangGraph ? <!--anki:6338326563376463616138363439653338366535396563626634623437643161-->
+?
+Un état volumineux augmente **sérialisation, stockage et coûts de checkpoint**. Il peut aussi multiplier les copies de données sensibles.
+
+Conserver une référence stable, une version et une empreinte, puis charger les détails à l'étape nécessaire. L'artefact doit rester accessible pendant la durée de reprise supportée. Un simple chemin temporaire ne suffit pas : après redémarrage sur un autre worker, il peut désigner un fichier absent ou différent.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton graphe doit résumer un nombre variable de documents (parfois 3, parfois 200) puis produire une synthèse. Comment le construis-tu ? <!--anki:6772416528637b63416b-->
@@ -169,6 +185,8 @@ Mise en situation : ton équipe hésite entre le graphe explicite et la Function
 - [LangGraph — état, reducers, transitions et Command](https://docs.langchain.com/oss/python/langgraph/graph-api)
 
 - [LangGraph — concepts et architecture](https://docs.langchain.com/oss/python/langgraph/overview)
+
+- Complément du 14 novembre 2026 — État et reducers : [LangGraph — Graph API](https://docs.langchain.com/oss/python/langgraph/graph-api).
 
 ## Connexions
 - [[45-langgraph-production|LangGraph — Production]] — persistance, HITL, multi-agents

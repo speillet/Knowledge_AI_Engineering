@@ -1,6 +1,6 @@
 # Patterns de workflows agentiques — Flashcards
 Tags: #flashcards #ai-engineering #agents #workflows #patterns #llm
-<!-- summary: prompt chaining, routing, parallélisation (sectioning, voting), evaluator-optimizer, plan-and-execute ou ReAct, Reflexion, calcul de fiabilité d'une chaîne, workflow ou agent, implémentation sans framework, conservation du meilleur candidat admissible. -->
+<!-- summary: prompt chaining, routing, parallélisation (sectioning, voting), evaluator-optimizer, plan-and-execute ou ReAct, Reflexion, calcul de fiabilité d'une chaîne, workflow ou agent, implémentation sans framework, conservation du meilleur candidat admissible, vote corrélé, arrêt des améliorations. -->
 
 
 Quels sont les patterns de base pour composer des appels LLM ? <!--anki:794e6f356a4c61743f5b-->
@@ -130,6 +130,22 @@ Quand une boucle evaluator-optimizer doit-elle conserver le meilleur candidat au
 Une **révision** peut améliorer un critère tout en dégradant une réponse déjà correcte. Le dernier candidat n'est donc pas nécessairement le meilleur.
 
 Conserver chaque proposition avec son score, ses violations et son coût. N'accepter une révision que selon une règle définie : contraintes impératives satisfaites puis amélioration mesurable. Arrêter sur budget, stagnation ou réussite, et conserver le meilleur candidat admissible. Si l'évaluateur est bruité, confirmer les écarts utiles ; multiplier les révisions peut seulement suradapter le texte à son juge.
+
+---
+
+Calcul : trois classifieurs indépendants ont chacun 80 % de probabilité de réponse correcte sur une tâche binaire. Quelle fiabilité pour leur vote majoritaire sans abstention ? <!--anki:3062663931623331356234393437383562663763373630623534653039316233-->
+?
+La majorité réussit si exactement deux ou les trois réussissent : **3 × 0,8² × 0,2 + 0,8³ = 0,896**, soit **89,6 %**.
+
+Le gain dépend fortement de l'indépendance supposée. Trois appels au même modèle partageant une fausse prémisse peuvent produire la même erreur ; leur vote ne suit alors pas ce calcul. Mesurer les erreurs conjointes et le coût avant de déployer une stratégie de vote.
+
+---
+
+Pourquoi fixer une amélioration minimale dans une boucle evaluator-optimizer ? <!--anki:3534353761626465623131653433613339383738626434636438336364623966-->
+?
+Sans seuil, la boucle peut poursuivre **des reformulations sans gain utile**, guidées par le bruit du juge. Définir un progrès minimal, un nombre maximal d'essais et une condition d'admissibilité.
+
+Conserver le meilleur candidat admissible selon la grille, puis confirmer les gains sur des cas indépendants. Une hausse minime du score automatique ne justifie pas nécessairement le coût d'un nouvel appel. Une amélioration de style ne doit pas compenser une perte d'exactitude.
 
 ---
 

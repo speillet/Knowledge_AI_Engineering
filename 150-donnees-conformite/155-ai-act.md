@@ -1,7 +1,7 @@
 # AI Act (règlement européen sur l'IA) — Flashcards
 Tags: #flashcards #ai-engineering #ai-act #conformite #reglementation
 Vérifié le : 25 septembre 2026 — date globale conservée ; revue ciblée du 13 novembre 2026 détaillée dans les Sources.
-<!-- summary: approche par les risques, pratiques interdites, haut risque et obligations, fournisseur ou déployeur, transparence, modèles à usage général, calendrier, sanctions, plan d'action, limites d'une validation humaine pour la qualification. -->
+<!-- summary: approche par les risques, pratiques interdites, haut risque et obligations, fournisseur ou déployeur, transparence, modèles à usage général, calendrier, sanctions, plan d'action, limites d'une validation humaine pour la qualification, changement de finalité, preuve de rôle. -->
 
 
 Qu'est-ce que l'AI Act ? <!--anki:4a5b34484f4550646148-->
@@ -130,6 +130,22 @@ Décrire l'usage réel, les exceptions éventuelles et le rôle de chaque acteur
 
 ---
 
+Pourquoi un changement de finalité peut-il imposer de réexaminer le rôle d'une organisation au regard de l'AI Act ? <!--anki:3263366433306435656661383432656561356465663737633534616537343864-->
+?
+L'article 25 prévoit notamment qu'un acteur modifiant **la finalité prévue d'un système jusqu'à le rendre à haut risque** peut être considéré comme fournisseur, sous les conditions du texte.
+
+La qualification dépend du système et de la modification, pas du titre commercial du produit. Documenter finalité initiale, nouvel usage et responsabilités, puis vérifier les obligations et dates applicables. Tout ajustement de prompt n'est pas automatiquement une modification substantielle.
+
+---
+
+Pourquoi conserver un dossier de qualification AI Act par cas d'usage plutôt qu'un label unique pour tout un modèle ? <!--anki:3430366563393030646465323430616638633366336366353061666637336534-->
+?
+Un même modèle peut participer à **des systèmes et finalités différents**. Les obligations liées au modèle à usage général et celles du système déployé ne se confondent pas.
+
+Documenter usage, acteurs, population concernée, degré d'autonomie et justification de la qualification. Réexaminer le dossier si le périmètre change. Une étiquette globale « conforme » ne démontre pas le respect de toutes les obligations d'un nouveau cas d'usage.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton entreprise déploie trois systèmes IA : un assistant de rédaction interne, un chatbot client et un outil de présélection de candidatures. Comment les classes-tu ? <!--anki:4943714a5b34316b7d70-->
@@ -181,6 +197,8 @@ Revue ciblée du 13 novembre 2026 : affirmations précisées dans cette passe ; 
 - [EUR-Lex — règlement modificatif (UE) 2026/1744](https://eur-lex.europa.eu/eli/reg/2026/1744/oj/eng) — texte normatif des amendements et calendrier.
 - [Commission européenne — article 111 amendé](https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-111) — transitions GPAI et marquage des systèmes existants.
 - [Commission européenne — article 113 amendé](https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-113) — dates d’application par dispositions.
+
+- Complément du 14 novembre 2026 — Changement de finalité et responsabilités : [Commission européenne — article 25](https://ai-act-service-desk.ec.europa.eu/en/ai-act/article-25).
 
 ## Connexions
 - [[154-rgpd-llm|RGPD appliqué aux LLM]] — le cadre de protection des données

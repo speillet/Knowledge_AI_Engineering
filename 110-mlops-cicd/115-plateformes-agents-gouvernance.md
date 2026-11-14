@@ -1,7 +1,7 @@
 # Plateformes d'agents — Architecture & gouvernance — Flashcards
 Tags: #flashcards #ai-engineering #agents #platform #gouvernance #llm
 Vérifié le : 25 septembre 2026 — date globale conservée ; revue ciblée du 13 novembre 2026 détaillée dans les Sources.
-<!-- summary: plateforme interne (paved road), plan de contrôle et plan d'exécution, architecture de référence, séparation cerveau, mains et session, exécution durable, isolation multi-tenant, échange de jetons pour l'agent délégué, jetons hors du contexte, standards d'identité, moteur de politiques, human-in-the-loop, registre et cycle de vie, Top 10 OWASP agentique, rayon d'impact et kill switch, audit, SLO, evals continues, coûts, AI Act, lock-in, critères de choix, révocation d'une délégation active, politiques versionnées, retrait vérifié, responsabilités métier et exploitation, dérogations temporaires. -->
+<!-- summary: plateforme interne (paved road), plan de contrôle et plan d'exécution, architecture de référence, séparation cerveau, mains et session, exécution durable, isolation multi-tenant, échange de jetons pour l'agent délégué, jetons hors du contexte, standards d'identité, moteur de politiques, human-in-the-loop, registre et cycle de vie, Top 10 OWASP agentique, rayon d'impact et kill switch, audit, SLO, evals continues, coûts, AI Act, lock-in, critères de choix, révocation d'une délégation active, politiques versionnées, retrait vérifié, responsabilités métier et exploitation, dérogations temporaires, révocation de cache, accès exceptionnel. -->
 
 
 Pourquoi construire une plateforme d'agents interne plutôt que laisser chaque équipe se débrouiller ? <!--anki:736971307067364a5850-->
@@ -337,6 +337,14 @@ Comment encadrer une exception temporaire aux standards de la plateforme IA ? <!
 Une **exception** doit identifier besoin, périmètre, propriétaire, contrôles compensatoires, échéance et condition de sortie. Elle permet une dérogation visible plutôt qu'un service parallèle oublié.
 
 Relier la décision à la release et tester les garanties réellement conservées : droits, données, traces et reprise. À expiration, réexaminer explicitement ou retirer l'usage selon la politique ; ne pas transformer le silence en prolongation. Mesurer les exceptions récurrentes : elles peuvent révéler un socle inadapté et motiver une évolution commune. L'automatisation peut signaler ou appliquer les limites prévues, sans inventer une autorisation que les responsables n'ont pas donnée.
+
+---
+
+Pourquoi les caches de décision d'autorisation doivent-ils faire partie du plan de révocation d'une plateforme d'agents ? <!--anki:3837613630353336616237353432666561323838643962653331376138643235-->
+?
+Une décision « autorisé » conservée trop longtemps peut **survivre au retrait d'un droit**. Les workers et gateways peuvent continuer à accepter des actions sur cette base.
+
+Définir portée, durée et invalidation du cache selon le risque. Pour une écriture sensible, vérifier les conditions courantes au service métier. Tester un retrait pendant une tâche longue. La politique centrale correcte ne suffit pas si ses copies restent périmées.
 
 ---
 

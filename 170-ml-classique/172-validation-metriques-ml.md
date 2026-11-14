@@ -1,6 +1,6 @@
 # ML classique : validation, fuites & métriques — Flashcards
 Tags: #flashcards #ai-engineering #ml-classique #validation #metriques
-<!-- summary: train-validation-test, fuites, validation croisée, groupes et temps, pipelines, classes rares, ROC et PR, calcul de précision selon la prévalence, seuils et incertitude, calcul de balanced accuracy. -->
+<!-- summary: train-validation-test, fuites, validation croisée, groupes et temps, pipelines, classes rares, ROC et PR, calcul de précision selon la prévalence, seuils et incertitude, calcul de balanced accuracy, macro et micro, prétraitement dans les folds. -->
 
 
 À ne pas confondre : entraînement, validation et test final en ML supervisé ? <!--anki:6663653365326138306266653464653739373832333133616230333730393964-->
@@ -50,6 +50,8 @@ Pourquoi apprendre imputation et sélection de variables à l'intérieur de chaq
 Ces opérations **apprennent elles aussi à partir des données**. Une sélection guidée par tous les labels transmet de l'information du fold de validation au modèle, même si son entraînement proprement dit n'utilise que le train.
 
 Une pipeline regroupe les transformations et l'estimateur : chaque fold ajuste la chaîne sur son train, puis transforme sa validation avec les paramètres obtenus. Cette protection ne détecte pas une variable déjà contaminée en amont. L'audit de provenance et de disponibilité reste nécessaire, même avec une pipeline correctement construite.
+
+Même une médiane calculée sans labels utilise la distribution de validation si elle est ajustée sur tout le dataset.
 
 ---
 
@@ -159,6 +161,14 @@ La seconde métrique donne ici un poids égal aux deux classes et révèle l'éc
 
 ---
 
+À ne pas confondre : moyenne macro et moyenne micro pour une classification multiclasse ? <!--anki:3537323966636332636235363430366239643735383739393137326637386431-->
+?
+La **macro** calcule la métrique par classe puis donne le même poids à chaque classe. La **micro** agrège les comptes avant calcul et donne davantage de poids aux classes fréquentes.
+
+Une bonne micro-métrique peut masquer une classe rare mal traitée. Choisir selon l'usage et publier les effectifs par classe. Pour une classification multiclasse à une seule étiquette, la micro-F1 coïncide avec l'exactitude si toutes les classes sont incluses.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton classifieur de documents atteint 98 % sur un split aléatoire mais échoue chez de nouveaux clients. Que vérifies-tu ? <!--anki:6332393032336432653936623461356261323834363962633030343933643733-->
@@ -204,6 +214,10 @@ Mise en situation : après 200 essais, le meilleur modèle gagne un point sur va
 - [scikit-learn — choix du seuil de décision](https://scikit-learn.org/stable/modules/classification_threshold.html)
 
 - [scikit-learn — métriques et balanced accuracy](https://scikit-learn.org/stable/modules/model_evaluation.html) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
+
+- Complément du 14 novembre 2026 — Prétraitement ajusté dans les folds : [scikit-learn — Common pitfalls](https://scikit-learn.org/stable/common_pitfalls.html).
+
+- Complément du 14 novembre 2026 — Moyennes macro et micro : [scikit-learn — Metrics and scoring](https://scikit-learn.org/stable/modules/model_evaluation.html).
 
 ## Connexions
 - [[171-choisir-modele-ml|Choisir un modèle ML]] — comparer les baselines et familles de modèles

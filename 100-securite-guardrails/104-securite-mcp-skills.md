@@ -1,7 +1,7 @@
 # Sécurité de MCP, des outils & des skills — Flashcards
 Tags: #flashcards #ai-engineering #securite #mcp #supply-chain #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: surface d'attaque, tool poisoning, rug pull et tool shadowing (et leurs différences), postmark-mcp, ClawHub, ToxicSkills, règles d'autorisation de la spec, scopes minimaux, SSRF et URL piégées, serveurs locaux, évaluation avant autorisation, gateway MCP, SSRF lors de la découverte. -->
+<!-- summary: surface d'attaque, tool poisoning, rug pull et tool shadowing (et leurs différences), postmark-mcp, ClawHub, ToxicSkills, règles d'autorisation de la spec, scopes minimaux, SSRF et URL piégées, serveurs locaux, évaluation avant autorisation, gateway MCP, SSRF lors de la découverte, verrouillage des dépendances, portée d'une mise à jour. -->
 
 
 Pourquoi les serveurs MCP et les skills élargissent-ils la surface d'attaque ? <!--anki:67293130246a4855475a-->
@@ -161,6 +161,22 @@ Valider schéma, destination et redirections selon la politique réseau ; traite
 
 ---
 
+Pourquoi épingler un serveur MCP sans verrouiller ses dépendances laisse-t-il un risque de supply chain ? <!--anki:3931386335653365313866353430346362626435396630336138323839336162-->
+?
+Le même code de serveur peut installer **une nouvelle dépendance transitive** au prochain démarrage. L'artefact exécuté n'est alors plus celui qui a été validé.
+
+Verrouiller les versions et vérifier les artefacts, leur provenance et les permissions effectives. Tester l'installation dans un environnement propre. Un numéro de version affiché dans la configuration ne garantit pas à lui seul la stabilité de toute la chaîne exécutée.
+
+---
+
+Pourquoi réexaminer les permissions lorsqu'une skill ajoute une nouvelle commande ? <!--anki:3762336136313366353131313435393861373434393264306466363732396131-->
+?
+L'évolution peut transformer **une aide documentaire en capacité d'exécution ou d'accès réseau**. La confiance accordée à l'ancienne version ne couvre pas automatiquement ce nouveau comportement.
+
+Comparer le contenu et les dépendances, puis vérifier les capacités réellement requises. Restreindre les secrets et chemins accessibles. La revue doit porter sur les effets possibles, pas seulement sur la taille du diff ou le nom familier de la skill.
+
+---
+
 ## Mises en situation
 
 Mise en situation : une équipe veut brancher sur son agent de production un serveur MCP Jira trouvé sur GitHub, maintenu par un inconnu, parce qu'il a plus de fonctionnalités que le serveur officiel. Que réponds-tu ? <!--anki:7538415d29676a753d77-->
@@ -192,6 +208,8 @@ Mise en situation : la gateway MCP t'alerte. La description de l'outil `search_d
 - [MCP — bonnes pratiques de sécurité, édition 2026-07-28](https://modelcontextprotocol.io/docs/2026-07-28/tutorials/security/security_best_practices)
 
 - [MCP — bonnes pratiques de sécurité](https://modelcontextprotocol.io/docs/2026-07-28/tutorials/security/security_best_practices) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
+
+- Complément du 14 novembre 2026 — Identité et frontières de confiance MCP : [MCP — pratiques de sécurité 2026-07-28](https://modelcontextprotocol.io/docs/2026-07-28/tutorials/security/security_best_practices).
 
 ## Connexions
 - [[33-mcp|MCP]] — le protocole et ses primitives

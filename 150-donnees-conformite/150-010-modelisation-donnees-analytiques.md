@@ -1,7 +1,7 @@
 # Modélisation des données analytiques — Flashcards
 Tags: #flashcards #ai-engineering #donnees #data-engineering
 Vérifié le : 9 octobre 2026 — références techniques et exemples de cette fiche.
-<!-- summary: grain, OLTP et OLAP, faits et dimensions, clés, normalisation, cardinalités de jointure, mesures additives, SCD, identité métier et définitions de métriques, calcul d'une moyenne globale pondérée. -->
+<!-- summary: grain, OLTP et OLAP, faits et dimensions, clés, normalisation, cardinalités de jointure, mesures additives, SCD, identité métier et définitions de métriques, calcul d'une moyenne globale pondérée, mesures semi-additives, dimensions historiques. -->
 
 
 Pourquoi définir le grain d’une table avant de construire des variables ML ? <!--anki:3062336464623832353838383439306261643964313533396439623630623261-->
@@ -134,6 +134,22 @@ Calcul : un groupe de deux commandes vaut 10 € en moyenne et un groupe de huit
 Reconstituer d'abord les sommes : `2 × 10 + 8 × 20 = 180 €` pour dix commandes. La **moyenne globale vaut 18 €**, et non la moyenne non pondérée `(10 + 20) / 2 = 15 €`.
 
 Conserver effectif et somme avec une moyenne agrégée pour pouvoir la recombiner correctement. Vérifier que les populations sont disjointes, les unités identiques et les valeurs manquantes traitées selon la même règle. Le même piège apparaît dans un dashboard qui moyenne les scores moyens de clients de tailles très différentes.
+
+---
+
+Pourquoi un solde bancaire est-il une mesure semi-additive dans un modèle analytique ? <!--anki:3330373137376466613965383438343362643032323166623666343937646335-->
+?
+On peut additionner **des soldes de comptes au même instant**, mais additionner le solde d'un même compte sur plusieurs jours ne donne pas un solde pertinent.
+
+Définir le grain temporel et l'agrégation attendue : dernier état, moyenne temporelle ou autre mesure métier. Un moteur SQL exécutera `SUM` sans savoir si cela a du sens. Documenter l'additivité de chaque mesure selon les dimensions.
+
+---
+
+Pourquoi joindre une vente historique à la dimension client actuelle peut-il changer le reporting passé ? <!--anki:3464666634393538623033303466316461373430353432643336363463343165-->
+?
+Le client peut avoir **changé de région ou de segment** depuis la vente. Utiliser sa valeur actuelle réattribue le passé selon la situation d'aujourd'hui.
+
+Choisir explicitement une lecture historique ou actuelle. Pour l'historique, utiliser la version de dimension valable au moment retenu et garantir des intervalles non ambigus. Les deux rapports peuvent être légitimes, mais ils répondent à des questions différentes.
 
 ---
 

@@ -1,7 +1,7 @@
 # Text-to-SQL & données structurées — Flashcards
 Tags: #flashcards #ai-engineering #rag #text-to-sql #donnees #llm
 Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: text-to-SQL ou RAG, contenu du prompt, schema linking, couche sémantique, sécurisation de l'exécution, boucle de correction, exact match ou execution accuracy, benchmarks (Spider, BIRD, Spider 2.0), questions ambiguës, limites d'une validation SQL sur échantillon. -->
+<!-- summary: text-to-SQL ou RAG, contenu du prompt, schema linking, couche sémantique, sécurisation de l'exécution, boucle de correction, exact match ou execution accuracy, benchmarks (Spider, BIRD, Spider 2.0), questions ambiguës, limites d'une validation SQL sur échantillon, fan-out des jointures, valeurs NULL. -->
 
 
 Qu'est-ce que le text-to-SQL ? <!--anki:797b6930743e52773076-->
@@ -109,6 +109,22 @@ Valider la requête sur des jeux contrôlés contenant cas limites, jointures mu
 
 ---
 
+Pourquoi une jointure peut-elle doubler un total dans une requête générée par text-to-SQL ? <!--anki:3630346365353337613433383466386539333031316637656130373133373162-->
+?
+Une relation **un-à-plusieurs multiplie les lignes** avant agrégation. Joindre une commande de 100 € à trois lignes produit trois occurrences du montant ; `SUM(montant_commande)` renvoie 300 €.
+
+Définir le grain de chaque table et préagréger au grain attendu, ou agréger les bonnes mesures. `SUM(DISTINCT montant)` n'est pas une réparation générale : deux commandes différentes peuvent avoir le même montant. Tester avec des cardinalités connues et comparer aux totaux de référence.
+
+---
+
+Comment les valeurs NULL peuvent-elles fausser une réponse text-to-SQL pourtant exécutable ? <!--anki:3762653638613565366531373465343739363839623732636538326662303862-->
+?
+**NULL représente une valeur inconnue ou absente**, pas zéro. `COUNT(*)` compte les lignes ; `COUNT(colonne)` ignore les NULL. `AVG(colonne)` ignore aussi ces valeurs, ce qui change le dénominateur.
+
+Sur trois factures de 10, 20 et montant inconnu, la moyenne des montants connus vaut 15, pas 10. Le système doit expliciter la population calculée et choisir une politique métier pour les absences. Remplacer tous les NULL par zéro inventerait une information.
+
+---
+
 ## Mises en situation
 
 Mise en situation : le directeur commercial veut « poser ses questions à l'entrepôt de données en langage naturel ». L'entrepôt compte 300 tables mal documentées. Comment cadres-tu le projet ? <!--anki:48286c646f7b7a5a404e-->
@@ -138,6 +154,8 @@ Mise en situation : ton assistant text-to-SQL a 85 % d'execution accuracy en tes
 ## Sources
 
 - [Spider 2.0 — benchmark des auteurs](https://spider2-sql.github.io/)
+
+- Complément du 14 novembre 2026 — Jointures, cardinalités et agrégations : [PostgreSQL 18 — expressions de table](https://www.postgresql.org/docs/18/queries-table-expressions.html).
 
 ## Connexions
 - [[145-cas-system-design|Cas de system design]] — l'assistant d'analyse de données comme cas d'architecture

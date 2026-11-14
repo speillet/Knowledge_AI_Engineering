@@ -1,7 +1,7 @@
 # Mixture of Experts (MoE) — Flashcards
 Tags: #flashcards #ai-engineering #fondamentaux #moe #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: paramètres totaux et actifs, routeur, load balancing, expert partagé, spécialisation réelle, coût mémoire, expert parallelism, MoE ou dense, calcul des experts distincts actifs dans un batch. -->
+<!-- summary: paramètres totaux et actifs, routeur, load balancing, expert partagé, spécialisation réelle, coût mémoire, expert parallelism, MoE ou dense, calcul des experts distincts actifs dans un batch, communication all-to-all, déséquilibre du routeur. -->
 
 
 Qu'est-ce qu'un modèle Mixture of Experts ? <!--anki:6a3348243e4677414e52-->
@@ -111,6 +111,14 @@ Le nombre d'experts actifs par token reste deux dans les deux cas. La couverture
 
 ---
 
+Que révèle un expert MoE recevant beaucoup plus de tokens que les autres ? <!--anki:6333333137316539663732353430393462313538313436383038613831643132-->
+?
+Il peut devenir **un goulot de calcul ou de capacité**, tandis que d'autres experts restent peu occupés. Cette concentration peut refléter les données ou un problème du routage.
+
+Examiner la distribution par couche et par type de requête, ainsi que les mécanismes d'équilibrage du modèle. Les implémentations diffèrent sur la gestion du dépassement de capacité. Ne pas conclure à une spécialisation utile à partir du seul volume reçu.
+
+---
+
 ## Mises en situation
 
 Mise en situation : un modèle MoE annoncé « 37 milliards de paramètres actifs » ne tient pas sur tes deux GPU de 80 Go, alors qu'un modèle dense de 70 milliards y tenait. Explique. <!--anki:6737702e68314b6e2a35-->
@@ -140,6 +148,8 @@ Mise en situation : pour un service interne à faible trafic sur un seul GPU, on
 ## Sources
 
 - [Jiang et al. — Mixtral of Experts (2024)](https://arxiv.org/abs/2401.04088)
+
+- Complément du 14 novembre 2026 — Routage et coûts des experts : [Fedus et al. — Switch Transformers](https://arxiv.org/abs/2101.03961).
 
 ## Connexions
 - [[131-transformer-architecture|Architecture Transformer]] — le bloc MLP remplacé

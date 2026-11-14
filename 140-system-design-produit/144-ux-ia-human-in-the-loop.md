@@ -1,6 +1,6 @@
 # UX de l'IA & human-in-the-loop — Flashcards
 Tags: #flashcards #ai-engineering #ux #produit #human-in-the-loop #llm
-<!-- summary: copilote ou autopilote, validation humaine efficace, streaming, visibilité des agents, feedback, attentes, chat ou interface dédiée, automation bias, erreurs et refus, correction locale des résultats. -->
+<!-- summary: copilote ou autopilote, validation humaine efficace, streaming, visibilité des agents, feedback, attentes, chat ou interface dédiée, automation bias, erreurs et refus, correction locale des résultats, capacité de revue, comparaison avant-après. -->
 
 
 Pourquoi l'UX est-elle un sujet d'AI Engineer et pas seulement de designer ? <!--anki:473c3c77237b4b533a6b-->
@@ -103,6 +103,22 @@ Pourquoi une interface IA doit-elle permettre de corriger une erreur sans recomm
 Une **correction locale** réduit l'effort humain et évite de régénérer des parties déjà validées. Pour une extraction, permettre de corriger un montant en gardant sa page source est souvent plus utile qu'un bouton « réessayer » global.
 
 Identifier les champs et décisions validés, conserver leur provenance et montrer les conséquences d'une modification. Ne pas réutiliser une approbation si l'action change. Mesurer temps de correction et erreurs restantes avec des utilisateurs. Collecter la correction comme un signal à vérifier, avec une politique de données adaptée, avant de l'utiliser pour entraîner le système.
+
+---
+
+Pourquoi une file de validation humaine peut-elle devenir un goulot malgré un agent rapide ? <!--anki:6639313332613335636339303430656538653038333532663737353339636339-->
+?
+Si les propositions arrivent plus vite que les humains ne les traitent, **l'attente s'accumule**. L'automatisation déplace alors la latence au lieu de la réduire.
+
+Mesurer taux d'arrivée, temps de revue et backlog. Réduire les propositions inutiles, prioriser selon le risque et limiter l'admission. Une approbation précipitée pour vider la file peut transformer le contrôle humain en formalité sans valeur.
+
+---
+
+Pourquoi montrer un diff avant approbation d'une action d'agent ? <!--anki:3264343336663365616634613437376662383761376636373565616434646132-->
+?
+Le diff rend visibles **les changements précis et leurs cibles**, plutôt qu'une formulation vague comme « mettre à jour le dossier ». L'humain peut contrôler montant, destinataire et suppression éventuelle.
+
+Lier l'approbation à cette proposition versionnée. Si les données changent ensuite, demander une nouvelle validation ou vérifier une règle explicite de compatibilité. Un bouton « approuver » sans objet précis favorise les erreurs d'attention.
 
 ---
 

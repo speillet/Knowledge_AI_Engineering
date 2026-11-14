@@ -1,7 +1,7 @@
 # containerd & runc — Flashcards
 Tags: #flashcards #conteneurs #containerd #runc
 Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: rôle de containerd, rôle de runc, relation entre les deux, containerd ou CRI-O, crun, RuntimeClass, outils `ctr`, `nerdctl` et `crictl`, place du GPU dans la chaîne, distinction entre panne du shim et panne applicative. -->
+<!-- summary: rôle de containerd, rôle de runc, relation entre les deux, containerd ou CRI-O, crun, RuntimeClass, outils `ctr`, `nerdctl` et `crictl`, place du GPU dans la chaîne, distinction entre panne du shim et panne applicative, logs par couche, snapshots disque. -->
 
 
 Qu'est-ce que containerd ? <!--anki:482f38677a352a716331-->
@@ -121,6 +121,22 @@ Pourquoi la disparition d'un shim containerd doit-elle être distinguée d'un pl
 Le **shim** participe au suivi du processus conteneur et à ses entrées-sorties, tandis que le modèle s'exécute dans le processus applicatif. Une erreur à ces niveaux demande des diagnostics différents.
 
 Corréler état du conteneur, événements du runtime, code de sortie et logs applicatifs avant de relancer le modèle. Vérifier si le processus a été tué par une limite mémoire ou si la communication avec le runtime a échoué. Une relance aveugle efface parfois les indices et peut rejouer un travail dont le résultat était déjà produit.
+
+---
+
+Pourquoi une erreur de création de snapshot containerd peut-elle empêcher le démarrage avant toute exécution du modèle ? <!--anki:6233376234653539653763373437373861663136393364373162363037653036-->
+?
+Le runtime doit préparer **le système de fichiers du conteneur** avant de lancer son processus. Un disque plein, un manque d'inodes ou un problème de snapshotter peut bloquer cette étape.
+
+Examiner événements, espace, inodes et journaux du runtime avant les logs applicatifs, qui peuvent ne pas exister. Ne pas supprimer arbitrairement les répertoires internes de containerd ; utiliser les mécanismes de maintenance adaptés à l'état du nœud.
+
+---
+
+Comment corréler les logs du kubelet, de containerd et du processus d'inférence ? <!--anki:3962323039626166393865333431366539323634373937393032646538316430-->
+?
+Utiliser **identifiants de Pod, conteneur, nœud et horodatages** pour reconstruire une même tentative de lancement. Un redémarrage peut changer l'identifiant du conteneur sans changer celui du Pod.
+
+Chercher d'abord la première erreur causale plutôt que la dernière conséquence. Conserver les événements et logs de la tentative précédente. Un message de reconnexion du runtime peut résulter d'un arrêt déjà déclenché ailleurs.
 
 ---
 

@@ -1,6 +1,6 @@
 # Kubernetes, kubelet & CRI — Flashcards
 Tags: #flashcards #kubernetes #conteneurs #infra
-<!-- summary: Pod, Deployment, Service, control plane, kubelet, CRI (containerd, CRI-O), scheduler, requests et limits, probes, startup, readiness et liveness. -->
+<!-- summary: Pod, Deployment, Service, control plane, kubelet, CRI (containerd, CRI-O), scheduler, requests et limits, probes, startup, readiness et liveness, arrêt gracieux, éviction et OOM. -->
 
 
 Qu'est-ce que Kubernetes ? <!--anki:727e3f4d405d3b296743-->
@@ -123,6 +123,22 @@ Un modèle peut avoir besoin de plusieurs minutes avant d'accepter une requête.
 
 ---
 
+Pourquoi retirer un Pod du trafic avant de terminer son processus d'inférence ? <!--anki:6530303638363661663865613465623661643933623130613335306465306562-->
+?
+Il faut **cesser d'admettre de nouvelles requêtes puis drainer celles en cours**. Sinon, des flux acceptés juste avant l'arrêt sont coupés.
+
+Coordonner readiness, propagation réseau et délai de terminaison avec le serveur. Une période de grâce ne garantit pas que le programme gère correctement SIGTERM. Tester des streams actifs pendant un déploiement, y compris la fin forcée lorsque le délai est épuisé.
+
+---
+
+À ne pas confondre : OOMKilled d'un conteneur et éviction d'un Pod sous pression du nœud ? <!--anki:6632346365653637626161623465383162316534383439323034313962633561-->
+?
+Un **OOM kill** correspond à une mise à mort liée à la mémoire ; une **éviction** est une décision du kubelet face à une pression de ressources, par exemple mémoire ou disque.
+
+Examiner raison, événements et métriques du nœud pour distinguer les causes. Augmenter la limite mémoire du conteneur ne résout pas un disque saturé ni nécessairement une pression globale. Le redémarrage automatique peut masquer la répétition du problème sans la corriger.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton Pod vLLM est tué et redémarré en boucle au démarrage, avant même d'avoir répondu à une requête. Que vérifies-tu ? <!--anki:46422c54432f78477a62-->
@@ -153,6 +169,10 @@ Mise en situation : une équipe demande pourquoi ses Pods GPU restent en attente
 - [Kubernetes — Pods, mises à jour et remplacement](https://kubernetes.io/docs/concepts/workloads/pods/) — consultation ciblée du 6 novembre 2026.
 
 - [Kubernetes — cycle de vie et sondes des Pods](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
+
+- Complément du 14 novembre 2026 — Terminaison des Pods : [Kubernetes — Pod Lifecycle](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/).
+
+- Complément du 14 novembre 2026 — Éviction sous pression de ressources : [Kubernetes — Node-pressure Eviction](https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/).
 
 ## Connexions
 - [[00-index|Index Conteneurs]] — conteneurs, OCI, Docker

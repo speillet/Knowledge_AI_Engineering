@@ -1,7 +1,7 @@
 # Sécurité des agents de code — Flashcards
 Tags: #flashcards #ai-engineering #securite #agents #coding-agents #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: cible de choix, modes sans permission, isolation du poste, s1ngularity, Amazon Q, fichiers d'instructions piégés, PromptPwnd, agents en CI/CD, slopsquatting et typosquatting, qualité du code généré, revue des PR d'agents, secrets, politique d'entreprise, secrets accessibles au code de test. -->
+<!-- summary: cible de choix, modes sans permission, isolation du poste, s1ngularity, Amazon Q, fichiers d'instructions piégés, PromptPwnd, agents en CI/CD, slopsquatting et typosquatting, qualité du code généré, revue des PR d'agents, secrets, politique d'entreprise, secrets accessibles au code de test, commandes de tests, provenance des dépendances. -->
 
 
 Pourquoi les agents de code sont-ils une cible de choix ? <!--anki:476b3a2c623d293b2560-->
@@ -147,6 +147,22 @@ Pourquoi un secret disponible uniquement pendant les tests peut-il encore être 
 Les **tests exécutent du code** : fixtures, scripts d'installation et hooks peuvent lire l'environnement et utiliser le réseau. Un secret absent du prompt peut donc rester accessible au processus lancé.
 
 Exécuter le code non approuvé sans secrets sensibles et avec un réseau limité, puis réserver les validations privilégiées à un contexte contrôlé. Revoir aussi les changements de dépendances et de CI. Tester que les branches non approuvées ne récupèrent pas les jetons de publication. La séparation du raisonnement du modèle et de l'exécution ne protège que si les droits du processus sont réellement réduits.
+
+---
+
+Pourquoi lancer les tests d'une PR d'agent doit-il être considéré comme une exécution de code non fiable ? <!--anki:3537356633383139646664643431383938636162643033303662303839316135-->
+?
+Les tests, fixtures et scripts d'installation peuvent **exécuter des commandes avec les droits du runner**. Un dépôt modifié peut donc accéder aux secrets même si le correctif applicatif paraît bénin.
+
+Utiliser un environnement isolé avec secrets minimaux et réseau maîtrisé. Examiner les changements de configuration de test et de dépendances. Une CI verte prouve que ses vérifications ont réussi ; elle ne prouve pas que le code exécuté était sans effets indésirables.
+
+---
+
+Comment vérifier une dépendance suggérée par un agent de code avant de l'ajouter ? <!--anki:6464383565336166663830353465316439636430343466386238383433323737-->
+?
+Vérifier **l'existence, l'origine, le nom exact et la nécessité** du paquet, puis sa maintenance et ses dépendances. Un nom plausible peut être inventé ou imiter un paquet connu.
+
+Privilégier les références officielles et les versions verrouillées. Installer d'abord dans un environnement isolé. Le nombre de téléchargements seul n'est pas une preuve de confiance ; une revue doit aussi examiner les scripts d'installation et les permissions utiles.
 
 ---
 

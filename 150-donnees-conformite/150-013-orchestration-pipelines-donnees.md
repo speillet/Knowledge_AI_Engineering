@@ -1,7 +1,7 @@
 # Transformations & orchestration des pipelines data — Flashcards
 Tags: #flashcards #ai-engineering #donnees #data-engineering
 Vérifié le : 9 octobre 2026 — références techniques et exemples de cette fiche.
-<!-- summary: ETL/ELT, couches de données, tâches et assets, intervalles logiques, dépendances, incrémental, retries, publication, CI, ressources et chemin critique d’un DAG, publication concurrente d'un même intervalle. -->
+<!-- summary: ETL/ELT, couches de données, tâches et assets, intervalles logiques, dépendances, incrémental, retries, publication, CI, ressources et chemin critique d’un DAG, publication concurrente d'un même intervalle, données disponibles, tâche réussie sans publication. -->
 
 
 À ne pas confondre : ETL et ELT dans un pipeline de données IA ? <!--anki:3335323665353333336238353433396662366239393935376130313139346330-->
@@ -140,6 +140,22 @@ Pourquoi deux orchestrations du même intervalle de données doivent-elles publi
 Un **retry, backfill ou lancement manuel** peut recalculer le même intervalle en parallèle. Si chaque run écrit directement dans la destination finale, les lecteurs peuvent voir des résultats mélangés.
 
 Définir une identité de partition logique, écrire dans une version isolée, valider puis publier avec un contrôle de concurrence. Décider si une seconde exécution retrouve le résultat existant ou le remplace selon une règle explicite. Tester deux runs simultanés. Le succès de toutes les tâches d'un DAG ne garantit pas que leur publication concurrente respecte le contrat de données.
+
+---
+
+Pourquoi une dépendance de données est-elle plus précise qu'une simple attente entre horaires de jobs ? <!--anki:6433643662623338386465643436636438323861623565626433306563623563-->
+?
+Un job lancé à 03 h peut dépendre d'un producteur de 02 h **qui a échoué ou n'a publié qu'une partie des données**. L'heure ne prouve pas la disponibilité.
+
+Déclencher selon un état de publication validé pour l'intervalle attendu, avec fraîcheur et complétude. Prévoir timeout et politique de retard. Un succès du scheduler ne doit pas être confondu avec une donnée prête pour ses consommateurs.
+
+---
+
+Que signifie la réussite d'une tâche de pipeline si ses résultats ne sont pas encore publiés ? <!--anki:6165666362383962613963343433376339336630383063383666363730346161-->
+?
+Elle peut signifier seulement **que le calcul s'est terminé**. Les consommateurs ont besoin d'une publication complète et cohérente, éventuellement distincte.
+
+Séparer états calculé, validé et publié, puis définir quel état débloque l'aval. Tester une panne entre ces étapes. Une reprise doit pouvoir vérifier les artefacts déjà produits sans créer un lot partiellement visible ou écraser une version publiée.
 
 ---
 

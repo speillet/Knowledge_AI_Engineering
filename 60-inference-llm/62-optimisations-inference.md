@@ -1,6 +1,6 @@
 # Optimisations d'inférence — Flashcards
 Tags: #flashcards #ai-engineering #inference #optimisation #llm
-<!-- summary: prefill et decode, continuous batching, quantization (AWQ, GPTQ, FP8), FlashAttention, parallélisme tensor et pipeline, chunked prefill, désagrégation prefill/decode, équité du chunked prefill. -->
+<!-- summary: prefill et decode, continuous batching, quantization (AWQ, GPTQ, FP8), FlashAttention, parallélisme tensor et pipeline, chunked prefill, désagrégation prefill/decode, équité du chunked prefill, FlashAttention et complexité, batch utile. -->
 
 
 Quelles sont les deux phases de l'inférence d'un LLM ? <!--anki:482678244d584c28753b-->
@@ -85,6 +85,22 @@ Cette équité peut améliorer l'ITL au prix d'un prefill plus fragmenté et d'u
 
 ---
 
+Pourquoi FlashAttention peut-il réduire la mémoire sans rendre linéaire le calcul d'attention dense ? <!--anki:3561383533396666363164363435633738393035333434333362663330363065-->
+?
+Il évite de matérialiser toute la **matrice des scores en mémoire GPU externe**, en organisant le calcul par blocs et en exploitant la mémoire rapide.
+
+Les interactions entre positions restent quadratiques pour une attention dense complète : la baisse des transferts et de mémoire intermédiaire ne supprime pas ces opérations. Distinguer complexité arithmétique, mémoire auxiliaire et performance observée. Le gain dépend des formes, du matériel et du backend réellement utilisé.
+
+---
+
+Pourquoi un batch plus grand peut-il diminuer le goodput malgré un débit brut supérieur ? <!--anki:3865636463613365356435303435313462393362386665343535336266356433-->
+?
+Il peut améliorer l'utilisation du GPU mais **allonger l'attente ou les intervalles entre tokens**. Davantage de requêtes terminent, mais certaines dépassent le SLO.
+
+Comparer débit utile sous contraintes de latence et taux de rejet, au même trafic offert. Segmenter par longueur et priorité. Chercher le point de fonctionnement qui respecte le contrat produit, plutôt que le batch maximal qui tient en mémoire ou le meilleur nombre de tokens/s isolé.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton service d'inférence tient le SLO de latence à faible charge, mais aux heures de pointe le TTFT explose alors que le débit stagne. Quels leviers actionnes-tu ? <!--anki:6932733f3f45586b4746-->
@@ -115,6 +131,8 @@ Mise en situation : on te propose de passer de 2 GPU à 4 GPU en tensor parallel
 
 - [Orca — continuous batching](https://www.usenix.org/conference/osdi22/presentation/yu)
 - [vLLM — optimisation et compromis](https://docs.vllm.ai/en/latest/configuration/optimization/)
+
+- Complément du 14 novembre 2026 — Mémoire intermédiaire et attention dense : [Dao et al. — FlashAttention](https://arxiv.org/abs/2205.14135).
 
 ## Connexions
 - [[61-kv-cache-attention|KV cache & attention]] — la mémoire que ces techniques gèrent

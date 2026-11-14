@@ -1,7 +1,7 @@
 # Computer use & agents navigateur — Flashcards
 Tags: #flashcards #ai-engineering #agents #computer-use #multimodal #securite
 Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: image ou structure (DOM, arbre d'accessibilité), grounding visuel, benchmarks (OSWorld, WebArena), coût et latence, injection par le contenu web, isolation, quand ne pas l'utiliser, computer use ou RPA, outils, revérification de l'écran avant un clic sensible. -->
+<!-- summary: image ou structure (DOM, arbre d'accessibilité), grounding visuel, benchmarks (OSWorld, WebArena), coût et latence, injection par le contenu web, isolation, quand ne pas l'utiliser, computer use ou RPA, outils, revérification de l'écran avant un clic sensible, attente sur condition, succès après clic. -->
 
 
 Quelles sont les deux façons pour un agent d'utiliser une interface ? <!--anki:6b51676a79395d336043-->
@@ -107,6 +107,22 @@ Pourquoi un agent d'interface doit-il revérifier l'écran avant un clic à effe
 Entre **observation et action**, la page peut changer : chargement, fenêtre modale ou déplacement d'un bouton. Les anciennes coordonnées peuvent alors viser une autre commande.
 
 Réobserver l'état, privilégier un identifiant sémantique fiable quand il existe et vérifier cible et paramètres avant l'effet. Après l'action, contrôler sa confirmation dans le système. Si l'état devient ambigu, arrêter et demander une clarification utile. Tester un déplacement de contenu entre capture et clic. Un historique de captures explique l'intention, mais ne garantit pas ce que l'interface affichait exactement à l'instant de l'action.
+
+---
+
+Pourquoi un agent navigateur doit-il attendre une condition plutôt qu'un délai fixe après un clic ? <!--anki:3630356166363063316637613465373738336263633331316532326661613530-->
+?
+Le chargement varie selon **réseau, serveur et état de l'interface**. Une pause trop courte provoque une action sur un écran incomplet ; une pause longue ralentit inutilement.
+
+Attendre un élément, un état ou un résultat précis avec timeout borné, puis relire l'écran. Vérifier que la condition correspond à la tâche et pas à une simple animation terminée. Un élément présent peut rester désactivé ou être masqué.
+
+---
+
+Pourquoi un clic réussi sur « Envoyer » ne prouve-t-il pas que l'action a abouti ? <!--anki:3534616637626634643737353430633039366331383761663463386561653065-->
+?
+Le clic peut être suivi **d'une erreur de validation, d'une panne réseau ou d'un rejet serveur**. Il prouve une interaction UI, pas l'effet métier.
+
+Vérifier confirmation, identifiant et état persistant lorsque disponibles. En cas de timeout, rechercher le résultat avant de cliquer à nouveau. Une répétition aveugle peut créer un doublon si le premier envoi a réussi sans que sa confirmation soit visible.
 
 ---
 

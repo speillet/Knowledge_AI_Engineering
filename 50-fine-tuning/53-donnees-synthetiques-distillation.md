@@ -1,7 +1,7 @@
 # Données synthétiques & distillation — Flashcards
 Tags: #flashcards #ai-engineering #fine-tuning #synthetic-data #distillation #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: génération variée, filtrage, model collapse, distillation sur les sorties ou sur les logits, distillation du raisonnement, contraintes juridiques, projet de distillation, jeux d'eval synthétiques, déduplication après génération. -->
+<!-- summary: génération variée, filtrage, model collapse, distillation sur les sorties ou sur les logits, distillation du raisonnement, contraintes juridiques, projet de distillation, jeux d'eval synthétiques, déduplication après génération, couverture des modes, rendement du filtrage. -->
 
 
 Qu'est-ce que les données synthétiques en AI Engineering ? <!--anki:4a7e713448475b3c212c-->
@@ -91,6 +91,22 @@ Pourquoi dédupliquer les données synthétiques après génération plutôt qu'
 Des **prompts distincts** peuvent produire des réponses presque identiques, et une génération peut recopier un exemple déjà présent dans le test. La diversité des graines ne garantit donc pas celle des données finales.
 
 Dédupliquer et regrouper les exemples par origine, gabarit et proximité avant de former les partitions. Contrôler aussi le chevauchement avec l'évaluation protégée. Conserver la provenance du générateur et du filtrage pour retrouver un lot défectueux. Mesurer la diversité des situations et erreurs couvertes, pas seulement le nombre de lignes produites.
+
+---
+
+Pourquoi équilibrer les données synthétiques par type d'erreur plutôt que seulement par classe ? <!--anki:6331363364303734633131353463313361346162663864353132313762313137-->
+?
+Une classe peut contenir **plusieurs difficultés** : négation, ambiguïté, bruit OCR ou contexte incomplet. Un dataset équilibré en étiquettes peut rester presque entièrement composé de cas faciles.
+
+Construire une grille de couverture, générer puis vérifier chaque famille, et comparer aux erreurs réelles. Ne pas régler le test final sur cette grille synthétique seule. Des exemples artificiellement difficiles mais irréalistes peuvent détourner l'apprentissage de la distribution utile.
+
+---
+
+Calcul : 20 000 exemples synthétiques coûtent 0,002 € chacun ; 40 % passent le filtre, puis 25 % des survivants sont des doublons. Quel coût de génération par exemple unique retenu ? <!--anki:3730623134303736656363643439343638326535646536633164333036353366-->
+?
+La génération coûte **40 €**. Il reste **20 000 × 0,40 × 0,75 = 6 000 exemples**, soit environ **0,0067 € par exemple retenu**.
+
+Le filtrage et la validation humaine ne sont pas inclus. Le rendement doit être suivi par catégorie : conserver beaucoup de paraphrases faciles peut donner un bon rendement global sans améliorer les cas importants. Dédupliquer avant de répartir entraînement et test.
 
 ---
 

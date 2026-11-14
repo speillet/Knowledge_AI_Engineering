@@ -1,7 +1,7 @@
 # Streaming & intégration applicative — Flashcards
 Tags: #flashcards #ai-engineering #api #streaming #agents #llm
 Vérifié le : 30 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: intérêt du streaming, SSE ou WebSocket, tampons des proxys, annulation côté serveur, JSON en streaming, événements d'un agent (AG-UI), tâches longues asynchrones, reprise d'un flux, clé d'idempotence, calcul des connexions ouvertes, déduplication à la reconnexion SSE. -->
+<!-- summary: intérêt du streaming, SSE ou WebSocket, tampons des proxys, annulation côté serveur, JSON en streaming, événements d'un agent (AG-UI), tâches longues asynchrones, reprise d'un flux, clé d'idempotence, calcul des connexions ouvertes, déduplication à la reconnexion SSE, backpressure, fin de flux. -->
 
 
 Pourquoi streamer les réponses d'un LLM ? <!--anki:6536416a5043402c2f28-->
@@ -114,6 +114,22 @@ Pourquoi une reconnexion SSE peut-elle afficher deux fois le même événement d
 Une **reconnexion** peut rejouer des événements déjà reçus, notamment si le client n'a pas enregistré son dernier curseur avant la coupure.
 
 Donner aux événements un identifiant stable et ordonné selon le contrat ; le client déduplique et reprend depuis son curseur. Si l'historique a expiré, récupérer un état de référence plutôt que reconstruire un résultat à partir d'un flux incomplet. Les événements d'affichage ne doivent pas déclencher directement des effets métier rejouables. Distinguer reprise de transport et reprise de l'exécution de l'agent.
+
+---
+
+Pourquoi borner le buffer d'un flux SSE lorsque le client lit lentement ? <!--anki:6431313366653233663238383436366161306265343930306263373735643431-->
+?
+Sans borne, le producteur peut accumuler **des données plus vite que le réseau ne les évacue**, jusqu'à saturer la mémoire.
+
+Définir une politique de backpressure, délai ou interruption explicite. Pour des événements rejouables, un journal durable peut découpler production et livraison. Ne pas supprimer silencieusement des fragments de texte ou d'arguments : le résultat deviendrait incomplet tout en paraissant valide.
+
+---
+
+Pourquoi distinguer fermeture de connexion et événement de réussite dans un stream d'agent ? <!--anki:6333613839326437333231653433653761333664336633366535326638666462-->
+?
+Une connexion peut se fermer après **une panne, un timeout ou une réussite**. La fermeture seule ne donne pas le statut métier.
+
+Prévoir un événement terminal explicite avec identifiant de tâche et résultat, ainsi qu'un endpoint de statut si la connexion est perdue. Le client ne doit pas afficher « terminé » sur une simple fin de transport. Tester une coupure juste avant et juste après l'enregistrement de la réussite.
 
 ---
 

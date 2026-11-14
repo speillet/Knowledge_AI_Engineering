@@ -1,6 +1,6 @@
 # Evals online & A/B testing — Flashcards
 Tags: #flashcards #ai-engineering #evals #ab-testing #production #llm
-<!-- summary: signaux explicites et implicites, A/B test, guardrail metrics, shadow testing, canary ou A/B, peeking, effet de nouveauté, métriques produit, boucle online-offline, confidentialité, calcul de la taille d'échantillon, intention de traiter et biais d'exposition. -->
+<!-- summary: signaux explicites et implicites, A/B test, guardrail metrics, shadow testing, canary ou A/B, peeking, effet de nouveauté, métriques produit, boucle online-offline, confidentialité, calcul de la taille d'échantillon, intention de traiter et biais d'exposition, unité de randomisation, métriques retardées. -->
 
 
 Pourquoi les evals offline ne suffisent-elles pas ? <!--anki:6b62287a2a6d53773a7b-->
@@ -110,6 +110,22 @@ Pourquoi distinguer intention de traiter et analyse des seuls utilisateurs effec
 L'**intention de traiter** compare les unités selon leur assignation initiale. Restreindre après coup aux utilisateurs exposés peut introduire un biais si la variante influence justement l'exposition ou les erreurs de chargement.
 
 Conserver assignation, éligibilité et exposition comme événements distincts ; définir la population d'analyse avant l'essai. Rapporter les échecs d'exposition et analyser leurs causes. Une analyse des exposés peut répondre à une question précise avec des hypothèses supplémentaires, mais ne remplace pas automatiquement l'estimation causale liée à la randomisation.
+
+---
+
+Pourquoi randomiser un assistant par utilisateur plutôt que par message dans certains A/B tests ? <!--anki:6662623337643438343431383435396662373931666562303831616562363032-->
+?
+Les messages d'une conversation s'influencent. Changer de variante à chaque message peut créer **une expérience incohérente et une contamination entre traitements**.
+
+Choisir l'unité selon le mécanisme étudié : utilisateur, conversation ou équipe. Analyser l'incertitude à ce niveau, car plusieurs messages d'une même personne ne sont pas indépendants. Une randomisation plus large peut nécessiter davantage d'unités pour atteindre la puissance voulue.
+
+---
+
+Pourquoi attendre la maturité des résultats avant de comparer deux variantes avec une métrique retardée ? <!--anki:6462663733656661653933623438346338303963383330666536323933626139-->
+?
+Les demandes récentes n'ont pas encore eu **le temps de produire leur résultat final**. Comparer une variante plus ancienne à une variante plus récente peut favoriser artificiellement la première.
+
+Définir une fenêtre de maturation commune, suivre la couverture des labels et analyser les cohortes comparables. Les indicateurs rapides peuvent aider au pilotage, mais ne remplacent pas automatiquement la métrique métier retardée.
 
 ---
 

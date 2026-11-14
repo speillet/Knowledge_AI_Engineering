@@ -1,6 +1,6 @@
 # LLM-as-a-judge — Flashcards
 Tags: #flashcards #ai-engineering #evals #llm-as-judge #llm
-<!-- summary: formats pointwise et pairwise, biais (position, verbosité, auto-préférence), prompt de juge, validation contre des humains (TPR, TNR, kappa), correction du taux mesuré, choix du modèle juge, juges spécialisés, limites, quand ne pas utiliser de juge; injection du juge, échecs de parsing, échantillonnage pondéré, contre-exemples de style pour les juges. -->
+<!-- summary: formats pointwise et pairwise, biais (position, verbosité, auto-préférence), prompt de juge, validation contre des humains (TPR, TNR, kappa), correction du taux mesuré, choix du modèle juge, juges spécialisés, limites, quand ne pas utiliser de juge; injection du juge, échecs de parsing, échantillonnage pondéré, contre-exemples de style pour les juges, cohérence pairwise, vérité de référence. -->
 
 
 Qu'est-ce que le LLM-as-a-judge ? <!--anki:68706a2847612b4c514c-->
@@ -179,6 +179,22 @@ Pourquoi tester un juge LLM avec des réponses volontairement longues, flatteuse
 Ces **contre-exemples** vérifient si le juge récompense l'apparence plutôt que le critère demandé. Une réponse longue et assurée peut obtenir une bonne note malgré une erreur factuelle.
 
 Créer des paires où la réponse sobre est correcte et la réponse séduisante est fausse ; inverser leur ordre et masquer le modèle auteur. Mesurer les désaccords avec une référence humaine et leur répartition par type d'erreur. Une forte corrélation globale ne suffit pas si le juge manque précisément les erreurs critiques du produit.
+
+---
+
+Pourquoi les préférences d'un juge LLM peuvent-elles former un cycle A > B > C > A ? <!--anki:3130326539353664306136383434663261303763633961306430393362623939-->
+?
+Le juge peut appliquer **des critères variables ou sensibles au contexte de comparaison**. Une préférence pairwise ne définit donc pas toujours un ordre global cohérent.
+
+Mesurer répétabilité, inverser l'ordre des réponses et utiliser une grille explicite. En cas de cycles importants, examiner les compromis de qualité plutôt que forcer un classement certain. Un tournoi agrégé peut résumer les observations, mais ne supprime pas leur incohérence.
+
+---
+
+Pourquoi fournir une référence fausse à un juge LLM peut-il dégrader une évaluation apparemment rigoureuse ? <!--anki:6436386165333037383932343437363839366336383336643062646534626434-->
+?
+Le juge peut pénaliser **une réponse correcte qui contredit la référence**. La structure de la grille n'empêche pas ce biais de départ.
+
+Vérifier les références, accepter plusieurs réponses valides lorsque nécessaire et tracer les contestations. Inclure des cas où la référence est incomplète pour tester les limites du protocole. Un juge plus puissant ne remplace pas une vérité terrain contrôlée et adaptée à la question.
 
 ---
 

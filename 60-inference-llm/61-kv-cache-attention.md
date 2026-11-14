@@ -1,6 +1,6 @@
 # KV cache & attention — Flashcards
 Tags: #flashcards #ai-engineering #inference #kv-cache #llm
-<!-- summary: rôle et taille du cache, KV cache, prefix caching et prompt caching, calcul de la concurrence sur un H100, PagedAttention et continuous batching, KV cache en FP8, coût des contextes longs, blocs physiques et préfixes partagés. -->
+<!-- summary: rôle et taille du cache, KV cache, prefix caching et prompt caching, calcul de la concurrence sur un H100, PagedAttention et continuous batching, KV cache en FP8, coût des contextes longs, blocs physiques et préfixes partagés, fragmentation par blocs, durée de résidence. -->
 
 
 Qu'est-ce que le KV cache ? <!--anki:4b502378625b2b7e6f5e-->
@@ -124,6 +124,22 @@ Pourquoi le partage de préfixe ne doit-il pas faire compter deux fois la même 
 Des **séquences partageant un préfixe** peuvent référencer les mêmes blocs KV physiques. Additionner naïvement tous leurs tokens logiques surestime alors la mémoire réellement allouée.
 
 Séparer blocs partagés, suffixes propres, blocs partiellement remplis et réserves du moteur. À l'inverse, une estimation supposant un partage parfait devient trop optimiste quand les préfixes divergent ou sont évincés. Vérifier les métriques du moteur avec un workload représentatif. Le nombre de tokens du contexte reste une grandeur logique ; la capacité dépend des blocs physiques et de leur politique de réutilisation.
+
+---
+
+Calcul : un cache KV alloue des blocs de 16 tokens. Trois séquences indépendantes utilisent chacune 17 tokens, sans partage. Combien de places sont réservées et quelle fraction est inutilisée ? <!--anki:3831316637326334646661663432336439333232666237363163333331613339-->
+?
+Chaque séquence requiert deux blocs, donc **3 × 2 × 16 = 96 places** pour 51 tokens utiles. Il reste **45 places**, soit **46,875 %** de la réservation.
+
+C'est une illustration de fragmentation interne, sans compter métadonnées ni autres allocations. Des blocs plus petits réduisent ce gaspillage, mais peuvent augmenter les coûts de gestion. Le dimensionnement doit tenir compte des longueurs réelles et du partage éventuel.
+
+---
+
+Pourquoi un client lent peut-il augmenter l'occupation mémoire du service d'inférence ? <!--anki:6665366135303961616362323466663262313639343235326639323864616262-->
+?
+Si le système conserve la requête active pendant l'envoi, la **durée de résidence de ses états et buffers** augmente. Cela peut réduire la concurrence disponible même lorsque le GPU calcule vite.
+
+Examiner le couplage entre génération, buffering et réseau. Borner les buffers, gérer les délais et propager les annulations. Le KV peut être libéré avant la fin du transfert dans certaines architectures : mesurer le comportement effectif plutôt que l'inférer de la seule durée du flux client.
 
 ---
 

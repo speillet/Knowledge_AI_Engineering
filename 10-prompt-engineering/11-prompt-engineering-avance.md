@@ -1,6 +1,6 @@
 # Prompt engineering avancé — Flashcards
 Tags: #flashcards #ai-engineering #prompt-engineering #llm
-<!-- summary: system prompt et user prompt, few-shot, few-shot ou fine-tuning, chain-of-thought (coût, balises), self-consistency et ses limites, délimiteurs, décomposition en appels, meta-prompting, prompts versionnés comme du code, anti-patterns, tests métamorphiques. -->
+<!-- summary: system prompt et user prompt, few-shot, few-shot ou fine-tuning, chain-of-thought (coût, balises), self-consistency et ses limites, délimiteurs, décomposition en appels, meta-prompting, prompts versionnés comme du code, anti-patterns, tests métamorphiques, ablation des consignes, exemples limites. -->
 
 
 Quel est le rôle du system prompt par rapport au user prompt ? <!--anki:6876605d304e7d7c4d6f-->
@@ -118,6 +118,14 @@ Tester paraphrases, espaces, ordre des exemples et ajout d'informations sans rap
 
 ---
 
+Comment une ablation permet-elle de savoir quelles consignes d'un prompt sont utiles ? <!--anki:6662663636333839346136663434613761333235366238633838326231373266-->
+?
+Une **ablation retire un seul composant** : rôle, exemple, règle ou bloc documentaire. Comparer les sorties sur les mêmes entrées, avec plusieurs tirages si nécessaire, permet d'estimer sa contribution.
+
+Si retirer le rôle ne change rien mais retirer un exemple dégrade les cas ambigus, conserver prioritairement cet exemple. L'absence de gain moyen ne suffit pas : contrôler les erreurs critiques. Les interactions entre composants imposent ensuite de retester le prompt simplifié complet.
+
+---
+
 ## Mises en situation
 
 Mise en situation : un prompt de 400 lignes gère l'extraction, la traduction et le résumé de contrats. Il marche à 70 % et chaque correction en casse une autre partie. Comment reprends-tu le sujet ? <!--anki:4e3842703a752847257c-->
@@ -149,6 +157,8 @@ Mise en situation : ton classifieur de tickets a 92 % d'exactitude mais l'équip
 - [Wei et al. — chain-of-thought prompting](https://arxiv.org/abs/2201.11903)
 - [Wang et al. — self-consistency](https://arxiv.org/abs/2203.11171)
 - [Turpin et al. — limites de fidélité des explications](https://arxiv.org/abs/2305.04388)
+
+- Complément du 14 novembre 2026 — Position et sélection du contexte : [Liu et al. — Lost in the Middle](https://arxiv.org/abs/2307.03172).
 
 ## Connexions
 - [[92-chainforge-evals-prompts|ChainForge & evals]] — tester systématiquement

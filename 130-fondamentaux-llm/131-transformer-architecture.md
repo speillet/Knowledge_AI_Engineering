@@ -1,6 +1,6 @@
 # Architecture Transformer — Flashcards
 Tags: #flashcards #ai-engineering #fondamentaux #transformer #llm
-<!-- summary: attention et somme pondérée, masque causal, teacher forcing, multi-head, GQA/MQA et mémoire KV, MLP, résiduelles, normalisation, RoPE, coûts, poids d’un 70B, modèle de base ou assistant, limites explicatives des poids d'attention. -->
+<!-- summary: attention et somme pondérée, masque causal, teacher forcing, multi-head, GQA/MQA et mémoire KV, MLP, résiduelles, normalisation, RoPE, coûts, poids d’un 70B, modèle de base ou assistant, limites explicatives des poids d'attention, normalisation softmax, contexte causal. -->
 
 
 Qu'est-ce qu'un LLM, mécaniquement ? <!--anki:7074663b5a51392c4f44-->
@@ -161,6 +161,22 @@ Distinguer visualisation interne et explication vérifiée. Tester des intervent
 
 ---
 
+Pourquoi soustraire le maximum des logits avant une softmax ne change-t-il pas les probabilités ? <!--anki:6635363938373665386132623436626339363864326162303565313565643638-->
+?
+Multiplier tous les termes exponentiels par **le même facteur** ne change pas leur rapport. Pour une constante c, `exp(z_i-c) / Σexp(z_j-c)` égale la softmax initiale.
+
+Choisir c égal au maximum limite les dépassements numériques. Cette transformation stabilise le calcul ; elle ne modifie pas la température ni la préférence relative entre tokens. Elle ne corrige pas non plus des logits déjà non finis.
+
+---
+
+Pourquoi le masque causal doit-il être appliqué avant la normalisation des scores d'attention ? <!--anki:3238356361643932613437343431336639353136656466626562353063613736-->
+?
+Les positions interdites doivent recevoir **une probabilité nulle dans la distribution normalisée**. Les masquer après softmax sans renormaliser laisserait une somme de poids inférieure à un.
+
+En pratique, le calcul exclut ces positions de la normalisation, souvent via une valeur assimilée à moins l'infini. Vérifier les conventions du kernel. Une erreur de masque pendant l'entraînement peut faire fuiter les tokens futurs et produire une perte artificiellement basse.
+
+---
+
 ## Mises en situation
 
 Mise en situation : on te demande combien de GPU prévoir pour servir un modèle 70B avec 16 000 tokens de contexte et 50 utilisateurs simultanés. Comment raisonnes-tu à voix haute ? <!--anki:4c256b2c707933653264-->
@@ -192,6 +208,8 @@ Mise en situation : en entretien, on te demande pourquoi un modèle de base rép
 - [Vaswani et al. — architecture Transformer](https://arxiv.org/abs/1706.03762)
 - [Ainslie et al. — GQA](https://arxiv.org/abs/2305.13245)
 - [Su et al. — RoFormer et RoPE](https://arxiv.org/abs/2104.09864)
+
+- Complément du 14 novembre 2026 — Attention et masque causal : [Vaswani et al. — Attention Is All You Need](https://arxiv.org/abs/1706.03762).
 
 ## Connexions
 - [[132-tokenisation|Tokenisation]] — l'entrée du modèle

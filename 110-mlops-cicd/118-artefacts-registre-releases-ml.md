@@ -1,7 +1,7 @@
 # Artefacts, registre & releases ML — Flashcards
 Tags: #flashcards #ai-engineering #mlops #ml-classique #registre #deploiement
 Vérifié le : 12 novembre 2026 — les exemples MLflow ciblent l'API 3 et restent à adapter à la version installée.
-<!-- summary: run, modèle journalisé et version enregistrée, paquet d'inférence complet, URI MLflow 3, résolution des alias, intégrité et provenance, sérialisation sûre, chargement en environnement propre, contrat des sorties, predict_proba, approbation, sauvegarde du registre, rétention, conversion, seuils et rollback de release. -->
+<!-- summary: run, modèle journalisé et version enregistrée, paquet d'inférence complet, URI MLflow 3, résolution des alias, intégrité et provenance, sérialisation sûre, chargement en environnement propre, contrat des sorties, predict_proba, approbation, sauvegarde du registre, rétention, conversion, seuils et rollback de release, résolution immuable, dépendance réseau au chargement. -->
 
 
 À ne pas confondre : run d'expérience, modèle journalisé et version de registre ? <!--anki:6166313136613661653031633431336539323137646439633965333963323364-->
@@ -164,6 +164,22 @@ Versionner la politique, documenter objectif et contraintes, puis évaluer les d
 
 ---
 
+Pourquoi résoudre un alias de modèle une seule fois au début d'un job batch ? <!--anki:3933383431353437663936393435646362316166633635386532396265303438-->
+?
+Un alias peut changer pendant le job et conduire à **un lot mélangeant plusieurs versions**. Résoudre une version immuable et l'enregistrer avec les résultats rend le traitement cohérent.
+
+Pour une reprise, conserver cette version sauf migration explicite. Un changement d'alias ne doit pas altérer silencieusement les éléments restants. Si le modèle initial est retiré pour sécurité, interrompre et appliquer une politique de retrait documentée.
+
+---
+
+Pourquoi tester le chargement d'un artefact ML sans accès réseau non déclaré ? <!--anki:3430346264306631653964663437303539363666346261343464363839666134-->
+?
+Un paquet peut télécharger **un tokenizer, du code ou des poids supplémentaires** au chargement. Il n'est alors pas autonome et sa reproduction dépend d'une source mutable.
+
+Déclarer et embarquer les dépendances nécessaires, ou documenter précisément leur récupération contrôlée. Tester en environnement propre avec réseau limité. Une réussite sur la machine d'entraînement peut provenir de caches locaux absents en production.
+
+---
+
 ## Mises en situation
 
 Mise en situation : le modèle fonctionne dans le notebook mais l'image de production ne trouve pas une classe de prétraitement. Que changes-tu ? <!--anki:3234383065626134626138333430636239643563393566386537336332353334-->
@@ -210,6 +226,8 @@ Mise en situation : après restauration, le registre affiche le champion mais so
 - [MLflow — architecture du stockage](https://mlflow.org/docs/latest/self-hosting/architecture/overview/) — séparation métadonnées et artefacts ; la procédure de restauration proposée en découle.
 - [scikit-learn — persistance des modèles](https://scikit-learn.org/stable/model_persistence.html) — sécurité, dépendances, compatibilité et conversion.
 - [scikit-learn — API du classifieur RandomForestClassifier](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html) — relation entre `classes_` et colonnes de probabilités.
+
+- Complément du 14 novembre 2026 — Alias et versions de modèle : [MLflow — Model Registry Workflows](https://mlflow.org/docs/latest/ml/model-registry/workflow/).
 
 ## Connexions
 

@@ -1,6 +1,6 @@
 # Transactions, outbox & sagas pour les agents — Flashcards
 Tags: #flashcards #ai-engineering #system-design #distribue #transactions
-<!-- summary: invariants métier, double écriture, outbox et inbox, périmètre transactionnel, sagas et compensation, isolation des workflows, états inconnus, checkpoints, validation humaine et tests de panne, âge des événements bloqués dans l'outbox. -->
+<!-- summary: invariants métier, double écriture, outbox et inbox, périmètre transactionnel, sagas et compensation, isolation des workflows, états inconnus, checkpoints, validation humaine et tests de panne, âge des événements bloqués dans l'outbox, réservation et compensation, ordre de publication. -->
 
 
 Pourquoi commencer un workflow d'agent par ses invariants métier ? <!--anki:6130323438373235613561633435303762363666336239313661613163346336-->
@@ -118,6 +118,22 @@ Pourquoi surveiller l'âge du plus ancien événement non publié d'une outbox ?
 Un **petit nombre d'événements en attente** peut cacher un événement bloqué depuis des heures. Le volume seul ne révèle ni le retard métier ni une ligne qui échoue à chaque tentative.
 
 Suivre âge, débit de publication et erreurs par catégorie. Prévoir reprise bornée, quarantaine inspectable et réconciliation avec les effets attendus. Tester un événement invalide au milieu d'un flux sain : il ne doit pas disparaître ni bloquer silencieusement tous les suivants. La transaction d'outbox garantit l'enregistrement conjoint ; elle ne garantit pas à elle seule que le relais publiera à temps.
+
+---
+
+À ne pas confondre : réserver une ressource et compenser une action déjà effectuée ? <!--anki:6166383563616165386539653430333661356665353132663739613463643463-->
+?
+La **réservation** garde temporairement une possibilité d'action ; la **compensation** tente de réparer un effet déjà produit. Une réservation de stock peut expirer, tandis qu'un colis expédié ne revient pas instantanément en annulant une ligne.
+
+Choisir selon les contraintes métier, avec durée et propriétaire explicites. Une saga ne rend pas chaque effet réversible. Prévoir les états nécessitant intervention humaine lorsque la compensation échoue ou reste partielle.
+
+---
+
+Pourquoi l'ordre des événements d'une outbox doit-il être défini par entité lorsque les mises à jour ne commutent pas ? <!--anki:3738353130306332626330613431373438386330356135636362626534396639-->
+?
+Publier « fermé » avant « ouvert » peut faire **régresser l'état chez un consommateur** si les événements sont appliqués dans leur ordre d'arrivée.
+
+Associer version ou séquence par entité et définir le traitement des retards et doublons. Un ordre global coûteux n'est pas toujours nécessaire. Le consommateur doit vérifier les transitions compatibles ; une outbox garantit le lien transactionnel avec l'écriture source, pas tous les ordres de livraison.
 
 ---
 

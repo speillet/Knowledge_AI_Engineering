@@ -1,7 +1,7 @@
 # Modèles vision-langage (VLM) — Flashcards
 Tags: #flashcards #ai-engineering #multimodal #vision #vlm #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: VLM génératif ou contrastif, encodeur visuel, coût des images, CLIP, limites, injection visuelle, OCR, coordonnées après transformation, qualité par champ et document complet, résolution d'image et conservation des preuves. -->
+<!-- summary: VLM génératif ou contrastif, encodeur visuel, coût des images, CLIP, limites, injection visuelle, OCR, coordonnées après transformation, qualité par champ et document complet, résolution d'image et conservation des preuves, recadrage et couverture, petite écriture. -->
 
 
 Qu'est-ce qu'un modèle vision-langage ? <!--anki:663a6d6d793b28727740-->
@@ -124,6 +124,22 @@ Pourquoi réduire la résolution d'une image peut-il diminuer le coût d'un VLM 
 Le **redimensionnement** peut rendre illisibles petits caractères, décimales ou légendes. Une image moins coûteuse n'est intéressante que si l'information nécessaire à la tâche reste disponible.
 
 Comparer plusieurs résolutions sur des cas annotés, notamment tableaux et détails fins. Utiliser au besoin une vue globale puis un recadrage ciblé, en conservant les transformations de coordonnées. Mesurer exactitude des champs critiques et coût total des reprises. Une bonne description générale de l'image ne prouve pas que le modèle peut lire le montant imprimé en bas de page.
+
+---
+
+Pourquoi recadrer une image peut-il aider un VLM tout en lui faisant perdre une information essentielle ? <!--anki:6132303532363261386439613461333938373562386262303837393266663531-->
+?
+Le recadrage rend **les détails locaux plus visibles**, mais peut supprimer titre, légende ou contexte spatial. Une valeur lue correctement peut alors être attribuée à la mauvaise catégorie.
+
+Conserver une vue globale et des régions identifiées, avec transformation de coordonnées traçable. Évaluer l'association détail-contexte, pas seulement la reconnaissance du texte. Choisir les recadrages selon la tâche plutôt que multiplier toutes les tuiles indistinctement.
+
+---
+
+Comment distinguer une erreur de perception d'une erreur de raisonnement dans un VLM ? <!--anki:3539653363643430303765373464363061346131353338353534663431323434-->
+?
+Fournir une **transcription ou description de référence** de la région utile, puis comparer la réponse à celle obtenue depuis l'image. Si le résultat devient correct, la perception est une piste forte.
+
+Vérifier que la référence ne donne pas directement la réponse attendue et conserver les autres conditions. Tester aussi la localisation de la preuve. Une réponse finale fausse ne permet pas seule d'accuser l'encodeur visuel ou le raisonnement.
 
 ---
 

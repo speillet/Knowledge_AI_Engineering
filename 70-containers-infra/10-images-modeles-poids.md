@@ -1,6 +1,6 @@
 # Images & poids de modèles — Flashcards
 Tags: #flashcards #conteneurs #modeles #stockage #infra
-<!-- summary: calcul du temps de chargement des poids d'un 70B, poids dans l'image ou séparés, cold start, safetensors ou pickle, safetensors ou GGUF, modèles distribués comme artefacts OCI, publication atomique d'un cache de poids. -->
+<!-- summary: calcul du temps de chargement des poids d'un 70B, poids dans l'image ou séparés, cold start, safetensors ou pickle, safetensors ou GGUF, modèles distribués comme artefacts OCI, publication atomique d'un cache de poids, intégrité des shards, cache de téléchargement. -->
 
 
 Calcul : quel temps minimal de transfert réseau pour 140 Go de poids BF16 d’un 70B, à 1 puis 10 Gbit/s constants, hors stockage, désérialisation et initialisation du moteur ? <!--anki:4e2e2a7a3e49745e523f-->
@@ -123,6 +123,22 @@ Pourquoi un cache de poids partagé doit-il publier les modèles de façon atomi
 Deux **workers** peuvent lire le même chemin pendant un téléchargement ou une mise à jour. Si les fichiers apparaissent progressivement, ils risquent de charger un mélange de versions ou des poids incomplets.
 
 Télécharger dans un emplacement temporaire, vérifier manifeste et checksums, puis publier une référence vers une version complète et immuable. Ne rendre le service prêt qu'après chargement validé. Nettoyer les versions avec une politique qui tient compte des lecteurs actifs. Un fichier présent ou une taille plausible ne garantit pas l'intégrité de tous les shards.
+
+---
+
+Pourquoi vérifier tous les shards et leur index avant de publier un modèle téléchargé ? <!--anki:3233356430306434663233383438623762393633613333333230353636333962-->
+?
+Un répertoire partiellement rempli peut avoir **le bon nom et une taille plausible** tout en manquant de tenseurs. L'index associe les poids à leurs shards ; leur cohérence doit être vérifiée.
+
+Télécharger dans un espace temporaire, contrôler le manifeste et les empreintes disponibles, puis rendre l'ensemble visible atomiquement. Tester un téléchargement interrompu. Un fichier marqueur « prêt » n'est fiable que s'il est écrit après ces contrôles.
+
+---
+
+Comment éviter que plusieurs Pods téléchargent simultanément les mêmes poids dans un cache partagé ? <!--anki:3361343565623936333138353465626562636635363733666262306162373338-->
+?
+Utiliser **un mécanisme de coordination par version d'artefact**, puis laisser les lecteurs utiliser seulement une version complète. Prévoir timeout du propriétaire et reprise après panne.
+
+Écrire dans des fichiers temporaires distincts et publier sans écraser un téléchargement actif. Le verrou protège la coordination ; les contrôles d'intégrité protègent le contenu. Surveiller aussi le débit de lecture une fois le téléchargement terminé : le cache peut devenir le prochain goulot.
 
 ---
 

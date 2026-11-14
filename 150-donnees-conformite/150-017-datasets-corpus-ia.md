@@ -1,7 +1,7 @@
 # Construction de datasets & corpus IA — Flashcards
 Tags: #flashcards #ai-engineering #donnees #data-engineering
 Vérifié le : 9 octobre 2026 — références techniques et exemples de cette fiche.
-<!-- summary: manifestes, identité documentaire, parsing, déduplication et splits, shards, streaming de datasets, shuffle, workers, mélange des sources, filtrage, packing et reprise d’entraînement, propagation des retraits aux caches d'entraînement. -->
+<!-- summary: manifestes, identité documentaire, parsing, déduplication et splits, shards, streaming de datasets, shuffle, workers, mélange des sources, filtrage, packing et reprise d’entraînement, propagation des retraits aux caches d'entraînement, split par source, packing et fuite. -->
 
 
 Que doit identifier le manifeste d’un dataset d’entraînement ou d’évaluation ? <!--anki:6435646437656139346162653431616139653838636163636131313631653832-->
@@ -147,6 +147,14 @@ Pourquoi conserver un jeu de données supprimé dans un cache d'entraînement pe
 Un **cache dérivé** peut continuer à fournir des exemples retirés des sources ou exclus d'une nouvelle version. Le dataset effectivement lu ne correspond alors plus au manifeste annoncé.
 
 Inclure version du corpus, transformations et règles de filtrage dans les clés de cache. Propager les retraits aux shards, données tokenisées et artefacts concernés selon une politique vérifiable. Faire un essai avec un exemple sentinelle supprimé, puis inspecter ce que le dataloader consomme réellement. Recalculer le manifeste sans invalider les dérivés ne prouve pas leur mise à jour.
+
+---
+
+Pourquoi répartir les documents par source avant de produire leurs chunks d'entraînement et de test ? <!--anki:3434343932633965343139653433646662343938346632336437366538323931-->
+?
+Des chunks d'un même document peuvent **partager formulations et faits**, même sans être identiques. Une répartition aléatoire après découpage crée une fuite entre jeux.
+
+Affecter d'abord les groupes pertinents, puis transformer et vérifier les quasi-doublons. Le groupe peut être document, auteur, client ou période selon l'usage. Conserver le manifeste de split pour que les reconstructions ultérieures ne déplacent pas silencieusement les exemples.
 
 ---
 

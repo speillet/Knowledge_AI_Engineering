@@ -1,7 +1,7 @@
 # Contrats de prédiction, features & scoring batch — Flashcards
 Tags: #flashcards #ai-engineering #mlops #ml-classique #features #batch
 Vérifié le : 12 novembre 2026 — les comportements de feature store dépendent de la version et du backend.
-<!-- summary: grain et contrat d'une prédiction, validation sémantique, parité entraînement-service, temps de disponibilité, TTL et fraîcheur, valeurs manquantes, schémas nommés, migrations des features, deadlines, indépendance au batch, idempotence, publication complète, validité temporelle des scores, retrait des features, rapprochement des labels, budget de latence et capacité batch. -->
+<!-- summary: grain et contrat d'une prédiction, validation sémantique, parité entraînement-service, temps de disponibilité, TTL et fraîcheur, valeurs manquantes, schémas nommés, migrations des features, deadlines, indépendance au batch, idempotence, publication complète, validité temporelle des scores, retrait des features, rapprochement des labels, budget de latence et capacité batch, ordre des colonnes, décision et score. -->
 
 
 Que doit préciser le contrat d'une prédiction avant de concevoir son endpoint ? <!--anki:3532653337623538353362313436646661646637323462333234613839343437-->
@@ -145,6 +145,22 @@ Deux heures représentent **7 200 secondes** :
 C'est un plancher de débit **utile de bout en bout**, après lecture, préparation, calcul, écriture et validation. Si trente minutes sont réservées à ces étapes hors scoring, les 5 400 secondes restantes imposent environ **2 223 lignes/s** pour le scoring seul.
 
 Prévoir marge pour reprises et partitions déséquilibrées, puis mesurer avec les tailles réelles. Multiplier un débit sur petit échantillon par le nombre de workers ignore souvent stockage, mémoire et contention. Préciser si le délai porte sur le dernier calcul ou sur la publication validée du lot consommable.
+
+---
+
+Pourquoi deux tables ayant les mêmes colonnes dans un ordre différent peuvent-elles produire des prédictions incorrectes ? <!--anki:3962623262643264313365613465343838396362643439663438386562646635-->
+?
+Un pipeline qui convertit les entrées en **matrice positionnelle** peut associer chaque valeur à la mauvaise feature. Les types restent plausibles, donc le modèle peut répondre sans erreur.
+
+Aligner explicitement les noms et valider ordre, type et unité avant conversion. Tester une permutation des colonnes. Les schémas nommés aident seulement si toutes les étapes les respectent ; leur perte dans un tableau intermédiaire doit être contrôlée.
+
+---
+
+Pourquoi versionner la politique de décision séparément du score prédictif ? <!--anki:6363633038306532663630313462366461393830633837373365323633353666-->
+?
+Un même score peut déclencher **une action différente selon le seuil, les quotas ou les règles métier**. Modifier ces règles change le produit sans modifier les poids.
+
+Conserver version du modèle, score brut, politique et décision effective pour l'audit et le rollback. Évaluer les impacts de capacité, coût et équité. Une bonne métrique prédictive ne prouve pas que la politique qui transforme le score en action est adaptée.
 
 ---
 

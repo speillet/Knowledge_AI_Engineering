@@ -1,6 +1,6 @@
 # Embeddings & représentations — Flashcards
 Tags: #flashcards #ai-engineering #fondamentaux #embeddings #rag
-<!-- summary: apprentissage contrastif, similarités, bi-encoder ou cross-encoder, ColBERT, Matryoshka, préfixes, choix (MTEB), fine-tuning d'embeddings, changement de modèle, SPLADE, limites, calcul du lien entre cosinus et distance L2. -->
+<!-- summary: apprentissage contrastif, similarités, bi-encoder ou cross-encoder, ColBERT, Matryoshka, préfixes, choix (MTEB), fine-tuning d'embeddings, changement de modèle, SPLADE, limites, calcul du lien entre cosinus et distance L2, norme des vecteurs, négatifs difficiles. -->
 
 
 Qu'est-ce qu'un modèle d'embedding ? <!--anki:6b565249636a404c3878-->
@@ -109,6 +109,22 @@ Calcul : pour deux vecteurs normalisés de cosinus 0,8, quelle distance euclidie
 Pour deux vecteurs de norme 1, `||u − v||² = 2 − 2 × cos(u,v)`. Avec un cosinus de 0,8, la distance vaut `√0,4 ≈ 0,632`.
 
 Minimiser cette distance revient donc à maximiser le cosinus **si tous les vecteurs sont effectivement normalisés**. Sans cette hypothèse, les normes influencent le produit scalaire et la distance, et les classements peuvent changer. Vérifier la normalisation à l'indexation et à la requête ; un seuil de similarité n'est pas directement un seuil de probabilité de pertinence.
+
+---
+
+Pourquoi le produit scalaire peut-il classer différemment deux embeddings que le cosinus ? <!--anki:6264303934396465653338323464663439623030613138333932616361373766-->
+?
+Le produit scalaire dépend **de l'angle et des normes** ; le cosinus ne garde que l'angle. Un vecteur de grande norme peut obtenir un score élevé sans être le plus proche en direction.
+
+Lorsque tous les vecteurs sont normalisés à norme un, les deux classements coïncident. Vérifier ce que le modèle et l'index attendent avant de normaliser : la norme peut être porteuse d'information dans certains entraînements.
+
+---
+
+Pourquoi les faux négatifs sont-ils dangereux dans l'entraînement contrastif d'embeddings ? <!--anki:3263333165656165343837643466623462383164623438393332303235326337-->
+?
+Un passage étiqueté négatif peut être **une autre réponse pertinente**. L'objectif entraîne alors le modèle à éloigner des éléments qui devraient rester proches.
+
+Contrôler les négatifs difficiles, dédupliquer et accepter plusieurs positifs quand la tâche le permet. Les négatifs aléatoires sont parfois trop faciles ; les négatifs proches demandent davantage de validation. Mesurer le retrieval sur des questions et sources indépendantes de la construction des paires.
 
 ---
 

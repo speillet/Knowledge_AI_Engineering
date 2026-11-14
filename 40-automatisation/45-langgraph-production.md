@@ -1,7 +1,7 @@
 # LangGraph — Production (persistance, HITL, multi-agents) — Flashcards
 Tags: #flashcards #ai-engineering #agents #langgraph #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: checkpointers, threads, `interrupt` et `Command(resume=...)`, time travel, Store long terme, durable execution, streaming, subgraphs, patterns multi-agents, déploiement, validité des approbations à la reprise. -->
+<!-- summary: checkpointers, threads, `interrupt` et `Command(resume=...)`, time travel, Store long terme, durable execution, streaming, subgraphs, patterns multi-agents, déploiement, validité des approbations à la reprise, approbation concurrente, reprise et secrets. -->
 
 
 Qu'est-ce qu'un checkpointer dans LangGraph ? <!--anki:73715178653d54644d38-->
@@ -133,6 +133,22 @@ L'**approbation** doit porter sur des arguments précis, une version d'objet et 
 
 ---
 
+Comment traiter deux réponses humaines concurrentes à une interruption LangGraph ? <!--anki:6236643737646232356561333466396238313861383337613263323466333861-->
+?
+Associer la décision à **l'identifiant d'interruption et à la version de la proposition**, puis accepter atomiquement une seule transition depuis l'état « en attente ».
+
+Une réponse tardive doit recevoir un statut déjà traité ou périmé. Ne pas appliquer successivement « approuver » puis « refuser » comme deux nouvelles commandes métier. Tester double clic, deux validateurs et reprise après timeout. L'interface et le graphe doivent partager le même état de décision.
+
+---
+
+Pourquoi éviter de persister un jeton d'accès dans un checkpoint LangGraph ? <!--anki:6664383032383065643938313436613262393838653835633232323061303632-->
+?
+Le jeton peut **expirer, être révoqué ou devenir accessible via une sauvegarde**. Reprendre l'ancien checkpoint ne doit pas restaurer une ancienne autorisation.
+
+Persister une référence d'identité et les données métier nécessaires, puis obtenir un accès courant via un mécanisme contrôlé. Revérifier les droits à l'action. Si un secret a déjà été stocké, la suppression de l'état courant ne suffit pas nécessairement à l'effacer des historiques et sauvegardes.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton agent de traitement de commandes s'arrête pour une validation humaine qui arrive parfois deux jours plus tard. Il tourne aujourd'hui avec `InMemorySaver`. Que changes-tu ? <!--anki:4d2f6936553058693334-->
@@ -180,6 +196,8 @@ Mise en situation : ton système à quatre agents devient impossible à débogue
 - [LangGraph — checkpointers et durabilité](https://docs.langchain.com/oss/python/langgraph/checkpointers)
 
 - [LangGraph — interruptions et reprise](https://docs.langchain.com/oss/python/langgraph/interrupts) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
+
+- Complément du 14 novembre 2026 — Checkpoints et mémoire persistée : [LangGraph — persistence](https://docs.langchain.com/oss/python/langgraph/persistence).
 
 ## Connexions
 - [[44-langgraph-fondamentaux|LangGraph — Fondamentaux]] — state, nodes, edges

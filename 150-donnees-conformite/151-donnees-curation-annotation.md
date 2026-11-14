@@ -1,6 +1,6 @@
 # Données : curation & annotation — Flashcards
 Tags: #flashcards #ai-engineering #donnees #annotation #qualite
-<!-- summary: dimensions de qualité, déduplication, guide d'annotation, accord inter-annotateurs, qui annote, active learning, séparation dev et test, données de production, préparation d'un fine-tuning, révision du guide après désaccords. -->
+<!-- summary: dimensions de qualité, déduplication, guide d'annotation, accord inter-annotateurs, qui annote, active learning, séparation dev et test, données de production, préparation d'un fine-tuning, révision du guide après désaccords, adjudication, incertitude des labels. -->
 
 
 Pourquoi les données restent-elles décisives à l'ère des LLM pré-entraînés ? <!--anki:7a61323b38504268346f-->
@@ -125,6 +125,22 @@ Pourquoi l'arbitrage des désaccords d'annotation doit-il parfois modifier le gu
 Un **désaccord récurrent** peut révéler une définition ambiguë de la cible, pas une mauvaise performance des annotateurs. Trancher chaque cas sans revoir la règle reproduit le problème.
 
 Regrouper les désaccords par cause, clarifier les critères et ajouter des exemples limites au guide. Réannoter un échantillon concerné avec la nouvelle version et mesurer l'accord obtenu. Conserver la provenance des labels et distinguer ambiguïté réelle et erreur. Une référence de test peut admettre plusieurs réponses justifiées ; forcer un consensus artificiel masque l'incertitude que le modèle devra gérer.
+
+---
+
+À quoi sert l'adjudication après un désaccord d'annotation ? <!--anki:6430313830346563616130333437323039303735373031383831356332313431-->
+?
+Elle cherche **une décision argumentée selon le guide**, ou identifie une ambiguïté à conserver. Elle ne consiste pas seulement à faire voter davantage de personnes.
+
+Examiner les preuves, clarifier la règle et réannoter les exemples concernés si nécessaire. Tracer le changement du guide. Certaines données restent indécidables ; leur imposer une étiquette certaine peut apprendre au modèle une règle artificielle.
+
+---
+
+Pourquoi conserver les raisons d'abstention des annotateurs ? <!--anki:6264346537346235393236633438306439663461663932653463323364366162-->
+?
+Elles distinguent **preuve manquante, consigne ambiguë et cas hors périmètre**. Ces causes demandent des actions différentes sur le corpus ou le produit.
+
+Un simple champ « non annoté » masque cette information. Mesurer la fréquence par source et segment, puis améliorer collecte ou guide. Ne pas supprimer systématiquement ces cas du test : le système de production les rencontrera peut-être et devra s'abstenir correctement.
 
 ---
 

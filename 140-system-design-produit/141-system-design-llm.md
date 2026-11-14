@@ -1,6 +1,6 @@
 # System design d'applications LLM — Méthode — Flashcards
 Tags: #flashcards #ai-engineering #system-design #architecture #llm
-<!-- summary: démarche, cadrage, échelle de complexité, triangle qualité-latence-coût, estimation de charge, composants, latence réelle ou perçue, synchrone ou asynchrone, multi-tenant, modes de défaillance, présentation des arbitrages, coût des erreurs métier. -->
+<!-- summary: démarche, cadrage, échelle de complexité, triangle qualité-latence-coût, estimation de charge, composants, latence réelle ou perçue, synchrone ou asynchrone, multi-tenant, modes de défaillance, présentation des arbitrages, coût des erreurs métier, amplification des appels, mode dégradé. -->
 
 
 Par quoi commence la démarche de system design d'une application LLM ? <!--anki:62787568774b543e5144-->
@@ -171,6 +171,22 @@ Pourquoi chiffrer le coût d'une erreur métier avant de choisir l'architecture 
 Le **coût de l'erreur** détermine les contrôles utiles : suggestion de titre et virement bancaire ne demandent pas le même niveau de preuve, de supervision ou de reprise.
 
 Décrire erreurs possibles, fréquence estimée, réversibilité et personnes affectées. Comparer ensuite règles, modèle, vérification et revue humaine sur leur coût total et leur délai. Commencer par un volume limité lorsque l'incertitude est forte. Une architecture plus complexe peut réduire certaines erreurs tout en créant de nouveaux modes de panne ; l'arbitrage doit porter sur le résultat métier complet.
+
+---
+
+Calcul : un produit reçoit 12 tâches/s ; chaque tâche fait en moyenne 4 appels LLM, et 10 % de ces appels nécessitent exactement une reprise. Quel débit moyen d'appels prévoir ? <!--anki:3837663937666661313835333434636261353265383138656134333066633363-->
+?
+Le débit nominal vaut **12 × 4 = 48 appels/s**. Les reprises ajoutent **4,8 appels/s**, soit **52,8 appels/s**.
+
+Ce calcul moyen ignore les rafales et la corrélation des pannes. Dimensionner aussi tokens, concurrence et dépendances d'outils. Un QPS produit ne se transpose pas directement en QPS fournisseur, surtout pour une boucle agentique à longueur variable.
+
+---
+
+Comment définir un mode dégradé utile pour une application LLM ? <!--anki:6538373361373864396336383438646362623465663035623561336131623033-->
+?
+Préserver **une valeur explicitement bornée** : recherche de documents sans synthèse, brouillon sans publication ou traitement différé. Indiquer clairement ce qui a été vérifié et ce qui reste en attente.
+
+Tester le mode avec les mêmes contraintes de droits et de confidentialité. Un fallback qui invente une réponse pour maintenir le taux de disponibilité dégrade le contrat produit. Mesurer réussite utile et délais dans ce mode séparément.
 
 ---
 

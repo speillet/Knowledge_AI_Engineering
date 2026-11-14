@@ -1,7 +1,7 @@
 # Orchestration multi-agents — Flashcards
 Tags: #flashcards #ai-engineering #agents #multi-agent #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: orchestrator-workers, supervisor, handoffs, evaluator-optimizer, état partagé, coût du multi-agent, protocole A2A, calcul du chemin critique parallèle. -->
+<!-- summary: orchestrator-workers, supervisor, handoffs, evaluator-optimizer, état partagé, coût du multi-agent, protocole A2A, calcul du chemin critique parallèle, annulation des branches, contrat de délégation. -->
 
 
 Qu'est-ce qu'un système multi-agents ? <!--anki:63233b336f5f4325367c-->
@@ -100,6 +100,22 @@ Calcul : quel temps minimal pour trois workers parallèles de 2, 5 et 8 secondes
 Si les workers sont **indépendants**, démarrent ensemble et que la synthèse attend les trois, le chemin critique vaut `max(2, 5, 8) + 3 = 11 secondes`, hors orchestration et files.
 
 L'exécution séquentielle prendrait `2 + 5 + 8 + 3 = 18 secondes`. Le gain de latence n'implique pas une baisse du coût : le même travail est exécuté, avec éventuellement davantage de coordination. Une dépendance entre workers ou une limite de concurrence invalide ce calcul idéal.
+
+---
+
+Que doit contenir un contrat de délégation entre un orchestrateur et un sous-agent ? <!--anki:3165613337626238373133633438623538333331336532376134613064653866-->
+?
+Préciser **objectif, entrées autorisées, livrable vérifiable, budget et condition d'arrêt**. Le sous-agent doit aussi indiquer les preuves et incertitudes utiles à la synthèse.
+
+« Analyse le dossier » est moins contrôlable que « extrais les clauses de résiliation avec page et citation ». L'orchestrateur reste responsable de vérifier le résultat et de résoudre les contradictions. Déléguer une tâche n'élargit pas les permissions ni n'efface le budget global.
+
+---
+
+Pourquoi annuler les sous-agents devenus inutiles après une décision ? <!--anki:3731393930653865323533383435623662313238633937653835313833383134-->
+?
+Ils peuvent continuer à consommer **tokens, outils et capacités d'écriture** alors que leur résultat ne sera plus utilisé. Propager l'annulation aux tâches, aux appels externes annulables et à l'admission de nouvelles actions.
+
+Vérifier les opérations déjà parties : une annulation locale ne prouve pas l'absence d'effet externe. Conserver leurs identifiants pour réconciliation. Mesurer le travail réellement économisé, car certains fournisseurs terminent et facturent une requête même après déconnexion du client.
 
 ---
 

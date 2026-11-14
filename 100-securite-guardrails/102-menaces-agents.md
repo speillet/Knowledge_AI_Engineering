@@ -1,7 +1,7 @@
 # Sécurité des agents — Menaces & incidents — Flashcards
 Tags: #flashcards #ai-engineering #securite #agents #menaces #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: nouveau modèle de menace, entrées non fiables, détournement d'agent, limites des défenses par détection, incidents (MCP GitHub, EchoLeak, Supabase, Replit), empoisonnement de la mémoire, injection invisible, risques multi-agents, denial of wallet, exécution de code, attaquants équipés d'agents, injection dans un résultat d'outil valide. -->
+<!-- summary: nouveau modèle de menace, entrées non fiables, détournement d'agent, limites des défenses par détection, incidents (MCP GitHub, EchoLeak, Supabase, Replit), empoisonnement de la mémoire, injection invisible, risques multi-agents, denial of wallet, exécution de code, attaquants équipés d'agents, injection dans un résultat d'outil valide, canaux secondaires, amplification de privilèges. -->
 
 
 En quoi un agent change-t-il le modèle de menace par rapport à un chatbot ? <!--anki:4d2e2b794421754f344e-->
@@ -168,6 +168,22 @@ Pourquoi une réponse d'outil correcte peut-elle encore transporter une attaque 
 Un **résultat d'outil** peut contenir à la fois les données demandées et des instructions malveillantes dans un commentaire, un titre ou une description. La réussite technique de l'appel ne rend pas tout son contenu fiable.
 
 Conserver la provenance, limiter les champs transmis au modèle et empêcher ces données de modifier les droits d'action. Tester une injection dans un champ secondaire d'une réponse autrement valide. Vérifier aussi les étapes suivantes : une donnée archivée en mémoire peut déclencher l'attaque bien après l'appel initial.
+
+---
+
+Pourquoi un agent sans outil d'envoi d'email peut-il encore exfiltrer des données ? <!--anki:3437386334333764393662623430366138333830383665373438343332663938-->
+?
+Un autre outil peut transmettre des données via **une URL, une requête de recherche, un dépôt ou un champ de journalisation externe**. L'exfiltration dépend des sorties réseau disponibles, pas du nom « email ».
+
+Cartographier sources sensibles et destinations autorisées, puis tester les frontières avec des données factices. Un filtre sur les réponses visibles ne couvre pas nécessairement les paramètres envoyés aux outils.
+
+---
+
+Pourquoi un agent peu privilégié peut-il devenir dangereux en déléguant à un agent plus privilégié ? <!--anki:3833333937616264316233613432626561376638383936656232393739636663-->
+?
+Le second agent peut agir comme **intermédiaire confus**, exécutant une demande au nom de son propre niveau d'accès plutôt que de celui du demandeur.
+
+Propager identité, périmètre et intention autorisée jusqu'au service d'exécution. Le destinataire doit vérifier la délégation et refuser une élévation implicite. Une conversation entre agents n'est pas une preuve d'autorisation métier.
 
 ---
 

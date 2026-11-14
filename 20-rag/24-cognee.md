@@ -1,7 +1,7 @@
 # Cognee — Flashcards
 Tags: #flashcards #ai-engineering #rag #knowledge-graph #memoire #cognee #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: mémoire d'agent en knowledge graph, opérations remember, recall, improve et forget, mémoire permanente ou de session, stratégies de recherche, ontologie OWL, intégrations (plugin, MCP), limites, test de réversibilité d'une mémoire. -->
+<!-- summary: mémoire d'agent en knowledge graph, opérations remember, recall, improve et forget, mémoire permanente ou de session, stratégies de recherche, ontologie OWL, intégrations (plugin, MCP), limites, test de réversibilité d'une mémoire, test d'utilité mémoire, reconstruction contrôlée. -->
 
 
 Qu'est-ce que Cognee ? <!--anki:7924302d43443778695b-->
@@ -106,6 +106,22 @@ Comment tester la réversibilité d'une mémoire Cognee avant d'y confier un cor
 Faire un **essai de sortie** sur un petit corpus synthétique : ingérer des faits avec leur provenance, exporter les données accessibles et reconstruire les réponses utiles dans un environnement vierge.
 
 Vérifier séparément documents, relations, métadonnées, droits et versions des transformations. Un export de textes seuls peut perdre les liens ou les règles d'accès. Tester aussi suppression et réingestion d'un document. Ce protocole évalue les garanties de la version déployée ; il ne suppose pas qu'une commande d'export universelle préserve automatiquement toute la mémoire.
+
+---
+
+Comment mesurer si une mémoire Cognee améliore réellement les réponses d'un agent ? <!--anki:6237333361666564626165633462306361353864366338336364343032313430-->
+?
+Comparer **sans mémoire, avec mémoire pertinente et avec mémoire obsolète** sur les mêmes tâches. Mesurer faits utiles rappelés, corrections respectées, latence et erreurs introduites.
+
+Séparer conversations d'écriture et de test pour éviter de mesurer une simple répétition immédiate. Inclure des demandes où aucun souvenir ne doit intervenir. Le nombre de nœuds ou de souvenirs stockés ne mesure pas l'utilité : une mémoire plus volumineuse peut augmenter les contradictions et les rappels hors sujet.
+
+---
+
+Que faut-il préserver pour reconstruire une mémoire Cognee après un changement de modèle d'embedding ? <!--anki:3633643439363365346138353438356338306230386265373534326539666334-->
+?
+Préserver **sources autorisées, identifiants, provenance et versions des transformations**, plutôt que les seuls vecteurs. Une reconstruction peut modifier les entités extraites et les relations : elle n'est pas nécessairement une copie sémantiquement identique.
+
+Construire la nouvelle mémoire à côté de l'ancienne, rejouer des questions de référence et vérifier suppressions et droits avant bascule. Documenter les données réellement exportables dans la version déployée ; les fonctions de reconstruction doivent être testées, pas déduites du nom des opérations.
 
 ---
 

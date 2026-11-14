@@ -1,7 +1,7 @@
 # Agents — Tests de contrats, pannes & reprises — Flashcards
 Tags: #flashcards #ai-engineering #agents #production
 Vérifié le : 9 octobre 2026 — API citées confrontées aux documentations officielles ; limites explicitées dans les cartes.
-<!-- summary: pyramide de tests, modèles simulés, invariants métier, fenêtres de panne, doubles commandes, concurrence, migrations, traces, évaluations et qualification de release, injection de panne après effet métier. -->
+<!-- summary: pyramide de tests, modèles simulés, invariants métier, fenêtres de panne, doubles commandes, concurrence, migrations, traces, évaluations et qualification de release, injection de panne après effet métier, test de propriété, panne de lecture du statut. -->
 
 
 Comment répartir les tests d'une application agentique ? <!--anki:3039663565653632366637393463383639616232376264373038636630623864-->
@@ -132,6 +132,22 @@ Comment un test par injection de panne peut-il vérifier l'idempotence réelle d
 Placer une **panne contrôlée juste après l'effet métier**, avant son acquittement ou son checkpoint, puis reprendre la même opération avec la même identité logique.
 
 Vérifier l'état final dans le système cible : un seul effet, résultat récupérable et statut cohérent. Répéter avant l'effet et après l'acquittement pour couvrir les frontières. Tester aussi deux reprises concurrentes. Compter seulement les appels d'outils ne suffit pas : plusieurs appels peuvent correctement retrouver le même effet, tandis qu'un seul appel peut en produire plusieurs si le service aval est mal conçu.
+
+---
+
+Pourquoi tester les invariants d'un agent sur plusieurs ordres d'événements ? <!--anki:3231613933653839656164333433333339366334303961646134303865333565-->
+?
+Les reprises, doublons et réponses humaines peuvent arriver **dans des ordres différents de la démonstration nominale**. Une suite unique de clics ne couvre pas ces combinaisons.
+
+Générer des séquences bornées et vérifier les invariants après chaque transition : aucun paiement sans approbation valide, pas de double effet, état terminal cohérent. Conserver une séquence minimale pour chaque échec. Le test doit observer le service métier, pas seulement l'état interne du graphe.
+
+---
+
+Comment tester un agent lorsque l'action réussit mais que la lecture de son statut échoue ? <!--anki:3533663932393364653236323466346462313265363435653465366631663739-->
+?
+Créer volontairement **un succès externe suivi d'une indisponibilité du suivi**. L'agent doit conserver le statut indéterminé et l'identifiant de l'opération, sans conclure à un échec certain.
+
+Rétablir le suivi et vérifier la réconciliation sans nouvelle action non idempotente. Ce scénario distingue tolérance à une panne de transport et fiabilité métier. Une simple simulation d'exception avant l'effet ne couvre pas cette fenêtre.
 
 ---
 

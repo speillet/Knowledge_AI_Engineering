@@ -1,6 +1,6 @@
 # Hallucinations, grounding & abstention — Flashcards
 Tags: #flashcards #ai-engineering #hallucinations #grounding #qualite #llm
-<!-- summary: types d'hallucinations, leviers, citations vérifiées, abstention, arbitrage avec la couverture, détection, communication de l'incertitude; température et factualité, conflits de sources, réponses partielles, citation réelle et preuve applicable. -->
+<!-- summary: types d'hallucinations, leviers, citations vérifiées, abstention, arbitrage avec la couverture, détection, communication de l'incertitude; température et factualité, conflits de sources, réponses partielles, citation réelle et preuve applicable, granularité des citations, faits et recommandations. -->
 
 
 Qu'est-ce qu'une hallucination ? <!--anki:43342c5e784379766728-->
@@ -106,6 +106,22 @@ Pourquoi une citation existante peut-elle ne pas justifier l'affirmation qui la 
 Une **citation valide** peut pointer vers un document réel qui ne soutient pas le détail annoncé : autre période, autre population ou simple hypothèse transformée en fait.
 
 Vérifier la correspondance entre affirmation et passage, puis ses conditions d'application. Par exemple, une politique de remboursement pour particuliers ne justifie pas le délai d'un contrat entreprise. Distinguer preuve directe, déduction explicitée et information absente. Tester des documents proches mais incompatibles. Le contrôle de l'URL ou du numéro de page garantit la localisation, pas l'implication logique.
+
+---
+
+Pourquoi placer une seule citation en fin d'un long paragraphe peut-il masquer des hallucinations ? <!--anki:3035353038353234386463613436383461376561616230663231613638636562-->
+?
+Le lecteur peut croire que la source soutient **toutes les affirmations**, alors qu'elle n'en justifie qu'une. La proximité visuelle n'est pas une preuve d'entailment.
+
+Découper les affirmations et rattacher chaque citation au passage qu'elle soutient. Vérifier entité, date et portée. Une citation correcte peut accompagner une extrapolation incorrecte ; marquer les déductions et leurs hypothèses.
+
+---
+
+Pourquoi séparer faits établis et recommandation dans une réponse d'assistant ? <!--anki:3235616265616538383066653438303362613832333136656338316437383031-->
+?
+Une recommandation combine **preuves, objectifs et arbitrages** ; elle n'est pas un fait directement présent dans une source. La présenter comme telle empêche le lecteur d'examiner les hypothèses.
+
+Indiquer les faits utilisés, les contraintes et les raisons du choix. Quand une information manque, rendre le conseil conditionnel. Des sources exactes ne garantissent pas qu'une recommandation convient à tous les contextes.
 
 ---
 

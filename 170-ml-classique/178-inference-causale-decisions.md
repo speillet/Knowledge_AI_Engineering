@@ -1,6 +1,6 @@
 # Inférence causale & décisions produit — Flashcards
 Tags: #flashcards #ai-engineering #ml-classique #causalite #experimentation
-<!-- summary: prédiction ou intervention, ATE et CATE, graphe causal, confusion et collision, identification ou estimation, hypothèses, positivité, score de propension, différences de différences, uplift et analyses de sensibilité, interférence entre unités traitées. -->
+<!-- summary: prédiction ou intervention, ATE et CATE, graphe causal, confusion et collision, identification ou estimation, hypothèses, positivité, score de propension, différences de différences, uplift et analyses de sensibilité, interférence entre unités traitées, ajustement post-traitement, transport des effets. -->
 
 
 Pourquoi prédire qui résiliera ne suffit-il pas à choisir qui aider ? <!--anki:3631623936393761336133623439396662323464393830633136303130383630-->
@@ -102,6 +102,22 @@ Pourquoi l'effet d'une intervention peut-il dépendre du traitement des autres p
 L'**interférence** apparaît quand le résultat d'une unité dépend du traitement d'autres unités : entraide entre collègues, stock partagé ou concurrence sur les mêmes recommandations.
 
 Une comparaison qui suppose des unités indépendantes peut alors mesurer un effet différent de celui attendu après généralisation. Identifier les liens et choisir, si nécessaire, une randomisation par groupe ou un plan adapté. Définir l'effet recherché, notamment direct ou collectif. L'assignation aléatoire individuelle ne supprime pas cette interaction ; il faut la prendre en compte dans le design et l'analyse.
+
+---
+
+Pourquoi ajuster sur une variable mesurée après le traitement peut-il biaiser une estimation causale ? <!--anki:6439316337316234333162383439363461663466656237323237616533303139-->
+?
+Cette variable peut être **un médiateur ou un collider**. La contrôler peut bloquer une partie de l'effet recherché ou ouvrir une association parasite.
+
+Définir l'effet cible et un graphe causal avant de choisir les covariables. Une variable très prédictive n'est pas automatiquement une bonne variable d'ajustement. Distinguer effet total et effet direct, avec leurs hypothèses d'identification propres.
+
+---
+
+Pourquoi un effet causal mesuré dans une population ne se transfère-t-il pas automatiquement à une autre ? <!--anki:3965626335353665323439303464613339343638346461383134623239643639-->
+?
+L'effet peut varier avec **les caractéristiques, le contexte ou la mise en œuvre du traitement**. Une expérimentation valide localement ne garantit pas la même valeur ailleurs.
+
+Comparer populations et mécanismes, identifier les modérateurs pertinents et vérifier la couverture des données. Une repondération ne résout pas l'absence totale de certains profils ni un changement de mécanisme. Documenter les hypothèses de transport et confirmer sur la cible lorsque possible.
 
 ---
 

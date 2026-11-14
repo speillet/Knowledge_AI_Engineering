@@ -1,6 +1,6 @@
 # FinOps LLM — Flashcards
 Tags: #flashcards #ai-engineering #finops #gouvernance #llm
-<!-- summary: quatre temps du FinOps, visibilité des coûts, attribution aux équipes, budgets et garde-fous, routage comme premier levier, caches, pratiques GPU, arbitrage coût-qualité-latence, rôle du Lead, réservation budgétaire des appels en vol. -->
+<!-- summary: quatre temps du FinOps, visibilité des coûts, attribution aux équipes, budgets et garde-fous, routage comme premier levier, caches, pratiques GPU, arbitrage coût-qualité-latence, rôle du Lead, réservation budgétaire des appels en vol, coûts partagés, unité économique stable. -->
 
 
 Qu'est-ce que le FinOps appliqué aux LLM ? <!--anki:7438516d555137566925-->
@@ -104,6 +104,22 @@ Pourquoi un plafond budgétaire d'agent doit-il réserver les dépenses des appe
 Si plusieurs **appels parallèles** lisent le même solde disponible, chacun peut démarrer avant que les autres dépenses soient comptabilisées. Un budget contrôlé seulement après réponse peut donc être largement dépassé.
 
 Réserver une enveloppe avant lancement, plafonner les sorties et réconcilier l'usage réel à la fin. Libérer les réserves seulement selon une règle qui tient compte des appels encore potentiellement facturables. Tester concurrence et coupure réseau. Une alerte de facture est utile au suivi, mais ne constitue pas un contrôle synchrone du budget d'exécution.
+
+---
+
+Comment attribuer le coût d'un GPU partagé entre plusieurs équipes ? <!--anki:3731303730373965323563393462336638376332366433383330313861636262-->
+?
+Définir une **règle mesurable et explicite** : temps réservé, travail exécuté ou capacité garantie, avec une méthode pour la part inactive.
+
+Aucune clé unique n'est universelle. Un partage par requête pénalise les petites requêtes si les longueurs varient fortement. Publier les hypothèses et rapprocher le total alloué de la facture. Les équipes doivent pouvoir expliquer leurs coûts et agir sur les leviers qui leur sont imputés.
+
+---
+
+Pourquoi surveiller ensemble coût unitaire et coût total après une optimisation LLM ? <!--anki:6165313765396363666162393461373139653864633433373565363335626166-->
+?
+Un coût par appel plus faible peut encourager **beaucoup plus d'appels ou de branches**, augmentant la dépense totale. Le gain technique ne garantit donc pas une baisse du budget.
+
+Suivre volume, coût par succès et budget global, avec une baseline d'usage comparable. Si l'usage supplémentaire crée de la valeur, l'augmentation peut être justifiée. L'objectif FinOps est un arbitrage explicite, pas une baisse automatique de toute consommation.
 
 ---
 

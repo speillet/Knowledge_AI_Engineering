@@ -1,7 +1,7 @@
 # Capacité & ordonnancement de l’inférence LLM — Flashcards
 Tags: #flashcards #ai-engineering #inference #capacity #scheduling #gpu
 Vérifié le : 8 octobre 2026
-<!-- summary: budgets de séquences et de tokens, mémoire KV réelle, GQA et sharding, préemption, admission, priorités, files, réplication et parallélismes, capacité de secours et annulation, réservation KV pour les sorties. -->
+<!-- summary: budgets de séquences et de tokens, mémoire KV réelle, GQA et sharding, préemption, admission, priorités, files, réplication et parallélismes, capacité de secours et annulation, réservation KV pour les sorties, marge de stabilité, risque de starvation. -->
 
 
 À ne pas confondre : limite de contexte, budget de batch et capacité KV ? <!--anki:3362373534643136313937303463623238346633646336363064366238343532-->
@@ -126,6 +126,14 @@ Pourquoi réserver seulement les tokens d'entrée sous-estime-t-il la capacité 
 Le **KV cache grandit pendant la génération**. Admettre les séquences uniquement selon leur prompt peut saturer la mémoire quand elles produisent simultanément leurs sorties.
 
 Estimer une enveloppe entrée plus sortie, selon les longueurs observées et les limites contractuelles, puis conserver une marge pour les autres allocations. Suivre préemptions, sorties longues et distribution par requête. Une réservation maximale partout peut être trop conservatrice ; choisir une politique d'admission mesurée, avec préemption ou refus explicites. La mémoire libre au début n'est pas une garantie de capacité jusqu'à la fin.
+
+---
+
+Calcul : un serveur termine 20 requêtes/s tandis que 23 requêtes/s sont admises pendant 30 secondes, sans abandons et avec une file initialement vide. Quel backlog supplémentaire se forme ? <!--anki:3665653138366239383766613439623061653639356139616431356563643337-->
+?
+Le déséquilibre vaut **23 − 20 = 3 requêtes/s**, soit **90 requêtes supplémentaires** en 30 secondes.
+
+Ce calcul suppose un débit de sortie constant et une capacité de file suffisante. À charge durablement supérieure au service, la file ne se stabilise pas. Il faut réduire l'admission, augmenter la capacité utile ou dégrader explicitement le service ; agrandir la file ne corrige pas ce déséquilibre.
 
 ---
 

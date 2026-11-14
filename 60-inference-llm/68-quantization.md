@@ -1,7 +1,7 @@
 # Quantization — Flashcards
 Tags: #flashcards #ai-engineering #inference #quantization #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: intérêt en mémoire et en vitesse, quantization des poids, des activations ou du KV cache, formats (FP8, INT8, INT4, NVFP4, MXFP4), weight-only ou W8A8, granularité des échelles, outliers d'activation (SmoothQuant, rotations), PTQ ou QAT, GPTQ, AWQ, GGUF, NF4, choix de la méthode selon le matériel, calibration, mesure de la perte, divergence KL et flips, validation avant déploiement, suivi en production, outils (llm-compressor, Model Optimizer, vLLM), représentativité du corpus de calibration. -->
+<!-- summary: intérêt en mémoire et en vitesse, quantization des poids, des activations ou du KV cache, formats (FP8, INT8, INT4, NVFP4, MXFP4), weight-only ou W8A8, granularité des échelles, outliers d'activation (SmoothQuant, rotations), PTQ ou QAT, GPTQ, AWQ, GGUF, NF4, choix de la méthode selon le matériel, calibration, mesure de la perte, divergence KL et flips, validation avant déploiement, suivi en production, outils (llm-compressor, Model Optimizer, vLLM), représentativité du corpus de calibration, métadonnées des groupes, erreurs de saturation. -->
 
 
 Qu'est-ce que la quantization (quantification) d'un LLM ? <!--anki:723d7149494058234777-->
@@ -235,6 +235,22 @@ Pourquoi une calibration de quantization doit-elle couvrir les entrées difficil
 La **distribution des activations** dépend des langues, longueurs, structures et tâches. Une calibration limitée aux textes courts peut mal représenter les valeurs extrêmes rencontrées dans du code ou des documents longs.
 
 Choisir un corpus distinct du test final, couvrant les segments de production et les cas sensibles. Comparer qualité et erreurs par segment avant et après quantization, avec le même protocole. Versionner corpus et paramètres de calibration. Un bon score global peut cacher une dégradation sur les montants rares ou les langues minoritaires ; augmenter le corpus sans diversifier ses cas peut ne rien corriger.
+
+---
+
+Calcul : un groupe de 128 poids utilise 4 bits par poids et une échelle FP16 de 2 octets, sans zéro-point ni padding. Quel coût moyen en bits par poids ? <!--anki:6662386633313363343637303462326439316630633734343037393665663939-->
+?
+Les poids occupent **64 octets**, l'échelle 2, soit 66 octets. Le coût moyen est **66 × 8 / 128 = 4,125 bits par poids**.
+
+Le stockage réel peut encore inclure index, alignement, zéro-points et couches non quantizées. Annoncer « 4 bits » décrit donc souvent la représentation principale, pas la taille totale du checkpoint ni la mémoire d'exécution.
+
+---
+
+Pourquoi surveiller la saturation des activations après une quantization ? <!--anki:3438646266653833663238333435353562646339366130353134643965343038-->
+?
+Une valeur hors plage peut être **écrêtée**, ce qui détruit une partie du signal. Si le trafic réel diffère de la calibration, les activations rares peuvent saturer davantage.
+
+Examiner les distributions et les erreurs par type d'entrée, puis ajuster échelles, granularité ou précision des couches sensibles. Une faible erreur moyenne peut masquer quelques cas critiques. Comparer la qualité finale et les coûts : une meilleure reconstruction numérique n'assure pas seule un meilleur résultat métier.
 
 ---
 

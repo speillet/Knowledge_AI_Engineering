@@ -1,7 +1,7 @@
 # Pipelines batch à grande échelle — Flashcards
 Tags: #flashcards #ai-engineering #batch #system-design #couts #llm
 Vérifié le : 30 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: batch ou en ligne, batch API (JSONL, `custom_id`, 24 h), batch API ou continuous batching, architecture reprenable, calculs de coût et de durée sous quota, classement des erreurs, contrôle qualité statistique, versions enregistrées avec chaque résultat, auto-hébergement hors ligne, quand ne pas utiliser de batch API, identifiants indépendants de l'ordre des résultats. -->
+<!-- summary: batch ou en ligne, batch API (JSONL, `custom_id`, 24 h), batch API ou continuous batching, architecture reprenable, calculs de coût et de durée sous quota, classement des erreurs, contrôle qualité statistique, versions enregistrées avec chaque résultat, auto-hébergement hors ligne, quand ne pas utiliser de batch API, identifiants indépendants de l'ordre des résultats, relance partielle, changement de corpus. -->
 
 
 Quand traiter des données par LLM en batch plutôt qu'en ligne ? <!--anki:73254754575550477a61-->
@@ -136,6 +136,22 @@ Pourquoi un traitement LLM batch doit-il identifier chaque élément indépendam
 L'**ordre de restitution** peut différer de celui des entrées, et certains éléments peuvent échouer. Rapprocher par numéro de ligne peut associer une réponse au mauvais dossier.
 
 Attribuer un identifiant stable à chaque demande et joindre les résultats sur cette clé, avec contrôle des doublons et éléments manquants. Reprendre uniquement les unités non confirmées selon leur statut, en conservant l'identité métier. Tester une sortie mélangée et partielle. Un batch déclaré terminé ne garantit pas que toutes ses demandes ont réussi ni que leurs effets ont été publiés.
+
+---
+
+Pourquoi relancer seulement les éléments échoués d'un batch LLM ? <!--anki:6439366632316538386238383435303861373831343337666634616431303135-->
+?
+Relancer le lot entier peut **repayer les réussites, produire des variantes et répéter des effets aval**. Chaque élément doit avoir un identifiant stable et un statut exploitable.
+
+Réconcilier d'abord les résultats inconnus, puis créer un lot de reprise contrôlé. Conserver modèle, prompt et données de la tentative ou expliciter leur migration. Une nouvelle soumission peut recevoir un nouvel identifiant technique tout en représentant le même travail métier.
+
+---
+
+Pourquoi fixer un instantané d'entrée pour un long pipeline batch LLM ? <!--anki:6339366339303664373865663437353939656630333633353231653538306636-->
+?
+Si les documents changent pendant le traitement, le résultat final peut **mélanger plusieurs états du corpus**. Une reprise ne saura plus quel contenu a été analysé.
+
+Conserver identifiants, versions et empreintes, puis relier chaque résultat à son entrée. Définir la gestion des documents retirés ou corrigés avant publication. Le snapshot rend le calcul cohérent ; les autorisations de diffusion doivent encore être vérifiées au moment utile.
 
 ---
 

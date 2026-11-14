@@ -1,7 +1,7 @@
 # MCP — Model Context Protocol — Flashcards
 Tags: #flashcards #ai-engineering #agents #mcp #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: problème M×N, host, client et serveur, tools, resources et prompts, transports stdio et HTTP, spec sans état 2026-07-28, serveur MCP ou API REST, risques, tests d'interopérabilité et compatibilité historique. -->
+<!-- summary: problème M×N, host, client et serveur, tools, resources et prompts, transports stdio et HTTP, spec sans état 2026-07-28, serveur MCP ou API REST, risques, tests d'interopérabilité et compatibilité historique, erreurs de protocole et métier, identité du serveur. -->
 
 
 Qu'est-ce que MCP ? <!--anki:516d532139606b765240-->
@@ -108,6 +108,22 @@ Construire un test de contrat : découverte, appel valide, erreur métier, résu
 
 ---
 
+À ne pas confondre : erreur de protocole MCP et échec métier d'un outil ? <!--anki:6336323733623162363238613435343161353064646531613531363534333030-->
+?
+Une **erreur de protocole** indique que l'échange lui-même est invalide ou impossible ; un **échec métier** peut être une réponse correctement reçue indiquant que l'opération a été refusée ou n'a pas abouti.
+
+Le host doit préserver cette distinction dans ce qu'il montre au modèle et dans ses métriques. Un transport réussi ne prouve pas le succès de l'action. Définir les reprises selon la nature de l'erreur et vérifier le contrat exact de la version MCP utilisée.
+
+---
+
+Pourquoi deux serveurs MCP exposant un outil de même nom ne sont-ils pas interchangeables ? <!--anki:3161383261393963646661373463656161373837353732636534386138353233-->
+?
+Le nom ne détermine ni **l'identité de l'opérateur, les autorisations, ni la sémantique** de l'action. Deux outils `search` peuvent explorer des corpus et des tenants différents.
+
+Lier la sélection à un serveur authentifié, sa configuration approuvée et son contrat. Tester les résultats et les effets lors d'un remplacement. Une description d'outil récupérée dynamiquement est une donnée à examiner ; elle ne doit pas accorder de nouvelles permissions au serveur qui la fournit.
+
+---
+
 ## Mises en situation
 
 Mise en situation : chaque équipe intègre à sa façon les API internes dans ses agents, et le même connecteur Jira existe en quatre versions. Que proposes-tu ? <!--anki:436d2a2b63586a323e77-->
@@ -140,6 +156,8 @@ Mise en situation : ton serveur MCP interne, écrit avant la spec 2026-07-28, ga
 - [MCP — bonnes pratiques de sécurité, édition 2026-07-28](https://modelcontextprotocol.io/docs/2026-07-28/tutorials/security/security_best_practices)
 
 - [MCP 2026-07-28 — version et compatibilité](https://modelcontextprotocol.io/specification/2026-07-28/basic/versioning) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
+
+- Complément du 14 novembre 2026 — Identité et frontières de confiance MCP : [MCP — pratiques de sécurité 2026-07-28](https://modelcontextprotocol.io/docs/2026-07-28/tutorials/security/security_best_practices).
 
 ## Connexions
 - [[32-tool-calling|Tool calling]] — le mécanisme sous-jacent

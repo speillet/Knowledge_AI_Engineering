@@ -1,6 +1,6 @@
 # ChainForge & évaluation de prompts — Flashcards
 Tags: #flashcards #ai-engineering #evals #prompts #llm
-<!-- summary: comparer prompts et modèles, evals automatiques, tests de régression et cas qui basculent, evals comme prérequis au déploiement, ordre des variantes et biais d'expérience. -->
+<!-- summary: comparer prompts et modèles, evals automatiques, tests de régression et cas qui basculent, evals comme prérequis au déploiement, ordre des variantes et biais d'expérience, contrôle des variables, cas discordants. -->
 
 
 Qu'est-ce que ChainForge ? <!--anki:50782b535f40475d557e-->
@@ -75,6 +75,22 @@ Pourquoi une expérience ChainForge doit-elle mélanger l'ordre des variantes é
 Un **ordre fixe** peut confondre variante et conditions d'exécution : cache chaud, charge fournisseur, dérive temporelle ou fatigue de l'annotateur.
 
 Apparier les entrées entre variantes, randomiser ou entrelacer leur ordre et enregistrer les conditions utiles. Pour un juge comparatif, inverser aussi la position des réponses et masquer leur origine. Refaire les essais nécessaires avec un protocole fixé. Une interface d'expérimentation organise les résultats ; elle ne supprime pas automatiquement les biais dus à la manière dont les appels et les jugements sont exécutés.
+
+---
+
+Pourquoi inspecter les cas où deux prompts donnent des résultats différents avant de choisir le meilleur ? <!--anki:3265333939333431366665383463643239363162383361666362336632383534-->
+?
+La différence de moyenne peut provenir **de quelques familles d'erreurs importantes**. Les cas discordants montrent ce que la nouvelle formulation gagne et perd.
+
+Les annoter sans connaître la variante lorsque possible, puis vérifier leur poids dans le trafic réel. Une amélioration sur un groupe fréquent peut cacher une régression critique rare. Ajouter les contre-exemples au jeu de développement sans contaminer le test de confirmation indépendant.
+
+---
+
+Pourquoi enregistrer les paramètres effectifs d'une expérience de prompts, même si l'interface montre les valeurs par défaut ? <!--anki:3731353361316166396238663436366661303135613963383931663331343063-->
+?
+Les valeurs par défaut peuvent **changer avec le fournisseur ou la version**. Ne conserver que le texte du prompt rend alors la comparaison difficile à reproduire.
+
+Exporter modèle résolu, sampling, limites, données et évaluateur, avec leurs versions. Vérifier les paramètres réellement acceptés, car une option ignorée n'est pas une option appliquée. Une capture d'écran ne remplace pas un manifeste exploitable de l'expérience.
 
 ---
 

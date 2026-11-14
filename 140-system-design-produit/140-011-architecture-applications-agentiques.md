@@ -1,7 +1,7 @@
 # Applications agentiques — Architecture & cycle de vie — Flashcards
 Tags: #flashcards #ai-engineering #agents #production
 Vérifié le : 9 octobre 2026 — API citées confrontées aux documentations officielles ; limites explicitées dans les cartes.
-<!-- summary: choix des briques, contrats d’exécution, API et workers, admission, identité, approbations versionnées, annulation, événements, déploiement et capacité, récupération d'une soumission après coupure réseau. -->
+<!-- summary: choix des briques, contrats d’exécution, API et workers, admission, identité, approbations versionnées, annulation, événements, déploiement et capacité, récupération d'une soumission après coupure réseau, tâche et session, nettoyage des ressources. -->
 
 
 Comment choisir les briques nécessaires à une application agentique ? <!--anki:6264333961356665313630323462663361383062303936656332656432666539-->
@@ -150,6 +150,22 @@ Pourquoi le client doit-il pouvoir retrouver un run d'agent après avoir perdu l
 Une **coupure réseau** peut survenir après création durable du run mais avant réception de son identifiant. Le client ignore alors si sa demande a été acceptée.
 
 Fournir une clé de soumission stable et un mécanisme de consultation ou de resoumission qui retrouve le même run. Vérifier identité, empreinte du contenu et état public avant de relancer. Tester la panne juste après l'enregistrement. Créer un nouveau run à chaque timeout peut doubler les effets et la facture, même si chaque worker fonctionne correctement.
+
+---
+
+À ne pas confondre : session utilisateur et tâche métier d'une application agentique ? <!--anki:3565643339653865386561663462343638663532373031363039396164633831-->
+?
+Une session regroupe **des interactions**, tandis qu'une tâche possède un objectif, un état et une fin vérifiable. Une même session peut contenir plusieurs tâches, et une tâche peut survivre à sa déconnexion.
+
+Utiliser des identifiants distincts et relier approbations, budget et effets à la bonne tâche. La fermeture de l'onglet ne doit pas implicitement signifier réussite ou annulation. Définir le comportement attendu pour les travaux en arrière-plan.
+
+---
+
+Pourquoi définir un cycle de vie des fichiers temporaires d'un agent ? <!--anki:6366346264363263336165323431393539326531373634326564346364633434-->
+?
+Les sandboxes et artefacts peuvent **survivre à l'exécution**, consommer des ressources et conserver des données privées. Les supprimer trop tôt peut au contraire empêcher une reprise.
+
+Associer propriétaire, statut et expiration aux ressources, puis nettoyer selon la fin réelle des tâches. Prévoir les tâches abandonnées et les pannes de worker. Tester qu'une ressource expirée produit une erreur explicite, sans réutilisation accidentelle par une autre tâche.
 
 ---
 

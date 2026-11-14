@@ -1,6 +1,6 @@
 # Calibration, incertitude & abstention — Flashcards
 Tags: #flashcards #ai-engineering #ml-classique #calibration #incertitude
-<!-- summary: discrimination et calibration, Brier score, calibrateur séparé, temperature scaling, incertitudes, risque-couverture, prédiction conforme, coût de décision avec revue et erreurs humaines, limites d'un ECE agrégé. -->
+<!-- summary: discrimination et calibration, Brier score, calibrateur séparé, temperature scaling, incertitudes, risque-couverture, prédiction conforme, coût de décision avec revue et erreurs humaines, limites d'un ECE agrégé, calibration après sélection, couverture conditionnelle. -->
 
 
 À ne pas confondre : discrimination et calibration d'un classifieur ? <!--anki:6337616261653836306433623432636261323934336534393832663635306633-->
@@ -149,6 +149,22 @@ Examiner courbe de fiabilité, effectifs et incertitude, puis les segments utile
 
 ---
 
+Pourquoi vérifier la calibration après filtrage des cas soumis à décision automatique ? <!--anki:3835316234393231653264363461353862626534336662383135626539626234-->
+?
+La sélection peut retenir **une population différente** de celle utilisée pour calibrer. Un score fiable globalement peut être mal calibré sur ce sous-ensemble ou sur certains groupes.
+
+Mesurer fréquences observées, effectifs et risque parmi les décisions effectivement prises. Garder un jeu indépendant pour ajuster seuil et calibrateur. Une baisse de couverture peut améliorer l'exactitude moyenne tout en concentrant des erreurs sur une catégorie particulière.
+
+---
+
+Pourquoi une couverture conforme marginale de 90 % ne garantit-elle pas 90 % pour chaque sous-groupe ? <!--anki:6636373231373238366261313462303861336265653032313561626239303130-->
+?
+La garantie porte généralement sur **la population globale sous les hypothèses requises**, notamment d'échangeabilité pour le cadre standard. Des groupes peuvent avoir des couvertures différentes.
+
+Mesurer les groupes importants et les tailles d'ensembles ou intervalles, puis envisager une méthode adaptée si une garantie plus ciblée est nécessaire. Une dérive de distribution peut aussi invalider les hypothèses. Ne pas interpréter la couverture comme une probabilité individuelle exacte pour chaque prédiction.
+
+---
+
 ## Mises en situation
 
 Mise en situation : un classifieur annonce 95 % de confiance mais se trompe sur un cas sur quatre dans cette tranche. Que changes-tu ? <!--anki:6234383262333736643935613465303538336135323536366232333930313163-->
@@ -197,6 +213,10 @@ Mise en situation : un intervalle conforme calibré sur les clients historiques 
 - [Lipton et al. — hypothèses et correction du label shift](https://proceedings.mlr.press/v80/lipton18a.html)
 
 - [scikit-learn — calibration et diagrammes de fiabilité](https://scikit-learn.org/stable/modules/calibration.html) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
+
+- Complément du 14 novembre 2026 — Calibration et populations de validation : [scikit-learn — Probability calibration](https://scikit-learn.org/stable/modules/calibration.html).
+
+- Complément du 14 novembre 2026 — Portée marginale des garanties conformes : [Angelopoulos et Bates — Conformal Prediction](https://arxiv.org/abs/2107.07511).
 
 ## Connexions
 - [[172-validation-metriques-ml|Validation ML]] — probabilités et seuils métier

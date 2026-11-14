@@ -1,6 +1,6 @@
 # Ingestion incrémentale, CDC & backfills — Flashcards
 Tags: #flashcards #ai-engineering #donnees #data-engineering #ingestion
-<!-- summary: snapshot ou incrémental, CDC, cohérence snapshot-journal, checkpoints, identités et versions, suppressions, rejeu historique, capacité de rattrapage, quarantaine, réconciliation et index RAG, pagination API et cohérence des extractions, tombstones et anciens événements rejoués. -->
+<!-- summary: snapshot ou incrémental, CDC, cohérence snapshot-journal, checkpoints, identités et versions, suppressions, rejeu historique, capacité de rattrapage, quarantaine, réconciliation et index RAG, pagination API et cohérence des extractions, tombstones et anciens événements rejoués, rétention du journal, frontière snapshot. -->
 
 
 Quand choisir une ingestion complète plutôt qu'incrémentale ? <!--anki:3366623837653530383437383462643961383764376337666362306263306237-->
@@ -110,6 +110,14 @@ Pourquoi un tombstone de suppression doit-il résister à la réapparition d'une
 Un **événement retardé** peut arriver après la suppression du même objet. Si la destination a seulement effacé la ligne, elle risque d'accepter cet ancien événement et de ressusciter les données.
 
 Conserver une version de suppression ou un état équivalent selon le contrat source, puis refuser les événements antérieurs. Définir une rétention compatible avec les retards et replays possibles. Tester suppression, mise à jour ancienne et backfill concurrent. Une réconciliation peut révéler l'écart, mais la règle de version doit empêcher sa réintroduction lors du prochain replay.
+
+---
+
+Pourquoi surveiller le retard CDC par rapport à la rétention du journal source ? <!--anki:3536313134376134313563393466303139383333323632666566363939643936-->
+?
+Si le consommateur prend trop de retard, **les événements nécessaires peuvent disparaître du journal** avant leur lecture. Reprendre depuis le dernier offset devient impossible.
+
+Alerter avec une marge de rattrapage et documenter la procédure de resnapshot. Mesurer la vitesse de reprise disponible. Augmenter la rétention ne suffit pas si le consommateur reste durablement plus lent que la production.
 
 ---
 

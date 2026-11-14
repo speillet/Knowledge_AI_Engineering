@@ -19,6 +19,8 @@ Pour industrialiser un modèle prédictif, le [parcours MLOps de bout en bout](d
 
 L’[audit d’actualité du 13 novembre 2026](docs/verification-actualite-2026-11-13.md) distingue références confirmées et corrections sur les services managés, MCP, OWASP et AI Act ; il ne constitue pas une certification de toutes les informations du vault.
 
+L’[enrichissement du 14 novembre 2026](docs/enrichissement-fiches-2026-11-14.md) approfondit les 150 fiches existantes : 271 nouvelles cartes, 18 réponses révisées, exemples chiffrés et diagnostics, avec conservation des identifiants de révision.
+
 ## Parcours de lecture
 Progression recommandée : **comprendre les modèles → les utiliser → construire des architectures → adapter → servir & déployer → industrialiser → gouverner → concevoir des systèmes.**
 - **Socle prédictif** : [[171-choisir-modele-ml|ML classique]] puis [[172-validation-metriques-ml|validation et métriques]] — choisir une approche avant de construire une chaîne LLM

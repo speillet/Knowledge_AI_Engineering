@@ -1,6 +1,6 @@
 # RAG — Avancé — Flashcards
 Tags: #flashcards #ai-engineering #rag #retrieval #llm
-<!-- summary: recherche hybride (BM25, RRF), reranking, query rewriting, HyDE et ses limites, filtrage par métadonnées et ACL, GraphRAG, agentic RAG, « lost in the middle », problèmes de production (fraîcheur, droits, ré-indexation), fusion RRF et échelles de scores. -->
+<!-- summary: recherche hybride (BM25, RRF), reranking, query rewriting, HyDE et ses limites, filtrage par métadonnées et ACL, GraphRAG, agentic RAG, « lost in the middle », problèmes de production (fraîcheur, droits, ré-indexation), fusion RRF et échelles de scores, diversité des résultats, plafond du reranker. -->
 
 
 Qu'est-ce que la recherche hybride ? <!--anki:783b3a7d537e53723532-->
@@ -20,15 +20,13 @@ Par exemple, une référence `AB-204` bénéficie du lexical, tandis qu'une refo
 
 Qu'est-ce que le reranking ? <!--anki:72403c653b3e44335232-->
 ?
-Un **cross-encoder re-score** les passages du retrieval initial (query et passage évalués **ensemble**) : précision nettement supérieure, au prix d'un peu de latence.
+Le **reranking reclasse les candidats** du retrieval initial avec un modèle plus coûteux, souvent un cross-encoder qui examine ensemble question et passage. Il peut améliorer leur pertinence et réduire le contexte transmis.
 ```text
-retrieval large  : top 50 candidats  (hybride, ~20 ms)
-reranking        : on garde les 5 meilleurs  (~50 à 200 ms)
-génération       : 5 chunks dans le contexte au lieu de 50
+retrieval : 50 candidats → reranking : 5 passages → génération
 ```
-Double bénéfice : **plus de précision** et **moins de tokens** envoyés au modèle ([[121-couts-inference|coûts]]).
+Ce choix illustratif se règle sur les données et le budget de latence. Le gain n'est pas garanti : vérifier rappel des candidats, classement puis qualité finale.
 
-Le reranker ne peut sélectionner qu'un passage **déjà présent parmi les candidats** : il ne corrige pas un document absent de l'index ou exclu par le premier retrieval. Les latences ci-dessus sont illustratives. Mesurer le gain de classement et la qualité finale, car un passage bien classé peut rester obsolète ou insuffisant pour répondre.
+Une preuve absente du lot ne peut pas être retrouvée par simple reclassement. L'ajouter au lot permet de tester ce plafond. Un bon classement ne valide ni fraîcheur ni droits ([[121-couts-inference|coûts]]).
 
 ---
 
@@ -118,6 +116,14 @@ Un score BM25 de 12 et une similarité vectorielle de 0,8 ne sont pas directemen
 
 ---
 
+Pourquoi diversifier les résultats après une recherche hybride ? <!--anki:6538326237613333316433333434383561623565663830613562353562643066-->
+?
+Plusieurs moteurs peuvent retrouver des copies du même passage. La **diversité** cherche des preuves complémentaires plutôt qu'un classement rempli de variantes presque identiques.
+
+Une méthode comme MMR combine pertinence pour la question et pénalité de similarité avec les passages déjà retenus. Régler ce compromis sur des questions multi-aspects : trop diversifier fait entrer des documents hors sujet. La déduplication exacte et les contraintes de droits doivent rester indépendantes de ce score.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton RAG juridique retrouve bien les documents pertinents (recall@20 de 0,95) mais les réponses restent moyennes. Que fais-tu ? <!--anki:657e457c29693d3b524b-->
@@ -155,6 +161,10 @@ Mise en situation : après un changement de modèle d'embedding, la qualité du 
 **Piège** : réindexer en place, ce qui laisse l'index dans un état mixte pendant des heures.
 
 ---
+
+## Sources
+
+- Complément du 14 novembre 2026 — Diversification par MMR : [Carbonell et Goldstein — MMR](https://www.cs.cmu.edu/~jgc/publication/The_Use_MMR_Diversity_Based_LTMIR_1998.pdf).
 
 ## Connexions
 - [[20-010-rag-droits-versions|RAG : droits & versions]] — appliquer les permissions, dates d'effet et priorités de sources

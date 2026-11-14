@@ -1,6 +1,6 @@
 # Évaluation des outputs & des réponses LLM — Flashcards
 Tags: #flashcards #ai-engineering #evals #reponses #qualite #llm
-<!-- summary: grille par dimension, exactitude et complétude, pertinence et consignes, références multiples, normalisation, BLEU et ROUGE, BERTScore, résumés, réponses numériques, critères bloquants et agrégation par affirmation, validation des affirmations et du style. -->
+<!-- summary: grille par dimension, exactitude et complétude, pertinence et consignes, références multiples, normalisation, BLEU et ROUGE, BERTScore, résumés, réponses numériques, critères bloquants et agrégation par affirmation, validation des affirmations et du style, tolérance numérique, couverture pondérée. -->
 
 
 Comment définir une grille d'évaluation d'une réponse LLM ? <!--anki:6631303738646665313965663463613262386165393030353031373061313738-->
@@ -83,17 +83,21 @@ Contrôler nombres, dates, acteurs, causalité et incertitude : « cause suspect
 
 Que vérifier dans une réponse numérique d'un LLM ? <!--anki:3863663331626135333439343464623462633938633766623138613733623237-->
 ?
-Comparer **valeur, unité et périmètre** au résultat attendu, puis vérifier les hypothèses demandées et la règle d'arrondi. Utiliser du code pour un calcul vérifiable, avec une tolérance définie selon la tâche.
+Comparer **valeur, unité, signe, période et périmètre**, puis vérifier les hypothèses et l'arrondi. Pour des valeurs x et une référence r, une règle possible est `|x-r| ≤ atol + rtol × |r|`, avec tolérances fixées avant l'évaluation.
 
-Une tolérance absolue et une tolérance relative n'ont pas le même sens ; préciser leur combinaison, notamment près de zéro. `100 g` et `0,1 kg` peuvent être équivalents après conversion autorisée, tandis que `100 kg` est faux. Pour les montants, utiliser une représentation décimale ou des unités monétaires entières adaptées au contrat ; ne pas effacer la devise.
+Près de zéro, la composante absolue évite une tolérance relative inadaptée. La règle choisie dépend du contrat, pas d'une constante universelle.
+
+`100 g` et `0,1 kg` peuvent être équivalents après conversion autorisée ; `100 kg` est faux. Pour les montants, utiliser décimaux ou unités monétaires entières selon le besoin, sans effacer devise ni signe.
 
 ---
 
 Pourquoi une moyenne de scores peut-elle cacher une réponse inacceptable ? <!--anki:3063346366393362343866303465366539343732383936383262626162383738-->
 ?
-Une moyenne autorise une **compensation entre dimensions** : excellent style et bonne structure peuvent masquer un montant faux ou une information privée révélée. Définir des critères bloquants pour les erreurs incompatibles avec le service.
+Une moyenne autorise une **compensation entre dimensions** : excellent style et structure peuvent masquer un montant faux ou une donnée privée révélée. Définir les critères bloquants avant de comparer les variantes.
 
-Publier le profil par dimension, les violations critiques et la fraction de réponses respectant tous les critères requis. Un score agrégé peut servir à classer les réponses admissibles, avec pondérations explicites ; il ne doit pas annuler un échec bloquant. Mesurer aussi les segments, car un bon résultat global peut cacher une population mal servie.
+Exemple : neuf affirmations exactes et une échéance critique fausse donnent 90 % d'exactitude par affirmation, mais la réponse reste inadmissible.
+
+Publier profil par dimension, violations critiques et fraction de réponses respectant tous les critères requis. Un score pondéré peut classer les réponses admissibles sans annuler un échec bloquant. Mesurer aussi les segments : une moyenne favorable peut cacher une population mal servie.
 
 ---
 

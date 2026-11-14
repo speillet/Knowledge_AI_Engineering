@@ -1,7 +1,7 @@
 # Agents de recherche (deep research) — Flashcards
 Tags: #flashcards #ai-engineering #rag #agents #deep-research #llm
 Vérifié le : 30 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: RAG ou agent de recherche, boucle de recherche, sous-agents parallèles, outils de recherche, citations fiables, risques (sources, injection, biais), évaluation (couverture, BrowseComp), calcul du coût d'un rapport, quand ne pas l'utiliser, indépendance des preuves web. -->
+<!-- summary: RAG ou agent de recherche, boucle de recherche, sous-agents parallèles, outils de recherche, citations fiables, risques (sources, injection, biais), évaluation (couverture, BrowseComp), calcul du coût d'un rapport, quand ne pas l'utiliser, indépendance des preuves web, couverture des affirmations, critère d'arrêt de recherche. -->
 
 
 Qu'est-ce qu'un agent de recherche (deep research) ? <!--anki:315f783362537c352a-->
@@ -118,6 +118,22 @@ Pourquoi dix pages web concordantes peuvent-elles ne représenter qu'une seule p
 Plusieurs pages peuvent **recopier une même dépêche, étude ou communiqué**. Leur nombre mesure alors la diffusion d'une affirmation plutôt que sa corroboration indépendante.
 
 Remonter à la source originale, regrouper les reprises et distinguer déclaration d'un acteur et vérification indépendante. Pour une controverse, chercher aussi des éléments contradictoires et préciser la date des faits. Conserver la chaîne de provenance dans les notes de recherche. Une synthèse ne doit pas transformer dix copies d'une affirmation non vérifiée en dix confirmations.
+
+---
+
+Comment construire une matrice affirmations-preuves pour un rapport de recherche ? <!--anki:3733376164663634363230393435643638633936303530623264386536626234-->
+?
+Associer chaque **affirmation importante** à une source précise, un passage, une date et un statut : soutenue, contredite ou non résolue. Cela rend visibles les conclusions sans preuve et les citations décoratives.
+
+Distinguer fait rapporté et déduction de l'agent. Pour une déduction, conserver les prémisses et ses limites. La matrice doit couvrir les questions du mandat, pas seulement les faits faciles à trouver ; une source accessible peut néanmoins être secondaire ou dépassée.
+
+---
+
+Quand un agent de recherche doit-il arrêter de chercher malgré des questions non résolues ? <!--anki:6335353537646438326237343430343862343166316361396639633631313934-->
+?
+Arrêter lorsque le **budget est atteint** ou que de nouvelles recherches n'apportent plus de preuves utiles, selon une règle définie à l'avance. Consigner requêtes déjà essayées, sources couvertes et incertitudes restantes.
+
+Un arrêt réussi peut produire un rapport partiel fiable. Répéter la même recherche avec des paraphrases n'est pas un progrès. Pour une décision critique, transmettre le point non résolu à un humain ; le manque de budget ne justifie pas de compléter par une supposition.
 
 ---
 

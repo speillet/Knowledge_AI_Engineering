@@ -1,7 +1,7 @@
 # Observabilité, lignage & exploitation des données — Flashcards
 Tags: #flashcards #ai-engineering #donnees #data-engineering
 Vérifié le : 9 octobre 2026 — références techniques et exemples de cette fiche.
-<!-- summary: SLO de données, fraîcheur, complétude par segment, réconciliation, couverture des tests, lignage déclaré ou exécuté, catalogue, impact, incidents et coût de surveillance, surveillance de la présence des contrôles. -->
+<!-- summary: SLO de données, fraîcheur, complétude par segment, réconciliation, couverture des tests, lignage déclaré ou exécuté, catalogue, impact, incidents et coût de surveillance, surveillance de la présence des contrôles, fraîcheur trompeuse, impact des incidents. -->
 
 
 Comment définir un SLO de données utile à un produit IA ? <!--anki:6338353835303661393538373438626139353234656232346339623536373631-->
@@ -148,6 +148,22 @@ Pourquoi un contrôle de fraîcheur doit-il vérifier aussi que sa propre mesure
 Une **dernière valeur conforme** peut rester affichée après l'arrêt du pipeline ou du collecteur. Sans surveillance du contrôle, le dashboard peut sembler sain indéfiniment.
 
 Associer mesure et heure d'observation, définir la fréquence attendue et traiter l'absence comme un état explicite. Comparer fraîcheur source, publication et disponibilité au consommateur. Tester interruption du pipeline puis du collecteur. Un timestamp maximal dans les données ne suffit pas si personne ne vérifie régulièrement sa progression et la présence de toutes les partitions attendues.
+
+---
+
+Pourquoi une table mise à jour récemment peut-elle contenir des données métier anciennes ? <!--anki:3162356338623163613965393463636438643433343636303364663065353262-->
+?
+Un job peut réécrire **les mêmes événements anciens**, donnant un timestamp technique récent sans nouvelle information. Date de modification et fraîcheur métier ne sont pas équivalentes.
+
+Suivre temps des événements, disponibilité et couverture par segment, en plus du dernier succès du pipeline. Tester une source figée avec jobs toujours verts. Une fraîcheur globale peut aussi masquer une partition qui ne reçoit plus de données.
+
+---
+
+Comment le lignage aide-t-il à traiter une erreur découverte dans une source de données ? <!--anki:6362613933663833326130663433383861313239376439653033633566633132-->
+?
+Il permet d'identifier **les tables, index, features et modèles dérivés** potentiellement touchés. L'analyse doit aussi tenir compte des versions et fenêtres concernées.
+
+Prioriser les consommateurs actifs, suspendre les publications risquées et planifier les recalculs. Vérifier le lignage réellement exécuté : une dépendance non déclarée peut manquer dans le catalogue. Une fois corrigé, réconcilier les résultats et confirmer les consommateurs remis à jour.
 
 ---
 

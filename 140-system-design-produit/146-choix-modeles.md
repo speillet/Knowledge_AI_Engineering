@@ -1,7 +1,7 @@
 # Choisir un modèle — Flashcards
 Tags: #flashcards #ai-engineering #choix-modele #benchmarks #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: critères et contraintes, benchmarks, hébergement et ouverture des poids, définition OSI, coût par succès, protocole comparable, front de Pareto, migration et lock-in, frontière de Pareto. -->
+<!-- summary: critères et contraintes, benchmarks, hébergement et ouverture des poids, définition OSI, coût par succès, protocole comparable, front de Pareto, migration et lock-in, frontière de Pareto, coût attendu d'erreur, admissibilité. -->
 
 
 Quels critères techniques pour choisir un modèle ? <!--anki:4e76712b43634b3a5168-->
@@ -149,6 +149,22 @@ Pourquoi comparer des modèles sur une frontière de Pareto plutôt qu'avec un s
 Un modèle est **dominé** si un autre est au moins aussi bon sur tous les critères retenus et meilleur sur l'un d'eux. Écarter ces options simplifie la comparaison sans imposer d'emblée une pondération arbitraire.
 
 Sur la frontière restante, décider selon contraintes de qualité, coût, latence et données. Mesurer les critères dans des conditions comparables et tenir compte de l'incertitude. Un score unique peut cacher un dépassement de délai ou une régression critique. La frontière rend l'arbitrage visible ; elle ne choisit pas les priorités produit à la place de l'équipe.
+
+---
+
+Calcul : A coûte 0,01 € par requête avec 4 % d'erreurs ; B coûte 0,03 € avec 1 % d'erreurs. Chaque erreur coûte en moyenne 2 €, identiquement pour les deux. Quel coût total attendu par requête ? <!--anki:3064313966396237646533373431393861313737653736353561316532396534-->
+?
+Pour A : **0,01 + 0,04 × 2 = 0,09 €**. Pour B : **0,03 + 0,01 × 2 = 0,05 €**.
+
+B est moins coûteux au total dans ces hypothèses, malgré son prix d'inférence supérieur. Vérifier que les erreurs ont des gravités comparables et que les taux sont représentatifs. Les contraintes de délai et de confidentialité restent des critères distincts.
+
+---
+
+Pourquoi éliminer les modèles non admissibles avant de calculer un score pondéré de choix ? <!--anki:3936333638653763376162663437363961323733376438663331323338636238-->
+?
+Un excellent coût ou benchmark ne doit pas compenser **une contrainte obligatoire non satisfaite**, comme un format nécessaire ou une condition d'hébergement.
+
+Définir d'abord les critères d'admissibilité, puis comparer les compromis entre candidats restants. Documenter les preuves et les incertitudes. Un score global peut masquer une faiblesse rédhibitoire si tous les critères sont traités comme échangeables.
 
 ---
 

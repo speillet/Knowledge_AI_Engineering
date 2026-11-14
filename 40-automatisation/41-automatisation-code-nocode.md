@@ -1,7 +1,7 @@
 # Automatisation code & no-code — Flashcards
 Tags: #flashcards #ai-engineering #automatisation #workflow #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: n8n, triggers, Zapier et Make, Airflow, Prefect et Temporal, durable execution, limites du no-code, doublons et désordre des webhooks. -->
+<!-- summary: n8n, triggers, Zapier et Make, Airflow, Prefect et Temporal, durable execution, limites du no-code, doublons et désordre des webhooks, fuseaux horaires, file d'échec. -->
 
 
 Qu'est-ce que n8n ? <!--anki:5074357b48742c717130-->
@@ -91,6 +91,22 @@ Pourquoi un webhook de workflow doit-il tolérer les événements livrés plusie
 La **livraison d'un webhook** peut être répétée après une erreur ou retardée par le réseau. L'ordre d'arrivée ne garantit donc pas l'ordre métier.
 
 Vérifier signature et fraîcheur, enregistrer un identifiant d'événement, puis dédupliquer avant l'effet. Pour un événement ancien, comparer la version de l'objet ou relire son état courant. Répondre après une prise en charge durable, selon le contrat du fournisseur. Tester doublon, retard et panne pendant l'écriture ; un workflow visuellement linéaire ne supprime pas ces cas distribués.
+
+---
+
+Pourquoi un déclenchement quotidien à heure locale demande-t-il une politique de changement d'heure ? <!--anki:6132663733613562646637663464386438383537643066303064653835363964-->
+?
+Au passage été/hiver, une heure locale peut **ne pas exister ou se produire deux fois**. « Tous les jours à 02 h 30 » n'est donc pas toujours une suite d'intervalles de 24 heures.
+
+Définir le fuseau et la politique de saut ou doublon, puis identifier l'exécution par sa période métier. L'idempotence protège un doublon ; elle ne crée pas l'exécution manquante. Tester les transitions et les relances après arrêt du scheduler.
+
+---
+
+Que doit permettre une file d'échec pour un workflow automatisé ? <!--anki:6538373535376362333666383432353562373562363362353535353965396433-->
+?
+Elle doit conserver **l'événement, la cause et l'historique des tentatives** afin de diagnostiquer puis rejouer de façon contrôlée. Déplacer un message dans une file ne résout pas son problème.
+
+Distinguer erreur corrigible de donnée invalide, corriger la cause puis rejouer avec le même identifiant métier si l'opération doit rester idempotente. Surveiller âge et volume de cette file. Un replay massif sans limite peut recréer la panne initiale.
 
 ---
 

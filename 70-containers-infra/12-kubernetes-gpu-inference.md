@@ -1,7 +1,7 @@
 # Kubernetes GPU & inférence — Flashcards
 Tags: #flashcards #kubernetes #gpu #llm #inference
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: device plugin, ressource `nvidia.com/gpu`, MIG, time-slicing, KServe, autoscaling (HPA, KEDA), pression du scale-out sur le stockage. -->
+<!-- summary: device plugin, ressource `nvidia.com/gpu`, MIG, time-slicing, KServe, autoscaling (HPA, KEDA), pression du scale-out sur le stockage, capacité de rollout, scale-down prudent. -->
 
 
 Comment [[04-kubernetes-kubelet-cri|Kubernetes]] alloue-t-il les GPU aux Pods ? <!--anki:782d706f674268736979-->
@@ -121,6 +121,22 @@ Pourquoi ajouter un réplica GPU peut-il d'abord augmenter la pression sur le st
 Un **nouveau réplica** doit souvent lire les mêmes poids volumineux avant de servir. Plusieurs démarrages simultanés se disputent le réseau et le stockage, ce qui peut allonger le chargement de tous les Pods.
 
 Mesurer le démarrage à froid sous concurrence, prévoir un cache local ou une préparation contrôlée et adapter la vitesse de scale-out. La readiness doit refléter le chargement réel. Inclure cette durée dans le dimensionnement : une capacité théorique disponible après dix minutes ne résout pas une rafale qui dure trente secondes.
+
+---
+
+Calcul : un service utilise 4 Pods d'un GPU chacun et le déploiement impose un Pod supplémentaire temporaire sans indisponibilité. Le cluster n'a que 4 GPU libres pour ce service. Pourquoi le rollout peut-il rester bloqué ? <!--anki:6331613832353565366464613461383561393434666231363761373638653064-->
+?
+Il faut momentanément **5 GPU**, alors que seulement 4 sont disponibles. Le nouveau Pod reste Pending tant qu'aucune ressource ne se libère.
+
+Prévoir capacité de surge, autre pool compatible ou stratégie acceptant une indisponibilité contrôlée. Vérifier aussi les contraintes de placement. Le nombre de GPU total du cluster ne suffit pas si certains nœuds ne sont pas admissibles pour l'image ou le modèle.
+
+---
+
+Pourquoi stabiliser les décisions de scale-down d'un service GPU ? <!--anki:3365313336376433393832613461343261663964386364666162656163393866-->
+?
+Une baisse temporaire peut entraîner **suppression puis recréation coûteuse** des Pods, avec chargement des poids et réchauffement des caches. Ce va-et-vient dégrade latence et coût.
+
+Utiliser une fenêtre de stabilisation, une capacité minimale justifiée et un drainage des requêtes actives. Mesurer le coût des GPU inoccupés face au coût des redémarrages et violations de SLO. La bonne politique dépend du profil de trafic, pas d'un seuil CPU universel.
 
 ---
 

@@ -1,7 +1,7 @@
 # CrewAI — Exécution fiable & intégration — Flashcards
 Tags: #flashcards #ai-engineering #agents #production
 Vérifié le : 9 octobre 2026 — API citées confrontées aux documentations officielles ; limites explicitées dans les cartes.
-<!-- summary: contrats de tâches, dépendances, guardrails bornés, budgets, async, persistance et checkpointing, délégation, isolation, instrumentation et tests, effets externes après rejet d'un guardrail. -->
+<!-- summary: contrats de tâches, dépendances, guardrails bornés, budgets, async, persistance et checkpointing, délégation, isolation, instrumentation et tests, effets externes après rejet d'un guardrail, publication des résultats, isolation des fichiers. -->
 
 
 Comment découper une crew CrewAI en tâches vérifiables ? <!--anki:3437303864316466363737393435623261313739336130656362623036353132-->
@@ -127,6 +127,22 @@ Pourquoi un guardrail CrewAI ne doit-il pas annuler implicitement les effets dé
 Un **guardrail de sortie** juge le résultat d'une tâche. Son rejet peut provoquer une nouvelle tentative, mais ne restaure pas automatiquement les systèmes externes modifiés par les outils.
 
 Faire produire une proposition avant l'action, puis valider et exécuter avec une clé d'idempotence. Si l'effet a déjà eu lieu, vérifier son statut et appliquer une compensation métier explicite si nécessaire. Tester le rejet après un effet et borner les tentatives. Un guardrail qui relance une tâche de facturation peut autrement créer plusieurs factures.
+
+---
+
+Pourquoi publier les résultats d'une crew seulement après validation du lot attendu ? <!--anki:3664336664313863623130613435613062646639623232626533346136336165-->
+?
+Un consommateur peut voir **un mélange de sorties complètes et partielles** si chaque tâche écrit directement dans l'emplacement final. Une tâche manquante peut alors passer pour une conclusion négative.
+
+Écrire les résultats dans un espace de préparation, vérifier présence, schémas et références, puis publier un manifeste de lot validé. Prévoir le statut des échecs partiels. Cette convention applicative ne découle pas automatiquement du fait que `kickoff` s'est terminé.
+
+---
+
+Pourquoi donner à chaque exécution CrewAI un espace de fichiers distinct ? <!--anki:3832363763323333323039373438626561643235303363646661663030643762-->
+?
+Des noms génériques comme `rapport.md` créent des **collisions entre tâches ou clients**. Une tâche peut lire un résultat d'une exécution précédente et le présenter comme nouveau.
+
+Construire les chemins à partir d'identifiants contrôlés, limiter les accès et associer chaque artefact à son exécution. Nettoyer selon une politique de rétention. Tester deux crews simultanées avec entrées différentes et vérifier les contenus, pas seulement leurs codes de retour.
 
 ---
 

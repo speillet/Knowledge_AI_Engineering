@@ -1,6 +1,6 @@
 # Coûts d'inférence — Flashcards
 Tags: #flashcards #ai-engineering #finops #couts #inference #llm
-<!-- summary: structure du coût d'un appel, calcul du coût d'un agent de 20 tours avec et sans cache, prix input et output, prompt caching, coût du self-hosting, break-even API ou self-host, batch API, leviers techniques, contexte long, unit economics, GPU idle, coût par réponse conforme et énergie par tâche utile, calcul d'économie nette d'un cache. -->
+<!-- summary: structure du coût d'un appel, calcul du coût d'un agent de 20 tours avec et sans cache, prix input et output, prompt caching, coût du self-hosting, break-even API ou self-host, batch API, leviers techniques, contexte long, unit economics, GPU idle, coût par réponse conforme et énergie par tâche utile, calcul d'économie nette d'un cache, coût total par tâche, cache et point mort. -->
 
 
 Comment se structure le coût d'un appel LLM API ? <!--anki:4f444670265626663e6d-->
@@ -179,6 +179,22 @@ Calcul : un cache fait passer 40 % de 10 000 demandes de 0,01 € à 0,001 €, 
 Sans cache : `10 000 × 0,01 = 100 €`. Avec cache : `4 000 × 0,001 + 6 000 × 0,01 + 15 = 79 €`, soit **21 € économisés**.
 
 Le hit rate doit porter sur ces demandes comparables et les réponses doivent rester valides. Ajouter les coûts d'invalidation, de stockage ou de vérification s'ils ne sont pas inclus. Un taux de hit élevé n'est pas une économie en soi : il faut comparer les coûts complets et vérifier que les erreurs ou réponses périmées n'augmentent pas le coût métier.
+
+---
+
+Calcul : 10 000 tâches coûtent 120 € de modèles, 30 € d'outils et 50 € de revue humaine ; 8 000 sont résolues correctement. Quel coût par tâche soumise et par succès utile ? <!--anki:3564303131643832663665333431363861303263623364343465366235643638-->
+?
+Le total est **200 €**, soit **0,02 € par tâche soumise** et **0,025 € par succès utile**.
+
+Les deux indicateurs ont des dénominateurs différents. Réduire le coût des modèles en dégradant le taux de réussite peut augmenter le second. Ajouter les coûts fixes ou de reprise lorsqu'ils appartiennent au périmètre étudié ; ne pas comparer deux solutions avec des périmètres comptables différents.
+
+---
+
+Calcul : un cache coûte 100 € par mois et économise 0,005 € par hit, sans autre effet. Combien de hits mensuels faut-il pour couvrir son coût ? <!--anki:3731646434623738646335313439326261663364616466613139303633373735-->
+?
+Le point mort vaut **100 / 0,005 = 20 000 hits par mois**. Au-delà, l'économie devient positive selon ces hypothèses.
+
+Compter les hits réellement réutilisables, après vérification de fraîcheur et de droits. Le stockage, les écritures, l'exploitation et les erreurs de cache peuvent modifier ce seuil. Un excellent taux de hit sur un trafic minuscule peut rester insuffisant pour amortir l'infrastructure.
 
 ---
 

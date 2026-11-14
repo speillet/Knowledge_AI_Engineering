@@ -1,7 +1,7 @@
 # Ingress & API gateway — Flashcards
 Tags: #flashcards #ai-engineering #kubernetes #ingress #networking
 Vérifié le : 17 octobre 2026 — retrait d'ingress-nginx confronté aux annonces du projet Kubernetes.
-<!-- summary: Ingress controller, retrait d'ingress-nginx, Ingress, API gateway et gateway LLM, TLS, Gateway API, rate limiting, streaming SSE, migration d'un controller, timeout total et timeout d'inactivité. -->
+<!-- summary: Ingress controller, retrait d'ingress-nginx, Ingress, API gateway et gateway LLM, TLS, Gateway API, rate limiting, streaming SSE, migration d'un controller, timeout total et timeout d'inactivité, déconnexion client, taille des corps. -->
 
 
 Qu'est-ce qu'un Ingress dans Kubernetes ? <!--anki:49586e334f397c2c6740-->
@@ -114,6 +114,22 @@ Pourquoi les timeouts d'une gateway doivent-ils distinguer silence du flux et du
 Un **timeout d'inactivité** limite le temps sans données ; un **timeout total** limite toute la durée de l'opération. Un flux peut rester actif pendant dix minutes et dépasser un budget produit de trente secondes.
 
 Aligner ces délais entre client, proxy, gateway et backend, puis propager une échéance globale. Tester un modèle qui raisonne longtemps avant le premier octet et un flux qui envoie régulièrement de petites données. Vérifier buffering et propagation de l'annulation. Un heartbeat réseau ne prouve pas qu'un contenu utile progresse.
+
+---
+
+Pourquoi limiter la taille d'une requête avant son arrivée au serveur LLM ? <!--anki:6266363131316433666338313430666239613339353965313334306638643465-->
+?
+Le parsing, la décompression et la tokenisation peuvent consommer **mémoire et CPU avant toute admission GPU**. Une limite en tokens appliquée tard ne protège pas ces étapes.
+
+Borner les octets, les pièces jointes et les tailles après décompression, puis vérifier le budget de tokens. Renvoyer une erreur compréhensible. Les limites doivent être cohérentes entre gateway et application pour éviter des échecs opaques à des tailles différentes.
+
+---
+
+Pourquoi vérifier la propagation d'une déconnexion client à travers la gateway ? <!--anki:3235313961376639343465383462626161333265613764376362343366366532-->
+?
+Le proxy peut continuer la requête vers l'amont même après le départ du client, laissant **un calcul coûteux sans consommateur**.
+
+Tracer un identifiant commun et observer l'arrêt effectif dans le serveur d'inférence. Tester déconnexion réseau, timeout proxy et annulation explicite. Selon le contrat, certaines tâches doivent continuer en arrière-plan ; il faut alors les exposer comme tâches asynchrones suivies, plutôt que perdre silencieusement leur résultat.
 
 ---
 

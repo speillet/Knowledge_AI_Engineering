@@ -1,6 +1,6 @@
 # GPU en conteneur — Flashcards
 Tags: #flashcards #conteneurs #gpu #cuda #infra
-<!-- summary: NVIDIA Container Toolkit, driver et CUDA, images CUDA, GPU Operator, Apptainer `--nv`, ROCm, topologie et communications entre GPU. -->
+<!-- summary: NVIDIA Container Toolkit, driver et CUDA, images CUDA, GPU Operator, Apptainer `--nv`, ROCm, topologie et communications entre GPU, visibilité et allocation, test CUDA réel. -->
 
 
 Un conteneur voit-il le GPU de l'hôte par défaut ? <!--anki:7278436c2c57552b3c74-->
@@ -125,6 +125,22 @@ Vérifier les liens réellement accessibles au conteneur et mesurer les communic
 
 ---
 
+Pourquoi un nvidia-smi réussi dans un conteneur ne suffit-il pas à valider une application CUDA ? <!--anki:6664393534663837353430623431656462653964653662323831306165623163-->
+?
+Il confirme surtout **l'accès à l'interface de gestion du GPU**. Le chargement des bibliothèques, les kernels utilisés et les besoins mémoire de l'application peuvent encore échouer.
+
+Exécuter un calcul minimal avec le framework réel, puis une requête représentative. Vérifier versions compatibles, précision et architecture GPU. Ne pas transformer ce smoke test en preuve de capacité sous charge : celle-ci nécessite un benchmark séparé.
+
+---
+
+Pourquoi la visibilité d'un GPU ne garantit-elle pas son exclusivité pour un conteneur ? <!--anki:3364663537306632326666623435326538646135336136613132633839616665-->
+?
+Rendre un périphérique visible détermine **ce que le processus peut adresser**, pas toujours qui d'autre l'utilise. Plusieurs processus peuvent partager calcul et mémoire selon la configuration.
+
+Vérifier allocation par l'orchestrateur, politique de partage et processus concurrents. Mesurer les effets sur latence et mémoire. Une variable de visibilité n'est pas, à elle seule, une frontière d'isolation ou une réservation de capacité.
+
+---
+
 ## Mises en situation
 
 Mise en situation : ton conteneur d'inférence démarre mais `nvidia-smi` n'y répond pas, alors que le GPU est bien visible sur l'hôte. Comment procèdes-tu ? <!--anki:4f613c7a75292524322a-->
@@ -157,6 +173,8 @@ Mise en situation : deux équipes se partagent un GPU pour leurs services d'inf�
 - [NVIDIA — GB300 NVL72 et mémoire des GPU Blackwell Ultra](https://www.nvidia.com/en-us/data-center/gb300-nvl72/)
 
 - [Apptainer — accès aux périphériques et bibliothèques GPU](https://apptainer.org/docs/user/main/gpu.html)
+
+- Complément du 14 novembre 2026 — Diagnostic du chemin GPU en conteneur : [NVIDIA — Container Toolkit troubleshooting](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/troubleshooting.html).
 
 ## Connexions
 - [[00-index|Index Conteneurs]] — les bases des conteneurs

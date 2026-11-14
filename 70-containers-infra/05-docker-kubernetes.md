@@ -1,7 +1,7 @@
 # Docker & Kubernetes — Flashcards
 Tags: #flashcards #docker #kubernetes
 Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: dockershim et sa suppression, architecture actuelle, images Docker exécutées sans Docker Engine, cri-dockerd, vérifications avant de retirer Docker Engine, construction d'images sans démon (BuildKit rootless, Buildah), validation des conditions d'exécution Kubernetes. -->
+<!-- summary: dockershim et sa suppression, architecture actuelle, images Docker exécutées sans Docker Engine, cri-dockerd, vérifications avant de retirer Docker Engine, construction d'images sans démon (BuildKit rootless, Buildah), validation des conditions d'exécution Kubernetes, UID et permissions, dérive des configurations. -->
 
 
 Historiquement, comment Kubernetes communiquait-il avec Docker Engine ? <!--anki:41645a73796a5a6f502a-->
@@ -85,6 +85,22 @@ Pourquoi un test Docker local ne suffit-il pas à valider un déploiement Kubern
 Le **contexte d'exécution** change : identité, système de fichiers, réseau, ressources et cycle de vie. Un conteneur local lancé avec tous les privilèges peut échouer dans un Pod restreint.
 
 Rejouer les conditions prévues : utilisateur non privilégié, volumes et droits réels, limites mémoire, secrets injectés et arrêt gracieux. Tester téléchargement des poids et accès GPU sur le cluster cible. Vérifier enfin Service et probes. Une image commune facilite le transfert, mais ne reproduit pas automatiquement les contrats que Kubernetes impose autour du processus.
+
+---
+
+Pourquoi un conteneur qui fonctionne en root localement peut-il échouer sous Kubernetes avec un utilisateur non privilégié ? <!--anki:3761323631653039303330313437393762356238336235616636373339643761-->
+?
+L'application peut essayer d'écrire dans **un répertoire appartenant à root**, d'accéder à un périphérique ou d'utiliser une capacité non accordée.
+
+Tester le même UID, les mêmes montages et restrictions avant déploiement. Préparer explicitement les répertoires inscriptibles nécessaires. Rétablir root pour « réparer » le démarrage peut dissimuler une dépendance évitable ; corriger les permissions au périmètre utile.
+
+---
+
+Pourquoi conserver les manifests Kubernetes en plus du Dockerfile pour reproduire un service ? <!--anki:3430373035333938303961353436376662353338623261323364346531336638-->
+?
+Le Dockerfile ne décrit pas **les secrets injectés, ressources, montages, probes et règles réseau** du déploiement. Ces paramètres peuvent changer le comportement sans modifier l'image.
+
+Versionner les manifests et références de configuration, puis vérifier l'état effectif du cluster. Conserver les valeurs sensibles dans un mécanisme adapté plutôt que dans Git. Une différence entre configuration déclarée et configuration appliquée doit être détectable.
 
 ---
 

@@ -1,7 +1,7 @@
 # LiteLLM (API layer) — Flashcards
 Tags: #flashcards #ai-engineering #api-layer #litellm #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: SDK ou proxy, virtual keys, budgets, rate limits, fallbacks, load balancing, callbacks d'observabilité, alternatives (gateways auto-hébergées, services des clouds, agrégateurs), réconciliation avec la facturation fournisseur. -->
+<!-- summary: SDK ou proxy, virtual keys, budgets, rate limits, fallbacks, load balancing, callbacks d'observabilité, alternatives (gateways auto-hébergées, services des clouds, agrégateurs), réconciliation avec la facturation fournisseur, streaming et fallback, budget concurrent. -->
 
 
 Qu'est-ce qu'une API layer (LLM gateway) ? <!--anki:79752c38462d5a6c3765-->
@@ -121,6 +121,22 @@ Pourquoi la comptabilité d'une gateway LiteLLM doit-elle être réconciliée av
 La **gateway** observe ses appels, mais des retries, réponses interrompues, outils ou différences de comptage peuvent créer un écart avec la facture. Le coût client déclaré n'est pas toujours le coût facturé définitif.
 
 Corréler identifiants d'appels, modèle effectif, usage renvoyé et tarif versionné. Inclure les tentatives échouées facturables et distinguer estimation et montant réconcilié. Tester un flux interrompu avant son événement final d'usage. Une attribution budgétaire utile conserve ces incertitudes au lieu de transformer une donnée manquante en coût nul.
+
+---
+
+Pourquoi un fallback après le début d'un stream LLM est-il délicat ? <!--anki:6261316164313439616262373435383739396232623330343864613565336662-->
+?
+Le client a déjà reçu **un préfixe produit par le premier modèle**. Le second peut générer une réponse différente ; concaténer les deux crée un résultat incohérent.
+
+Définir un protocole explicite de reprise ou d'échec, éventuellement recommencer un nouveau message identifié. Tester la panne après plusieurs fragments. La possibilité technique de rappeler un fournisseur ne garantit pas une reprise transparente au niveau produit.
+
+---
+
+Pourquoi une limite de dépense vérifiée seulement après chaque réponse peut-elle être dépassée ? <!--anki:3835323334633563353335353439613139623864393236363935343336333236-->
+?
+Plusieurs requêtes concurrentes peuvent être acceptées avec **le même solde restant**, puis chacune consommer ce budget. La comptabilité a posteriori arrive trop tard pour une limite stricte.
+
+Réserver une estimation avant admission, borner la génération puis réconcilier avec l'usage réel. Définir la marge d'incertitude et le traitement des appels encore en vol. Vérifier les garanties exactes du proxy déployé ; un tableau de dépenses ne constitue pas nécessairement un verrou budgétaire.
 
 ---
 

@@ -1,6 +1,6 @@
 # Monitoring, drift & boucle de feedback — Flashcards
 Tags: #flashcards #ai-engineering #mlops #monitoring #drift #llm
-<!-- summary: data drift et concept drift, PSI et calcul, test KS sur gros volumes, dérive multivariée, distribution des scores, drift d'une app LLM et d'un RAG, qualité en production, boucle de feedback, quand ré-entraîner, annotation régulière, mises à jour des modèles API, alertes sur tendance et par segment, biais des labels tardifs, références fixe et glissante, définition versionnée du label, calcul de couverture, panne de la mesure. -->
+<!-- summary: data drift et concept drift, PSI et calcul, test KS sur gros volumes, dérive multivariée, distribution des scores, drift d'une app LLM et d'un RAG, qualité en production, boucle de feedback, quand ré-entraîner, annotation régulière, mises à jour des modèles API, alertes sur tendance et par segment, biais des labels tardifs, références fixe et glissante, définition versionnée du label, calcul de couverture, panne de la mesure, boucle de décision, saisonnalité. -->
 
 
 À ne pas confondre : data drift et concept drift ? <!--anki:693a4558422d7246257a-->
@@ -182,6 +182,22 @@ Comment surveiller un modèle lorsque l'évaluateur ou la collecte de labels tom
 Surveiller aussi la **chaîne de mesure** : nombre de prédictions, labels attendus et reçus, évaluations tentées et terminées, âge des dernières observations et erreurs de rapprochement.
 
 Distinguer état sain, non conforme et inconnu. Une métrique figée peut refléter l'arrêt du calcul plutôt qu'une stabilité de qualité. Prévoir une alerte et une politique d'exploitation pour cette perte de visibilité, selon la criticité. Continuer les contrôles disponibles, comme formats et latence, sans les présenter comme une preuve de performance prédictive. Tester panne du juge ou retard de labels avec des sondes dont le résultat attendu est connu.
+
+---
+
+Pourquoi une dérive apparente peut-elle venir de l'action du modèle lui-même ? <!--anki:3233303166356337336639323461326639393362393065343539386162653032-->
+?
+Le modèle modifie **les décisions et donc les données futures**. Une offre de rétention peut réduire les résiliations observées précisément chez les clients estimés à risque.
+
+Relier prédiction, action et résultat, puis distinguer changement de population et effet de la politique. Une baisse du taux de résiliation n'est pas automatiquement une amélioration de calibration. Des groupes de comparaison ou une collecte conçue pour l'identification sont nécessaires pour certaines conclusions.
+
+---
+
+Comment distinguer une saisonnalité attendue d'une dérive préoccupante ? <!--anki:3433653833363331333432623466613361366266626130363635386534326231-->
+?
+Comparer à **des périodes et segments comparables**, par exemple même jour de semaine ou saison, puis examiner l'effet sur la qualité et les décisions.
+
+Conserver une référence fixe pour voir les changements de fond et une référence saisonnière pour éviter les alertes répétitives. Ne pas normaliser toute variation au point de masquer un incident. Les seuils doivent refléter les volumes, l'incertitude et le coût métier.
 
 ---
 

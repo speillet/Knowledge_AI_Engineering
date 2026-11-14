@@ -1,7 +1,7 @@
 # Stockage colonnaire, partitions & lakehouse — Flashcards
 Tags: #flashcards #ai-engineering #donnees #data-engineering
 Vérifié le : 9 octobre 2026 — références techniques et exemples de cette fiche.
-<!-- summary: warehouse, lake et lakehouse, stockage objet, JSONL/Avro/Parquet/Arrow, row groups, pruning, partitions, petits fichiers, formats de table, transactions, snapshots et suppressions, predicate pushdown et octets réellement lus. -->
+<!-- summary: warehouse, lake et lakehouse, stockage objet, JSONL/Avro/Parquet/Arrow, row groups, pruning, partitions, petits fichiers, formats de table, transactions, snapshots et suppressions, predicate pushdown et octets réellement lus, min-max et tri, compaction et snapshots. -->
 
 
 À ne pas confondre : data warehouse, data lake et lakehouse ? <!--anki:3030646666643563393464653462346261336265636638363463376338646433-->
@@ -156,6 +156,22 @@ Examiner le plan et les octets réellement lus avec le moteur cible. Comparer un
 
 ---
 
+Pourquoi trier les données peut-il améliorer le pruning d'un fichier Parquet ? <!--anki:3235353262366532626430343465666638333236396333303334633231353636-->
+?
+Des row groups contenant **des plages plus resserrées** permettent aux statistiques min/max d'exclure davantage de groupes pour certains filtres.
+
+Sans organisation, chaque groupe peut couvrir presque toute la plage et rester candidat. Le bénéfice dépend des colonnes filtrées et du coût du tri. Mesurer les octets réellement lus ; le nombre de lignes retournées ne suffit pas à estimer le travail évité.
+
+---
+
+Pourquoi une compaction lakehouse ne doit-elle pas supprimer immédiatement les anciens fichiers encore référencés ? <!--anki:3764313336613332376531623437656461366566373833643064383130636466-->
+?
+Des lecteurs ou snapshots peuvent **utiliser l'ancienne version** pendant que la nouvelle devient visible. Supprimer trop tôt casse leurs lectures et les possibilités de retour historique.
+
+Publier la nouvelle version par le mécanisme transactionnel du format de table, puis appliquer une rétention compatible avec les lecteurs. Vérifier aussi les fichiers orphelins. Le stockage objet seul ne connaît pas ces dépendances logiques.
+
+---
+
 ## Mises en situation
 
 Mise en situation : une préparation de features de 80 Go met surtout du temps à démarrer et ouvre deux millions de fichiers. Quel diagnostic proposes-tu ? <!--anki:3330353764633634663539633439363661336132323938336534663831643435-->
@@ -202,6 +218,10 @@ Mise en situation : deux jobs publient chacun une table cohérente, mais le mod�
 - [Apache Iceberg — fiabilité et concurrence](https://iceberg.apache.org/docs/latest/reliability/)
 - [Apache Iceberg — évolution](https://iceberg.apache.org/docs/latest/evolution/)
 - [Apache Iceberg — maintenance et expiration](https://iceberg.apache.org/docs/latest/maintenance/)
+
+- Complément du 14 novembre 2026 — Organisation physique Parquet : [Apache Parquet — File Format](https://parquet.apache.org/docs/file-format/).
+
+- Complément du 14 novembre 2026 — Snapshots et isolation des lectures : [Apache Iceberg — Reliability](https://iceberg.apache.org/docs/latest/reliability/).
 
 ## Connexions
 - [[153-data-flywheel-versioning|Versioning des données]] — préserver les versions physiques nécessaires aux expériences

@@ -1,6 +1,6 @@
 # PII & confidentialité des données — Flashcards
 Tags: #flashcards #ai-engineering #donnees #pii #confidentialite #securite
-<!-- summary: où passent les données, détection, masquage, pseudonymisation et anonymisation, pseudonymiser avant l'appel, engagements des fournisseurs, logs, mémorisation, fuites entre utilisateurs, secrets, privacy by design, réidentification par attributs indirects. -->
+<!-- summary: où passent les données, détection, masquage, pseudonymisation et anonymisation, pseudonymiser avant l'appel, engagements des fournisseurs, logs, mémorisation, fuites entre utilisateurs, secrets, privacy by design, réidentification par attributs indirects, hash et pseudonyme, minimisation des traces. -->
 
 
 Où passent les données personnelles dans une application LLM ? <!--anki:75613b6d24494663604d-->
@@ -97,6 +97,22 @@ Pourquoi remplacer les noms par des identifiants stables peut-il encore permettr
 Des **identifiants stables** relient les événements d'une personne. Combinés à dates, lieux, profession ou événements rares, ils peuvent permettre de la retrouver même sans son nom.
 
 Évaluer l'ensemble des attributs et les possibilités de rapprochement, puis réduire précision, rétention et accès selon la finalité. Protéger séparément la table de correspondance quand elle existe. Ne pas qualifier automatiquement ces données d'anonymes : la pseudonymisation reste un traitement de données personnelles. Tester les risques sur les traces et exports, pas seulement sur le texte envoyé au modèle.
+
+---
+
+Pourquoi hasher une adresse email ne l'anonymise-t-il pas automatiquement ? <!--anki:6538326333326239303637313434333861393562663031666365663264333832-->
+?
+Un attaquant peut **tester des adresses candidates et comparer leurs empreintes**, surtout si le domaine et la population sont connus. Un identifiant stable permet aussi de relier des événements.
+
+Une protection cryptographique adaptée peut réduire certains risques, mais il faut examiner possibilités de réidentification et informations auxiliaires. Traiter ces données selon leur risque réel. La pseudonymisation ne supprime pas automatiquement les obligations liées aux données personnelles.
+
+---
+
+Comment conserver des traces utiles d'un agent sans enregistrer tous les documents privés ? <!--anki:6532363035313838303632623434313538653238396334393537376132306437-->
+?
+Journaliser **identifiants, versions, statuts et métriques nécessaires**, avec des extraits minimisés lorsque leur utilité est justifiée. Garder les originaux dans un stockage soumis à leurs droits propres.
+
+Définir accès et rétention, puis tester le masquage sur sorties normales et exceptions. Un identifiant ou une métadonnée peut aussi être personnel. La minimisation porte sur tout le chemin de télémétrie, y compris les outils externes.
 
 ---
 

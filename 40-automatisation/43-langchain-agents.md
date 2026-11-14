@@ -1,7 +1,7 @@
 # LangChain — Agents & middleware — Flashcards
 Tags: #flashcards #ai-engineering #agents #langchain #llm
 Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: `create_agent`, mémoire par checkpointer et `thread_id`, `response_format`, hooks de middleware, middlewares fournis (human-in-the-loop, résumé, fallback, limites), runtime context, Deep Agents, multiplication des retries entre couches. -->
+<!-- summary: `create_agent`, mémoire par checkpointer et `thread_id`, `response_format`, hooks de middleware, middlewares fournis (human-in-the-loop, résumé, fallback, limites), runtime context, Deep Agents, multiplication des retries entre couches, restauration des budgets, filtrage des résultats. -->
 
 
 Qu'est-ce que `create_agent` ? <!--anki:7a4b2e797a59726e6d3e-->
@@ -146,6 +146,22 @@ Pourquoi borner les tentatives dans chaque middleware LangChain ne suffit-il pas
 Des **boucles imbriquées** peuvent multiplier les tentatives : trois essais dans le SDK et trois dans un middleware permettent jusqu'à neuf appels pour une même demande logique.
 
 Fixer un budget global de temps, coût et appels, consommé par toutes les couches. Désigner la couche responsable de chaque reprise et propager l'échéance restante. Instrumenter tentative technique et tour d'agent séparément. Tester un fournisseur qui échoue systématiquement : les limites locales doivent conduire à une fin explicite avant l'épuisement du budget global.
+
+---
+
+Pourquoi le budget d'un agent LangChain doit-il survivre à une interruption humaine ? <!--anki:3535623031666166333865303431633661393164666634373139633636623362-->
+?
+Une reprise peut sinon remettre les compteurs à zéro et autoriser **un nouveau budget à chaque suspension**. La limite annoncée par tâche ne serait plus réelle.
+
+Persister la consommation associée à l'exécution métier et vérifier le reliquat avant chaque appel. Distinguer nouvelle demande utilisateur et poursuite de la même tâche. Les compteurs de tokens estimés doivent être rapprochés de l'usage observé ; une interruption ne rembourse pas les appels déjà effectués.
+
+---
+
+Où filtrer les données sensibles des résultats d'outils avant leur utilisation par un agent LangChain ? <!--anki:3965343565613330336666643439636539646636326261373832663839626532-->
+?
+Au niveau de **l'outil ou de sa frontière applicative**, avant insertion dans les messages, traces et éventuels résumés. Un filtre de réponse finale intervient trop tard si le secret a déjà été envoyé au modèle.
+
+Définir les champs nécessaires à la tâche, puis construire un résultat minimal. Tester aussi exceptions et logs. Le middleware peut centraliser une partie du contrôle, mais il faut vérifier l'ordre effectif des hooks et tous les chemins de sortie.
 
 ---
 
