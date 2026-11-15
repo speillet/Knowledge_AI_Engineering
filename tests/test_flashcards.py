@@ -146,7 +146,9 @@ class VaultTests(unittest.TestCase):
         self.root = Path(self.tmp.name)
         sources = (
             lint.topic_files()
-            + list((ROOT / "docs").glob("*.md"))
+            + list((ROOT / "docs").rglob("*.md"))
+            + list(ROOT.glob("*.md"))
+            + list((ROOT / "tests").glob("*.py"))
             + [
                 ROOT / "README.md",
                 ROOT / f"{lint.MOC}.md",
@@ -200,6 +202,17 @@ class VaultTests(unittest.TestCase):
         readme = self.root / "README.md"
         write(readme, read(readme) + "\n[A record](missing-topic.md)\n")
         self.assertIn("broken Markdown link", self.errors())
+
+    def test_dead_markdown_link_in_nested_guide_fails_lint(self):
+        guide = self.root / "docs/guides/example.md"
+        guide.parent.mkdir(parents=True, exist_ok=True)
+        write(guide, "[Missing topic](../../missing.md)\n")
+        self.assertIn("broken Markdown link", self.errors())
+
+    def test_catalog_links_resolve_from_documentation_directory(self):
+        text = read(self.root / lint.CATALOG)
+        self.assertIn("(../20-rag/21-rag-fundamentals.md)", text)
+        self.assertFalse(lint.lint(0)[0])
 
     def test_invalid_date_fails_without_exception(self):
         self.edit(self.rag, "\n<!-- summary:", "\nVerified on: 31 February 2026\n<!-- summary:")

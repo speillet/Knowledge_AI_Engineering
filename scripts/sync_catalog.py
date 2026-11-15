@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generates the README and MOC summaries from the sheets and sections.json.
+"""Generate the topic catalog and MOC from topics and sections.json.
 
 python3 scripts/sync_catalog.py # updates both blocks
 python3 scripts/sync_catalog.py --check # fails if an update is required
@@ -10,7 +10,7 @@ import json
 from pathlib import Path
 import re
 
-from lint_flashcards import MOC, ROOT, topic_title
+from lint_flashcards import CATALOG, MOC, ROOT, topic_title
 
 BEGIN = "<!-- catalog:begin -->"
 END = "<!-- catalog:end -->"
@@ -28,7 +28,7 @@ def topic_order(path: Path) -> tuple[int, str]:
 
 
 def render(root: Path, moc: bool = False) -> str:
-    """Summary of sections: wikilinks for the MOC, Markdown links and abstracts for the README."""
+    """Render wikilinks for the MOC or relative Markdown links for the catalog."""
     sections = json.loads((root / "scripts/sections.json").read_text(encoding="utf-8"))
     unknown = {p.name for p in root.glob("[0-9]*") if p.is_dir()} - sections.keys()
     if unknown:
@@ -50,7 +50,7 @@ def render(root: Path, moc: bool = False) -> str:
             if moc:
                 output.append(f"- [[{path.stem}|{title}]]")
             else:
-                output.append(f"- [{title}]({path.relative_to(root).as_posix()}) : {match[1]}")
+                output.append(f"- [{title}](../{path.relative_to(root).as_posix()}) : {match[1]}")
         output.append("")
     return "\n".join(output).rstrip()
 
@@ -67,7 +67,7 @@ def replace_block(text: str, body: str) -> str:
 def sync(root: Path = ROOT, check: bool = False) -> bool:
     """Updates the two summaries; with check, returns False if they are to be regenerated, without writing."""
     updates: list[tuple[Path, str]] = []
-    for name, moc in (("README.md", False), (f"{MOC}.md", True)):
+    for name, moc in ((CATALOG, False), (f"{MOC}.md", True)):
         path = root / name
         original = path.read_text(encoding="utf-8")
         updated = replace_block(original, render(root, moc=moc))
