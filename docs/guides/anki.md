@@ -4,6 +4,8 @@ Every push to `main` generates an Anki package and publishes it at a stable addr
 
 [Download the Anki package](https://github.com/speillet/Knowledge_AI_Engineering/releases/download/anki/ai-engineering.apkg).
 
+Versioned releases, tagged `anki-vYYYY.MM.DD`, keep the package of that date with notes that list the merged changes: see the [releases](https://github.com/speillet/Knowledge_AI_Engineering/releases). Download one to keep a fixed reference; the stable link always serves the latest build of `main`.
+
 1. Install **AnkiDroid** from the Play Store or F-Droid.
 2. Download the package on your phone and open it with AnkiDroid. It imports into **AI Engineering**, organized by section and topic.
 3. To update, download and import it again. Each note has a permanent `<!--anki:…-->` identifier, so rewording a question or renaming a file can update the existing note while retaining its review history.

@@ -1,9 +1,11 @@
 name: Flashcards and Anki export
 
-# Checks run on every PR and push. Publish the anki release from main only after they pass.
+# Checks run on every PR and push. Only after they pass, publish the rolling anki release
+# from main, and a versioned release from an anki-v* tag that points to a commit of main.
 on:
   push:
     branches: [main]
+    tags: ["anki-v*"]
   pull_request:
   workflow_dispatch:
 
@@ -70,3 +72,53 @@ jobs:
               --notes "Anki package for the vault, rebuilt after checks pass on main. See the Anki guide linked from the README."
           fi
           gh release upload anki dist/ai-engineering.apkg --clobber
+
+  release:
+    name: Publish the versioned release
+    needs: check
+    if: startsWith(github.ref, 'refs/tags/anki-v') && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    concurrency:
+      group: anki-release-${{ github.ref_name }}
+      cancel-in-progress: false
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      TAG: ${{ github.ref_name }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
+        with:
+          name: ai-engineering-anki
+          path: dist
+      - name: Refuse a tag outside main
+        run: |
+          status=$(gh api "repos/$GH_REPO/compare/main...$GITHUB_SHA" --jq .status)
+          if [ "$status" != identical ] && [ "$status" != behind ]; then
+            echo "::error::$TAG must point to a commit of main (compare status: $status)."
+            exit 1
+          fi
+      - name: Publish the package with generated notes
+        run: |
+          # A rerun only refreshes the package; published notes are left as they are.
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" dist/ai-engineering.apkg --clobber
+            exit 0
+          fi
+          stats=$(python3 scripts/lint_flashcards.py --quiet | tail -n 1 | sed 's/ —.*//')
+          previous=$(gh api "repos/$GH_REPO/releases?per_page=100" \
+            --jq '[.[] | select(.tag_name | startswith("anki-v"))] | sort_by(.created_at) | last | .tag_name // empty')
+          args=(-f tag_name="$TAG" -f target_commitish="$GITHUB_SHA")
+          if [ -n "$previous" ]; then args+=(-f previous_tag_name="$previous"); fi
+          {
+            echo "Anki package of the vault at \`$TAG\` (commit ${GITHUB_SHA::7}): $stats."
+            echo
+            echo "Import \`ai-engineering.apkg\` into Anki or AnkiDroid: reimporting updates existing notes and keeps their review history. The [stable link](https://github.com/$GH_REPO/releases/download/anki/ai-engineering.apkg) always serves the latest build of \`main\`."
+            echo
+            gh api "repos/$GH_REPO/releases/generate-notes" "${args[@]}" --jq .body
+          } > notes.md
+          gh release create "$TAG" dist/ai-engineering.apkg --verify-tag --latest \
+            --title "Anki package ${TAG#anki-v}" --notes-file notes.md
