@@ -29,6 +29,7 @@ ROOT = Path(__file__).resolve().parent.parent
 MOC = "00-moc-ai-engineering"
 INDEXES = {MOC, "00-index"}
 README = "README.md"
+CATALOG = "docs/catalog.md"
 CONTAINERS_INDEX = "70-containers-infra/00-index.md"
 RETIRED = "scripts/retired_cards.json"
 
@@ -122,7 +123,7 @@ class Vault:
     inbound: collections.Counter[str] = field(default_factory=collections.Counter)
 
     def __post_init__(self) -> None:
-        self.names = collections.Counter(p.stem for p in self.texts)
+        self.names = collections.Counter([*(p.stem for p in self.files), MOC])
 
     def text(self, relative: str) -> str:
         return self.texts[ROOT / relative]
@@ -393,12 +394,12 @@ def check_cards(path: Path, rel: Path, cards: list[Card], vault: Vault, report: 
 
 
 def check_catalogs(path: Path, rel: Path, vault: Vault, report: Report) -> None:
-    """File cited by the MOC (or the container index) and by the README."""
+    """Topic listed in the MOC (or container index) and the generated catalog."""
     moc, index = vault.text(f"{MOC}.md"), vault.text(CONTAINERS_INDEX)
     if path.stem not in INDEXES and f"[[{path.stem}" not in moc and f"[[{path.stem}" not in index:
         report.errors.append(f"{rel} missing the MOC (or container index)")
-    if str(rel) not in vault.text(README):
-        report.warnings.append(f"{rel} missing from the README “Covered Concepts” list")
+    if rel.as_posix() not in vault.text(CATALOG):
+        report.warnings.append(f"{rel} missing from the topic catalog")
 
 
 def check_dates(rel: Path, text: str, vault: Vault, report: Report) -> None:
@@ -481,7 +482,7 @@ def check_graph(vault: Vault, report: Report) -> None:
 def lint(stale_months: int) -> tuple[list[str], list[str], list[TopicStats]]:
     """Errors, warnings and statistics per record; stale_months = 0 ignores the age of the dates."""
     files = topic_files()
-    pages = [*files, ROOT / f"{MOC}.md", ROOT / README]
+    pages = [*files, *ROOT.glob("*.md"), *(ROOT / "docs").rglob("*.md")]
     vault = Vault(files, {p: p.read_text(encoding="utf-8") for p in pages}, stale_months)
     report = Report()
     for name, count in vault.names.items():
