@@ -1,0 +1,3 @@
+{{- with resources.Get "js/kv.js" | minify | fingerprint "sha512" }}
+<script src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" defer></script>
+{{- end }}

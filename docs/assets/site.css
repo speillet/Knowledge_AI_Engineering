@@ -1,9 +1,0 @@
-/* Keep long explanations and tables comfortable to read on wide and narrow screens. */
-.wy-nav-content { max-width: 1100px; }
-.rst-content { line-height: 1.65; }
-.rst-content details { margin: .6rem 0 1.5rem; padding: .7rem 1rem; border: 1px solid #d8e1e8; border-radius: .35rem; }
-.rst-content summary { cursor: pointer; font-weight: 600; color: #215a7b; }
-.rst-content details[open] summary { margin-bottom: 1rem; }
-.rst-content details > :last-child { margin-bottom: 0; }
-.rst-content pre { overflow-x: auto; }
-@media print { .wy-nav-side, .rst-footer-buttons { display: none; } .wy-nav-content-wrap { margin-left: 0; } }

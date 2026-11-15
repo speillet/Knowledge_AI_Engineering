@@ -1,0 +1,65 @@
+# Blowfish options: https://blowfish.page/docs/configuration/#theme-parameters
+colorScheme = "ocean"
+logo = "img/logo.svg"
+defaultAppearance = "light"
+autoSwitchAppearance = true
+enableSearch = true
+enableCodeCopy = true
+enableStructuredBreadcrumbs = true
+disableImageOptimization = true
+smartTOC = true
+highlightCurrentMenuArea = true
+description = "Connected flashcards, learning paths and practical workshops for AI engineering."
+repository = "https://github.com/speillet/Knowledge_AI_Engineering"
+anki = "https://github.com/speillet/Knowledge_AI_Engineering/releases/download/anki/ai-engineering.apkg"
+releases = "https://github.com/speillet/Knowledge_AI_Engineering/releases"
+
+[header]
+  layout = "fixed-fill-blur"
+
+[footer]
+  showMenu = true
+  showCopyright = true
+  showThemeAttribution = true
+  showAppearanceSwitcher = true
+  showScrollToTop = true
+
+[homepage]
+  layout = "custom"
+  showRecent = false
+
+[article]
+  showDate = false
+  showViews = false
+  showLikes = false
+  showDateUpdated = false
+  showAuthor = false
+  showHero = false
+  showBreadcrumbs = true
+  showDraftLabel = false
+  showEdit = true
+  showHeadingAnchors = true
+  showPagination = true
+  invertPagination = false
+  showReadingTime = false
+  showReadingProgress = true
+  showTableOfContents = true
+  showRelatedContent = false
+  showTaxonomies = false
+  showWordCount = false
+  showZenMode = false
+
+[list]
+  showHero = false
+  showBreadcrumbs = true
+  showSummary = true
+  showTableOfContents = true
+  showCards = false
+  orderByWeight = true
+  groupByYear = false
+  cardView = true
+  cardViewScreenWidth = false
+  constrainItemsWidth = false
+
+[sitemap]
+  excludedKinds = ["taxonomy", "term"]

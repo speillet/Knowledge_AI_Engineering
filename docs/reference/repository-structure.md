@@ -18,7 +18,8 @@ Knowledge_AI_Engineering/
 ├── examples/                    # runnable workshops
 ├── scripts/                     # lint, catalogs, IDs and Anki export
 ├── tests/                       # tooling and compatibility checks
-├── .github/workflows/           # checks and Anki publication
+├── website/                     # Hugo site: configuration, overrides, Blowfish theme submodule
+├── .github/workflows/           # checks, Anki and website publication
 └── Makefile                     # maintenance commands
 ```
 

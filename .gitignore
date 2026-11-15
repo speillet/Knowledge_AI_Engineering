@@ -25,6 +25,8 @@ __pycache__/
 # Isolated support-agent workshop dependencies
 .venv-agentic/
 
-# Generated documentation
+# Generated documentation (make site)
 build/
 site/
+website/content/
+website/.hugo_build.lock

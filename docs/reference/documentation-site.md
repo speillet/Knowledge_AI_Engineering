@@ -1,37 +1,51 @@
 # Documentation website
 
-The [website](https://speillet.github.io/Knowledge_AI_Engineering/) provides domain navigation, full-text search and expandable answers. Markdown files in the repository remain the source for the website, Obsidian and Anki.
+The [website](https://speillet.github.io/Knowledge_AI_Engineering/) offers domain navigation, search over topics and card questions, and collapsible answers. Markdown files in the repository remain the source for the website, Obsidian and Anki.
 
 ## Build or preview
 
-Use a Python 3.10+ virtual environment from the repository root:
+The site uses [Hugo](https://gohugo.io/installation/) **extended** edition, version 0.166.0 to 0.169.0, as required by the pinned release of the [Blowfish](https://blowfish.page/) theme. Then run from the repository root:
 
 ```bash
-python3 -m venv .venv
-. .venv/bin/activate
-python -m pip install -r requirements-docs.txt
-make site
-make site-serve
+make site          # writes the static site to site/
+make site-serve    # preview at http://127.0.0.1:1313/
 ```
 
-The preview address is printed in the terminal. Stop it with Ctrl+C. After editing source Markdown, rerun `make site-serve` to regenerate the staged pages.
+Both targets first fetch the theme submodule if it is missing (`git submodule update --init --depth 1 website/themes/blowfish`). `make site` stages the content, builds with Hugo, then checks every internal link and anchor of the built pages and the URLs of the search index with [scripts/check_site.py](../../scripts/check_site.py). It fails on any Hugo warning, broken page reference, link or anchor. After editing source Markdown, rerun `make site-serve` to regenerate the staged pages. Staging needs only Python 3.10+ and its standard library.
 
-`make site` writes static HTML to `site/` and fails on documentation build warnings. Serve that directory over HTTP to test navigation and search; opening files directly with `file://` does not support the search requests.
+## How pages are built
 
-## What is generated
+[scripts/prepare_site.py](../../scripts/prepare_site.py) stages the public pages in `website/content/` without modifying the sources:
 
-[scripts/prepare_site.py](../../scripts/prepare_site.py) stages the public learning pages in `build/docs/`. It converts Obsidian wikilinks to relative Markdown links, maps each `README.md` to `index.md`, and turns flashcard separators into expandable answers. Fenced and inline code remain unchanged. Links to scripts and data point to their GitHub source.
+- **Topics** keep one section per card kind: key concepts, do-not-confuse, calculations and scenarios. Each answer folds under its question; card counts, the "What this topic covers" list, sources and connections frame the cards. The theme adds the table of contents, breadcrumbs and previous/next topics.
+- **Other pages** keep their `##` sections and fold each `###` subsection. Lists made only of links become card grids; numbered lists keep their step numbers.
+- **Domain pages** show the prerequisites, the ordered fundamentals and the practice task from `scripts/sections.json`, then every topic of the domain as theme cards. The **topic catalog** folds one block per domain.
+- **Links**: wikilinks and relative links become Hugo `relref` references, so a broken link fails the build. Links to scripts and data point to their GitHub source. Card anchors derive from Anki identifiers, so a link to a card survives a rewording.
 
-The staging list includes topics, domain indexes, guides, learning paths, references, review reports and workshop READMEs. Editor settings, local environments and working databases are excluded. Neither `build/` nor `site/` is committed.
+Neither `website/content/` nor `site/` is committed.
 
-Navigation, search, the theme and strict link validation are configured in [mkdocs.yml](../../mkdocs.yml). Dependencies are pinned in [requirements-docs.txt](../../requirements-docs.txt). When adding a domain, add its navigation entry to the configuration after updating `scripts/sections.json`.
+## Theme
+
+[Blowfish](https://github.com/nunocoracao/blowfish) is a git submodule in `website/themes/blowfish`, pinned to a release. The site configuration is in `website/config/_default/`: the `ocean` colour scheme, a fixed header with blur, light and dark appearance following the system, search, breadcrumbs and tables of contents.
+
+The site overrides only what the vault needs, in `website/layouts/` and `website/assets/`: the home page (`partials/home/custom.html`), a lighter search index built from card questions (`_default/index.json`), the edit link to the vault source, the favicon, and the styles and script of the collapsible cards (`css/custom.css`, `js/kv.js`). These styles use the colour variables of the scheme, so they follow the palette and the dark mode.
+
+To upgrade the theme, check the Hugo versions it supports (`[module.hugoVersion]` in its `config.toml`), then:
+
+```bash
+git -C website/themes/blowfish fetch --depth 1 origin tag <tag>
+git -C website/themes/blowfish checkout <tag>
+git add website/themes/blowfish
+```
+
+Update `HUGO_VERSION` and `HUGO_SHA256` in the workflow if the supported range changes. In Obsidian, `.obsidian/app.json` excludes `website/themes/` so the theme's own Markdown stays out of the vault.
 
 ## Publication
 
-The Documentation site workflow builds every pull request and uploads a `documentation-site` preview artifact. Only `main` deploys to GitHub Pages, after a successful strict build. GitHub Pages must use **GitHub Actions** as its publishing source in the repository settings.
+The Documentation site workflow checks out the theme submodule, installs a pinned Hugo extended release after checking its SHA-256, builds every pull request and uploads a `documentation-site` preview artifact. The artifact is built for the `/Knowledge_AI_Engineering/` path: to browse it, extract it into a folder named `Knowledge_AI_Engineering`, run `python3 -m http.server` from the parent folder and open `http://localhost:8000/Knowledge_AI_Engineering/`. Only `main` deploys to GitHub Pages, which must use **GitHub Actions** as its publishing source in the repository settings.
 
 The Flashcards workflow separately checks the source and exports Anki. Website generation does not change card identifiers or review schedules.
 
-See the official [MkDocs configuration guide](https://www.mkdocs.org/user-guide/configuration/) and [GitHub Pages workflow documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
+See the official [Hugo documentation](https://gohugo.io/documentation/), the [Blowfish documentation](https://blowfish.page/docs/) and the [GitHub Pages workflow documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
 
 [Reference](README.md) · [Contributing](../../CONTRIBUTING.md)

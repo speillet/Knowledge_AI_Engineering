@@ -1,0 +1,16 @@
+[goldmark]
+  [goldmark.renderer]
+    # Staged pages hold <details> cards generated from the vault.
+    unsafe = true
+  [goldmark.parser.attribute]
+    block = true
+  [goldmark.extensions.passthrough]
+    # The vault has no maths; do not treat $$, \( or \[ as delimiters.
+    enable = false
+
+[highlight]
+  noClasses = false
+
+[tableOfContents]
+  startLevel = 2
+  endLevel = 3
