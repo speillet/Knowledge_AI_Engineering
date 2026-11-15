@@ -11,11 +11,15 @@ Browse topics below, or open the [catalog with summaries](docs/catalog.md). Each
 
 ## 10 — Prompt engineering
 
+[Start this domain](./10-prompt-engineering/README.md)
+
 - [[11-advanced-prompt-engineering|Advanced prompt engineering]]
 - [[12-automatic-prompt-optimization|Automatic Prompt Optimization (DSPy)]]
 - [[13-production-prompts|Prompts in production]]
 
 ## 20 — RAG
+
+[Start this domain](./20-rag/README.md)
 
 - [[21-rag-fundamentals|RAG — Fundamentals]]
 - [[22-advanced-rag|Advanced RAG]]
@@ -28,6 +32,8 @@ Browse topics below, or open the [catalog with summaries](docs/catalog.md). Each
 
 ## 30 — Agents
 
+[Start this domain](./30-agents/README.md)
+
 - [[31-agent-fundamentals|Agent fundamentals]]
 - [[32-tool-calling|Tool calling]]
 - [[33-mcp|MCP — Model Context Protocol]]
@@ -39,6 +45,8 @@ Browse topics below, or open the [catalog with summaries](docs/catalog.md). Each
 - [[39-agent-memory|Agent Memory]]
 
 ## 40 — Automation & agent frameworks
+
+[Start this domain](./40-automation/README.md)
 
 - [[41-code-nocode-automation|Code and no-code automation]]
 - [[42-langchain-fundamentals|LangChain — Fundamentals]]
@@ -55,6 +63,8 @@ Browse topics below, or open the [catalog with summaries](docs/catalog.md). Each
 
 ## 50 — Fine-tuning
 
+[Start this domain](./50-fine-tuning/README.md)
+
 - [[51-fine-tuning-adaptation|Fine-tuning & model adaptation]]
 - [[52-post-training-alignment|Post-training & alignment]]
 - [[53-synthetic-data-distillation|Synthetic data & distillation]]
@@ -63,6 +73,8 @@ Browse topics below, or open the [catalog with summaries](docs/catalog.md). Each
 - [[56-training-optimization-diagnostics|Training optimization & diagnostics]]
 
 ## 60 — LLM inference
+
+[Start this domain](./60-llm-inference/README.md)
 
 - [[61-kv-cache-attention|KV cache & attention]]
 - [[62-inference-optimizations|Inference optimizations]]
@@ -81,6 +93,8 @@ Browse topics below, or open the [catalog with summaries](docs/catalog.md). Each
 
 ## 70 — Containers & infrastructure
 
+[Start this domain](./70-containers-infra/README.md)
+
 - [[00-index|Containers & infra — Index]]
 - [[01-oci|OCI]]
 - [[02-docker-images-registries|Docker, images & registries]]
@@ -98,6 +112,8 @@ Browse topics below, or open the [catalog with summaries](docs/catalog.md). Each
 
 ## 80 — API layer & routing
 
+[Start this domain](./80-api-layer-routing/README.md)
+
 - [[81-litellm-api-layer|LiteLLM (API layer)]]
 - [[82-routing-llm|LLM routing]]
 - [[83-gateway-ingress|Ingress & API gateway]]
@@ -105,6 +121,8 @@ Browse topics below, or open the [catalog with summaries](docs/catalog.md). Each
 - [[85-agentic-protocols-map|Agentic protocol map]]
 
 ## 90 — Observability & evaluations
+
+[Start this domain](./90-observability-evals/README.md)
 
 - [[91-langfuse-observability|Langfuse & LLM observability]]
 - [[92-chainforge-evals-prompts|ChainForge & prompt evaluation]]
@@ -125,6 +143,8 @@ Browse topics below, or open the [catalog with summaries](docs/catalog.md). Each
 
 ## 100 — Security & guardrails
 
+[Start this domain](./100-security-guardrails/README.md)
+
 - [[101-llm-security-guardrails|LLM security & guardrails]]
 - [[102-agent-threats|Agent security — Threats & incidents]]
 - [[103-agent-defenses|Agent security — Defensive architecture]]
@@ -133,6 +153,8 @@ Browse topics below, or open the [catalog with summaries](docs/catalog.md). Each
 - [[106-coding-agent-security|Coding agent security]]
 
 ## 110 — MLOps & CI/CD
+
+[Start this domain](./110-mlops-cicd/README.md)
 
 - [[111-mlops-llmops-fundamentals|MLOps & LLMOps — Fundamentals]]
 - [[112-model-cicd|Model CI/CD]]
@@ -146,11 +168,15 @@ Browse topics below, or open the [catalog with summaries](docs/catalog.md). Each
 
 ## 120 — Costs & FinOps
 
+[Start this domain](./120-costs-finops/README.md)
+
 - [[121-inference-costs|Inference costs]]
 - [[122-finops-llm|LLM FinOps]]
 - [[123-aggressive-caching|Aggressive caching]]
 
 ## 130 — LLM fundamentals
+
+[Start this domain](./130-llm-fundamentals/README.md)
 
 - [[131-transformer-architecture|Transformer architecture]]
 - [[132-tokenization|Tokenisation]]
@@ -162,6 +188,8 @@ Browse topics below, or open the [catalog with summaries](docs/catalog.md). Each
 - [[138-reasoning-models|Reasoning Models & Test-Time Compute]]
 
 ## 140 — System design & product
+
+[Start this domain](./140-system-design-product/README.md)
 
 - [[141-system-design-llm|LLM application system design]]
 - [[142-llm-reliability-resilience|LLM application reliability & resilience]]
@@ -176,6 +204,8 @@ Browse topics below, or open the [catalog with summaries](docs/catalog.md). Each
 - [[140-011-agentic-application-architecture|Agentic applications — Architecture & lifecycle]]
 
 ## 150 — Data & compliance
+
+[Start this domain](./150-data-compliance/README.md)
 
 - [[151-data-curation-annotation|Data: curation & annotation]]
 - [[152-pii-privacy|PII & Data Privacy]]
@@ -197,6 +227,8 @@ Browse topics below, or open the [catalog with summaries](docs/catalog.md). Each
 
 ## 160 — Multimodal & edge
 
+[Start this domain](./160-multimodal-edge/README.md)
+
 - [[161-vision-language-models|Vision-Language Models (VLM)]]
 - [[162-document-parsing|Document parsing (PDF, OCR, layout)]]
 - [[163-real-time-voice|Voice & real-time agents]]
@@ -204,6 +236,8 @@ Browse topics below, or open the [catalog with summaries](docs/catalog.md). Each
 - [[165-computer-use-browser-agents|Computer use & browser agents]]
 
 ## 170 — Classical ML & validation
+
+[Start this domain](./170-classical-ml/README.md)
 
 - [[171-ml-model-selection|Classical ML: model selection & fundamentals]]
 - [[172-ml-validation-metrics|Classical ML: validation, leakage & metrics]]

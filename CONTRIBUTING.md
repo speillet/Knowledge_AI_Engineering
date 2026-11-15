@@ -75,7 +75,7 @@ Conventions:
 1. Choose the section and the next free number, then name the file in kebab-case, for example `28-rag-multimodal.md`. To exceed nine topics, use the extended numbering described in [repository structure](docs/reference/repository-structure.md).
 2. **The filename must be unique throughout the vault**, because Obsidian resolves `[[...]]` links by filename, not by path.
 3. Write the cards in the format above, fill in the `summary` comment and the sources if the file is dated, and then launch `python3 scripts/assign_card_ids.py`.
-4. Launch `python3 scripts/sync_catalog.py` to regenerate the MOC and topic catalog. For a new section, first fill in `scripts/sections.json`. The reading paths remain editorial. Update the figures with `python3 scripts/lint_flashcards.py --update-readme`.
+4. Run `make catalog` to regenerate the MOC, topic catalog and domain indexes. Maintain the domain's introduction, prerequisites, ordered `core` topics and practice task in `scripts/sections.json`. Other topics appear under “Go further”; move a new foundational topic into `core` when appropriate. For a new section, add its metadata first. Update the figures with `make readme`.
 5. Add links in both directions: the new file cites its neighbors, and the neighbors quote it in their section `Connections`. Also connect the files that **mention** the notion treated without binding. The lint indicates any link without return.
 6. Launch `python3 scripts/lint_flashcards.py`: it indicates dead links, missing topics from the MOC or topic catalog, little connected topics and format deviations (see [Maintenance](#maintenance)).
 

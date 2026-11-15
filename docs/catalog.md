@@ -20,11 +20,19 @@ Three topics cross the stack: **observability** (traces, metrics, evals), **secu
 
 ### 10 — Prompt engineering
 
+[Start this domain](../10-prompt-engineering/README.md)
+
+Communicate tasks, examples and constraints to models, then evaluate prompt changes.
+
 - [Advanced prompt engineering](../10-prompt-engineering/11-advanced-prompt-engineering.md) : system prompt and user prompt, few-shot, few-shot or fine-tuning, chain-of-thought (cost, tags), self-consistency and its limits, delimiters, decomposition into calls, meta-prompting, prompt versions as code, anti-patterns, metamorphic tests, removal of instructions, limit examples.
 - [Automatic Prompt Optimization (DSPy)](../10-prompt-engineering/12-automatic-prompt-optimization.md) : meta-prompting or metric-guided optimization, DSpy (signatures, modules, BootstrapFewShot optimizers, MIPROv2, GEPA), APE, OPRO, TextGrad, when to use it or not, over-learning, transfer between models, prompt optimization or fine-tuning, critical optimization constraints, constrained goal, research budget.
 - [Prompts in production](../10-prompt-engineering/13-production-prompts.md) : Prompt bricks, placement of long documents, reasoned instructions, role limits, prompt a reasoning model, templates and user data, registry and versioning, prompt in the code or in a registry, portability between models, language, length control, migration of the output contract, effective rendering, missing data.
 
 ### 20 — RAG
+
+[Start this domain](../20-rag/README.md)
+
+Build retrieval pipelines whose answers can be traced to relevant, permitted evidence.
 
 - [RAG — Fundamentals](../20-rag/21-rag-fundamentals.md) : RAG or fine-tuning, ingestion and query pipeline, chunking strategies, embeddings, vector bases (HNSW, pgvector, Qdrant), top-k, grounding and citations, recall@k, when not to do RAG, diagnostic with reference context, evidence budget, sub-question coverage.
 - [Advanced RAG](../20-rag/22-advanced-rag.md) : hybrid search (BM25, RRF), ranking, query rewriting, HyDE and its limits, filtering by metadata and ACL, GraphRAG, agentic RAG, "lost in the middle", production problems (fresher, rights, re-indexing), RRF fusion and score scales, diversity of results, ceiling of the ranking.
@@ -36,6 +44,10 @@ Three topics cross the stack: **observability** (traces, metrics, evals), **secu
 - [RAG in production: rights, versions & abstention](../20-rag/20-010-rag-permissions-versions.md) : identity and permissions, pre-exposure filtering, recall under filters, time validity, source priority, deletions and caches, versioned citations, abstention and regression tests, revocation of rights during generation, proof of absence, consistency of snapshots.
 
 ### 30 — Agents
+
+[Start this domain](../30-agents/README.md)
+
+Build tool-using systems with explicit state, context and execution controls.
 
 - [Agent fundamentals](../30-agents/31-agent-fundamentals.md) : workflow or agent, ReAct pattern, minimal agent components, three forms of human-in-the-loop, risks and parades, cost orders of magnitude, stop conditions, end-of-task proof, environmental observableness, success and trajectory.
 - [Tool calling](../30-agents/32-tool-calling.md) : tool definition, controlled parallel calls, tool calling or MCP, validation of arguments, errors and timeouts, operation statuses, pagination and cost of schemas, separation proposal and execution, voluminous results, writing preconditions, schema guarantees by tool_choice in vLLM.
@@ -49,7 +61,9 @@ Three topics cross the stack: **observability** (traces, metrics, evals), **secu
 
 ### 40 — Automation & agent frameworks
 
-Build workflows and agents with LangChain, LangGraph and CrewAI: fundamentals, tool contracts, takeover, competition, budgets and integration in production.
+[Start this domain](../40-automation/README.md)
+
+Implement workflows and agents with clear contracts, persistence and recovery.
 
 - [Code and no-code automation](../40-automation/41-code-nocode-automation.md) : n8n, triggers, Zapier and Make, Airflow, Prefect and Temporal, durable execution, no-code limits, duplicates and webhooks mess, time zones, queue failure.
 - [LangChain — Fundamentals](../40-automation/42-langchain-fundamentals.md) : v1, `init_chat_model` packets, messages, `@tool` and `bind_tools` tools, structured outputs, Runnables and LCEL, RAG bricks, LangSmith, structured message retention, argument streaming, call concurrency.
@@ -66,6 +80,10 @@ Build workflows and agents with LangChain, LangGraph and CrewAI: fundamentals, t
 
 ### 50 — Fine-tuning
 
+[Start this domain](../50-fine-tuning/README.md)
+
+Decide when to adapt a model, then diagnose training and evaluate the result.
+
 - [Fine-tuning & model adaptation](../50-fine-tuning/51-fine-tuning-adaptation.md) : when to adapt, SFT, PEFT, LoRA and QLoRA, resources, distillation, multi-LoRA, regressions, rank and damping calculation, versions of an adaptor, teacher forcing and free generation, supervision masking, fusion LoRA.
 - [Post-training & alignment](../50-fine-tuning/52-post-training-alignment.md) : RLHF steps, KL penalty, reward hacking, DPO and variants, GRPO, RLVR, RLAIF and Constitutional AI, sets of preferences, alignment fee, reward model or checker, when to do DPO or RL yourself, bias preference pairs, DPO signal, reward and length.
 - [Synthetic data & distillation](../50-fine-tuning/53-synthetic-data-distillation.md) : varied generation, filtering, model collapse, distillation on outputs or on logs, distillation of reasoning, legal constraints, distillation project, synthetic eval games, deduplication after generation, coverage of modes, filtering efficiency.
@@ -75,7 +93,9 @@ Build workflows and agents with LangChain, LangGraph and CrewAI: fundamentals, t
 
 ### 60 — LLM inference
 
-Understand the mechanisms of the serving, measure quality and SLO, test capacity under load and optimize payload, memory and cost.
+[Start this domain](../60-llm-inference/README.md)
+
+Understand serving mechanics, measure quality and latency, and plan capacity under load.
 
 - [KV cache & attention](../60-llm-inference/61-kv-cache-attention.md) : cache role and size, KV cache, prefix caching and prompt caching, concurrency calculation on an H100, PagedAttention and continuous batching, KV cache in FP8, cost of long contexts, physical blocks and shared prefixes, fragmentation by blocks, residence time.
 - [Inference optimizations](../60-llm-inference/62-inference-optimizations.md) : prefill and decode, continuous batching, quantization (AWQ, GPTQ, FP8), FlashAttention, parallelism tensor and pipeline, chunked prefill, disaggregation prefill/decode, equity of chunked prefill, FlashAttention and complexity, useful batch.
@@ -94,6 +114,10 @@ Understand the mechanisms of the serving, measure quality and SLO, test capacity
 
 ### 70 — Containers & infrastructure
 
+[Start this domain](../70-containers-infra/README.md)
+
+Package and run model workloads using containers, GPUs and deployment runtimes.
+
 - [Containers & infra — Index](../70-containers-infra/00-index.md) : Summary of 13 section cards, chains to remember, and maps on container interest to serve models, start test on the actual target, deployment responsibilities, configuration control.
 - [OCI](../70-containers-infra/01-oci.md) : Open Container Initiative role, image specifications, runtime and distribution, cross-platform OCI index, integrity and authenticity, manifests and layers.
 - [Docker, images & registries](../70-containers-infra/02-docker-images-registries.md) : Docker role and difference with OCI, image or container (instance, state, volumes), Docker/OCI compatibility, records and push/pull workflow, secrets in image layers, build cache, reproducible dependencies.
@@ -111,6 +135,10 @@ Understand the mechanisms of the serving, measure quality and SLO, test capacity
 
 ### 80 — API layer & routing
 
+[Start this domain](../80-api-layer-routing/README.md)
+
+Route model requests through reliable gateways and application interfaces.
+
 - [LiteLLM (API layer)](../80-api-layer-routing/81-litellm-api-layer.md) : SDK or proxy, virtual keys, budgets, rate limits, fallbacks, load balancing, observability callbacks, alternatives (self-hosted gateways, cloud services, aggregators), reconciliation with provider billing, streaming and fallback, competing budget.
 - [LLM routing](../80-api-layer-routing/82-routing-llm.md) : static, rule-based or semantic routing, RouteLLM, cascade, load-based routing, semantic cache, calculation of the average cost of a cascade, router bias, counterfactual decision.
 - [Ingress & API gateway](../80-api-layer-routing/83-gateway-ingress.md) : Ingress controller, ingress-nginx removal, Ingress, API gateway and gateway LLM, TLS, Gateway API, rate limiting, SSE streaming, controller migration, total timeout and idle timeout, client disconnect, body size.
@@ -119,7 +147,9 @@ Understand the mechanisms of the serving, measure quality and SLO, test capacity
 
 ### 90 — Observability & evaluations
 
-Instrument applications, link tracks and metrics, manage prompts and experiences, assess quality and test contracts, breakdowns and reps of agents.
+[Start this domain](../90-observability-evals/README.md)
+
+Observe application behavior and evaluate quality with reproducible evidence.
 
 - [Langfuse & LLM observability](../90-observability-evals/91-langfuse-observability.md) : perimeter and alternatives (LangSmith, Phoenix, Braintrust), traces, spans and generations, sessions, prompt management, scores, LLM-as-judge, datasets, trace sampling bias, traces and audit, metadata cardinality.
 - [ChainForge & prompt evaluation](../90-observability-evals/92-chainforge-evals-prompts.md) : compare prompts and models, automatic evals, regression tests and tipping cases, evals as a prerequisite for deployment, order of variants and experience biases, variable control, discordant cases.
@@ -140,7 +170,9 @@ Instrument applications, link tracks and metrics, manage prompts and experiences
 
 ### 100 — Security & guardrails
 
-From the security of the LLM to that of the agents: the real threats and incidents, the defensive architecture, the supply chain of tools and skills, the DevSecOps, and the case of code agents.
+[Start this domain](../100-security-guardrails/README.md)
+
+Protect LLM applications and agents through runtime controls and tested defenses.
 
 - [LLM security & guardrails](../100-security-guardrails/101-llm-security-guardrails.md) : OWASP Top 10 LLM 2026, exposure of the hidden context and change of identifiers, direct or indirect injection, “lethal trifecta”, exfiltration, excessive agency, guardrails (Llama Guard, NeMo Guardrails), red teaming, false positive injection detectors, fail-open, cost of false positives.
 - [Agent security — Threats & incidents](../100-security-guardrails/102-agent-threats.md) : new threat model, unreliable entries, agent hijacking, detection defense limits, incidents (MCP GitHub, EchoLeak, Supabase, Replit), memory poisoning, invisible injection, multi-agent risks, denial of wallet, code execution, attackers equipped with agents, injection into a valid tool result, secondary channels, privilege amplification.
@@ -151,7 +183,9 @@ From the security of the LLM to that of the agents: the real threats and inciden
 
 ### 110 — MLOps & CI/CD
 
-Industrialize the life cycle of LLM models and applications: data, drive, artifacts, registry, releases, prediction contracts, CI/CD, monitoring, governance and disaster recovery.
+[Start this domain](../110-mlops-cicd/README.md)
+
+Deliver models and AI applications through reproducible training, releases and operations.
 
 - [MLOps & LLMOps — Fundamentals](../110-mlops-cicd/111-mlops-llmops-fundamentals.md) : DevOps or MLOps, specificities of the LLMOps, what to version (code and config, models and data), model registry, lineage, reproducibility, dev/staging/prod environments, role of the Lead, consistent release manifest, CI/CD/CT, recipe and run, technical, statistical and business validity, data dependency debt, model owner, label debt.
 - [Model CI/CD](../110-mlops-cicd/112-model-cicd.md) : evals statistics and deterministic tests, eval gates (threshold example), deployed artifact, blue/green and canary, shadow deployment, rollback, GitOps, tests of a LLM app, CI prompts, complete pipeline, rollback after schema migration, continuous delivery or deployment, smoke training, same promoted artifact, canary with late label.
@@ -165,13 +199,19 @@ Industrialize the life cycle of LLM models and applications: data, drive, artifa
 
 ### 120 — Costs & FinOps
 
+[Start this domain](../120-costs-finops/README.md)
+
+Measure and control AI costs while preserving task quality and service requirements.
+
 - [Inference costs](../120-costs-finops/121-inference-costs.md) : cost structure of a call, calculation of the cost of an agent of 20 turns with and without cache, price input and output, prompt caching, cost of self-hosting, break-even API or self-host, batch API, technical levers, long context, unit economics, GPU idle, cost per compliant point-and-energy cache, cost per compliant point-and-energy.
 - [LLM FinOps](../120-costs-finops/122-finops-llm.md) : four times of the FinOps, visibility of costs, allocation to teams, budgets and safeguards, routing as the first lever, caches, practices GPU, cost-quality-latency arbitration, role of the Lead, budget reservation of in-flight calls, shared costs, stable economic unit.
 - [Aggressive caching](../120-costs-finops/123-aggressive-caching.md) : prompt caching (TTL, write and read prices), stable prompt structure, which breaks the cache, append-only context, parallel requests and pre-heating, response caches, embeddings and tool caches, prompt caching, exact or semantic cache, invalidation, security, steering, false semantic cache equivalents, stampede, verified freshness.
 
 ### 130 — LLM fundamentals
 
-What you need to understand about the model itself in order to reason about quality, cost and the serving.
+[Start this domain](../130-llm-fundamentals/README.md)
+
+Understand model representations and computation before choosing application techniques.
 
 - [Transformer architecture](../130-llm-fundamentals/131-transformer-architecture.md) : attention and weighted sum, causal mask, teacher forcing, multi-head, GQA/MQA and memory KV, MLP, residuals, normalization, RoPE, costs, weight of a 70B, basic model or assistant, explanatory limits of attention weights, softmax normalization, causal context.
 - [Tokenisation](../130-llm-fundamentals/132-tokenization.md) : token or word, BPE, byte-level, vocabulary size, extra cost of French, character limits, special tokens, chat templates, tokens borders, counting, security, structured truncation and budget of tokens, Unicode and standardization, special tokens.
@@ -184,7 +224,9 @@ What you need to understand about the model itself in order to reason about qual
 
 ### 140 — System design & product
 
-The part that assembles everything else: design, reliability and control an application LLM, senior level.
+[Start this domain](../140-system-design-product/README.md)
+
+Design AI applications around product requirements, failure modes and operational ownership.
 
 - [LLM application system design](../140-system-design-product/141-system-design-llm.md) : approach, framing, complexity scale, quality-latency-cost triangle, load estimation, components, real or perceived latency, synchronous or asynchronous, multi-tenant, failure modes, arbitration presentation, cost of business errors, amplification of calls, degraded mode.
 - [LLM application reliability & resilience](../140-system-design-product/142-llm-reliability-resilience.md) : timeouts, recoveries, fallbacks, circuit breaker, retry, fallback or circuit breaker, recoveries multiplied between layers, poorly formed outputs, graceful degradation, spleen limits, long tasks, version pinning, SLO, chaos testing, classification of errors of a circuit breaker, jitter, recovery after 429, useless retry, correlated attempts.
@@ -200,7 +242,9 @@ The part that assembles everything else: design, reliability and control an appl
 
 ### 150 — Data & compliance
 
-Building AI systems data: modeling and SQL, contracts and ingestion, temporality and features, storage, orchestration, streaming, distributed computing, corpus, lineage and compliance.
+[Start this domain](../150-data-compliance/README.md)
+
+Build reliable data flows with explicit schemas, time semantics, quality and governance.
 
 - [Data: curation & annotation](../150-data-compliance/151-data-curation-annotation.md) : quality dimensions, deduplication, annotation guide, inter-annotators agreement, which annotates, active learning, dev and test separation, production data, preparation of a fine-tuning, review of the guide after disagreements, auction, label uncertainty.
 - [PII & Data Privacy](../150-data-compliance/152-pii-privacy.md) : where data pass, detection, masking, pseudonymization and anonymization, pseudonymization before the call, commitments of providers, logs, memorization, leaks between users, secrets, privacy by design, reidentification by indirect attributes, hash and pseudonym, trace minimization.
@@ -222,6 +266,10 @@ Building AI systems data: modeling and SQL, contracts and ingestion, temporality
 
 ### 160 — Multimodal & edge
 
+[Start this domain](../160-multimodal-edge/README.md)
+
+Work with images, documents, voice and local models using task-specific evaluations.
+
 - [Vision-Language Models (VLM)](../160-multimodal-edge/161-vision-language-models.md) : Generative or contrastive VLM, visual encoder, cost of images, CLIP, limits, visual injection, OCR, coordinates after transformation, quality per field and complete document, image resolution and preservation of evidence, cropping and coverage, small writing.
 - [Document parsing (PDF, OCR, layout)](../160-multimodal-edge/162-document-parsing.md) : Native or scanned PDF, layout analysis, tools (Docling, Unstructured, cloud services, VLM), tables, figures, ColPali, structural chunking, evaluation, exploitation, units and table headers, reading order, global quality calculation.
 - [Voice & real-time agents](../160-multimodal-edge/163-real-time-voice.md) : cascade or speech-to-speech, latency and critical path, end of turn, barge-in, STT and WER limits, interruptions and business effects, evaluation and risks, audio interruption and business cancellation, provisional transcription, critical words.
@@ -230,7 +278,9 @@ Building AI systems data: modeling and SQL, contracts and ingestion, temporality
 
 ### 170 — Classical ML & validation
 
-Select and validate predictive models, calibrate their outputs, recommend, predict and detect anomalies; distinguish model explanation and causal effect of an action.
+[Start this domain](../170-classical-ml/README.md)
+
+Select and validate predictive models, then reason about uncertainty and decisions.
 
 - [Classical ML: model selection & fundamentals](../170-classical-ml/171-ml-model-selection.md) : rules or ML or LLM, target formulation, baselines, regressions, regularization, trees, random forest and boosting, clustering, preprocessing, missing data and cost of ownership, unknown categories in production, business baseline, capacity and data.
 - [Classical ML: validation, leakage & metrics](../170-classical-ml/172-ml-validation-metrics.md) : Train-validation-test, leaks, cross-validation, groups and times, pipelines, rare classes, ROC and PR, precision calculation according to prevalence, thresholds and uncertainty, balanced-accuracy calculation, macro and micro, pretreatment in folds.

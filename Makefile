@@ -18,7 +18,7 @@ check: lint catalog-check ruff typecheck test workshops ## All CI checks
 lint: ## Card Conventions: Errors and Warnings
 	$(PYTHON) $(STRICT_ENCODING) scripts/lint_flashcards.py --stale-months 0
 
-catalog-check: ## Verify the topic catalog and MOC are current
+catalog-check: ## Verify the topic catalog, MOC and domain indexes are current
 	$(PYTHON) $(STRICT_ENCODING) scripts/sync_catalog.py --check
 
 ruff: ## Style and Probable Python Code Errors
@@ -43,7 +43,7 @@ pre-commit: ## Quick Checks Launched by .githooks/pre-commit
 ids: ## Anki New Card Identifiers
 	$(PYTHON) scripts/assign_card_ids.py
 
-catalog: ## Regenerate the topic catalog and MOC
+catalog: ## Regenerate the topic catalog, MOC and domain indexes
 	$(PYTHON) scripts/sync_catalog.py
 
 stats: ## Statistics by topic and dates to be rechecked
