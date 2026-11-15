@@ -162,12 +162,12 @@ The service must verify this condition atomically. The agent then rereads the fi
 
 With vLLM, when do the arguments of a tool call respect its schema? <!--anki:3330393664343530326665363465316538333532356533313261373234386564-->
 ?
-It depends on the `tool_choice` mode and on the tool's `strict` field:
-- **named** or `"required"`: constrained decoding, the call always parses; the schema is enforced if the parser derives the grammar from it or if the tool declares `strict: true`;
-- `"auto"` without a strict tool: vLLM extracts the calls from the raw text, with arguments sometimes **malformed** or off-schema;
-- `--tool-strict-level parameter`: the server enforces every schema, even without `strict` on the client side.
+It depends on `tool_choice`, the tool's `strict` field and the parser:
+- **named** or `"required"`: the envelope (markup, function name) is constrained; the argument schema is pinned only by `strict: true`, `--tool-strict-level parameter` or a parser that derives its JSON constraints from the schema;
+- `"auto"` without a strict tool: no grammar, calls are extracted from the raw text, arguments sometimes **malformed** or off-schema;
+- `--tool-strict-level parameter`: the server enforces every schema, even if the client never declares `strict`, as most do.
 
-Most clients and frameworks never declare `strict`. Constrained or not, arguments can be wrong: validate them before any action ([[60-014-inference-parity-validation|inference parity]]).
+On recent Mistral models in the official format, even a forced call is not guaranteed. Constrained or not, validate the arguments before any action ([[60-014-inference-parity-validation|inference parity]]).
 
 ---
 
