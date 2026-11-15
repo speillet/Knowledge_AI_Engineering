@@ -164,7 +164,7 @@ def decode_guid(hexa: str) -> str:
     except UnicodeDecodeError as exc:
         raise ValueError("GUID non ASCII") from exc
     if not guid or any(ord(c) < 33 or ord(c) > 126 for c in guid):
-        raise ValueError("GUID non imprimable")
+        raise ValueError("Non-printable GUID")
     return guid
 
 
@@ -316,7 +316,7 @@ def check_links(vault: Vault, report: Report) -> None:
 
 
 def check_layout(rel: Path, text: str, report: Report) -> None:
-    """Online title 1, online tags 2, no frontmatter."""
+    """Title on line 1, tags on line 2, no frontmatter."""
     lines = text.split("\n")
     if not lines[0].startswith("# "):
         report.errors.append(f"{rel}:1 missing title")
@@ -440,7 +440,7 @@ def check_topic(path: Path, vault: Vault, report: Report) -> TopicStats:
 
 
 def check_retired(vault: Vault, report: Report) -> None:
-    """Valid, unique, and missing entries from removed_cards.json."""
+    """Valid, unique, and missing entries from retired_cards.json."""
     retired: set[str] = set()
     for entry in retired_cards():
         hexa = entry.get("id", "") if isinstance(entry, dict) else ""
@@ -479,7 +479,7 @@ def check_graph(vault: Vault, report: Report) -> None:
 
 
 def lint(stale_months: int) -> tuple[list[str], list[str], list[TopicStats]]:
-    """Errors, warnings and statistics per record; stele_months = 0 ignores the age of the dates."""
+    """Errors, warnings and statistics per record; stale_months = 0 ignores the age of the dates."""
     files = topic_files()
     pages = [*files, ROOT / f"{MOC}.md", ROOT / README]
     vault = Vault(files, {p: p.read_text(encoding="utf-8") for p in pages}, stale_months)

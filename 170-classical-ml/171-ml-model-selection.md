@@ -93,7 +93,7 @@ Learn the transformations on the train, then apply them to other games.
 ```python
 pipe = make_pipeline(SimpleImputer(strategy="median"), StandardScaler(), LogisticRegression())
 pipe.fit(X_train, y_train)               # Median and scales learned on the train alone
-joblib.dump(pipe, "modele-v3.joblib")    # transformations and weights versioned together
+joblib.dump(pipe, "model-v3.joblib")    # transformations and weights versioned together
 ```
 A versioned string prevents notebook and service from reconstructing the same variables differently. Also define the behavior in front of a missing column.
 

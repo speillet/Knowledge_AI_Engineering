@@ -1,7 +1,7 @@
 # — Agent Platforms Architecture & Governance — Flashcards
 Tags: #flashcards #ai-engineering #agents #platform #governance #llm
 Verified on: 25 September 2026 — global date preserved; targeted review of 13 November 2026 detailed in Sources.
-<!-- summary: internal platform (paved road), control plan and implementation plan, reference architecture, separation of the brain, hands and session, sustainable execution, multi-tenant insulation, exchange of tokens for the delegated agent, throws out of context, standards of identity, engine of policies, human-in-the-loop, register and life cycle, Top 10 OWASP agentic, impact radius and kill switch, Audit, SLO, continuous evals, costs, AI Act, lock-in, criteria of choice, revocation of an active delegation, political versions, verified withdrawal, business and operational responsibilities, Temporary derogations, Revocation of cache, exceptional access. -->
+<!-- summary: internal platform (paved road), control plane and execution planee, reference architecture, separation of the brain, hands and session, durable execution, multi-tenant isolation, exchange of tokens for the delegated agent, throws out of context, standards of identity, engine of policies, human-in-the-loop, register and life cycle, Top 10 OWASP agentic, impact radius and kill switch, Audit, SLO, continuous evals, costs, AI Act, lock-in, criteria of choice, revocation of an active delegation, political versions, verified withdrawal, business and operational responsibilities, Temporary derogations, Revocation of cache, exceptional access. -->
 
 
 Why build an internal agent platform instead of letting each team get by? <!--anki:736971307067364a5850-->
@@ -20,11 +20,11 @@ It is a **Forecast published**, not a measure of failures already observed or a 
 
 ---
 
-Do not confuse: control plan and execution plan for an agent platform? <!--anki:4b303c326a415821624f-->
+Do not confuse: control plane and execution plane for an agent platform? <!--anki:4b303c326a415821624f-->
 ?
-The **Control Plan** manages inventory, identities, policies, versions, and deployment decisions; the **Runtime Plan** handles sessions, model calls, tools, memory, and traces.
+The **Control Plane** manages inventory, identities, policies, versions, and deployment decisions; the **Execution Plane** handles sessions, model calls, tools, memory, and traces.
 
-These are responsibilities, not necessarily two products: an offer can cover both. At Microsoft, Foundry Agent Service provides execution and Agent 365 organizational governance of embedded or discovered agents. Agent 365 is commercially available from the 1er May 2026, with licensing and integration requirements. Do not infer visibility or automatic control over any unknown agent from the system.
+These are responsibilities, not necessarily two products: an offer can cover both. At Microsoft, Foundry Agent Service provides execution and Agent 365 organizational governance of embedded or discovered agents. Agent 365 is commercially available from the 1 May 2026, with licensing and integration requirements. Do not infer visibility or automatic control over any unknown agent from the system.
 
 ---
 
@@ -39,7 +39,7 @@ Runtime: isolated sessions, harness (agent loop)
    ├─ Gateway LLM ──────→ models (routing, budgets)
    ├─ Gateway Tools ─→ MCP, API tools   ← Engine of Policies
    ├─ Sandbox ──────────→ code, browser
-   └─ Memory ──────────→ session, long terme
+   └─ Memory ──────────→ session, long term
 Transverse: identity, register, observation (OTel), evals
 ```
 Each arrow is a **control point**: this is where you authenticate, filter, trace and limit.
@@ -68,7 +68,7 @@ Latency and cost benefits depend on what is actually preheated, transferred, or 
 
 How to make an agent that runs for hours reliable? <!--anki:6c415f6f4a3457375e3a-->
 ?
-With the **Sustainable Execution** ([[41-code-nocode-automation|durable execution]]) :
+With the **Durable Execution** ([[41-code-nocode-automation|durable execution]]) :
 - **Checkpoint at each stage**, resumed at the last point after a crash ([[45-langgraph-production|LangGraph]], Temporal)
 - **Idempotence** of tool calls (idempotency key), so that a replay does not pay twice
 - **Timeouts and withdrawals** with backoff

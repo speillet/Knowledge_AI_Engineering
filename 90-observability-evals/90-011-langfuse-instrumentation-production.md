@@ -35,7 +35,7 @@ Create a parent for execution, then distinguish between **LLM calls, tools, and 
 with langfuse.start_as_current_observation(name="support-run", as_type="agent"):
     with langfuse.start_as_current_observation(name="read-order", as_type="tool"): ...
     with langfuse.start_as_current_observation(name="propose-refund", as_type="generation",
-                                               model="modele-x"): ...
+                                               model="model-x"): ...
 ```
 Do not wrap the entire loop in a single generation: this hides the call that has magnified the context or requested an incorrect tool. Use stable names and metadata for variable identifiers, in order to keep filters and ratings comparable.
 
@@ -67,7 +67,7 @@ What data is needed to interpret the cost of a Langfuse generation? <!--anki:653
 ?
 The **model actually called**, the units of use available and a suitable pricing. Distinguish notably inputs, outputs and tokens cached when the provider exposes them.
 
-An absent value should not silently become a zero cost. Example: the provider returns a dated name, `modele-x-2026-10`, absent from the price table; no cost is inferred and the table that adds up these generations underestimates the expense. Check alias, custom rates and specific counters. Periodically reconcile estimates with billing, keeping scope: some tool or infrastructure fees are excluding LLM cost.
+An absent value should not silently become a zero cost. Example: the provider returns a dated name, `model-x-2026-10`, absent from the price table; no cost is inferred and the table that adds up these generations underestimates the expense. Check alias, custom rates and specific counters. Periodically reconcile estimates with billing, keeping scope: some tool or infrastructure fees are excluding LLM cost.
 
 ---
 

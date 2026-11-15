@@ -251,7 +251,7 @@ Scenario: your team is testing a bug-fixing agent. It passes 4 times on 5 in dem
 - [[54-distributed-training|Distributed training]] — memory and drive parallelisms
 - [[67-speculative-decoding|Speculative Decoding]] — generate multiple tokens per pass
 - [[68-quantization|Quantization]] — reduce accuracy to gain memory and speed
-- [[96-evals-rag-agents|Evaluation of GARs & Agents]] — retrieval, trajectories and passes^k
+- [[96-evals-rag-agents|Evaluation of RAG systems & Agents]] — retrieval, trajectories and passes^k
 - [[97-evals-online-ab-testing|Evals online & A/B testing]] — measure in production
 - [[98-agent-debugging|Debugging agents]] — find the cause of a failure in a trace
 - [[165-computer-use-browser-agents|Computer use & browser agents]] — agents that use interfaces

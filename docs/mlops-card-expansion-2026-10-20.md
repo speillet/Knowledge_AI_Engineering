@@ -14,7 +14,7 @@ This pass does not reread cards with more than 45 words and does not recheck the
 
 89 cards have received a paragraph. In accordance with the rule of 17 October, each addition brings an element absent from the card and its neighbors:
 
-| Apport | Exemples |
+| Contribution | Examples |
 | --- | --- |
 | Mechanism | copy-on-write of overlayfs, layer hidden by a `rm`, rollback of the KV cache after a rejection, states of a circuit breaker |
 | Encrypted example | INT8 quantification of a weight, embedding and lm_head share in a 8B, total cost with escalations, TPOT gain according to output length |

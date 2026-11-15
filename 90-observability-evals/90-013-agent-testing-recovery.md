@@ -129,9 +129,9 @@ Repeats inform variability, but do not create 480 independent folders. To compar
 
 How can a fault injection test verify the true idempotency of an agent? <!--anki:6433373732643039336232633436346562316133313332623731636161396437-->
 ?
-Place a **checked out immediately after the business effect**, before its acquittal or checkpoint, and then resume the same operation with the same logical identity.
+Inject a **controlled failure immediately after the business effect**, before acknowledgment or checkpointing, then resume the same operation with the same logical identity.
 
-Check the end state in the target system: a single effect, recoverable result and consistent status. Repeat before the effect and after the acknowledgement to cover the borders. Also test two concurrent times. Counting only the tool calls is not enough: several calls can correctly find the same effect, while a single call can produce several if the downstream service is poorly designed.
+Check the end state in the target system: a single effect, recoverable result and consistent status. Repeat before the effect and after the acknowledgement to cover the borders. Also test two concurrent attempts. Counting only the tool calls is not enough: several calls can correctly find the same effect, while a single call can produce several if the downstream service is poorly designed.
 
 ---
 

@@ -109,7 +109,7 @@ For an integration exercise on an authorized Langfuse instance, replace the loca
 2. **Fault window**: read `test_process_exit_after_effect_is_recovered`. The child process stops with `os._exit(73)` after the business COMMIT, before the next checkpoint. The recovery must return a single credit.
 3. **Business course**: Prepare two folders on the same command, approve the first, then the second. The command version of the second is out of date: it must be blocked. The business version test reproduces this control.
 4. **Observability**: Remove an observation or alter its parent in a working copy and see the regression of the trace test.
-5. **Insulation**: Try the consultation and decision routes with the identity of the other client; no data from the file should be returned.
+5. **Isolation**: Try the consultation and decision routes with the identity of the other client; no data from the file should be returned.
 
 ## Variant CrewAI to build
 

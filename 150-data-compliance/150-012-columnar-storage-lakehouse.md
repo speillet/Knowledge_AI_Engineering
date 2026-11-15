@@ -129,7 +129,7 @@ Assuming perfect removal of partitions and proportional projection of columns, e
 ```text
 volume = 900 × 7/30 × 3/30 = 21 GiB
 cost = 21/1,024 × 5 ≈ 0.103 €
-scan complet = 900/1 024 × 5 ≈ 4,39 €
+scan complet = 900/1,024 × 5 ≈ 4,39 €
 ```
 Actual columns are not all the same size and filters are not always actionable. Units billed may differ from the physical bytes read. This calculation illustrates selectivity; check plan, scan metric and effective pricing for an actual decision.
 
@@ -141,8 +141,8 @@ Calculation: 512 GiB are written as 1 MiB files. How many files does this repres
 ?
 With binary units and uniform files:
 ```text
-512 × 1 024 / 1 = 524 288 fichiers
-512 × 1 024 / 256 = 2 048 fichiers
+512 × 1,024 / 1 = 524,288 files
+512 × 1,024 / 256 = 2,048 files
 ```
 The number of files is divided by **256**, not the volume of data. The time saving is not necessarily the same factor: reading, compression, network and writing remain to be paid. The size of 256 MiB is a pedagogical hypothesis, not a universal rule. Keep enough parallelism and check the results after publication of the new snapshot.
 
@@ -221,7 +221,7 @@ Scenario: two jobs each publish a coherent table, but the model reads new featur
 
 - Supplement of the 14 November 2026 — Physical Organization Parquet: [Apache Parquet — File Format](https://parquet.apache.org/docs/file-format/).
 
-- 14 November 2026 — Snapshots and Reading Insulation: [Apache Iceberg — Reliability](https://iceberg.apache.org/docs/latest/reliability/).
+- 14 November 2026 — Snapshots and Reading Isolation: [Apache Iceberg — Reliability](https://iceberg.apache.org/docs/latest/reliability/).
 
 ## Connections
 - [[153-data-flywheel-versioning|Versioning of data]] — preserve physical versions needed for experiments

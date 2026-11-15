@@ -18,6 +18,8 @@ Bulk prose was translated locally with [OPUS-MT French–English](https://huggin
 
 Reviews specifically addressed concurrency, model versus template, calculation units and thousands separators, code examples, English retrieval vocabulary, and false positives in language-dependent lint rules. The RAG workshop uses consistent English terms in questions and documents while retaining its original outcomes: all ten filtered cases pass; the baseline fails all ten and produces twenty context violations.
 
+A further review corrected substitution damage in three words, restored Harbor's `verifier` paths and configuration section, and refined the skills, distributed-systems and document-parsing translations against their French originals. Technical terms such as acknowledgment, isolation, fencing tokens, control plane and durable execution use their established English forms. These targeted reviews do not amount to a sentence-by-sentence human review of the entire vault.
+
 Historical reports retain their original scope, counts and verification limits. Source URLs and historical Git commit identifiers remain references to their original targets. Third-party names, licensed skill text already in English, and deliberate Unicode examples are retained where their exact spelling matters.
 
 ## Validation

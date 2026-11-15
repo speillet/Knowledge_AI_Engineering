@@ -4,7 +4,7 @@
 Usage :
     pip install -r scripts/requirements.txt
     python3 scripts/export_anki.py # writes dist/ai-engineering.apkg
-    python3 scripts/export_anki.py --output autre.apkg
+    python3 scripts/export_anki.py --output custom.apkg
 
 Each note carries a permanent <!--anki:...--> identifier: a reimport updates
 existing notes even if their question or file changes.
@@ -145,9 +145,9 @@ def build() -> tuple[list[genanki.Deck], int, int]:
         for c in cards:
             guid = c.guid
             if not guid or not c.question or not c.answer:
-                raise ValueError(f"{p.name}:{c.line} : identifier, Missing question or answer")
+                raise ValueError(f"{p.name}:{c.line} : missing identifier, question or answer")
             if guid in guids:
-                raise ValueError(f"Identifier in duplicate {p.name} : {c.question[:60]}")
+                raise ValueError(f"Duplicate identifier in {p.name} : {c.question[:60]}")
             guids.add(guid)
             deck.add_note(
                 genanki.Note(

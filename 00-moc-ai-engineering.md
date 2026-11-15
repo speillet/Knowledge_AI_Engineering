@@ -255,7 +255,7 @@ The [Inference Audit of October 8](docs/llm-inference-audit-2026-10-08.md) maps 
 - [[90-013-agent-testing-recovery|Agents — Contracts, Faults & Repeats Testing]]
 - [[90-014-agent-skill-evaluation|Evaluate agent skills]]
 - [[90-015-agent-skills-format-skills-ref|Agent Skills: format & validation with skills-ref]]
-- [[90-016-harbor-agent-evaluation|Harbor: Evaluate Container Agents]]
+- [[90-016-harbor-agent-evaluation|Harbor: Evaluating Agents in Containers]]
 
 ## 100 — Security & guardrails
 
@@ -305,7 +305,7 @@ The [Inference Audit of October 8](docs/llm-inference-audit-2026-10-08.md) maps 
 - [[146-model-selection|Choose model]]
 - [[147-ai-technical-leadership|Technical Leadership in AI Engineering]]
 - [[148-llm-batch-pipelines|Large Scale Batch Pipelines]]
-- [[149-delivery-idempotency-concurrency|Delivery, idempotency & competition]]
+- [[149-delivery-idempotency-concurrency|Delivery, idempotency & concurrency]]
 - [[140-010-transactions-outbox-sagas|Transactions, outbox & sagas for agents]]
 - [[140-011-agentic-application-architecture|Applications — Architecture & Life Cycle]]
 

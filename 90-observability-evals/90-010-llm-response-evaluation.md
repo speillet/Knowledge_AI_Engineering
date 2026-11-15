@@ -7,7 +7,7 @@ How to define a grid for evaluating a LLM response? <!--anki:6631303738646665313
 ?
 From the **request and the task contract**, and then define observable criteria: exact result, elements requested present, instructions respected and limits of the evidence announced. For each criterion, specify the necessary data, the auditor and success or failure cases.
 
-Keep dimensions separate: a clear answer may be wrong, an exact answer may be incomplete. Identify blocking criteria before noting the style. The [[94-evals-methodology|Methodology]] organizes the test set; a [[95-llm-as-judge|juge]] must be validated for the topic used.
+Keep dimensions separate: a clear answer may be wrong, an exact answer may be incomplete. Identify blocking criteria before noting the style. The [[94-evals-methodology|Methodology]] organizes the test set; a [[95-llm-as-judge|judge]] must be validated for the topic used.
 
 ---
 

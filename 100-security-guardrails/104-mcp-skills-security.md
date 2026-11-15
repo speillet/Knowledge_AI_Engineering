@@ -197,7 +197,7 @@ Scenario: the MCP gateway alerts you. The `search_docs` tool description of an a
 2. **Search for calls** made since the change: arguments sent, secrets can be exfiltrated
 3. **Make turn** the secrets exposed
 4. **Investigate source**: malicious update (**rug pull**), maintainer account or compromised publishing chain
-5. **Durcir**: pinned versions, mandatory review of any new description, no secrets accessible to agents
+5. **Harden**: pinned versions, mandatory review of any new description, no secrets accessible to agents
 
 **Trap**: Go back to the old version without checking what has already leaked.
 

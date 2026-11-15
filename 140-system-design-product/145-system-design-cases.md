@@ -132,7 +132,7 @@ Make the hypotheses reviewable: “10 requests/s, point ×3, answer p95 under 5 
 
 Calculation: 200 daily files require a review of 6 minutes, but two people spend only 4 hours each. What capacity and what daily delay? <!--anki:3265353363323565346531393436326539363135333830636365393034643539-->
 ?
-Available capacity is `2 × 4 × 60 / 6 = 80 dossiers/day`. With **200 daily arrivals**, the delay increases by **120 records/day**, excluding changes and recoveries.
+Available capacity is `2 × 4 × 60 / 6 = 80 cases/day`. With **200 daily arrivals**, the delay increases by **120 records/day**, excluding changes and recoveries.
 
 A human review does not stabilize the system in this scenario. Reduce the volume, time per file or increase the capacity; reserve the controls according to the risk without removing an essential validation. Include wait times and peak load in the design. A good precision of the model does not compensate for a structurally saturated human queue.
 

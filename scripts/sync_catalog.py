@@ -46,7 +46,7 @@ def render(root: Path, moc: bool = False) -> str:
             title = topic_title(text)
             match = re.search(r"^<!-- summary: (.+) -->$", text, re.M)
             if not match:
-                raise ValueError(f"{path.name} : commentaire summary manquant")
+                raise ValueError(f"{path.name} : missing summary comment")
             if moc:
                 output.append(f"- [[{path.stem}|{title}]]")
             else:

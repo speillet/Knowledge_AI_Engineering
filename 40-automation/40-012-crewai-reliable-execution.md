@@ -54,7 +54,7 @@ An iteration can handle a lot of tokens; a manager and delegated agents can add 
 
 ---
 
-Do not confuse: asynchronous launch of a crew and sustainable execution? <!--anki:3539376536343138363931613438623039343262396235386637343732636236-->
+Do not confuse: asynchronous launch of a crew and durable execution? <!--anki:3539376536343138363931613438623039343262396235386637343732636236-->
 ?
 A **asynchronous** launch releases the caller for other tasks. A **durable** run retains enough information to recover after the process disappears.
 

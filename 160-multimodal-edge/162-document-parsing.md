@@ -115,9 +115,9 @@ Rebuild layout blocks before linearizing, keep pages and coordinates, and then t
 
 How do I detect a parsing error that keeps all words but attaches a note to the wrong table? <!--anki:3765633565353666653438313436346538326132353732383535633635613239-->
 ?
-Controlling **structure relationships**, not just the extracted text: array, caption, note, and unit must remain associated. A note "amounts in thousands" attached to the neighbor array can multiply the values interpreted by a thousand.
+Check **structural relationships**, not just extracted text: a table, its caption, notes and units must stay associated. Attaching an "amounts in thousands" note to the neighboring table can multiply the interpreted values by a thousand.
 
-Make annotated cases with links betweas a batchks and page coordinates. Check the rendering and reconstruction of cells with their qualifiers. An excellent OCR score does not measure these associations or the fidelity of the structured document.
+Create annotated test cases that link layout blocks to page coordinates. Check the rendering and reconstruction of cells with their qualifiers. An excellent OCR score does not measure these associations or the fidelity of the structured document.
 
 ---
 

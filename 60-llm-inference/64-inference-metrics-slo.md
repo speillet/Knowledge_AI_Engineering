@@ -1,6 +1,6 @@
 # Inference Metrics & SLO — Flashcards
 Tags: #flashcards #ai-engineering #inference #slo #llm
-<!-- summary: TTFT, TPOT and ITL, useful content and reasoning, offered/admitted/useful bitrates, SLO spouses, timeouts, burn rate, Little's law, autoscaling and benchmarks, calculation of duration up to the last token, percentile aggregation, latency budget. -->
+<!-- summary: TTFT, TPOT and ITL, useful content and reasoning, offered/admitted/useful throughput, joint SLOs, timeouts, burn rate, Little's law, autoscaling and benchmarks, calculation of duration up to the last token, percentile aggregation, latency budget. -->
 
 
 What is the TTFT? <!--anki:68355e7b7b31743d5d46-->
@@ -66,7 +66,7 @@ Scan batch loads and budgets. Hold maximum throughput that meets latency and qua
 
 What is goodput? <!--anki:4b7157417d2d3c3f7e39-->
 ?
-The bitrate **of the only requests that meet the SLO** (TTFT and TPOT below the thresholds). More honest than raw throughput: serving requests outside SLO quickly does not count.
+The throughput **of the only requests that meet the SLO** (TTFT and TPOT below the thresholds). More honest than raw throughput: serving requests outside SLO quickly does not count.
 
 Precisely define the unit: successful requests per second, or tokens associated with these requests, with all applicable criteria. If 100 requests/s are served but only 70 meet quality and time requirements, the payload speed is 70 requests/s according to this definition. Compare variants with the same thresholds.
 
@@ -228,7 +228,7 @@ Scenario: your autoscaling is triggered too late, and requests wait several seco
 
 - [Google SRE — error alerts and budgets](https://sre.google/workbook/alerting-on-slos/)
 - [vLLM — metric definitions](https://docs.vllm.ai/en/latest/design/metrics/)
-- [DistServe — goodput and SLO spouses](https://arxiv.org/abs/2401.09670)
+- [DistServe — goodput and joint SLOs](https://arxiv.org/abs/2401.09670)
 
 ## Connections
 - [[61-kv-cache-attention|KV cache]] — concurrency capped by VRAM

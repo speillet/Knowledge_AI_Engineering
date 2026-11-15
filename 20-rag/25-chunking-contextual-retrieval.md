@@ -181,5 +181,5 @@ Scenario: You are asked to pass the entire corpus in semantic chunking "because 
 - [[162-document-parsing|Parsing of documents]] — structure before cutting
 - [[133-embeddings-representations|Embeddings]] — models with long context and late interaction
 - [[123-aggressive-caching|Caching]] — make contextual retrieval affordable
-- [[96-evals-rag-agents|Evaluation of GARs]] — judge a strategy to call@k
+- [[96-evals-rag-agents|Evaluation of RAG systems]] — judge a strategy to call@k
 - [[00-moc-ai-engineering|MOC AI Engineering]]

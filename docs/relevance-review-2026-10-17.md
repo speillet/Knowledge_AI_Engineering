@@ -65,7 +65,7 @@ Four additions posed a concrete problem: two revealed the answer of a calculatio
 
 ## Modifications
 
-| Type | Volume | Exemples |
+| Type | Count | Examples |
 | --- | ---: | --- |
 | Retired cards | 41 | duplicates above, two catalogs without response criteria |
 | Reformulated questions | 29 | benchmarks set as a choice, subject named, “Not to be confused” |

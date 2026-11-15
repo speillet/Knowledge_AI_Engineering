@@ -79,7 +79,7 @@ The former keeps the progress of a conversation; the latter may retain a useful 
 
 ---
 
-What is sustainable execution in LangGraph? <!--anki:6e5a3837745771543752-->
+What is durable execution in LangGraph? <!--anki:6e5a3837745771543752-->
 ?
 The ability of a workflow to **recover from persistent** information after a failure or pause. Work that has been saved can be reused; unsaved portions can be replayed.
 

@@ -40,7 +40,7 @@ How to manage LLM team expenses? <!--anki:532b47722b306e7350-->
 **Budgets and quotas per key/team** in the gateway, **alerts** before passing, **kill switch** in case of runaway.
 ```yaml
 # example of virtual key safeguards (gateway LLM)
-key: equipe-support
+key: support-team
 max_budget: 500          # € per month
 budget_duration: 30d
 rpm_limit: 600           # requests per minute

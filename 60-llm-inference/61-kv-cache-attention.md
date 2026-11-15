@@ -58,7 +58,7 @@ Can we quantify the KV cache? <!--anki:765860436e5b7274564e-->
 ?
 A **FP8** cache uses about half as many bytes for values as a BF16 cache, excluding scales and metadata. This may allow for more tokens residents, subject to hardware support and the engine.
 ```bash
-vllm serve mon-modele --kv-cache-dtype fp8
+vllm serve my-model --kv-cache-dtype fp8
 ```
 Check the required formats and scaling factors for the model and version. Measure quality, including long-context, and then load goodput. Half bytes does not guarantee unchanged quality or doubled throughput: kernels, bandwidth, and scheduler limits also count.
 
