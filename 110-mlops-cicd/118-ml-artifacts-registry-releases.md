@@ -1,4 +1,4 @@
-# Artefacts, registry & releases ML — Flashcards
+# ML artifacts, registry & releases — Flashcards
 Tags: #flashcards #ai-engineering #mlops #classical-ml #registry #deployment
 Verified on: 12 November 2026 — MLflow examples target the API 3 and remain to be adapted to the installed version.
 <!-- summary: run, logged model and registered version, full inference package, MLflow 3 URI, alias resolution, integrity and provenance, secure serialization, clean environment loading, output contract, predict_proba, approval, registry backup, retention, conversion, release thresholds and rollback, immutable resolution, network dependency on loading. -->

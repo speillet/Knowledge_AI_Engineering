@@ -1,4 +1,4 @@
-# Map of — Flashcards
+# Agentic protocol map — Flashcards
 Tags: #flashcards #ai-engineering #agents #protocols #mcp #a2a
 Verified on: 30 September 2026 — This factsheet lists products, versions or regulatory texts that are evolving quickly.
 <!-- summary: protocols by border, MCP, A2A and AG-UI, Agent Card, A2A task cycle, OpenAI compatible API, OpenTelemetry GenAI conventions, `AGENTS.md` and skills, payments by agents (AP2, ACP), governance of standards, when not to expose an agent in A2A, trust borders, job cancellation and business clearing, negotiation of capabilities, contract evolution. -->

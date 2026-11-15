@@ -1,4 +1,4 @@
-# — Training Pipelines, Register & Continuous Training — Flashcards
+# Training pipelines, registry & continuous training — Flashcards
 Tags: #flashcards #ai-engineering #mlops #classical-ml #pipelines
 Verified on: 20 October 2026 — global date preserved; targeted review of 13 November 2026 detailed in Sources.
 <!-- summary: MLOps maturity levels, deployed pipeline rather than model, planned or triggered retraining, data and model validation, MLflow experience tracking, signature, champion and challenger alias, registry or vendor alias, milestone cache, training window, scoring batch or online, model censored labels, expected performance calculation without labels, concurrent model promotions, trigger grouping, benchmarking, benchmarking and benchmarking. -->

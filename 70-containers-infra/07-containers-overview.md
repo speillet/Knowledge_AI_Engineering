@@ -1,4 +1,4 @@
-# Containers — Synthesis — Flashcards
+# Containers — Overview — Flashcards
 Tags: #flashcards #containers #review
 <!-- summary: Transverse review cards (OCI, CRI and SIF, Kubernetes channels and image, GPU access, inference servers, weight storage), location of a failure in the launch chain, proof of portability, cold start diagnosis. -->
 

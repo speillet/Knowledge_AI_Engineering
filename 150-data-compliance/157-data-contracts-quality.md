@@ -1,4 +1,4 @@
-# Contracts, Schematics & Data Quality — Flashcards
+# Data contracts, schemas & quality — Flashcards
 Tags: #flashcards #ai-engineering #data #data-engineering #quality
 <!-- summary: producer-consumer contract, schema and business constraints, freshness and completeness, compatibility, migrations, quarantine, drift or incident, atomic publication and operational lineage, semantic contracts and units, compatibility of values, quarantine and population. -->
 

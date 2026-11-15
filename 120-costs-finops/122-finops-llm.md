@@ -1,4 +1,4 @@
-# FinOps LLM — Flashcards
+# LLM FinOps — Flashcards
 Tags: #flashcards #ai-engineering #finops #governance #llm
 <!-- summary: four times of the FinOps, visibility of costs, allocation to teams, budgets and safeguards, routing as the first lever, caches, practices GPU, cost-quality-latency arbitration, role of the Lead, budget reservation of in-flight calls, shared costs, stable economic unit. -->
 

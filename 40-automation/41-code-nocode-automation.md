@@ -1,4 +1,4 @@
-# Automation code & no-code — Flashcards
+# Code and no-code automation — Flashcards
 Tags: #flashcards #ai-engineering #automation #workflow #llm
 Verified on: 25 September 2026 — This factsheet lists products, versions or regulatory texts that are evolving quickly.
 <!-- summary: n8n, triggers, Zapier and Make, Airflow, Prefect and Temporal, durable execution, no-code limits, duplicates and webhooks mess, time zones, queue failure. -->

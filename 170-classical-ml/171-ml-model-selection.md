@@ -1,4 +1,4 @@
-# Classic ML: choose and understand the — Flashcards
+# Classical ML: model selection & fundamentals — Flashcards
 Tags: #flashcards #ai-engineering #classical-ml #models #baseline
 <!-- summary: rules or ML or LLM, target formulation, baselines, regressions, regularization, trees, random forest and boosting, clustering, preprocessing, missing data and cost of ownership, unknown categories in production, business baseline, capacity and data. -->
 

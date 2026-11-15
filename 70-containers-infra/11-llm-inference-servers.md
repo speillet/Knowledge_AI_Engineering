@@ -1,4 +1,4 @@
-# Inference Servers LLM — Flashcards
+# LLM inference servers — Flashcards
 Tags: #flashcards #ai-engineering #inference #serving #llm
 Verified on: 25 September 2026 — This factsheet lists products, versions or regulatory texts that are evolving quickly.
 <!-- summary: vLLM, API compatible OpenAI, multi-LoRA, SGLang, TensorRT-LLM and Triton, TGI, llama.cpp and Ollama, boundary tests of a compatible API, effective tokenizer, termination tests. -->

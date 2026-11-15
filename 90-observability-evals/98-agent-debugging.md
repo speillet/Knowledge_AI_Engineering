@@ -1,4 +1,4 @@
-# Debugging & Failure Analysis of — Flashcards Agents — Flashcards
+# Agent debugging & failure analysis — Flashcards
 Tags: #flashcards #ai-engineering #agents #evals #observability #debugging
 <!-- summary: error analysis (open and axial coding), symptom or cause, failure categories, MAST taxonomy, loop detection, replay reproduction, failure in case of non-regression, production signals, when not to blame the model, controlled ablation, first divergence, debugging without effects. -->
 

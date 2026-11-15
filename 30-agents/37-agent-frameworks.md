@@ -1,4 +1,4 @@
-# Frameworks d'agents — Flashcards
+# Agent frameworks — Flashcards
 Tags: #flashcards #ai-engineering #agents #frameworks #llm
 Verified on: 25 September 2026 — This factsheet lists products, versions or regulatory texts that are evolving quickly.
 <!-- summary: LangChain, LangGraph, CrewAI, Google ADK, OpenAI Agents SDK, Claude Agent SDK, LlamaIndex, framework or house code, comparative prototype with failures, state portability, business border. -->

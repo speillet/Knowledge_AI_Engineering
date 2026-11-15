@@ -1,4 +1,4 @@
-# Output & Response Rating LLM — Flashcards
+# Evaluating LLM outputs & responses — Flashcards
 Tags: #flashcards #ai-engineering #evals #responses #quality #llm
 <!-- summary: grid by dimension, accuracy and completeness, relevance and guidance, multiple references, standardization, BLUE and RED, BERTScore, summaries, numerical responses, blocking criteria and aggregation by affirmation, validation of affirmations and style, numerical tolerance, weighted coverage. -->
 

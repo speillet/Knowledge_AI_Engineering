@@ -1,4 +1,4 @@
-# Recommandation & learning to rank — Flashcards
+# Recommendation & learning to rank — Flashcards
 Tags: #flashcards #ai-engineering #classical-ml #recommendation #ranking
 <!-- summary: Product objective, candidate generation and ranking, collaborative filtering or content, implicit feedback, two-turn models, ranking objectives, negatives, exposure bias, cold start, nDCG and diversity, recall calculation between candidates and ranking, non-exposed negatives, catalog diversity. -->
 

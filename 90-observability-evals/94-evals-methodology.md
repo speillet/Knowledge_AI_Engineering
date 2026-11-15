@@ -1,4 +1,4 @@
-# System evaluation LLM — Methodology — Flashcards
+# LLM system evaluation — Methodology — Flashcards
 Tags: #flashcards #ai-engineering #evals #llm #quality
 <!-- summary: benchmark or eval application, error analysis, golden dataset, game size, evaluation families, binary criteria, with or without reference, offline and online, eval-driven development, saturation, anti-patterns, representative cases and adversarial cases, annotation disagreement, test maintenance. -->
 

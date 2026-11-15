@@ -1,4 +1,4 @@
-# Observability, lineage & data exploitation — Flashcards
+# Data observability, lineage & operations — Flashcards
 Tags: #flashcards #ai-engineering #data #data-engineering
 Verified on: 9 October 2026 — technical references and examples of this file.
 <!-- summary: SLO of data, freshness, completeness by segment, reconciliation, test coverage, declared or executed lineage, catalog, impact, incidents and monitoring cost, monitoring of the presence of controls, misleading freshness, impact of incidents. -->

@@ -1,4 +1,4 @@
-# Orchestration multi-agents — Flashcards
+# Multi-agent orchestration — Flashcards
 Tags: #flashcards #ai-engineering #agents #multi-agent #llm
 Verified on: 25 September 2026 — This factsheet lists products, versions or regulatory texts that are evolving quickly.
 <!-- summary: orchestrator-workers, supervisor, handoffs, evaluator-optimizer, shared state, multi-agent cost, A2A protocol, parallel critical path calculation, branch cancellation, delegation contract. -->

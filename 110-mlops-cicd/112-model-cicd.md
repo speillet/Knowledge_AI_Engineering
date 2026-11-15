@@ -1,4 +1,4 @@
-# CI/CD Models — Flashcards
+# Model CI/CD — Flashcards
 Tags: #flashcards #ai-engineering #mlops #cicd #llm
 <!-- summary: evals statistics and deterministic tests, eval gates (threshold example), deployed artifact, blue/green and canary, shadow deployment, rollback, GitOps, tests of a LLM app, CI prompts, complete pipeline, rollback after schema migration, continuous delivery or deployment, smoke training, same promoted artifact, canary with late label. -->
 

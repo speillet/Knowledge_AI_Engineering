@@ -1,4 +1,4 @@
-# LLM local, on-prem & edge — Flashcards
+# Local, on-premises & edge LLMs — Flashcards
 Tags: #flashcards #ai-engineering #edge #local #self-hosting #llm
 Verified on: 25 September 2026 — This factsheet lists products, versions or regulatory texts that are evolving quickly.
 <!-- summary: motivations, capacity or memory bandwidth, llama.cpp and GGUF, local tools, Ollama or vLLM, Apple Silicon, small language models, hybrid local and cloud, fleet of devices, profitability of on-prem, measurement in sustained thermal regime, energy autonomy, offline mode. -->

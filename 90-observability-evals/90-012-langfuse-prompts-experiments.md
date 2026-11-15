@@ -1,4 +1,4 @@
-# Langfuse — Prompts, datasets & experiences — Flashcards
+# Langfuse — Prompts, datasets & experiments — Flashcards
 Tags: #flashcards #ai-engineering #agents #production
 Verified on: 9 October 2026 — API cited against official documentation; limits spelled out in maps.
 <!-- summary: labels and versions, prompt cache, fallback, promotion, evaluation games, comparable runs, missing scores, costs per achievement and feedback, confirmation game independence, absent scores, version cache. -->

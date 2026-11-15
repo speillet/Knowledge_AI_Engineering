@@ -1,4 +1,4 @@
-# Reliability & resilience of LLM — Flashcards applications — Flashcards
+# LLM application reliability & resilience — Flashcards
 Tags: #flashcards #ai-engineering #system-design #reliability #production #llm
 <!-- summary: timeouts, recoveries, fallbacks, circuit breaker, retry, fallback or circuit breaker, recoveries multiplied between layers, poorly formed outputs, graceful degradation, spleen limits, long tasks, version pinning, SLO, chaos testing, classification of errors of a circuit breaker, jitter, recovery after 429. -->
 

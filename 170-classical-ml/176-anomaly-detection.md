@@ -1,4 +1,4 @@
-# Detection of anomalies — Flashcards
+# Anomaly detection — Flashcards
 Tags: #flashcards #ai-engineering #classical-ml #anomalies #monitoring
 Verified on: 8 October 2026
 <!-- summary: rarity and business error, outlier or novelty, non-probability scores, contextual baseline, Isolation Forest, LOF, self-encoders, review capacity, prevalence, assessment by incident, missing and drifting labels, limits of a fixed quota of alerts, duration of incidents, contextual threshold. -->

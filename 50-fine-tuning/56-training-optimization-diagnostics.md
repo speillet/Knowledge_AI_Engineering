@@ -1,4 +1,4 @@
-# Drive Optimization & Diagnostics — Flashcards
+# Training optimization & diagnostics — Flashcards
 Tags: #flashcards #ai-engineering #fine-tuning #optimization #deep-learning
 Verified on: 7 October 2026
 <!-- summary: loss and business metric, backpropagation, learning rate, AdamW, learning curves, diagnostic micro-lot, normalized accumulation, clipping, mixed precision, PyTorch modes and label masking, train loss comparability and validation, supervised tokens, order of transformations. -->

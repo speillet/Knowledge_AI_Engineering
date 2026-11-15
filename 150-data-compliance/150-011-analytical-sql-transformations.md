@@ -1,4 +1,4 @@
-# SQL for IA pipelines and datasets — Flashcards
+# SQL for AI pipelines & datasets — Flashcards
 Tags: #flashcards #ai-engineering #data #data-engineering
 Verified on: 9 October 2026 — technical references and examples of this file.
 <!-- summary: joins and filters, null, aggregations, windows, deterministic deduplication, anti-joins, CTE, time SQL, query plans and transformation controls, deterministic deduplication and equalities, ROWS and RANGE windows, join filter. -->

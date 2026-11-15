@@ -1,4 +1,4 @@
-# Code Agents: Usage & Integration — Flashcards
+# Coding agents: usage & integration — Flashcards
 Tags: #flashcards #ai-engineering #agents #coding-agents #development #llm
 Verified on: 30 September 2026 — This factsheet lists products, versions or regulatory texts that are evolving quickly.
 <!-- summary: ACI (SWE-agent), test-driven loop, `CLAUDE.md` and `AGENTS.md`, plan mode, worktrees and subagents, context management, headless mode, SWE-bench and its limits, tasks to delegate, provision measurement, patch independent testing, change location, patch proof. -->

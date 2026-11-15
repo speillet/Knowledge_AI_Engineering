@@ -1,4 +1,4 @@
-# Applications — Architecture & Life Cycle — Flashcards
+# Agentic applications — Architecture & lifecycle — Flashcards
 Tags: #flashcards #ai-engineering #agents #production
 Verified on: 9 October 2026 — API cited against official documentation; limits spelled out in maps.
 <!-- summary: choice of bricks, execution contracts, API and workers, admission, identity, versioned approvals, cancellation, events, deployment and capacity, retrieval of a submission after network shutdown, task and session, resource cleaning. -->
