@@ -145,7 +145,7 @@ def markdown_lines(text: str) -> Iterator[Line]:
 
 def topic_files() -> list[Path]:
     """Sheets of numbered sections, including container indexes, MOC excluded."""
-    return sorted(p for p in ROOT.glob("[0-9]*/*.md") if p.stem != MOC)
+    return sorted(p for p in ROOT.glob("[0-9]*/*.md") if p.stem != MOC and p.name != README)
 
 
 def topic_title(text: str) -> str:
@@ -482,7 +482,7 @@ def check_graph(vault: Vault, report: Report) -> None:
 def lint(stale_months: int) -> tuple[list[str], list[str], list[TopicStats]]:
     """Errors, warnings and statistics per record; stale_months = 0 ignores the age of the dates."""
     files = topic_files()
-    pages = [*files, *ROOT.glob("*.md"), *(ROOT / "docs").rglob("*.md")]
+    pages = [*ROOT.glob("[0-9]*/*.md"), *ROOT.glob("*.md"), *(ROOT / "docs").rglob("*.md")]
     vault = Vault(files, {p: p.read_text(encoding="utf-8") for p in pages}, stale_months)
     report = Report()
     for name, count in vault.names.items():
