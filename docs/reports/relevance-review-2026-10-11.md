@@ -24,15 +24,15 @@ Twelve added cards: eight concept cards, one calculation card and three scenario
 
 | Topic | Corrected | Added | Enhanced competence |
 | --- | ---: | ---: | --- |
-| [Fundamental agents](../30-agents/31-agent-fundamentals.md) | 4 | 0 | Distinguish ReAct, call format and controlled loop; justify autonomy |
-| [Tool calling](../30-agents/32-tool-calling.md) | 8 | 3 | MCP without LLM decision, conditional validation, timeouts, statuses and pagination |
-| [Fine-tuning](../50-fine-tuning/51-fine-tuning-adaptation.md) | 5 | 3 | Possible regress with LoRA, Adaptor Artifacts, Rank and Damping |
-| [Guided generation](../60-llm-inference/63-guided-generation.md) | 3 | 0 | Exit contract, abstention and diagnosis without assuming the cause |
-| [Choice of models](../140-system-design-product/146-model-selection.md) | 4 | 3 | Opening and hosting, OSI definition, comparable budgets and Pareto front |
-| [Vision-langage](../160-multimodal-edge/161-vision-language-models.md) | 5 | 4 | OCR without promise of accuracy, contact information, complete documents and scope of marking |
-| [Real time voice](../160-multimodal-edge/163-real-time-voice.md) | 5 | 3 | Measured latency, WER and business errors, interruption and action already performed |
-| [Validation ML](../170-classical-ml/172-ml-validation-metrics.md) | 0 | 1 | Effect of prevalence on accuracy at constant TPR/FPR |
-| [Calibration and abstention](../170-classical-ml/173-calibration-uncertainty-abstention.md) | 1 | 4 | Expected cost of three decisions, two directions of coverage, human errors |
+| [Fundamental agents](../../30-agents/31-agent-fundamentals.md) | 4 | 0 | Distinguish ReAct, call format and controlled loop; justify autonomy |
+| [Tool calling](../../30-agents/32-tool-calling.md) | 8 | 3 | MCP without LLM decision, conditional validation, timeouts, statuses and pagination |
+| [Fine-tuning](../../50-fine-tuning/51-fine-tuning-adaptation.md) | 5 | 3 | Possible regress with LoRA, Adaptor Artifacts, Rank and Damping |
+| [Guided generation](../../60-llm-inference/63-guided-generation.md) | 3 | 0 | Exit contract, abstention and diagnosis without assuming the cause |
+| [Choice of models](../../140-system-design-product/146-model-selection.md) | 4 | 3 | Opening and hosting, OSI definition, comparable budgets and Pareto front |
+| [Vision-langage](../../160-multimodal-edge/161-vision-language-models.md) | 5 | 4 | OCR without promise of accuracy, contact information, complete documents and scope of marking |
+| [Real time voice](../../160-multimodal-edge/163-real-time-voice.md) | 5 | 3 | Measured latency, WER and business errors, interruption and action already performed |
+| [Validation ML](../../170-classical-ml/172-ml-validation-metrics.md) | 0 | 1 | Effect of prevalence on accuracy at constant TPR/FPR |
+| [Calibration and abstention](../../170-classical-ml/173-calibration-uncertainty-abstention.md) | 1 | 4 | Expected cost of three decisions, two directions of coverage, human errors |
 | **Total** | **35** | **21** | |
 
 Some decisive corrections:
@@ -48,7 +48,7 @@ New questions are understood alone and the calculations provide their hypotheses
 
 ## Executable workshop
 
-The [AI Decision Workshop](../examples/ai-decisions/README.md) uses the standard Python library, with separate statements of solutions, controlled results, and draft variants. It is linked from the README, MOC, and Learning Guide.
+The [AI Decision Workshop](../../examples/ai-decisions/README.md) uses the standard Python library, with separate statements of solutions, controlled results, and draft variants. It is linked from the README, MOC, and Learning Guide.
 
 Its four exercises work precision according to prevalence, decision with review, choice under constraints and documentary quality. Two batches to 99% of correct fields have respectively 80% and 99% of fully correct documents: the distribution of errors counts. The independent calculation `0,99^20 ≈ 81,8 %` is another model, whose hypothesis must be explained.
 

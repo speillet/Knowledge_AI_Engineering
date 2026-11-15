@@ -4,7 +4,7 @@
 
 1. Install [Obsidian](https://obsidian.md).
 2. Choose **Open folder as vault** and select the repository folder (`Knowledge_AI_Engineering` after a `git clone`).
-3. Open [00-moc-ai-engineering.md](../00-moc-ai-engineering.md).
+3. Open [00-moc-ai-engineering.md](../../00-moc-ai-engineering.md).
 
 ## Review with spaced repetition
 

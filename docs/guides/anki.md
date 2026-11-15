@@ -12,7 +12,7 @@ Every push to `main` generates an Anki package and publishes it at a stable addr
    - Retired cards are re-exported suspended with the `retired` tag. Search for `tag:retired` in Anki to delete them.
 4. Anki and Obsidian maintain separate review schedules; their progress is not synchronized.
 
-The migration preserves note GUIDs, the model ID and the existing deck IDs. See the [migration report](../docs/english-migration-2026-11-15.md) for the compatibility checks.
+The migration preserves note GUIDs, the model ID and the existing deck IDs. See the [migration report](../reports/english-migration-2026-11-15.md) for the compatibility checks.
 
 To generate the package locally:
 

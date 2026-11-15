@@ -8,7 +8,7 @@ The unit is **an active subscription at a reference date**. The target is its te
 
 A prediction from last week does not immediately receive a negative label because no termination is yet observed. The horizon must be elapsed, then the collection time respected. The metrics relate to sufficiently mature cohorts, with coverage of the reconciliation and explicit rule for issues still unknown.
 
-The business owner defines usage and processing capacity; data, model and operations managers define their commitments and take-back conditions. The initial deliverable is a prediction contract, before a choice of registry or orchestrator. See [the Prediction Contracts](../110-mlops-cicd/119-prediction-contracts-features-batch.md) and [the MLOps Responsibilities](../110-mlops-cicd/111-mlops-llmops-fundamentals.md).
+The business owner defines usage and processing capacity; data, model and operations managers define their commitments and take-back conditions. The initial deliverable is a prediction contract, before a choice of registry or orchestrator. See [the Prediction Contracts](../../110-mlops-cicd/119-prediction-contracts-features-batch.md) and [the MLOps Responsibilities](../../110-mlops-cicd/111-mlops-llmops-fundamentals.md).
 
 ## 2. Build the data that is actually available for decision
 
@@ -16,7 +16,7 @@ At each reference date, reconstitute the information then available: past activi
 
 The [Feast on point-in-time joins](https://docs.feast.dev/getting-started/concepts/point-in-time-joins) documentation describes the history search in a TTL window. This does not exempt you from checking the availability, deduplication and backend rules separately. A value available in the storage may also be too old for business use.
 
-The deliverable is an identified snapshot with schema, provenance, semantic controls, eligibility and label definition. Keep rejections and their reason within the limit provided by the data policy. A source that changes amounts from euros to cents can keep its types while invalidating the model. See [the Time Data](../150-data-compliance/159-temporal-data-features.md).
+The deliverable is an identified snapshot with schema, provenance, semantic controls, eligibility and label definition. Keep rejections and their reason within the limit provided by the data policy. A source that changes amounts from euros to cents can keep its types while invalidating the model. See [the Time Data](../../150-data-compliance/159-temporal-data-features.md).
 
 ## 3. Separate recipe, execution and candidate
 
@@ -24,7 +24,7 @@ The **recipe** describes transformations, learning, and evaluation. A **run** ex
 
 Timely separation of sets when required, respecting availability and label maturity. Adjusting imputation, encoding, and normalization to only data allowed by the protocol. Allow for calibration adjustment and threshold selection without reusing the final test as a selection lever. Properly nested cross-validation can organize these separations; four separate files are not a universal obligation.
 
-Tracer versions, splits, hyperparameters, seeds, environment and results per segment. **Save a seed does not apply** to different generators. The determinism guarantees depend on the components and platforms. [PyTorch describes these limits](https://docs.pytorch.org/docs/stable/notes/randomness.html); the notions of seed and historical proof are developed in [the Reproducibility topic](../110-mlops-cicd/114-reproducibility-variance.md).
+Tracer versions, splits, hyperparameters, seeds, environment and results per segment. **Save a seed does not apply** to different generators. The determinism guarantees depend on the components and platforms. [PyTorch describes these limits](https://docs.pytorch.org/docs/stable/notes/randomness.html); the notions of seed and historical proof are developed in [the Reproducibility topic](../../110-mlops-cicd/114-reproducibility-variance.md).
 
 ## 4. Publish a package that can actually predict
 
@@ -34,7 +34,7 @@ With [MLflow 3](https://mlflow.org/docs/latest/ml/mlflow-3/), use `name=` in the
 
 The signature describes a technical contract; it does not prove that the units or the horizon have the expected meaning. Test the probabilities with their order of classes and the mode of inference chosen. A consumer who expects a probability should not silently receive the class produced by `predict`.
 
-In a clean image, load the published artifact, run known cases, and test for errors. Checking provenance before deserialization: Pickle-based formats can run code. A conversion or dependency update requires proper validation; [scikit-learn does not guarantee load compatibility between versions](https://scikit-learn.org/stable/model_persistence.html). See [artifacts, registry and releases](../110-mlops-cicd/118-ml-artifacts-registry-releases.md).
+In a clean image, load the published artifact, run known cases, and test for errors. Checking provenance before deserialization: Pickle-based formats can run code. A conversion or dependency update requires proper validation; [scikit-learn does not guarantee load compatibility between versions](https://scikit-learn.org/stable/model_persistence.html). See [artifacts, registry and releases](../../110-mlops-cicd/118-ml-artifacts-registry-releases.md).
 
 ## 5. Decide if the candidate deserves a promotion
 
@@ -59,7 +59,7 @@ validation_report: approved-report-r17
 rollback_release: retention-r16-revalidee
 ```
 
-The number 17 the registry and the release coincide here by choice of example; They don’t need to coincide. Proof of approval and promotion rights remain separate from an editable tag. See [CI/CD](../110-mlops-cicd/112-model-cicd.md) and [pipelines continus](../110-mlops-cicd/117-continuous-training-pipelines.md).
+The number 17 the registry and the release coincide here by choice of example; They don’t need to coincide. Proof of approval and promotion rights remain separate from an editable tag. See [CI/CD](../../110-mlops-cicd/112-model-cicd.md) and [pipelines continus](../../110-mlops-cicd/117-continuous-training-pipelines.md).
 
 ## 6. Deploy the approved version and identify the one that responds
 
@@ -95,13 +95,13 @@ Monitoring availability, latency, saturation, data, output distribution and busi
 
 Bring labels closer to the prediction identity and the horizon, not just the client. Report maturation, coverage and corrections. Out of a thousand predictions of which six hundred have an exploitable label and four hundred eighty are correct, the observed accuracy is **80% on the labeled part**, with **60% of coverage**. This does not demonstrate 80% on the entire population.
 
-When decisions determine which outcomes become visible, labels are selective. A human review is not necessarily the counterfactual outcome. A weighting does not recreate labels for groups that have no chance of being observed; see [Original work on selective labels](https://pmc.ncbi.nlm.nih.gov/articles/PMC5958915/). The diagnostic path is in [monitoring and feedback](../110-mlops-cicd/113-monitoring-drift-feedback.md).
+When decisions determine which outcomes become visible, labels are selective. A human review is not necessarily the counterfactual outcome. A weighting does not recreate labels for groups that have no chance of being observed; see [Original work on selective labels](https://pmc.ncbi.nlm.nih.gov/articles/PMC5958915/). The diagnostic path is in [monitoring and feedback](../../110-mlops-cicd/113-monitoring-drift-feedback.md).
 
 ## 9. Prove recovery capability
 
 A registry restore must cover metadata and artifacts, which are [separate storage components in MLflow](https://mlflow.org/docs/latest/self-hosting/architecture/overview/). Test in isolated environment: find the approved version, check bytes, load into the compatible image, retrieve the necessary features and produce the reference results.
 
-Measuring RPO and RTO. An accessible record with missing artifacts does not restore service. The end of the technical incident does not close the ML analysis: identify affected decisions, missing results, disrupted labels and possible contamination of future drives. See [SRE, Incidents and Capacity](../110-mlops-cicd/116-ai-sre-incidents-capacity.md).
+Measuring RPO and RTO. An accessible record with missing artifacts does not restore service. The end of the technical incident does not close the ML analysis: identify affected decisions, missing results, disrupted labels and possible contamination of future drives. See [SRE, Incidents and Capacity](../../110-mlops-cicd/116-ai-sre-incidents-capacity.md).
 
 ## Perimeter of enrichment
 
@@ -115,4 +115,4 @@ The pre-existing **2,372 questions and Anki IDs** are retained. New cards receiv
 
 Local Validation: `make check` succeeds, including **54 tests**, ruff, mypy and both workshops. Lint reports **zero error and zero warning**. Inspection of exported package finds **2,440 active cards** with expected IDs and **71 old cards removed still suspended**. Added calculations and syntax of Python snippets have also not been checked for an Mnippets test;
 
-The [Additional topicality check](reference-currency-check-2026-11-13.md) then controls the announcements, hosting methods, repositories and regulatory transitions still mentioned in these topics and their neighbors.
+The [Additional topicality check](../reports/reference-currency-check-2026-11-13.md) then controls the announcements, hosting methods, repositories and regulatory transitions still mentioned in these topics and their neighbors.

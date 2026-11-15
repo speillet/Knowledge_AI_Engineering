@@ -10,11 +10,11 @@ The review of the themes and related topics made it possible to distinguish what
 
 | Topic | Contribution in relation to existing content | When to work |
 | --- | --- | --- |
-| [174 — Recommandation & learning to rank](../170-classical-ml/174-recommendation-ranking.md) | Product objective, candidates, implicit labels, negatives, exposure, new users and diversity; extends embeddings and RAG metrics | Custom search, suggestions, catalog, content or products |
-| [175 — Time forecast](../170-classical-ml/175-time-series-forecasting.md) | Horizons, backtesting, seasonal baseline, ETS/ARIMA, recursive forecasts, future variables, MASE, quantiles and reconciliation; extends the temporal availability of data | Demand, capacity, volumes or deadlines to anticipate |
-| [176 — Detection of anomalies](../170-classical-ml/176-anomaly-detection.md) | Detection without complete labels, methods, operational thresholds, review load and measurement by incident; extends rare class monitoring and metrics | Incidents, quality, unusual changes or investigation |
-| [177 — Explainability](../170-classical-ml/177-model-explainability.md) | Permutations, correlations, SHAP and its units, PDP/ICE, feasible actions and justifications fidelity; develops the limits of predictive importance | Diagnosing, reviewing a model or explaining it to its users |
-| [178 — Causal Inference](../170-classical-ml/178-causal-inference-decisions.md) | Targeted effects, graphs, selection, identification, overlap, propensity, differences in differences and uplift; extends A/B tests | Choose an action and measure what it really changes |
+| [174 — Recommandation & learning to rank](../../170-classical-ml/174-recommendation-ranking.md) | Product objective, candidates, implicit labels, negatives, exposure, new users and diversity; extends embeddings and RAG metrics | Custom search, suggestions, catalog, content or products |
+| [175 — Time forecast](../../170-classical-ml/175-time-series-forecasting.md) | Horizons, backtesting, seasonal baseline, ETS/ARIMA, recursive forecasts, future variables, MASE, quantiles and reconciliation; extends the temporal availability of data | Demand, capacity, volumes or deadlines to anticipate |
+| [176 — Detection of anomalies](../../170-classical-ml/176-anomaly-detection.md) | Detection without complete labels, methods, operational thresholds, review load and measurement by incident; extends rare class monitoring and metrics | Incidents, quality, unusual changes or investigation |
+| [177 — Explainability](../../170-classical-ml/177-model-explainability.md) | Permutations, correlations, SHAP and its units, PDP/ICE, feasible actions and justifications fidelity; develops the limits of predictive importance | Diagnosing, reviewing a model or explaining it to its users |
+| [178 — Causal Inference](../../170-classical-ml/178-causal-inference-decisions.md) | Targeted effects, graphs, selection, identification, overlap, propensity, differences in differences and uplift; extends A/B tests | Choose an action and measure what it really changes |
 
 Start with the 171 to 173 files on choice, validation and calibration. Then choose a branch according to the problem encountered. The five domains do not constitute a list of tools to know uniformly: a research, platform and forecasting station does not require the same depth.
 

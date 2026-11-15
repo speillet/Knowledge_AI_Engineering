@@ -14,9 +14,9 @@ The gap research focused on the RAG rights, freshness, and assessments organizat
 
 | Ajout | Competence worked | Evidence available |
 | --- | --- | --- |
-| [RAG: rights, versions and abstention](../20-rag/20-010-rag-permissions-versions.md) | Authenticated identity, filters, effect dates, source authority, citations, withdrawals, and caches | 19 cards, including two calculations, two distinctions and three situational settings |
-| [Verifiable RAG Workshop](../examples/verifiable-rag/README.md) | Diagnose research, applicability of sources and final response | Ten Fictional Passages, Ten Annotated Cases, and the JSON Affirmation/Citation Report |
-| [Tests of the workshop](../tests/test_rag_workshop.py) | Detect a leak, an incorrect time marker or a misleading assessment | Two-tenant regressions, revoked rights, modified/withdrawn evidence, and masked conflict |
+| [RAG: rights, versions and abstention](../../20-rag/20-010-rag-permissions-versions.md) | Authenticated identity, filters, effect dates, source authority, citations, withdrawals, and caches | 19 cards, including two calculations, two distinctions and three situational settings |
+| [Verifiable RAG Workshop](../../examples/verifiable-rag/README.md) | Diagnose research, applicability of sources and final response | Ten Fictional Passages, Ten Annotated Cases, and the JSON Affirmation/Citation Report |
+| [Tests of the workshop](../../tests/test_rag_workshop.py) | Detect a leak, an incorrect time marker or a misleading assessment | Two-tenant regressions, revoked rights, modified/withdrawn evidence, and masked conflict |
 | Integration with the courses | Switching from cards to a validation deliverable | README, MOC, learning guide, 5 stage of the platform journey and four reciprocal links |
 
 Existing cards receive links; their cards and identifiers remain unchanged. Previous verification dates remain. The new card cites the primary sources consulted for this pass.

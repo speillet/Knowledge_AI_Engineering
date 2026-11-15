@@ -1,6 +1,6 @@
 # Contributing
 
-Improve explanations and examples while preserving card identifiers and review history. For the folder layout and numbering rules, see the [repository structure](docs/repository-structure.md).
+Improve explanations and examples while preserving card identifiers and review history. For the folder layout and numbering rules, see the [repository structure](docs/reference/repository-structure.md).
 
 ## Format of a topic
 
@@ -59,7 +59,7 @@ Conventions:
 - **Questions must make sense alone**, because review mixes cards. Name the subject: “What is a thread in LangGraph?”, rather than “What is a thread?”. Avoid “And X?” or “How does it work?”, which depend on the previous card.
 - **Calculations must be solvable before reading the answer**. Supply the data, units, scope and assumptions unless recalling them is explicitly part of the task. Identify fictional prices and approximations. Show the formula, result and justified conclusion on the back; neighboring cards should not give away the result.
 - **One concept, one reference card**: define a concept in its dedicated card. Other cards link to it, apply it or use it in a scenario. Search the vault before adding another definition.
-- **Make success assessable**: specify what to explain, compare, calculate or decide. Do not present conditional rules as universal. Examples and limitations support understanding; they should not become an implicit recital. The [learning guide](docs/learning-with-flashcards.md) explains how to assess each card type.
+- **Make success assessable**: specify what to explain, compare, calculate or decide. Do not present conditional rules as universal. Examples and limitations support understanding; they should not become an implicit recital. The [learning guide](docs/guides/learning-with-flashcards.md) explains how to assess each card type.
 - **Avoid product lists to memorize**. “Which parsing tools should you know?” is hard to grade and ages quickly. Ask a decision question instead: “Which parsing tool fits high-volume scans, and which fits confidential data?”.
 - **One idea per card**: split answers that combine two unrelated mechanisms, product lists or incidents.
 - Prefer **numerical reference values and executable examples**—commands, configuration and code—to abstract claims.
@@ -72,7 +72,7 @@ Conventions:
 
 ## Add a topic
 
-1. Choose the section and the next free number, then name the file in kebab-case, for example `28-rag-multimodal.md`. To exceed nine topics, use the extended numbering described in [repository structure](docs/repository-structure.md).
+1. Choose the section and the next free number, then name the file in kebab-case, for example `28-rag-multimodal.md`. To exceed nine topics, use the extended numbering described in [repository structure](docs/reference/repository-structure.md).
 2. **The filename must be unique throughout the vault**, because Obsidian resolves `[[...]]` links by filename, not by path.
 3. Write the cards in the format above, fill in the `summary` comment and the sources if the file is dated, and then launch `python3 scripts/assign_card_ids.py`.
 4. Launch `python3 scripts/sync_catalog.py` to regenerate the MOC and topic catalog. For a new section, first fill in `scripts/sections.json`. The reading paths remain editorial. Update the figures with `python3 scripts/lint_flashcards.py --update-readme`.
@@ -104,9 +104,9 @@ Lint checks structure, links and conventions; it does not establish factual accu
 
 Pull requests run `make check` on Python 3.10 and 3.12 and build an Anki package as a CI artifact. Pushes to `main`, or manual workflow runs on `main`, publish the package only after these checks pass.
 
-Python in `scripts/`, `tests/` and `examples/` follows ruff, configured in `pyproject.toml`. `scripts/` is type-checked with mypy. File reads and writes explicitly use `encoding="utf-8"`; lint rejects implicit encodings. The [code tooling report](docs/code-tooling-2026-10-31.md) explains these choices and checks.
+Python in `scripts/`, `tests/` and `examples/` follows ruff, configured in `pyproject.toml`. `scripts/` is type-checked with mypy. File reads and writes explicitly use `encoding="utf-8"`; lint rejects implicit encodings. The [code tooling report](docs/reports/code-tooling-2026-10-31.md) explains these choices and checks.
 
-The [Anki package](docs/anki.md) is rebuilt on each push to `main`. Preserve `MODEL_ID` in `scripts/export_anki.py` and the historical numeric deck mapping in `scripts/deck_ids.json`; changing these identities can disrupt updates to existing imports.
+The [Anki package](docs/guides/anki.md) is rebuilt on each push to `main`. Preserve `MODEL_ID` in `scripts/export_anki.py` and the historical numeric deck mapping in `scripts/deck_ids.json`; changing these identities can disrupt updates to existing imports.
 
 Enable the pre-commit hook once per clone with `git config core.hooksPath .githooks`. It runs `make pre-commit`: topic lint, catalog checks and ruff when installed.
 
