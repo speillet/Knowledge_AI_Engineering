@@ -33,7 +33,7 @@ Is an SIF image simply an OCI image? <!--anki:4d7c436a753d627a6e3c-->
 
 Apptainer can convert an image retrieved via `docker://` to SIF. This SIF can also be published in a compatible OCI registry via **`oras://`**, as an artifact: this does not transform it into an image directly executable by Docker.
 
-Example: Sharing `modele.sif` per registry avoids manual transfer on each cluster, but consumers need to understand the SIF format. Distinguish between **execution format and distribution channel**, and then verify provenance and conversion compatibility.
+Example: Sharing `model.sif` per registry avoids manual transfer on each cluster, but consumers need to understand the SIF format. Distinguish between **execution format and distribution channel**, and then verify provenance and conversion compatibility.
 
 ---
 

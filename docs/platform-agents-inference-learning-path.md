@@ -68,7 +68,7 @@ In a small service, these responsibilities can share a process. For long tasks, 
 
 ## 3. Define the API and qualify each model route
 
-**Files to work**: [gateway LLM](../80-api-layer-routing/81-litellm-api-layer.md), [Routing and Fallback](../80-api-layer-routing/82-routing-llm.md), [Streaming and integration](../80-api-layer-routing/84-streaming-application-integration.md) and [Structured Exits](../60-llm-inference/63-guided-generation.md).
+**Files to work**: [gateway LLM](../80-api-layer-routing/81-litellm-api-layer.md), [Routing and Fallback](../80-api-layer-routing/82-routing-llm.md), [Streaming and integration](../80-api-layer-routing/84-streaming-application-integration.md) and [Structured Outputs](../60-llm-inference/63-guided-generation.md).
 
 Separate three contracts: that of the application for users, that of model calls and that of business tools. For the workshop, propose this API application:
 
@@ -197,7 +197,7 @@ Test the complete service with realistic task arrivals and their dependencies be
 
 Compare low load, target load and overload, then introduce burst, long context, cold cache and loss of capacity. Track refusal, evolution and queue age, latencies, compliant task throughput and cost. Include requests still in flight and errors; verify that the generator actually emits the expected traffic. Repeat around the saturation border and justify the reserve by start-up times and failure scenarios.
 
-Then choose a lever depending on the bottleneck: reduce unnecessary calls or the context, control the concurrency, adjust the batching, distribute the load or change the model. For self-hosting, deepen [KV cache](../60-llm-inference/61-kv-cache-attention.md) and [Inference Servers](../70-containers-infra/11-llm-inference-servers.md). The [prefix caching](../60-llm-inference/66-prefix-caching-radix-attention.md) and [quantification](../60-llm-inference/68-quantization.md) compare with their memory, quality and insulation constraints.
+Then choose a lever depending on the bottleneck: reduce unnecessary calls or the context, control the concurrency, adjust the batching, distribute the load or change the model. For self-hosting, deepen [KV cache](../60-llm-inference/61-kv-cache-attention.md) and [Inference Servers](../70-containers-infra/11-llm-inference-servers.md). The [prefix caching](../60-llm-inference/66-prefix-caching-radix-attention.md) and [quantification](../60-llm-inference/68-quantization.md) compare with their memory, quality and isolation constraints.
 
 **Deliverable**: repeatable manifest, load/conformity/time/cost curves and capacity decision. **Passage**: supported target load with stable queue and met criteria, processed loss scenario, optimization gain confirmed by repetition and business qualification. The mocks prepare the protocol; a GPU capacity or a supplier quota is valid on the actual backend.
 

@@ -204,7 +204,7 @@ Scenario: after an SSE reconnection, the customer receives the "proposal ready" 
 
 **Trap**: Trigger an irreversible effect each time a progress event is received.
 
-Test a cut after the effect, before the acquittal: the restarted run must find the existing refund. The business server keeps the operation key with its result; only deduplicating the display does not protect the money.
+Test a cut after the effect, before the acknowledgment: the restarted run must find the existing refund. The business server keeps the operation key with its result; only deduplicating the display does not protect the money.
 
 ---
 

@@ -227,15 +227,15 @@ How to reconcile the metrics of the gateway and those of the LLM engine? <!--ank
 ?
 Milestones: arrival, admission, start of the prefill, first token engine, first customer content, last token and final validation. Meters must specify layer, population and unit.
 
-One task can trigger multiple calls, and a call for several attempts. Connect these levels with traces; do not add their counters as if they were independent. Measure durations on a local monotonous clock; subtracting timestamps from different machines requires known timing and uncertainty. Network, buffering and tools often explain the client–engine gap.
+One task can trigger multiple calls, and a call for several attempts. Connect these levels with traces; do not add their counters as if they were independent. Measure durations on a local monotonic clock; subtracting timestamps from different machines requires known timing and uncertainty. Network, buffering and tools often explain the client–engine gap.
 
 ---
 
-Calculation: two queries start together and each produce 100 tokens, A in 1 s and B in 9 s. Compare the average of individual bitrates to the overall bitrate on the 9 s? <!--anki:3961323930326463383764623432363861333465306430333062356639376239-->
+Calculation: two queries start together and each produce 100 tokens, A in 1 s and B in 9 s. How does the mean of their individual throughput rates compare with overall throughput across the 9 s window? <!--anki:3961323930326463383764623432363861333465306430333062356639376239-->
 ?
-Two **simultaneous** queries each produce 100 tokens: A in 1 seconds, B in 9 seconds. Their average bitrates are `(100 + 11,1) / 2 ≈ 55,6 tokens/s`.
+Two **simultaneous** queries each produce 100 tokens: A in 1 second and B in 9 seconds. Their mean individual throughput is `(100 + 11.1) / 2 ≈ 55.6 tokens/s`.
 
-On the common window of 9 seconds, the service produces `200 / 9 ≈ 22,2 tokens/s`. The denominators differ; none of these numbers substitutes for the other. For the aggregated rate, use the tokens actually emitted during a common wall window. Specify if we count all tokens or only those of the compliant answers.
+On the common window of 9 seconds, the service produces `200 / 9 ≈ 22.2 tokens/s`. The denominators differ; none of these numbers substitutes for the other. For the aggregated rate, use the tokens actually emitted during a common wall window. Specify if we count all tokens or only those of the compliant answers.
 
 ---
 
@@ -257,7 +257,7 @@ Compare input counters, completed queries, and duration observations; alert to u
 
 Why measure the age of the oldest queue request in addition to the queue length? <!--anki:3839653062623265336561393466396138653932623033373739656465363766-->
 ?
-A small queue may contain **a request that has beas a batchked for a long time**, while a large queue may resolve quickly. Length describes a volume; age reveals a risk of delay or starvation.
+A small queue may contain **a request that has been blocked for a long time**, while a large queue may resolve quickly. Length describes a volume; age reveals a risk of delay or starvation.
 
 Track also arrivals, departures and distribution of waiting by priority. An alert must specify the perimeter and the action expected. Do not reset the age on a recovery if the user is still waiting for the same task.
 

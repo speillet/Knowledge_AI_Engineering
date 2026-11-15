@@ -52,15 +52,15 @@ Which “code” orchestrator for planned data pipelines, modern Python orchestr
 - **Modern Python orchestration**, focused on tasks or assets: **Prefect**, **Dagster**
 - **Long workflows that have to survive breakdowns** (human expectations, agents): **Temporal** and its **durable execution**
 
-Starting from the need for recovery: recalculating a data partition is not the same as resuming an approval wait after three days. Testing delays, resorches and external effects with the chosen orchestrator. A sustainable execution keeps the progress, but replayable activities must always manage the idempotency of business writes.
+Starting from the need for recovery: recalculating a data partition is not the same as resuming an approval wait after three days. Test delays, restarts and external effects with the chosen orchestrator. A durable execution keeps the progress, but replayable activities must always manage the idempotency of business writes.
 
 ---
 
-Why are agents interested in sustainable enforcement? <!--anki:624b5d7544713e7d2179-->
+Why is durable execution useful for agents? <!--anki:624b5d7544713e7d2179-->
 ?
 It allows you to **recover a workflow from a durable history**, without redoing the steps whose result has already been saved.
 ```python
-await workflow.execute_activity(proposer_remboursement, dossier,
+await workflow.execute_activity(propose_refund, case,
                                 start_to_close_timeout=timedelta(minutes=5))
 await workflow.wait_condition(lambda: self.decision is not None)  # human signal, no time limit
 ```

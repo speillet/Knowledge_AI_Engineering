@@ -52,7 +52,7 @@ Four historical answers are corrected, with their questions and identifiers reta
 - Deduplication: a semantic likeness is not enough to merge examples; numbers, negations and variants can be decisive.
 - Versioning: A fingerprint does not prove usage rights, and a named version must remain physically accessible to be rebuilt.
 - Durable execution: a persistent history does not guarantee the uniqueness of all remote activities.
-- Orchestration data and sustainable execution: distinguish objectives and guarantees without presenting the categories of tools as exclusive.
+- Orchestration data and durable execution: distinguish objectives and guarantees without presenting the categories of tools as exclusive.
 
 Each new listing contains primary sources and reciprocal connections. Sources include PostgreSQL, Kimball Group, Apache Parquet/Arrow/Avro/Iceberg/Spark/Beam/Flink/Kafka/Airflow, dbt, OpenLineage, Feast, PyTorch, Hugging Face, and the authors' article on deduplication.
 

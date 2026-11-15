@@ -100,12 +100,12 @@ class Engine:
             # Exact retrieval on a synthetic versioned source, without vector engine.
             policy = {
                 "version": "support-v1",
-                "text": "Any creation of having requires human approval and a sufficient balance.",
+                "text": "Issuing a credit note requires human approval and a sufficient balance.",
             }
             span.update(output=policy)
         # Controlled response: Tests the integration, not the quality of a vendor.
         model = GenericFakeChatModel(messages=iter([json.dumps(state["request"])]))
-        prompt = policy["text"] + " Demande : " + json.dumps(state["request"])
+        prompt = policy["text"] + " Request: " + json.dumps(state["request"])
         with self.telemetry.start_as_current_observation(
             name="propose-refund",
             as_type="generation",
@@ -123,9 +123,9 @@ class Engine:
         # Independent validation of the model response.
         request = state["request"]
         if proposal["order_id"] != request["order_id"] or proposal["amount_cents"] != request["amount_cents"]:
-            raise Conflict("The model has changed the demand")
+            raise Conflict("The model changed the request")
         if proposal["amount_cents"] > order["remaining"]:
-            raise Conflict("Solde insuffisant")
+            raise Conflict("Insufficient balance")
         return {"proposal": proposal, "status": "waiting"}
 
     def approve(self, state):
@@ -141,7 +141,7 @@ class Engine:
         ) as span:
             receipt = self.store.refund(state["run_id"], state["tenant"], state["proposal"])
             span.update(output={"receipt": receipt})
-        # The business transaction is already validated; the next checkpoint is not.
+        # The business transaction is already committed; the next checkpoint is not.
         if self.fault == "exit_after_effect":
             os._exit(73)
         if self.fault == "raise_after_effect":
@@ -193,7 +193,7 @@ class Engine:
                     span.update(output={"status": status, "receipt": current.values.get("receipt")})
                 self.store.status(run_id, status)
             except Exception:
-                # Failed means interrupted treatment, no evidence of no effect.
+                # Failed means processing was interrupted; it does not prove that no effect occurred.
                 self.store.status(run_id, "failed")
                 raise
             finally:

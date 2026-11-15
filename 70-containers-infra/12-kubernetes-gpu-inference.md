@@ -104,7 +104,7 @@ Why is GPU management so important in inference on Kubernetes? <!--anki:69785125
 ?
 Because the **GPU is a rare and expensive resource**: its allocation and sharing condition the cost and density of the service.
 
-A too large allocation immobilizes the capacity; poorly controlled sharing degrades the memory and latency of neighbors. Choose GPU integer, hardware partition or time sharing according to the need for isolation. Follow usage, memory, queue and useful bitrate to verify that the density obtained complies with the SLO.
+A too large allocation immobilizes the capacity; poorly controlled sharing degrades the memory and latency of neighbors. Choose GPU integer, hardware partition or time sharing according to the need for isolation. Follow usage, memory, queue and useful throughput to verify that the density obtained complies with the SLO.
 
 ---
 

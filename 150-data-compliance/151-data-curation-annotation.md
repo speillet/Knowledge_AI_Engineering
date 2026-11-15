@@ -53,11 +53,11 @@ Annotate the same examples without consultation before arbitration. Versioning t
 
 How to measure the inter-annotator agreement? <!--anki:416b7945232c3f326648-->
 ?
-Annotate **independently the same sample**, then measure raw chord, disagreements by class and adapted coefficient: Cohen kappa for two annotators, Krippendorff alpha for more general configurations.
+Annotate **independently the same sample**, then measure raw agreement, disagreements by class and adapted coefficient: Cohen kappa for two annotators, Krippendorff alpha for more general configurations.
 
 For example, if a class represents 95% of cases, a strong raw agreement may mostly reflect this prevalence. Corrected coefficients use an expected agreement model, but remain sensitive to distribution and protocol.
 
-A weak chord signals ambiguity, difficulty, or insufficient formation; it is not a **universal mathematical ceiling** for a [[95-llm-as-judge|juge LLM]]. Build an arbitrated reference and document uncertainty rather than automatically declare an infallible annotator.
+Low agreement signals ambiguity, difficulty or insufficient training; it is not a **universal mathematical ceiling** for a [[95-llm-as-judge|LLM judge]]. Build an arbitrated reference and document uncertainty rather than automatically declare an infallible annotator.
 
 ---
 
@@ -151,8 +151,8 @@ Scenario: two annotators disagree on a third of the cases of your eval game. Wha
 1. **Do not blame annotators**: frequent disagreement reveals above all an ill-defined **criterion**
 2. **Measure** the agreement with a metric that corrects chance (kappa), rather than a gross percentage
 3. **Resume guide**: definitions, positive and negative examples, treatment of borderline cases, option "uncertain"
-4. **Re-annotate a driver** and check that the agreement is up
-5. **Pulling a marker**: an automatic judge can do no better than human agreement ([[95-llm-as-judge|juge]])
+4. **Re-annotate a pilot sample** and check whether agreement improves
+5. **Derive a bound**: an automatic judge can do no better than human agreement ([[95-llm-as-judge|judge]])
 
 **Trap**: decide the disagreements yourself and freeze an eval game whose criteria remain unclear.
 

@@ -45,11 +45,11 @@ The first reduces **latency**, the second increases **reliability** ([[65-probab
 
 ---
 
-What is the valuator-optimizer pattern? <!--anki:6f513979335932596924-->
+What is the evaluator–optimizer pattern? <!--anki:6f513979335932596924-->
 ?
 A **loop**: a call **generates**, a second **evaluates** according to explicit criteria and returns a review, the first **corrects**, until validation or maximum number of turns.
 
-It works when two conditions are met: **Clear assessment criteria**, and a criticism that **Really Improves** The answer (translation, Drafting, code that needs to pass tests). Without verifiable criteria, the Round Loop[[95-llm-as-judge|juge]]).
+It works when two conditions hold: **clear evaluation criteria** and feedback that **improves the answer**, such as translation, writing or code that must pass tests. Without verifiable criteria, the loop goes in circles ([[95-llm-as-judge|judge]]).
 
 ---
 
@@ -166,7 +166,7 @@ Scenario: your team has built a stand-alone agent to process claims. It succeeds
 Scenario: a generator of product descriptions has 20% of rejections by the marketing team (tone, length, forbidden mentions). You are considering an evaluation-optimizer loop. How do you design it? <!--anki:4c313c6c243e38355869-->
 ?
 1. **Write the criteria** of the marketing in verifiable form: length, prohibited mentions (in code), tone (judge)
-2. **Check first in code** everything that can be checked, and reserve the judge by tone ([[95-llm-as-judge|juge]])
+2. **Check first in code** everything that can be checked, and reserve the judge by tone ([[95-llm-as-judge|judge]])
 3. **Calibrate the judge** on 100 descriptions already accepted or rejected by marketing
 4. **Limit to 2 or 3 turns**, and climb to a human beyond
 5. **Measure** rejection rate and cost per description before and after

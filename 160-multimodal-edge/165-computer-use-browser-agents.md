@@ -165,7 +165,7 @@ Scenario: during a test, your browser agent, in charge of comparing prices, went
 - [[32-tool-calling|Tool calling]] — prefer the API when it exists
 - [[33-mcp|MCP]] — Playwright MCP and browser tools
 - [[102-agent-threats|Threats to agents]] — injection by web content
-- [[103-agent-defenses|Defenses of agents]] — insulation and confirmations
+- [[103-agent-defenses|Defenses of agents]] — isolation and confirmations
 - [[38-agent-platforms|Platforms of agents]] — Managed Browsers and Sandboxes
 - [[101-llm-security-guardrails|LLM Security]] — injection, exfiltration and guardrails
 - [[114-reproducibility-variance|Reproducibility & variance]] — non-determinism and eval statistics

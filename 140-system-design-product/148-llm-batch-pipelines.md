@@ -8,7 +8,7 @@ When to process data by LLM in batch rather than online? <!--anki:73254754575550
 ?
 When the result can be **differed**: document extraction, history classification, embeddings or massive evaluations. Discounts of API batches and the best filling GPU can reduce the cost, depending on the supply and load ([[121-inference-costs|costs]]).
 
-The batch keeps a **deadline**: a report available at 9 h fails if the processing ends at noon. Sizing useful bitrate, withdrawals and margin before this deadline; plan to resume by item rather than relaunch the whole batch. Declare separately acceptance of the job and success of each of its results.
+The batch keeps a **deadline**: a report available at 9 h fails if the processing ends at noon. Sizing useful throughput, withdrawals and margin before this deadline; plan to resume by item rather than relaunch the whole batch. Declare separately acceptance of the job and success of each of its results.
 
 ---
 

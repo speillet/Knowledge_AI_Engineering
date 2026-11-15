@@ -74,7 +74,7 @@ Example: the agent searches for a command, receives "3 results, including 2 canc
 
 What is the best-of-n with checker? <!--anki:674758746a32554c483a-->
 ?
-Generate **n answers** and then choose the best through a **verify**: unit tests (code), formal verification, [[95-llm-as-judge|juge]] or reward model. The gain depends mainly on the **quality of the verify**: an executable verify (tests) is much more reliable than a judge LLM.
+Generate **n answers**, then choose the best using a **verifier**: unit tests for code, formal verification, an [[95-llm-as-judge|LLM judge]] or a reward model. The gain depends mainly on **verifier quality**: executable checks such as tests are much more reliable than an LLM judge.
 
 The cost increases linearly with n, the gain much less: the first additional tests often help clearly, the following ones less and less. With an imperfect judge, increase can even degrade the result: the more candidates there are, the more likely the judge is to prefer a forgery that exploits its biases.
 

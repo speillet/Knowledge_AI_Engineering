@@ -177,7 +177,7 @@ Scenario: you want the code agent to update every week the dependencies of about
 - [[55-agentic-rl|Agentic RL]] — how models learn to code as agents
 - [[03-containerd-runc|containerd & runc]] — the runtime that actually runs the containers
 - [[102-agent-threats|Threats to agents]] — real attacks and incidents
-- [[103-agent-defenses|Defenses of agents]] — insulation, policies and least privilege
+- [[103-agent-defenses|Defenses of agents]] — isolation, policies and least privilege
 - [[143-hallucinations-grounding|Hallucinations & grounding]] — quotes, abstention and verification
 - [[145-system-design-cases|Case of system design]] — of commented type architectures
 - [[38-agent-platforms|Platforms of agents]] — runtime, sandbox, tool gateway and identity

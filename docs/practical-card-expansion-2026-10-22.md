@@ -1,6 +1,6 @@
 # Concrete anchoring of abstract maps — 22 October 2026
 
-This pass continues the enrichment of the [17](relevance-review-2026-10-17.md) and [20 octobre](mlops-card-expansion-2026-10-20.md). It no longer aims at the length of the answers but their **anchoring**: the README requests "encrypted markers and executable examples rather than abstract formulations", and the review of the 17 October reported recent maps "that answer with a checklist".
+This pass continues the enrichment of the [17](relevance-review-2026-10-17.md) and [20 October](mlops-card-expansion-2026-10-20.md). It no longer aims at the length of the answers but their **anchoring**: the README requests "quantitative reference points and executable examples rather than abstract formulations", and the review of the 17 October reported recent cards "that answer with a checklist".
 
 The following sections keep the historical record of the 22 October. These local changes were integrated and completed during the [Cross-country pass in November](#cross-sectional-supplement-of-november-2026) described at the end of the document; its figures should not be confused with those of the first pass.
 
@@ -16,7 +16,7 @@ This measure is a crude indicator: an example named without a number remains cou
 
 Each addition **replaces a generic sentence** rather than adding to it, to remain below the limit of 110 words. It brings one of the following four elements, absent from the map and its neighbors:
 
-| Apport | Exemples |
+| Contribution | Examples |
 | --- | --- |
 | Encrypted scenario | Coordinated omission on a blocked client 2 s, spending cap exceeded by two competing transactions, coverage of an interval at 90% measured at 83% |
 | Code or request | outbox and inbox in SQL, conditional write `ON CONFLICT … WHERE`, reducer LangGraph that rejects conflicts, `merge_asof` point-in-time, salting PySpark |

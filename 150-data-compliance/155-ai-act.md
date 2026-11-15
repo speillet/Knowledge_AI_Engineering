@@ -208,5 +208,5 @@ Targeted review of 13 November 2026: affirmations specified in this pass; other 
 - [[144-ai-ux-human-in-the-loop|UX of AI]] — inform the user
 - [[147-ai-technical-leadership|Technical Leadership]] — regulatory framing of projects
 - [[146-model-selection|Choice of models]] — criteria, benchmarks and migration
-- [[103-agent-defenses|Defenses of agents]] — insulation, policies and least privilege
+- [[103-agent-defenses|Defenses of agents]] — isolation, policies and least privilege
 - [[00-moc-ai-engineering|MOC AI Engineering]]

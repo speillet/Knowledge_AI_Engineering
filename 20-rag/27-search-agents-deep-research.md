@@ -175,6 +175,6 @@ Scenario: your search agent produces good reports, but costs 8 € and 25 minute
 - [[36-agent-orchestration|Orchestration multi-agents]] — orchestrator and subagents
 - [[143-hallucinations-grounding|Hallucinations & grounding]] — citations fiables
 - [[102-agent-threats|Threats to agents]] — injection by the pages read
-- [[96-evals-rag-agents|Evaluation of GARs & Agents]] — measure coverage and fidelity
+- [[96-evals-rag-agents|Evaluation of RAG systems & Agents]] — measure coverage and fidelity
 - [[165-computer-use-browser-agents|Browser Agents]] — when searching requests to browse
 - [[00-moc-ai-engineering|MOC AI Engineering]]

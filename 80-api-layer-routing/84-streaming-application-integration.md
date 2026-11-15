@@ -70,11 +70,11 @@ This is the object of protocols like **AG-UI**, which standardizes these events 
 How to expose an agent task that lasts several minutes? <!--anki:6a352641682c7b69602d-->
 ?
 Not in synchronous HTTP request: connections are cut and we lose everything. We pass in **asynchronous**:
-1. `POST /taches` immediately returns a **ID**
-2. The agent turns into a **worker**, his condition is persisted
+1. `POST /tasks` immediately returns an **ID**
+2. The agent runs in a **worker**, with its state persisted
 3. The client follows the progress by **SSE**, by periodic query, or receives a **webhook** at the end
 
-If the worker restarts, the task resumes thanks to the **Sustainable Execution** ([[115-agent-platforms-governance|Sustainable Execution]]).
+If the worker restarts, the task resumes thanks to the **Durable Execution** ([[115-agent-platforms-governance|Durable Execution]]).
 
 ---
 
@@ -150,7 +150,7 @@ Scenario: your assistant stream well locally, but in production the answer appea
 Scenario: an analysis agent takes 3 to 8 minutes to produce a report. Today the interface waits for the HTTP response, and 20% scans are lost. How do you recognize the integration? <!--anki:76523976517d40646353-->
 ?
 1. **Go asynchronous**: Create task with ID, Idempotence key against duplicate submissions
-2. **Run in a worker** with durable execution, to survive reboots ([[115-agent-platforms-governance|Sustainable Execution]])
+2. **Run in a worker** with durable execution, to survive reboots ([[115-agent-platforms-governance|Durable Execution]])
 3. **Publish progress** in events (steps, sources read), searchable by SSE with recovery via `Last-Event-ID`
 4. **Notify end** by webhook or notification, so the user can close the tab
 5. **Measure**: completion rate, duration, abandonments

@@ -145,7 +145,7 @@ def audit_claims(response, context, documents, principal, as_of):
 
 def evaluate(corpus, case, mode, k=4):
     if mode not in {"baseline", "filtered"}:
-        raise ValueError("mode inconnu")
+        raise ValueError("unknown mode")
     principal = corpus["principals"][case["principal"]]
     as_of = date.fromisoformat(case["as_of"])
     documents = corpus["documents"]

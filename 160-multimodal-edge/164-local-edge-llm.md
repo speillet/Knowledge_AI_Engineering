@@ -28,7 +28,7 @@ What is llama.cpp and the GGUF format? <!--anki:647e555f4a2a7a723579-->
 ?
 **llama.cpp** is a portable C/C++ inference engine, with different CPU and GPU backends. **GGUF** describes a weight and metadata container; weights can be quantified or floating precision, and the model can be split into shards.
 
-The tokenizer and the chat template must match the template; check the metadata present. Example: `llama-server -m modele.gguf -c 8192 -ngl 99`. `-ngl 99` requests the offload of a number of layers; the result depends on the template, the backend and the memory. Check logs instead of assuming that the entire template runs on GPU.
+The tokenizer and the chat template must match the template; check the metadata present. Example: `llama-server -m model.gguf -c 8192 -ngl 99`. `-ngl 99` requests the offload of a number of layers; the result depends on the template, the backend and the memory. Check logs instead of assuming that the entire template runs on GPU.
 
 ---
 

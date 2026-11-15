@@ -167,7 +167,7 @@ Scenario: your internal MCP server, written before spec 2026-07-28, keeps the st
 - [[115-agent-platforms-governance|— Agent Platforms Architecture & Governance]] — Business Authorization and Tool Gateway
 - [[104-mcp-skills-security|Security of MCP & Skills]] — attacks specific to MCP and spec rules
 - [[85-agentic-protocols-map|Map of protocols]] — MCP from A2A, AG-UI and others
-- [[103-agent-defenses|Defenses of agents]] — insulation, policies and least privilege
+- [[103-agent-defenses|Defenses of agents]] — isolation, policies and least privilege
 - [[165-computer-use-browser-agents|Computer use & browser agents]] — agents that use interfaces
 - [[24-cognee|Cognee]] — an agent memory in knowledge graph
 - [[84-streaming-application-integration|Streaming & integration]] — SSE, cancellation and long tasks

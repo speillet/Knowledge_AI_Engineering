@@ -177,7 +177,7 @@ Scenario: you want to ensure that no agent on your team can launch `terraform ap
 - [[38-agent-platforms|Platforms of agents]] — harness across an organization
 - [[106-coding-agent-security|Security of Code Agents]] — Code Agent Permission and Isolation Modes
 - [[49-coding-agents|Code Agents]] — Daily Use of a Code Harness
-- [[103-agent-defenses|Defenses of agents]] — insulation, policies and least privilege
+- [[103-agent-defenses|Defenses of agents]] — isolation, policies and least privilege
 - [[104-mcp-skills-security|Security of MCP & Skills]] — tools and skills as supply chain
 - [[24-cognee|Cognee]] — an agent memory in knowledge graph
 - [[36-agent-orchestration|Orchestration multi-agents]] — subagents, handoffs and A2A

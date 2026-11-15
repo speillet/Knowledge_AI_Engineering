@@ -194,7 +194,7 @@ class RagWorkshopTests(unittest.TestCase):
             report = json.loads(path.read_text(encoding="utf-8"))
             self.assertEqual(report["snapshot"], self.corpus["snapshot"])
             self.assertEqual(report["summary"]["filtered"]["passed"], 1)
-            for arguments in (("--k", "0"), ("--case", "inconnu"), ("--questions", "--json", str(path))):
+            for arguments in (("--k", "0"), ("--case", "unknown"), ("--questions", "--json", str(path))):
                 with self.subTest(arguments=arguments):
                     self.assertEqual(run(*arguments).returncode, 2)
 

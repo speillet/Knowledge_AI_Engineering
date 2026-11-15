@@ -7,11 +7,11 @@ Why start an agent workflow with its business invariants? <!--anki:6130323438373
 ?
 **invariants** describe what should remain true despite errors and concurrency: an order should not be debited twice, a stock should not become negative, a sensitive action should match the approved parameters.
 
-They guide the storage, transitions, and controls. A prompt asking to "be careful" does not impose anything on the writes; `CHECK (stock >= 0)` or `UNIQUE (order_id)` on the bitrate table causes the faulty write to fail, regardless of the model text. For each invariant, identify where it is checked, which concurrent operations may threaten it, and what happens if the process crashes there.
+They guide the storage, transitions, and controls. A prompt asking to "be careful" does not impose anything on the writes; `CHECK (stock >= 0)` or `UNIQUE (order_id)` on the charges table causes the faulty write to fail, regardless of the model text. For each invariant, identify where it is checked, which concurrent operations may threaten it, and what happens if the process crashes there.
 
 ---
 
-What is the problem with dual writing between business base and broker? <!--anki:3335356335363537623034643434623138366330643232363266666135376536-->
+What problem does a dual write between a business database and a broker create? <!--anki:3335356335363537623034643434623138366330643232363266666135376536-->
 ?
 If one **validates in base and then publishes an event**, a crash between the two leaves a change without notification. If one publishes first, the event can announce a change eventually canceled in base.
 
@@ -19,7 +19,7 @@ Changing the order moves the problem without solving it. It requires proper tran
 
 ---
 
-How does the transactional outbox pattern solve double write? <!--anki:3738363031656632333061323438653162666433346538613039663263616231-->
+How does the transactional outbox pattern solve the dual-write problem? <!--anki:3738363031656632333061323438653162666433346538613039663263616231-->
 ?
 Write **the business mutation and the event to be published in the same local transaction**. A relay then reads the validated entries of the outbox and transmits them to the broker, with recovery on error.
 ```sql
@@ -99,23 +99,23 @@ Keep operation key, allowed settings, vendor references, and attempt history. Tr
 
 Why is an agent checkpoint not enough to secure external effects? <!--anki:3333323166376239613861633432613862333037376561316162666230633934-->
 ?
-The checkpoint describes **the saved state of the workflow**, but is not necessarily atomic with the action performed by a remote tool. If the action succeeds and the backup fails, the recovery can return just before this action.
+A checkpoint describes **the saved workflow state**, but is not necessarily atomic with an action performed by a remote tool. If the action succeeds and saving the checkpoint fails, recovery can return to just before that action.
 
-For example: LangGraph reruns the `payer` node from the last checkpoint; only the stable key `run-42:payer`, passed to the provider, allows it to recognize the first bit rate. The persistence of the framework makes the calculation reprehensible; the uniqueness of the effects requires additional guarantees in the tools and their destinations.
-
----
-
-How to test the guarantees of a distributed workflow beyond the happy path? <!--anki:3632653736656631316438653439633738323635343439386630376137396362-->
-?
-Inject failures **at the boundaries between effect, persistence, and acquittal**. Replay the same event, lose a response, stop a worker after a commit, misorder messages, and execute two simultaneous attempts.
-
-For example, a `os._exit(1)` injection point immediately after commit simulates a stop that no `finally` intercepts; a proxy like Toxicoxy cuts off the broker's response after receiving it; a test that only controls the HTTP response misses the double effects, and a perfect mock can hide the provider's actual limits.
+Record the action's identity before the call and reuse it during recovery. For example, LangGraph reruns the `pay` node from the last checkpoint; the stable key `run-42:pay`, passed to the provider, lets it recognize the original charge. Framework persistence makes computation resumable; unique effects require additional guarantees from tools and their destinations.
 
 ---
 
-Why monitor the age of the oldest unreleased event in an outbox? <!--anki:3636643839336264316663613435313338653061666336363664653033633631-->
+How do you test distributed workflow guarantees beyond the happy path? <!--anki:3632653736656631316438653439633738323635343439386630376137396362-->
 ?
-A **small number of pending events** can hide an event that has beas a batchked for hours. The volume alone does not reveal either the business delay or a line that fails on each attempt.
+Inject failures **at the boundaries between effect, persistence and acknowledgment**. Replay the same event, lose a response, stop a worker after commit, reorder messages and run two simultaneous attempts.
+
+Check business invariants and the ability to reach a terminal state or an explicit unknown-outcome state. For example, injecting `os._exit(1)` immediately after commit simulates a shutdown that no `finally` block can intercept; a proxy such as Toxiproxy cuts off the broker's response after receipt. Testing only the HTTP response misses duplicate effects, and a perfect mock can hide the provider's real limitations.
+
+---
+
+Why monitor the age of the oldest unpublished event in an outbox? <!--anki:3636643839336264316663613435313338653061666336363664653033633631-->
+?
+A **small number of pending events** can hide an event that has been blocked for hours. The volume alone does not reveal either the business delay or a line that fails on each attempt.
 
 Track age, publishing rate, and errors by category. Provide bounded recovery, inspectable quarantine, and reconciliation with expected effects. Test an invalid event in the middle of a healthy stream: it must not disappear or silently block all subsequent ones. The outbox transaction guarantees joint recording; it does not guarantee on its own that the relay will publish on time.
 
@@ -129,7 +129,7 @@ Choose according to business constraints, with explicit duration and ownership. 
 
 ---
 
-Why should the order of events in an outbox be set per entity when updates do not switch? <!--anki:3738353130306332626330613431373438386330356135636362626534396639-->
+Why should outbox events be ordered per entity when updates do not commute? <!--anki:3738353130306332626330613431373438386330356135636362626534396639-->
 ?
 Posting "closed" before "open" can make **regress state to a consumer** if events are applied in their order of arrival.
 
@@ -151,7 +151,7 @@ Scenario: an agent debited a client, then the server stopped before its checkpoi
 
 ---
 
-Scenario: the creation of a command succeeds, but its processing event sometimes never arrives in the queue. How do you fix the architecture? <!--anki:3135376531326265343464643465353761393966323438333730396331656366-->
+Scenario: creating an order succeeds, but its processing event sometimes never reaches the queue. How do you fix the architecture? <!--anki:3135376531326265343464643465353761393966323438333730396331656366-->
 ?
 1. **Identify double-write** and the window between commit base and publish.
 2. **Save order and event** in an outbox transaction.
@@ -163,7 +163,7 @@ Scenario: the creation of a command succeeds, but its processing event sometimes
 
 ---
 
-Scenario: a stock reservation succeeds, the payment fails and the release of the stock also fails. Which state should expose the system? <!--anki:3436323335393733623033393463653638316363373766633465393737653534-->
+Scenario: a stock reservation succeeds, the payment fails and the release of the stock also fails. What state should the system expose? <!--anki:3436323335393733623033393463653638316363373766633465393737653534-->
 ?
 1. **Keep the payment failure** and the separate compensation status to complete.
 2. **Sustainably record the release**, with an identity allowing it to be replayed.
@@ -182,7 +182,7 @@ Scenario: a stock reservation succeeds, the payment fails and the release of the
 - [PostgreSQL — isolation and competing transactions](https://www.postgresql.org/docs/current/transaction-iso.html)
 
 ## Connections
-- [[149-delivery-idempotency-concurrency|Delivery, Idempotence & Competition]] — workflow bricks guaranteed
+- [[149-delivery-idempotency-concurrency|Delivery, Idempotency & Concurrency]] — guarantees provided by workflow components
 - [[45-langgraph-production|LangGraph in production]] — distinguish checkpoint and business effect
 - [[115-agent-platforms-governance|Governance of agents]] — permissions, approvals, and compensation
 - [[144-ai-ux-human-in-the-loop|UX & validation humaine]] — approve an exact request and track its result

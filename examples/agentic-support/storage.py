@@ -39,7 +39,7 @@ class Store:
                 seq INTEGER PRIMARY KEY AUTOINCREMENT, run_id TEXT NOT NULL,
                 kind TEXT NOT NULL, payload TEXT NOT NULL);
         """)
-        # Fictive data; no reset of a previously processed command.
+        # Synthetic data; do not reset an order that was already processed.
         with self.db:
             for tenant in ("alice", "bob"):
                 self.db.execute("INSERT OR IGNORE INTO orders VALUES (?, 'order-1', 10000, 1)", (tenant,))
@@ -50,7 +50,7 @@ class Store:
     def owned(self, run_id, tenant):
         row = self.db.execute("SELECT * FROM runs WHERE id=? AND tenant=?", (run_id, tenant)).fetchone()
         if row is None:
-            raise KeyError("Dossier introuvable")
+            raise KeyError("Case not found")
         return dict(row)
 
     def event(self, run_id, kind, payload):
@@ -90,7 +90,7 @@ class Store:
                     raise Conflict("A different decision is already recorded")
                 return
             if row["status"] != "waiting":
-                raise Conflict("The file does not wait for a decision")
+                raise Conflict("The case is not awaiting a decision")
             self.db.execute("UPDATE runs SET decision=?,proposal_hash=? WHERE id=?", (int(approved), digest, run_id))
             self.event(run_id, "decision", {"approved": approved, "proposal_hash": digest})
 
@@ -99,7 +99,7 @@ class Store:
             "SELECT remaining,version FROM orders WHERE tenant=? AND id=?", (tenant, order_id)
         ).fetchone()
         if row is None:
-            raise ValueError("Commande introuvable")
+            raise ValueError("Order not found")
         return dict(row)
 
     def refund(self, run_id, tenant, proposal):
@@ -124,10 +124,10 @@ class Store:
             order = self.order(tenant, proposal["order_id"])
             amount = proposal["amount_cents"]
             if type(amount) is not int or not 0 < amount <= order["remaining"]:
-                raise Conflict("Montant invalide")
+                raise Conflict("Invalid amount")
             if order["version"] != proposal["order_version"]:
                 raise Conflict("Order modified since proposal")
-            receipt = "avoir-" + run_id
+            receipt = "credit-" + run_id
             self.db.execute(
                 "UPDATE orders SET remaining=remaining-?,version=version+1 WHERE tenant=? AND id=?",
                 (amount, tenant, proposal["order_id"]),

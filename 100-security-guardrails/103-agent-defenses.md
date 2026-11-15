@@ -179,7 +179,7 @@ What layers of design and control form the in-depth defense of an agent? <!--ank
 1. Design: Rule of Two, design patterns, narrow tools
 2. Identity: user rights, short and limited tokens
 3. Control: validation, policy engine, provenance
-4. Insulation: sandbox, filtered outgoing network, secrets out of reach
+4. Isolation: sandbox, filtered outgoing network, secrets out of reach
 ```
 
 These layers aim to prevent malicious content from becoming a powerful action. Identity limits accessible resources; the policy engine checks for actual action; isolation limits effects if a control fails. For example, a document-reading tool does not need a payment secret or general network access.

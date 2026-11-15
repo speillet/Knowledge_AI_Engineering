@@ -1,4 +1,4 @@
-"""API locale de demonstration: uvicron api:create_app --factory --workers 1."""
+"""Local demonstration API: uvicorn api:create_app --factory --workers 1."""
 
 from contextlib import asynccontextmanager
 import os
@@ -22,7 +22,7 @@ def identity(authorization: str = Header(default="")):
     # Public educational accounts, NOT a production authentication mechanism.
     identities = {"Bearer alice-demo": "alice", "Bearer bob-demo": "bob"}
     if authorization not in identities:
-        raise HTTPException(401, "Using a demonstration identity")
+        raise HTTPException(401, "Use a demonstration identity")
     return identities[authorization]
 
 
@@ -34,7 +34,7 @@ def create_app(directory=None):
         yield
         engine.close()
 
-    app = FastAPI(title="Atelier support agentique local", lifespan=lifespan)
+    app = FastAPI(title="Local agentic support workshop", lifespan=lifespan)
     app.state.engine = engine
 
     @app.exception_handler(Conflict)
@@ -43,7 +43,7 @@ def create_app(directory=None):
 
     @app.exception_handler(KeyError)
     async def missing_handler(request, exc):
-        return JSONResponse(status_code=404, content={"detail": "Dossier introuvable"})
+        return JSONResponse(status_code=404, content={"detail": "Case not found"})
 
     @app.exception_handler(ValueError)
     async def value_handler(request, exc):
@@ -52,7 +52,7 @@ def create_app(directory=None):
     @app.post("/runs")
     def submit(request: Request, tenant=Depends(identity), idempotency_key: str = Header(min_length=1, max_length=128)):
         run_id = engine.create(tenant, idempotency_key, request.model_dump())
-        # The local model is immediate. In production: sustainable worker for long tasks.
+        # The local model is immediate. In production: durable worker for long tasks.
         return engine.drive(tenant, run_id)
 
     @app.get("/runs/{run_id}")
@@ -79,10 +79,10 @@ def create_app(directory=None):
             if after < 0:
                 raise ValueError()
         except ValueError:
-            raise HTTPException(400, "Positive or zero integer slider expected") from None
+            raise HTTPException(400, "Expected a nonnegative integer cursor") from None
         with engine.lock:
             rows = engine.store.events(run_id, tenant, after)
-        # Finished replay of the log, NOT a real-time subscription or a tokens feed.
+        # Finite replay of the log, NOT a real-time subscription or a tokens feed.
         frames = [f"id: {row['seq']}\nevent: {row['kind']}\ndata: {row['payload']}\n\n" for row in rows]
         return StreamingResponse(iter(frames), media_type="text/event-stream", headers={"Cache-Control": "no-cache"})
 

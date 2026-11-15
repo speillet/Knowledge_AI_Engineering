@@ -34,7 +34,7 @@ The **formal scheme of a domain**: the **classes** (Person, Company), their **hi
 
 Why an ontology when a LLM builds the graph? <!--anki:66354d4240287b307542-->
 ?
-Without a schema, extraction **drift**: duplicates ("Paris", "City of Paris"), synonym relationships (WORKS_FOR, EMPLOYED_BY), invented types, and the graph becomes impossible to interrogate. Ontology **constrains extraction** (types of entities and relations authorized, in [[63-guided-generation|Structured Exit]]) and reduces entities to canonical **terms**.
+Without a schema, extraction **drifts**: duplicate entities ("Paris", "City of Paris"), synonymous relationships (WORKS_FOR, EMPLOYED_BY) and invented types make the graph difficult to query. An ontology **constrains extraction** to allowed entity and relationship types, using [[63-guided-generation|structured output]], and normalizes entities to **canonical terms**.
 
 For example, imposing a `EMPLOYE_PAR` relationship avoids three names for the same link, but this does not prove that the job exists or that two people with the same name are the same. Keep the source of each relationship and control separately **schema validity, identity resolution, and factual accuracy**.
 
