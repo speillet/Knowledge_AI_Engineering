@@ -1,4 +1,4 @@
-# Kubernetes GPU & inference — Flashcards
+# Kubernetes, GPUs & inference — Flashcards
 Tags: #flashcards #kubernetes #gpu #llm #inference
 Verified on: 25 September 2026 — This factsheet lists products, versions or regulatory texts that are evolving quickly.
 <!-- summary: device plugin, `nvidia.com/gpu` resource, MIG, time-slicing, KServe, autoscaling (HPA, KEDA), scale-out pressure on storage, rollout capacity, careful scale-down. -->

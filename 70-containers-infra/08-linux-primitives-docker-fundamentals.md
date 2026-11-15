@@ -1,4 +1,4 @@
-# Primitive Linux & Docker fundamentals — Flashcards
+# Linux primitives & Docker fundamentals — Flashcards
 Tags: #flashcards #containers #linux #docker
 <!-- summary: namespaces and cgroups, container or VM, layers, Dockerfile and cache order, volumes and bind mounts, port mapping, distinction between RAM and VRAM, PID 1 and signals, disk and inodes. -->
 

@@ -1,4 +1,4 @@
-# Caching agressif — Flashcards
+# Aggressive caching — Flashcards
 Tags: #flashcards #ai-engineering #finops #caching #costs #llm
 Verified on: 17 October 2026 — This page lists products, versions or regulatory texts that are evolving quickly.
 <!-- summary: prompt caching (TTL, write and read prices), stable prompt structure, which breaks the cache, append-only context, parallel requests and pre-heating, response caches, embeddings and tool caches, prompt caching, exact or semantic cache, invalidation, security, steering, false semantic cache equivalents, stampede, verified freshness. -->

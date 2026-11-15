@@ -1,4 +1,4 @@
-# Security LLM & guardrails — Flashcards
+# LLM security & guardrails — Flashcards
 Tags: #flashcards #ai-engineering #security #guardrails #llm
 Verified on: 25 September 2026 — global date preserved; targeted review of 13 November 2026 detailed in Sources.
 <!-- summary: OWASP Top 10 LLM 2026, exposure of the hidden context and change of identifiers, direct or indirect injection, “lethal trifecta”, exfiltration, excessive agency, guardrails (Llama Guard, NeMo Guardrails), red teaming, false positive injection detectors, fail-open, cost of false positives. -->

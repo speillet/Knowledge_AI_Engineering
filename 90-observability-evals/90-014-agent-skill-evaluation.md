@@ -1,4 +1,4 @@
-# Evaluate agent skills — Flashcards
+# Evaluating agent skills — Flashcards
 Tags: #flashcards #ai-engineering #evals #agents #skills #llm
 Verified on: 14 November 2026 — This factsheet lists fast-moving products, versions or regulatory texts.
 <!-- summary: Compliance, triggering and utility, role of description, overly simple requests, trigger set and near-misses, trace detection, three-test noise, training and validation, paired executions, reference without skill or older version, assertions and evidence, cost-per-success, SkillsBench (curated and self-generated skills, size, normalized gain), solution leak, skill invoked or useful. -->

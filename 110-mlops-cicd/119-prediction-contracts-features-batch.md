@@ -1,4 +1,4 @@
-# Prediction contracts, features & scoring batch — Flashcards
+# Prediction contracts, features & batch scoring — Flashcards
 Tags: #flashcards #ai-engineering #mlops #classical-ml #features #batch
 Verified on: 12 November 2026 — feature store behaviors depend on version and backend.
 <!-- summary: grain and contract of a prediction, semantic validation, drive-service parity, uptime, TTL and freshness, missing values, named schemas, feature migrations, deadlines, batch independence, idempotency, full publication, temporal validity of scores, feature removal, label reconciliation, latency budget and batch capability, column order, decision and score. -->

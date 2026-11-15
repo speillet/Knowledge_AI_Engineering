@@ -1,4 +1,4 @@
-# GDPR applied to LLM — Flashcards
+# GDPR for LLMs — Flashcards
 Tags: #flashcards #ai-engineering #gdpr #compliance #data
 Verified on: 25 September 2026 — This factsheet lists products, versions or regulatory texts that are evolving quickly.
 <!-- summary: scope, GDPR or AI Act, principles, legal basis for re-use, controller and processor, transfers outside the EU, right to erasure, AIPD, automated decisions, data in the model, concrete measures, separate purposes between service and training, retention by purpose, proof of erasure. -->

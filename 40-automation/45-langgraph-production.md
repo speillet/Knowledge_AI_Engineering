@@ -1,4 +1,4 @@
-# LangGraph — Production (persistance, HITL, multi-agents) — Flashcards
+# LangGraph — Production (persistence, HITL, multi-agent systems) — Flashcards
 Tags: #flashcards #ai-engineering #agents #langgraph #llm
 Verified on: 25 September 2026 — This factsheet lists products, versions or regulatory texts that are evolving quickly.
 <!-- summary: checkpointers, threads, `interrupt` and `Command(resume=...)`, time travel, Store long-term, durable execution, streaming, subgraphs, multi-agent patterns, deployment, valid take-back approvals, concurrent approval, take-back and secrets. -->

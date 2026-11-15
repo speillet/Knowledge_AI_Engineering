@@ -1,4 +1,4 @@
-# Explainability & diagnostics of — Flashcards
+# Model explainability & diagnostics — Flashcards
 Tags: #flashcards #ai-engineering #classical-ml #explainability #shap
 Verified on: 8 October 2026
 <!-- summary: Local or global explanation, significance by permutation, correlated variables, SHAP contributions, reference population, log-odds, PDP and ICE, actionable counterfactuals, generated justifications and explanation fidelity, stability of explanations, importance and causality, explanation of transformations. -->

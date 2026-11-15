@@ -1,4 +1,4 @@
-# Fine-tuning & adaptation of models — Flashcards
+# Fine-tuning & model adaptation — Flashcards
 Tags: #flashcards #ai-engineering #fine-tuning #llm
 <!-- summary: when to adapt, SFT, PEFT, LoRA and QLoRA, resources, distillation, multi-LoRA, regressions, rank and damping calculation, versions of an adaptor, teacher forcing and free generation, supervision masking, fusion LoRA. -->
 

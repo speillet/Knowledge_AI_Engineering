@@ -1,4 +1,4 @@
-# Charging benchmarks for inference LLM — Flashcards
+# Load benchmarking for LLM inference — Flashcards
 Tags: #flashcards #ai-engineering #inference #benchmark #performance
 Verified on: 8 October 2026
 <!-- summary: Reproducible protocol, open or closed loop, coordinated omission, query mix, cold/hot cache, saturation, uncertainty, generator limits, SLO capability, burst testing, survivor bias, plateau duration. -->

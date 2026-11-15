@@ -1,4 +1,4 @@
-# Inference Optimization Approach LLM — Flashcards
+# LLM inference optimization method — Flashcards
 Tags: #flashcards #ai-engineering #inference #performance #profiling #finops
 Verified on: 8 October 2026
 <!-- summary: objective under constraints, CPU/GPU profiling, CUDA graphs and compilation, kernels, Amdahl law, interactions between optimizations, API quotas, retrievals, routing, reasoning and multimodal, marginal cost of an optimization, causal attribution of the gain, rollback cost. -->

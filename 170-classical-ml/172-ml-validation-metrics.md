@@ -1,4 +1,4 @@
-# Classic ML: Validation, Leaks & Metrics — Flashcards
+# Classical ML: validation, leakage & metrics — Flashcards
 Tags: #flashcards #ai-engineering #classical-ml #validation #metrics
 <!-- summary: Train-validation-test, leaks, cross-validation, groups and times, pipelines, rare classes, ROC and PR, precision calculation according to prevalence, thresholds and uncertainty, balanced-accuracy calculation, macro and micro, pretreatment in folds. -->
 

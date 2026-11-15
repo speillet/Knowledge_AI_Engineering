@@ -1,4 +1,4 @@
-# Agents — Contracts, Faults & Repeats Testing — Flashcards
+# Agent testing — Contracts, failures & recovery — Flashcards
 Tags: #flashcards #ai-engineering #agents #production
 Verified on: 9 October 2026 — API cited against official documentation; limits spelled out in maps.
 <!-- summary: pyramid of tests, simulated models, business invariants, fault windows, double orders, concurrency, migrations, traces, evaluations and release qualification, fault injection after business effect, property test, status readout failure. -->

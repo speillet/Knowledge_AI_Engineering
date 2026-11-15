@@ -1,4 +1,4 @@
-# Time Series Forecast — Flashcards
+# Time series forecasting — Flashcards
 Tags: #flashcards #ai-engineering #classical-ml #forecasting #time-series
 <!-- summary: horizon and cadence, seasonal baseline, ETS or ARIMA or ML, backtesting with slippery origins, future variables, direct or recursive forecasts, lags, MAPE and MASE, quantiles, intervals and hierarchical coherence, MAPE limits with zero sales, horizon and leakage, interval validation. -->
 

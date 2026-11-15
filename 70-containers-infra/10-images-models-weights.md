@@ -1,4 +1,4 @@
-# Images & weights of — Flashcards
+# Container images & model weights — Flashcards
 Tags: #flashcards #containers #models #storage #infra
 <!-- summary: calculation of the loading time of the weights of a 70B, weight in the image or separated, cold start, safetensors or pickle, safetensors or GGUF, distributed models as OCI artifacts, atomic publication of a weight cache, integrity of shards, download cache. -->
 

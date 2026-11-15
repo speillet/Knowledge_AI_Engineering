@@ -1,4 +1,4 @@
-# Routing LLM — Flashcards
+# LLM routing — Flashcards
 Tags: #flashcards #ai-engineering #routing #api-layer #llm
 <!-- summary: static, rule-based or semantic routing, RouteLLM, cascade, load-based routing, semantic cache, calculation of the average cost of a cascade, router bias, counterfactual decision. -->
 

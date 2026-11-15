@@ -1,4 +1,4 @@
-# Security of agents — Defensive architecture — Flashcards
+# Agent security — Defensive architecture — Flashcards
 Tags: #flashcards #ai-engineering #security #agents #defense #llm
 Verified on: 25 September 2026 — This factsheet lists products, versions or regulatory texts that are evolving quickly.
 <!-- summary: Assume Compromise, Agents Rule of Two, Six Design Patterns, Dual LLM and CaMeL, Lower Privilege, Outbound Network, Secrets, Tool Call Validation, Trusted Human Approval, Content Guardrail or Authorization Policy, Memory, Agent Exchanges, Defense in Depth, Argument-Related Approval, Destination Validation, Flight Revocation. -->

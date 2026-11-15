@@ -1,4 +1,4 @@
-# Analytic Data Modeling — Flashcards
+# Analytical data modeling — Flashcards
 Tags: #flashcards #ai-engineering #data #data-engineering
 Verified on: 9 October 2026 — technical references and examples of this file.
 <!-- summary: grain, OLTP and OLAP, facts and dimensions, keys, standardization, join cardinalities, additive measurements, SCD, business identity and metric definitions, weighted global average calculation, semi-additive measurements, historical dimensions. -->

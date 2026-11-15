@@ -1,4 +1,4 @@
-# — Agent Platforms Architecture & Governance — Flashcards
+# Agent platforms — Architecture & governance — Flashcards
 Tags: #flashcards #ai-engineering #agents #platform #governance #llm
 Verified on: 25 September 2026 — global date preserved; targeted review of 13 November 2026 detailed in Sources.
 <!-- summary: internal platform (paved road), control plane and execution planee, reference architecture, separation of the brain, hands and session, durable execution, multi-tenant isolation, exchange of tokens for the delegated agent, throws out of context, standards of identity, engine of policies, human-in-the-loop, register and life cycle, Top 10 OWASP agentic, impact radius and kill switch, Audit, SLO, continuous evals, costs, AI Act, lock-in, criteria of choice, revocation of an active delegation, political versions, verified withdrawal, business and operational responsibilities, Temporary derogations, Revocation of cache, exceptional access. -->

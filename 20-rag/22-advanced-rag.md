@@ -1,4 +1,4 @@
-# RAG Advanced — Flashcards
+# Advanced RAG — Flashcards
 Tags: #flashcards #ai-engineering #rag #retrieval #llm
 <!-- summary: hybrid search (BM25, RRF), ranking, query rewriting, HyDE and its limits, filtering by metadata and ACL, GraphRAG, agentic RAG, "lost in the middle", production problems (fresher, rights, re-indexing), RRF fusion and score scales, diversity of results, ceiling of the ranking. -->
 

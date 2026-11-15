@@ -1,4 +1,4 @@
-# Parsing documents (PDF, OCR, layout) — Flashcards
+# Document parsing (PDF, OCR, layout) — Flashcards
 Tags: #flashcards #ai-engineering #multimodal #document-parsing #rag
 Verified on: 25 September 2026 — This factsheet lists products, versions or regulatory texts that are evolving quickly.
 <!-- summary: Native or scanned PDF, layout analysis, tools (Docling, Unstructured, cloud services, VLM), tables, figures, ColPali, structural chunking, evaluation, exploitation, units and table headers, reading order, global quality calculation. -->
