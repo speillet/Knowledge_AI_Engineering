@@ -40,14 +40,14 @@ Container and HPC topics remain relevant for self-hosted inference. They are opt
 
 | Topic | Correction |
 | --- | --- |
-| [MCP](../30-agents/33-mcp.md) | Example of an explicitly fictitious and host-specific configuration; removal of an example of a third-party package whose version is not established by the specification. |
-| [containerd and runc](../70-containers-infra/03-containerd-runc.md) | crun is no longer presented as universally faster or as the guaranteed default of all quoted distributions. |
-| [Linux primitives](../70-containers-infra/08-linux-primitives-docker-fundamentals.md) | Performance of storage-dependent volumes and layers; weight in the image presented as a possible compromise. |
-| [Embeddings](../130-llm-fundamentals/133-embeddings-representations.md) | Cosine equivalency, scalar product and L2 conditioned to normalization; removal of a general speed superiority. |
-| [Parsing of documents](../160-multimodal-edge/162-document-parsing.md) | Mixed PDF and scans already OCRized; a threshold of characters is not enough to decide on an OCR or to validate the text. |
-| [Local LLM](../160-multimodal-edge/164-local-edge-llm.md) | Three revised answers: bandwidth quotient presented as a simplified terminal, GGUF not limited to quantified weights or a single file, `-ngl` offload and comparison of explicitly conditional machines. |
-| [AI Act](../150-data-compliance/155-ai-act.md) | Aggregation of the results does not erase an inference of forbidden emotions upstream; another collection must be studied without reintroducing this function. |
-| [Agentic protocols](../80-api-layer-routing/85-agentic-protocols-map.md) | Open governance distinguished from the guarantees of security, compatibility and durability of an implementation. |
+| [MCP](../../30-agents/33-mcp.md) | Example of an explicitly fictitious and host-specific configuration; removal of an example of a third-party package whose version is not established by the specification. |
+| [containerd and runc](../../70-containers-infra/03-containerd-runc.md) | crun is no longer presented as universally faster or as the guaranteed default of all quoted distributions. |
+| [Linux primitives](../../70-containers-infra/08-linux-primitives-docker-fundamentals.md) | Performance of storage-dependent volumes and layers; weight in the image presented as a possible compromise. |
+| [Embeddings](../../130-llm-fundamentals/133-embeddings-representations.md) | Cosine equivalency, scalar product and L2 conditioned to normalization; removal of a general speed superiority. |
+| [Parsing of documents](../../160-multimodal-edge/162-document-parsing.md) | Mixed PDF and scans already OCRized; a threshold of characters is not enough to decide on an OCR or to validate the text. |
+| [Local LLM](../../160-multimodal-edge/164-local-edge-llm.md) | Three revised answers: bandwidth quotient presented as a simplified terminal, GGUF not limited to quantified weights or a single file, `-ngl` offload and comparison of explicitly conditional machines. |
+| [AI Act](../../150-data-compliance/155-ai-act.md) | Aggregation of the results does not erase an inference of forbidden emotions upstream; another collection must be studied without reintroducing this function. |
+| [Agentic protocols](../../80-api-layer-routing/85-agentic-protocols-map.md) | Open governance distinguished from the guarantees of security, compatibility and durability of an implementation. |
 
 ## Points facing primary sources
 
@@ -73,4 +73,4 @@ The added sources are identified checkpoints. They do not constitute a legal cer
 
 Structure and export tests protect the use in Obsidian and Anki; they do not prove the accuracy of the content. Actual model calls, GPU loads, and business services are not executed in this document pass. CI checks on Python versions of the repository complete local validation before merging.
 
-To review the add-ins, start with those that correspond to a problem encountered in a project, and then apply a calculation or diagnostic card on a real case. The [Learning Guide](learning-with-flashcards.md) remains the entry point to avoid confusing card volume and practical mastery.
+To review the add-ins, start with those that correspond to a problem encountered in a project, and then apply a calculation or diagnostic card on a real case. The [Learning Guide](../guides/learning-with-flashcards.md) remains the entry point to avoid confusing card volume and practical mastery.

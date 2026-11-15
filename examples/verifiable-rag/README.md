@@ -92,4 +92,4 @@ The effect of filters on an approximate index must be measured with the actual e
 
 The indicators of support and coverage are a pedagogical adaptation of the distinction studied by Liu, Zhang and Liang they do not reproduce their annotation protocol. [Evaluating Verifiability in Generative Search Engines](https://arxiv.org/abs/2304.09848).
 
-To read: [RAG and rights/versions](../../20-rag/20-010-rag-permissions-versions.md), [RAG Assessment](../../90-observability-evals/96-evals-rag-agents.md), [Construction of Corpus](../../150-data-compliance/150-017-ai-datasets-corpora.md) and [Learning Guide](../../docs/learning-with-flashcards.md).
+To read: [RAG and rights/versions](../../20-rag/20-010-rag-permissions-versions.md), [RAG Assessment](../../90-observability-evals/96-evals-rag-agents.md), [Construction of Corpus](../../150-data-compliance/150-017-ai-datasets-corpora.md) and [Learning Guide](../../docs/guides/learning-with-flashcards.md).

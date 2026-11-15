@@ -2,7 +2,7 @@
 
 This workshop connects a LangChain tool, a simulated LangChain model, a persistent LangGraph graph, Langfuse instrumentation, and a API FastAPI to see the effects of an interruption, denial, and outage after business writing. All demo commands use synthetic data; no paid models or remote Langfuse services are called.
 
-The associated path is described in the [Agential Audit](../../docs/agentic-stack-audit-2026-10-09.md). The **18 tests** of the [atelier](test_workshop.py) are part of the workshop: read their invariants, predict the result, and then run them.
+The associated path is described in the [Agential Audit](../../docs/reports/agentic-stack-audit-2026-10-09.md). The **18 tests** of the [atelier](test_workshop.py) are part of the workshop: read their invariants, predict the result, and then run them.
 
 ## Installation
 

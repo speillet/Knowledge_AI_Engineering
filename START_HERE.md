@@ -55,8 +55,8 @@ You are ready for the next step when you can:
 - Explain why a relaxed requirement can change the set of reasonable choices.
 - Name at least one limitation of the synthetic measurements.
 
-Keep your short decision as the session's deliverable. Review a few cards from the three topics using [Anki](docs/anki.md) or [Obsidian](docs/obsidian.md); use the [learning guide](docs/learning-with-flashcards.md) to rate your answers.
+Keep your short decision as the session's deliverable. Review a few cards from the three topics using [Anki](docs/guides/anki.md) or [Obsidian](docs/guides/obsidian.md); use the [learning guide](docs/guides/learning-with-flashcards.md) to rate your answers.
 
 ## Where to go next
 
-Continue with the other [AI decision exercises](examples/ai-decisions/README.md), choose a [learning path](00-moc-ai-engineering.md#reading-path), or browse the [topic catalog](docs/catalog.md). You do not need to read every section before practicing.
+Continue with the other [AI decision exercises](examples/ai-decisions/README.md), choose a [learning path](docs/paths/README.md), or browse the [topic catalog](docs/catalog.md). You do not need to read every section before practicing.

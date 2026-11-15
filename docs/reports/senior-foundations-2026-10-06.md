@@ -6,14 +6,14 @@ This extension completes the LLM journey and agents through three cross-cutting 
 
 | Bloc | Sheets | Cards | Scenarios |
 | --- | --- | ---: | ---: |
-| Classic ML and validation | [Choose a model](../170-classical-ml/171-ml-model-selection.md), [validation and metrics](../170-classical-ml/172-ml-validation-metrics.md) | 36 | 6 |
-| Data engineering | [Contracts and quality](../150-data-compliance/157-data-contracts-quality.md), [ingestion and backfills](../150-data-compliance/158-ingestion-cdc-backfills.md), [Temporality and Variables](../150-data-compliance/159-temporal-data-features.md) | 42 | 9 |
-| Distributed systems | [Delivery, idempotency and concurrency](../140-system-design-product/149-delivery-idempotency-concurrency.md), [transactions, outbox and sagas](../140-system-design-product/140-010-transactions-outbox-sagas.md) | 32 | 6 |
+| Classic ML and validation | [Choose a model](../../170-classical-ml/171-ml-model-selection.md), [validation and metrics](../../170-classical-ml/172-ml-validation-metrics.md) | 36 | 6 |
+| Data engineering | [Contracts and quality](../../150-data-compliance/157-data-contracts-quality.md), [ingestion and backfills](../../150-data-compliance/158-ingestion-cdc-backfills.md), [Temporality and Variables](../../150-data-compliance/159-temporal-data-features.md) | 42 | 9 |
+| Distributed systems | [Delivery, idempotency and concurrency](../../140-system-design-product/149-delivery-idempotency-concurrency.md), [transactions, outbox and sagas](../../140-system-design-product/140-010-transactions-outbox-sagas.md) | 32 | 6 |
 | **Total** | **7 topics** | **110** | **21** |
 
 The new `170-classical-ml` section deals with predictive models, their comparison and data leaks. The other five topics extend the existing data and system design sections. The `140-010` topic applies the extended numbering provided by the repository, without renaming the historical topics.
 
-The [MOC](../00-moc-ai-engineering.md) offers a “senior foundation” course. The catalogues, statistics, structure and courses of the README are updated. The new topics and their neighbors are connected in both directions.
+The [MOC](../../00-moc-ai-engineering.md) offers a “senior foundation” course. The catalogues, statistics, structure and courses of the README are updated. The new topics and their neighbors are connected in both directions.
 
 ## Educational choices
 
