@@ -1,6 +1,6 @@
 # Guided generation (structured outputs) — Flashcards
 Tags: #flashcards #ai-engineering #inference #structured-output #llm
-<!-- summary: masking of logs, JSON Schema, regex and grammars, XGrammar and Outlines, structured outputs of API, JSON mode or structured outputs, business validation, explicit representation of missing information, refusal and schema, cross-constraints. -->
+<!-- summary: masking of logs, JSON Schema, regex and grammars, XGrammar and Outlines, structured outputs of API, JSON mode or structured outputs, business validation, explicit representation of missing information, refusal and schema, cross-constraints, anchoring by exact quote, strict Pydantic validation, constrained output of a reasoning model. -->
 
 
 What is guided generation? <!--anki:574e547021574d687c-->
@@ -138,6 +138,44 @@ Control the relationship after parsing and return a targeted error or abstention
 
 ---
 
+How do you check that a value extracted by an LLM really comes from the source document? <!--anki:3433303639356333346462373465373838353735313835626434336232363938-->
+?
+Ask, for each field, for the **exact quote** that justifies it, then check it in code:
+
+```python
+def anchored(value: str, quote: str, source: str) -> bool:
+    norm = lambda s: " ".join(s.split()).lower()
+    return norm(quote) in norm(source) and norm(value) in norm(quote)
+```
+
+The quote must appear in the source, and the value in the quote; otherwise the field goes to review. For an amount or a date, compare after normalizing the type. This check rules out invented values, not reading errors: an exactly quoted pre-tax amount is still wrong if the field expects the amount including tax ([[143-hallucinations-grounding|grounding]]).
+
+---
+
+Why can a permissive Pydantic model validate a wrong LLM extraction? <!--anki:6162653539386563643763313439336538313263333239626537396435306661-->
+?
+Because its default settings tolerate deviations typical of an LLM. An unknown key is **ignored** (`extra='ignore'`). With `Optional[date] = None`, a misnamed key, `dueDate` instead of `due_date`, leaves the field at `None`: the error passes for a genuine absence. **Lax** mode also converts `'123'` to an integer.
+
+```python
+class Invoice(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+    due_date: date | None  # required key, null allowed
+
+Invoice.model_validate_json(output)
+```
+
+Validate the JSON text: strict mode still accepts ISO dates there ([[90-010-llm-response-evaluation|empty fields]]).
+
+---
+
+Why can a structured output be missing with a reasoning model served by vLLM? <!--anki:6538326462636531393333313437363362323862613864336265613631316339-->
+?
+Because the constraint usually applies only **after the reasoning ends**: the structured output engine waits for the end-of-reasoning token. If `max_tokens` runs out before, the constrained answer never starts. With the basic `<think>…</think>` parser, all the text then goes into `reasoning`, and `content` is `null`.
+
+Treat this case as a **truncation** (`finish_reason` set to `length`), not as a refusal or an empty answer. Reserve a budget for the answer: `thinking_token_budget` forces the end of reasoning beyond a threshold. Track this rate per model and per effort level ([[138-reasoning-models|reasoning models]]).
+
+---
+
 ## Scenarios
 
 Scenario: Since you forced the output by a JSON Schema, the JSON is still valid but the answers have become less good. What do you correct? <!--anki:4b54485521782c4c4a72-->
@@ -167,6 +205,8 @@ Scenario: your invoice extraction always returns a compliant JSON, but the accou
 ## Sources
 
 - [OpenAI — structured outputs, rejections and limits](https://developers.openai.com/api/docs/guides/structured-outputs) — targeted deepening of the 12 November 2026; educational examples are built for this review.
+- Supplement of 15 November 2026 — Pydantic 2.14: [extra data (`extra`)](https://github.com/pydantic/pydantic/blob/v2.14.3/docs/concepts/models.md), [required and nullable fields](https://github.com/pydantic/pydantic/blob/v2.14.3/docs/migration.md) and [strict mode](https://github.com/pydantic/pydantic/blob/v2.14.3/docs/concepts/strict_mode.md).
+- Supplement of 15 November 2026 — vLLM: [reasoning outputs, thinking budget and structured outputs](https://github.com/vllm-project/vllm/blob/bb23c0a81779ba733923a7dab9b840b4e533f6a5/docs/features/reasoning_outputs.md), [basic `<think>` parser](https://github.com/vllm-project/vllm/blob/bb23c0a81779ba733923a7dab9b840b4e533f6a5/vllm/reasoning/basic_parsers.py).
 
 ## Connections
 - [[90-010-llm-response-evaluation|Evaluation of responses]] — check content beyond format and schema
@@ -181,4 +221,6 @@ Scenario: your invoice extraction always returns a compliant JSON, but the accou
 - [[142-llm-reliability-resilience|Reliability & resilience]] — timeouts, recoveries, fallbacks and degradation
 - [[148-llm-batch-pipelines|Pipelines batch]] — process millions of items at a lower cost
 - [[146-model-selection|Choice of models]] — criteria, benchmarks and migration
+- [[60-014-inference-parity-validation|Inference parity]] — replaying schemas after a backend change
+- [[138-reasoning-models|Reasoning models]] — reasoning that exhausts the budget before the constrained output
 - [[00-moc-ai-engineering|MOC AI Engineering]]

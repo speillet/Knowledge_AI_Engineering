@@ -64,7 +64,7 @@ Follow the [Complete practical guide](docs/platform-agents-inference-learning-pa
 5. **Check answers and business result** with [[90-010-llm-response-evaluation|Evaluation of responses]], [[96-evals-rag-agents|Evaluation of Agents]] and [[114-reproducibility-variance|Reproducibility]]: grid, completeness, final state and variance.
 6. **Observe end-to-end** with [[93-monitoring-inference|Monitoring]] and [[64-inference-metrics-slo|Metrics and SLO]]: traces, populations, deadlines and cost per compliant task.
 7. **Measure and size** with [[60-010-inference-load-benchmarks|Benchmarks]], [[60-011-inference-capacity-scheduling|Capacity]] and [[60-012-inference-optimization-method|Optimisation]]: calls per task, actual load, queues and reserve.
-8. **Deploy and resume** with [[142-llm-reliability-resilience|Resilience]], [[112-model-cicd|CI/CD]] and [[116-ai-sre-incidents-capacity|SRE]]: crash tests, canary, rollback and runbook.
+8. **Deploy and resume** with [[60-014-inference-parity-validation|Inference parity]], [[142-llm-reliability-resilience|Resilience]], [[112-model-cicd|CI/CD]] and [[116-ai-sre-incidents-capacity|SRE]]: serving stack parity, crash tests, canary, rollback and runbook.
 
 ### Build and operate an agentic application
 
@@ -212,6 +212,7 @@ The [Inference Audit of October 8](docs/llm-inference-audit-2026-10-08.md) maps 
 - [[60-011-inference-capacity-scheduling|Inference Capacity & Scheduling LLM]]
 - [[60-012-inference-optimization-method|Inference Optimization Approach LLM]]
 - [[60-013-prefill-decode-step-by-step|Prefill & decode — Step by Step Execution]]
+- [[60-014-inference-parity-validation|Validate an inference deployment: parity & non-regression]]
 
 ## 70 — Containers & infrastructure
 

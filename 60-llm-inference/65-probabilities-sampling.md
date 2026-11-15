@@ -224,4 +224,5 @@ Scenario: your classifier should send the uncertain cases to a human. How do you
 - [[143-hallucinations-grounding|Hallucinations]] — calibration and detection
 - [[11-llm-inference-servers|Inference Servers]] — vLLM, SGLang, TensorRT-LLM and their setting
 - [[52-post-training-alignment|Post-training & Alignment]] — RLHF, DPO, GRPO and RLVR
+- [[60-014-inference-parity-validation|Inference parity]] — raw or processed logprobs in a comparison
 - [[00-moc-ai-engineering|MOC AI Engineering]]

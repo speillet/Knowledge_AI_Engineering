@@ -166,4 +166,5 @@ Scenario: Ton corpus of 20 million chunks is expensive in vector storage, and th
 - [[25-chunking-contextual-retrieval|Advanced Chunking]] — Make Every Chunk Found
 - [[68-quantization|Quantization]] — reduce accuracy to gain memory and speed
 - [[174-recommendation-ranking|Recommandation & learning to rank]] — representations to search for candidates
+- [[60-014-inference-parity-validation|Inference parity]] — validating an encoder served by another engine
 - [[00-moc-ai-engineering|MOC AI Engineering]]

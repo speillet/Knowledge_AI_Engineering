@@ -317,4 +317,5 @@ Scenario: your supplier publishes the same model in BF16, FP8 and GGUF Q4_K_M. T
 - [[95-llm-as-judge|LLM-as-a-judge]] — note automatically, and validate the judge
 - [[133-embeddings-representations|Embeddings]] — represent meaning by vectors
 - [[137-long-context|Long context]] — limits and cost of long windows
+- [[60-014-inference-parity-validation|Inference parity]] — the same comparison method for any stack change
 - [[00-moc-ai-engineering|MOC AI Engineering]]

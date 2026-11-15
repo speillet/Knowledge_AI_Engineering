@@ -213,4 +213,5 @@ Targeted review of 13 November 2026: affirmations specified in this pass; other 
 - [[161-vision-language-models|Vision-language models]] — input images and screens
 - [[164-local-edge-llm|Local LLM & Edge]] — run a model locally
 - [[165-computer-use-browser-agents|Computer use & browser agents]] — agents that use interfaces
+- [[93-monitoring-inference|Inference monitoring]] — rejection rate of a validator in observation mode
 - [[00-moc-ai-engineering|MOC AI Engineering]]
