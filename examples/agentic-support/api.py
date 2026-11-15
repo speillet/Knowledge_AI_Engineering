@@ -1,4 +1,5 @@
-"""API locale de démonstration : uvicorn api:create_app --factory --workers 1."""
+"""API locale de demonstration: uvicron api:create_app --factory --workers 1."""
+
 from contextlib import asynccontextmanager
 import os
 from pathlib import Path
@@ -18,10 +19,10 @@ class Decision(BaseModel):
 
 
 def identity(authorization: str = Header(default="")):
-    # Comptes pédagogiques publics, PAS un mécanisme d'authentification de production.
+    # Public educational accounts, NOT a production authentication mechanism.
     identities = {"Bearer alice-demo": "alice", "Bearer bob-demo": "bob"}
     if authorization not in identities:
-        raise HTTPException(401, "Utiliser une identité de démonstration")
+        raise HTTPException(401, "Using a demonstration identity")
     return identities[authorization]
 
 
@@ -46,12 +47,12 @@ def create_app(directory=None):
 
     @app.exception_handler(ValueError)
     async def value_handler(request, exc):
-        return JSONResponse(status_code=422, content={"detail": "Entrée ou état incompatible"})
+        return JSONResponse(status_code=422, content={"detail": "Incompatible entry or state"})
 
     @app.post("/runs")
     def submit(request: Request, tenant=Depends(identity), idempotency_key: str = Header(min_length=1, max_length=128)):
         run_id = engine.create(tenant, idempotency_key, request.model_dump())
-        # Le modèle local est immédiat. En production : worker durable pour tâches longues.
+        # The local model is immediate. In production: sustainable worker for long tasks.
         return engine.drive(tenant, run_id)
 
     @app.get("/runs/{run_id}")
@@ -64,7 +65,7 @@ def create_app(directory=None):
 
     @app.post("/runs/{run_id}/retry")
     def retry(run_id: str, tenant=Depends(identity)):
-        # Réconciliation manuelle d'un échec ou d'un processus disparu.
+        # Manual reconciliation of a failed or lost process.
         return engine.drive(tenant, run_id)
 
     @app.post("/runs/{run_id}/cancel")
@@ -78,12 +79,11 @@ def create_app(directory=None):
             if after < 0:
                 raise ValueError()
         except ValueError:
-            raise HTTPException(400, "Curseur entier positif ou nul attendu") from None
+            raise HTTPException(400, "Positive or zero integer slider expected") from None
         with engine.lock:
             rows = engine.store.events(run_id, tenant, after)
-        # Rejeu fini du journal, PAS un abonnement temps réel ni un flux de tokens.
-        frames = [f'id: {row["seq"]}\nevent: {row["kind"]}\ndata: {row["payload"]}\n\n' for row in rows]
-        return StreamingResponse(iter(frames), media_type="text/event-stream",
-                                 headers={"Cache-Control": "no-cache"})
+        # Finished replay of the log, NOT a real-time subscription or a tokens feed.
+        frames = [f"id: {row['seq']}\nevent: {row['kind']}\ndata: {row['payload']}\n\n" for row in rows]
+        return StreamingResponse(iter(frames), media_type="text/event-stream", headers={"Cache-Control": "no-cache"})
 
     return app

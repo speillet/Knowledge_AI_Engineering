@@ -1,84 +1,84 @@
 # containerd & runc — Flashcards
-Tags: #flashcards #conteneurs #containerd #runc
-Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: rôle de containerd, rôle de runc, relation entre les deux, containerd ou CRI-O, crun, RuntimeClass, outils `ctr`, `nerdctl` et `crictl`, place du GPU dans la chaîne, distinction entre panne du shim et panne applicative, logs par couche, snapshots disque. -->
+Tags: #flashcards #containers #containerd #runc
+Verified on: 29 September 2026 — This factsheet lists products, versions or regulatory texts that are evolving quickly.
+<!-- summary: role of containerd, runc role, relationship between the two, containerd or CRI-O, crun, RuntimeClass, tools `ctr`, `nerdctl` and `crictl`, place of the GPU in the chain, distinction between shim failure and application failure, logs by layer, snapshots disk. -->
 
 
-Qu'est-ce que containerd ? <!--anki:482f38677a352a716331-->
+What is containerd? <!--anki:482f38677a352a716331-->
 ?
-**containerd** gère des opérations de haut niveau : téléchargement et stockage des images, snapshots du système de fichiers, tâches et cycle de vie des conteneurs. Il délègue l'exécution bas niveau à un runtime OCI tel que runc via des shims.
+**containerd** handles high-level operations: uploading and storing images, file system snapshots, tasks, and container lifecycle. It delegates low-level execution to an OCI runtime such as runc via shims.
 
-Docker peut s'appuyer sur containerd ; Kubernetes communique avec une intégration CRI. Pour les Pods, le réseau s'articule notamment avec les plugins CNI selon la configuration. Distinguer ces responsabilités aide au diagnostic : erreur de registre, création du conteneur et crash applicatif ne se réparent pas au même niveau. containerd n'est ni l'ordonnanceur Kubernetes ni le modèle exécuté.
+Docker can rely on containerd; Kubernetes communicates with a CRI integration. For Pods, the network is articulated with the CNI plugins according to the configuration. Distinguishing these responsibilities helps in diagnosis: registry error, container creation and application crash do not repair at the same level. containerd is neither the Kubernetes scheduler nor the executed model.
 
 ---
 
-containerd et Docker sont-ils la même chose ? <!--anki:77337a5b6e5556322929-->
+Are containerd and Docker the same? <!--anki:77337a5b6e5556322929-->
 ?
-**Non.** Docker est une **suite d'outils** : CLI, construction d'images (BuildKit), réseau, Compose, Desktop. Sous le capot, Docker **délègue** l'exécution à containerd. Historiquement, containerd a d'ailleurs été **extrait de Docker** puis donné à la CNCF : on peut donc utiliser containerd **sans** Docker, ce que fait Kubernetes ([[05-docker-kubernetes|dockershim]]).
+**Nope.** Docker is a **suite of tools** : CLI, image building (BuildKit), network, Compose, Desktop. Under the hood, Docker **Delegate** execution to containerd. Historically, The container has been **Extract from Docker** then given to the CNCF: we can therefore use containerd **without** Docker, What Kubernetes does[[05-docker-kubernetes|dockershim]]).
 
-Un nœud Kubernetes peut donc lancer des images produites par `docker build` sans disposer de Docker Engine. Ne pas installer le démon uniquement pour déboguer les Pods : interroger l'interface et les journaux du runtime réellement utilisé.
+A Kubernetes node can therefore launch images produced by `docker build` without Docker Engine. Do not install the daemon only to debug Pods: query the interface and logs of the runtime actually used.
 
 ---
 
-Qu'est-ce que runc ? <!--anki:702e5e602d5751585a4f-->
+What is runc? <!--anki:702e5e602d5751585a4f-->
 ?
-Un **runtime OCI bas niveau** : un binaire qui reçoit un **bundle** (système de fichiers + `config.json`) et demande au noyau de créer le conteneur, conformément à l'[[01-oci|OCI Runtime Specification]]. Il configure **namespaces, cgroups, capabilities, seccomp**, lance le premier processus… puis **se retire** : ce n'est pas un démon.
+A **low-level OCI runtime**: a binary that receives a **bundle** (filesystem + `config.json`) and asks the kernel to create the container, in accordance with [[01-oci|OCI Runtime Specification]]. It configures **namespaces, cgroups, capabilities, seccomp**, initiates the first process... then **removes**: it is not a daemon.
 
-Il ne télécharge pas l'image et ne décide pas du placement sur un cluster. Le shim conserve le suivi du processus pour containerd ; l'absence d'un processus `runc` permanent ne signifie donc pas que le conteneur s'est arrêté.
+The shim keeps track of the process for containerd, so the absence of a permanent `runc` process does not mean that the container has stopped.
 
 ---
 
-Quelle relation existe entre containerd et runc ? <!--anki:6579234d4f604d777d24-->
+What is the relationship between containerd and runc? <!--anki:6579234d4f604d777d24-->
 ?
 `containerd → shim → runc → Linux kernel`
 
-containerd lance un **shim** par conteneur, qui appelle **runc** pour la création puis reste le **processus parent** du conteneur. C'est ce qui permet de **redémarrer containerd sans tuer les conteneurs** en cours.
+containerd launches a **shim** per container, which calls **runc** for the creation and then remains the **parent process** of the container. This is what allows to **restart containerd without killing the containers** in progress.
 ```bash
-ctr -n k8s.io containers list   # côté containerd
-crictl ps                       # ce que voit le kubelet via la CRI
+ctr -n k8s.io containers list   # Container Sided
+crictl ps                       # what the kubelet sees via the CRI
 ```
 
-runc ne reste pas en mémoire : il lit le `config.json` du bundle OCI, crée namespaces et cgroups, lance le processus puis se termine. Une erreur `OCI runtime create failed` vient de cette étape : chercher du côté des montages, des limites cgroup ou des devices GPU déclarés, plutôt que dans containerd.
+runc does not remain in memory: it reads the `config.json` of the OCI bundle, creates namespaces and cgroups, launches the process and then terminates. A `OCI runtime create failed` error comes from this step: look for declared edits, cgroup limits or GPU devices, rather than in containerd.
 
 ---
 
-Quelle phrase permet de retenir la différence entre containerd et runc ? <!--anki:6d7c4b326064574e6644-->
+Which sentence helps to remember the difference between containerd and runc? <!--anki:6d7c4b326064574e6644-->
 ?
-**containerd gère ; runc exécute.**
+**containerd manages; runc executes.**
 
-Corollaire utile : on remplace **runc** pour changer d'isolation (gVisor, Kata Containers via une RuntimeClass), et on garde containerd. C'est ainsi qu'on durcit l'exécution du code généré par un agent ([[103-defenses-agents|isolation]]).
+Useful corollary: replace **runc** to change insulation (gVisor, Kata Containers via a RuntimeClass), and keep containerd. This is how we harden the execution of the code generated by an agent ([[103-agent-defenses|isolation]]).
 
-« Gérer » couvre tout ce qui dure : télécharger et dépaqueter les images, préparer les snapshots du système de fichiers, superviser chaque conteneur via son shim et exposer la CRI au kubelet. « Exécuter » est un acte ponctuel : créer une fois le processus isolé selon la spécification runtime de l'OCI.
+"Manage" covers everything that lasts: downloading and unpacking images, preparing snapshots of the file system, supervising each container via its shim and exposing the CRI to the kubelet. "Run" is a one-time act: creating once the process is isolated according to the OCI runtime specification.
 
 ---
 
-À ne pas confondre : containerd et CRI-O ? <!--anki:677a31493c373b323f5e-->
+Do not confuse: containerd and CRI-O? <!--anki:677a31493c373b323f5e-->
 ?
-Deux **runtimes de haut niveau** qui implémentent la [[04-kubernetes-kubelet-cri|CRI]] et délèguent l'exécution à un runtime OCI (runc ou crun) :
-- **containerd** : généraliste, utilisé par Docker **et** par Kubernetes, défaut de la plupart des distributions managées (EKS, GKE, AKS)
-- **CRI-O** : conçu **uniquement pour Kubernetes**, sans fonctions superflues, défaut d'**OpenShift**
+Two high-level **runtimes** that implement the [[04-kubernetes-kubelet-cri|CRI]] and delegate execution to an OCI runtime (runc or crun):
+- **containerd**: generalist, used by Docker **and** by Kubernetes, default of most managed distributions (EKS, GKE, AKS)
+- **CRI-O**: Designed **only for Kubernetes**, no extra functions, lack of **OpenShift**
 
-La standardisation [[01-oci|OCI]] facilite la portabilité des images ; les fonctions, paramètres de sécurité et comportements propres au runtime doivent néanmoins être testés.
+[[01-oci|OCI]] standardization makes it easier to move images; however, runtime-specific functions, security settings, and behaviors need to be tested.
 
 ---
 
-Qu'est-ce que crun ? <!--anki:736d6a51574d495f543d-->
+What is crin? <!--anki:736d6a51574d495f543d-->
 ?
-Un **runtime OCI bas niveau écrit en C**, alternative à runc, écrit en Go. Il vise un faible coût de lancement et une empreinte réduite, avec une implémentation de l'interface OCI.
+A **low-level OCI runtime written in C**, alternative to runc, written in Go. It aims for a low launch cost and a reduced footprint, with an implementation of the OCI interface.
 
-Les gains de performance et le runtime choisi par défaut dépendent de la distribution, de la version et du workload. Mesurer sur l'environnement cible plutôt que promettre un démarrage toujours plus rapide. Le remplacer demande aussi une configuration correcte du gestionnaire de conteneurs ; la conformité OCI facilite l'interopérabilité sans rendre toutes les options et extensions automatiquement interchangeables.
+The performance gains and the default runtime depend on the distribution, version and workload. Measuring on the target environment rather than promising an ever-faster startup. Replacing it also requires proper configuration of the container manager; OCI compliance facilitates interoperability without making all options and extensions automatically interchangeable.
 
 ---
 
-Comment déclarer un runtime alternatif avec une RuntimeClass ? <!--anki:4a66603832787c366435-->
+How to declare an alternative runtime with a RuntimeClass? <!--anki:4a66603832787c366435-->
 ?
-La RuntimeClass associe un **nom** à un **handler** configuré dans containerd ; le Pod le choisit par `runtimeClassName`.
+The RuntimeClass associates a **name** with a **handler** configured in containerd; the Pod chooses it by `runtimeClassName`.
 ```yaml
 apiVersion: node.k8s.io/v1
 kind: RuntimeClass
 metadata:
   name: gvisor
-handler: runsc            # runtime déclaré dans la config de containerd
+handler: runsc            # declared runtime in the containerd config
 ---
 apiVersion: v1
 kind: Pod
@@ -90,93 +90,93 @@ spec:
     - name: sandbox
       image: registry.example.com/agent-sandbox:1.4
 ```
-Seuls les Pods qui le demandent paient le surcoût de l'isolation renforcée ([[106-securite-agents-code|agents de code]]).
+Only Pods that request it pay the extra cost of reinforced insulation ([[106-coding-agent-security|Code Agents]]).
 
-Créer l'objet RuntimeClass ne suffit pas : le handler doit déjà être installé et configuré sur les nœuds éligibles. Prévoir leur sélection et, si nécessaire, le surcoût de ressources. Tester les appels système et périphériques requis par l'application, car une isolation renforcée peut limiter certaines fonctionnalités.
-
----
-
-À ne pas confondre : ctr, nerdctl et crictl ? <!--anki:475279656c3947717c78-->
-?
-- **`ctr`** : client **bas niveau** livré avec containerd, pour le débogage. Attention aux **namespaces** containerd (`-n k8s.io` pour voir les conteneurs de Kubernetes)
-- **`nerdctl`** : client **compatible avec la syntaxe Docker** (`nerdctl run`, `nerdctl build`), sans Docker Engine
-- **`crictl`** : parle à containerd **via la CRI**, et montre donc ce que voit le **kubelet** (Pods, conteneurs, logs)
-
-Sur un node Kubernetes, `crictl` est le réflexe de diagnostic.
+Creating the RuntimeClass object is not enough: the handler must already be installed and configured on the eligible nodes. Plan their selection and, if necessary, the additional cost of resources. Test the system and peripheral calls required by the application, because a reinforced isolation can limit certain features.
 
 ---
 
-Où le GPU entre-t-il dans la chaîne containerd → runc ? <!--anki:49616e4d622f4e78292d-->
+Do not confuse: ctr, nerdctl and cricctl? <!--anki:475279656c3947717c78-->
 ?
-Lors de la **préparation/création du conteneur** : le NVIDIA Container Toolkit configure l'exposition des périphériques et bibliothèques du driver hôte, via intégration runtime, hooks ou **CDI** selon la pile.
+- **`ctr`**: client **low level** delivered with containerd, for debugging. Beware of **namespaces** containerd (`-n k8s.io` to see Kubernetes containers)
+- **`nerdctl`**: client **compatible with Docker syntax** (`nerdctl run`, `nerdctl build`), without Docker Engine
+- **`crictl`**: talk to containerd **via the CRI**, and therefore show what the **kubelet** sees (Pods, containers, logs)
 
-Le runtime bas niveau applique ces ressources au conteneur ; il n'exécute pas lui-même les calculs CUDA. Exemple : une image peut contenir CUDA et démarrer normalement, mais échouer à initialiser le GPU si les devices ou bibliothèques nécessaires ne sont pas exposés.
-
-Diagnostiquer driver hôte, intégration containerd/CDI et allocation du périphérique avant de reconstruire l'image. Cette exposition ne crée ni VRAM supplémentaire ni allocation auprès de l'ordonnanceur ([[09-gpu-conteneurs|GPU & conteneurs]]).
+On a Kubernetes node, `crictl` is the diagnostic reflex.
 
 ---
 
-Pourquoi la disparition d'un shim containerd doit-elle être distinguée d'un plantage du modèle ? <!--anki:3663326538306332623332653463633862643738366632393739393033346634-->
+Where does the GPU enter the containerd chain → runc? <!--anki:49616e4d622f4e78292d-->
 ?
-Le **shim** participe au suivi du processus conteneur et à ses entrées-sorties, tandis que le modèle s'exécute dans le processus applicatif. Une erreur à ces niveaux demande des diagnostics différents.
+When **preparing/creating the container**: The NVIDIA Container Toolkit configures the exposure of host driver devices and libraries, via runtime integration, hooks, or **CDI** depending on the stack.
 
-Corréler état du conteneur, événements du runtime, code de sortie et logs applicatifs avant de relancer le modèle. Vérifier si le processus a été tué par une limite mémoire ou si la communication avec le runtime a échoué. Une relance aveugle efface parfois les indices et peut rejouer un travail dont le résultat était déjà produit.
+The low-level runtime applies these resources to the container; it does not run CUDA calculations itself. Example: An image may contain CUDA and start normally, but fail to initialize the GPU if the necessary devices or libraries are not exposed.
+
+Diagnose host driver, containerd/CDI integration, and device allocation before reconstructing the image. This exposure creates no additional VRAM or scheduler allocation ([[09-gpu-containers|GPU & Containers]]).
 
 ---
 
-Pourquoi une erreur de création de snapshot containerd peut-elle empêcher le démarrage avant toute exécution du modèle ? <!--anki:6233376234653539653763373437373861663136393364373162363037653036-->
+Why should the disappearance of a containerd shim be distinguished from a model crash? <!--anki:3663326538306332623332653463633862643738366632393739393033346634-->
 ?
-Le runtime doit préparer **le système de fichiers du conteneur** avant de lancer son processus. Un disque plein, un manque d'inodes ou un problème de snapshotter peut bloquer cette étape.
+The **shim** is involved in tracking the container process and its I/O, while the model runs in the application process. An error at these levels requires different diagnoses.
 
-Examiner événements, espace, inodes et journaux du runtime avant les logs applicatifs, qui peuvent ne pas exister. Ne pas supprimer arbitrairement les répertoires internes de containerd ; utiliser les mécanismes de maintenance adaptés à l'état du nœud.
+Correlate container state, runtime events, exit code, and application logs before relaunching the model. Check if the process was killed by a memory limit or if communication with the runtime failed. A blind relaunch sometimes clears clues and can replay a work whose result was already produced.
 
 ---
 
-Comment corréler les logs du kubelet, de containerd et du processus d'inférence ? <!--anki:3962323039626166393865333431366539323634373937393032646538316430-->
+Why can a snapshot containerd creation error prevent booting before any model runs? <!--anki:6233376234653539653763373437373861663136393364373162363037653036-->
 ?
-Utiliser **identifiants de Pod, conteneur, nœud et horodatages** pour reconstruire une même tentative de lancement. Un redémarrage peut changer l'identifiant du conteneur sans changer celui du Pod.
+The runtime must prepare **the container's file system** before starting its process. A full disk, a lack of inodes, or a snapshotter problem can block this step.
 
-Chercher d'abord la première erreur causale plutôt que la dernière conséquence. Conserver les événements et logs de la tentative précédente. Un message de reconnexion du runtime peut résulter d'un arrêt déjà déclenché ailleurs.
+Examine runtime events, spaces, inodes, and logs before application logs, which may not exist. Do not arbitrarily delete containerd internal directories; use maintenance mechanisms appropriate to the state of the node.
 
 ---
 
-## Mises en situation
-
-Mise en situation : tu veux exécuter du code généré par un agent avec une isolation plus forte que le conteneur classique. Où intervient le runtime ? <!--anki:6a563a3e753231586361-->
+How to correlate kubelet, containerd and inference process logs? <!--anki:3962323039626166393865333431366539323634373937393032646538316430-->
 ?
-1. **Comprendre la chaîne** : containerd gère, **runc exécute** avec les primitives du noyau, noyau partagé avec l'hôte
-2. **Remplacer le runtime bas niveau** : gVisor ou Kata Containers s'utilisent à la place de runc, avec une isolation plus forte
-3. **Déclarer** ce runtime alternatif, par exemple via une RuntimeClass dans Kubernetes
-4. **Accepter le compromis** : démarrage plus lent et léger surcoût, contre un noyau isolé
-5. **Compléter** : réseau sortant filtré, secrets hors du conteneur ([[103-defenses-agents|défenses]])
+Use **Pod, container, node, and timestamp identifiers** to rebuild the same launch attempt. A restart can change the container ID without changing the Pod ID.
 
-**Piège** : croire qu'un conteneur standard suffit à exécuter du code non fiable.
+First look for the first causal error rather than the last consequence. Keep events and logs from the previous attempt. A runtime reconnection message may result from a shutdown already triggered elsewhere.
 
 ---
 
-Mise en situation : un incident mentionne « containerd ne répond plus » et l'équipe se demande si Docker est en cause. Comment expliques-tu l'architecture ? <!--anki:682e51314d5e5669475f-->
-?
-1. **Séparer les rôles** : Docker est un outillage complet, containerd le runtime de haut niveau, runc le runtime bas niveau
-2. **Rappeler la chaîne** : `containerd → runc → noyau Linux`, et dans Kubernetes le kubelet appelle containerd via la **CRI**
-3. **En conséquence** : un cluster Kubernetes moderne n'a pas besoin de Docker Engine ([[05-docker-kubernetes|dockershim]])
-4. **Diagnostiquer au bon niveau** : conteneurs qui ne démarrent plus, images qui ne se pullent plus, ou processus qui ne s'exécutent plus
-5. **Retenir la formule** : **containerd gère, runc exécute**
+## Scenarios
 
-**Piège** : chercher un démon Docker sur un node qui n'en a pas.
+Scenario: you want to execute code generated by an agent with stronger isolation than the conventional container. Where does the runtime work? <!--anki:6a563a3e753231586361-->
+?
+1. **Understand string**: containerd manages, **runc executes** with kernel primitives, kernel shared with host
+2. **Replace low-level runtime**: gVisor or Kata Containers are used instead of runc, with stronger insulation
+3. **Declare** this alternative runtime, for example via a RuntimeClass in Kubernetes
+4. **Accept compromise**: Slower start and light extra cost, against an isolated kernel
+5. **Complete**: filtered outgoing network, secrets out of container ([[103-agent-defenses|Defenses]])
+
+**Trap**: Believe that a standard container is enough to execute unreliable code.
+
+---
+
+Scenario: an incident mentions "contained no longer responds" and the team wonders if Docker is involved. How do you explain the architecture? <!--anki:682e51314d5e5669475f-->
+?
+1. **Separate roles**: Docker is a complete tooling, containerd the high-level runtime, runc the low-level runtime
+2. **Recall channel**: `containerd → runc → Linux kernel`, and in Kubernetes the kubelet calls containerd via the **CRI**
+3. **As a result**: A modern Kubernetes cluster does not need a Docker Engine ([[05-docker-kubernetes|dockershim]])
+4. **Diagnose at the right level**: containers that no longer start, images that no longer pop, or processes that no longer run
+5. **Retain formula**: **containerd manages, runc executes**
+
+**Trap** : look for a Docker daemon on a node that doesn't have one.
 
 ---
 
 ## Sources
 
-- [containerd — documentation du projet et architecture](https://github.com/containerd/containerd)
+- [containerd — project documentation and architecture](https://github.com/containerd/containerd)
 
-- [crun — implémentation OCI et mesures de performance](https://github.com/containers/crun) — vérification ciblée du 12 novembre 2026, sans renouvellement de la date globale de la fiche.
+- [crin — OCI implementation and performance measures](https://github.com/containers/crun) — targeted verification of 12 November 2026, without renewal of the global date of the topic.
 
-## Connexions
-- [[01-oci|OCI]] — runc implémente l'OCI Runtime Spec
-- [[04-kubernetes-kubelet-cri|Kubernetes & CRI]] — containerd est appelé via CRI
-- [[08-linux-primitives-docker-fondamentaux|Primitives Linux]] — runc configure namespaces & cgroups
-- [[02-docker-images-registries|Docker & images]] — containerd gère les images
-- [[49-agents-de-code|Agents de code]] — utiliser et intégrer les agents de code
-- [[00-index|Index Conteneurs]]
+## Connections
+- [[01-oci|OCI]] — runc implements the OCI Runtime Spec
+- [[04-kubernetes-kubelet-cri|Kubernetes & CRI]] — containerd is called via CRI
+- [[08-linux-primitives-docker-fundamentals|Linux primitives]] — runc configure namespaces & cgroups
+- [[02-docker-images-registries|Docker & images]] — containerd handles images
+- [[49-coding-agents|Code Agents]] — Use and Integrate Code Agents
+- [[00-index|Index Containers]]
 - [[00-moc-ai-engineering|MOC AI Engineering]]

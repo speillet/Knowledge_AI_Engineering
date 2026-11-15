@@ -1,15 +1,15 @@
-# Obsidian : état d'interface propre à chaque machine et plugins tiers
-# (le README explique comment installer Spaced Repetition)
+# Obsidian: interface state specific to each machine and third-party plugins
+# (Readme explains how to install Spaced Repetition)
 .obsidian/workspace.json
 .obsidian/workspace-mobile.json
 .obsidian/plugins/
 
-# Outillage local (les skills de .claude/skills/ sont versionnés)
+# Local tools (the skills of .claude/skills/ are versioned)
 .kilo/
 .claude/settings.local.json
 .claude/settings.json
 
-# Paquet Anki généré (publié par la CI en release « anki »)
+# Anki generated package (published by the CI in release “anki”)
 dist/
 
 # Cache Python
@@ -18,6 +18,6 @@ __pycache__/
 # Environnement Python local
 .venv/
 
-# Caches des outils de qualité (make ruff, make typecheck)
+# Quality tool caches (make ruff, make typecheck)
 .ruff_cache/
 .mypy_cache/

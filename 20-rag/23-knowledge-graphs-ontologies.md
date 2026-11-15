@@ -1,188 +1,188 @@
 # Knowledge graphs & ontologies — Flashcards
-Tags: #flashcards #ai-engineering #rag #knowledge-graph #ontologie #llm
-Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: triplets, RDF ou property graph (Cypher, GQL), ontologie et taxonomie, extraction par LLM sous schéma, résolution d'entités, graphe ou vecteurs, GraphRAG local et global, Text2Cypher, context graph, coûts, provenance des relations, monde ouvert, négation des relations. -->
+Tags: #flashcards #ai-engineering #rag #knowledge-graph #ontology #llm
+Verified on: 29 September 2026 — This factsheet lists products, versions or regulatory texts that are evolving quickly.
+<!-- summary: triplets, RDF or property graph (Cypher, GQL), ontology and taxonomy, extraction by LLM under schema, entity resolution, graph or vectors, local and global GraphRAG, Text2Cypher, context graph, costs, source of relations, open world, negation of relations. -->
 
 
-Qu'est-ce qu'un knowledge graph ? <!--anki:75794e4c4c3a65215f7b-->
+What is a knowledge graph? <!--anki:75794e4c4c3a65215f7b-->
 ?
-Une représentation des connaissances sous forme de **graphe** : des **entités** (nœuds : personnes, produits, contrats…) reliées par des **relations typées** (arêtes), chacune pouvant porter des propriétés. L'unité de base est le **triplet** :
+A representation of knowledge in the form of a **graph**: **entities** (nodes: people, products, contracts...) linked by **typed relationships** (edges), each of which can carry properties. The basic unit is the **triplet**:
 ```text
-(Marie Curie) —[NÉE_À]→ (Varsovie)
-   sujet          prédicat      objet
+(Marie Curie) — [NEA_To]→ (Warsaw)
+   Subject Predicate Object
 ```
 
-L'intérêt est de pouvoir suivre les relations : retrouver les personnes liées à une organisation, puis les contrats concernés. Conserver la source et, si nécessaire, la période de validité des faits. Un graphe représente ce qui a été enregistré ; il ne garantit pas que chaque relation extraite soit vraie.
+The interest is to be able to follow the relationships: find the people related to an organization, then the contracts concerned. Keep the source and, if necessary, the validity period of the facts. A graph represents what has been recorded; it does not guarantee that each relationship extracted is true.
 
 ---
 
-RDF ou property graph ? <!--anki:6f6a784b296a54416f74-->
+RDF or property graph? <!--anki:6f6a784b296a54416f74-->
 ?
-- **RDF** (standard W3C) : tout est triplet, identifié par des URI, interrogé en **SPARQL**, décrit par des ontologies **OWL**. Fort pour l'interopérabilité et le raisonnement.
-- **Property graph** (Neo4j, FalkorDB, Amazon Neptune…) : nœuds et arêtes portent directement des propriétés, interrogés en **Cypher** ou en **GQL** (norme ISO depuis 2024). Plus pratique pour les applications, c'est le choix courant des stacks LLM.
+- **RDF** (W3C standard): everything is triplet, identified by URIs, interrogated in **SPARQL**, described by **OWL** ontologies. Strong for interoperability and reasoning.
+- **Property graph** (Neo4j, FalkorDB, Amazon Neptune...): nodes and edges directly carry properties, queried in **Cypher** or **GQL** (ISO standard since 2024). More convenient for applications, it is the common choice of LLM stacks.
 
 ---
 
-Qu'est-ce qu'une ontologie ? <!--anki:473f21414c2b645b3135-->
+What is an ontology? <!--anki:473f21414c2b645b3135-->
 ?
-Le **schéma formel d'un domaine** : les **classes** (Personne, Entreprise), leur **hiérarchie** (un Fournisseur *est une* Entreprise), les **types de relations** autorisés entre classes et leurs contraintes. Elle permet de valider les données et d'**inférer** des faits.
-- **Taxonomie** : seulement la hiérarchie des classes
-- **Ontologie** : le schéma complet, avec relations et règles
-- **Knowledge graph** : les **instances** (les données) conformes à ce schéma
+The **formal scheme of a domain**: the **classes** (Person, Company), their **hierarchy** (a Provider *is an* Company), the **types of relations** allowed between classes and their constraints. It allows to validate the data and **infer** facts.
+- **Taxonomy**: only the class hierarchy
+- **Ontology**: the complete schema, with relationships and rules
+- **Knowledge graph**: **Instances** (data) conform to this schema
 
 ---
 
-Pourquoi une ontologie quand un LLM construit le graphe ? <!--anki:66354d4240287b307542-->
+Why an ontology when a LLM builds the graph? <!--anki:66354d4240287b307542-->
 ?
-Sans schéma, l'extraction **dérive** : doublons (« Paris », « Ville de Paris »), relations synonymes (TRAVAILLE_POUR, EMPLOYÉ_DE), types inventés, et le graphe devient impossible à interroger. L'ontologie **contraint l'extraction** (types d'entités et de relations autorisés, en [[63-guided-generation|sortie structurée]]) et ramène les entités à des **termes canoniques**.
+Without a schema, extraction **drift**: duplicates ("Paris", "City of Paris"), synonym relationships (WORKS_FOR, EMPLOYED_BY), invented types, and the graph becomes impossible to interrogate. Ontology **constrains extraction** (types of entities and relations authorized, in [[63-guided-generation|Structured Exit]]) and reduces entities to canonical **terms**.
 
-Par exemple, imposer une relation `EMPLOYE_PAR` évite trois noms pour le même lien. Cela ne prouve toutefois ni que l'emploi existe ni que deux personnes homonymes sont identiques. Conserver la source de chaque relation et contrôler séparément **validité du schéma, résolution d'identité et exactitude factuelle**.
+For example, imposing a `EMPLOYE_PAR` relationship avoids three names for the same link, but this does not prove that the job exists or that two people with the same name are the same. Keep the source of each relationship and control separately **schema validity, identity resolution, and factual accuracy**.
 
 ---
 
-Comment construire un knowledge graph avec un LLM ? <!--anki:7645732d313e6c377d63-->
+How to build a knowledge graph with a LLM? <!--anki:7645732d313e6c377d63-->
 ?
 ```text
-documents → passages → extraction d'entités et relations sous schéma
-→ résolution d'entités → validation → stockage du graphe
+documents → passages → entity extraction and schema relationships
+→ entity resolution → validation → graph storage
 ```
-Définir d'abord les types d'entités et de relations autorisés. L'extracteur doit associer chaque fait à un passage source ; la **résolution d'entités** fusionne ensuite les mentions désignant le même objet sans confondre les homonymes.
+The extractor must associate each fact with a source passage; the **entity resolution** then merges the mentions designating the same object without confusing homonyms.
 
-Vérifier contraintes, doublons et relations douteuses avant chargement. Des embeddings peuvent faciliter la recherche, mais ne sont pas obligatoires. Des outils comme [[24-cognee|Cognee]] automatisent une partie du pipeline ; ils ne remplacent pas la validation des faits.
-
----
-
-Qu'est-ce que la résolution d'entités ? <!--anki:70586539675d5f58613a-->
-?
-Reconnaître que plusieurs mentions désignent **la même entité réelle** et les **fusionner** : normalisation, similarité d'embeddings, règles métier (même SIREN), puis un LLM pour trancher les cas ambigus. Trop timide, le graphe est **fragmenté** ; trop agressive, elle **fusionne à tort** des entités distinctes.
-
-Deux établissements portant le même nom ne doivent pas être fusionnés sur la seule ressemblance textuelle. Préférer un identifiant stable lorsqu'il existe, conserver les mentions et la provenance, puis prévoir une revue des cas incertains. Une fusion erronée propage des attributs et relations à la mauvaise entité ; elle doit pouvoir être annulée.
+Check constraints, duplicates, and questionable relationships before loading. embeddingss can make searching easier, but are not mandatory. Tools like [[24-cognee|Cognee]] automate a portion of the pipeline; they do not replace fact validation.
 
 ---
 
-Quand un graphe bat-il la recherche vectorielle ? <!--anki:696f362a64337e444e58-->
+What is Entity Resolution? <!--anki:70586539675d5f58613a-->
 ?
-- Questions **multi-hop** (« quels fournisseurs des filiales de X sont en retard ? »)
-- **Relations explicites** et chemins entre entités
-- **Agrégations** et comptages (« combien de contrats par client ? »)
-- **Provenance** et explicabilité : on montre le chemin parcouru
+Recognize that several mentions designate **the same real entity** and **merge**: normalization, similarity of embeddings, business rules (same SIREN), then a LLM to decide ambiguous cases. Too shy, the graph is **fragmented**; too aggressive, it **mistakenly merges** separate entities.
 
-La recherche vectorielle reste meilleure pour la **proximité de sens** dans du texte non structuré : on combine souvent les deux.
+Two institutions with the same name should not be merged on text-only likeness. Prefer a stable identifier where it exists, keep mentions and provenance, and then provide for a review of uncertain cases. An erroneous merge spreads attributes and relationships to the wrong entity; it should be able to be undone.
 
 ---
 
-Comment combiner graphe et vecteurs ? <!--anki:5268263e733e2e3f7d6a-->
+When does a graph beat vector search? <!--anki:696f362a64337e444e58-->
 ?
-1. **Recherche vectorielle** pour trouver les chunks ou les nœuds d'entrée pertinents
-2. **Parcours du graphe** à k sauts autour de ces nœuds (voisins, relations)
-3. Assemblage du **sous-graphe et des chunks** dans le contexte du LLM
+- Questions **multi-hop** (“Which suppliers from X’s subsidiaries are late?”)
+- **Explicit relationships** and paths between entities
+- **Aggregations** and counts (“how many contracts per customer?”)
+- **Provenance** and explicability: we show the path traveled
 
-C'est le principe du GraphRAG « local », utile quand la réponse est répartie entre plusieurs documents liés.
-
-Exemple : retrouver un composant par sa description, puis suivre les liens vers ses fournisseurs. Borner profondeur et nombre de voisins : un nœud très connecté peut remplir le contexte de relations inutiles. Conserver la provenance des relations pour vérifier la réponse.
+The vector search remains better for the **closeness of meaning** in unstructured text: we often combine the two.
 
 ---
 
-Comment fonctionne GraphRAG de Microsoft ? <!--anki:7a516429687c6a513b6d-->
+How to combine graph and vectors? <!--anki:5268263e733e2e3f7d6a-->
 ?
-À l'indexation : extraction des entités et relations, détection de **communautés** (algorithme de Leiden), puis **résumés hiérarchiques** de chaque communauté. À la requête :
-- **Local search** : partir des entités de la question et de leur voisinage
-- **Global search** : map-reduce sur les résumés de communautés, pour les questions sur **tout le corpus** (« quels sont les thèmes principaux ? »)
+1. **Vector search** to find relevant chunks or input nodes
+2. **Path of the Graph** to k jumps around these nodes (neighbors, Relationships)
+3. Assembly of the **subgraph and chunks** in the context of the LLM
 
-L'indexation est **coûteuse** ; LazyGraphRAG repousse le travail LLM au moment de la requête pour la réduire fortement.
+This is the principle of GraphRAG "local", useful when the answer is distributed among several linked documents.
+
+Example: find a component by its description, then follow the links to its suppliers. Bound depth and number of neighbors: a highly connected node can fill the context of unnecessary relationships. Keep the provenance of relationships to check the answer.
 
 ---
 
-Qu'est-ce que Text2Cypher et quels sont ses risques ? <!--anki:4450547e3f4856545139-->
+How does GraphRAG work from Microsoft? <!--anki:7a516429687c6a513b6d-->
 ?
-Le LLM **traduit la question en requête Cypher**, avec le schéma du graphe dans le prompt. Risques : requête fausse, labels inventés, requête coûteuse ou **destructrice** (injection). Parades : utilisateur de base **en lecture seule**, validation de la requête, timeouts et limites de résultats, requêtes **paramétrées** pour les cas fréquents.
+At indexing: extraction of entities and relationships, detection of **communities** (Leiden algorithm), then **hierarchical summaries** of each community.
+- **Local search**: from the entities of the question and their neighborhood
+- **Global search**: map-reduce on community summaries, for questions on **the whole corpus** (“what are the main themes?”)
 
-Une requête syntaxiquement valide peut traverser le mauvais type de relation. Tester sur un petit graphe dont la réponse est connue, puis contrôler le plan d'exécution. Un `LIMIT` borne les lignes retournées, pas nécessairement le travail effectué avant ce retour.
+Indexing is **expensive**; LazyGraphRAG pushes back the LLM job at the time of the query to greatly reduce it.
 
 ---
 
-Qu'est-ce qu'un context graph ? <!--anki:7256243e362425497749-->
+What is Text2Cypher and what are its risks? <!--anki:4450547e3f4856545139-->
 ?
-Un terme récent, **non standardisé**, avec deux sens :
-- **Traces de décision** (Foundation Capital, fin 2025) : un graphe qui relie les entités métier aux **décisions prises** (règle appliquée, exception accordée, qui a validé, quel précédent), pour que les agents retrouvent les précédents et qu'on puisse auditer leurs choix.
-- **Graphe temporel** (Graphiti, Zep) : un knowledge graph où chaque fait a une **fenêtre de validité** et remonte aux **épisodes** (données brutes) qui l'ont produit.
+The LLM **translates the question into a Cypher request**, with the diagram of the graph in the prompt. Risks: false request, invented labels, expensive request or **destructive** (injection). Parades: basic user **read-only**, request validation, timeouts and result limits, requests **set** for frequent cases.
+
+A syntactically valid query can cross the wrong type of relationship. Test on a small graph whose answer is known, and then control the execution plan. A `LIMIT` limits the returned lines, not necessarily the work done before this return.
 
 ---
 
-Quels sont les coûts et les pièges d'un knowledge graph ? <!--anki:64642c3535557229767e-->
+What is a context graph? <!--anki:7256243e362425497749-->
 ?
-Le coût comprend **extraction, maintenance et évaluation**, pas seulement le stockage du graphe. Une relation erronée peut contaminer plusieurs réponses multi-hop.
-
-Exemple : transformer « fournisseur envisagé » en « fournisseur agréé » crée une arête plausible mais fausse. Conserver le passage justificatif, le type et la période de validité de la relation permet de la contrôler et de la retirer quand la source change.
-
-Démarrer avec une **ontologie restreinte** ; mesurer qualité des entités, des relations et des réponses. Comparer le gain à un [[21-rag-fondamentaux|RAG vectoriel]] sur les mêmes [[92-chainforge-evals-prompts|evals]], en intégrant le coût de correction humaine.
+A recent term, **not standardized**, with two meanings:
+- **Decision marks** (Foundation Capital, end 2025): a graph that links business entities to **decisions made** (rule applied, exception granted, who validated, what precedent), so that agents can find the precedents and audit their choices.
+- **Time Graph** (Graphiti, Zep): a knowledge graph where each fact has a **window of validity** and goes back to the **episodes** (raw data) that produced it.
 
 ---
 
-Pourquoi conserver la provenance de chaque relation extraite dans un knowledge graph ? <!--anki:3866343838343766326361623433336262323237373366623366393334363032-->
+What are the costs and pitfalls of a knowledge graph? <!--anki:64642c3535557229767e-->
 ?
-Une **relation extraite** reste une affirmation issue d'une source, parfois incertaine. Conserver document, passage, date de validité et version d'extracteur permet de vérifier, corriger ou retirer cette affirmation.
+The cost includes **extraction, maintenance and evaluation**, not just graph storage. An erroneous relationship can contaminate multiple multi-hop responses.
 
-Si deux rapports attribuent des dirigeants différents à une société, garder leurs périodes et preuves évite d'écraser arbitrairement l'une des relations. Une suppression doit pouvoir retrouver les relations dérivées du document. Le graphe gagne en traçabilité ; il ne devient pas vrai par construction. Distinguer relation observée, relation inférée et fait validé.
+For example, turning "supplier envisaged" into "authorised supplier" creates a plausible but false edge. Keeping the supporting passage, type and period of validity of the relationship allows you to control it and remove it when the source changes.
+
+Start with a **restricted ontology**; measure the quality of entities, relationships and responses. Compare the gain to a [[21-rag-fundamentals|Vector RAG]] on the same [[92-chainforge-evals-prompts|evals]], integrating the human correction cost.
 
 ---
 
-À ne pas confondre : absence de relation dans un graphe et preuve que la relation est fausse ? <!--anki:6665303530386666656164313464313162653766626631376135653063313662-->
+Why keep the provenance of each relationship extracted in a knowledge graph? <!--anki:3866343838343766326361623433336262323237373366623366393334363032-->
 ?
-Dans une sémantique de **monde ouvert**, ne pas connaître une relation ne signifie pas sa négation. Un graphe sans lien « possède » entre une société et une filiale peut simplement être incomplet.
+An extracted **relationship** remains an affirmation from a source, sometimes uncertain. Keep document, passage, validity date and extractor version allows to verify, correct or withdraw this affirmation.
 
-Une règle de monde fermé n'est défendable que pour un périmètre déclaré complet, avec date et provenance. Un agent doit donc distinguer relation confirmée, réfutée et inconnue. La convention du moteur de requête ne transforme pas l'incomplétude des sources en certitude métier.
+If two reports assign different leaders to a company, keeping their periods and evidence avoids arbitrarily overwriting one of the relationships. A deletion must be able to find the relationships derived from the document. The graph gains in traceability; it does not become true by construction. Distinguish observed relationship, inferred relationship and validated fact.
 
 ---
 
-Comment éviter de transformer une relation hypothétique extraite par LLM en fait du knowledge graph ? <!--anki:3934356638626430663463313466363138326637623836653834353263613063-->
+Do not confuse: absence of relationship in a graph and proof that the relationship is false? <!--anki:6665303530386666656164313464313162653766626631376135653063313662-->
 ?
-Conserver **modalité, négation et attribution** : « envisage de racheter » ne signifie pas « possède ». Modéliser l'affirmation avec sa source, sa date et son statut avant d'en dériver une relation exploitable.
+In a semantics of **Open World**, Not knowing a relationship does not mean its negation. An unrelated graph between a company and a subsidiary may simply be incomplete.
 
-Valider les règles de promotion sur des exemples négatifs et conditionnels. Deux mentions répétées d'une même rumeur ne constituent pas deux confirmations indépendantes. Une relation sans ces qualifications peut rendre les parcours multi-hop cohérents en apparence mais factuellement faux.
+A closed world rule is defensible only for a declared complete perimeter, with date and provenance. An agent must therefore distinguish confirmed, refuted and unknown relationship. The convention of the query engine does not transform the incompleteness of the sources into business certainty.
 
 ---
 
-## Mises en situation
-
-Mise en situation : ton graphe extrait par LLM contient « Société Générale », « Societe Generale » et « SG » comme trois entités distinctes, et les requêtes multi-hop échouent. Comment corriges-tu ? <!--anki:6670413d484e4a557b4d-->
+How to avoid turning a hypothetical relationship extracted by LLM into a knowledge graph? <!--anki:3934356638626430663463313466363138326637623836653834353263613063-->
 ?
-1. **Cause** : extraction sans ontologie ni résolution d'entités, donc un graphe **fragmenté**
-2. **Ontologie restreinte** : types d'entités et de relations autorisés, extraction en sortie structurée ([[63-guided-generation|guided generation]])
-3. **Résolution d'entités** : normalisation, similarité d'embeddings, règles métier (même SIREN), LLM en arbitre sur les cas douteux
-4. **Fusionner l'existant** plutôt que tout ré-extraire, si le corpus est coûteux à retraiter
-5. **Mesurer** : requêtes de test connues, et surveiller le nombre d'entités par concept
+Retaining **modality, negation, and attribution**: "considers redeeming" does not mean "owns." Model the assertion with its source, date, and status before deriving an exploitable relationship.
 
-**Piège** : une résolution trop agressive qui fusionne une filiale et sa maison mère.
+Validate promotion rules on negative and conditional examples. Two repeated mentions of the same rumor do not constitute two independent confirmations. A relationship without these qualifications can make multi-hop courses coherent in appearance but factually false.
 
 ---
 
-Mise en situation : un chef de projet veut exposer Text2Cypher aux utilisateurs métier, pour qu'ils interrogent le graphe en langage naturel. Quelles conditions poses-tu ? <!--anki:4a3b4c694f233a516228-->
-?
-1. **Utilisateur de base en lecture seule** : aucune requête ne doit pouvoir modifier ou supprimer le graphe
-2. **Validation de la requête générée** avant exécution, avec labels et relations vérifiés contre le schéma
-3. **Timeouts et limites** de résultats, contre les requêtes qui balayent tout le graphe
-4. **Requêtes paramétrées** pour les questions fréquentes, le LLM ne remplissant que les paramètres
-5. **Afficher la requête et le chemin** parcouru, pour que l'utilisateur juge la réponse ([[102-menaces-agents|menaces]])
+## Scenarios
 
-**Piège** : donner au générateur un compte d'administration « le temps des tests ».
+Scenario: your graph extracted by LLM contains "Societe Generale", "Societe Generale" and "SG" as three separate entities, and multi-hop queries fail. How do you fix it? <!--anki:6670413d484e4a557b4d-->
+?
+1. **Cause** : extraction without ontology or resolution of entities, So a graph **Fragment**
+2. **Restricted Ontology**: Allowed types of entities and relationships, structured output extraction ([[63-guided-generation|guided generation]])
+3. **Entity resolution**: normalization, similarity of embeddings, business rules (same SIREN), LLM in arbiter on doubtful cases
+4. **Merge the existing** rather than re-extract everything, if the corpus is expensive to reprocess
+5. **Measure**: Known test queries, and monitor the number of entities per concept
+
+**Trap** too aggressive resolution that merges a subsidiary and its parent company.
+
+---
+
+Scenario: a project manager wants to expose Text2Cypher to business users, so that they query the graph in natural language. What conditions do you pose? <!--anki:4a3b4c694f233a516228-->
+?
+1. **Read-only basic user**: No request can modify or delete the graph
+2. **Validation of query generated** before execution, with labels and relationships checked against the schema
+3. **Timeouts and result limits**, against queries that scan the entire graph
+4. **Setting requests** for frequently asked questions, the LLM only filling in the parameters
+5. **Show the query and the path** traveled, so that the user can judge the answer ([[102-agent-threats|threats]])
+
+**Trap**: Give the generator an administration account "test time".
 
 ---
 
 ## Sources
 
-- [Microsoft — GraphRAG, indexation et recherche](https://microsoft.github.io/graphrag/)
+- [Microsoft — GraphRAG, indexing and search](https://microsoft.github.io/graphrag/)
 
-- [W3C — modèle de provenance PROV](https://www.w3.org/TR/prov-overview/) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
+- [W3C — PROV provenance model](https://www.w3.org/TR/prov-overview/) — targeted deepening of the 12 November 2026; educational examples are built for this review.
 
-- Complément du 14 novembre 2026 — Monde ouvert et assertions : [W3C — OWL 2 Primer](https://www.w3.org/TR/owl2-primer/).
+- Supplement of the 14 November 2026 — Open world and assertions: [W3C — OWL 2 Primer](https://www.w3.org/TR/owl2-primer/).
 
-## Connexions
-- [[21-rag-fondamentaux|RAG — Fondamentaux]] — la recherche vectorielle de base
-- [[22-rag-avance|RAG avancé]] — recherche hybride et agentic RAG
-- [[24-cognee|Cognee]] — une mémoire d'agent bâtie sur un graphe et une ontologie
-- [[39-memoire-agents|Mémoire des agents]] — graphes temporels pour se souvenir
-- [[63-guided-generation|Guided generation]] — extraire sous schéma
-- [[101-securite-llm-guardrails|Sécurité LLM]] — injection dans les requêtes générées
-- [[26-text-to-sql|Text-to-SQL]] — le même problème que Text2Cypher, sur une base relationnelle
+## Connections
+- [[21-rag-fundamentals|RAG — Fundamentals]] — Basic Vector Search
+- [[22-advanced-rag|Advanced RAG]] — hybrid and agentic search RAG
+- [[24-cognee|Cognee]] — an agent memory built on a graph and an ontology
+- [[39-agent-memory|Memorandum of agents]] — Time Graphs to Remember
+- [[63-guided-generation|Guided generation]] — extract as schema
+- [[101-llm-security-guardrails|LLM Security]] — injection in generated queries
+- [[26-text-to-sql|Text-to-SQL]] — the same problem as Text2Cypher, on a relational basis
 - [[00-moc-ai-engineering|MOC AI Engineering]]

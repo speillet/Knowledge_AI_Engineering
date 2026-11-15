@@ -1,4 +1,5 @@
-"""Vrai graphe LangGraph, modèle LangChain simulé et traces Langfuse locales."""
+"""True LangGraph graph, simulated LangChain model and local Langfuse traces."""
+
 import json
 import os
 from pathlib import Path
@@ -50,13 +51,17 @@ class Engine:
         directory.mkdir(parents=True, exist_ok=True)
         self.store = Store(directory / "business.sqlite")
         self.checkpoints = sqlite3.connect(str(directory / "checkpoints.sqlite"), check_same_thread=False)
-        # Tous les runs sont sérialisés : atelier UN processus, pas un verrou distribué.
+        # All runs are serialized: One process workshop, not a distributed lock.
         self.lock = threading.RLock()
-        self.fault = fault  # injecté par les tests, jamais exposé dans l'API
+        self.fault = fault  # injected by the tests, never exposed in the API
         self.exporter = InMemorySpanExporter()
-        # Export local uniquement. Aucune clé réelle, aucun envoi à Langfuse Cloud.
-        self.telemetry = Langfuse(public_key="pk-lab-" + str(uuid.uuid4()), secret_key="sk-local-only",
-                                 span_exporter=self.exporter, environment="local-lab")
+        # Local export only. No real key, no sending to Langfuse Cloud.
+        self.telemetry = Langfuse(
+            public_key="pk-lab-" + str(uuid.uuid4()),
+            secret_key="sk-local-only",
+            span_exporter=self.exporter,
+            environment="local-lab",
+        )
         builder = StateGraph(State)
         builder.add_node("propose", self.propose)
         builder.add_node("approve", self.approve)
@@ -78,39 +83,47 @@ class Engine:
         return {"configurable": {"thread_id": run_id}}
 
     def propose(self, state):
-        # Le tenant est injecté par le service, jamais par le schéma d'outil.
+        # The holder is injected by the service, never by the tool scheme.
         @tool
         def read_order(order_id: str) -> dict:
-            """Lire le solde et la version d'une commande du client authentifié."""
+            """Read the balance and version of an authenticated customer order."""
             return self.store.order(state["tenant"], order_id)
 
-        with self.telemetry.start_as_current_observation(name="read-order", as_type="tool",
-                                                        input={"order_id": state["request"]["order_id"]}) as span:
+        with self.telemetry.start_as_current_observation(
+            name="read-order", as_type="tool", input={"order_id": state["request"]["order_id"]}
+        ) as span:
             order = read_order.invoke({"order_id": state["request"]["order_id"]})
             span.update(output=order)
-        with self.telemetry.start_as_current_observation(name="retrieve-policy", as_type="retriever",
-                                                        input={"policy_id": "support-v1"}) as span:
-            # Retrieval exact sur une source synthétique versionnée, sans moteur vectoriel.
-            policy = {"version": "support-v1",
-                      "text": "Toute création d'avoir exige une approbation humaine et un solde suffisant."}
+        with self.telemetry.start_as_current_observation(
+            name="retrieve-policy", as_type="retriever", input={"policy_id": "support-v1"}
+        ) as span:
+            # Exact retrieval on a synthetic versioned source, without vector engine.
+            policy = {
+                "version": "support-v1",
+                "text": "Any creation of having requires human approval and a sufficient balance.",
+            }
             span.update(output=policy)
-        # Réponse contrôlée : teste l'intégration, pas la qualité d'un fournisseur.
+        # Controlled response: Tests the integration, not the quality of a vendor.
         model = GenericFakeChatModel(messages=iter([json.dumps(state["request"])]))
         prompt = policy["text"] + " Demande : " + json.dumps(state["request"])
-        with self.telemetry.start_as_current_observation(name="propose-refund", as_type="generation",
-                                                        input=[{"role": "user", "content": prompt}],
-                                                        model="simulated-local", metadata={"simulated": True}) as span:
+        with self.telemetry.start_as_current_observation(
+            name="propose-refund",
+            as_type="generation",
+            input=[{"role": "user", "content": prompt}],
+            model="simulated-local",
+            metadata={"simulated": True},
+        ) as span:
             response = model.invoke([HumanMessage(content=prompt)])
             span.update(output=response.content)
         draft = Request.model_validate_json(response.content).model_dump()
-        # Version métier, expiration et politique sont fixées côté serveur.
-        proposal = Proposal(**draft, order_version=order["version"],
-                            expires_at=time.time() + 3600.0,
-                            policy_version=policy["version"]).model_dump()
-        # Validation indépendante de la réponse du modèle.
+        # Business version, expiration and policy are set on the server side.
+        proposal = Proposal(
+            **draft, order_version=order["version"], expires_at=time.time() + 3600.0, policy_version=policy["version"]
+        ).model_dump()
+        # Independent validation of the model response.
         request = state["request"]
         if proposal["order_id"] != request["order_id"] or proposal["amount_cents"] != request["amount_cents"]:
-            raise Conflict("Le modèle a changé la demande")
+            raise Conflict("The model has changed the demand")
         if proposal["amount_cents"] > order["remaining"]:
             raise Conflict("Solde insuffisant")
         return {"proposal": proposal, "status": "waiting"}
@@ -119,27 +132,27 @@ class Engine:
         digest = fingerprint(state["proposal"])
         decision = interrupt({"proposal": state["proposal"], "proposal_hash": digest})
         if decision.get("proposal_hash") != digest or type(decision.get("approved")) is not bool:
-            raise Conflict("Décision incompatible avec la proposition")
+            raise Conflict("Decision incompatible with the proposal")
         return {"approved": decision["approved"], "status": "approved" if decision["approved"] else "rejected"}
 
     def execute(self, state):
         with self.telemetry.start_as_current_observation(
-                name="commit-refund", as_type="tool",
-                input={"proposal_hash": fingerprint(state["proposal"])}) as span:
+            name="commit-refund", as_type="tool", input={"proposal_hash": fingerprint(state["proposal"])}
+        ) as span:
             receipt = self.store.refund(state["run_id"], state["tenant"], state["proposal"])
             span.update(output={"receipt": receipt})
-        # La transaction métier est déjà validée ; le checkpoint suivant ne l'est pas.
+        # The business transaction is already validated; the next checkpoint is not.
         if self.fault == "exit_after_effect":
             os._exit(73)
         if self.fault == "raise_after_effect":
             self.fault = None
-            raise RuntimeError("Panne injectée après effet, avant checkpoint")
+            raise RuntimeError("Injected after effect, before checkpoint")
         return {"receipt": receipt, "status": "completed"}
 
     def create(self, tenant, key, request):
         request = Request.model_validate(request).model_dump()
         if not 1 <= len(key) <= 128:
-            raise ValueError("Clé de soumission invalide")
+            raise ValueError("Invalid submission key")
         with self.lock:
             return self.store.create(tenant, key, request)
 
@@ -171,16 +184,16 @@ class Engine:
                 data = {"run_id": run_id, "tenant": tenant, "request": json.loads(row["request"])}
             self.store.status(run_id, "running")
             try:
-                with self.telemetry.start_as_current_observation(name="support-run", as_type="agent",
-                                                                input=json.loads(row["request"]),
-                                                                metadata={"run_id": run_id}) as span:
+                with self.telemetry.start_as_current_observation(
+                    name="support-run", as_type="agent", input=json.loads(row["request"]), metadata={"run_id": run_id}
+                ) as span:
                     self.graph.invoke(data, self.config(run_id), durability="sync")
                     current = self.graph.get_state(self.config(run_id))
                     status = "waiting" if current.interrupts else current.values["status"]
                     span.update(output={"status": status, "receipt": current.values.get("receipt")})
                 self.store.status(run_id, status)
             except Exception:
-                # failed signifie traitement interrompu, pas preuve d'absence d'effet.
+                # Failed means interrupted treatment, no evidence of no effect.
                 self.store.status(run_id, "failed")
                 raise
             finally:
@@ -189,11 +202,11 @@ class Engine:
 
     def decide(self, tenant, run_id, digest, approved):
         if type(approved) is not bool:
-            raise ValueError("Décision booléenne attendue")
+            raise ValueError("Boolean decision expected")
         with self.lock:
             view = self.view(tenant, run_id)
             if digest != view.get("proposal_hash"):
-                raise Conflict("Proposition obsolète ou inconnue")
+                raise Conflict("Obsolete or unknown proposal")
             self.store.decide(run_id, tenant, digest, approved)
             return self.drive(tenant, run_id)
 
@@ -202,8 +215,8 @@ class Engine:
             row = self.store.owned(run_id, tenant)
             if row["status"] == "cancelled":
                 return self.view(tenant, run_id)
-            # Une décision déjà persistée peut avoir été exécutée malgré un crash.
+            # An already-persisted decision may have been executed despite a crash.
             if row["status"] not in ("queued", "waiting") or row["decision"] is not None:
-                raise Conflict("Annulation sûre impossible dans cet état ; vérifier les effets")
+                raise Conflict("Safe cancellation impossible in this state; check effects")
             self.store.status(run_id, "cancelled")
             return self.view(tenant, run_id)

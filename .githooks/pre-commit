@@ -1,5 +1,5 @@
 #!/bin/sh
-# Bloque le commit si une fiche casse la révision ou la navigation, ou si le code Python
-# ne passe pas ruff. Les cibles sont définies dans le Makefile (make pre-commit).
-# Activation (une fois par clone) : git config core.hooksPath .githooks
+# Blocks the commit if a file breaks the revision or navigation, or if the Python code
+# does not pass ruff. Targets are set in the Make file (make pre-commit).
+# Activation (once per clone): git config core.hooksPath .githooks
 exec make --no-print-directory pre-commit

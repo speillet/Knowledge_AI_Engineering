@@ -1,170 +1,170 @@
-# Text-to-SQL & données structurées — Flashcards
-Tags: #flashcards #ai-engineering #rag #text-to-sql #donnees #llm
-Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: text-to-SQL ou RAG, contenu du prompt, schema linking, couche sémantique, sécurisation de l'exécution, boucle de correction, exact match ou execution accuracy, benchmarks (Spider, BIRD, Spider 2.0), questions ambiguës, limites d'une validation SQL sur échantillon, fan-out des jointures, valeurs NULL. -->
+# Text-to-SQL & structured data — Flashcards
+Tags: #flashcards #ai-engineering #rag #text-to-sql #data #llm
+Verified on: 29 September 2026 — This factsheet lists products, versions or regulatory texts that are evolving quickly.
+<!-- summary: text-to-SQL or RAG, prompt content, schema linking, semantic layer, execution security, correction loop, exact match or execution compliance, benchmarks (Spider, BIRD, Spider 2.0), ambiguous questions, limits of SQL validation on sample, join fan-out, NULL values. -->
 
 
-Qu'est-ce que le text-to-SQL ? <!--anki:797b6930743e52773076-->
+What is text-to-SQL? <!--anki:797b6930743e52773076-->
 ?
-Un LLM **traduit une question en langage naturel en requête SQL**, qu'on exécute sur la base ; le résultat est ensuite présenté ou résumé. C'est le moyen de répondre aux questions **chiffrées et agrégées** (« combien », « quelle évolution », « top 10 ») sur des données tabulaires.
+A LLM **translates a natural language question into a SQL query**, which is executed on the basis; the result is then presented or summarized. This is the way to answer the questions **encrypted and aggregated** ("how many", "what evolution", "top 10") on tabular data.
 
-La difficulté est aussi **sémantique** : « chiffre d'affaires » exige une définition, une période, une devise et une gestion des annulations. Une requête SQL valide peut calculer le mauvais indicateur. Fournir le schéma utile, contrôler les droits et le coût d'exécution, puis vérifier le résultat sur des cas dont le calcul métier est connu.
+The difficulty is also **semantic**: "turnover" requires definition, period, currency, and cancellation management. A valid SQL query can calculate the wrong indicator. Provide the useful schema, control the rights and execution cost, and then verify the result on cases whose business calculation is known.
 
 ---
 
-À ne pas confondre : text-to-SQL et RAG ? <!--anki:49415b3c493c4d7148-->
+Do not confuse: text-to-SQL and RAG? <!--anki:49415b3c493c4d7148-->
 ?
-- **RAG** : retrouve des **passages de texte** pertinents et laisse le LLM en tirer la réponse. Bon pour « que dit la politique de remboursement ? »
-- **Text-to-SQL** : fait **calculer** la base. Bon pour « combien de remboursements en mars, par région ? »
+- **RAG**: find relevant **text passages** and let the LLM get the answer. Good for "what does the refund policy say?"
+- **Text-to-SQL**: Makes **calculate** the base. Good for "How many refunds in March, by region?"
 
-Un RAG ne sait pas **compter** : il remonte k chunks, jamais l'ensemble des lignes. Les assistants d'entreprise combinent souvent les deux, avec un **routage** selon la question ([[21-rag-fondamentaux|quand ne pas faire de RAG]]).
+A RAG does not know **Count** : it goes up k chunks, Never all the lines. Business assistants often combine the two, with a **Routing** according to the question ([[21-rag-fundamentals|when not to do RAG]]).
 
 ---
 
-Que met-on dans le prompt d'un système text-to-SQL ? <!--anki:7145587c263171674831-->
+What is in the prompt of a text-to-SQL system? <!--anki:7145587c263171674831-->
 ?
-- Le **schéma** : tables, colonnes, types, clés, avec des **descriptions métier** (« `statut = 3` signifie annulé »)
-- Quelques **valeurs d'exemple** par colonne catégorielle, pour écrire les bons filtres
-- Des **exemples question → SQL** validés, proches de la question (sélectionnés par similarité)
-- Le **dialecte** (PostgreSQL, BigQuery, Snowflake) et les règles : lecture seule, `LIMIT`, fuseau horaire
+- The **schema**: tables, columns, types, keys, with **business descriptions** (“`status = 3` means canceled”)
+- Some **example values** per categorical column, to write the right filters
+- The **Example Question → SQL** validated, close to the question (selected by similarity)
+- The **dialect** (PostgreSQL, BigQuery, Snowflake) and rules: read-only, `LIMIT`, time zone
 
-Un schéma brut sans descriptions est une cause d'erreur fréquente.
+A raw schema without descriptions is a common cause of error.
 
 ---
 
-Comment un système text-to-SQL peut-il gérer un schéma de 500 tables ? <!--anki:744e306277797e296e65-->
+How can a text-to-SQL system handle a schema of 500 tables? <!--anki:744e306277797e296e65-->
 ?
-Par **schema linking** : une première étape sélectionne les **tables et colonnes utiles** à la question (recherche sur les descriptions, ou LLM), puis on ne met que ce sous-schéma dans le prompt de génération. Sans cela, le schéma sature le contexte et le modèle **confond des colonnes homonymes**.
+By **schema linking**: a first step selects the **tables and columns that are useful** to the question (description search, or LLM), then we put only this sub-schema in the generation prompt. Otherwise, the schema saturates the context and the **confound model of the homonymous columns**.
 
-Mieux encore : exposer des **vues métier** préparées plutôt que les tables brutes.
+Better yet: expose prepared **business views** rather than raw tables.
 
-Conserver aussi les clés et tables de liaison nécessaires aux jointures. Pour « revenus par client », sélectionner `clients` et `lignes_facture` sans le lien `factures` peut rendre la bonne requête impossible, même avec les bonnes colonnes de montant.
+For "revenues per customer", selecting `clients` and `lignes_facture` without the `factures` link can make the right query impossible, even with the right amount columns.
 
 ---
 
-Qu'est-ce qu'une couche sémantique et pourquoi aide-t-elle ? <!--anki:4a75536f372969675526-->
+What is a semantic layer and why does it help? <!--anki:4a75536f372969675526-->
 ?
-Une couche qui définit **une fois** les **métriques et dimensions** de l'entreprise (« chiffre d'affaires net », « client actif ») avec leur calcul officiel (dbt Semantic Layer, Cube, LookML). Le LLM choisit **quelle métrique et quels filtres**, au lieu d'écrire la jointure et la formule.
+A layer that defines **once** the **metrics and dimensions** of the company ("net sales", "active customer") with their official calculation (dbt Semantic Layer, Cube, LookML). The LLM chooses **which metric and which filters**, instead of writing the join and formula.
 
-Gain : les chiffres **correspondent à ceux des tableaux de bord**, et le LLM ne peut pas inventer sa propre définition du CA.
+Gain: the figures **match those of the dashboards**, and the LLM cannot invent its own definition of the turnover.
 
 ---
 
-Comment sécuriser l'exécution des requêtes générées ? <!--anki:503f54667a6e2f616d4d-->
+How to secure the execution of generated queries? <!--anki:503f54667a6e2f616d4d-->
 ?
-- Compte de base en **lecture seule**, sur une **réplique**, avec seulement les schémas autorisés
-- **Sécurité au niveau des lignes** (row-level security) : l'utilisateur ne voit que ses données, quelle que soit la requête
-- **Analyse de la requête** avant exécution : une seule instruction `SELECT`, tables autorisées
-- **Timeouts**, `LIMIT` et budget : estimation préalable du coût (`EXPLAIN`, dry run BigQuery)
+- Basic account in **read-only**, on a **replica**, with only the allowed schemes
+- **Safety at the line level** (row-level security): the user only sees his data, Whatever the request
+- **Query analysis** before execution: only one `SELECT` statement, tables allowed
+- **Timeouts**, `LIMIT` and budget: preliminary cost estimate (`EXPLAIN`, dry run BigQuery)
 
-La requête générée est une **entrée non fiable**, influençable par injection ([[101-securite-llm-guardrails|sécurité]]).
+The generated request is an unreliable **input**, which can be influenced by injection ([[101-llm-security-guardrails|Security]]).
 
 ---
 
-Comment un système text-to-SQL corrige-t-il ses erreurs ? <!--anki:493c403f785f2c3e4b37-->
+How does a text-to-SQL system fix its errors? <!--anki:493c403f785f2c3e4b37-->
 ?
-Par une **boucle bornée** : analyser la requête, utiliser `EXPLAIN` lorsque pertinent, puis exécuter sous permissions et limites contrôlées. Renvoyer une erreur exploitable sans secrets permet de corriger syntaxe ou colonnes inconnues.
+By an **Bounded Loop** : analyze the request, use `EXPLAIN` When relevant, then execute under controlled permissions and limits. Returning an exploitable error without secrets helps to correct syntax or unknown columns.
 
-Une exécution réussie ne valide pas le **sens**. Exemple : joindre chaque commande à ses lignes puis sommer le total de commande le compte plusieurs fois. Contrôler grain, cardinalités et agrégations, avec des jeux de données où l'erreur devient visible. Un résultat vide ou négatif mérite examen, mais peut être légitime : ne pas modifier arbitrairement la requête jusqu'à obtenir un résultat « rassurant ».
+A successful execution does not validate the **sense**. Example: join each command to its lines and then sum the order total counts it several times. Control grain, cardinalities and aggregations, with datasets where the error becomes visible. An empty or negative result deserves consideration, but can be legitimate: do not arbitrarily modify the request until a "reassuring" result is obtained.
 
 ---
 
-À ne pas confondre : exact match et execution accuracy ? <!--anki:4a5e2b332a234d433067-->
+Do not confuse: Exact Match and Execution Accuracy? <!--anki:4a5e2b332a234d433067-->
 ?
-- **Exact match** : la requête générée est-elle **identique** à la requête de référence ? Trop strict, car il existe plusieurs SQL corrects
-- **Execution accuracy** : les deux requêtes donnent-elles le **même résultat** sur la base ? C'est la métrique standard
+- **Exact match** : the generated request is **identical** The reference request? too strict, because there are several correct SQL
+- **Accuracy**: Do the two queries give the **same result** on the basis? This is the standard metric
 
-Limite de la seconde : deux requêtes peuvent coïncider sur les données de test par hasard. On teste sur une base **réaliste** et on vérifie les cas limites.
+Limit of the second: two requests can coincide on the test data by chance. We test on a **realistic** basis and we check the limit cases.
 
 ---
 
-Pourquoi un bon score sur Spider ne prédit-il pas la réussite d'un text-to-SQL sur un entrepôt d'entreprise ? <!--anki:6976465b5b7c3160683e-->
+Why does a good score on Spider not predict the success of a text-to-SQL on a corporate warehouse? <!--anki:6976465b5b7c3160683e-->
 ?
-- **Spider** (2018) : bases variées mais simples, aujourd'hui saturé
-- **BIRD** (2023) : bases plus grandes et **sales**, connaissances métier nécessaires
-- **Spider 2.0** (2024) : workflows d'entreprise réels (BigQuery, Snowflake), schémas de centaines de colonnes ; les taux de réussite y restent bien plus bas
+- **Spider** (2018): varied but simple bases, now saturated
+- **BIRD** (2023): larger and **sales** bases, necessary business knowledge
+- **Spider 2.0** (2024): real enterprise workflows (BigQuery, Snowflake), hundreds of column diagrams; success rates remain much lower
 
-L'écart entre ces benchmarks rappelle qu'un score public ne prédit pas le résultat **sur sa propre base** ([[146-choix-modeles|choix de modèle]]).
+The difference between these benchmarks is a reminder that a public score does not predict the result **on its own basis** ([[146-model-selection|choice of model]]).
 
-Construire des cas locaux avec dates fiscales, annulations et jointures un-à-plusieurs. Une requête peut s'exécuter sans erreur tout en doublant le chiffre d'affaires : comparer le résultat métier, pas seulement la syntaxe ou l'absence d'exception.
+Build local cases with tax dates, cancellations and one-to-many joins. A query can run without error while doubling the turnover: compare the business result, not just the syntax or the absence of exception.
 
 ---
 
-Comment un système text-to-SQL doit-il gérer une question ambiguë ? <!--anki:62717d725e7e684b387b-->
+How should a text-to-SQL system handle an ambiguous question? <!--anki:62717d725e7e684b387b-->
 ?
-« Les ventes de mars » : quelle année, quel périmètre, CA brut ou net ? Options :
-- **Demander une précision** quand l'ambiguïté change fortement le résultat
-- **Appliquer une convention documentée** (dernière année complète, CA net) et **l'afficher** dans la réponse
-- **Montrer la requête** ou sa traduction en langage naturel, pour que l'utilisateur vérifie ce qui a été calculé
+"March sales": what year, what scope, gross or net turnover? Options:
+- **Ask for clarification** when ambiguity strongly changes the result
+- **Apply a documented convention** (last full year, net sales) and **display it** in the response
+- **Show the query** or its translation into natural language, so that the user can verify what has been calculated
 
-Un chiffre faux présenté avec assurance est pire qu'une question de clarification ([[143-hallucinations-grounding|abstention]]).
+A false figure presented with assurance is worse than a question of clarification ([[143-hallucinations-grounding|abstention]]).
 
 ---
 
-Pourquoi LIMIT sans ordre défini ne constitue-t-il pas un échantillon représentatif pour valider un text-to-SQL ? <!--anki:6337346239313835376561633466663038303239616635643966326461323562-->
+Why is LIMIT not a representative sample for validating a text-to-SQL? <!--anki:6337346239313835376561633466663038303239616635643966326461323562-->
 ?
-Un **LIMIT** retient un sous-ensemble dont l'ordre peut dépendre du plan et du stockage. Les premières lignes peuvent représenter une seule période ou un seul client, sans couvrir les cas qui font varier la réponse.
+A **LIMIT** retains a subset whose order may depend on the plan and storage. The first lines can represent a single period or a single client, without covering cases that vary the response.
 
-Valider la requête sur des jeux contrôlés contenant cas limites, jointures multiples et valeurs manquantes, puis sur la population pertinente. Si un échantillon statistique est nécessaire, définir sa méthode et ses strates. Ajouter un ORDER BY stabilise une sélection, mais ne la rend pas automatiquement représentative ni correcte pour un agrégat global.
+Validate the query on controlled sets containing limit cases, multiple joins and missing values, and then on the relevant population. If a statistical sample is needed, define its method and its strata. Adding an ORDER BY stabilizes a selection, but does not automatically make it representative or correct for an overall aggregate.
 
 ---
 
-Pourquoi une jointure peut-elle doubler un total dans une requête générée par text-to-SQL ? <!--anki:3630346365353337613433383466386539333031316637656130373133373162-->
+Why can a join double a total in a text-to-SQL generated query? <!--anki:3630346365353337613433383466386539333031316637656130373133373162-->
 ?
-Une relation **un-à-plusieurs multiplie les lignes** avant agrégation. Joindre une commande de 100 € à trois lignes produit trois occurrences du montant ; `SUM(montant_commande)` renvoie 300 €.
+A relationship **One-to-many multiplies lines** before aggregation. Attach an order of 100 € three lines produces three occurrences of the amount; `SUM(montant_commande)` returns 300 €.
 
-Définir le grain de chaque table et préagréger au grain attendu, ou agréger les bonnes mesures. `SUM(DISTINCT montant)` n'est pas une réparation générale : deux commandes différentes peuvent avoir le même montant. Tester avec des cardinalités connues et comparer aux totaux de référence.
+Define the grain of each table and preaggregate to the expected grain, or aggregate the right measurements. `SUM(DISTINCT amount)` is not a general repair: two different orders can have the same amount. Test with known cardinalities and compare to reference totals.
 
 ---
 
-Comment les valeurs NULL peuvent-elles fausser une réponse text-to-SQL pourtant exécutable ? <!--anki:3762653638613565366531373465343739363839623732636538326662303862-->
+How can NULL values distort an executable text-to-SQL response? <!--anki:3762653638613565366531373465343739363839623732636538326662303862-->
 ?
-**NULL représente une valeur inconnue ou absente**, pas zéro. `COUNT(*)` compte les lignes ; `COUNT(colonne)` ignore les NULL. `AVG(colonne)` ignore aussi ces valeurs, ce qui change le dénominateur.
+**NULL represents an unknown or absent value**, not zero. `COUNT(*)` counts rows; `COUNT(colonne)` ignores NULLs. `AVG(colonne)` also ignores these values, which changes the denominator.
 
-Sur trois factures de 10, 20 et montant inconnu, la moyenne des montants connus vaut 15, pas 10. Le système doit expliciter la population calculée et choisir une politique métier pour les absences. Remplacer tous les NULL par zéro inventerait une information.
+On three invoices of 10, 20 and unknown amount, the average of the known amounts is 15, not 10. The system must specify the calculated population and choose a business policy for absences. Replacing all NULLs with zero would invent information.
 
 ---
 
-## Mises en situation
+## Scenarios
 
-Mise en situation : le directeur commercial veut « poser ses questions à l'entrepôt de données en langage naturel ». L'entrepôt compte 300 tables mal documentées. Comment cadres-tu le projet ? <!--anki:48286c646f7b7a5a404e-->
+Scenario: the sales manager wants to "ask questions at the natural language data warehouse". The warehouse has 300 poorly documented tables. How do you frame the project? <!--anki:48286c646f7b7a5a404e-->
 ?
-1. **Réduire le périmètre** : un domaine (ventes), une dizaine de vues métier documentées, pas les 300 tables
-2. **S'appuyer sur la couche sémantique** si elle existe, pour que les chiffres collent aux tableaux de bord
-3. **Construire le jeu d'eval** : 100 questions réelles du métier avec leur résultat attendu, en execution accuracy
-4. **Sécuriser** : lecture seule, réplique, row-level security, timeouts et budget par requête
-5. **Rendre vérifiable** : afficher la requête, les filtres appliqués et les conventions choisies
+1. **Reduce the scope**: one domain (sales), a dozen documented business views, not the 300 tables
+2. **Rely on the semantic layer** if it exists, so that the numbers stick to the dashboards
+3. **Build the eval game**: 100 real business questions with their expected result, in execution accuracy
+4. **Secure**: Read-only, reply, row-level security, timeouts and budget per request
+5. **Make it verifiable**: Display the query, applied filters, and selected conventions
 
-**Piège** : brancher le LLM sur tout l'entrepôt et laisser le métier découvrir des chiffres faux en comité.
+**Pip**: plug the LLM into the entire warehouse and let the trade discover false figures in committee.
 
 ---
 
-Mise en situation : ton assistant text-to-SQL a 85 % d'execution accuracy en test, mais les utilisateurs se plaignent de chiffres « qui ne collent pas ». Que cherches-tu ? <!--anki:76553f3b417169662447-->
+Scenario: your text-to-SQL wizard has 85% execution accurency in test, but users complain about numbers "that don't stick". What are you looking for? <!--anki:76553f3b417169662447-->
 ?
-1. **Collecter les cas signalés** avec la question, la requête et le chiffre attendu par l'utilisateur
-2. **Classer les écarts** : mauvaise définition métier (CA brut ou net), filtre implicite oublié (clients test, annulations), période ambiguë, vraie erreur SQL
-3. **Corriger à la source** : descriptions de colonnes, exemples question → SQL, métriques dans la couche sémantique
-4. **Ajouter ces cas au jeu d'eval**, qui ne reflétait pas les vraies questions ([[153-data-flywheel-versioning|flywheel]])
-5. **Afficher les conventions** appliquées dans chaque réponse
+1. **Collect reported cases** with the question, query and number expected by the user
+2. **Sort gaps**: poor business definition (gross or net CA), forgotten implicit filter (test clients, cancellations), ambiguous period, real SQL error
+3. **Correct at source**: column descriptions, example question → SQL, metrics in the semantic layer
+4. **Add these cases to the eval game**, which did not reflect the real questions ([[153-data-flywheel-versioning|flywheel]])
+5. **Display conventions** applied in each response
 
-**Piège** : changer de modèle alors que l'erreur vient de définitions métier absentes du prompt.
+**Trap**: Change model when the error comes from business definitions missing from the prompt.
 
 ---
 
 ## Sources
 
-- [Spider 2.0 — benchmark des auteurs](https://spider2-sql.github.io/)
+- [Spider 2.0 — author's benchmark](https://spider2-sql.github.io/)
 
-- Complément du 14 novembre 2026 — Jointures, cardinalités et agrégations : [PostgreSQL 18 — expressions de table](https://www.postgresql.org/docs/18/queries-table-expressions.html).
+- Supplement of the 14 November 2026 — Joints, cardinalities and aggregations: [PostgreSQL 18 — table expressions](https://www.postgresql.org/docs/18/queries-table-expressions.html).
 
-## Connexions
-- [[145-cas-system-design|Cas de system design]] — l'assistant d'analyse de données comme cas d'architecture
-- [[21-rag-fondamentaux|RAG — Fondamentaux]] — le texte, quand le SQL ne convient pas
-- [[23-knowledge-graphs-ontologies|Knowledge graphs]] — Text2Cypher, le même problème sur un graphe
-- [[32-tool-calling|Tool calling]] — exposer l'exécution SQL comme un outil
-- [[101-securite-llm-guardrails|Sécurité LLM]] — la requête générée est une entrée non fiable
-- [[96-evals-rag-agents|Évaluation des RAG & des agents]] — mesurer sur ses propres questions
-- [[143-hallucinations-grounding|Hallucinations & grounding]] — clarifier plutôt qu'inventer
-- [[150-010-modelisation-donnees-analytiques|Modélisation des données analytiques]] — rendre explicites les jointures et métriques autorisées
-- [[150-011-sql-transformations-analytiques|SQL pour les pipelines et datasets IA]] — valider le sens et les résultats du SQL
+## Connections
+- [[145-system-design-cases|Case of system design]] — Data Analysis Assistant as an Architecture Case
+- [[21-rag-fundamentals|RAG — Fundamentals]] — text, when SQL is not suitable
+- [[23-knowledge-graphs-ontologies|Knowledge graphs]] — Text2Cypher, the same problem on a graph
+- [[32-tool-calling|Tool calling]] — Expose SQL Execution as a Tool
+- [[101-llm-security-guardrails|LLM Security]] — generated query is untrusted entry
+- [[96-evals-rag-agents|Evaluation of GARs & Agents]] — measure on its own questions
+- [[143-hallucinations-grounding|Hallucinations & grounding]] — clarify rather than invent
+- [[150-010-analytical-data-modeling|Modeling of analytical data]] — make allowable joins and metrics explicit
+- [[150-011-analytical-sql-transformations|SQL for AI Pipelines and Datasets]] — validate the meaning and results of SQL
 - [[00-moc-ai-engineering|MOC AI Engineering]]

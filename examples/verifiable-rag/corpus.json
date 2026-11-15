@@ -1,0 +1,201 @@
+{
+  "snapshot": "synthetic-support-v1",
+  "description": "Synthetic teaching corpus with business validity dates, simulated current permissions and manually annotated facts.",
+  "principals": {
+    "alice": {
+      "tenant": "acme",
+      "groups": [
+        "support"
+      ]
+    },
+    "bruno": {
+      "tenant": "acme",
+      "groups": [
+        "support",
+        "finance"
+      ]
+    },
+    "camille": {
+      "tenant": "orion",
+      "groups": [
+        "support"
+      ]
+    }
+  },
+  "documents": [
+    {
+      "document_id": "contract-refund",
+      "version": 1,
+      "chunk_id": "a-refund-v1",
+      "tenant": "acme",
+      "groups": [
+        "support"
+      ],
+      "authority": 2,
+      "state": "active",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-10-01",
+      "text": "Acme: refund period and procedure. Refund are available within 14 days by email to support.",
+      "facts": {
+        "refund_days": "14 days",
+        "refund_method": "email to support"
+      }
+    },
+    {
+      "document_id": "faq-refund",
+      "version": 1,
+      "chunk_id": "b-faq-refund",
+      "tenant": "acme",
+      "groups": [
+        "support"
+      ],
+      "authority": 1,
+      "state": "active",
+      "valid_from": "2026-01-01",
+      "valid_until": null,
+      "text": "Acme: refund period and procedure. This informational FAQ states 14 days and email to support.",
+      "facts": {
+        "refund_days": "14 days",
+        "refund_method": "email to support"
+      }
+    },
+    {
+      "document_id": "contract-refund",
+      "version": 2,
+      "chunk_id": "c-refund-v2",
+      "tenant": "acme",
+      "groups": [
+        "support"
+      ],
+      "authority": 2,
+      "state": "active",
+      "valid_from": "2026-10-01",
+      "valid_until": "2026-11-01",
+      "text": "Acme: refund period and procedure. Refund are available within 30 days using the customer form.",
+      "facts": {
+        "refund_days": "30 days",
+        "refund_method": "customer form"
+      }
+    },
+    {
+      "document_id": "contract-refund",
+      "version": 3,
+      "chunk_id": "d-refund-v3",
+      "tenant": "acme",
+      "groups": [
+        "support"
+      ],
+      "authority": 2,
+      "state": "active",
+      "valid_from": "2026-11-01",
+      "valid_until": null,
+      "text": "Acme: refund period and procedure. Refund will be available within 45 days using the customer form.",
+      "facts": {
+        "refund_days": "45 days",
+        "refund_method": "customer form"
+      }
+    },
+    {
+      "document_id": "discount-finance",
+      "version": 1,
+      "chunk_id": "e-discount-finance",
+      "tenant": "acme",
+      "groups": [
+        "finance"
+      ],
+      "authority": 2,
+      "state": "active",
+      "valid_from": "2026-01-01",
+      "valid_until": null,
+      "text": "Acme: the confidential finance discount is 45%.",
+      "facts": {
+        "private_discount": "45%"
+      }
+    },
+    {
+      "document_id": "contract-refund",
+      "version": 1,
+      "chunk_id": "f-orion-refund",
+      "tenant": "orion",
+      "groups": [
+        "support"
+      ],
+      "authority": 2,
+      "state": "active",
+      "valid_from": "2026-01-01",
+      "valid_until": null,
+      "text": "Orion: refund period and procedure. Refund are available within 90 days.",
+      "facts": {
+        "refund_days": "90 days"
+      }
+    },
+    {
+      "document_id": "contract-delay-support-a",
+      "version": 1,
+      "chunk_id": "g-delay-support-a",
+      "tenant": "acme",
+      "groups": [
+        "support"
+      ],
+      "authority": 2,
+      "state": "active",
+      "valid_from": "2026-01-01",
+      "valid_until": null,
+      "text": "Acme: support response time for an incident, four hours.",
+      "facts": {
+        "support_delay": "4 hours"
+      }
+    },
+    {
+      "document_id": "contract-delay-support-b",
+      "version": 1,
+      "chunk_id": "h-delay-support-b",
+      "tenant": "acme",
+      "groups": [
+        "support"
+      ],
+      "authority": 2,
+      "state": "active",
+      "valid_from": "2026-01-01",
+      "valid_until": null,
+      "text": "Acme: support response time for an incident, eight hours.",
+      "facts": {
+        "support_delay": "8 hours"
+      }
+    },
+    {
+      "document_id": "promotion",
+      "version": 1,
+      "chunk_id": "i-withdrawn-promotion",
+      "tenant": "acme",
+      "groups": [
+        "support"
+      ],
+      "authority": 2,
+      "state": "withdrawn",
+      "valid_from": "2026-01-01",
+      "valid_until": null,
+      "text": "Acme: special promotion with a promotional rate of 50%.",
+      "facts": {
+        "promotion_rate": "50%"
+      }
+    },
+    {
+      "document_id": "opening-hours",
+      "version": 1,
+      "chunk_id": "j-opening-hours",
+      "tenant": "acme",
+      "groups": [
+        "support"
+      ],
+      "authority": 2,
+      "state": "active",
+      "valid_from": "2026-01-01",
+      "valid_until": null,
+      "text": "Acme: support opening hours, Monday to Friday.",
+      "facts": {
+        "support_hours": "Monday to Friday"
+      }
+    }
+  ]
+}

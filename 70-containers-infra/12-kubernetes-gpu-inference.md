@@ -1,20 +1,20 @@
-# Kubernetes GPU & inférence — Flashcards
+# Kubernetes GPU & inference — Flashcards
 Tags: #flashcards #kubernetes #gpu #llm #inference
-Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: device plugin, ressource `nvidia.com/gpu`, MIG, time-slicing, KServe, autoscaling (HPA, KEDA), pression du scale-out sur le stockage, capacité de rollout, scale-down prudent. -->
+Verified on: 25 September 2026 — This factsheet lists products, versions or regulatory texts that are evolving quickly.
+<!-- summary: device plugin, `nvidia.com/gpu` resource, MIG, time-slicing, KServe, autoscaling (HPA, KEDA), scale-out pressure on storage, rollout capacity, careful scale-down. -->
 
 
-Comment [[04-kubernetes-kubelet-cri|Kubernetes]] alloue-t-il les GPU aux Pods ? <!--anki:782d706f674268736979-->
+How does [[04-kubernetes-kubelet-cri|Kubernetes]] allocate GPU to Pods? <!--anki:782d706f674268736979-->
 ?
-Via le **NVIDIA device plugin**, déployé en **DaemonSet** : il découvre les GPU de chaque node, les **annonce au kubelet** comme ressource `nvidia.com/gpu`, et fournit au runtime les devices à injecter quand un Pod en demande. Le scheduler ne fait ensuite que de l'**arithmétique entière** sur cette ressource.
+Via the **NVIDIA device plugin**, deployed in **Daemon Set** : he discovers them GPU of each node, on the **Announcement at Kubelet** as a resource `nvidia.com/gpu`, and provides the runtime with devices to inject when a Pod requests it. Then the scheduler does nothing but **Whole Arithmetic** on this resource.
 
-En pratique, on l'installe via le **GPU Operator**, qui gère aussi driver, toolkit, métriques DCGM et configuration MIG ([[09-gpu-conteneurs|GPU en conteneur]]).
+In practice, it is installed via the **GPU Operator**, which also supports driver, toolkit, DCGM metrics and MIG configuration ([[09-gpu-containers|GPU in container]]).
 
 ---
 
-Comment demander un GPU pour un conteneur dans Kubernetes ? <!--anki:6f716621355b686f6048-->
+How do I request a GPU for a container in Kubernetes? <!--anki:6f716621355b686f6048-->
 ?
-En déclarant la ressource **`nvidia.com/gpu`** dans les `resources.limits`.
+By declaring the resource **`nvidia.com/gpu`** in the `resources.limits`.
 
 ```yaml
 resources:
@@ -22,168 +22,168 @@ resources:
     nvidia.com/gpu: 1
 ```
 
-Le nœud doit annoncer cette ressource via un device plugin configuré. Pour une ressource GPU étendue, la limite sert de request si celle-ci est omise ; si les deux sont définies, elles doivent être égales. Sans capacité éligible, le Pod reste Pending. La demande alloue une unité annoncée, dont la signification dépend du partage configuré.
+The node must announce this resource via a configured device plugin. For an extended GPU resource, the limit serves as a request if it is omitted; if both are set, they must be equal. Without an eligible ability, the Pod remains Pending. The request allocates an advertised unit, whose meaning depends on the configured share.
 
 ---
 
-Un GPU peut-il être partagé entre plusieurs Pods par défaut ? <!--anki:4f2d4d2f21696245696b-->
+Can a GPU be shared between multiple Pods by default? <!--anki:4f2d4d2f21696245696b-->
 ?
-**Non.** La ressource `nvidia.com/gpu` est **entière et exclusive** : on ne peut pas demander « 0,5 GPU ». Un Pod qui obtient le GPU le garde pour lui, même s'il ne l'utilise qu'à 10 %.
+**No.** The `nvidia.com/gpu` resource is **entire and exclusive**: you cannot ask for "0.5 GPU". A Pod that gets the GPU keeps it for itself, even if it only uses it at 10%.
 
-Trois façons de partager :
-- **MIG** : partitions **matériellement isolées** (mémoire et calcul dédiés)
-- **Time-slicing** : plusieurs Pods se relaient sur le GPU, **sans isolation mémoire**
-- **MPS** : exécution concurrente des noyaux, pour des charges qui se font confiance
+Three ways to share:
+- **MIG**: partitions **materially isolated** (dedicated memory and calculation)
+- **Time-slicing**: several Pods take turns on the GPU, **without memory isolation**
+- **MPS**: concurrent execution of kernels, for trusted loads
 
 ---
 
-Qu'est-ce que MIG (Multi-Instance GPU) ? <!--anki:6e4870724d693d6c2b2a-->
+What is MIG (Multi-Instance GPU)? <!--anki:6e4870724d693d6c2b2a-->
 ?
-Une technologie NVIDIA qui **partitionne physiquement** un GPU (A100, H100, H200, B200) en **instances isolées**, chacune avec sa mémoire et ses unités de calcul. Chaque instance apparaît comme un GPU distinct, donc allouable à un Pod différent.
+An NVIDIA technology that physically **partitions** a GPU (A100, H100, H200, B200) into **isolated instances**, each with its memory and computing units. Each instance appears as a separate GPU and is therefore assignable to a different Pod.
 ```text
-A100 80 Go → jusqu'à 7 instances (profils 1g.10gb, 2g.20gb, 3g.40gb…)
+A100 80 GB → up to 7 instances (1g.10gb, 2g.20gb, 3g.40gb...)
 ```
-Intérêt : servir plusieurs **petits modèles** ou environnements de test sans qu'ils se gênent. Limite : les profils sont **fixés à l'avance** et le reconfigurer demande de vider le node.
+Interest: serve several **small models** or test environments without them bothering. Limit: profiles are **set in advance** and reconfigure it requires emptying the node.
 
 ---
 
-À ne pas confondre : MIG et time-slicing ? <!--anki:6b3b5f755d694f4f6851-->
+Do not confuse: MIG and time-slicing? <!--anki:6b3b5f755d694f4f6851-->
 ?
-- **MIG** : isolation **matérielle**. Mémoire dédiée, performances prévisibles, nombre d'instances limité par les profils
-- **Time-slicing** : simple **partage temporel**. Aucune isolation mémoire, un Pod peut saturer la VRAM et faire tomber les autres, mais le partage est souple et sans reconfiguration
+- **MIG**: isolation **hardware**. Dedicated memory, predictable performance, number of instances limited by profiles
+- **Time-slicing**: simple **time-sharing**. No memory isolation, one Pod can saturate VRAM and knock others down, but sharing is flexible and without reconfiguration
 
-Règle : **MIG pour la production multi-tenant**, time-slicing pour du développement ou des charges tolérantes.
+Rule: **MIG for multi-tenant production**, time-slicing for development or tolerant loads.
 
-Vérifier que le profil MIG tient réellement poids et KV du modèle ; une partition trop petite reste inutilisable malgré son isolation. Le time-slicing augmente les consommateurs admis, pas la VRAM disponible ni la puissance physique.
+Check that the MIG profile really holds weight and KV of the model; a partition too small remains unusable despite its isolation. Time-slicing increases the admitted consumers, not the available VRAM nor the physical power.
 
 ---
 
-À quoi servent les node selectors, taints et tolerations pour le GPU ? <!--anki:786472704640764f4057-->
+What are node selectors, tints, and tolerations for the GPU? <!--anki:786472704640764f4057-->
 ?
-À **cibler et réserver les nodes GPU** :
-- **Node selector ou affinité** : « place-moi sur un node qui a des H100 ». C'est le Pod qui **choisit**
-- **Taint sur le node** : « personne ne vient ici sans y être invité ». C'est le node qui **repousse**
-- **Toleration sur le Pod** : le laissez-passer qui permet d'ignorer le taint
+To **target and reserve GPU** nodes:
+- **Node selector or affinity**: "place me on a node that has H100s." It's the Pod that **chooses**
+- **Taint on the node**: "No one comes here without being invited." This is the node that **repeats**
+- **Toleration on the Pod**: the pass that allows you to ignore the stain
 
-Sans taint, des charges sans GPU viennent occuper la mémoire et le CPU de machines à plusieurs dizaines de milliers d'euros. Le GPU Operator pose des **labels** (modèle de GPU, profil MIG) directement exploitables par les sélecteurs.
+Without tincture, Charges without GPU come to occupy the memory and CPU machines worth tens of thousands of euros. The GPU Operator of the **Labels** (Model of GPU, MIG profile) directly operable by the selectors.
 
 ---
 
-Que sont KServe et Kubeflow ? <!--anki:63503c706e2e62445352-->
+What are KServe and Kubeflow? <!--anki:63503c706e2e62445352-->
 ?
-**KServe** fournit une couche de serving Kubernetes, notamment avec `InferenceService` ; **Kubeflow** regroupe des composants MLOps plus larges : notebooks, pipelines, entraînement et tuning.
+**KServe** provides a layer of serving Kubernetes, especially with `InferenceService`; **Kubeflow** bundles larger MLOps components: notebooks, pipelines, drive and tuning.
 
-Autoscaling, canary et scale-to-zero dépendent du mode de déploiement et des composants configurés : ce ne sont pas des garanties automatiques.
+Autoscaling, canary, and scale-to-zero depend on the deployment mode and configured components: these are not automatic warranties.
 
-Exemple : revenir de zéro réplique impose de récupérer les poids et initialiser le moteur ; un SLO interactif peut nécessiter des réplicas chauds malgré une option de scale-to-zero.
+Example: returning from zero replicas requires recovering the weights and initializing the engine; an interactive SLO may require hot replicas despite a scale-to-zero option.
 
-Comparer le besoin de standardisation au coût d'exploitation. Un Deployment vLLM avec routage adapté peut suffire ; la plateforme ne choisit pas seule un bon [[66-prefix-caching-radix-attention|routage cache-aware]].
+Comparing the need for standardization to the cost of operation. A vLLM deployment with suitable routing may be enough; the platform does not choose a good [[66-prefix-caching-radix-attention|routage cache-aware]] alone.
 
 ---
 
-Comment gère-t-on la charge variable d'un service d'inférence sur Kubernetes ? <!--anki:4b5451773748245e6355-->
+How do I manage the variable load of an inference service on Kubernetes? <!--anki:4b5451773748245e6355-->
 ?
-Par l'**autoscaling** : le **HPA** sur des métriques personnalisées, ou **KEDA** pour se brancher directement sur Prometheus. On scale sur la **file d'attente** et l'**occupation du KV cache**, pas sur l'utilisation GPU ([[93-monitoring-inference|métriques]]).
+By the **Autoscaling** decode work **HPA** on custom metrics, or **KEDA** to connect directly to Prometheus. We scale on the **queue** and the **occupation of KV Cache**, not on the use GPU ([[93-monitoring-inference|Metric]]).
 ```yaml
 resources:
   limits:
-    nvidia.com/gpu: 1        # unité annoncée par le device plugin
+    nvidia.com/gpu: 1        # unit announced by the device plugin
 nodeSelector:
   nvidia.com/gpu.product: NVIDIA-H100-80GB-HBM3
 tolerations:
   - key: nvidia.com/gpu
     operator: Exists
 ```
-Le **scale-to-zero** ne vaut que si l'on accepte un **cold start** de plusieurs minutes ([[10-images-modeles-poids|cold start]]).
+The **scale-to-zero** is only valid if you accept a **cold start** of several minutes ([[10-images-models-weights|cold start]]).
 
-La ressource demandée ne garantit l'exclusivité physique que sans partage configuré. Le YAML place un Pod ; il ne définit pas le HPA. Dimensionner aussi une réserve chaude pour couvrir le délai d'arrivée d'un nouveau réplica.
-
----
-
-Pourquoi la gestion des GPU est-elle si importante en inférence sur Kubernetes ? <!--anki:697851257b26396e486d-->
-?
-Parce que le **GPU est une ressource rare et coûteuse** : son allocation et son partage conditionnent le coût et la densité du service.
-
-Une allocation trop large immobilise de la capacité ; un partage mal contrôlé dégrade mémoire et latence des voisins. Choisir GPU entier, partition matérielle ou partage temporel selon le besoin d'isolation. Suivre utilisation, mémoire, file d'attente et débit utile pour vérifier que la densité obtenue respecte les SLO.
+The requested resource only guarantees physical exclusivity without sharing configured. The YAML places a Pod; it does not define the HPA. Also size a hot reserve to cover the time of arrival of a new replica.
 
 ---
 
-Que se passe-t-il si un Pod demande un GPU alors qu'aucun node n'en a de libre ? <!--anki:3663623037653831613230613465336462336361666463326631393961353562-->
+Why is GPU management so important in inference on Kubernetes? <!--anki:697851257b26396e486d-->
 ?
-Le Pod reste **Pending** (événement `Insufficient nvidia.com/gpu`). Si un autoscaler de cluster est configuré, il ajoute un node GPU, mais cela prend **plusieurs minutes** : démarrage de la VM, driver, pull de l'image, chargement des poids ([[10-images-modeles-poids|cold start]]).
+Because the **GPU is a rare and expensive resource**: its allocation and sharing condition the cost and density of the service.
 
-Pendant ce temps, les requêtes attendent ou échouent. Parades : une **marge** de capacité, une montée en charge anticipée sur la file d'attente, et des GPU réservés aux services critiques.
+A too large allocation immobilizes the capacity; poorly controlled sharing degrades the memory and latency of neighbors. Choose GPU integer, hardware partition or time sharing according to the need for isolation. Follow usage, memory, queue and useful bitrate to verify that the density obtained complies with the SLO.
 
 ---
 
-Pourquoi ajouter un réplica GPU peut-il d'abord augmenter la pression sur le stockage partagé ? <!--anki:3633656237613561353231363462316561643930626139386334333439633130-->
+What happens if a Pod requests a GPU when no node has one? <!--anki:3663623037653831613230613465336462336361666463326631393961353562-->
 ?
-Un **nouveau réplica** doit souvent lire les mêmes poids volumineux avant de servir. Plusieurs démarrages simultanés se disputent le réseau et le stockage, ce qui peut allonger le chargement de tous les Pods.
+The Pod remains **Pending** (`Insufficient nvidia.com/gpu` event). If a cluster autoscaler is configured, it adds a GPU node, but it takes **several minutes**: VM startup, driver, image pull, load weights ([[10-images-models-weights|cold start]]).
 
-Mesurer le démarrage à froid sous concurrence, prévoir un cache local ou une préparation contrôlée et adapter la vitesse de scale-out. La readiness doit refléter le chargement réel. Inclure cette durée dans le dimensionnement : une capacité théorique disponible après dix minutes ne résout pas une rafale qui dure trente secondes.
+During this time, requests wait or fail. Parades: a **margin** of capacity, an anticipated load on the queue, and GPU reserved for critical services.
 
 ---
 
-Calcul : un service utilise 4 Pods d'un GPU chacun et le déploiement impose un Pod supplémentaire temporaire sans indisponibilité. Le cluster n'a que 4 GPU libres pour ce service. Pourquoi le rollout peut-il rester bloqué ? <!--anki:6331613832353565366464613461383561393434666231363761373638653064-->
+Why can adding a GPU replica increase the pressure on shared storage first? <!--anki:3633656237613561353231363462316561643930626139386334333439633130-->
 ?
-Il faut momentanément **5 GPU**, alors que seulement 4 sont disponibles. Le nouveau Pod reste Pending tant qu'aucune ressource ne se libère.
+A **new replica** often has to read the same large weights before serving. Several simultaneous starts compete for network and storage, which can lengthen the load of all Pods.
 
-Prévoir capacité de surge, autre pool compatible ou stratégie acceptant une indisponibilité contrôlée. Vérifier aussi les contraintes de placement. Le nombre de GPU total du cluster ne suffit pas si certains nœuds ne sont pas admissibles pour l'image ou le modèle.
+Measure cold start under concurrency, provide a local cache or controlled preparation and adjust the scale-out speed. The readiness must reflect the actual load. Include this duration in the sizing: a theoretical capacity available after ten minutes does not resolve a burst that lasts thirty seconds.
 
 ---
 
-Pourquoi stabiliser les décisions de scale-down d'un service GPU ? <!--anki:3365313336376433393832613461343261663964386364666162656163393866-->
+Calculation: a service uses 4 Pods of one GPU each and the deployment imposes an additional temporary Pod without unavailability. The cluster only has 4 GPU free for this service. Why can rollout remain blocked? <!--anki:6331613832353565366464613461383561393434666231363761373638653064-->
 ?
-Une baisse temporaire peut entraîner **suppression puis recréation coûteuse** des Pods, avec chargement des poids et réchauffement des caches. Ce va-et-vient dégrade latence et coût.
+It is temporary **5 GPU**, while only 4 is available. The new Pod remains Pending as long as no resources are released.
 
-Utiliser une fenêtre de stabilisation, une capacité minimale justifiée et un drainage des requêtes actives. Mesurer le coût des GPU inoccupés face au coût des redémarrages et violations de SLO. La bonne politique dépend du profil de trafic, pas d'un seuil CPU universel.
+Provide surge capacity, other compatible pool, or policy that accepts controlled downtime. Also check for placement constraints. The total number of GPUs in the cluster is not enough if some nodes are not eligible for the image or model.
 
 ---
 
-## Mises en situation
-
-Mise en situation : ton service d'inférence tourne sur 4 GPU A100 réservés en permanence, mais le trafic est concentré sur les heures de bureau. Comment réduis-tu la facture sans casser le service ? <!--anki:474124573d3839286841-->
+Why stabilize the scale-down decisions of a GPU service? <!--anki:3365313336376433393832613461343261663964386364666162656163393866-->
 ?
-1. **Mesurer le profil réel** : trafic par heure, concurrence de pointe, SLO à tenir ([[64-metriques-slo-inference|SLO]])
-2. **Autoscaling** sur la file d'attente et l'occupation du KV cache, pas sur l'utilisation GPU
-3. **Anticiper le cold start** : plusieurs minutes pour charger les poids, donc garder un socle de réplicas chauds ([[10-images-modeles-poids|cold start]])
-4. **Scale-to-zero** uniquement pour les environnements non critiques (préproduction, batch)
-5. **Densifier** : MIG pour les petits modèles, quantization pour tenir sur moins de GPU ([[68-quantization|quantization]])
+A temporary drop can result in **deletion and then costly** recreation of Pods, with loading weights and warming caches. This back and forth degrades latency and cost.
 
-**Piège** : un scale-to-zero en production qui fait payer plusieurs minutes d'attente au premier utilisateur du matin.
+Use a stabilization window, a justified minimum capacity, and active query drainage. Measure the cost of unoccupied GPU against the cost of restarts and violations of SLO. The correct policy depends on the traffic profile, not a universal CPU threshold.
 
 ---
 
-Mise en situation : plusieurs équipes veulent déployer leurs modèles sur le même cluster GPU, et se disputent les ressources. Comment organises-tu le partage ? <!--anki:76356329543d292b5349-->
-?
-1. **Réserver les nodes GPU** aux charges concernées avec taints et tolerations
-2. **Quotas par namespace** : nombre de GPU par équipe, plutôt qu'une course au premier arrivé
-3. **Partage fin** : MIG pour isoler des instances, time-slicing seulement pour les charges tolérantes
-4. **Priorités** : classes de priorité et préemption pour les charges critiques
-5. **Visibilité** : consommation et coût par équipe, sinon rien ne change ([[122-finops-llm|FinOps]])
+## Scenarios
 
-**Piège** : laisser chaque équipe demander « 1 GPU » pour des services inactifs la moitié du temps.
+Scenario: your inference service runs on 4 GPU A100 permanently reserved, but the traffic is focused on the office hours. How do you reduce the bill without breaking the service? <!--anki:474124573d3839286841-->
+?
+1. **Measure real profile**: traffic per hour, top concurrency, SLO to hold ([[64-inference-metrics-slo|SLO]])
+2. **Autoscaling** on the queue and occupation of the KV cache, not on the use GPU
+3. **Anticipate the cold start**: several minutes to load the weights, so keep a base of hot replicas ([[10-images-models-weights|cold start]])
+4. **Scale-to-zero** only for non-critical environments (preproduction, batch)
+5. **Densifier**: MIG for small models, quantization to fit on less than GPU ([[68-quantization|quantization]])
+
+**Trap**: a scale-to-zero in production that charges several minutes of waiting time to the first user in the morning.
+
+---
+
+Scenario: Several teams want to deploy their models on the same GPU cluster, and compete for resources. How do you organize sharing? <!--anki:76356329543d292b5349-->
+?
+1. **Reserve GPU** nodes to affected loads with tints and tolerations
+2. **Quotas per namespace**: number of GPUs per team, rather than a first-come race
+3. **Fine sharing**: MIG to isolate instances, time-slicing only for tolerant loads
+4. **Priorities**: priority classes and pre-emption for critical loads
+5. **Visibility**: consumption and cost per team, otherwise nothing changes ([[122-finops-llm|FinOps]])
+
+**Hip**: Let each team request “1 GPU” for inactive services half the time.
 
 ---
 
 ## Sources
 
-- [Kubernetes — planification des GPU](https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/)
+- [Kubernetes — GPU Planning](https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/)
 
-## Connexions
+## Connections
 - [[04-kubernetes-kubelet-cri|Kubernetes, kubelet & CRI]] — base d'orchestration
-- [[09-gpu-conteneurs|GPU en conteneur]] — accès GPU
-- [[11-serveurs-inference-llm|Serveurs d'inférence]] — ce qu'on déploie
-- [[10-images-modeles-poids|Images & poids]] — pull time des grosses images
-- [[83-gateway-ingress|Ingress & API gateway]] — l'entrée réseau du serving
-- [[64-metriques-slo-inference|Métriques & SLO]] — les signaux d'autoscaling
-- [[122-finops-llm|FinOps LLM]] — le coût du GPU idle
-- [[00-index|Index Conteneurs]]
-- [[93-monitoring-inference|Monitoring de l'inférence]] — métriques GPU (DCGM) et signaux d'autoscaling
-- [[69-roofline-prefill-decode|Désagrégation prefill/decode]] — deux pools à autoscaler séparément
-- [[112-cicd-modeles|CI/CD des modèles]] — eval gates, canary et rollback
-- [[13-apptainer-inference-hpc|Apptainer & inférence HPC]] — servir un modèle sur un cluster Slurm
-- [[136-mixture-of-experts|Mixture of Experts]] — paramètres totaux et actifs
-- [[61-kv-cache-attention|KV cache]] — la mémoire qui limite la concurrence
-- [[62-optimisations-inference|Optimisations d'inférence]] — les leviers de latence et de débit
+- [[09-gpu-containers|GPU in container]] — GPU
+- [[11-llm-inference-servers|Inference Servers]] —
+- [[10-images-models-weights|Images & poids]] — pull time big pictures
+- [[83-gateway-ingress|Ingress & API gateway]] — network input of the serving
+- [[64-inference-metrics-slo|Metrics & SLO]] — autoscaling signals
+- [[122-finops-llm|FinOps LLM]] — the cost of the GPU idle
+- [[00-index|Index Containers]]
+- [[93-monitoring-inference|Monitoring of inference]] — metric GPU (DCGM) and autoscaling signals
+- [[69-roofline-prefill-decode|Disaggregation prefill/decode]] — two pools to be autoscaled separately
+- [[112-model-cicd|CI/CD models]] — eval gates, canary and rollback
+- [[13-apptainer-inference-hpc|Apptainer & HPC Inference]] — serve a model on a Slurm cluster
+- [[136-mixture-of-experts|Mixture of Experts]] — total and active settings
+- [[61-kv-cache-attention|KV cache]] — memory that limits concurrency
+- [[62-inference-optimizations|Inference optimizations]] — latency and throughput levers
 - [[00-moc-ai-engineering|MOC AI Engineering]]

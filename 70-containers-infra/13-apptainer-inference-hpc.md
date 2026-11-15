@@ -1,22 +1,22 @@
-# Apptainer & inférence HPC — Flashcards
-Tags: #flashcards #conteneurs #apptainer #hpc #llm #inference
-Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: Apptainer ou Docker en HPC, modèle de sécurité, intégration Slurm, `--nv`, poids montés depuis le système de fichiers partagé, images SIF, fichier de définition, service multi-nœuds (Ray, InfiniBand, NCCL), exposition d'un serveur lancé dans un job, drainage avant walltime, allocation Slurm, caches locaux. -->
+# Apptainer & Inference HPC — Flashcards
+Tags: #flashcards #containers #apptainer #hpc #llm #inference
+Verified on: 29 September 2026 — This factsheet lists products, versions or regulatory texts that are evolving quickly.
+<!-- summary: Apptainer or Docker in HPC, security model, Slurm integration, `--nv`, weights mounted from the shared file system, SIF images, definition file, multi-node service (Ray, InfiniBand, NCCL), exposure of a server launched in a job, drainage before walltime, Slurm allocation, local caches. -->
 
 
-Pourquoi préfère-t-on Apptainer à Docker en environnement HPC ? <!--anki:632d364048502c312858-->
+Why do we prefer Apptainer over Docker in HPC environment? <!--anki:632d364048502c312858-->
 ?
-Apptainer s'intègre aux **identités Unix, systèmes de fichiers partagés et ordonnanceurs HPC**, sans démon central comparable à Docker Engine. Un job Slurm peut lancer une image SIF avec les droits de l'utilisateur.
+Apptainer integrates with **Unix identities, shared file systems, and HPC schedulers**, with no central daemon comparable to Docker Engine. A Slurm job can launch an SIF image with user rights.
 
-Exemple : le conteneur lit les données autorisées au compte et utilise les GPU alloués au job ; il ne doit pas contourner les quotas du cluster.
+Example: The container reads the allowed data from the account and uses the GPU allocated to the job; it must not bypass the cluster quotas.
 
-Nuancer la sécurité : Apptainer peut être installé avec un composant setuid selon la configuration ; Docker existe aussi en rootless. C'est l'accès au socket d'un Docker **rootful** qui confère des pouvoirs équivalents à root. Respecter les choix d'installation et politiques des administrateurs.
+Nuancer security: Apptainer can be installed with a setuid component depending on configuration; Docker also exists as rootless. It is the access to the socket of a **rootful** Docker that confers equivalent powers to root. Respect the installation choices and policies of the administrators.
 
 ---
 
-Comment Apptainer s'intègre-t-il avec Slurm ? <!--anki:4e31232b53236e642f30-->
+How does Apptainer integrate with Slurm? <!--anki:4e31232b53236e642f30-->
 ?
-La commande Apptainer est **lancée à l'intérieur d'un job Slurm**, en héritant des ressources allouées (GPU, CPU, mémoire) : il n'y a **rien à installer côté ordonnanceur**, puisqu'il n'existe pas de démon.
+The Apptainer command is **launched inside a Slurm** job, inheriting allocated resources (GPU, CPU, memory): there is **nothing to install on the scheduling side**, since there is no demon.
 ```bash
 #!/bin/bash
 #SBATCH --gres=gpu:1 --cpus-per-task=8 --mem=64G --time=02:00:00
@@ -24,43 +24,43 @@ apptainer exec --nv \
   --bind /scratch/models:/models \
   vllm.sif python -m vllm.entrypoints.openai.api_server --model /models/llama-8b
 ```
-Les variables `SLURM_*` et `CUDA_VISIBLE_DEVICES` sont **héritées** par le conteneur.
+The variables `SLURM_*` and `CUDA_VISIBLE_DEVICES` are **inherited** by the container.
 
-Le conteneur hérite aussi des **limites** du job. Si le cluster applique les cgroups de Slurm, un chargement de poids qui dépasse les 64 Go demandés est tué pour manque de mémoire, même sur un nœud de 512 Go. De même, `--cpus-per-task` borne les threads de chargement et de tokenisation : dimensionner la demande sur le pic de démarrage, pas seulement sur le régime établi.
+The container also inherits **limits** from the job. If the cluster applies the Slurm cgroups, a load that exceeds the requested 64 GB is killed for lack of memory, even on a 512 GB node. Similarly, `--cpus-per-task` limits loading and tokenization threads: sizing the request on the boot peak, not just on the established scheme.
 
 ---
 
-Comment fournir les poids d'un modèle à un conteneur Apptainer ? <!--anki:4a423c78424443567254-->
+How do I provide model weights to an Apptainer container? <!--anki:4a423c78424443567254-->
 ?
-En **montant le système de fichiers partagé** avec `--bind`.
+By **mounting the shared file system** with `--bind`.
 
 ```bash
 apptainer exec --nv --bind /data/models:/models model.sif python serve.py
 ```
 
-Le chemin de gauche désigne le stockage visible sur l'hôte, celui de droite son emplacement dans le conteneur. Utiliser une révision précise des poids et un montage en lecture seule si aucune modification n'est nécessaire. Vérifier droits, débit du stockage partagé et présence de tous les fichiers attendus avant de lancer le serveur.
+The left path indicates the storage visible on the host, the right path indicates its location in the container. Use accurate weight review and read-only editing if no changes are required. Verify rights, shared storage throughput, and presence of all expected files before launching the server.
 
-La forme `--bind /data/models:/models:ro` explicite la lecture seule. Garder caches et résultats sur un autre chemin inscriptible ; sinon une bibliothèque tentant d'écrire près des poids peut échouer au démarrage.
+The form `--bind /data/models:/models:ro` makes read-only explicit. Keep caches and results on another writable path; otherwise a library attempting to write near weights may fail at startup.
 
 ---
 
-Comment récupérer une image Docker au format Apptainer ? <!--anki:4626266d35774b253342-->
+How to recover a Docker image in Apptainer format? <!--anki:4626266d35774b253342-->
 ?
-Avec `apptainer pull` et le préfixe `docker://` (voir [[06-apptainer-singularity|Apptainer & Singularity]]).
+With `apptainer pull` and the prefix `docker://` (see [[06-apptainer-singularity|Apptainer & Singularity]]).
 
 ```bash
 apptainer pull vllm.sif docker://vllm/vllm-openai:latest
 ```
 
-Apptainer télécharge l'image du registry et la convertit en SIF ; Docker Engine n'a pas besoin de tourner sur le nœud. `latest` est pratique pour illustrer la commande mais n'est pas reproductible. En production, utiliser une référence immuable ou un tag contrôlé, conserver l'empreinte du SIF et vérifier la compatibilité du point d'entrée.
+Apptainer downloads the registry image and converts it to SIF; Docker Engine does not need to rotate on the node. `latest` is convenient to illustrate the command but is not reproducible. In production, use an immutable reference or a controlled tag, keep the SIF fingerprint and check the compatibility of the entry point.
 
-Construire ou récupérer le SIF avant le job GPU évite de payer une allocation pendant le téléchargement. Tester ensuite l'image sur un nœud de calcul représentatif, pas uniquement sur le nœud de connexion.
+Building or retrieving the SIF before the GPU job avoids paying an allocation while downloading, and then testing the image on a representative compute node, not just the connection node.
 
 ---
 
-Comment construire une image Apptainer à partir d'un fichier de définition ? <!--anki:77425d60757078702d63-->
+How to build an Apptainer image from a definition file? <!--anki:77425d60757078702d63-->
 ?
-Un fichier `.def` part d'une image existante et la complète :
+A `.def` file starts from an existing image and completes it:
 ```text
 Bootstrap: docker
 From: vllm/vllm-openai:v0.10.1
@@ -72,96 +72,96 @@ From: vllm/vllm-openai:v0.10.1
     exec vllm serve "$@"
 ```
 ```bash
-apptainer build vllm.sif vllm.def      # souvent possible sans root (--fakeroot)
+apptainer build vllm.sif vllm.def      # often possible without root (--fakeroot)
 apptainer run --nv --bind /data/models:/models vllm.sif /models/llama-70b
 ```
-Le fichier `.def` se **versionne** dans Git, et le SIF produit est un artefact immuable.
+The `.def` file is **version** in Git, and the produced SIF is an immutable artifact.
 
-Le mode offline suppose que poids, tokenizer et configurations nécessaires existent déjà dans le montage. Le tag donné est illustratif : choisir une version compatible avec le modèle et les drivers du cluster. Les possibilités de build sans root dépendent des namespaces utilisateur et de la configuration administrateur ; vérifier ces prérequis avant de planifier le job.
-
----
-
-Comment servir un modèle sur plusieurs nœuds avec Slurm et Apptainer ? <!--anki:4a3d3177612d7c5e5a56-->
-?
-- **Tensor parallelism dans le nœud** (NVLink), **pipeline parallelism entre nœuds**, car le réseau inter-nœuds est plus lent ([[54-entrainement-distribue|parallélismes]])
-- Une allocation Slurm de N nœuds, où `srun` démarre un conteneur par nœud et un **cluster Ray** qui relie les workers de vLLM
-- Le conteneur doit voir le réseau rapide : **InfiniBand** et bibliothèques associées, que `--nv` ne fournit pas, pour que **NCCL** ne retombe pas sur Ethernet
-
-Vérifier le débit NCCL avant d'accuser le modèle d'être lent.
+The offline mode assumes that weight, tokenizer and necessary configurations already exist in the timeline. The given tag is illustrative: choose a version compatible with the model and the drivers of the cluster. The possibilities of build without root depend on the user namespaces and the administrator configuration; check these prerequisites before planning the job.
 
 ---
 
-Comment exposer un serveur d'inférence lancé dans un job Slurm ? <!--anki:72645e2f7e58367a5647-->
+How do I serve a multi-node model with Slurm and Apptainer? <!--anki:4a3d3177612d7c5e5a56-->
 ?
-Le serveur écoute sur un **nœud de calcul** dont le nom change à chaque job :
-- Le job **publie son adresse** (fichier partagé, service de découverte) ou un **reverse proxy** sur un nœud d'accès route vers lui
-- Pour un usage personnel : **tunnel SSH** via le nœud de login
-- Le **walltime** limite la durée : prévoir une resoumission automatique et un **health check** côté client
+- **Tensor parallelism in node** (NVLink), **pipeline parallelism between nodes**, because the internode network is slower ([[54-distributed-training|Parallelisms]])
+- A Slurm allocation of N nodes, where `srun` starts a container per node and a **cluster Ray** that connects vLLM workers
+- The container must see the fast network: **InfiniBand** and associated libraries, which `--nv` does not provide, so that **NCCL** does not fall back on Ethernet
 
-Ces contournements montrent la limite du HPC pour un service permanent ([[12-kubernetes-gpu-inference|Kubernetes GPU]]).
+Check the NCCL flow rate before accusing the model of being slow.
 
 ---
 
-Pourquoi un job Slurm qui arrive à son walltime doit-il cesser d'accepter de nouvelles requêtes avant l'arrêt ? <!--anki:3063353234626533643164613434616438313935303361346466393731653531-->
+How to expose an inference server launched in a Slurm job? <!--anki:72645e2f7e58367a5647-->
 ?
-Le **walltime** impose une échéance indépendante de la durée des requêtes. Continuer à accepter du travail jusqu'à la dernière seconde augmente les réponses interrompues.
+The server listens to a **calculation node** whose name changes with each job:
+- The job **publishes its address** (shared file, discovery service) or a **reverse proxy** on an access node route to it
+- For personal use: **SSH tunnel** via the login node
+- The **walltime** limits the duration: provide an automatic resubmission and a **health check** on the client side
 
-Prévoir une phase de drainage : retirer l'instance de la découverte, refuser les nouvelles demandes et laisser finir celles qui tiennent dans le délai restant. Rendre les travaux longs reprenables ou annoncer explicitement leur interruption. Tester l'arrêt avec des clients actifs. Une resoumission automatique restaure éventuellement la capacité, mais ne garantit ni la continuité du flux ni la conservation des requêtes en mémoire.
+These bypasses show the HPC limit for a permanent service ([[12-kubernetes-gpu-inference|Kubernetes GPU]]).
 
 ---
 
-Pourquoi un serveur lancé dans un job Slurm doit-il utiliser uniquement les ressources allouées ? <!--anki:6132383733303833396236383437646262643863643366383465313163363838-->
+Why should a Slurm job that arrives at its walltime stop accepting new requests before stopping? <!--anki:3063353234626533643164613434616438313935303361346466393731653531-->
 ?
-Le nœud peut être **partagé avec d'autres jobs**. Détecter tous les GPU de la machine puis les utiliser ignore l'allocation et peut provoquer conflits ou violation de politique.
+The **walltime** imposes a deadline independent of the duration of the requests. Continuing to accept work until the last second increases the interrupted answers.
 
-Respecter les mécanismes d'exposition et contraintes du scheduler, puis vérifier rangs, GPU et ports effectivement utilisés. Ne pas lancer de calcul lourd sur un nœud de connexion. Tester le lancement multi-processus dans la configuration autorisée par le centre.
+Schedule a drainage phase: remove the instance from the discovery, refuse new requests, and let the remaining requests finish within the remaining time. Make long jobs repeatable or explicitly announce their interruption. Test the shutdown with active clients. An automatic resubmission eventually restores the capacity, but does not guarantee the continuity of the flow or the retention of requests in memory.
 
 ---
 
-Quand copier les poids vers le stockage local d'un nœud HPC avant l'inférence ? <!--anki:6437383938313230643938333461646539666538353739623765666236383430-->
+Why should a server running a Slurm job use only the allocated resources? <!--anki:6132383733303833396236383437646262643863643366383465313163363838-->
 ?
-Lorsque plusieurs lectures sur le stockage partagé deviennent **un goulot mesuré** et que le job dispose d'assez d'espace et de temps. La copie ajoute un coût initial qui doit être amorti.
+The node can be **shared with other jobs**. Detect all GPUs on the machine and then use them ignores the allocation and can cause conflicts or policy violation.
 
-Vérifier l'intégrité, isoler les caches par version et gérer leur durée de vie. Une copie par rang peut multiplier inutilement les transferts ; coordonner au niveau du nœud. Tenir compte du nettoyage et de la confidentialité des données locales.
+Respect the scheduler's exposure mechanisms and constraints, and then check rows, GPU, and ports actually used. Do not run heavy compute on a connection node. Test multi-process launch in the configuration allowed by the center.
 
 ---
 
-## Mises en situation
-
-Mise en situation : tu dois servir un modèle 70B sur un cluster HPC en Slurm, sans droits root et sans accès Internet depuis les nœuds de calcul. Comment t'organises-tu ? <!--anki:6d3e37556e6351317430-->
+When to copy the weights to the local storage of an HPC node before inference? <!--anki:6437383938313230643938333461646539666538353739623765666236383430-->
 ?
-1. **Préparer l'image ailleurs** : `apptainer pull` depuis un nœud qui a le réseau, puis copier le SIF sur le système de fichiers partagé
-2. **Poids à part** : téléchargés une fois et montés par `--bind`, jamais embarqués dans l'image
-3. **Job Slurm** : réserver GPU, CPU et mémoire, puis lancer `apptainer exec --nv` dans le job
-4. **Vérifier CUDA et driver** : l'image doit être compatible avec le driver des nœuds ([[09-gpu-conteneurs|GPU en conteneur]])
-5. **Exposer le service** : port accessible depuis le nœud de connexion, ou traitement en batch plutôt qu'en service permanent
+When multiple reads on shared storage become **a measured bottleneck** and the job has enough space and time, the copy adds an upfront cost that needs to be amortized.
 
-**Piège** : lancer un serveur d'inférence permanent sur un cluster dont les jobs ont une durée maximale.
+Verify integrity, isolate caches by version, and manage their lifetime. One copy per row can unnecessarily multiply transfers; coordinate at node level. Take into account local data cleansing and privacy.
 
 ---
 
-Mise en situation : ton laboratoire hésite entre un cluster HPC en Slurm et un cluster Kubernetes pour servir des modèles. Quels critères proposes-tu ? <!--anki:513e6d4b3132634e4077-->
-?
-1. **Nature de la charge** : batch et calcul planifié pour le HPC, service permanent et trafic continu pour Kubernetes
-2. **Modèle de sécurité** : Apptainer est rootless et sans démon, pensé pour des clusters multi-utilisateurs
-3. **Ce qui manque en HPC** : autoscaling, ingress, redémarrage automatique, déploiements progressifs ([[12-kubernetes-gpu-inference|K8s GPU]])
-4. **Ce qui existe déjà** : matériel, équipe, ordonnanceur et compétences en place pèsent souvent plus que la technique
-5. **Solution mixte fréquente** : entraînement et batch en HPC, service en ligne sur Kubernetes
+## Scenarios
 
-**Piège** : transformer un cluster HPC en plateforme de service en ligne, avec des jobs relancés en boucle.
+Scenario: you must serve a 70B model on an HPC cluster in Slurm, without root rights and without Internet access from the compute nodes. How do you organize? <!--anki:6d3e37556e6351317430-->
+?
+1. **Prepare image elsewhere**: `apptainer pull` from a node that has the network, then copy the SIF to the shared file system
+2. **Except weight**: downloaded once and mounted by `--bind`, never embedded in the image
+3. **Job Slurm**: reserve GPU, CPU and memory, then launch `apptainer exec --nv` in the job
+4. **Check CUDA and driver**: the image must be compatible with the node driver ([[09-gpu-containers|GPU in container]])
+5. **Expose service**: port accessible from the connection node, or batch processing rather than permanent service
+
+**Field**: Launch a permanent inference server on a cluster whose jobs have a maximum duration.
+
+---
+
+Scenario: your laboratory hesitates between an HPC cluster in Slurm and a Kubernetes cluster to serve models. What criteria do you propose? <!--anki:513e6d4b3132634e4077-->
+?
+1. **Load nature**: batch and scheduled calculation for HPC, permanent service and continuous traffic for Kubernetes
+2. **Security model**: Apptainer is rootless and demon-free, designed for multi-user clusters
+3. **What's missing in HPC**: autoscaling, ingress, automatic restart, progressive deployments ([[12-kubernetes-gpu-inference|K8s GPU]])
+4. **What already exists**: equipment, team, scheduler and skills in place often weigh more than technique
+5. **Frequent mixed solution**: HPC training and batch, online service on Kubernetes
+
+**Pip**: turn an HPC cluster into an online service platform, with jobs relaunched in a loop.
 
 ---
 
 ## Sources
 
-- [Apptainer — accès aux périphériques et bibliothèques GPU](https://apptainer.org/docs/user/main/gpu.html)
+- [Apptainer — access to GPU devices and libraries](https://apptainer.org/docs/user/main/gpu.html)
 
-- [Apptainer — support GPU, guide utilisateur 1.5](https://apptainer.org/docs/user/1.5/gpu.html)
+- [Apptainer — GPU support, user guide 1.5](https://apptainer.org/docs/user/1.5/gpu.html)
 
-## Connexions
+## Connections
 - [[06-apptainer-singularity|Apptainer & Singularity]] — bases & format SIF
-- [[09-gpu-conteneurs|GPU en conteneur]] — `--nv` vs `--gpus`
-- [[11-serveurs-inference-llm|Serveurs d'inférence]] — ce qu'on exécute
+- [[09-gpu-containers|GPU in container]] — `--nv` vs `--gpus`
+- [[11-llm-inference-servers|Inference Servers]] — what we run
 - [[12-kubernetes-gpu-inference|Kubernetes GPU]] — alternative cloud/cluster
-- [[00-index|Index Conteneurs]]
+- [[00-index|Index Containers]]
 - [[00-moc-ai-engineering|MOC AI Engineering]]

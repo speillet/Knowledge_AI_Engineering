@@ -1,11 +1,12 @@
-"""Lecture des fiches telle que la fait le plugin Obsidian Spaced Repetition (version 1.15.4).
+"""Reading cards such as the Obsidian Spaced Repetition plugin (1.15.4 version).
 
-Transcription fidèle de la fonction parse() de src/parser.ts, défauts compris, pour que le lint
-vérifie que le plugin voit exactement les mêmes cartes que l'export Anki. Deux comportements
-du plugin dictent la mise en page des fiches :
-- une ligne qui commence par <!-- (hors <!--SR:) est sautée, et la ligne suivante aussi ;
-- sans marqueur de fin, une carte s'arrête à la première ligne vide : le README impose `---`.
+Accurate transcription of the parse() function of src/parser.ts, including defects, for the lint
+checks that the plugin sees exactly the same maps as the Anki export. Two behaviors
+of the plugin dictate the layout of the files:
+- a line that starts with <!-- (excluding <!--SR:) is skipped, and so is the next line;
+- without an end marker, a card stops at the first empty line: the README imposes `---`.
 """
+
 from collections.abc import Mapping
 import re
 
@@ -14,15 +15,15 @@ OPTIONS: Mapping[str, str] = {
     "single_reversed": ":::",
     "multiline": "?",
     "multiline_reversed": "??",
-    "end_marker": "---",  # réglage « Characters denoting the end of clozes and multiline flashcards »
+    "end_marker": "---",  # Characters denoting the end of clozes and multiline flashcards
 }
 SR_METADATA_CALLOUT = "> [!sr|card-metadata]"
-CLOZE_RE = re.compile(r"==.+?==")  # motif de cloze par défaut ==answer== (surlignage)
+CLOZE_RE = re.compile(r"==.+?==")  # Cloze pattern by default ==answer== (highlighting)
 
 
 def _inside_code(text: str, marker: str, index: int) -> bool:
     before = text[:index].count("`")
-    after = text[index + len(marker):].count("`")
+    after = text[index + len(marker) :].count("`")
     return before % 2 == 1 and after % 2 == 1
 
 
@@ -32,9 +33,10 @@ def _has_inline_marker(text: str, marker: str) -> bool:
 
 
 def parse(text: str, options: Mapping[str, str] = OPTIONS) -> list[tuple[str, str]]:
-    """Liste de (type, texte) : type vaut single, single_reversed, multiline, multiline_reversed ou cloze."""
-    separators = sorted([(options["single"], "single"), (options["single_reversed"], "single_reversed")],
-                        key=lambda s: -len(s[0]))
+    """List of (type, text): type is single, single_reversed, multiline, multiline_reversed or cloze."""
+    separators = sorted(
+        [(options["single"], "single"), (options["single_reversed"], "single_reversed")], key=lambda s: -len(s[0])
+    )
     cards: list[tuple[str, str]] = []
     card_text, card_type = "", None
     lines = text.replace("\r\n", "\n").split("\n")
@@ -44,7 +46,7 @@ def parse(text: str, options: Mapping[str, str] = OPTIONS) -> list[tuple[str, st
         if line.startswith("<!--") and not line.startswith("<!--SR:"):
             while i + 1 < len(lines) and "-->" not in line:
                 i += 1
-            i += 2  # défaut du plugin : la ligne qui suit le commentaire est perdue
+            i += 2  # plugin default: the line following the comment is lost
             continue
         empty = not trimmed
         end_marker = options["end_marker"] and trimmed == options["end_marker"]

@@ -1,173 +1,173 @@
-# Chunking avancé & contextual retrieval — Flashcards
+# Advanced Chunking & Contextual Retrieval — Flashcards
 Tags: #flashcards #ai-engineering #rag #chunking #retrieval #llm
-Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: chunks sans contexte, contextual retrieval (gain, coût, prompt caching), late chunking, taille des chunks, small-to-big, chunking sémantique et par propositions, fil d'Ariane et métadonnées, comparaison de stratégies au recall@k, calcul du surcoût de l'overlap, tableaux et unités, parent-child sous budget. -->
+Verified on: 29 September 2026 — This factsheet lists products, versions or regulatory texts that are evolving quickly.
+<!-- summary: chunks without context, contextual retrieval (gain, cost, prompt caching), late chunking, chunk size, small-to-big, semantic and propositional chunking, breadcrumb and metadata, policy comparison to call@k, calculation of overlap overcost, tables and units, parent-child under budget. -->
 
 
-Pourquoi un chunk isolé est-il souvent introuvable ? <!--anki:7a544f517c5831297e3c-->
+Why is an isolated chunk often not found? <!--anki:7a544f517c5831297e3c-->
 ?
-Parce qu'il a **perdu son contexte** en étant découpé. « Le chiffre d'affaires a progressé de 3 % » ne dit ni **quelle entreprise** ni **quel trimestre** : ni son embedding ni ses mots-clés ne correspondent à la question « CA d'ACME au T2 2025 ». Le problème n'est pas l'index, c'est **ce qu'on a indexé**.
+Because it has **lost its context** by being split. "Revenue increased by 3%" does not say either **which company** or **what quarter**: neither its embedding nor its keywords correspond to the question "ACME's turnover in Q2 2025". The problem is not the index, it is **what has been indexed**.
 
-Rattacher au passage son titre, sa période et son document parent avant indexation. Vérifier ces informations dans la source : inventer le contexte manquant rendrait le passage plus facile à retrouver, mais moins fiable.
+Check this information in the source: inventing the missing context would make the passage easier to find, but less reliable.
 
 ---
 
-Qu'est-ce que le contextual retrieval ? <!--anki:5052216e2d52403b2b54-->
+What is contextual retrieval? <!--anki:5052216e2d52403b2b54-->
 ?
-Une technique publiée par Anthropic (2024) : avant l'indexation, un LLM rédige pour **chaque chunk** une courte phrase de contexte (50 à 100 tokens) tirée du **document entier**, qu'on **préfixe au chunk**. On calcule ensuite l'embedding **et** l'index BM25 sur ce texte enrichi.
+A technique published by Anthropic (2024): before indexing, a LLM writes for **each chunk** a short context sentence (50 to 100 tokens) from the **entire document**, which is **prefixed to the chunk**. We then calculate the embedding **and** index BM25 on this enriched text.
 ```text
-[Contexte : extrait du rapport trimestriel d'ACME, T2 2025,
-section résultats financiers.]
-Le chiffre d'affaires a progressé de 3 % par rapport au trimestre précédent.
+[Background: excerpt from ACME quarterly report, T2 2025,
+Financial results section.]
+Sales increased by 3% compared to the previous quarter.
 ```
 
-Le préfixe rend compréhensible un passage isolé : « 3 % » ne précise ni entreprise ni période. Garder cependant le chunk original et sa source, car le contexte ajouté est **généré** et peut contenir une erreur. Évaluer la récupération et la fidélité de ces préfixes, ainsi que le coût de leur production lors des mises à jour.
+The prefix makes an isolated passage understandable: "3%" does not specify any company or period. Keep the original chunk and its source, however, because the added context is **generated** and may contain an error. Evaluate the recovery and fidelity of these prefixes, as well as the cost of their production during updates.
 
 ---
 
-Quel gain et quel coût pour le contextual retrieval ? <!--anki:727b7357643b706e5729-->
+What is the gain and cost for the contextual retrieval? <!--anki:727b7357643b706e5729-->
 ?
-**Gain** mesuré par Anthropic : **−49 % d'échecs de retrieval** (embeddings et BM25 contextualisés), **−67 %** en ajoutant un reranker.
+**Gain** measured by Anthropic: **−49% of retrieval failures** (embeddings and BM25 contextualized), **−67%** by adding a reranker.
 
-**Coût** : un appel LLM par chunk, à l'ingestion seulement. Le document entier est envoyé à chaque appel, donc le **[[123-caching-agressif|prompt caching]]** est indispensable : le document est mis en cache une fois, seuls le chunk et la réponse changent. Ré-ingérer un document modifié repaie ce coût.
+**Cost**: one LLM call per chunk, for ingestion only. The entire document is sent to each call, so the **[[123-aggressive-caching|prompt caching]]** is essential: the document is cached once, only the chunk and the response change. Re-ingesting a modified document repaints this cost.
 
 ---
 
-Qu'est-ce que le late chunking ? <!--anki:52446439345e515e6d-->
+What is Late Chunking? <!--anki:52446439345e515e6d-->
 ?
-Inverser l'ordre habituel : on passe **le document entier** (ou une large fenêtre) dans un modèle d'embedding à **long contexte**, puis on découpe **les vecteurs de tokens** en chunks et on les moyenne (pooling). Chaque vecteur de chunk a « vu » le reste du document, **sans appel LLM**. Proposé par Jina AI (2024).
+Invert the usual order: pass **the entire document** (or a large window) in a model of embedding to **long context**, then cut **the vectors of tokens** into chunks and average them (pooling). Each vector of chunk has "seen" the rest of the document, **without calling LLM**. Suggested by Jina AI (2024).
 
-Limite : il faut un modèle d'embedding qui expose les vecteurs par token et accepte des documents longs ([[133-embeddings-representations|embeddings]]).
+Limit: A embedding model is required that exposes vectors by token and accepts long documents ([[133-embeddings-representations|embeddings]]).
 
 ---
 
-À ne pas confondre : contextual retrieval et late chunking ? <!--anki:483b40683c78345a3126-->
+Do not confuse: Contextual Retrieval and Late Chunking? <!--anki:483b40683c78345a3126-->
 ?
-- **Contextual retrieval** : ajoute du contexte **en texte**, rédigé par un LLM. Profite aussi à **BM25**, reste lisible et vérifiable, mais coûte un appel LLM par chunk
-- **Late chunking** : ajoute du contexte **dans le vecteur**, par l'encodeur. Pas d'appel LLM, mais aucun effet sur la recherche lexicale et dépend du modèle d'embedding
+- **Contextual retrieval**: adds context **in text**, written by a LLM. Also benefits **BM25**, remains readable and verifiable, but costs a LLM call per chunk
+- **Late chunking**: adds context **in the vector**, by the encoder. No LLM call, but no effect on the lexical search and depends on the embedding model
 
-Le premier est plus cher et plus robuste, le second plus économique.
+The first is more expensive and more robust, the second more economical.
 
 ---
 
-Quels sont les effets d'une taille de chunk trop petite ou trop grande ? <!--anki:436e5231376f26446864-->
+What are the effects of a chunk size that is too small or too large? <!--anki:436e5231376f26446864-->
 ?
-- **Trop petit** (moins de 100 tokens) : précis mais **sans contexte**, et la réponse est éclatée entre plusieurs chunks
-- **Trop grand** (plus de 1 000 tokens) : l'embedding **moyenne plusieurs sujets** et devient flou, et chaque chunk remonté coûte cher en contexte
+- **Too small** (less than 100 tokens): accurate but **without context**, and the answer is broken between several chunks
+- **Too big** (more than 1,000 tokens): the embedding **averages several subjects** and becomes blurred, and each reassembled chunk is expensive in context
 
-Point de départ courant : **300 à 800 tokens** avec 10 à 20 % de chevauchement, puis **mesurer** plusieurs tailles sur ses propres questions ([[21-rag-fondamentaux|réglages de départ]]).
+Current starting point: **300 to 800 tokens** with 10 to 20% overlap, then **measure** multiple sizes on its own questions ([[21-rag-fundamentals|Start Settings]]).
 
 ---
 
-Qu'est-ce que le pattern small-to-big (parent-child) ? <!--anki:6f4d265d7a2f3e534a41-->
+What is the small-to-big (parent-child) pattern? <!--anki:6f4d265d7a2f3e534a41-->
 ?
-**Chercher petit, renvoyer grand** : on indexe de **petits chunks** (phrases, paragraphes) pour une recherche précise, et on renvoie au LLM leur **bloc parent** (section, page) pour qu'il ait le contexte. Variante **sentence window** : renvoyer la phrase trouvée avec les N phrases voisines.
+**Look for small, Send back big** The index of **Small Chunks** (Phrase, paragraphs) for a specific search, and we return to LLM their **Parent Block** (Section, page) so that it has context. Variant **sentence window** : return the sentence found with the N neighboring sentences.
 
-Il découple deux besoins contradictoires : la **précision** de la recherche et la **complétude** du contexte.
+It decouples two conflicting needs: the **precision** of the research and the **completeness** of the context.
 
-Dédupliquer les parents si plusieurs petits chunks pointent vers la même section, et plafonner le contexte renvoyé. Préserver droits et versions du parent ; un enfant pertinent ne justifie pas d'exposer un bloc plus large non autorisé.
+Deduplicate parents if multiple small chunks point to the same section, and cap the context returned. Preserve parent rights and versions; a relevant child does not justify exposing a larger unauthorized block.
 
 ---
 
-Le chunking sémantique vaut-il son coût ? <!--anki:67377e70797147715e59-->
+Is semantic chunking worth its cost? <!--anki:67377e70797147715e59-->
 ?
-**Pas systématiquement.** Couper là où les embeddings de phrases consécutives divergent semble plus intelligent, mais des évaluations publiées (2024) ne montrent **pas de gain constant** sur un découpage récursif bien réglé, pour un coût d'ingestion supérieur. La **structure du document** (titres, sections) est souvent un meilleur signal que la similarité ([[162-document-parsing|chunking structurel]]).
+**Not always.** Cutting where the embeddings of consecutive sentences diverge seems smarter, but published ratings (2024) show **no constant gain** on a well-tuned recursive cutting, for a higher cost of ingestion. **Document structure** (headings, sections) is often a better signal than similarity ([[162-document-parsing|chunking structurel]]).
 
-Comparer à budget de contexte similaire, pas seulement à nombre de chunks égal. Vérifier les questions qui exigent deux phrases voisines : une rupture sémantique peut séparer une règle de son exception.
+Compare to similar context budget, not just equal number of chunks. Check for questions that require two neighboring sentences: a semantic break can separate a rule from its exception.
 
 ---
 
-Qu'est-ce que le chunking par propositions ? <!--anki:79456d2e71752a256331-->
+What is Chunking by Propositions? <!--anki:79456d2e71752a256331-->
 ?
-Réécrire le texte en **propositions atomiques et autonomes**, indexées séparément. Exemple : « ACME prévoit 12 M€ de CA au T2 2025 » doit conserver **prévoit**, l'entreprise, la période et l'unité ; « ACME a réalisé 12 M€ » change le sens.
+Rewrite the text in **Atomic and autonomous proposals**, indexed separately. Example: "ACME provides 12 M€ from CA to T2 2025 » must retain **Plan**, the company, the period and the unit; ACME has achieved 12 M€ “Changes the meaning.
 
-Cette granularité peut améliorer les recherches factuelles, mais perdre conditions, négations ou relations entre propositions. L'extraction LLM ajoute coût et erreurs possibles. Garder un lien vers le passage original, vérifier que celui-ci implique réellement la proposition et restituer au besoin son contexte. Une proposition est un objet de recherche, pas une nouvelle source faisant autorité.
+This granularity can improve factual research, but lose conditions, negations, or relationships between propositions. The LLM extraction adds cost and possible errors. Keep a link to the original passage, verify that it actually involves the proposition, and render its context if necessary. A proposition is a research object, not an authoritative new source.
 
 ---
 
-Pourquoi enrichir les chunks avec des métadonnées ? <!--anki:433a363b4023495b3046-->
+Why enrich chunks with metadata? <!--anki:433a363b4023495b3046-->
 ?
-- **Fil d'Ariane** préfixé au texte (titre du document > section > sous-section) : du contexte **gratuit**, sans appel LLM
-- **Champs filtrables** (date, source, langue, droits d'accès) : filtrer **avant** la recherche vectorielle ([[22-rag-avance|filtrage et ACL]])
-- **Identifiants stables** (document, page, position) : citations et mises à jour incrémentales
+- **Ariane's son** prefixed to the text (title of the document > section > subsection): from the context **free**, without appeal LLM
+- **filterable fields** (date, source, language, access rights): filter **before** vector search ([[22-advanced-rag|Filtering and ACL]])
+- **Stable identifiers** (document, page, position): incremental citations and updates
 
-C'est la première amélioration à essayer : peu chère, souvent efficace.
+This is the first improvement to try: inexpensive, often effective.
 
 ---
 
-Comment comparer deux stratégies de chunking ? <!--anki:6d51784b656f656e423a-->
+How to compare two chunking strategies? <!--anki:6d51784b656f656e423a-->
 ?
-1. Un jeu de **questions réelles** avec, pour chacune, les **passages attendus**
-2. Ré-indexer le **même corpus** avec chaque stratégie
-3. Comparer le **recall@k** et le **MRR** du retrieval, puis la qualité des réponses finales ([[96-evals-rag-agents|evals RAG]])
-4. Comparer aussi le **coût d'ingestion** et le **nombre de tokens** injectés par réponse
+1. A game of **real questions** with, for each, the **expected passes**
+2. Re-index the **The same corpus** with each strategy
+3. Compare the **recall@k** and **MRR** of the retrieval, then the quality of the final answers ([[96-evals-rag-agents|evals RAG]])
+4. Also compare the **cost of ingestion** and the **number of tokens** injected per response
 
-Comme les chunks changent entre stratégies, on juge « passage attendu retrouvé » par **recouvrement de texte**, pas par identifiant de chunk.
+As the chunks change between strategies, we judge "expected passage found" by **text recovery**, not by chunk identifier.
 
 ---
 
-Calcul : 10 000 documents de 8 000 tokens sont découpés en 16 chunks de 500 tokens. Chaque appel reçoit document + chunk + 100 tokens de consigne et produit 75 tokens, à 1 €/M en entrée et 5 €/M en sortie. Quel coût sans cache puis avec le document écrit une fois à 1,25× et relu 15 fois à 0,1× ? <!--anki:6336316138626364306238353434323662316364643334376639656430306536-->
+Calculation: 10,000 Documents of 8,000 tokens They are cut in 16 Chunks 500 tokens. Each call receives document + chunk + 100 tokens set-off and product 75 tokens, To 1 €/M as input and 5 €/M out. What cost without cache then with the document written once to 1.25× and reread 15 Time to 0.1× ? <!--anki:6336316138626364306238353434323662316364643334376639656430306536-->
 ?
-Avec les **tarifs hypothétiques** et les 160 000 appels de l'énoncé :
+With the **hypothetical rates** and the 160,000 calls of the statement:
 ```text
-entrée sans cache : 160 000 × 8 600 / 1e6 × 1 = 1 376 €
-entrée avec cache : 80 × (1,25 + 15 × 0,1) + 96 = 316 €
-sortie inchangée  : 160 000 × 75 / 1e6 × 5 = 60 €
-total sans cache  : 1 436 € ; avec cache : 376 €
+cacheless entry: 160,000 × 8,600 / 1e6 × 1 = 1,376 €
+entry with cache: 80 × (1.25 + 15 × 0.1) + 96 = 316 €
+output unchanged: 160,000 × 75 / 1e6 × 5 = 60 €
+total without cache: 1,436 €; with cache: 376 €
 ```
-Les 80 M tokens représentent les documents ; les 96 M restants, chunks et consignes. Le gain suppose les quinze relectures réellement servies depuis le cache. Expiration, préfixes différents et tentatives supplémentaires changent la facture. C'est un coût d'ingestion, à réévaluer lors des modifications.
+The 80 M tokens represents the documents; the remaining 96 M, chunks and instructions. The gain assumes the fifteen proofreadings actually served from the cache. Expiration, different prefixes and additional attempts change the invoice. It is a cost of ingestion, to be reevaluated during the modifications.
 
-Les consignes et chunks non cachés coûtent encore 96 € d'entrée dans ce scénario. Le cache porte ici sur le document placé dans un préfixe réutilisable ; il ne rend pas gratuites les autres parties de chaque appel.
-
----
-
-Calcul : quel surcoût approximatif crée un overlap de 100 tokens pour des chunks de 500 tokens sur un long document ? <!--anki:3966666139393564316138613438393938636261386464333563666635393730-->
-?
-Le **pas de découpage** vaut `500 − 100 = 400` tokens. Pour un document très long, le volume total indexé est approximativement multiplié par `500 / 400 = 1,25`, soit **25 % de tokens supplémentaires**.
-
-Le coût d'embedding et le nombre de vecteurs augmentent à peu près dans ce rapport si les autres réglages restent fixes. Les bords du document et le découpage structurel modifient le résultat exact. Dédupliquer les passages voisins à l'évaluation : retrouver plusieurs chunks presque identiques ne signifie pas couvrir davantage de preuves.
+Unhidden instructions and chunks still cost 96 € entry in this scenario. The cache here is about the document placed in a reusable prefix; it does not make the other parts of each call free.
 
 ---
 
-Pourquoi un tableau découpé par nombre de tokens peut-il produire des preuves RAG trompeuses ? <!--anki:3030656130313936623438653432646338343636623266383061336363353564-->
+Calculation: how much does an overlap of 100 tokens create for chunks of 500 tokens on a long document? <!--anki:3966666139393564316138613438393938636261386464333563666635393730-->
 ?
-La valeur peut être séparée de **son en-tête, son unité ou sa période**. « 12,5 » sans savoir s'il s'agit de millions d'euros ou d'un pourcentage n'est pas une preuve exploitable.
+The **chunk stride** is `500 − 100 = 400` tokens. For a very long document, the total indexed volume is approximately multiplied by `500 / 400 = 1,25`, either **25% of tokens Additional**.
 
-Préserver la structure ligne/colonne et répliquer les en-têtes utiles dans les morceaux, avec provenance. Pour un tableau multipage, vérifier les en-têtes répétés et les notes. Tester la reconstruction d'une cellule avec son sens complet, pas seulement la présence du chiffre dans l'index.
+The cost of embedding and the number of vectors increase in this ratio if the other settings remain fixed. The document edges and the structural slicing change the exact result. Deduplicating the neighboring passages to the evaluation: finding several almost identical chunks does not mean covering more evidence.
 
 ---
 
-Comment borner le contexte lorsque plusieurs petits chunks pointent vers le même parent ? <!--anki:6336393762333634343536653463656139346339613366386364366661333266-->
+Why can a table cut by tokens number produce misleading RAG evidence? <!--anki:3030656130313936623438653432646338343636623266383061336363353564-->
 ?
-**Dédupliquer les parents avant expansion**, puis limiter le volume total. Cinq enfants pertinents d'un même chapitre ne doivent pas conduire à injecter cinq fois ce chapitre.
+The value can be separated from **its header, unit or period**. "12.5" without knowing if it is millions of euros or a percentage is not actionable proof.
 
-Si le parent est trop grand, sélectionner des fenêtres autour des passages avec les titres et références nécessaires. Mesurer la couverture des preuves après expansion : un gain de rappel au niveau enfant peut être annulé par une troncature du contexte final. Conserver les localisations fines pour les citations.
+Preserve the line/column structure and replicate the useful headers in the pieces, with provenance. For a multipage table, check the repeated headers and notes. Test the reconstruction of a cell with its full meaning, not just the presence of the number in the index.
 
 ---
 
-## Mises en situation
-
-Mise en situation : ton RAG sur 3 000 rapports financiers répond souvent « information non trouvée » alors que le chiffre figure dans le corpus. Les chunks font 400 tokens. Comment procèdes-tu ? <!--anki:7126512e53305a26792c-->
+How to limit context when multiple small chunks point to the same parent? <!--anki:6336393762333634343536653463656139346339613366386364366661333266-->
 ?
-1. **Diagnostiquer** : sur 50 questions ratées, le bon passage est-il dans le top 20 ? Si non, c'est le retrieval
-2. **Lire les chunks** : ils disent souvent « le chiffre d'affaires » sans nom d'entreprise ni période
-3. **Ajouter le fil d'Ariane** (entreprise, année, section) à chaque chunk, sans coût LLM
-4. **Tester le contextual retrieval** avec prompt caching, puis ajouter un **reranker** ([[22-rag-avance|reranking]])
-5. **Mesurer** le recall@k avant et après, et le coût d'ingestion total
+**Deduplicate parents before expansion**, then limit the total volume. Five relevant children of the same chapter should not lead to injecting five times this chapter.
 
-**Piège** : augmenter le top-k pour « tout ramener », ce qui noie le modèle sans rendre les chunks plus trouvables.
+If the parent is too large, select windows around the passages with the necessary titles and references. Measure the coverage of evidence after expansion: a reminder gain at the child level can be canceled by truncation of the final context. Keep fine locations for quotes.
 
 ---
 
-Mise en situation : on te demande de passer tout le corpus en chunking sémantique « parce que c'est l'état de l'art ». Le corpus est de la documentation technique bien structurée en Markdown. Que réponds-tu ? <!--anki:7a253f545f55776c6c67-->
-?
-1. **Rappeler l'objectif** : le chunking se juge au recall@k sur nos questions, pas à la mode
-2. **Constater l'atout du corpus** : les titres Markdown donnent déjà des frontières de sens fiables
-3. **Proposer un comparatif** : découpage par sections avec fil d'Ariane, contre chunking sémantique, sur le même jeu de questions
-4. **Chiffrer** le coût d'ingestion et de ré-ingestion de chaque option
-5. **Décider sur les mesures**, et documenter le choix dans un ADR ([[147-leadership-technique-ia|ADR]])
+## Scenarios
 
-**Piège** : changer de stratégie de chunking sans jeu d'eval, et découvrir la régression par les utilisateurs.
+Scenario: your RAG on 3,000 financial reports often answers "information not found" while the number is in the corpus. The chunks do 400 tokens. How do you proceed? <!--anki:7126512e53305a26792c-->
+?
+1. **Diagnose**: on 50 missed questions, is the right passage in the top 20? If not, it's the retrieval
+2. **Read the chunks**: they often say "turnover" without a company name or period
+3. **Add the breadcrumb thread** (company, year, section) to each chunk, at no cost LLM
+4. **Test contextual retrieval** with prompt caching, then add a **reranker** ([[22-advanced-rag|reranking]])
+5. **Measure** call@k before and after, and total ingestion cost
+
+**Trap** : increase the top-k to "bring everything back", which drowns the model without making the chunks more findable.
+
+---
+
+Scenario: You are asked to pass the entire corpus in semantic chunking "because it is the state of the art". The corpus is well-structured technical documentation in Markdown. What do you say? <!--anki:7a253f545f55776c6c67-->
+?
+1. **Remind the goal**: the chunking is judged at call@k on our questions, not fashionable
+2. **Finding the corpus asset**: Markdown titles already give reliable boundaries of meaning
+3. **Propose a comparison**: cutting by sections with Ariadne thread, against semantic chunking, on the same set of questions
+4. **Rate** the cost of ingestion and re-ingestion of each option
+5. **Decide on measures**, and document the choice in an ADR ([[147-ai-technical-leadership|ADR]])
+
+**Trap**: Change your chunking strategy without an eval game, and discover regression by users.
 
 ---
 
@@ -175,11 +175,11 @@ Mise en situation : on te demande de passer tout le corpus en chunking sémantiq
 
 - [Anthropic — Contextual Retrieval (2024)](https://www.anthropic.com/engineering/contextual-retrieval)
 
-## Connexions
-- [[21-rag-fondamentaux|RAG — Fondamentaux]] — les stratégies de chunking de base
-- [[22-rag-avance|RAG — Avancé]] — hybride, reranking, filtres
-- [[162-document-parsing|Parsing de documents]] — la structure avant le découpage
-- [[133-embeddings-representations|Embeddings]] — modèles à long contexte et late interaction
-- [[123-caching-agressif|Caching]] — rendre le contextual retrieval abordable
-- [[96-evals-rag-agents|Évaluation des RAG]] — juger une stratégie au recall@k
+## Connections
+- [[21-rag-fundamentals|RAG — Fundamentals]] — basic chunking strategies
+- [[22-advanced-rag|RAG — Advanced]] — hybride, reranking, filtres
+- [[162-document-parsing|Parsing of documents]] — structure before cutting
+- [[133-embeddings-representations|Embeddings]] — models with long context and late interaction
+- [[123-aggressive-caching|Caching]] — make contextual retrieval affordable
+- [[96-evals-rag-agents|Evaluation of GARs]] — judge a strategy to call@k
 - [[00-moc-ai-engineering|MOC AI Engineering]]

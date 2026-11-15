@@ -1,357 +1,357 @@
 [
   {
     "id": "7a7b4b5e6330535d6435",
-    "question": "Qu'est-ce que le LLM-as-judge ?",
-    "raison": "doublon de 95-llm-as-judge"
+    "question": "What is the LLM-as-judge?",
+    "reason": "95-llm-as-judge"
   },
   {
     "id": "6c7c5d51286e41557528",
-    "question": "Qu'est-ce qu'un golden dataset ?",
-    "raison": "doublon de 94-evals-methodologie"
+    "question": "What is a golden dataset?",
+    "reason": "94-evals-methodology"
   },
   {
     "id": "71536079417d5f583732",
-    "question": "Quelle est la triade d'évaluation RAG ?",
-    "raison": "doublon de 96-evals-rag-agents"
+    "question": "What is the RAG evaluation triad?",
+    "reason": "96-evals-rag-agents"
   },
   {
     "id": "677263766d67727d6a65",
-    "question": "Qu'est-ce que le speculative decoding ?",
-    "raison": "doublon de 67-speculative-decoding"
+    "question": "What is Speculative Decoding?",
+    "reason": "67-speculative-decoding"
   },
   {
     "id": "415567412c67584e7621",
-    "question": "À ne pas confondre : LangGraph et LangChain ?",
-    "raison": "doublon de 37-frameworks-agents"
+    "question": "Do not confuse: LangGraph and LangChain?",
+    "reason": "duplicate of 37-agent-frameworks"
   },
   {
     "id": "666443416c324f6f4b3a",
-    "question": "Apptainer peut-il récupérer une image Docker ?",
-    "raison": "doublon de 13-apptainer-inference-hpc"
+    "question": "Can Apptainer recover a Docker image?",
+    "reason": "13-apptainer-inference-hpc"
   },
   {
     "id": "6d477d606d29413d6764",
-    "question": "Mémoire court terme vs long terme ?",
-    "raison": "doublon de 39-memoire-agents"
+    "question": "Short term vs long term memory?",
+    "reason": "duplicate of 39-memory-agents"
   },
   {
     "id": "4f4f3e637d4351542e2c",
-    "question": "Qu'est-ce que le format GGUF ?",
-    "raison": "doublon de 164-llm-local-edge, remplacée par la comparaison safetensors et GGUF"
+    "question": "What is the GGUF format?",
+    "reason": "duplicate of 164-local-edge-llm, replaced by the safetensors and GGUF comparison"
   },
   {
     "id": "4121657b55617d3e2624",
-    "question": "Quels outils de guardrails existent ?",
-    "raison": "liste de produits remplacée par une carte de choix"
+    "question": "What kind of guardrails are there?",
+    "reason": "list of products replaced by a card of choice"
   },
   {
     "id": "71335a4821303e723f5b",
-    "question": "Quels outils pour versionner les données ?",
-    "raison": "liste de produits remplacée par une carte de choix"
+    "question": "What tools to release the data?",
+    "reason": "list of products replaced by a card of choice"
   },
   {
     "id": "763d5e68713b775b4d2e",
-    "question": "Quels outils de parsing connaître ?",
-    "raison": "liste de produits remplacée par une carte de choix"
+    "question": "What Parsing Tools to Know?",
+    "reason": "list of products replaced by a card of choice"
   },
   {
     "id": "6c63492e3a4553506f63",
-    "question": "Quels outils pour servir un modèle local ?",
-    "raison": "liste de produits remplacée par une carte de choix"
+    "question": "What tools to serve a local model?",
+    "reason": "list of products replaced by a card of choice"
   },
   {
     "id": "6752677b6567413c462f",
-    "question": "Quels produits et outils connaître ?",
-    "raison": "liste de produits remplacée par une carte de choix"
+    "question": "What products and tools do you know?",
+    "reason": "list of products replaced by a card of choice"
   },
   {
     "id": "72233e647a6e59473b5f",
     "question": "Citez d'autres frameworks courants.",
-    "raison": "liste de produits remplacée par une carte de choix"
+    "reason": "list of products replaced by a card of choice"
   },
   {
     "id": "464b56556f472b613e3e",
-    "question": "Quels outils d'orchestration « code » utilise-t-on ?",
-    "raison": "liste de produits remplacée par une carte de choix"
+    "question": "What “code” orchestration tools are used?",
+    "reason": "list of products replaced by a card of choice"
   },
   {
     "id": "787e2f625a5433466645",
-    "question": "Quels outils pour faire du RL agentique ?",
-    "raison": "liste de produits remplacée par une carte de choix"
+    "question": "What tools to do RL agentique?",
+    "reason": "list of products replaced by a card of choice"
   },
   {
     "id": "702a6c35687d64612f7d",
-    "question": "Quels outils implémentent la guided generation ?",
-    "raison": "liste de produits remplacée par une carte de choix"
+    "question": "What tools implement guided generation?",
+    "reason": "list of products replaced by a card of choice"
   },
   {
     "id": "48732b41566441324e4a",
-    "question": "Quels outils pour quantizer et servir un modèle quantizé ?",
-    "raison": "liste de produits remplacée par une carte de choix"
+    "question": "What tools to quantize and serve a quantized model?",
+    "reason": "list of products replaced by a card of choice"
   },
   {
     "id": "4e7b3a796e376560212a",
-    "question": "Quels serveurs d'inférence LLM conteneurisés faut-il connaître ?",
-    "raison": "liste de produits remplacée par une carte de choix"
+    "question": "Which LLM containerized inference servers should I know?",
+    "reason": "list of products replaced by a card of choice"
   },
   {
     "id": "4a785a514860456e7223",
-    "question": "Quelles alternatives à LiteLLM ?",
-    "raison": "liste de produits remplacée par une carte de choix"
+    "question": "What are the alternatives to LiteLM?",
+    "reason": "list of products replaced by a card of choice"
   },
   {
     "id": "4b266f24464137705932",
-    "question": "Donnez des exemples de serveurs MCP courants.",
-    "raison": "liste de produits remplacée par une carte de choix"
+    "question": "Give examples of common MCP servers.",
+    "reason": "list of products replaced by a card of choice"
   },
   {
     "id": "67254c614036287a593d",
-    "question": "Donnez des exemples de harness.",
-    "raison": "liste de produits remplacée par une carte de choix"
+    "question": "Give examples of harness.",
+    "reason": "list of products replaced by a card of choice"
   },
   {
     "id": "726e3f763269777b4a54",
-    "question": "Quelles bibliothèques dédiées à la mémoire des agents existent ?",
-    "raison": "liste de produits remplacée par une carte de choix"
+    "question": "Which libraries dedicated to the memory of agents exist?",
+    "reason": "list of products replaced by a card of choice"
   },
   {
     "id": "73492d33343547474e48",
-    "question": "Définis en une phrase : OCI, image, conteneur, registry.",
-    "raison": "plusieurs notions par carte, chacune déjà définie dans sa fiche"
+    "question": "Defined in one sentence: OCI, image, container, registry.",
+    "reason": "several notions per card, each already defined in its card"
   },
   {
     "id": "516c7c5379535d552f54",
-    "question": "Définis en une phrase : Kubernetes, kubelet, CRI.",
-    "raison": "plusieurs notions par carte, chacune déjà définie dans sa fiche"
+    "question": "Defined in one sentence: Kubernetes, kubelet, CRI.",
+    "reason": "several notions per card, each already defined in its card"
   },
   {
     "id": "4a3a2141514b24426a64",
-    "question": "Définis en une phrase : containerd, runc.",
-    "raison": "plusieurs notions par carte, chacune déjà définie dans sa fiche"
+    "question": "Defined in one sentence: containerd, runc.",
+    "reason": "several notions per card, each already defined in its card"
   },
   {
     "id": "463e2f2d4074386c7a2d",
-    "question": "Définis en une phrase : NVIDIA Container Toolkit, device plugin, MIG.",
-    "raison": "plusieurs notions par carte, chacune déjà définie dans sa fiche"
+    "question": "Defined in one sentence: NVIDIA Container Toolkit, device plugin, MIG.",
+    "reason": "several notions per card, each already defined in its card"
   },
   {
     "id": "7860645e5e44623d6a3b",
-    "question": "Définis en une phrase : vLLM, Triton, TGI.",
-    "raison": "plusieurs notions par carte, chacune déjà définie dans sa fiche"
+    "question": "Defined in one sentence: vLLM, Triton, TGI.",
+    "reason": "several notions per card, each already defined in its card"
   },
   {
     "id": "6370427b363d21607d52",
-    "question": "Définis en une phrase : KV cache, cold start.",
-    "raison": "plusieurs notions par carte, chacune déjà définie dans sa fiche"
+    "question": "Defined in one sentence: KV cache, cold start.",
+    "reason": "several notions per card, each already defined in its card"
   },
   {
     "id": "7230625557696a456f63",
-    "question": "Comment distinguer namespaces et cgroups ?",
-    "raison": "doublon de 08-linux-primitives-docker-fondamentaux"
+    "question": "How to distinguish namespaces and cgroups?",
+    "reason": "08-linux-primitives-backer-fundamentals"
   },
   {
     "id": "716b504c607369232b6a",
-    "question": "Mise en situation : en production, les réponses longues de ton assistant sont coupées au bout de 60 secondes, alors qu'elles fonctionnent en local. Que vérifies-tu ?",
-    "raison": "doublon de la mise en situation de 84-streaming-integration-applicative, remplacée par une migration hors d'ingress-nginx"
+    "question": "Scenario: In production, the long answers of your assistant are cut after 60 seconds, while they work locally. What do you check?",
+    "reason": "double the 84-streaming-integration-application implementation, replaced by a migration out of ingress-nginx"
   },
   {
     "id": "443d4d6b453641476b78",
-    "question": "À ne pas confondre : Ingress et API gateway ?",
-    "raison": "incluse dans « À ne pas confondre : Ingress, API gateway et gateway LLM » de 83-gateway-ingress"
+    "question": "Do not confuse: Ingress and API gateway?",
+    "reason": "included in \"Not to be confused: Ingress, API gateway and LLM gateway\" by 83-gateway-ingress"
   },
   {
     "id": "6872644c3d3f746a303b",
-    "question": "Cas 4 — Extraction de données de millions de documents : quel design ?",
-    "raison": "doublon de la mise en situation « extraction sur 20 millions de documents » de 145-cas-system-design, remplacée par un cas d'analyse de données"
+    "question": "Case 4 — Extracting data from millions of documents: what design?",
+    "reason": "duplicate of the 145-system-design-cases \"extracting on 20 million documents\" scenario, replaced by a data analysis case"
   },
   {
     "id": "633a44664441747c2432",
-    "question": "Workflow ou agent : quelle différence ?",
-    "raison": "doublon de « À ne pas confondre : workflow et agent » de 31-agents-fondamentaux, formulation « quelle différence » proscrite"
+    "question": "Workflow or agent: what’s the difference?",
+    "reason": "duplicate of \"Not to be confused: workflow and agent\" of 31-agents-fundamentals, formulation \"what difference\" proscribed"
   },
   {
     "id": "4c52586b37256f59494e",
-    "question": "Quel est l'intérêt principal des sous-agents ?",
-    "raison": "doublon de « Comment les sous-agents aident-ils à gérer le contexte ? » de 35-context-engineering"
+    "question": "What is the main interest of sub-agents?",
+    "reason": "35-context-engineering \"How do sub-agents help manage context?\""
   },
   {
     "id": "514c36507e6b23627d33",
-    "question": "Que mesure-t-on quand on évalue un agent ?",
-    "raison": "doublon de « Qu'évalue-t-on dans un agent ? » de 96-evals-rag-agents"
+    "question": "What is measured when evaluating an agent?",
+    "reason": "duplicate of \"What is evaluated in an agent?\" from 96-evals-rag-agents"
   },
   {
     "id": "794a63615d3f7835663e",
-    "question": "Qu'est-ce que le RLHF ?",
-    "raison": "doublon de « Quelles sont les étapes classiques du RLHF ? » de 52-post-training-alignement"
+    "question": "What is the RLHF?",
+    "reason": "“What are the classic steps of the RLHF?” from 52-post-training-alignment"
   },
   {
     "id": "492f54413476366b5246",
-    "question": "Qu'est-ce que DPO ?",
-    "raison": "doublon de « Qu'apporte DPO par rapport au RLHF classique ? » de 52-post-training-alignement"
+    "question": "What is DPO?",
+    "reason": "duplicate of \"What does DPO bring compared to the classic RLHF?\" from 52-post-training-alignment"
   },
   {
     "id": "507e7979303d77246724",
-    "question": "Comment mener un projet de distillation en pratique ?",
-    "raison": "doublon de la mise en situation « classification à 8 000 € par mois » de 53-donnees-synthetiques-distillation"
+    "question": "How to carry out a distillation project in practice?",
+    "reason": "duplicate of the 8,000 € per month simulation of 53-data-synthetic-distillation"
   },
   {
     "id": "426d336e30672d4b5324",
-    "question": "Pourquoi le KV cache est-il indispensable ?",
-    "raison": "doublon de « Qu'est-ce que le KV cache ? » de 61-kv-cache-attention"
+    "question": "Why is the KV cache essential?",
+    "reason": "duplicate of \"What is the KV cache?\" from 61-kv-cache-attention"
   },
   {
     "id": "43725f666b753b3d2d2e",
-    "question": "Qu'est-ce que le prefix caching ?",
-    "raison": "doublon de « Qu'est-ce que le prefix caching côté serveur ? » de 66-prefix-caching-radix-attention"
+    "question": "What is Prefix Caching?",
+    "reason": "duplicate of \"What is server-side prefix caching?\" from 66-prefix-caching-radix-attention"
   },
   {
     "id": "712b5a5a4e2d6f442a35",
-    "question": "Qu'est-ce que la quantization ?",
-    "raison": "doublon des cartes de définition de 68-quantization"
+    "question": "What is quantization?",
+    "reason": "duplicate 68-quantization definition cards"
   },
   {
     "id": "423164672b2b78664256",
-    "question": "Pourquoi prefill et decode ont-ils des goulots différents ?",
-    "raison": "doublon de « Pourquoi le prefill est-il compute-bound et le decode memory-bound ? » de 69-roofline-prefill-decode"
+    "question": "Why do prefill and decode have different necks?",
+    "reason": "“Why is prefill Compute-Bound and decode Memory-Bound?” by 69-roofline-prefill-decode"
   },
   {
     "id": "4e7d7c3d6a4c3c4f5f3b",
-    "question": "Qu'est-ce qui limite la concurrence d'un serveur ?",
-    "raison": "doublon de « Pourquoi le KV cache limite-t-il le nombre de requêtes simultanées ? » de 61-kv-cache-attention"
+    "question": "What limits the competition of a server?",
+    "reason": "Why does the KV cache limit the number of simultaneous requests? from 61-kv-cache-attention"
   },
   {
     "id": "745b47483e2155344a39",
-    "question": "Le speculative decoding modifie-t-il la distribution des sorties ?",
-    "raison": "doublon de « Le speculative decoding dégrade-t-il la qualité ? » de 67-speculative-decoding"
+    "question": "Does Speculative Decoding change the distribution of outputs?",
+    "reason": "“Does Speculative Decoding Degrade Quality?” by 67-Speculative Decoding"
   },
   {
     "id": "6b39775e3a7726676030",
-    "question": "Weight-only (W4A16) ou poids + activations (W8A8) : quelle différence ?",
-    "raison": "doublon de « À ne pas confondre : quantization des poids, des activations et du KV cache ? » de 68-quantization, formulation « quelle différence » proscrite"
+    "question": "Weight-only (W4A16) or weight + activations (W8A8): what is the difference?",
+    "reason": "duplicate of \"Not to be confused: quantization of weights, activations and KV cache?\" from 68-quantization, proscribed \"what difference\" formulation"
   },
   {
     "id": "48423f5d56613037636e",
-    "question": "Pourquoi l'utilisation GPU de `nvidia-smi` est-elle trompeuse ?",
-    "raison": "doublon de « Pourquoi l'utilisation GPU et la VRAM utilisée sont-elles des métriques trompeuses ? » de 93-monitoring-inference"
+    "question": "Why is GPU use of `nvidia-smi` misleading?",
+    "reason": "duplicate of \"Why are GPU usage and VRAM used misleading metrics?\" from 93-monitoring-inference"
   },
   {
     "id": "43286e50532924447e3c",
-    "question": "Quel est le rôle d'OCI ?",
-    "raison": "doublon de « Que signifie OCI ? » et « Quelles sont les trois grandes spécifications OCI ? » de 01-oci"
+    "question": "What is the role of OCI?",
+    "reason": "“What does OCI mean?” and “What are the three major OCI specifications?” from 01-oci"
   },
   {
     "id": "4c2f4d4a6863677c5f39",
-    "question": "Docker Engine est-il nécessaire pour exécuter dans Kubernetes une image construite avec Docker ?",
-    "raison": "doublon de 02-docker-images-registries et de la carte « à ne pas confondre » de 05-docker-kubernetes"
+    "question": "Is Docker Engine necessary to run an image built with Docker in Kubernetes?",
+    "reason": "duplicate of 02-docker-images-registries and the \"not to be confused\" card of 05-docker-kubernetes"
   },
   {
     "id": "77556b3d6648472f756b",
-    "question": "Comment utilise-t-on le GPU avec Apptainer ?",
-    "raison": "doublon de « À quoi sert `--nv` avec Apptainer ? » de 06-apptainer-singularity"
+    "question": "How do I use the GPU with Apptainer?",
+    "reason": "\"What is `--nv` with Apptainer?\" from 06-apptainer-singularity"
   },
   {
     "id": "62453d6048415f292569",
-    "question": "Que fait précisément l'option `--nv` d'Apptainer ?",
-    "raison": "doublon de « À quoi sert `--nv` avec Apptainer ? » de 06-apptainer-singularity"
+    "question": "What exactly does the Apptainer `--nv` option do?",
+    "reason": "\"What is `--nv` with Apptainer?\" from 06-apptainer-singularity"
   },
   {
     "id": "6957347b4c5a59334768",
-    "question": "Quel est le modèle de sécurité d'Apptainer ?",
-    "raison": "doublon de « À ne pas confondre : Apptainer et Docker sur le plan de la sécurité ? » de 06-apptainer-singularity"
+    "question": "What is Apptainer’s security model?",
+    "reason": "“Not to be confused: Apptainer and Docker in terms of security?” from 06-apptainer-singularity"
   },
   {
     "id": "796a74462e3c2d7e774b",
-    "question": "Pourquoi le format SIF (fichier unique) est-il pratique en HPC ?",
-    "raison": "doublon de la carte sur le format SIF de 06-apptainer-singularity"
+    "question": "Why is the SIF format (single file) convenient in HPC?",
+    "reason": "duplicate map on 06-apptainer-singularity SIF format"
   },
   {
     "id": "484b513771565d286c7b",
-    "question": "Pourquoi l'API compatible OpenAI est-elle importante ?",
-    "raison": "doublon de « Pourquoi l'API « compatible OpenAI » est-elle un standard de fait ? » de 85-carte-protocoles-agentiques"
+    "question": "Why is the OpenAI-enabled API important?",
+    "reason": "\"Why is the API 'OpenAI compatible' a de facto standard?\" from 85-agent-protocol-card"
   },
   {
     "id": "4a7c3664572c6c572a38",
-    "question": "Combien d'exemples faut-il dans un jeu d'eval ?",
-    "raison": "doublon de « Quels ordres de grandeur pour un jeu d'évaluation ? » de 92-chainforge-evals-prompts"
+    "question": "How many examples do you need in an eval game?",
+    "reason": "duplicate of \"What orders of magnitude for an evaluation game?\" from 92-chainforge-evals-prompts"
   },
   {
     "id": "4e5e397b574e687a6f79",
-    "question": "Qu’apporte pass^k à l’évaluation de la fiabilité d’un agent ?",
-    "raison": "doublon de « À ne pas confondre : pass@k et pass^k ? » de 114-reproductibilite-variance"
+    "question": "What does pass^k bring to the assessment of the reliability of an agent?",
+    "reason": "\"Not to be confused: pass@k and pass^k?\" from 114-reproducibility-variance"
   },
   {
     "id": "4a6f2b436e3958626d33",
-    "question": "Qu'est-ce que le shadow testing ?",
-    "raison": "doublon de « Qu'est-ce que le shadow deployment ? » de 112-cicd-modeles"
+    "question": "What is shadow testing?",
+    "reason": "What is 112-cicd-models' shadow deployment?"
   },
   {
     "id": "6e4f4a30597944562b70",
-    "question": "Pourquoi les prompts passent-ils par la CI ?",
-    "raison": "doublon de « Pourquoi traiter les prompts comme du code ? » de 11-prompt-engineering-avance"
+    "question": "Why do the prompts pass through the IC?",
+    "reason": "\"Why treat prompts like code?\" by 11-prompt-engineering-advance"
   },
   {
     "id": "6165373738373233373436643438306262336238663763393132633938666631",
-    "question": "Combien de tokens un agent consomme-t-il par rapport à un chat, selon Anthropic ?",
-    "raison": "doublon de « Quels ordres de grandeur pour le coût d'un agent ? » de 31-agents-fondamentaux"
+    "question": "How many tokenss does an agent consume compared to a cat, according to Anthropic?",
+    "reason": "duplicate of \"What orders of magnitude for the cost of an agent?\" from 31-basic agents"
   },
   {
     "id": "7874483852304e797a44",
-    "question": "Quelles échéances de l'AI Act concernent une plateforme d'agents ?",
-    "raison": "doublon du calendrier de 155-ai-act, source unique pour éviter les divergences"
+    "question": "What are the AI Act deadlines for an agent platform?",
+    "reason": "duplicate calendar of 155-ai-act, single source to avoid discrepancies"
   },
   {
     "id": "492b6e722363457c3733",
-    "question": "Quels caches actionner côté FinOps ?",
-    "raison": "doublon des cartes sur les niveaux de cache de 123-caching-agressif"
+    "question": "Which caches operate side FinOps?",
+    "reason": "Double maps on cache levels of 123-caching-aggressive"
   },
   {
     "id": "7a6f47267b447c417071",
-    "question": "Pourquoi la qualité se dégrade-t-elle avant même d'atteindre la limite de la fenêtre ?",
-    "raison": "doublon de « Qu'est-ce que le context rot ? » de 35-context-engineering"
+    "question": "Why does the quality deteriorate even before reaching the limit of the window?",
+    "reason": "double of \"What is context rot?\" from 35-context-engineering"
   },
   {
     "id": "4c503b7432776c5b584d",
-    "question": "Faut-il encore écrire « réfléchis étape par étape » ?",
-    "raison": "doublon de « Comment prompter un modèle de raisonnement ? » de 13-prompts-production et de la carte « à ne pas confondre » de 138"
+    "question": "Do you have to write “Step by Step”?",
+    "reason": "duplicate of \"How to prompt a reasoning model?\" from 13-production-prompts and the \"not to be confused\" map from 138"
   },
   {
     "id": "3635396366633138316430363438613962306666303362323137373862646338",
-    "question": "Comment empêcher qu'une approbation humaine valide des paramètres ensuite modifiés ?",
-    "raison": "doublon de « Que doit contenir une proposition d'action soumise à approbation humaine ? » de 140-011-architecture-applications-agentiques"
+    "question": "How do I prevent a human approval from validating the settings that were subsequently changed?",
+    "reason": "duplicate of 140-011-architecture-applications-agents' \"What should a human-approved action proposal contain?\""
   },
   {
     "id": "7255287c6d622c66262a",
-    "question": "Comment rendre les citations fiables ?",
-    "raison": "doublon de « Comment rendre une réponse RAG vérifiable ? » de 21-rag-fondamentaux"
+    "question": "How to make quotes reliable?",
+    "reason": "duplicate of \"How to make a RAG response verifiable?\" from 21-rag-fundamentals"
   },
   {
     "id": "65443c5a7252553d7a3a",
-    "question": "Les LLM sont-ils calibrés : leur confiance reflète-t-elle leur taux de réponses justes ?",
-    "raison": "doublon de « Les probabilités d'un LLM sont-elles fiables (calibration) ? » de 65-probabilites-sampling"
+    "question": "Are the LLM calibrated: does their confidence reflect their correct response rate?",
+    "reason": "duplicate of \"Are the probabilities of a LLM reliable (calibration)?\" from 65-probability-sampling"
   },
   {
     "id": "4e43495d553d6e306131",
-    "question": "Pourquoi les hallucinations de code sont-elles un risque de sécurité ?",
-    "raison": "doublon de « Qu'est-ce que le slopsquatting ? » de 106-securite-agents-code"
+    "question": "Why are Code Hallucinations a Security Risk?",
+    "reason": "duplicate of \"What is slopsquatting?\" from 106-security-agents-code"
   },
   {
     "id": "645344583a7e797b6d2a",
-    "question": "Que faut-il versionner ensemble pour qu'une eval soit reproductible ?",
-    "raison": "doublon de la mise en situation « score impossible à reproduire » de 153 et du lineage de 111-mlops-llmops-fondamentaux"
+    "question": "What do you need to do together to make an eval reproducible?",
+    "reason": "duplicate of the 153 “score impossible to reproduce” setting and the 111-mlops-llmops-fundamentals lineage"
   },
   {
     "id": "4932627d6f6b4c7a6f51",
-    "question": "Quels référentiels de gouvernance de l'IA connaître ?",
-    "raison": "liste de référentiels à réciter, couverte par 105-devsecops-ia-agentique"
+    "question": "Which AI governance frameworks to know?",
+    "reason": "list of repositories to be recited, covered by 105-agentic-ai-devsecops"
   },
   {
     "id": "6d5a443662786d4f5177",
-    "question": "Quels autres modèles multimodaux existent en génération ?",
-    "raison": "catalogue de modalités sans critère de réponse évaluable"
+    "question": "What other multimodal models exist in the generation?",
+    "reason": "catalogue of modalities without evaluable response criteria"
   },
   {
     "id": "45635b4b45313f3a3278",
-    "question": "Ollama ou vLLM en entreprise ?",
-    "raison": "doublon de la carte de choix des outils locaux et de la mise en situation Ollama de 164-llm-local-edge"
+    "question": "Ollama or vLLM in business?",
+    "reason": "duplicate map of choice of local tools and setting Ollama of 164-local-edge-llm"
   }
 ]

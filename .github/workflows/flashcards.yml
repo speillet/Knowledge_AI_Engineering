@@ -1,7 +1,6 @@
-name: Flashcards et export Anki
+name: Flashcards and Anki export
 
-# Une seule chaîne : les vérifications tournent sur chaque PR et chaque push ;
-# la release « anki » n'est publiée depuis main qu'après des vérifications vertes.
+# Checks run on every PR and push. Publish the anki release from main only after they pass.
 on:
   push:
     branches: [main]
@@ -13,13 +12,13 @@ permissions:
 
 jobs:
   check:
-    name: Vérifications (Python ${{ matrix.python-version }})
+    name: Checks (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
     timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
-        # 3.10 : version minimale supportée ; 3.12 : version qui produit le paquet publié.
+        # 3.10: minimum version supported; 3.12: version that produces the published package.
         python-version: ["3.10", "3.12"]
     steps:
       - uses: actions/checkout@v4
@@ -30,14 +29,14 @@ jobs:
           cache-dependency-path: |
             requirements-dev.txt
             scripts/requirements.txt
-      - name: Installer les dépendances
+      - name: Install dependencies
         run: make install
-      - name: Vérifier fiches, sommaires, code, tests et ateliers
+      - name: Check topics, catalogs, code, tests and workshops
         run: make check
-      - name: Générer le paquet Anki
+      - name: Build the Anki package
         if: matrix.python-version == '3.12'
         run: make export
-      - name: Conserver le paquet pour validation
+      - name: Save the package for validation
         if: matrix.python-version == '3.12'
         uses: actions/upload-artifact@v4
         with:
@@ -46,7 +45,7 @@ jobs:
           if-no-files-found: error
 
   publish:
-    name: Publier dans la release « anki »
+    name: Publish the anki release
     needs: check
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
@@ -61,13 +60,13 @@ jobs:
         with:
           name: ai-engineering-anki
           path: dist
-      - name: Publier le paquet
+      - name: Publish the package
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
         run: |
           if ! gh release view anki >/dev/null 2>&1; then
-            gh release create anki --title "Paquet Anki" --latest=false \
-              --notes "Paquet Anki du vault, régénéré à chaque push sur main. Voir la section « Réviser sur Android avec Anki » du README."
+            gh release create anki --title "Anki package" --latest=false \
+              --notes "Anki package for the vault, rebuilt on every push to main. See the “Review on Android with Anki” section of the README."
           fi
           gh release upload anki dist/ai-engineering.apkg --clobber

@@ -1,40 +1,41 @@
 #!/usr/bin/env python3
-"""Attribue un identifiant permanent aux nouvelles cartes, sans modifier les anciens.
+"""Assigns a permanent ID to new cards, without changing old ones.
 
 Usage : python3 scripts/assign_card_ids.py
-Ne jamais retirer un identifiant pour reformuler ou déplacer une carte existante.
+Never remove an identifier to reformulate or move an existing card.
 """
+
 from pathlib import Path
 import sys
 import uuid
 
-from lint_flashcards import fiche_files, parse_cards
+from lint_flashcards import parse_cards, topic_files
 
 
 def assign(text: str) -> tuple[str, int]:
-    """Ajoute l'identifiant en fin de question : sur sa propre ligne, le plugin
-    Spaced Repetition sauterait aussi la ligne suivante (voir sr_plugin.py).
-    Renvoie le texte et le nombre d'identifiants ajoutés."""
+    """Adds the identifier at the end of the question: on its own line, the plugin
+    Spaced Repetition would also skip the next line (see sr_plugin.py).
+    Returns the text and the number of identifiers added."""
     cards, malformed = parse_cards(text)
     if malformed or any(not c.question or not c.answer for c in cards):
-        raise ValueError(f"cartes mal formées ou vides (lignes {malformed})")
+        raise ValueError(f"poorly formed or empty cards (lines) {malformed})")
     lines = text.splitlines(keepends=True)
     missing = [c for c in cards if not c.guid]
     for card in missing:
-        index = card.line - 2  # ligne qui précède le séparateur ?
+        index = card.line - 2  # The line before the separator?
         while not lines[index].strip():
             index -= 1
         content = lines[index].rstrip("\r\n")
-        ending = lines[index][len(content):]
+        ending = lines[index][len(content) :]
         guid = uuid.uuid4().hex
         lines[index] = f"{content.rstrip()} <!--anki:{guid.encode('ascii').hex()}-->{ending}"
     return "".join(lines), len(missing)
 
 
 def main() -> None:
-    # Préparer toutes les modifications avant d'écrire : aucun fichier partiellement migré.
+    # Prepare all changes before writing: no partially migrated files.
     updates: list[tuple[Path, str, int]] = []
-    for path in fiche_files():
+    for path in topic_files():
         try:
             text, count = assign(path.read_text(encoding="utf-8"))
         except ValueError as exc:
@@ -43,7 +44,7 @@ def main() -> None:
             updates.append((path, text, count))
     for path, text, _ in updates:
         path.write_text(text, encoding="utf-8", newline="\n")
-    print(f"{sum(count for _, _, count in updates)} identifiant(s) ajouté(s).")
+    print(f"{sum(count for (_, _, count) in updates)} ID(s) added.")
 
 
 if __name__ == "__main__":

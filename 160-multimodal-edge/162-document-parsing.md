@@ -1,165 +1,165 @@
-# Parsing de documents (PDF, OCR, layout) — Flashcards
+# Parsing documents (PDF, OCR, layout) — Flashcards
 Tags: #flashcards #ai-engineering #multimodal #document-parsing #rag
-Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: PDF natif ou scanné, analyse de layout, outils (Docling, Unstructured, services cloud, VLM), tableaux, figures, ColPali, chunking structurel, évaluation, exploitation, unités et en-têtes des tableaux, ordre de lecture, calcul de qualité globale. -->
+Verified on: 25 September 2026 — This factsheet lists products, versions or regulatory texts that are evolving quickly.
+<!-- summary: Native or scanned PDF, layout analysis, tools (Docling, Unstructured, cloud services, VLM), tables, figures, ColPali, structural chunking, evaluation, exploitation, units and table headers, reading order, global quality calculation. -->
 
 
-Pourquoi le parsing de documents est-il souvent le goulot d'un RAG d'entreprise ? <!--anki:7038666a4c6a61724345-->
+Why is document parsing often the crux of an enterprise RAG? <!--anki:7038666a4c6a61724345-->
 ?
-Parce que les documents réels sont des **PDF scannés, tableaux, slides, formulaires, colonnes multiples, en-têtes et pieds de page**. Un mauvais parsing (tableau aplati, colonnes mélangées, texte manquant) produit des chunks **inexploitables** : aucun modèle ni reranker ne rattrape une information **perdue à l'ingestion** ([[21-rag-fondamentaux|RAG]]).
+Because real documents are **Scanned PDF, Tables, slides, forms, multiple columns, headers and footers**. A bad parsing (flattened painting, mixed columns, missing text) produces chunks **Inoperable** : no model or ranking does not catch any information **Lost in ingestion** ([[21-rag-fundamentals|RAG]]).
 
-Exemple : un contrat scanné ingéré sans OCR produit des chunks vides ; une question sur sa clause de résiliation ne peut plus trouver de preuve, quel que soit le modèle.
+Example: A scanned contract ingested without OCR produces empty chunks; a question about its termination clause can no longer find evidence, regardless of the model.
 
 ---
 
-À ne pas confondre : PDF natif et PDF scanné ? <!--anki:4c4f575870682a745132-->
+Do not confuse: Native PDF and Scanned PDF? <!--anki:4c4f575870682a745132-->
 ?
-Un **PDF natif** contient généralement du texte extractible ; un **scan** représente la page par une image et peut déjà inclure une couche OCR. La structure logique et l'ordre de lecture ne sont pas garantis dans les deux cas.
+A native **PDF** usually contains extractable text; a **scan** represents the page by an image and may already include an OCR layer. The logical structure and reading order are not guaranteed in either case.
 
-Détecter page par page le texte exploitable, les zones image et la qualité de l'extraction. Un seuil de 20 caractères n'est qu'une heuristique : une page presque vide peut être correcte, et une couche OCR longue peut être corrompue. Appliquer l'OCR aux zones nécessaires, puis contrôler texte, unités et mise en page plutôt que compter seulement les caractères.
+Detecting page-by-page actionable text, image areas, and quality of extraction. A threshold of 20 characters is only a heuristic: an almost empty page can be correct, and a long OCR layer can be corrupted. Apply OCR to the necessary areas, then control text, units, and layout rather than just counting characters.
 
 ---
 
-Qu'est-ce que l'analyse de layout ? <!--anki:752b69687c7e7867775a-->
+What is layout analysis? <!--anki:752b69687c7e7867775a-->
 ?
-Détecter les **zones** d'une page — titres, paragraphes, tableaux, figures, légendes, en-têtes, notes — et l'**ordre de lecture**. Elle permet de reconstruire la **structure** (hiérarchie des sections) et de traiter chaque zone avec le bon outil (OCR, extraction de tableau, description de figure).
+Detect the **zones** of a — page titles, paragraphs, tables, figures, captions, headers, — notes and the **reading order**. It allows you to reconstruct the **structure** (section hierarchy) and treat each zone with the right tool (OCR, table extraction, figure description).
 
-Exemple : sur une page à deux colonnes, une extraction ligne par ligne mélange les deux textes ; l'ordre de lecture remet la colonne de gauche avant celle de droite. Les en-têtes et pieds de page répétés sont aussi repérés et retirés : sinon, ils polluent chaque chunk et faussent la recherche.
+Example: On a two-column page, a line-by-line extraction mixes the two texts; the reading order puts the left column back before the right column. Repeated headers and footers are also spotted and removed: otherwise, they pollute each chunk and distort the search.
 
 ---
 
-Quel outil de parsing selon le document : PDF natif simple, mise en page complexe, scans en volume, données confidentielles ? <!--anki:3963656532376466656136373464373061363131353338666435663437353963-->
+Which parsing tool according to the document: simple native PDF, complex layout, volume scans, confidential data? <!--anki:3963656532376466656136373464373061363131353338666435663437353963-->
 ?
-- **PDF natif simple** : extraction textuelle, par exemple pdfplumber ou PyMuPDF, après vérification de licence.
-- **Mise en page complexe** : analyse de layout, par exemple Docling ou Unstructured.
-- **Scans en volume** : OCR local ou service documentaire, éventuellement VLM pour les cas difficiles.
-- **Données confinées** : pipeline auto-hébergé dont les appels réseau sont maîtrisés.
+- **Simple native PDF**: Text extraction, e.g. pdfplumber or PyMuPDF, after license verification.
+- **Complex layout**: Layout analysis, for example Docling or Unstructured.
+- **Scans in volume**: Local OCR or documentary service, possibly VLM for difficult cases.
+- **Confined data**: self-hosted pipeline whose network calls are controlled.
 
-Tester sur les erreurs qui comptent : un tableau lisible en Markdown peut associer le montant à la mauvaise ligne. Mesurer champs, ordre de lecture et provenance, puis coût et débit. Le cloud n'est pas obligatoire pour le volume ; l'open source ne garantit ni confidentialité ni exploitation gratuite.
+Test for errors that matter: A Markdown table can match the amount to the wrong line. Measure fields, read order and provenance, then cost and throughput. Cloud is not required for volume; open source does not guarantee privacy or free operation.
 
 ---
 
-Comment traiter les tableaux lors du parsing de documents ? <!--anki:4b3d5068593763564574-->
+How do I process tables when parsing documents? <!--anki:4b3d5068593763564574-->
 ?
-Les extraire en **structure** (markdown, HTML ou JSON), pas en texte aplati. Pour le RAG : garder le tableau **entier** dans un chunk avec son **titre et ses en-têtes de colonnes** ; pour un grand tableau, répéter les en-têtes dans chaque morceau.
+Extract them in **structure** (markdown, HTML or JSON), not in flat text. For the RAG: keep the array **whole** in a chunk with its **title and column headers**; for a large array, repeat the headers in each piece.
 ```text
-Tableau 3 — Tarifs 2026
+Table 3 — Rates 2026
 | Offre    | Prix mensuel | Engagement |
 |----------|--------------|------------|
 | Standard | 12 €         | aucun      |
 ```
-On peut aussi générer un **résumé textuel** du tableau pour l'embedding et fournir le tableau complet au LLM.
+You can also generate a **text summary** of the table for the embedding and provide the complete table to the LLM.
 
-Conserver aussi unités, notes et coordonnées source. Vérifier cellules fusionnées et ruptures de page : un nombre correctement reconnu peut appartenir à la mauvaise ligne ou changer de sens si son unité disparaît.
-
----
-
-Comment traiter les images et graphiques d'un document ? <!--anki:62734f492d5f7a4c7026-->
-?
-Les faire **décrire par un VLM** (description + données lisibles du graphique) et indexer cette description, en gardant un **lien vers l'image** pour pouvoir la fournir au modèle au moment de la réponse. Alternative : **retrieval multimodal** direct sur les images de pages ([[161-modeles-vision-langage|VLM]]).
-
-Exemple : un graphique de chiffre d'affaires décrit comme « courbe en hausse » ne répond pas à « quel CA au troisième trimestre ? ». Demander au VLM les valeurs lisibles sous forme de tableau, avec une mention d'incertitude, et garder la page source pour vérification. Chaque figure coûte un appel VLM à l'ingestion : filtrer d'abord logos et éléments décoratifs.
+Check merged cells and page breaks: A correctly recognized number can belong to the wrong line or change direction if its unit disappears.
 
 ---
 
-Qu'est-ce que le retrieval sur images de pages (type ColPali) ? <!--anki:692e4d5d2665634c4768-->
+How do I process images and graphics in a document? <!--anki:62734f492d5f7a4c7026-->
 ?
-On **n'extrait pas le texte** : chaque page est encodée **comme image** par un VLM en embeddings multi-vecteurs (late interaction), et la requête texte est comparée directement à ces pages. Robuste aux mises en page complexes et aux graphiques, au prix d'un **stockage** plus lourd et d'une réponse générée par un **VLM**.
+Make them **Described by a VLM** (description + readable data from the chart) and index this description, by keeping a **link to the image** to be able to provide it to the model at the time of the response. Alternative: **Multimodal Retrieval** direct on the images of pages ([[161-vision-language-models|VLM]]).
 
-Ordre de grandeur : ColPali produit environ un millier de vecteurs de 128 dimensions par page, soit quelques centaines de Ko, contre quelques Ko pour un embedding unique de passage.
+Example: a revenue graph described as an "upward curve" does not respond to "what third quarter revenue?" Ask the VLM for readable values in table form, with an indication of uncertainty, and keep the source page for verification. Each figure costs a VLM call to ingestion: filter first logos and decorative elements.
 
 ---
 
-Comment chunker en respectant la structure ? <!--anki:49576b5a755e527e6934-->
+What is the retrieval on page images (type ColPali)? <!--anki:692e4d5d2665634c4768-->
 ?
-Découper **selon la hiérarchie** (sections, sous-sections) plutôt qu'à taille fixe, **ne jamais couper** un tableau ou une liste au milieu, et ajouter à chaque chunk son **contexte** : titre du document, chemin des titres (« Contrat > Article 5 > Résiliation »), date, source. Ce contexte améliore beaucoup le retrieval ([[22-rag-avance|RAG avancé]]).
+On **does not extract the text** : each page is encoded **as an image** by a VLM embeddings multi-vectors (late interaction), and the text query is compared directly to these pages. Robust to complex layouts and graphics, at the price of one **Storage** and a response generated by a **VLM**.
 
-Docling, par exemple, fournit un `HierarchicalChunker` qui suit la structure détectée, et un `HybridChunker` qui la combine à une limite de tokens.
+Order of magnitude: ColPali produces about a thousand vectors of 128 dimensions per page, or a few hundred KB, against a few KB for a single embedding.
 
 ---
 
-Comment évaluer une chaîne de parsing ? <!--anki:7750667d2928215a777b-->
+How to chunker while respecting the structure? <!--anki:49576b5a755e527e6934-->
 ?
-- Sur un **échantillon représentatif** de documents (y compris les pires : scans, tableaux complexes).
-- Métriques : **taux d'erreur de caractères** (OCR), exactitude des **cellules** de tableau, ordre de lecture, **champs** extraits corrects.
-- Et surtout l'effet **en aval** : recall du retrieval et qualité des réponses du RAG.
+Cut **according to hierarchy** (sections, subsections) rather than fixed size, **never cut** an array or list in the middle, and add to each chunk its **context**: document title, title path ("Contract > Article 5 > Termination"), date, source. This context greatly improves the retrieval ([[22-advanced-rag|Advanced RAG]]).
 
-Exemple : 12 erreurs sur 1 000 caractères de référence donnent un taux d'erreur de 1,2 % ; une seule de ces erreurs dans un IBAN suffit pourtant à rendre le champ inutilisable.
+Docling, for example, provides a `HierarchicalChunker` that tracks the detected structure, and a `HybridChunker` that combines it with a limit of tokens.
 
 ---
 
-Quels pièges d'exploitation dans une chaîne d'ingestion ? <!--anki:504a6b3c446331367152-->
+How to evaluate a parsing string? <!--anki:7750667d2928215a777b-->
 ?
-- **Coût et durée** : un VLM ou un service cloud sur des millions de pages coûte cher → traitement **batch**, cache par hash de fichier.
-- **Échecs silencieux** : pages vides, encodages cassés → contrôles de qualité automatiques, par exemple alerte sous 200 caractères ou sous 50 % de caractères alphanumériques sur une page de texte.
-- **Mises à jour** : ré-ingestion incrémentale et suppression des anciennes versions.
-- **Confidentialité** des documents envoyés à un service externe ([[152-pii-confidentialite|PII]]).
+- On a **representative sample** of documents (including the worst: scans, complex tables).
+- Metrics: **character error rate** (OCR), table **cells** accuracy, reading order, **correct extracted fields**.
+- And especially the effect **downstream**: recall of the retrieval and quality of the responses of the RAG.
+
+Example: 12 errors on 1,000 reference characters give an error rate of 1.2%; only one of these errors in an IBAN is enough to make the field unusable.
 
 ---
 
-Pourquoi conserver unités, en-têtes et notes lors de l'extraction d'un tableau de document ? <!--anki:6233393965666636343566303439663138303839333561343838623234376662-->
+What operating traps in an ingestion chain? <!--anki:504a6b3c446331367152-->
 ?
-Une **cellule isolée** perd souvent son sens : `125` peut désigner euros, milliers d'euros ou pourcentage selon l'en-tête et les notes.
-
-Reconstruire lignes, colonnes et cellules fusionnées avec leur contexte, puis conserver page et coordonnées pour vérification. Tester tableaux sur plusieurs pages, parenthèses négatives et séparateurs décimaux. Vérifier des totaux connus sans supposer que toutes les lignes s'additionnent. Un texte OCR exact au caractère près peut produire une donnée métier fausse si l'unité ou le bon en-tête a été perdu.
+- **Cost and duration**: A VLM or cloud service on millions of pages costs → processing **batch**, file hash cache.
+- **Silent failures**: Blank pages, broken encodings → automatic quality controls, for example alert under 200 characters or under 50% alphanumeric characters on a text page.
+- **Updates**: Incremental re-ingestion and deletion of older versions.
+- **Privacy** of documents sent to an external service ([[152-pii-privacy|PII]]).
 
 ---
 
-Pourquoi l'ordre de lecture d'un PDF à deux colonnes est-il critique pour un RAG ? <!--anki:3738653362353834353462303436663762313138386431353965623437623235-->
+Why keep units, headers, and notes when extracting a document array? <!--anki:6233393965666636343566303439663138303839333561343838623234376662-->
 ?
-Une extraction ligne par ligne peut **entrelacer deux paragraphes indépendants**. Le texte paraît grammaticalement fragmenté et les relations entre phrases deviennent fausses.
+A **Isolated Cell** It often loses its meaning: `125` can refer to euros, thousands of euros or percentage depending on the header and notes.
 
-Reconstruire les blocs de layout avant de linéariser, conserver pages et coordonnées, puis tester des exemples multicolonnes. Une bonne reconnaissance des caractères ne prouve pas un bon ordre de lecture. Le chunking ne répare pas automatiquement cette corruption amont.
+Rebuild merged rows, columns, and cells with their context, and then keep page and coordinates for verification. Test tables on multiple pages, negative parentheses, and decimal separators. Check for known totals without assuming that all rows add up. An exact OCR text with the correct character can produce false business data if the unit or the correct header has been lost.
 
 ---
 
-Comment détecter une erreur de parsing qui conserve tous les mots mais rattache une note au mauvais tableau ? <!--anki:3765633565353666653438313436346538326132353732383535633635613239-->
+Why is the reading order of a two-column PDF critical for a RAG? <!--anki:3738653362353834353462303436663762313138386431353965623437623235-->
 ?
-Contrôler **les relations de structure**, pas seulement le texte extrait : tableau, légende, note et unité doivent rester associés. Une note « montants en milliers » rattachée au tableau voisin peut multiplier les valeurs interprétées par mille.
+A line-by-line extraction can **entangle two independent paragraphs**. The text appears grammatically fragmented and the relationships between sentences become false.
 
-Constituer des cas annotés avec liens entre blocs et coordonnées de page. Vérifier le rendu et la reconstruction de cellules avec leurs qualificatifs. Un score OCR excellent ne mesure ni ces associations ni la fidélité du document structuré.
+Rebuild layout blocks before linearizing, keep pages and coordinates, and then test multi-column examples. Good character recognition does not prove a good read order. Chunking does not automatically fix this upstream corruption.
 
 ---
 
-## Mises en situation
-
-Mise en situation : ton RAG répond mal sur les documents contenant des tableaux, alors que le retrieval semble correct. Où cherches-tu ? <!--anki:706d673e5b7368796370-->
+How do I detect a parsing error that keeps all words but attaches a note to the wrong table? <!--anki:3765633565353666653438313436346538326132353732383535633635613239-->
 ?
-1. **Regarder les chunks eux-mêmes** : un tableau aplati en texte perd les correspondances entre lignes et colonnes
-2. **Extraire en structure** (markdown, HTML ou JSON) plutôt qu'en texte brut
-3. **Garder le tableau entier** dans un chunk, avec son titre et ses en-têtes, et répéter les en-têtes si on doit le découper
-4. **Enrichir l'index** : un résumé textuel du tableau pour l'embedding, le tableau complet fourni au modèle
-5. **Mesurer en aval** : recall et exactitude des réponses sur les questions qui portent sur des tableaux
+Controlling **structure relationships**, not just the extracted text: array, caption, note, and unit must remain associated. A note "amounts in thousands" attached to the neighbor array can multiply the values interpreted by a thousand.
 
-**Piège** : chercher la cause dans le modèle de génération alors que l'information a été perdue à l'ingestion.
+Make annotated cases with links betweas a batchks and page coordinates. Check the rendering and reconstruction of cells with their qualifiers. An excellent OCR score does not measure these associations or the fidelity of the structured document.
 
 ---
 
-Mise en situation : tu dois ingérer 500 000 PDF, dont beaucoup de scans, avec un budget limité. Comment conçois-tu la chaîne ? <!--anki:6d7e7b6f2367455a4132-->
-?
-1. **Trier par type** : PDF natifs traités par extraction directe, scans envoyés à l'OCR, cas complexes à un VLM
-2. **Traiter en batch** et **cacher par empreinte de fichier**, pour ne jamais retraiter deux fois le même document
-3. **Contrôles qualité automatiques** : pages vides, ratio de caractères valides, longueur anormale, pour détecter les échecs silencieux
-4. **Évaluer la chaîne** sur un échantillon représentatif, en incluant les pires documents
-5. **Vérifier la confidentialité** avant d'envoyer des documents à un service externe ([[152-pii-confidentialite|PII]])
+## Scenarios
 
-**Piège** : envoyer les 500 000 documents au parseur le plus coûteux, alors que la majorité se traite avec une simple extraction.
+Scenario: your RAG responds badly on documents containing tables, while the retrieval seems correct. Where are you looking? <!--anki:706d673e5b7368796370-->
+?
+1. **Look at the chunks themselves**: a flattened table in text loses the correspondences between rows and columns
+2. **Extract in structure** (markdown, HTML or JSON) rather than plain text
+3. **Keep the entire array** in a chunk, with its title and headers, and repeat the headers if you need to cut it
+4. **Enrich the index**: a text summary of the table for the embedding, the complete table provided to the model
+5. **Measure Downline**: Recall and Accuracy of Table Questions
+
+**Trap**: look for the cause in the generation model while the information has been lost to ingestion.
+
+---
+
+Scenario: you need to ingest 500,000 PDF, including many scans, with a limited budget. How do you design the string? <!--anki:6d7e7b6f2367455a4132-->
+?
+1. **Sort by type**: Native PDFs processed by direct extraction, scans sent to the OCR, complex cases to a VLM
+2. **Treat in batch** and **hide by file imprint**, so you never reprocess the same document twice
+3. **Automated quality controls**: blank pages, valid character ratio, abnormal length, to detect silent failures
+4. **Assess channel** on a representative sample, including the worst documents
+5. **Check confidentiality** before sending documents to an external service ([[152-pii-privacy|PII]])
+
+**Ship**: send the 500,000 documents to the most expensive parser, while the majority is treated with a simple extraction.
 
 ---
 
 ## Sources
 
-- [Docling — parsing et conversion de documents](https://docling-project.github.io/docling/)
+- [Docling — parsing and document conversion](https://docling-project.github.io/docling/)
 
-- [PyMuPDF — OCR complet ou partiel des pages](https://pymupdf.readthedocs.io/en/latest/page.html#Page.get_textpage_ocr) — vérification ciblée du 12 novembre 2026, sans renouvellement de la date globale de la fiche.
+- [PyMuPDF — OCR full or partial pages](https://pymupdf.readthedocs.io/en/latest/page.html#Page.get_textpage_ocr) — targeted verification of 12 November 2026, without renewal of the global date of the topic.
 
-## Connexions
-- [[21-rag-fondamentaux|RAG — Fondamentaux]] — l'ingestion en amont du retrieval
-- [[22-rag-avance|RAG avancé]] — chunking contextuel
-- [[161-modeles-vision-langage|Modèles vision-langage]] — VLM comme parseurs
+## Connections
+- [[21-rag-fundamentals|RAG — Fundamentals]] — ingestion upstream of the retrieval
+- [[22-advanced-rag|Advanced RAG]] — chunking contextuel
+- [[161-vision-language-models|Vision-language models]] — VLM as parsers
 - [[133-embeddings-representations|Embeddings]] — late interaction
-- [[145-cas-system-design|Cas de system design]] — recherche documentaire et extraction
-- [[25-chunking-contextual-retrieval|Chunking avancé]] — du document structuré aux chunks contextualisés
-- [[148-pipelines-batch-llm|Pipelines batch]] — traiter des millions de documents
-- [[150-017-datasets-corpus-ia|Construction de datasets & corpus IA]] — contrôler les représentations dérivées
+- [[145-system-design-cases|Case of system design]] — document search and extraction
+- [[25-chunking-contextual-retrieval|Advanced Chunking]] — from structured document to contextualized chunks
+- [[148-llm-batch-pipelines|Pipelines batch]] — process millions of documents
+- [[150-017-ai-datasets-corpora|Building Datasets & Corpus IA]] — control derived representations
 - [[00-moc-ai-engineering|MOC AI Engineering]]

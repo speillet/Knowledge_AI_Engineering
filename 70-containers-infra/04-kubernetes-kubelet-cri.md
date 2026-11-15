@@ -1,187 +1,187 @@
 # Kubernetes, kubelet & CRI — Flashcards
-Tags: #flashcards #kubernetes #conteneurs #infra
-<!-- summary: Pod, Deployment, Service, control plane, kubelet, CRI (containerd, CRI-O), scheduler, requests et limits, probes, startup, readiness et liveness, arrêt gracieux, éviction et OOM. -->
+Tags: #flashcards #kubernetes #containers #infra
+<!-- summary: Pod, Deployment, Service, control plane, kubelet, CRI (containerd, CRI-O), schedule, requests and limits, probes, startup, readiness and liveness, graceful shutdown, eviction and OOM. -->
 
 
-Qu'est-ce que Kubernetes ? <!--anki:727e3f4d405d3b296743-->
+What is Kubernetes? <!--anki:727e3f4d405d3b296743-->
 ?
-Un **orchestrateur de conteneurs** : on déclare l'**état désiré** (quelles applications, combien de réplicas, quelles ressources) et des contrôleurs le **maintiennent en continu** (redémarrage, placement, scaling).
+A **container orchestrator** the State of the **Desired state** (What applications, How many replicas, what resources) and controllers **Continuously maintain** (Restarting, placement, Scaling).
 
-Si un Pod disparaît, les contrôleurs cherchent à rétablir le nombre demandé ; le scheduler choisit un nœud et le kubelet y lance les conteneurs. Kubernetes automatise cette réconciliation, mais ne garantit pas qu'une application répliquée soit correcte. Readiness, ressources, stockage et logique métier restent à configurer.
+If a Pod disappears, the controllers try to restore the requested number; the scheduler chooses a node and the kubelet launches the containers. Kubernetes automates this reconciliation, but does not guarantee that a replicated application is correct. Readiness, resources, storage and business logic remain to be configured.
 
 ---
 
-Qu'est-ce qu'un Pod ? <!--anki:7850754b2339264c582f-->
+What is a Pod? <!--anki:7850754b2339264c582f-->
 ?
-La **plus petite unité déployable Kubernetes** : des conteneurs co-localisés sur un node, partageant le réseau et pouvant monter des volumes communs. Leurs systèmes de fichiers racines ne sont pas automatiquement partagés.
+The **Kubernetes Smaller Deployable Unit** : containers co-located on a node, share the network and can mount common volumes. Their root file systems are not automatically shared.
 
-Exemple : un init container télécharge les [[10-images-modeles-poids|poids]] dans un volume que monte ensuite le serveur ; un sidecar peut joindre ce serveur via `localhost`.
+Example: an init container downloads the [[10-images-models-weights|poids]] into a volume that the server then mounts; a sidecar can join this server via `localhost`.
 
-Le Pod est éphémère, mais **pas intégralement immuable** : certains champs peuvent être modifiés. Un changement de template de Deployment remplace généralement les Pods. Un Pod recréé a une nouvelle identité ; conserver les données nécessaires dans un stockage adapté, pas seulement dans son système de fichiers local.
+The Pod is ephemeral, but **not entirely immutable**: some fields can be changed. A deployment template change usually replaces the Pods. A recreated Pod has a new identity; keep the necessary data in suitable storage, not just in its local file system.
 
 ---
 
-Quel est le rôle d'un Deployment ? <!--anki:62577b514a5248636034-->
+What is the role of a Deployment? <!--anki:62577b514a5248636034-->
 ?
-Gérer un ensemble de **Pods identiques** (via un ReplicaSet) : nombre de réplicas, **rolling updates** et rollback.
+Manage a set of identical **Pods** (via a ReplicaSet): number of replicas, **rolling updates** and rollback.
 
-Lors d'une nouvelle version, le Deployment ajuste les ReplicaSets pour remplacer progressivement les Pods selon la stratégie choisie. Il convient aux services dont les instances sont interchangeables. Un rollback restaure une configuration précédente ; il ne restaure pas automatiquement une base de données ni les effets déjà produits par la nouvelle application.
+In a new version, the Deployment adjusts the ReplicaSets to gradually replace the Pods according to the chosen policy. It is suitable for services whose instances are interchangeable. A rollback restores a previous configuration; it does not automatically restore a database or the effects already produced by the new application.
 
 ---
 
-À quoi sert un Service Kubernetes ? <!--anki:4c2d5e652833592c4a4e-->
+What is a Kubernetes Service? <!--anki:4c2d5e652833592c4a4e-->
 ?
-À fournir une **adresse stable** (IP virtuelle et nom DNS) devant des Pods éphémères, avec **répartition de charge** entre eux.
+To provide a stable **address** (virtual IP and DNS name) in front of ephemeral Pods, with **load allocation** between them.
 
-Un Service sélectionne des endpoints correspondant aux Pods attendus et masque leurs changements d'adresse. Dans le cas courant `ClusterIP`, l'adresse est interne au cluster ; l'exposition externe demande un mécanisme supplémentaire. Un Service headless constitue un cas différent, sans IP virtuelle. La readiness aide à exclure les instances non prêtes.
+A Service selects endpoints corresponding to the expected Pods and hides their address changes. In the current case `ClusterIP`, the address is internal to the cluster; the external exposure requires an additional mechanism. A Headless Service is a different case, without a virtual IP. The readiness helps to exclude unready instances.
 
 ---
 
-Que contient le control plane de Kubernetes ? <!--anki:484723506a4126657e57-->
+What is in the Kubernetes plane control? <!--anki:484723506a4126657e57-->
 ?
-- **kube-apiserver** : point d'entrée de toutes les opérations
-- **etcd** : base clé-valeur de l'état du cluster
-- **kube-scheduler** : choisit le node de chaque Pod
-- **controller-manager** : boucles de réconciliation
+- **kube-apiserver**: entry point for all operations
+- **etcd**: key-value base of the cluster state
+- **kube-scheduler**: choose the node of each Pod
+- **controller-manager**: reconciliation loops
 
-Le scheduler décide du placement ; les contrôleurs réconcilient l'état désiré ; le kubelet réalise l'exécution sur le nœud. L'API server centralise les échanges et les autorisations. Une panne du control plane peut empêcher de nouvelles décisions sans arrêter immédiatement tous les conteneurs déjà en cours d'exécution.
+The scheduler decides the placement; the controllers reconcile the desired state; the kubelet executes the execution on the node. The API server centralizes exchanges and permissions. A failure of the control plane can prevent new decisions without immediately stopping all containers already running.
 
 ---
 
-Quel est le rôle du kubelet ? <!--anki:526151232c463e387774-->
+What is the role of kubelet? <!--anki:526151232c463e387774-->
 ?
-L'**agent présent sur chaque node** : il reçoit les Pods assignés, demande au runtime de **lancer les conteneurs**, surveille leur santé (probes) et **remonte leur état** à l'API server.
+The **agent present on each node** : it receives the assigned Pods, ask the runtime **Launch the Containers**, monitor their health (probes) and **Resurrect their state** At theAPI server.
 
-Le kubelet ne choisit généralement pas sur quel nœud placer le Pod : cette décision vient du scheduler. Il traduit localement le PodSpec en opérations de runtime, monte les ressources nécessaires et applique les probes. Pour diagnostiquer un lancement raté, consulter événements du Pod, état du nœud et messages du runtime.
+The kubelet does not usually choose which node to place the Pod on: this decision comes from the scheduler. It locally translates the PodSpec into runtime operations, mounts the necessary resources and applies the procedures. To diagnose a failed launch, consult Pod events, node state and runtime messages.
 
 ---
 
-Qu'est-ce que la CRI ? <!--anki:792f3230294d735a244f-->
+What is CRI? <!--anki:792f3230294d735a244f-->
 ?
-La **Container Runtime Interface** : l'API (gRPC) par laquelle le kubelet pilote **n'importe quel runtime** compatible, comme **containerd** ou **CRI-O**. Le support direct de Docker (dockershim) a été retiré en v1.24.
+The **Container Runtime Interface**: the API (gRPC) by which the kubelet drives **any compatible runtime**, such as **containerd** or **CRI-O**. Direct Docker support (dockershim) has been removed in v1.24.
 
-Elle sépare Kubernetes des implémentations concrètes du runtime : le kubelet demande par exemple la préparation d'une sandbox ou le lancement d'un conteneur. Une image construite avec Docker reste utilisable après la suppression de dockershim. Ne pas confondre CRI avec OCI, qui décrit notamment le format des images et l'exécution bas niveau.
+It separates Kubernetes from the concrete implementations of the runtime: the kubelet requires for example the preparation of a sandbox or the launch of a container. An image built with Docker remains usable after the removal of dockershim. Do not confuse CRI with OCI, which describes in particular the format of the images and the low-level execution.
 
 ---
 
-Comment le scheduler choisit-il un node ? <!--anki:6f6d4e346d365b51612c-->
+How does the scheduler choose a node? <!--anki:6f6d4e346d365b51612c-->
 ?
-Il **filtre** les nodes capables d'accueillir le Pod (ressources demandées, node selectors, taints/tolerations, affinités), puis **note** les candidats restants et prend le meilleur.
+It **filters** the nodes capable of hosting the Pod (requested resources, node selectors, tints/tolerations, affinities), then **notes** the remaining candidates and takes the best.
 
-Il utilise notamment les **requests déclarées**, pas simplement la consommation instantanée des Pods existants. Si aucun nœud ne satisfait les contraintes, le Pod reste Pending. Vérifier les événements de scheduling avant d'ajouter des ressources : une affinité incompatible ou une absence de tolération peut être la vraie cause.
+In particular, it uses declared **requests**, not just the instant consumption of existing Pods. If no node satisfies the constraints, the Pod remains Pending. Check schedule events before adding resources: incompatible affinity or lack of toleration may be the real cause.
 
 ---
 
-À ne pas confondre : requests et limits ? <!--anki:6257312a413972352b79-->
+Do not confuse: requests and limits? <!--anki:6257312a413972352b79-->
 ?
-- **Requests** : ressources **réservées**, utilisées par le scheduler pour placer le Pod
-- **Limits** : **plafond** d'usage ; dépassement mémoire → **OOMKilled**, dépassement CPU → ralenti (throttling)
+- **Requests**: resources **reserved**, used by the scheduler to place the Pod
+- **Limits**: **Usage ceiling**; memory overrun → **OOMKilled**, overrun CPU → idle (throttling)
 
-Pour CPU et mémoire, les requests servent au placement et aux garanties relatives ; le conteneur peut consommer davantage si disponible et autorisé. Une limite mémoire n'est pas une réservation supplémentaire. Les GPU exposés comme ressources étendues suivent d'autres règles : ils sont généralement demandés en unités entières et leurs requests et limits doivent coïncider.
+For CPU and memory, requests are used for placement and relative guarantees; the container can consume more if available and allowed. A memory limit is not an additional reservation. The GPU exposed as extended resources follow other rules: they are usually requested in integer units and their requests and limits must coincide.
 
 ---
 
-Qu'est-ce qu'un DaemonSet ? <!--anki:647c2c386d5138336533-->
+What is a DaemonSet? <!--anki:647c2c386d5138336533-->
 ?
-Un contrôleur qui lance **un Pod sur chaque node** (ou chaque node sélectionné) : agents de logs, monitoring, ou le **NVIDIA device plugin** ([[12-kubernetes-gpu-inference|GPU]]).
+A controller that launches **a Pod on each node** (or each selected node): log agents, monitoring, or the **NVIDIA device plugin** ([[12-kubernetes-gpu-inference|GPU]]).
 
-Quand un nœud éligible rejoint le cluster, le contrôleur y fait créer le Pod correspondant. C'est adapté aux services attachés à la machine, pas à un nombre arbitraire de réplicas applicatifs. Les sélecteurs, taints et tolérations restent importants pour ne déployer un agent GPU que sur les nœuds concernés.
+When an eligible node joins the cluster, the controller creates the corresponding Pod. This is suitable for the services attached to the machine, not for an arbitrary number of application replicas. Selectors, stains and tolerations remain important to deploy a GPU agent only on the nodes concerned.
 
 ---
 
-Pourquoi les probes sont-elles importantes pour un serveur LLM ? <!--anki:622e723e7a6d7d574d23-->
+Why are processes important for a LLM server? <!--anki:622e723e7a6d7d574d23-->
 ?
-Un serveur d'inférence met **plusieurs minutes à charger les poids** : une **startupProbe** évite qu'il soit tué pendant le chargement, et la **readinessProbe** ne lui envoie du trafic qu'une fois prêt.
+An inference server takes **several minutes to load weights**: a **startupProbe** prevents it from being killed during loading, and the **readinessProbe** only sends traffic to it once it is ready.
 ```yaml
-startupProbe:                 # tolère 10 min de chargement
+startupProbe:                 # tolerates 10 min loading
   httpGet: { path: /health, port: 8000 }
   failureThreshold: 60
   periodSeconds: 10
-readinessProbe:               # n'envoie du trafic qu'une fois le modèle chargé
+readinessProbe:               # sends traffic only when the model is loaded
   httpGet: { path: /health, port: 8000 }
 ```
-Sans startupProbe, une **livenessProbe trop impatiente** peut redémarrer le conteneur en boucle. Vérifier que `/health` ne déclare pas seulement le processus vivant : la readiness doit refléter l'aptitude à servir le modèle. Une surcharge transitoire n'est pas forcément un motif de redémarrage.
+Without startupProbe, a **livenessProbe that is too impatient** can restart the container in a loop. Verify that `/health` not only declares the process alive: the readiness must reflect the ability to serve the model. A transient overload is not necessarily a reason for restarting.
 
 ---
 
-À ne pas confondre : Service et Ingress ? <!--anki:4e357775664e4c37644a-->
+Do not confuse: Service and Ingress? <!--anki:4e357775664e4c37644a-->
 ?
-- **Service** : une adresse stable **à l'intérieur** du cluster (IP virtuelle et nom DNS) devant des Pods éphémères, avec répartition de charge
-- **Ingress** : l'entrée **depuis l'extérieur** en HTTP(S), qui route vers des Services selon l'hôte et le chemin ([[83-gateway-ingress|Ingress]])
+- **Service** A stable address **Inside** cluster (virtual IP and DNS name) in front of ephemeral Pods, with load distribution
+- **Ingress** The entrance **from the outside** in HTTP(S), which leads to Services according to the host and the path ([[83-gateway-ingress|Ingress]])
 
-Un Service **ClusterIP** n'expose pas directement Internet ; les types **NodePort** ou **LoadBalancer** peuvent fournir un accès externe selon le réseau. Un Ingress exige un contrôleur pour appliquer ses règles.
+A **ClusterIP** service does not directly expose the Internet; **NodePort** or **LoadBalancer** types can provide external access depending on the network. An Ingress requires a controller to enforce its rules.
 
-Pour diagnostiquer un échec, tester d'abord le Pod, puis le Service, puis l'entrée externe : une erreur DNS ou TLS n'a pas le même correctif qu'un backend non prêt.
+To diagnose a failure, first test the Pod, then the Service, and then the external entry: a DNS or TLS error does not have the same fix as an unready backend.
 
 ---
 
-Pourquoi distinguer startup, readiness et liveness pour un modèle long à charger sur Kubernetes ? <!--anki:3538313238666534653361363464643138313138343637633839656364613939-->
+Why distinguish startup, dreaminess and liveness for a long model to load on Kubernetes? <!--anki:3538313238666534653361363464643138313138343637633839656364613939-->
 ?
-La **startup probe** protège la phase de démarrage ; la **readiness probe** détermine si le Pod peut recevoir le trafic du Service ; la **liveness probe** déclenche un redémarrage lorsque son échec dépasse le seuil configuré.
+The **startup probe** protects the startup phase; the **readiness probe** determines whether the Pod can receive Service traffic; the **liveness probe** triggers a restart when its failure exceeds the configured threshold.
 
-Un modèle peut avoir besoin de plusieurs minutes avant d'accepter une requête. Utiliser une liveness trop agressive pendant cette phase peut provoquer une boucle de redémarrages. Après démarrage, tester une readiness liée à la capacité de servir et éviter qu'une dépendance momentanément lente entraîne des redémarrages en cascade.
+A model may need several minutes to accept a request. Using too aggressive liveness during this phase can cause a loop of restarts. After startup, test a readiness related to the ability to serve and prevent a momentarily slow dependency from causing cascading restarts.
 
 ---
 
-Pourquoi retirer un Pod du trafic avant de terminer son processus d'inférence ? <!--anki:6530303638363661663865613465623661643933623130613335306465306562-->
+Why remove a Pod from traffic before completing its inference process? <!--anki:6530303638363661663865613465623661643933623130613335306465306562-->
 ?
-Il faut **cesser d'admettre de nouvelles requêtes puis drainer celles en cours**. Sinon, des flux acceptés juste avant l'arrêt sont coupés.
+It is necessary to **stop admitting new requests and then drain the current ones**. Otherwise, accepted streams just before the stop are cut.
 
-Coordonner readiness, propagation réseau et délai de terminaison avec le serveur. Une période de grâce ne garantit pas que le programme gère correctement SIGTERM. Tester des streams actifs pendant un déploiement, y compris la fin forcée lorsque le délai est épuisé.
+Coordinating readiness, network propagation, and termination time with the server. A grace period does not guarantee that the program is properly managing SIGTERM. Testing active streams during a deployment, including forced termination when the timeout is exhausted.
 
 ---
 
-À ne pas confondre : OOMKilled d'un conteneur et éviction d'un Pod sous pression du nœud ? <!--anki:6632346365653637626161623465383162316534383439323034313962633561-->
+Do not confuse: OOMKilled of a container and eviction of a Pod under pressure from the node? <!--anki:6632346365653637626161623465383162316534383439323034313962633561-->
 ?
-Un **OOM kill** correspond à une mise à mort liée à la mémoire ; une **éviction** est une décision du kubelet face à une pression de ressources, par exemple mémoire ou disque.
+A **OOM kill** is a memory-related kill; a **eviction** is a decision of the kubelet in the face of resource pressure, such as memory or disk.
 
-Examiner raison, événements et métriques du nœud pour distinguer les causes. Augmenter la limite mémoire du conteneur ne résout pas un disque saturé ni nécessairement une pression globale. Le redémarrage automatique peut masquer la répétition du problème sans la corriger.
+Examine the node's reason, events, and metrics to distinguish the causes. Increasing the container's memory limit does not resolve a saturated disk or necessarily a global pressure. Automatic restarting may mask the repetition of the problem without correcting it.
 
 ---
 
-## Mises en situation
+## Scenarios
 
-Mise en situation : ton Pod vLLM est tué et redémarré en boucle au démarrage, avant même d'avoir répondu à une requête. Que vérifies-tu ? <!--anki:46422c54432f78477a62-->
+Scenario: your Pod vLLM is killed and restarted in a loop at startup, even before you have responded to a request. What do you check? <!--anki:46422c54432f78477a62-->
 ?
-1. **Les probes** : sans **startupProbe**, la livenessProbe tue le conteneur pendant le chargement des poids, qui prend plusieurs minutes
-2. **La readinessProbe** : elle ne doit passer au vert qu'une fois le modèle chargé, pour ne pas recevoir de trafic trop tôt
-3. **La mémoire** : un `OOMKilled` indique une limite mémoire trop basse, pas un problème de probe
-4. **Les ressources** : requests et limits cohérentes, GPU bien demandé ([[12-kubernetes-gpu-inference|K8s GPU]])
-5. **Les logs et événements** du Pod, pour distinguer échec de démarrage et échec de santé
+1. **Probes**: Without **startupProbe**, the livenessProbe kills the container while loading the weights, which takes several minutes
+2. **The rearinessProbe**: it should only go green once the model is loaded, so as not to receive traffic too early
+3. **Memory**: a `OOMKilled` indicates a memory limit that is too low, not a problem of probe
+4. **Resources**: consistent requests and limits, well-requested GPU ([[12-kubernetes-gpu-inference|K8s GPU]])
+5. **Logs and events** of the Pod, to distinguish startup failure and health failure
 
-**Piège** : allonger le délai de la livenessProbe au lieu d'utiliser une startupProbe.
+**Trap**: Extend the timeline of the livenessProbe instead of using a startupProbe.
 
 ---
 
-Mise en situation : une équipe demande pourquoi ses Pods GPU restent en attente alors que le cluster « a des GPU libres ». Comment expliques-tu le placement ? <!--anki:495e636128334b48256a-->
+Scenario: one team asks why its GPU Pods remain on hold while the cluster “has free GPUs.” How do you explain the placement? <!--anki:495e636128334b48256a-->
 ?
-1. **Le scheduler filtre puis note** : il ne retient que les nodes capables d'accueillir le Pod
-2. **Ressources demandées** : un GPU se demande explicitement comme ressource, et il n'est pas partageable par défaut
-3. **Taints et tolerations** : les nodes GPU sont souvent teintés pour n'accueillir que les charges concernées
-4. **Requests trop élevées** : mémoire ou CPU demandés au-delà de ce qu'un node peut offrir
-5. **Vérifier** les événements du Pod, qui indiquent la raison exacte du rejet par node
+1. **The scheduler filters and then notes**: it only retains nodes that can accommodate the Pod
+2. **Resources requested**: A GPU explicitly requests itself as a resource, and it is not shareable by default
+3. **Taints and tolerations**: GPU nodes are often tinted to accommodate only the loads concerned
+4. **Requests too high**: memory or CPU requested beyond what a node can offer
+5. **Check** for Pod events, which indicate the exact reason for rejection per node
 
-**Piège** : regarder l'utilisation réelle des nodes plutôt que leurs ressources **réservées**.
+**trap**: Watch the actual use of nodes rather than their resources **reserved**.
 
 ---
 
 ## Sources
-- [Kubernetes — Pods, mises à jour et remplacement](https://kubernetes.io/docs/concepts/workloads/pods/) — consultation ciblée du 6 novembre 2026.
+- [Kubernetes — Pods, updates and replacements](https://kubernetes.io/docs/concepts/workloads/pods/) — targeted consultation of 6 November 2026.
 
-- [Kubernetes — cycle de vie et sondes des Pods](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
+- [Kubernetes — Pod life cycle and probes](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/) — targeted deepening of the 12 November 2026; educational examples are built for this review.
 
-- Complément du 14 novembre 2026 — Terminaison des Pods : [Kubernetes — Pod Lifecycle](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/).
+- 14 November 2026 — Pod completion: [Kubernetes — Pod Lifecycle](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/).
 
-- Complément du 14 novembre 2026 — Éviction sous pression de ressources : [Kubernetes — Node-pressure Eviction](https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/).
+- 14 November Supplement 2026 — Resource Pressure Eviction: [Kubernetes — Node-pressure Eviction](https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/).
 
-## Connexions
-- [[00-index|Index Conteneurs]] — conteneurs, OCI, Docker
-- [[09-gpu-conteneurs|GPU en conteneur]] — ce que le runtime doit exposer
-- [[12-kubernetes-gpu-inference|Kubernetes GPU & inférence]] — l'application aux LLM
-- [[83-gateway-ingress|Ingress & API gateway]] — exposer les Services
-- [[01-oci|OCI]] — à ne pas confondre avec CRI
-- [[03-containerd-runc|containerd & runc]] — le runtime derrière CRI
-- [[05-docker-kubernetes|Docker & Kubernetes]] — l'histoire de dockershim
-- [[07-synthese-containers|Synthèse conteneurs]] — de `kubectl apply` au processus
-- [[11-serveurs-inference-llm|Serveurs d'inférence]] — vLLM, SGLang, TensorRT-LLM et leur réglage
+## Connections
+- [[00-index|Index Containers]] — containers, OCI, Docker
+- [[09-gpu-containers|GPU in container]] — what the runtime should expose
+- [[12-kubernetes-gpu-inference|Kubernetes GPU & inference]] — the application to LLM
+- [[83-gateway-ingress|Ingress & API gateway]] — expose the Services
+- [[01-oci|OCI]] — not to be confused with CRI
+- [[03-containerd-runc|containerd & runc]] — the runtime behind CRI
+- [[05-docker-kubernetes|Docker & Kubernetes]] — history of dockershim
+- [[07-containers-overview|Container Synthesis]] — from `kubectl apply` to process
+- [[11-llm-inference-servers|Inference Servers]] — vLLM, SGLang, TensorRT-LLM and their setting
 - [[00-moc-ai-engineering|MOC AI Engineering]]
