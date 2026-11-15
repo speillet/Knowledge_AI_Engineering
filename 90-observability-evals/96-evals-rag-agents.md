@@ -1,37 +1,37 @@
 # Evaluation of RAG & agents — Flashcards
 Tags: #flashcards #ai-engineering #evals #rag #agents #llm
-<!-- summary: retrieval and generation, precision/recall calculations@k and MRR, nDCG, fidelity or accuracy, oracle context, synthetic games, result or trajectory, eval environments, pass^k and efficiency; citation coverage, support calculation, counterfactual tests, external effects verification, minimal evidence, context pollution, annotations required per metric, RAGAS definitions (rank-weighted context precision, context recall against the reference, context relevance, answer relevancy, answer correctness), hit@k or recall@k, NaN scores, agreement with human annotators. -->
+<!-- summary: retrieval and generation, precision@k, recall@k and MRR calculations, nDCG, faithfulness or accuracy, oracle context, synthetic datasets, result or trajectory, eval environments, pass^k and efficiency; citation coverage, support calculation, counterfactual tests, external effects verification, minimal evidence, context pollution, annotations required per metric, RAGAS definitions (rank-weighted context precision, context recall against the reference, context relevance, answer relevancy, answer correctness), hit@k or recall@k, NaN scores, agreement with human annotators. -->
 
 
-How to cut the evaluation of a RAG? <!--anki:486239767d48454b594b-->
+How do you split the evaluation of a RAG? <!--anki:486239767d48454b594b-->
 ?
-In two floors:
-1. **Retrieval**: are the good passages up? (recall@k, precision@k, MRR, nDCG)
-2. **Generation**: Is the answer **faithful** to the passages and **responds** to the question?
+Into two stages:
+1. **Retrieval**: are the right passages retrieved? (recall@k, precision@k, MRR, nDCG)
+2. **Generation**: is the answer **faithful** to the passages, and does it **address** the question?
 
-A bad overall score doesn’t say which one to correct; metrics by floor, yes.
+A bad overall score does not say which stage to fix; per-stage metrics do.
 
-Do an oracle test: provide the generator with the reference passages. If the failure persists, improving the retrieval alone is not enough. If the answer becomes correct, compare the actually recovered proofs and their versions to the oracle context.
+Run an oracle test: give the generator the reference passages. If the failure persists, improving retrieval alone is not enough. If the answer becomes correct, compare the evidence actually retrieved, and its versions, with the oracle context.
 
 ---
 
-What do call@k, MRR and nDCG measure? <!--anki:4a7e6f715833634b5574-->
+What do recall@k, MRR and nDCG measure? <!--anki:4a7e6f715833634b5574-->
 ?
-The **recall@k** measures the fraction of the relevant annotated elements present in the k primes; the **MRR** averages the inverse of the rank of the first relevant, with zero if none is found in the retained perimeter. The **nDCG** evaluates the order, with relevance possibly graduated and normalized by an ideal ranking.
+**Recall@k** measures the fraction of the annotated relevant items present in the top k; **MRR** averages the inverse rank of the first relevant item, counting zero when none is found within the cutoff. **nDCG** evaluates the order, with optionally graded relevance, normalized by an ideal ranking.
 
-Specify unit — document, passage or proof —, cutoff and processing of requests without relevance. An incomplete reference may penalize another valid passage. These measures describe different aspects: finding a single proof is not always enough to answer a question that requires several.
+Specify the unit — document, passage or piece of evidence —, the cutoff and the handling of queries without any relevant item. An incomplete reference may penalize another valid passage. These measures describe different aspects: finding a single piece of evidence is not always enough to answer a question that requires several.
 
 ---
 
 What is the RAG triad? <!--anki:6a653b4e2d6648756538-->
 ?
-1. **Relevance context**: Are the retrieved passages relevant to the question?
-2. **Faithfulness/groundedness**: Is every statement in the answer **supported by context**?
-3. **Answer note**: Does the answer address **the question asked**?
+1. **Context relevance**: are the retrieved passages relevant to the question?
+2. **Faithfulness / groundedness**: is every statement in the answer **supported by the context**?
+3. **Answer relevance**: does the answer address **the question asked**?
 
 This is the basis of [[22-advanced-rag|RAGAS]] and equivalent evaluators.
 
-A response can be faithful to a false or outdated context and remain incorrect. Add accuracy of business references, completeness and rights; the three dimensions of the triad isolate defects but do not cover all product warranties.
+A response can be faithful to a false or outdated context and remain incorrect. Add accuracy of business references, completeness and rights; the three dimensions of the triad isolate defects but do not cover all product guarantees.
 
 ---
 
@@ -136,11 +136,11 @@ The denominator includes the **three requests**, including failure. Dividing onl
 
 ---
 
-Do not confuse: source fidelity and factual accuracy of a RAG response? <!--anki:3438653833316233663937323464373461653464616261383963323063313461-->
+Do not confuse: faithfulness to the sources and factual accuracy of a RAG answer? <!--anki:3438653833316233663937323464373461653464616261383963323063313461-->
 ?
-The **fidelity** verifies that the sources provided support the answer; the **accuracy** verifies that its content is correct according to a reliable reference adapted to the question.
+**Faithfulness** checks that the sources provided support the answer; **accuracy** checks that its content is correct according to a reliable reference suited to the question.
 
-A fictitious example: an old inventory indicates ten units, but the current stock is zero. For a question about the current stock, answer "ten" can be faithful to the document and false. Answer "zero" can be accurate without being supported by this document. Examine freshness and perimeter of sources, then evaluate both dimensions; a quote present is not enough.
+A fictitious example: an old inventory indicates ten units, but the current stock is zero. For a question about the current stock, answering "ten" can be faithful to the document and false; answering "zero" can be accurate without being supported by this document. Examine the freshness and scope of the sources, then evaluate both dimensions; the presence of a citation is not enough.
 
 ---
 
@@ -180,7 +180,7 @@ Construct controlled counterfactual **tests**: change a fact in a fictitious doc
 
 Keep question and configuration comparable; avoid transformations that make the document inconsistent. Add a variant with a contradictory source and an explicit priority rule. These tests reveal a dependence on context on the cases tested; they do not prove that all future answers will be faithful.
 
-Also test a changed citation without changing the fact to distinguish semantic fidelity and reference copy.
+Also test a changed citation without changing the fact to distinguish semantic faithfulness from copying the reference.
 
 ---
 
@@ -279,7 +279,7 @@ B is **wrong** yet scores 0.24: similarity gives a floor to an answer phrased li
 
 Why count the NaN scores of a RAGAS evaluation before reading its averages? <!--anki:6239346264373365613232653465323438356230336566316563386132323631-->
 ?
-Because the average displayed by `evaluate()` **ignores `NaN` values**. Faithfulness returns `NaN` when the LLM extracts no claim from the answer, for lack of verifiable content: these cases drop out of the overall score, and each metric may cover a different subset. In RAGAS 0.4.4, `AnswerCorrectness` from the `collections` API does the opposite: if the answer or the reference yields no claim, the factual score is 1.
+Because the average displayed by `evaluate()` **ignores `NaN` values**. Faithfulness returns `NaN` when the LLM extracts no claim from the answer, for lack of verifiable content: these cases drop out of the overall score, and each metric may cover a different subset. Other metrics handle the same edge case with a **default score** instead: test each metric on an empty answer and on a refusal before trusting its average.
 
 Count the `NaN` values and the claim-less cases per metric, report the number of cases actually scored, and evaluate refusals and empty answers as explicit outcomes ([[90-010-llm-response-evaluation|empty answers]]).
 
@@ -287,9 +287,9 @@ Count the `NaN` values and the claim-less cases per metric, report the number of
 
 What does the agreement of RAGAS with human annotators in the original paper show, and what is its limit? <!--anki:3935356535316639306633323434636462613865333734346233373535646338-->
 ?
-On WikiEval, 50 questions drawn from Wikipedia, two annotators picked the better of two answers or two contexts. RAGAS matches their choice in 95% of pairs for faithfulness, 78% for answer relevance and 70% for context relevance. A 0-to-10 score requested from ChatGPT reaches 72%, 52% and 63%.
+On WikiEval, 50 questions drawn from Wikipedia, two annotators picked the better of two answers or two contexts. RAGAS matched their choice in 95% of pairs for faithfulness, but only 70% for context relevance, the hardest dimension to judge, especially on long contexts.
 
-This validates the ranking of **contrasted pairs**, in English, with gpt-3.5-turbo and the 2023 formulas; the context relevance formula has changed since. It is not a reliable threshold on your data: annotate a sample from your domain ([[95-llm-as-judge|validating a judge]]).
+This validates the ranking of **contrasted pairs**, in English, with gpt-3.5-turbo and the 2023 formulas, not a threshold on absolute scores. Before trusting a RAGAS score on your data, annotate a sample from your domain and measure the agreement metric by metric ([[95-llm-as-judge|validating a judge]]).
 
 ---
 
@@ -297,10 +297,10 @@ This validates the ranking of **contrasted pairs**, in English, with gpt-3.5-tur
 
 Scenario: your RAG displays 62% of answers deemed correct, and the team wants to change generation model. How do you check that it is the right lever? <!--anki:4f663b6b4b4a55712b34-->
 ?
-1. **Separate floors**: recall of passages, fidelity and accuracy of the response.
+1. **Separate the stages**: passage recall, faithfulness and accuracy of the answer.
 2. **Examine retrieval failures**: missing, poorly parsed, poorly classified or filtered evidence.
 3. **Test an oracle context** containing the right evidence, with the same generator and a comparable budget.
-4. **Checking claims**: Source support and truth are two separate criteria.
+4. **Check the claims**: source support and truth are two separate criteria.
 5. **Choose the measured lever**, then compare quality, cost and latency ([[146-model-selection|choice of model]]).
 
 **Trap**: infer the cause of a bad overall score without isolating retrieval and generation.

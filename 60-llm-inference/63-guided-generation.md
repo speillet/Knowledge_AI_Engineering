@@ -143,12 +143,16 @@ How do you check that a value extracted by an LLM really comes from the source d
 Ask, for each field, for the **exact quote** that justifies it, then check it in code:
 
 ```python
-def anchored(value: str, quote: str, source: str) -> bool:
+import re
+
+def anchored(value: str, quote: str, source: str, min_words: int = 3) -> bool:
     norm = lambda s: " ".join(s.split()).lower()
-    return norm(quote) in norm(source) and norm(value) in norm(quote)
+    q, v = norm(quote), re.escape(norm(value))
+    return (len(q.split()) >= min_words and q in norm(source)
+            and re.search(rf"(?<!\w){v}(?!\w)", q) is not None)
 ```
 
-The quote must appear in the source, and the value in the quote; otherwise the field goes to review. For an amount or a date, compare after normalizing the type. This check rules out invented values, not reading errors: an exactly quoted pre-tax amount is still wrong if the field expects the amount including tax ([[143-hallucinations-grounding|grounding]]).
+The quote must be long enough and appear in the source, and the value must appear in it as a whole word; otherwise the field goes to review. A plain substring test would accept "12" inside "125". For an amount or a date, parse both sides and compare the normalized values. This check rules out invented values, not reading errors: an exactly quoted pre-tax amount is still wrong if the field expects the amount including tax. It applies the verified citations of [[143-hallucinations-grounding|grounding]] to each extracted field.
 
 ---
 
