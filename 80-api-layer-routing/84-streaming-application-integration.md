@@ -1,7 +1,7 @@
 # Streaming & application integration — Flashcards
 Tags: #flashcards #ai-engineering #api #streaming #agents #llm
 Verified on: 30 September 2026 — This factsheet lists products, versions or regulatory texts that are evolving quickly.
-<!-- summary: streaming interest, SSE or WebSocket, proxy buffers, server-side cancellation, streaming JSON, agent events (AG-UI), long asynchronous tasks, resuming a stream, idempotency key, calculation of open connections, deduplication to SSE reconnection, backpressure, end of stream. -->
+<!-- summary: streaming interest, SSE or WebSocket, proxy buffers, server-side cancellation, streaming JSON, agent events (AG-UI), long asynchronous tasks, resuming a stream, idempotency key, calculation of open connections, deduplication to SSE reconnection, backpressure, end of stream, guardrail on a stream. -->
 
 
 Why stream the answers of a LLM? <!--anki:6536416a5043402c2f28-->
@@ -70,11 +70,11 @@ This is the object of protocols like **AG-UI**, which standardizes these events 
 How to expose an agent task that lasts several minutes? <!--anki:6a352641682c7b69602d-->
 ?
 Not in synchronous HTTP request: connections are cut and we lose everything. We pass in **asynchronous**:
-1. `POST /taches` immediately returns a **ID**
-2. The agent turns into a **worker**, his condition is persisted
+1. `POST /tasks` immediately returns an **ID**
+2. The agent runs in a **worker**, with its state persisted
 3. The client follows the progress by **SSE**, by periodic query, or receives a **webhook** at the end
 
-If the worker restarts, the task resumes thanks to the **Sustainable Execution** ([[115-agent-platforms-governance|Sustainable Execution]]).
+If the worker restarts, the task resumes thanks to the **Durable Execution** ([[115-agent-platforms-governance|Durable Execution]]).
 
 ---
 
@@ -133,6 +133,17 @@ Provide an explicit end event with task and result ID, as well as a status endpo
 
 ---
 
+How do you apply an output guardrail to a streamed response? <!--anki:3261326362663331373339323464393762393765643738373933333936373135-->
+?
+Three options, depending on the risk:
+- **validate everything before displaying**: safe, but you lose the benefit of streaming;
+- **validate by window**: hold back a few sentences and check each segment before releasing it;
+- **stream then retract**: replace the message if the final check fails, only for a low risk.
+
+In every case, trigger **no action** or write before the full validation, and emit a structured field only once verified. A chunk-by-chunk filter misses what only shows in context, such as personal data split across two chunks ([[101-llm-security-guardrails|guardrails]]).
+
+---
+
 ## Scenarios
 
 Scenario: your assistant stream well locally, but in production the answer appears suddenly after 15 seconds, and some long answers are cut to 60 seconds. What do you check? <!--anki:4651427b395e7d5061-->
@@ -150,7 +161,7 @@ Scenario: your assistant stream well locally, but in production the answer appea
 Scenario: an analysis agent takes 3 to 8 minutes to produce a report. Today the interface waits for the HTTP response, and 20% scans are lost. How do you recognize the integration? <!--anki:76523976517d40646353-->
 ?
 1. **Go asynchronous**: Create task with ID, Idempotence key against duplicate submissions
-2. **Run in a worker** with durable execution, to survive reboots ([[115-agent-platforms-governance|Sustainable Execution]])
+2. **Run in a worker** with durable execution, to survive reboots ([[115-agent-platforms-governance|Durable Execution]])
 3. **Publish progress** in events (steps, sources read), searchable by SSE with recovery via `Last-Event-ID`
 4. **Notify end** by webhook or notification, so the user can close the tab
 5. **Measure**: completion rate, duration, abandonments

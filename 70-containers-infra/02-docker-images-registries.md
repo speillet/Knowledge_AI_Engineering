@@ -1,4 +1,4 @@
-# Docker, images and registers — Flashcards
+# Docker, images & registries — Flashcards
 Tags: #flashcards #containers #docker
 <!-- summary: Docker role and difference with OCI, image or container (instance, state, volumes), Docker/OCI compatibility, records and push/pull workflow, secrets in image layers, build cache, reproducible dependencies. -->
 

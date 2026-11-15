@@ -1,4 +1,4 @@
-# Detection of anomalies — Flashcards
+# Anomaly detection — Flashcards
 Tags: #flashcards #ai-engineering #classical-ml #anomalies #monitoring
 Verified on: 8 October 2026
 <!-- summary: rarity and business error, outlier or novelty, non-probability scores, contextual baseline, Isolation Forest, LOF, self-encoders, review capacity, prevalence, assessment by incident, missing and drifting labels, limits of a fixed quota of alerts, duration of incidents, contextual threshold. -->
@@ -42,7 +42,7 @@ Learning the reference to the available past and specifying what happens when th
 
 ---
 
-How does Forest Insulation detect atypical observations? <!--anki:6362353831653063623837373431313339366433396539346664613032613361-->
+How does Isolation Forest detect atypical observations? <!--anki:6362353831653063623837373431313339366433396539346664613032613361-->
 ?
 It constructs trees with **random partitions** of variables and measures how many separations are needed to isolate a point. Quickly isolated observations receive a more atypical character depending on the score used. In scikit-learn, each `IsolationForest` tree uses by default `min(256, n_samples)` observations; `score_samples` is all the lower the point is atypical.
 
@@ -160,7 +160,7 @@ Scenario: the alert rate climbs after a lasting change in operation, and the tea
 
 ## Sources
 - [scikit-learn — outliers, novelty and LOF](https://scikit-learn.org/stable/modules/outlier_detection.html)
-- [scikit-learn — Forest Insulation and Threshold](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.IsolationForest.html)
+- [scikit-learn — Isolation Forest and Threshold](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.IsolationForest.html)
 - [Kim et al. — Towards a Rigorous Evaluation of Time-series Anomaly Detection](https://arxiv.org/abs/2109.05257)
 - [Bouman & Heskes — limits reconstruction to detect anomalies](https://arxiv.org/abs/2501.13864)
 

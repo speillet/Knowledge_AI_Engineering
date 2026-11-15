@@ -29,6 +29,7 @@ ROOT = Path(__file__).resolve().parent.parent
 MOC = "00-moc-ai-engineering"
 INDEXES = {MOC, "00-index"}
 README = "README.md"
+CATALOG = "docs/catalog.md"
 CONTAINERS_INDEX = "70-containers-infra/00-index.md"
 RETIRED = "scripts/retired_cards.json"
 
@@ -122,7 +123,7 @@ class Vault:
     inbound: collections.Counter[str] = field(default_factory=collections.Counter)
 
     def __post_init__(self) -> None:
-        self.names = collections.Counter(p.stem for p in self.texts)
+        self.names = collections.Counter([*(p.stem for p in self.files), MOC])
 
     def text(self, relative: str) -> str:
         return self.texts[ROOT / relative]
@@ -144,7 +145,7 @@ def markdown_lines(text: str) -> Iterator[Line]:
 
 def topic_files() -> list[Path]:
     """Sheets of numbered sections, including container indexes, MOC excluded."""
-    return sorted(p for p in ROOT.glob("[0-9]*/*.md") if p.stem != MOC)
+    return sorted(p for p in ROOT.glob("[0-9]*/*.md") if p.stem != MOC and p.name != README)
 
 
 def topic_title(text: str) -> str:
@@ -164,7 +165,7 @@ def decode_guid(hexa: str) -> str:
     except UnicodeDecodeError as exc:
         raise ValueError("GUID non ASCII") from exc
     if not guid or any(ord(c) < 33 or ord(c) > 126 for c in guid):
-        raise ValueError("GUID non imprimable")
+        raise ValueError("Non-printable GUID")
     return guid
 
 
@@ -316,7 +317,7 @@ def check_links(vault: Vault, report: Report) -> None:
 
 
 def check_layout(rel: Path, text: str, report: Report) -> None:
-    """Online title 1, online tags 2, no frontmatter."""
+    """Title on line 1, tags on line 2, no frontmatter."""
     lines = text.split("\n")
     if not lines[0].startswith("# "):
         report.errors.append(f"{rel}:1 missing title")
@@ -393,12 +394,12 @@ def check_cards(path: Path, rel: Path, cards: list[Card], vault: Vault, report: 
 
 
 def check_catalogs(path: Path, rel: Path, vault: Vault, report: Report) -> None:
-    """File cited by the MOC (or the container index) and by the README."""
+    """Topic listed in the MOC (or container index) and the generated catalog."""
     moc, index = vault.text(f"{MOC}.md"), vault.text(CONTAINERS_INDEX)
     if path.stem not in INDEXES and f"[[{path.stem}" not in moc and f"[[{path.stem}" not in index:
         report.errors.append(f"{rel} missing the MOC (or container index)")
-    if str(rel) not in vault.text(README):
-        report.warnings.append(f"{rel} missing from the README “Covered Concepts” list")
+    if rel.as_posix() not in vault.text(CATALOG):
+        report.warnings.append(f"{rel} missing from the topic catalog")
 
 
 def check_dates(rel: Path, text: str, vault: Vault, report: Report) -> None:
@@ -440,7 +441,7 @@ def check_topic(path: Path, vault: Vault, report: Report) -> TopicStats:
 
 
 def check_retired(vault: Vault, report: Report) -> None:
-    """Valid, unique, and missing entries from removed_cards.json."""
+    """Valid, unique, and missing entries from retired_cards.json."""
     retired: set[str] = set()
     for entry in retired_cards():
         hexa = entry.get("id", "") if isinstance(entry, dict) else ""
@@ -479,9 +480,11 @@ def check_graph(vault: Vault, report: Report) -> None:
 
 
 def lint(stale_months: int) -> tuple[list[str], list[str], list[TopicStats]]:
-    """Errors, warnings and statistics per record; stele_months = 0 ignores the age of the dates."""
+    """Errors, warnings and statistics per record; stale_months = 0 ignores the age of the dates."""
     files = topic_files()
-    pages = [*files, ROOT / f"{MOC}.md", ROOT / README]
+    pages = [*ROOT.glob("[0-9]*/*.md"), *ROOT.glob("*.md"), *(ROOT / "docs").rglob("*.md")]
+    pages += [ROOT / "examples/README.md", *ROOT.glob("examples/*/README.md")]
+    pages = [p for p in pages if p.exists()]
     vault = Vault(files, {p: p.read_text(encoding="utf-8") for p in pages}, stale_months)
     report = Report()
     for name, count in vault.names.items():

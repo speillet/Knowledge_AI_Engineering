@@ -197,4 +197,5 @@ Scenario: your VLM correctly extracts 99% from the fields, but one in five docum
 - [[131-transformer-architecture|Architecture Transformer]] — tokens visuals in sequence
 - [[165-computer-use-browser-agents|Computer use & browser agents]] — agents that use interfaces
 - [[101-llm-security-guardrails|LLM Security]] — injection, exfiltration and guardrails
+- [[60-014-inference-parity-validation|Inference parity]] — same image processor parameters across two stacks
 - [[00-moc-ai-engineering|MOC AI Engineering]]

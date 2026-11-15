@@ -1,6 +1,6 @@
-# Reliability & resilience of LLM — Flashcards applications — Flashcards
+# LLM application reliability & resilience — Flashcards
 Tags: #flashcards #ai-engineering #system-design #reliability #production #llm
-<!-- summary: timeouts, recoveries, fallbacks, circuit breaker, retry, fallback or circuit breaker, recoveries multiplied between layers, poorly formed outputs, graceful degradation, spleen limits, long tasks, version pinning, SLO, chaos testing, classification of errors of a circuit breaker, jitter, recovery after 429. -->
+<!-- summary: timeouts, recoveries, fallbacks, circuit breaker, retry, fallback or circuit breaker, recoveries multiplied between layers, poorly formed outputs, graceful degradation, spleen limits, long tasks, version pinning, SLO, chaos testing, classification of errors of a circuit breaker, jitter, recovery after 429, useless retry, correlated attempts. -->
 
 
 Why is a LLM application more fragile than a traditional application? <!--anki:47364949697173294a73-->
@@ -169,6 +169,29 @@ Why not automatically resume all 4xx HTTP codes of a API LLM? <!--anki:646564393
 Many indicate **a persistent issue for this query**, such as an invalid schema or missing permission. Retry the same squanders budget and quota.
 
 Classify according to the contract: correct the request, renew access in a controlled way or wait for some 429. Check the status of an operation if the effect is uncertain. The code alone does not always describe the whole cause; keep the useful details without secrets.
+
+---
+
+When is a new attempt unlikely to fix an invalid LLM output? <!--anki:6462626239363230346562393439633761613531333438626566646163383931-->
+?
+When the failure comes from **the input or the contract**, not from chance:
+- information missing from the context, which the model invents or refuses;
+- contradictory schema, or constraints impossible to satisfy together;
+- output longer than `max_tokens`, which will be truncated again;
+- identical greedy call, which reproduces the same output.
+
+A new attempt mostly helps against random format errors, especially if the validation error is sent back. Measure the **fix rate per attempt** by failure type; below a threshold, go straight to abstention, fallback or review.
+
+---
+
+Calculation: 92% of outputs are valid on the first attempt, and each new attempt fixes only 40% of the remaining failures. What validity rate after two new attempts, and what would the assumption of independent attempts give? <!--anki:3138343036663234613431663464303562366363636136313538356162626663-->
+?
+```text
+measured    : 0.92 + 0.08 × 0.4 + 0.048 × 0.4 ≈ 0.971
+calls       : 1 + 0.08 + 0.048 = 1.128 per request
+independent : 1 − 0.08³ ≈ 0.9995
+```
+Failures are **correlated**: hard inputs fail again. Validity plateaus around 97.1%, far from the 99.95% that independence would promise. The cost remains modest, about 13% more calls, but the gain wears off: a third attempt would add only about 1.2 points.
 
 ---
 

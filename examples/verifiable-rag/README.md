@@ -1,8 +1,8 @@
-# Local workshop: RAG verifiable
+# Workshop: verifiable RAG
 
-This workshop diagnoses a documentary system before adding a LLM. A fictional corpus of ten passages and ten annotated cases allows to compare a voluntarily incorrect baseline to a policy that respects holding, groups, dates of effect, withdrawal and authority of sources.
+This workshop diagnoses a documentary system before adding an LLM. A fictional corpus of ten passages and ten annotated cases compares a deliberately incorrect baseline with a policy that respects tenants, groups, effective dates, withdrawals and source authority.
 
-It uses only the standard library of **Python 3.9 or higher**, without API, GPU or installation. The ranking is lexical and deterministic; the facts structured, annotated by hand, replace extraction and generation. The scores are those of this simulation, not performance measured on a model.
+It uses only the standard library of **Python 3.10 or newer**, without API, GPU or installation. The ranking is lexical and deterministic; the facts structured, annotated by hand, replace extraction and generation. The scores are those of this simulation, not performance measured on a model.
 
 ## Run from the repository root
 
@@ -13,13 +13,13 @@ python3 examples/verifiable-rag/rag_workshop.py --questions
 # Compare the two policies on the ten cases.
 python3 examples/verifiable-rag/rag_workshop.py
 
-# Inspect affirmation by affirmation, with a report out of the repository.
+# Inspect each claim and write a report outside the repository.
 python3 examples/verifiable-rag/rag_workshop.py --case current --json /tmp/rag-current.json
 
-# Observe a research budget that hides a contradiction.
+# Observe a retrieval budget that hides a contradiction.
 python3 examples/verifiable-rag/rag_workshop.py --case conflict --k 1
 
-# Execute security, temporality and evidence variations tests.
+# Run tests for permissions, time validity and evidence changes.
 python3 -m unittest discover -s tests -p 'test_rag_workshop.py' -v
 ```
 
@@ -27,13 +27,13 @@ The commands also work from another directory if the script path is absolute: th
 
 ## Data and policy
 
-- [corpus.json](corpus.json) contains simulated identities, passages, their versions, effective dates, groups, and annotated facts. An identity belongs to a holder; a document requires the same holder **and at least one authorized group**.
+- [corpus.json](corpus.json) contains simulated identities, passages, their versions, effective dates, groups, and annotated facts. An identity belongs to a tenant; a document requires the same tenant **and at least one authorized group**.
 - [cases.json](cases.json) sets the requested fields, relevant evidence and expected results. These references are only used for evaluation; the resolver only looks at the retrieved passages.
 - [rag_workshop.py](rag_workshop.py) applies the policy and produces the trace: passages and versions, affirmations, quotes, reasons for abstention, violations and metrics.
 
 The report also contains SHA-256 fingerprints of the normalized contents of the corpus and of the executed cases, including expected annotations. They change if a fact or a reference changes, even without renaming the snapshot. Keep the input files with the report: a fingerprint makes it possible to recognize the contents, not to reconstruct it.
 
-Validity follows `[valid_from, valid_until)`: on 1 November, the version at 45 days replaces the one at 30 days. The rights are those of the simulated identity at the time of access, even for a historical question. Chunk identifiers are unique in the snapshot; the full identity of a document also includes its holder.
+Validity follows `[valid_from, valid_until)`: on 1 November, the version at 45 days replaces the one at 30 days. The rights are those of the simulated identity at the time of access, even for a historical question. Chunk identifiers are unique in the snapshot; the full identity of a document also includes its tenant.
 
 In this fictitious domain, contracts have an authority of 2 and the FAQ of 1. For each field, the resolver retains the maximum authority among the recovered proofs. Two values incompatible with this authority produce `conflict`. The absence of proof produces `no_evidence`. The answer is `complete`, `partial` or `abstain` depending on the fields solved.
 
@@ -41,7 +41,7 @@ The baseline takes the first passages of the global ranking and the first value 
 
 ## Cases to Diagnose
 
-| Case | What he checks |
+| Case | What it checks |
 | --- | --- |
 | `current` | Old version, adversarial FAQ and applicable contract |
 | `historical` | Business date passed with current permissions |
@@ -53,7 +53,7 @@ The baseline takes the first passages of the global ranking and the first value 
 | `partial` | Two resolved fields and an explicitly reported missing element |
 | `withdrawn-source` | A chunk still present in the snapshot is blocked after removal |
 
-With the corpus delivered and `k=4`, `filtered` complies with **10 contracts on 10**, with zero out-of-scope passes. The baseline complies with **0 on 10** and exposes 20 out-of-scope passes in total. A contract also requires that **all context** be admissible: the baseline may fail even if its final response appears to be correct.
+With the corpus delivered and `k=4`, `filtered` complies with **10 out of 10 contracts**, with zero out-of-scope passages. The baseline complies with **0 out of 10** and exposes 20 out-of-scope passages in total. A contract also requires that **all context** be admissible: the baseline may fail even if its final response appears to be correct.
 
 ## Read metrics without confusing their denominators
 
@@ -84,7 +84,7 @@ Deliverable: a JSON report, a `question | affirmation | passage/version | verdic
 
 ## Limits and extension to a real RAG
 
-Identity is a trusted fix, **not actual authentication**. The workshop does not model changing permissions during a query, physical purge, caches, response flows, free formulations, historical availability of documents, or an ANN engine. The exact equality of annotated facts does not replace a semantic check on natural texts.
+Identity is a trusted fixture, **not actual authentication**. The workshop does not model changing permissions during a query, physical purge, caches, response flows, free formulations, historical availability of documents, or an ANN engine. The exact equality of annotated facts does not replace a semantic check on natural texts.
 
 To move to a real pipeline, replace the retriever and generator while retaining cases, references, and trace. Annotate support for free assertions, control missing evidence, and then add load, cost, and revocation during execution. The numerical authority of this example must be replaced by a business rule tailored to the topic.
 
@@ -92,4 +92,6 @@ The effect of filters on an approximate index must be measured with the actual e
 
 The indicators of support and coverage are a pedagogical adaptation of the distinction studied by Liu, Zhang and Liang they do not reproduce their annotation protocol. [Evaluating Verifiability in Generative Search Engines](https://arxiv.org/abs/2304.09848).
 
-To read: [RAG and rights/versions](../../20-rag/20-010-rag-permissions-versions.md), [RAG Assessment](../../90-observability-evals/96-evals-rag-agents.md), [Construction of Corpus](../../150-data-compliance/150-017-ai-datasets-corpora.md) and [Learning Guide](../../docs/learning-with-flashcards.md).
+To read: [RAG and rights/versions](../../20-rag/20-010-rag-permissions-versions.md), [RAG Assessment](../../90-observability-evals/96-evals-rag-agents.md), [Construction of Corpus](../../150-data-compliance/150-017-ai-datasets-corpora.md) and [Learning Guide](../../docs/guides/learning-with-flashcards.md).
+
+[All workshops](../README.md)

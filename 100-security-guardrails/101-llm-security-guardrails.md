@@ -1,4 +1,4 @@
-# Security LLM & guardrails — Flashcards
+# LLM security & guardrails — Flashcards
 Tags: #flashcards #ai-engineering #security #guardrails #llm
 Verified on: 25 September 2026 — global date preserved; targeted review of 13 November 2026 detailed in Sources.
 <!-- summary: OWASP Top 10 LLM 2026, exposure of the hidden context and change of identifiers, direct or indirect injection, “lethal trifecta”, exfiltration, excessive agency, guardrails (Llama Guard, NeMo Guardrails), red teaming, false positive injection detectors, fail-open, cost of false positives. -->
@@ -213,4 +213,5 @@ Targeted review of 13 November 2026: affirmations specified in this pass; other 
 - [[161-vision-language-models|Vision-language models]] — input images and screens
 - [[164-local-edge-llm|Local LLM & Edge]] — run a model locally
 - [[165-computer-use-browser-agents|Computer use & browser agents]] — agents that use interfaces
+- [[93-monitoring-inference|Inference monitoring]] — rejection rate of a validator in observation mode
 - [[00-moc-ai-engineering|MOC AI Engineering]]

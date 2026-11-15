@@ -1,4 +1,4 @@
-# Inference Optimization Approach LLM — Flashcards
+# LLM inference optimization method — Flashcards
 Tags: #flashcards #ai-engineering #inference #performance #profiling #finops
 Verified on: 8 October 2026
 <!-- summary: objective under constraints, CPU/GPU profiling, CUDA graphs and compilation, kernels, Amdahl law, interactions between optimizations, API quotas, retrievals, routing, reasoning and multimodal, marginal cost of an optimization, causal attribution of the gain, rollback cost. -->
@@ -196,4 +196,5 @@ Scenario: increase call concurrency API mostly produces 429 errors. How do you r
 - [[60-011-inference-capacity-scheduling|Capacity & scheduling]] — budget and admission
 - [[121-inference-costs|Costs of inference]] — cost and energy per useful task
 - [[138-reasoning-models|Models of Reasoning]] — measure the performance of the additional calculation
+- [[60-014-inference-parity-validation|Inference parity]] — proving that an optimization does not change the model
 - [[00-moc-ai-engineering|MOC AI Engineering]]

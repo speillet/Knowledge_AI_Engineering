@@ -1,4 +1,4 @@
-# Evals online & A/B testing — Flashcards
+# Online evaluation & A/B testing — Flashcards
 Tags: #flashcards #ai-engineering #evals #ab-testing #production #llm
 <!-- summary: Explicit and implicit signals, A/B test, guardrail metrics, shadow testing, canary or A/B, peeking, novelty effect, product metrics, online-offline loop, confidentiality, sample size calculation, intent to process and exposure bias, randomization unit, delayed metrics. -->
 

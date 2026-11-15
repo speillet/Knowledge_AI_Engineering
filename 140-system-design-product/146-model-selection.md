@@ -1,4 +1,4 @@
-# Choose model — Flashcards
+# Model selection — Flashcards
 Tags: #flashcards #ai-engineering #model-selection #benchmarks #llm
 Verified on: 25 September 2026 — This factsheet lists products, versions or regulatory texts that are evolving quickly.
 <!-- summary: criteria and constraints, benchmarks, hosting and weight opening, OSI definition, cost-per-success, comparable protocol, Pareto front, migration and lock-in, Pareto border, expected error cost, eligibility. -->

@@ -1,4 +1,4 @@
-# Inference Capacity & Scheduling LLM — Flashcards
+# LLM inference capacity & scheduling — Flashcards
 Tags: #flashcards #ai-engineering #inference #capacity #scheduling #gpu
 Verified on: 8 October 2026
 <!-- summary: Sequence and tokens budgets, actual KV memory, GQA and sharding, preemption, admission, priorities, queues, replication and parallelisms, backup and cancellation capacity, KV reservation for outputs, stability margin, starvation risk. -->

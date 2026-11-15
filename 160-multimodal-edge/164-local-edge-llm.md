@@ -1,4 +1,4 @@
-# LLM local, on-prem & edge — Flashcards
+# Local, on-premises & edge LLMs — Flashcards
 Tags: #flashcards #ai-engineering #edge #local #self-hosting #llm
 Verified on: 25 September 2026 — This factsheet lists products, versions or regulatory texts that are evolving quickly.
 <!-- summary: motivations, capacity or memory bandwidth, llama.cpp and GGUF, local tools, Ollama or vLLM, Apple Silicon, small language models, hybrid local and cloud, fleet of devices, profitability of on-prem, measurement in sustained thermal regime, energy autonomy, offline mode. -->
@@ -28,7 +28,7 @@ What is llama.cpp and the GGUF format? <!--anki:647e555f4a2a7a723579-->
 ?
 **llama.cpp** is a portable C/C++ inference engine, with different CPU and GPU backends. **GGUF** describes a weight and metadata container; weights can be quantified or floating precision, and the model can be split into shards.
 
-The tokenizer and the chat template must match the template; check the metadata present. Example: `llama-server -m modele.gguf -c 8192 -ngl 99`. `-ngl 99` requests the offload of a number of layers; the result depends on the template, the backend and the memory. Check logs instead of assuming that the entire template runs on GPU.
+The tokenizer and the chat template must match the template; check the metadata present. Example: `llama-server -m model.gguf -c 8192 -ngl 99`. `-ngl 99` requests the offload of a number of layers; the result depends on the template, the backend and the memory. Check logs instead of assuming that the entire template runs on GPU.
 
 ---
 
@@ -174,4 +174,5 @@ Scenario: an industrial customer wants an assistant that works without the Inter
 - [[53-synthetic-data-distillation|Distillation]] — small specialized models
 - [[101-llm-security-guardrails|LLM Security]] — injection, exfiltration and guardrails
 - [[61-kv-cache-attention|KV cache]] — memory that limits concurrency
+- [[60-014-inference-parity-validation|Inference parity]] — checking the pre-tokenizer during GGUF conversion
 - [[00-moc-ai-engineering|MOC AI Engineering]]

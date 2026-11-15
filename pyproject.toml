@@ -15,7 +15,7 @@ ignore = ["SIM905"]
 [tool.ruff.lint.isort]
 force-sort-within-sections = true
 known-first-party = [
-    "assign_card_ids", "export_anki", "lint_flashcards", "sr_plugin", "sync_catalog",
+    "assign_card_ids", "export_anki", "lint_flashcards", "prepare_site", "sr_plugin", "sync_catalog",
     "api", "demo", "engine", "storage",
 ]
 

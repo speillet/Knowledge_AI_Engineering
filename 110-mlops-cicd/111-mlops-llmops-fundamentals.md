@@ -66,7 +66,7 @@ The **lineage** links a served version to the data, transformations, code, param
 ```yaml
 release: retention-r17
 image: registry.example.org/scoring@sha256:empreinte-a-remplacer
-modele: models:/retention/17
+model: models:/retention/17
 features: client-30j@v4
 train: retention-train@snapshot-042
 evaluation: retention-validation@v9

@@ -163,7 +163,7 @@ Scenario: your text-to-SQL wizard has 85% execution accurency in test, but users
 - [[23-knowledge-graphs-ontologies|Knowledge graphs]] — Text2Cypher, the same problem on a graph
 - [[32-tool-calling|Tool calling]] — Expose SQL Execution as a Tool
 - [[101-llm-security-guardrails|LLM Security]] — generated query is untrusted entry
-- [[96-evals-rag-agents|Evaluation of GARs & Agents]] — measure on its own questions
+- [[96-evals-rag-agents|Evaluation of RAG systems & Agents]] — measure on its own questions
 - [[143-hallucinations-grounding|Hallucinations & grounding]] — clarify rather than invent
 - [[150-010-analytical-data-modeling|Modeling of analytical data]] — make allowable joins and metrics explicit
 - [[150-011-analytical-sql-transformations|SQL for AI Pipelines and Datasets]] — validate the meaning and results of SQL

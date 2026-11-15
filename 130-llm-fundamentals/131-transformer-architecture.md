@@ -1,4 +1,4 @@
-# Architecture Transformer — Flashcards
+# Transformer architecture — Flashcards
 Tags: #flashcards #ai-engineering #fundamentals #transformer #llm
 <!-- summary: attention and weighted sum, causal mask, teacher forcing, multi-head, GQA/MQA and memory KV, MLP, residuals, normalization, RoPE, costs, weight of a 70B, basic model or assistant, explanatory limits of attention weights, softmax normalization, causal context. -->
 

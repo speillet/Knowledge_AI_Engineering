@@ -1,4 +1,4 @@
-# Pre-workout & scaling laws — Flashcards
+# Pretraining & scaling laws — Flashcards
 Tags: #flashcards #ai-engineering #fundamentals #pretraining #scaling #llm
 <!-- summary: manufacturing steps, pre-workout or post-workout, data, scaling laws, Chinchilla, over-workout for inference, 6ND, MFU, contamination, knowledge cutoff, emerging capabilities, data wall, scaling laws extrapolation limits, lifecycle cost, tokens quality. -->
 

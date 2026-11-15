@@ -1,4 +1,4 @@
-# Apptainer & Inference HPC — Flashcards
+# Apptainer & HPC inference — Flashcards
 Tags: #flashcards #containers #apptainer #hpc #llm #inference
 Verified on: 29 September 2026 — This factsheet lists products, versions or regulatory texts that are evolving quickly.
 <!-- summary: Apptainer or Docker in HPC, security model, Slurm integration, `--nv`, weights mounted from the shared file system, SIF images, definition file, multi-node service (Ray, InfiniBand, NCCL), exposure of a server launched in a job, drainage before walltime, Slurm allocation, local caches. -->

@@ -1,4 +1,4 @@
-# LangGraph — Production (persistance, HITL, multi-agents) — Flashcards
+# LangGraph — Production (persistence, HITL, multi-agent systems) — Flashcards
 Tags: #flashcards #ai-engineering #agents #langgraph #llm
 Verified on: 25 September 2026 — This factsheet lists products, versions or regulatory texts that are evolving quickly.
 <!-- summary: checkpointers, threads, `interrupt` and `Command(resume=...)`, time travel, Store long-term, durable execution, streaming, subgraphs, multi-agent patterns, deployment, valid take-back approvals, concurrent approval, take-back and secrets. -->
@@ -79,7 +79,7 @@ The former keeps the progress of a conversation; the latter may retain a useful 
 
 ---
 
-What is sustainable execution in LangGraph? <!--anki:6e5a3837745771543752-->
+What is durable execution in LangGraph? <!--anki:6e5a3837745771543752-->
 ?
 The ability of a workflow to **recover from persistent** information after a failure or pause. Work that has been saved can be reused; unsaved portions can be replayed.
 

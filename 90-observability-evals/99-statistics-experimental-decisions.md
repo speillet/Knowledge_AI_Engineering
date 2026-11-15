@@ -1,4 +1,4 @@
-# Statistics for deciding in IA — Flashcards
+# Statistics for AI decisions — Flashcards
 Tags: #flashcards #ai-engineering #evals #statistics #experimentation
 <!-- summary: Useful effect and significance, p-value, confidence interval, matched comparison, independent unit, zero failure, multiple tests, power, causality, selection bias and sample mismatch ratio, opportunistic stop and sequential tests, Simpson's paradox, observation dependency. -->
 

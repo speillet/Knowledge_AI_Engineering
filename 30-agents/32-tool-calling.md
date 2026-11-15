@@ -1,6 +1,6 @@
 # Tool calling — Flashcards
 Tags: #flashcards #ai-engineering #agents #tool-calling #llm
-<!-- summary: tool definition, controlled parallel calls, tool calling or MCP, validation of arguments, errors and timeouts, operation statuses, pagination and cost of schemas, separation proposal and execution, voluminous results, writing preconditions. -->
+<!-- summary: tool definition, controlled parallel calls, tool calling or MCP, validation of arguments, errors and timeouts, operation statuses, pagination and cost of schemas, separation proposal and execution, voluminous results, writing preconditions, schema guarantees by tool_choice in vLLM. -->
 
 
 What is tool calling (function calling)? <!--anki:4c434c62492628352f4a-->
@@ -160,6 +160,17 @@ The service must verify this condition atomically. The agent then rereads the fi
 
 ---
 
+With vLLM, when do the arguments of a tool call respect its schema? <!--anki:3330393664343530326665363465316538333532356533313261373234386564-->
+?
+It depends on `tool_choice`, the tool's `strict` field and the parser:
+- **named** or `"required"`: the envelope (markup, function name) is constrained; the argument schema is pinned only by `strict: true`, `--tool-strict-level parameter` or a parser that derives its JSON constraints from the schema;
+- `"auto"` without a strict tool: no grammar, calls are extracted from the raw text, arguments sometimes **malformed** or off-schema;
+- `--tool-strict-level parameter`: the server enforces every schema, even if the client never declares `strict`, as most do.
+
+On recent Mistral models in the official format, even a forced call is not guaranteed. Constrained or not, validate the arguments before any action ([[60-014-inference-parity-validation|inference parity]]).
+
+---
+
 ## Scenarios
 
 Scenario: your agent has 40 tools and often gets the wrong tool or invents parameters. How do you improve the situation? <!--anki:45503a33472d5921333f-->
@@ -204,6 +215,7 @@ Scenario: an agent claims that a customer has no outstanding invoices after read
 - [MCP 2025-11-25 — application-driven resources](https://modelcontextprotocol.io/specification/2025-11-25/server/resources)
 - [Anthropic — define tools](https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools)
 - [Anthropic — design results and evaluate tools](https://www.anthropic.com/engineering/writing-tools-for-agents)
+- Supplement of 15 November 2026 — [vLLM — `tool_choice`, `strict` and `--tool-strict-level`](https://github.com/vllm-project/vllm/blob/bb23c0a81779ba733923a7dab9b840b4e533f6a5/docs/features/tool_calling.md)
 
 ## Connections
 - [[31-agent-fundamentals|Agents]] — the loop that consumes the tools
@@ -219,4 +231,5 @@ Scenario: an agent claims that a customer has no outstanding invoices after read
 - [[41-code-nocode-automation|Automation code & no-code]] — workflows and no-code tools
 - [[42-langchain-fundamentals|LangChain]] — the basic building blocks of the framework
 - [[40-010-langchain-tools-middleware-production|LangChain — Contracts, tools & middleware in production]] — validate requests and results
+- [[60-014-inference-parity-validation|Inference parity]] — validating the tool call parsers of the server
 - [[00-moc-ai-engineering|MOC AI Engineering]]

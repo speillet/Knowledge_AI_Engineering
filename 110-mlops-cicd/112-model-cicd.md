@@ -1,4 +1,4 @@
-# CI/CD Models — Flashcards
+# Model CI/CD — Flashcards
 Tags: #flashcards #ai-engineering #mlops #cicd #llm
 <!-- summary: evals statistics and deterministic tests, eval gates (threshold example), deployed artifact, blue/green and canary, shadow deployment, rollback, GitOps, tests of a LLM app, CI prompts, complete pipeline, rollback after schema migration, continuous delivery or deployment, smoke training, same promoted artifact, canary with late label. -->
 
@@ -199,4 +199,5 @@ Scenario: you need to deploy a new model version on a critical service, without 
 - [[117-continuous-training-pipelines|Training Pipelines & Continuous Training]] — pipeline that produces candidates to promote
 - [[118-ml-artifacts-registry-releases|Artifacts, registry and releases ML]] — production contracts and verifications
 - [[119-prediction-contracts-features-batch|Prediction contracts, features and batch]] — production contracts and verifications
+- [[60-014-inference-parity-validation|Inference parity]] — a versioned parity set in the release gates
 - [[00-moc-ai-engineering|MOC AI Engineering]]

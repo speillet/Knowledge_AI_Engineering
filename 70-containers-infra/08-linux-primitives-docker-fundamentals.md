@@ -1,4 +1,4 @@
-# Primitive Linux & Docker fundamentals — Flashcards
+# Linux primitives & Docker fundamentals — Flashcards
 Tags: #flashcards #containers #linux #docker
 <!-- summary: namespaces and cgroups, container or VM, layers, Dockerfile and cache order, volumes and bind mounts, port mapping, distinction between RAM and VRAM, PID 1 and signals, disk and inodes. -->
 
@@ -61,7 +61,7 @@ What is an image layer? <!--anki:735f7a393c5b29347d70-->
 ?
 A **read-only layer**; layers are stacked via a **union/overlay filesystem** to form the final image. The image is described by a **manifest** and identified by a **digest** (hash); layers common to multiple images are **shared and cached**.
 
-Each `RUN`, `COPY` or `ADD` statement creates a layer. Delete a file in a subsequent layer the **mask** without reducing the image: a `RUN wget modele.bin` followed by a `RUN rm modele.bin` leaves the file in the previous layer, uploaded to each pull. Clean in the same `RUN` statement, or copy only the final result.
+Each `RUN`, `COPY` or `ADD` statement creates a layer. Delete a file in a subsequent layer the **mask** without reducing the image: a `RUN wget model.bin` followed by a `RUN rm model.bin` leaves the file in the previous layer, uploaded to each pull. Clean in the same `RUN` statement, or copy only the final result.
 
 ---
 

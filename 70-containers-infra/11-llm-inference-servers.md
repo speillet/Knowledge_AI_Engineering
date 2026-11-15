@@ -1,4 +1,4 @@
-# Inference Servers LLM — Flashcards
+# LLM inference servers — Flashcards
 Tags: #flashcards #ai-engineering #inference #serving #llm
 Verified on: 25 September 2026 — This factsheet lists products, versions or regulatory texts that are evolving quickly.
 <!-- summary: vLLM, API compatible OpenAI, multi-LoRA, SGLang, TensorRT-LLM and Triton, TGI, llama.cpp and Ollama, boundary tests of a compatible API, effective tokenizer, termination tests. -->
@@ -175,4 +175,5 @@ Scenario: your company has 15 fine-tuned variants of the same model 8B, one per 
 - [[69-roofline-prefill-decode|Roofline & Disaggregation]] — which limits each phase of the inference
 - [[83-gateway-ingress|Ingress & API gateway]] — network input stack
 - [[85-agentic-protocols-map|Map of protocols]] — which protocol to which agent boundary
+- [[60-014-inference-parity-validation|Inference parity]] — checking that a new server computes the same model
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -1,4 +1,4 @@
-# Map of — Flashcards
+# Agentic protocol map — Flashcards
 Tags: #flashcards #ai-engineering #agents #protocols #mcp #a2a
 Verified on: 30 September 2026 — This factsheet lists products, versions or regulatory texts that are evolving quickly.
 <!-- summary: protocols by border, MCP, A2A and AG-UI, Agent Card, A2A task cycle, OpenAI compatible API, OpenTelemetry GenAI conventions, `AGENTS.md` and skills, payments by agents (AP2, ACP), governance of standards, when not to expose an agent in A2A, trust borders, job cancellation and business clearing, negotiation of capabilities, contract evolution. -->
@@ -188,6 +188,6 @@ Scenario: three teams have each built agents with different frameworks, and mana
 - [[115-agent-platforms-governance|Agent Platforms — Governance]] — standard open against lock
 - [[11-llm-inference-servers|Inference Servers]] — vLLM, SGLang, TensorRT-LLM and their setting
 - [[123-aggressive-caching|Caching]] — prompt caching and response caches
-- [[103-agent-defenses|Defenses of agents]] — insulation, policies and least privilege
+- [[103-agent-defenses|Defenses of agents]] — isolation, policies and least privilege
 - [[37-agent-frameworks|Frameworks d'agents]] — framework panorama
 - [[00-moc-ai-engineering|MOC AI Engineering]]

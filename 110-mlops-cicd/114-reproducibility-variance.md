@@ -251,11 +251,12 @@ Scenario: your team is testing a bug-fixing agent. It passes 4 times on 5 in dem
 - [[54-distributed-training|Distributed training]] — memory and drive parallelisms
 - [[67-speculative-decoding|Speculative Decoding]] — generate multiple tokens per pass
 - [[68-quantization|Quantization]] — reduce accuracy to gain memory and speed
-- [[96-evals-rag-agents|Evaluation of GARs & Agents]] — retrieval, trajectories and passes^k
+- [[96-evals-rag-agents|Evaluation of RAG systems & Agents]] — retrieval, trajectories and passes^k
 - [[97-evals-online-ab-testing|Evals online & A/B testing]] — measure in production
 - [[98-agent-debugging|Debugging agents]] — find the cause of a failure in a trace
 - [[165-computer-use-browser-agents|Computer use & browser agents]] — agents that use interfaces
 - [[55-agentic-rl|Agentic RL]] — train a model on agent tasks
 - [[118-ml-artifacts-registry-releases|Artifacts, registry and releases ML]] — production contracts and verifications
 - [[90-016-harbor-agent-evaluation|Harbor]] — pass@k and repeated tests calculated by an eval harness
+- [[60-014-inference-parity-validation|Inference parity]] — noise floor and parity between inference stacks
 - [[00-moc-ai-engineering|MOC AI Engineering]]

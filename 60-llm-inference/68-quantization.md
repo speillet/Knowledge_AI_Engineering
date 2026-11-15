@@ -174,7 +174,7 @@ How do I validate a quantized model before deploying it? <!--anki:4e602c2f2d606e
 With a **eval gate**, comparing to the BF16 model ([[112-model-cicd|CI/CD models]]):
 1. **Business assessments** question by question, with a threshold set in advance (e.g. ≥ 99% of the BF16 score on each critical task)
 2. **Format tests**: validity of JSON and tool calls, long context
-3. **Benchmark load** on target hardware: is the gain in TPOT, bitrate or number of GPU real?
+3. **Benchmark load** on target hardware: is the gain in TPOT, throughput or number of GPU real?
 4. **Canary or shadow** on real traffic before full toggle
 
 ---
@@ -211,8 +211,8 @@ How to serve a quantized checkpoint with vLLM? <!--anki:383636633764656233313436
 ?
 vLLM **reads the method in the checkpoint configuration**, and also knows how to quantize in FP8 **on the fly** ([[11-llm-inference-servers|Inference Servers]]):
 ```bash
-vllm serve org/modele-AWQ                     # Automatically detected method
-vllm serve org/modele --quantization fp8 \
+vllm serve org/model-AWQ                     # Automatically detected method
+vllm serve org/model --quantization fp8 \
            --kv-cache-dtype fp8               # FP8 weight on the fly + KV FP8 cache
 ```
 
@@ -317,4 +317,5 @@ Scenario: your supplier publishes the same model in BF16, FP8 and GGUF Q4_K_M. T
 - [[95-llm-as-judge|LLM-as-a-judge]] — note automatically, and validate the judge
 - [[133-embeddings-representations|Embeddings]] — represent meaning by vectors
 - [[137-long-context|Long context]] — limits and cost of long windows
+- [[60-014-inference-parity-validation|Inference parity]] — the same comparison method for any stack change
 - [[00-moc-ai-engineering|MOC AI Engineering]]

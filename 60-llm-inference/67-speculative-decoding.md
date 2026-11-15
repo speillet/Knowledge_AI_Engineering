@@ -319,4 +319,5 @@ Scenario: a quality manager is concerned that the specific decoding changes the 
 - [[61-kv-cache-attention|KV cache]] — memory that limits concurrency
 - [[69-roofline-prefill-decode|Roofline & Disaggregation]] — which limits each phase of the inference
 - [[60-013-prefill-decode-step-by-step|Prefill & decode step by step]] — track calculated positions, cache and delays
+- [[60-014-inference-parity-validation|Inference parity]] — parity tests of an inference deployment
 - [[00-moc-ai-engineering|MOC AI Engineering]]

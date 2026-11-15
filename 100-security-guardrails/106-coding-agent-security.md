@@ -1,4 +1,4 @@
-# Security of code agents — Flashcards
+# Coding agent security — Flashcards
 Tags: #flashcards #ai-engineering #security #agents #coding-agents #llm
 Verified on: 25 September 2026 — This factsheet lists products, versions or regulatory texts that are evolving quickly.
 <!-- summary: choice target, permissionless modes, job isolation, s1ngularity, Amazon Q, trapped instruction files, PromptPwnd, agents in CI/CD, slopsquatting and typing, generated code quality, agent PR review, secrets, corporate policy, test code accessible secrets, test commands, proven dependencies. -->

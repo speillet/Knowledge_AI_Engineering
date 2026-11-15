@@ -67,6 +67,6 @@ jobs:
         run: |
           if ! gh release view anki >/dev/null 2>&1; then
             gh release create anki --title "Anki package" --latest=false \
-              --notes "Anki package for the vault, rebuilt on every push to main. See the “Review on Android with Anki” section of the README."
+              --notes "Anki package for the vault, rebuilt after checks pass on main. See the Anki guide linked from the README."
           fi
           gh release upload anki dist/ai-engineering.apkg --clobber

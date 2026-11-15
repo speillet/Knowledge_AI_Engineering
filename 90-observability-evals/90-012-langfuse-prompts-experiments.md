@@ -1,4 +1,4 @@
-# Langfuse — Prompts, datasets & experiences — Flashcards
+# Langfuse — Prompts, datasets & experiments — Flashcards
 Tags: #flashcards #ai-engineering #agents #production
 Verified on: 9 October 2026 — API cited against official documentation; limits spelled out in maps.
 <!-- summary: labels and versions, prompt cache, fallback, promotion, evaluation games, comparable runs, missing scores, costs per achievement and feedback, confirmation game independence, absent scores, version cache. -->
@@ -57,7 +57,7 @@ For a sensitive task, proper refusal may be preferable to a generic improvised i
 
 Why should a Langfuse experience fix more than the prompt? <!--anki:3035313633663562333364343465366338363566343438383064313730313635-->
 ?
-The output also depends on the **model**, the tools, the corpus, the configuration and the initial state. Save their versions with the identity of the dataset and the evaluator, for example in `run_experiment(..., metadata={"modele": "modele-x", "corpus": "snap-2026-10-20", "tools": "v7"})`.
+The output also depends on the **model**, the tools, the corpus, the configuration and the initial state. Save their versions with the identity of the dataset and the evaluator, for example in `run_experiment(..., metadata={"model": "model-x", "corpus": "snap-2026-10-20", "tools": "v7"})`.
 
 If two candidates do not have access to the same documents or if the second takes advantage of a memory created by the first, the comparison is biased. Build an independent fixture for each essay, while maintaining comparable conditions. The traces then help to explain the observed deviations.
 

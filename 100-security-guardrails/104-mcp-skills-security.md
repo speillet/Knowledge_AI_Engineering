@@ -1,4 +1,4 @@
-# MCP Security, Tools & Skills — Flashcards
+# MCP, tool & skill security — Flashcards
 Tags: #flashcards #ai-engineering #security #mcp #supply-chain #llm
 Verified on: 25 September 2026 — This factsheet lists products, versions or regulatory texts that are evolving quickly.
 <!-- summary: attack surface, tool poisoning, rug pull and tool shadowing (and their differences), postmark-mcp, ClawHub, ToxicSkills, spec permission rules, minimal scopes, SSRF and URL traps, local servers, pre-authorization evaluation, gateway MCP, SSRF upon discovery, dependency lock, update scope. -->
@@ -197,7 +197,7 @@ Scenario: the MCP gateway alerts you. The `search_docs` tool description of an a
 2. **Search for calls** made since the change: arguments sent, secrets can be exfiltrated
 3. **Make turn** the secrets exposed
 4. **Investigate source**: malicious update (**rug pull**), maintainer account or compromised publishing chain
-5. **Durcir**: pinned versions, mandatory review of any new description, no secrets accessible to agents
+5. **Harden**: pinned versions, mandatory review of any new description, no secrets accessible to agents
 
 **Trap**: Go back to the old version without checking what has already leaked.
 

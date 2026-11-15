@@ -1,4 +1,4 @@
-# ChainForge & Prompt Review — Flashcards
+# ChainForge & prompt evaluation — Flashcards
 Tags: #flashcards #ai-engineering #evals #prompts #llm
 <!-- summary: compare prompts and models, automatic evals, regression tests and tipping cases, evals as a prerequisite for deployment, order of variants and experience biases, variable control, discordant cases. -->
 

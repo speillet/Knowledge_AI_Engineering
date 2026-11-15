@@ -1,4 +1,4 @@
-# Contracts, Schematics & Data Quality — Flashcards
+# Data contracts, schemas & quality — Flashcards
 Tags: #flashcards #ai-engineering #data #data-engineering #quality
 <!-- summary: producer-consumer contract, schema and business constraints, freshness and completeness, compatibility, migrations, quarantine, drift or incident, atomic publication and operational lineage, semantic contracts and units, compatibility of values, quarantine and population. -->
 
@@ -85,7 +85,7 @@ What lineage to keep to diagnose a bad data in a prediction? <!--anki:6264366563
 ?
 Link **source and version, transformations and configuration, published dataset and consumer**. For a prediction, save the useful references to the variables or documents actually used, with the time and version of the model.
 
-Example: each decision records `modele=fraude-v12` and `features=snapshot-2026-10-20T06` ; a Corrupt Lot 20 October then designates exactly the decisions concerned, to play alone again. A simple “current” table name is not enough if its content has changed. Adapt the granularity of the lineage to the necessary diagnosis and confidentiality, without duplicating all the sensitive data in the logs.
+Example: each decision records `model=fraud-v12` and `features=snapshot-2026-10-20T06` ; a Corrupt Lot 20 October then designates exactly the decisions concerned, to play alone again. A simple “current” table name is not enough if its content has changed. Adapt the granularity of the lineage to the necessary diagnosis and confidentiality, without duplicating all the sensitive data in the logs.
 
 ---
 

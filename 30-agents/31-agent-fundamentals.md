@@ -1,4 +1,4 @@
-# Basics of — Flashcards
+# Agent fundamentals — Flashcards
 Tags: #flashcards #ai-engineering #agents #llm
 <!-- summary: workflow or agent, ReAct pattern, minimal agent components, three forms of human-in-the-loop, risks and parades, cost orders of magnitude, stop conditions, end-of-task proof, environmental observableness, success and trajectory. -->
 

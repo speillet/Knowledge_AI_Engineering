@@ -1,4 +1,4 @@
-# Security of agents — Threats & incidents — Flashcards
+# Agent security — Threats & incidents — Flashcards
 Tags: #flashcards #ai-engineering #security #agents #threats #llm
 Verified on: 25 September 2026 — This factsheet lists products, versions or regulatory texts that are evolving quickly.
 <!-- summary: new threat model, unreliable entries, agent hijacking, detection defense limits, incidents (MCP GitHub, EchoLeak, Supabase, Replit), memory poisoning, invisible injection, multi-agent risks, denial of wallet, code execution, attackers equipped with agents, injection into a valid tool result, secondary channels, privilege amplification. -->

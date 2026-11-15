@@ -21,3 +21,10 @@ __pycache__/
 # Quality tool caches (make ruff, make typecheck)
 .ruff_cache/
 .mypy_cache/
+
+# Isolated support-agent workshop dependencies
+.venv-agentic/
+
+# Generated documentation
+build/
+site/

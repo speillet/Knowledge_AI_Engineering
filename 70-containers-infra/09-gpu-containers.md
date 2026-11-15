@@ -1,4 +1,4 @@
-# GPU in container — Flashcards
+# GPUs in containers — Flashcards
 Tags: #flashcards #containers #gpu #cuda #infra
 <!-- summary: NVIDIA Container Toolkit, driver and CUDA, CUDA images, GPU Operator, Apptainer `--nv`, ROCm, topology and communications between GPU, visibility and allocation, real CUDA test. -->
 

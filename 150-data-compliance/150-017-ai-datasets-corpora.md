@@ -1,4 +1,4 @@
-# Dataset building & corpus IA — Flashcards
+# Building AI datasets & corpora — Flashcards
 Tags: #flashcards #ai-engineering #data #data-engineering
 Verified on: 9 October 2026 — technical references and examples of this file.
 <!-- summary: manifests, document identity, parsing, deduplication and splits, shards, streaming datasets, shuffles, workers, mixing sources, filtering, packing and resuming training, spreading withdrawals to training caches, splitting by source, packing and leaking. -->

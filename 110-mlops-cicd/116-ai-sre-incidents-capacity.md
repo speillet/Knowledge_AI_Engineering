@@ -1,4 +1,4 @@
-# SRE: incidents & capacity of IA services — Flashcards
+# SRE — Incidents & capacity for AI services — Flashcards
 Tags: #flashcards #ai-engineering #mlops #sre #incidents #capacity
 <!-- summary: SLI user, error budgets, burn rate, multi-window alerts, bounded queues, admission, backup capability, time propagation, incident management, rollback, RTO and RPO, postmortem and recovery, RTO and RPO compliance calculation, boot-up dependency, drive-service isolation, backlog resorption calculation, ML impact after restoration, recovery load, recovery exercises. -->
 

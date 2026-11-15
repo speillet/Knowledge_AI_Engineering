@@ -176,7 +176,7 @@ Describe possible errors, estimated frequency, reversibility and people affected
 
 Calculation: a product receives 12 tasks/s; each task does on average 4 calls LLM, and 10% of these calls require exactly one pick-up. What average call throughput would you expect? <!--anki:3837663937666661313835333434636261353265383138656134333066633363-->
 ?
-The nominal bitrate is **12 × 4 = 48 calls/s**. Repeats add **4.8 calls/s**, or **52.8 calls/s**.
+The nominal throughput is **12 × 4 = 48 calls/s**. Repeats add **4.8 calls/s**, or **52.8 calls/s**.
 
 This average calculation ignores bursts and the correlation of failures. Also size tokens, concurrency and tool dependencies. A product QPS does not translate directly into supplier QPS, especially for an agentic loop of variable length.
 

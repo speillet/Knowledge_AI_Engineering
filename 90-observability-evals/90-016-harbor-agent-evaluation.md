@@ -1,81 +1,81 @@
-# Harbor: Evaluate Container Agents — Flashcards
+# Harbor: Evaluating Agents in Containers — Flashcards
 Tags: #flashcards #ai-engineering #evals #agents #benchmarks #containers
 Verified on: 14 November 2026 — This factsheet lists fast-moving products, versions or regulatory texts.
-<!-- summary: Harbor role, task components, checker and reward files, trial or job, oracle and nop agents, shared or separate checker, run command and its options, job or task skills, skill provenance, comparison with and without skill, reward aggregation, mis-trials, calculation of invalid rewards, pass@k, reward hacking, lint, check-and-anal. -->
+<!-- summary: Harbor purpose, task components, verifiers and reward files, trials and jobs, oracle and nop agents, shared and separate verifiers, run options, job and task skills, skill provenance, comparisons with and without skills, reward aggregation, trial errors, invalid rewards, pass@k, reward hacking, lint, check and analyze, restricted networks, task versions and re-verification. -->
 
 
 What is Harbor? <!--anki:6239333066353262363737633431323738373066316330666434613364326133-->
 ?
-An open source framework, under the Apache 2.0 license, created by the **Terminal-Bench** team to **evaluate and optimize agents and models** in containers. It runs existing agents, such as Claude Code, Codex CLI or OpenHands, or a home agent, on isolated tasks for which a checker calculates the reward.
+An open source framework under the Apache 2.0 license, created by the **Terminal-Bench** team to **evaluate and optimize agents and models** in containers. It runs existing agents, such as Claude Code, Codex CLI or OpenHands, or a custom agent, on isolated tasks whose verifier computes a reward.
 
-This is the official harness of Terminal-Bench 2.0; it integrates third-party benchmarks like SWE-bench and produces reusable trajectories in [[55-agentic-rl|Agentic RL]]. The tests run locally with Docker, or in parallel with sandbox suppliers like Daytona or Modal.
+This is the official harness of Terminal-Bench 2.0; it integrates third-party benchmarks like SWE-bench and produces reusable trajectories in [[55-agentic-rl|Agentic RL]]. The tests run locally with Docker, or in parallel with sandbox providers like Daytona or Modal.
 
 ---
 
 What are the components of a Harbor task? <!--anki:6531363938333430363665383438303938616565346534643432343862363438-->
 ?
-An autonomous file:
-- **`instruction.md`**: the instructions given to the agent;
-- **`task.toml`**: metadata, timelines, resources, network, checker mode;
-- **`environment/`**: the definition of sandbox, often a `Dockerfile`;
-- **`tests/test.sh`** : the auditor, Who writes the reward;
+A self-contained directory:
+- **`instruction.md`**: instructions given to the agent;
+- **`task.toml`**: metadata, timeouts, resources, network settings and verifier mode;
+- **`environment/`**: the sandbox definition, often a `Dockerfile`;
+- **`tests/test.sh`**: the verifier, which writes the reward;
 - **`solution/solve.sh`**, optional: a reference solution.
 
-A task does not depend on the framework: it is a versioned package that another compatible tool can run. Treating it as — software review, testing, — versions prevents a task defect from passing for an agent failure.
+A task is independent of the framework: it is a versioned package that another compatible tool can run. Treat it as software, with reviews, tests and versions, to avoid mistaking a task defect for an agent failure.
 
 ---
 
-How Does a Harbor Checker Produce a Trial Reward? <!--anki:3866306466343931396562353462636461626635366566343235656532666566-->
+How does a Harbor verifier produce a trial reward? <!--anki:3866306466343931396562353462636461626635366566343235656532666566-->
 ?
-`tests/test.sh` runs after the agent and writes a number in **`/logs/verify/reward.txt`**, or metrics named in **`/logs/verify/reward.json`**, priority if both exist:
+`tests/test.sh` runs after the agent and writes a number to **`/logs/verifier/reward.txt`**, or named metrics to **`/logs/verifier/reward.json`**. The JSON file takes precedence if both exist:
 
 ```bash
 #!/bin/bash
 set -euo pipefail
 if pytest /tests/test_outputs.py; then
-  echo 1 > /logs/verify/reward.txt
+  echo 1 > /logs/verifier/reward.txt
 else
-  echo 0 > /logs/verify/reward.txt
+  echo 0 > /logs/verifier/reward.txt
 fi
 ```
 
-Use absolute paths. Harbor clears these files at the beginning of the check: an agent cannot deposit its own reward there. The script can also call a [[95-llm-as-judge|juge LLM]], for example with the `harbor-rewardkit` package.
+Use absolute paths. Harbor clears these files at the start of verification, preventing an agent from leaving its own reward there. The script can also call an [[95-llm-as-judge|LLM judge]], for example through the `harbor-rewardkit` package.
 
 ---
 
 Do not confuse: trial and job in Harbor? <!--anki:6464323531366133323364643461353861373831363864656430376666653135-->
 ?
-A **Trial** is **an agent's attempt on a task** Start the sandbox, execution of the agent, verification, reward and trajectory. A **Job** is an **Set of Trials** launched by `harbor run` It combines datasets. tasks, agents and models, and execute the trials in parallel.
+A **trial** is **one attempt by an agent at a task**: sandbox startup, agent execution, verification, reward and trajectory. A **job** is a **set of trials** launched with `harbor run`: it combines datasets, tasks, agents and models, and runs trials in parallel.
 
-With 30 tasks, two agents and 5 attempts per task, a job counts 300 trials. The statistics, like the average or pass@k, are calculated in the job, by agent, model and dataset. The **trajectory** of each trial, in ATIF format, is used for debugging.
+With 30 tasks, two agents and 5 attempts per task, a job contains 300 trials. Statistics such as the mean and pass@k are computed within the job, grouped by agent, model and dataset. Each trial's **trajectory**, in ATIF format, supports debugging.
 
 ---
 
-What are Oracle and Nop Agents for in Harbor? <!--anki:3961323633656464376264363463623262306430376239363734313535383663-->
+What are the oracle and nop agents for in Harbor? <!--anki:3961323633656464376264363463623262306430376239363734313535383663-->
 ?
-To **test the task before testing an agent**. **`oracle`** executes `solution/solve.sh`: it must get 1, otherwise the task is insoluble or the checker rejects a good solution. **`nop`** does nothing: it must get 0, otherwise the checker accepts the start state.
+They **test the task before testing an agent**. **`oracle`** runs `solution/solve.sh` and should receive 1; otherwise, the task is unsolvable or the verifier rejects a correct solution. **`nop`** does nothing and should receive 0; otherwise, the verifier accepts the initial state.
 
 ```bash
-harbor run -p taches/ma-tache -a oracle
-harbor run -p taches/ma-tache -a nop
+harbor run -p tasks/my-task -a oracle
+harbor run -p tasks/my-task -a nop
 ```
 
-A task can provide multiple reference solutions, chosen by a variable passed with `--ae`. A checker that accepts only one implementation is **over-adjusted** and will penalize correct agents.
+A task can provide several reference solutions, selected through a variable passed with `--ae`. A verifier that accepts only one implementation is **overfit** and penalizes correct agents.
 
 ---
 
-Do not confuse: Shared Checker and Separate Checker in Harbor? <!--anki:6663336334633962353863663432663739663937633135623836323136666233-->
+Do not confuse: shared and separate verifiers in Harbor? <!--anki:6663336334633962353863663432663739663937633135623836323136666233-->
 ?
-**Shared** (`environment_mode = "shared"`): Tests run in the agent's container, which has been able to read them or modify what they inspect. **Separate**: A new sandbox, where Harbor copies only the **artifacts** declared in `task.toml`.
+**Shared** (`environment_mode = "shared"`): tests run in the agent's container, where the agent may have read them or modified what they inspect. **Separate**: tests run in a fresh sandbox, to which Harbor copies only the **artifacts** declared in `task.toml`.
 
 ```toml
 artifacts = ["/app/output"]
 
-[verify]
+[verifier]
 environment_mode = "separate"
 ```
 
-`harbor init` creates separate tasks by default. Limit: what needs to be checked must exist as **files**; a current process or a state in memory must be materialized, otherwise the shared mode remains necessary. Separate mode also allows to re-check existing trials.
+`harbor init` creates tasks with separate verification by default. The limitation is that anything to be checked must exist as **files**: a running process or in-memory state must be materialized, otherwise shared mode is still necessary. Separate mode also supports re-verifying existing trials.
 
 ---
 
@@ -85,120 +85,120 @@ How do I launch an evaluation job with Harbor? <!--anki:383361663132303464353032
 harbor run -d terminal-bench@2.0 -a claude-code \
   -m anthropic/claude-opus-5-5 -n 8 -k 5 -r 2
 ```
-- `-d`: registry dataset, `-p` for a local folder, `-t` for a task
+- `-d`: a registry dataset; use `-p` for a local directory or `-t` for a task;
 - `-a` and `-m`: agent and model;
-- `-n`: concurrent trials, 4 by default;
-- `-k`: attempts by task, 1 by default;
-- `-r`: Repeated after error, 0 by default.
+- `-n`: concurrent trials, default 4;
+- `-k`: attempts per task, default 1;
+- `-r`: retries after errors, default 0.
 
-`--env daytona` moves sandboxes to a vendor to parallelize. `--print-config` displays the configuration: the versioner makes the job replayable.
+`--env daytona` moves sandboxes to a provider to increase parallelism. `--print-config` displays the configuration; version it to make the job reproducible.
 
 ---
 
 How does Harbor provide skills to the agent during a trial? <!--anki:6637373038613239323238343433393562323438613530373237303066376230-->
 ?
-With the repeatable option `--skill`, which accepts a local folder, `org/repo@ref` or a GitHub URL in `/tree/<ref>/<chemin>`:
+Use the repeatable `--skill` option, which accepts a local directory, `org/repo@ref` or a GitHub URL ending in `/tree/<ref>/<path>`:
 
 ```bash
-harbor run -p taches/ -a codex -m openai/<modele> \
-  --skill ./skills/analyse-csv --skill mon-org/skills@v1.4
+harbor run -p tasks/ -a codex -m openai/<model> \
+  --skill ./skills/analyze-csv --skill my-org/skills@v1.4
 ```
 
-For each trial, Harbor copies each skill to `/runtime/skills/<nom>` of the sandbox, after the health check and before the agent is installed. The integration then saves it to the native location: `$HOME/.agents/skills` for Codex, `$CLAUDE_CONFIG_DIR/skills` for Claude Code. If two skills have the same folder name, **the last wins**.
+For each trial, Harbor copies each skill into the sandbox at `/runtime/skills/<name>`, after the health check and before agent installation. The integration then registers it at the native location: `$HOME/.agents/skills` for Codex or `$CLAUDE_CONFIG_DIR/skills` for Claude Code. If two skills have the same directory name, **the last one wins**.
 
 ---
 
-Do not confuse: Job and task skills in Harbor? <!--anki:3936326531326430653566323430653438646334303034376639323438363734-->
+Do not confuse: task skills and job skills in Harbor? <!--anki:3936326531326430653566323430653438646334303034376639323438363734-->
 ?
-The **task skills** are integrated into the image, for example `COPY skills/ /skills/` in the `Dockerfile`, and declared by `environment.skills_dir`: all agents receive the same. The **job skills** come from `--skill` at launch: you change skills without rebuilding the task.
+**Task skills** are built into the image, for example with `COPY skills/ /skills/` in the `Dockerfile`, and declared through `environment.skills_dir`: all agents receive the same skills. **Job skills** are supplied through `--skill` at launch, so they can change without rebuilding the task.
 
-Job skills are copied to the `skills_dir` of the task, and a job skill **replaces** the task skill of the same name for this trial. To compare with and without skill, do not mix the two: a skill remained in the image contaminates the condition "without skill".
+Job skills are copied into the task's `skills_dir`. A job skill **replaces** a task skill with the same name for that trial. Keep these sources distinct when comparing runs with and without a skill: a skill left in the image contaminates the "without skill" condition.
 
 ---
 
-How does Harbor make it traceable the version of a skill used in a job? <!--anki:3665666433613337383539383465313939633862393836663061353166386537-->
+How does Harbor track the version of a skill used in a job? <!--anki:3665666433613337383539383465313939633862393836663061353166386537-->
 ?
-The **job lock file** records, for each skill, his name, its source, a **digest SHA-256** of all its files and, for a Git skill, the URL of the repository and the **commit resolved**. Git skills are cached by commit in `~/.cache/harbor/skills/`.
+The **job lock file** records each skill's name, source and **SHA-256 digest** of all its files. For a Git skill, it also records the repository URL and **resolved commit**. Git skills are cached by commit in `~/.cache/harbor/skills/`.
 
-A branch can move forward after the job: the commit and the digest say exactly what content produced the results. Compare the digests of two jobs before assigning a gap to "the skill": if the content differs, we may be comparing two versions without knowing it.
+A branch can advance after the job runs; the commit and digest identify the exact content that produced the results. Compare digests before attributing a difference between jobs to "the skill": different content may mean that two versions were compared unintentionally.
 
 ---
 
-How to compare an agent with and without skill in Harbor? <!--anki:3030323739396665306531353435336661663932393430393663313263313731-->
+How do you compare an agent with and without a skill in Harbor? <!--anki:3030323739396665306531353435336661663932393430393663313263313731-->
 ?
-Two identical jobs, to the skill limit:
+Run two jobs that differ only in the skill:
 
 ```bash
-harbor run -p taches/ -a claude-code -m anthropic/claude-opus-5-5 \
+harbor run -p tasks/ -a claude-code -m anthropic/claude-opus-5-5 \
   -k 5 --job-name without-skill
-harbor run -p taches/ -a claude-code -m anthropic/claude-opus-5-5 \
-  -k 5 --job-name with-skill --skill ./skills/migration-schema
+harbor run -p tasks/ -a claude-code -m anthropic/claude-opus-5-5 \
+  -k 5 --job-name with-skill --skill ./skills/schema-migration
 ```
 
-Keep tasks, agent, model, attempts, and environment; check that no skills are already in the images. Compare **per task**, then average, valid rewards, and tokens. `harbor view` shows in trajectories whether the skill has been loaded: non-trigger and inefficient skill do not correct in the same way ([[90-014-agent-skill-evaluation|Assessment of Skills]]).
+Keep tasks, agent, model, attempt count and environment fixed; check that the images contain no skills already. Compare results **per task**, then the mean, valid rewards and token use. Trajectories in `harbor view` show whether the skill was loaded: failure to trigger a skill and an ineffective skill require different fixes ([[90-014-agent-skill-evaluation|skill evaluation]]).
 
 ---
 
 How does Harbor aggregate the rewards of a job? <!--anki:3737663261373437636231373464396538643235363135303232366338366132-->
 ?
-By default, it makes the **average** of the rewards; for a multi-dimensional `reward.json`, an average **per dimension**, where an absent dimension counts 0. A `metric.py` placed in the dataset replaces this calculation: it reads a JSONL file of rewards (`-i`) and writes a JSON object of metrics (`-o`).
+By default, Harbor computes the **mean** reward. For a multidimensional `reward.json`, it computes a mean **per dimension**, counting a missing dimension as 0. A `metric.py` in the dataset replaces this calculation: it reads a JSONL reward file (`-i`) and writes a JSON metrics object (`-o`).
 
-To compare two conditions, also look at the results **per task** and per domain, as well as the number of valid rewards on each side ([[94-evals-methodology|methodology of evals]]).
+The overall mean combines tasks with very different difficulty levels. Also compare results **per task** and domain, and the number of valid rewards in each condition ([[94-evals-methodology|evaluation methodology]]).
 
 ---
 
 What does Harbor do with a trial that ends in error? <!--anki:6332353832386265663962393434346261643139393166306464373131613136-->
 ?
-Each type of error has its policy: resume or not, check or not, count or not the reward.
-- **Agent time or context exceeded**: verified, reward **valid**; this is an agent failure.
-- **Sandbox that does not start**: recovery, no verification, invalid reward.
-- **Error ofAPI or flow limit** : recovery and verification, but Reward **Invalid**.
+Each error type has a policy defining whether to retry, verify and count the reward.
+- **Agent timeout or context limit exceeded**: verification runs and the reward is **valid**; this counts as an agent failure.
+- **Sandbox startup failure**: retry, no verification, invalid reward.
+- **API error or rate limit**: retry and verification, but an **invalid** reward.
 
-An invalid reward leaves the **numerator and the denominator** of the average. The restarts are set with `-r`, and `override_error_policy` modifies the policy of an error type.
+Invalid rewards are excluded from **both the numerator and denominator** of the mean. Set retries with `-r`; `override_error_policy` changes the policy for a particular error type.
 
 ---
 
-Calculation: A 20 trials account job: 10 achievements and 6 valid failures, plus 4 invalid reward API error trials. What average does Harbor earn, and what would be the rate if these 4 trials counted as failures? <!--anki:3533313230643162643433613463393161356161393264313232386166623538-->
+Calculation: a job has 20 trials: 10 successes, 6 valid failures and 4 API-error trials with invalid rewards. What mean does Harbor report, and what would it report if those 4 errors counted as failures? <!--anki:3533313230643162643433613463393161356161393264313232386166623538-->
 ?
 ```text
-Harbor : 10 / (10 + 6) = 0,625
-errors counted in failure: 10 / 20 = 0.50
+Harbor: 10 / (10 + 6) = 0.625
+Errors counted as failures: 10 / 20 = 0.50
 ```
-Harbor reports **62.5%**. Exclusion is fair if errors hit randomly. If they mostly hit long tasks, which make more calls and encounter more throughput limits, they remove difficult tasks and inflate the score. Before comparing two conditions, check that they have as many valid rewards and restart trial errors.
+Harbor reports **62.5%**. Exclusion is fair if errors occur randomly. If errors mostly affect long tasks that make more calls and encounter more rate limits, exclusion removes difficult tasks and inflates the score. Before comparing conditions, check that they have the same number of valid rewards and rerun trials that ended in error.
 
 ---
 
 When does Harbor calculate pass@k, and for what values of k? <!--anki:3938313632666236356435363438623239653733323665666530313566393936-->
 ?
-Only if each reward is **binary**, 0, or 1, and only one dimension. Harbor applies the [[114-reproducibility-variance|pass@k]] non-biased estimator per task, then averages on tasks.
+Only when every reward is **binary**, 0 or 1, and has a single dimension. Harbor applies the unbiased [[114-reproducibility-variance|pass@k]] estimator per task, then averages across tasks.
 
-The values of k are the powers of 2 from 2 and the multiples of 5, until the **smaller number of valid tests** of a task. With `-k 5` and no errors: k ∈ {2, 4, 5}. If a task has only 3 valid rewards, only pass@2 Stay. A reward continues. As 0.7, Delete Pass@k.
+Values of k are powers of 2 starting at 2 and multiples of 5, up to the **smallest number of valid trials** for any task. With `-k 5` and no errors, k ∈ {2, 4, 5}. If a task has only 3 valid rewards, only pass@2 remains. A continuous reward, such as 0.7, disables pass@k.
 
 ---
 
 What are the three types of reward hacking distinguished by Harbor? <!--anki:6362363631623462633662303432633362353062393038386462396430336530-->
 ?
-- **Alteration** (*tampering*): The agent disrupts the notation, for example by modifying the checker or pointing a symbolic link to the solution.
-- **Cheat** (*cheating*): It gets the answer from a prohibited source, such as the benchmark solution published online.
-- **Failure** (*loophole*): it satisfies the tests without solving the problem, for example by hard-coded the verified cases.
+- **Tampering**: the agent interferes with scoring, for example by modifying the verifier or pointing a symbolic link to the solution.
+- **Cheating**: it obtains the answer from a prohibited source, such as a benchmark solution published online.
+- **Loopholes**: it satisfies the tests without solving the problem, for example by hard-coding the checked cases.
 
-Each type calls its parade: isolate the checker, restrict the network, strengthen the tests. The same risk exists at training ([[55-agentic-rl|reward hacking in RL]]).
+Each type needs a corresponding defense: isolate the verifier, restrict the network and strengthen the tests. The same risk exists during training ([[55-agentic-rl|reward hacking in RL]]).
 
 ---
 
 Do not confuse: harbor lint, harbor check and harbor analyze? <!--anki:6163373736353735656531333432376261353733323438386338383065653030-->
 ?
-**`harbor lint`** statically controls the configuration of a task: solution or tests copied into the agent image, shared checker, image not pinned by digest, privileged container.
+**`harbor lint`** statically checks task configuration: solutions or tests copied into the agent image, shared verifiers, images not pinned by digest and privileged containers.
 
-**`harbor check`** entrusts an agent with reviewing the sources of the task according to a grid, default 11 criteria inspired by Terminal-Bench.
+**`harbor check`** asks an agent to review task sources against a rubric, using 11 Terminal-Bench-inspired criteria by default.
 
-**`harbor analyze`** intervenes **after** the job: an agent reads the task, the logs and the trajectory of each trial, then reports the rewards obtained by deceiving the checker and the instructions too vague. The first two precede the tests; the third audits the results.
+**`harbor analyze`** runs **after** a job: an agent reads the task, logs and each trial's trajectory, then flags rewards obtained by fooling the verifier and overly vague instructions. The first two run before trials; the third audits the results.
 
 ---
 
 How does Harbor limit network access cheating? <!--anki:6236613738303436396239643463646138326461623637353861353431646539-->
 ?
-By `network_mode` in `task.toml`: `public`, `allowlist` with `allowed_hosts`, or `no-network`, separately adjustable for agent and verify.
+Set `network_mode` in `task.toml` to `public`, `allowlist` with `allowed_hosts`, or `no-network`. Agent and verifier settings can be configured separately.
 
 ```toml
 [environment]
@@ -206,18 +206,18 @@ network_mode = "allowlist"
 allowed_hosts = ["pypi.org"]
 ```
 
-When the network is restricted, Harbor automatically allows the agent-declared inference point, or the configured `base_url`, and **disables built-in web search** of agents that have one. To limit awareness of being evaluated, paths and variables visible to the agent have neutral names.
+With a restricted network, Harbor automatically allows the agent-declared inference endpoint or configured `base_url`, and **disables built-in web search** for agents that provide it. Paths and variables visible to the agent use neutral names to limit awareness of being evaluated.
 
 ---
 
-What happens when you change the version of a task in a dataset Harbor? <!--anki:3135623836653661393034393438303461313634643336396264643061346331-->
+What happens when a task version changes in a Harbor dataset? <!--anki:3135623836653661393034393438303461313634643336396264643061346331-->
 ?
-Harbor applies the **semantic versioning** to tasks:
-- **Corrective**: Existing trials are reused;
-- **minor**: they are **re-verified** with the new checker;
-- **major**: they are **relaunched**.
+Harbor applies **semantic versioning** to tasks:
+- **Patch**: existing trials are reused;
+- **Minor**: existing trials are **re-verified** with the new verifier;
+- **Major**: trials are **rerun**.
 
-`harbor run -d <dataset>@<new-version> -a <agent> --diff <old-job>` applies these rules. Correcting an overly permissive checker thus costs a re-check, not a new passage of agents, provided you use a separate checker and preserved artifacts.
+`harbor run -d <dataset>@<new-version> -a <agent> --diff <old-job>` applies these rules. Fixing an overly permissive verifier therefore requires re-verification rather than rerunning agents, provided the task uses a separate verifier and the artifacts were retained.
 
 ---
 
@@ -236,27 +236,27 @@ Scenario: your team wants to know if its internal schema migration skill really 
 
 ---
 
-Scenario: on your internal dataset Harbor, a new agent changes from 55% to 94% success in one version. Before celebrating, what do you check? <!--anki:6362666337626132363061343439613962613933383538373665626230636439-->
+Scenario: an agent jumps from 55% to 94% success on your internal Harbor dataset in one release. What do you check before celebrating? <!--anki:6362666337626132363061343439613962613933383538373665626230636439-->
 ?
-1. **Read successful trajectories** with `harbor view`: Does the agent solve the task or bypass the tests?
-2. **Launch `harbor analyze`** on the job to report alterations, cheats and flaws.
-3. **Audit tasks** with `harbor lint`: shared checker, in-image testing, open network.
-4. **Durcir**: separate checker, non-root agent, network whitelist, multiple reference solutions.
-5. **Correct and version** tasks, then re-check with `--diff`.
+1. **Read successful trajectories** with `harbor view`: does the agent solve the task or bypass the tests?
+2. **Run `harbor analyze`** to flag tampering, cheating and loopholes.
+3. **Audit tasks** with `harbor lint`: shared verifiers, tests in the agent image and open networks.
+4. **Harden the environment**: separate verifier, non-root agent, network allowlist and multiple reference solutions.
+5. **Fix and version** tasks, then re-verify with `--diff`.
 
-**Trap**: Publish the score before you have read a single track.
+**Trap**: publishing the score before reading a single trajectory.
 
 ---
 
-Scenario: you discover that the checker of a task accepts an empty output file, whereas 2,000 trials have already been noted on this dataset. How do you fix without restarting everything? <!--anki:3637613938643835316637363433306539623232323262316438313863666433-->
+Scenario: a task verifier accepts an empty output file, but 2,000 trials have already been scored on the dataset. How do you fix this without rerunning everything? <!--anki:3637613938643835316637363433306539623232323262316438313863666433-->
 ?
-1. **Reproduce** the fault: An empty output file must get 0 with the checker fixed.
-2. **Correct** `tests/` and add a checker test, excluded from the sandbox by `.harborignore`.
-3. **Mount the minor version** of the task: existing trials will be re-checked, not re-launched.
-4. **Re-check** with `--diff` on the old job, which assumes a separate checker and preserved artifacts.
-5. **Publish** the deviation before and after correction, and report the relevant rankings.
+1. **Reproduce the defect**: an empty output file must receive 0 from the corrected verifier.
+2. **Fix `tests/`** and add a verifier test, excluded from the sandbox through `.harborignore`.
+3. **Increment the task's minor version**: existing trials will be re-verified rather than rerun.
+4. **Re-verify** the old job with `--diff`, using a separate verifier and retained artifacts.
+5. **Publish the before-and-after difference** and identify affected rankings.
 
-**Strap**: fix without changing version, which mixes old and new notes.
+**Trap**: fixing the verifier without changing the version, mixing old and new scores.
 
 ---
 
@@ -264,15 +264,15 @@ Scenario: you discover that the checker of a task accepts an empty output file, 
 
 - [Harbor — repository and README, version 0.26.0](https://github.com/harbor-framework/harbor)
 - [Harbor — concepts](https://docs.harborframework.com/core-concepts)
-- [Harbor — task format](https://docs.harborframework.com/tasks/overview), [Checker](https://docs.harborframework.com/tasks/verifier) and [solution](https://docs.harborframework.com/tasks/solution)
+- [Harbor — task format](https://docs.harborframework.com/tasks/overview), [Verifier](https://docs.harborframework.com/tasks/verifier) and [solution](https://docs.harborframework.com/tasks/solution)
 - [Harbor — Launching a Job](https://docs.harborframework.com/jobs/run-a-job), [skills](https://docs.harborframework.com/jobs/skills) and [Task Skills](https://docs.harborframework.com/tasks/skills)
-- [Harbor — error classification](https://docs.harborframework.com/jobs/error-classification) and [Metric](https://docs.harborframework.com/datasets/metrics)
-- [Harbor — Cracking down on reward hacking, 28 octobre 2026](https://docs.harborframework.com/news/reward-hacking)
+- [Harbor — error classification](https://docs.harborframework.com/jobs/error-classification) and [Metrics](https://docs.harborframework.com/datasets/metrics)
+- [Harbor — Cracking down on reward hacking, 28 October 2026](https://docs.harborframework.com/news/reward-hacking)
 
 ## Connections
 - [[90-014-agent-skill-evaluation|Evaluating Agent Skills]] — protocol with and without skill that Harbor executes
 - [[90-015-agent-skills-format-skills-ref|Agent Skills & skills-ref]] — validate the format before injecting a skill
-- [[96-evals-rag-agents|Evaluation of GARs & Agents]] — eval environments and end state verification
+- [[96-evals-rag-agents|Evaluation of RAG systems & Agents]] — eval environments and end state verification
 - [[114-reproducibility-variance|Reproducibility & variance]] — pass@k and repeated tests
 - [[55-agentic-rl|Agentic RL]] — training environments and reward hacking
 - [[49-coding-agents|Code Agents]] — code agent benchmarks and their limits

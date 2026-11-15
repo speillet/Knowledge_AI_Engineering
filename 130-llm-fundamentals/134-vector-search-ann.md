@@ -1,4 +1,4 @@
-# Vector Search & Index ANN — Flashcards
+# Vector search & ANN indexes — Flashcards
 Tags: #flashcards #ai-engineering #fundamentals #vector-search #rag
 <!-- summary: brute force or ANN, index recall or retrieval recall, calculation of the memory of an HNSW index, HNSW and its parameters, IVF, Product Quantization, scalar and binary quantization, DiskANN, filtering, index recall, pgvector or dedicated base, exploitation, sizing, processing of ex æquo in an ANN benchmark, recall under filtering. -->
 

@@ -1,174 +1,174 @@
-# Delivery, idempotency & competition — Flashcards
+# Delivery, idempotency & concurrency — Flashcards
 Tags: #flashcards #ai-engineering #system-design #distributed #idempotency
 <!-- summary: guarantees of delivery, limits of exactly once, ambiguous timeout, identity of operations, atomic deduplication, retention, ack, order by entity, optimistic concurrency, isolation and splitting tokens, atomicity of deduplication and effect, key and parameters, duration of deduplication. -->
 
 
-Do not confuse: delivery at most once and at least once? <!--anki:6338323339363635373833343438333462316232386335666330386265396435-->
+Do not confuse: at-most-once and at-least-once delivery? <!--anki:6338323339363635373833343438333462316232386335666330386265396435-->
 ?
-**At most once** avoids re-delivery but can lose a message. **At least once** allows re-delivery so as not to abandon an unconfirmed message; the consumer must support duplicates.
+**At-most-once** avoids redelivery but can lose a message. **At-least-once** allows redelivery so an unconfirmed message is not abandoned; the consumer must tolerate duplicates.
 
-The choice depends on the cost of a loss: losing one telemetry point in a thousand is acceptable, losing an order is not. The second requires at least once and deduplication. A broker does not promise to try again forever. For an agent action, distinguish message received and business effect realized: two receptions can correspond to a single effect if the consumer is properly designed.
+The choice depends on the cost of loss: losing one telemetry point in a thousand may be acceptable; losing an order is not. The latter needs at-least-once delivery and deduplication. A broker does not necessarily promise to retry forever. For an agent action, distinguish receipt of a message from completion of its business effect: two deliveries can produce one effect if the consumer is designed correctly.
 
 ---
 
-Why does a warranty exactly once have to specify its perimeter? <!--anki:3866373364386264623830343439393839643132626537386366336564633831-->
+Why must an exactly-once guarantee specify its scope? <!--anki:3866373364386264623830343439393839643132626537386366336564633831-->
 ?
-It may concern **an internal transaction to the engine**, without including an external payment or email. For example, Kafka transactions together validate the offset read and the messages written in an output topic; An e-mail sent during this processing can still leave twice.
+It may cover **an internal transaction within the engine** without covering an external payment or email. For example, Kafka transactions commit the consumed offset and messages written to an output topic together; an email sent during that processing can still be sent twice.
 
-Ask which records are atomic, how repeats are identified, and how long duplicates are recognized. A single business effect can be achieved with repeated deliveries, deduplication, and suitable destination. This chain of safeguards must be demonstrated instead of inferred from an option with the name "exactly-ounce".
+Ask which writes are atomic, how retries are identified and how long duplicates remain recognizable. Repeated deliveries can produce a single business effect through deduplication and a suitable destination. Demonstrate that chain of guarantees instead of inferring it from an option named "exactly-once".
 
 ---
 
 Why doesn't a tool call timeout mean that the action failed? <!--anki:3762636139316533313363333433343661616431393837303766633965386439-->
 ?
-The client only knows that he **did not receive a response within the time**. The request may not have arrived, may still be in progress, or may have succeeded with a lost response.
+The client only knows that it **did not receive a response before the deadline**. The request may never have arrived, may still be running, or may have succeeded with a lost response.
 
-For an action with an external effect, record an "unknown result" state and look for its status with the transaction identifier. A retry is safe only if the protocol allows to recognize the same intent. Retrying with a new identifier can transform a simple loss of response into double payment or double booking.
+For an action with an external effect, record an "unknown outcome" state and look up its status using the operation identifier. Retrying is safe only if the protocol recognizes the same intent. Retrying with a new identifier can turn a lost response into a duplicate payment or reservation.
 
 ---
 
 Do not confuse: idempotency of an operation and determinism of its response? <!--anki:6333353633376632626632373464616362653235323461303964353765613762-->
 ?
-**Idempotence** refers to the effect of repetitions: it remains equivalent to a single application. **Determinism** refers to the result obtained for the same inputs and conditions.
+**Idempotency** concerns the effect of repetition: it remains equivalent to applying the operation once. **Determinism** concerns obtaining the same result from the same inputs and conditions.
 
-Example: "set the status closed" can be idempotent while returning first "modified", then "already closed". Conversely, two bitrates can produce exactly the same text "performed".
+For example, "set status to closed" can be idempotent while returning "updated" first and "already closed" on a retry. Conversely, two charges can return exactly the same text, "completed".
 
-Define the business effect, key, scope, and shelf life; specify separately if the fetches fetch the first response. Test concurrent queries and parameters incompatible with the same key. The same seed or message in the model does not protect against a repeated effect.
-
----
-
-How to build an idempotency key for an agent action? <!--anki:6334313330346166326230393438616639636331376164373165343539643165-->
-?
-Create a stable **identifier of the business intent**, before the external call, and reuse it every attempt of this same action. Attach it to the holder and the type of operation, for example `tenant-7:refund:dossier-123`; a new intent receives a new key.
-
-Do not derive only the key from the generated text, which may vary, or only parameters, because two identical purchases may be legitimate. Also keep a fingerprint of the relevant parameters. The reuse of a key with another amount must cause an explicit conflict, not execute a new action silently.
+Define the business effect, key, scope and retention period; separately specify whether retries return the original response. Test concurrent requests and incompatible parameters using the same key. The same seed or model response does not prevent a repeated effect.
 
 ---
 
-Why is "check and insert" not enough to deduplicate two competing queries? <!--anki:3933616535306664383636303461313561616166333735336439626339326135-->
+How do you build an idempotency key for an agent action? <!--anki:6334313330346166326230393438616639636331376164373165343539643165-->
 ?
-Two workers can both read **"missing operation"**, then each perform the action. A prior reading does not exclude the other writing.
+Create a **stable identifier for the business intent** before the external call and reuse it on every attempt at that action. Bind it to the tenant and operation type, for example `tenant-7:refund:case-123`; a new intent receives a new key.
 
-For an effect entirely in a database, associate a uniqueness constraint on the identity of the operation and the business mutation in the same transaction.
+Do not derive the key solely from generated text, which can vary, or solely from parameters, because two identical purchases can be legitimate. Also store a fingerprint of the relevant parameters. Reusing a key with a different amount must cause an explicit conflict, rather than silently executing a new action.
+
+---
+
+Why is "check then insert" insufficient to deduplicate concurrent requests? <!--anki:3933616535306664383636303461313561616166333735336439626339326135-->
+?
+Two workers can both read **"operation absent"** and then each perform the action. A preliminary read does not exclude the other write.
+
+For an effect contained entirely in one database, combine a uniqueness constraint on the operation identity with the business mutation in the same transaction.
 ```sql
 INSERT INTO operations (op_id) VALUES (:op_id)
-ON CONFLICT (op_id) DO NOTHING RETURNING op_id;   -- No line: already taken
+ON CONFLICT (op_id) DO NOTHING RETURNING op_id;   -- no row: already claimed
 ```
-If the effect is external, the local uniqueness does not cover the crash after its execution: the destination must cooperate or a reconciliation must resolve the uncertainty.
+The second attempt must wait or detect the conflict and retrieve the result. For an external effect, local uniqueness does not cover a crash after execution: the destination must cooperate, or reconciliation must resolve the uncertainty.
 
 ---
 
-Which storage period to choose for Idempotence Keys? <!--anki:3833356231616533393838353431336161336236363963643661633861343836-->
+How long should idempotency keys be retained? <!--anki:3833356231616533393838353431336161336236363963643661633861343836-->
 ?
-The duration must cover **the real horizon of retry and replay**, including manual rework, Delayed incidents and tasks. After expiration, An old attempt can be considered new and reproduce its effect.
+Retention must cover **the actual retry and replay window**, including manual recovery, incidents and delayed tasks. After expiration, an old attempt can be treated as new and repeat its effect.
 
-Document what the destination guarantees. Example: Stripe can purge an Idempotence key after 24 hours; a manual replay three days after an incident must rely on a persistent business identifier, such as the folder number. Also define the processing of current operations or unknown result: delete them by simple TTL can reopen a double execution window.
+Document the destination's guarantees. For example, Stripe may purge an idempotency key after 24 hours; a manual replay three days after an incident must rely on a persistent business identifier such as a case number. Also define how to handle operations still in progress or with unknown outcomes: deleting them through a simple TTL can reopen a duplicate-execution window.
 
 ---
 
-When to pay for a message consumed to avoid losses? <!--anki:6335373038626363656335643437643061396138323437626437366263346362-->
+When should a consumed message be acknowledged to avoid loss? <!--anki:6335373038626363656335643437643061396138323437626437366263346362-->
 ?
-After the lasting **persistent effect and deduplication information**, when their perimeter allows it. Acquitting before may lose work after a breakdown. Acquitting after leaves a redelivery window if the worker crashes between commit and ack.
+After **durably persisting the effect and deduplication information**, when their scope permits it. Acknowledging first can lose work after a failure. Acknowledging afterward leaves a redelivery window if the worker crashes between commit and ack.
 
-Example with RabbitMQ: in `auto_ack`, a worker who dies while processing loses the message; with `basic_ack` after commit, the message is re-delivered and an idempotent resume recognizes the duplicate. The execution order does not make atomic an ack and a mutation out of the same transaction. External calls also require a policy for the effect already performed but not yet locally registered.
+For example, with RabbitMQ's `auto_ack`, a worker dying during processing loses the message. With `basic_ack` after commit, the message is redelivered and an idempotent recovery recognizes the duplicate. Execution order alone does not make an acknowledgment and a mutation atomic if they are outside the same transaction. External calls also need a strategy for an effect already performed but not yet recorded locally.
 
 ---
 
-Does a queue of messages guarantee the order of all operations? <!--anki:3637363639313263666164663464396162623837643966323337613735393661-->
+Does a message queue guarantee the order of all operations? <!--anki:3637363639313263666164663464396162623837643966323337613735393661-->
 ?
-**Not necessarily.** The order can be guaranteed only by partition or key, and several consumers can complete their treatments in a different order than the receptions.
+**Not necessarily.** Ordering may apply only within a partition or key, and multiple consumers can finish processing in a different order from receipt.
 
-Define the necessary order, usually by business entity. Example: Kafka places all `order-88` key messages in the same partition, but two consumer threads can still end them in a mess. A version number helps to refuse an obsolete state. But a delta, like "add an article", cannot always be ignored because a next operation has already arrived. The global order costs more and often remains useless.
+Define the required order, usually per business entity. Kafka places all messages with key `order-88` in the same partition, but two consumer threads can still finish them out of order. A version number helps reject stale state. However, a delta such as "add an item" cannot always be discarded just because a later operation has already arrived. Global ordering costs more and is often unnecessary.
 
 ---
 
 How does optimistic concurrency avoid a lost update? <!--anki:3161666463306237633138323438643239363864366138383830393164323839-->
 ?
-The mutation checks that the **version read is still current**, and then increments that version in the same conditional write. If another worker has changed the object, no lines are changed and the operation must be recalculated or denied.
+The mutation checks that **the version previously read is still current**, then increments it in the same conditional write. If another worker changed the object, no rows are updated and the operation must be recomputed or rejected.
 ```sql
-UPDATE dossiers
+UPDATE cases
 SET status = 'valid', version = version + 1
-WHERE id = :id AND version = :version_lue;
+WHERE id = :id AND version = :read_version;
 ```
-This example is conceptual parameterized SQL. Check the number of rows affected. Do not blindly replay a decision that has become outdated, especially if the price, rights, or approved parameters have changed.
+This is conceptual parameterized SQL. Check the affected-row count. Do not blindly replay a decision that has become stale, especially if the price, permissions or approved parameters changed.
 
 ---
 
 Do not confuse: atomicity and isolation of a transaction? <!--anki:6530353664656438353531373430666239313232376537383430313638306438-->
 ?
-The **Atomicity** ensures that the entries in a transaction are validated together or cancelled together. The **Insulation** defines what competing transactions can observe and what anomalies are still possible.
+**Atomicity** guarantees that a transaction's writes are committed together or rolled back together. **Isolation** defines what concurrent transactions can observe and which anomalies remain possible.
 
-Two atomic transactions can still violate a global rule if they each read an incomplete state of each other's actions. For example, with a ceiling of 1,000 € already consumed in 800 €, Two expenses of 150 € Read each 800 €, They are allowed and bring the total to 1,100 €. Protect the invariant by constraints, appropriate locking or insulation, then manage the conflicts and recoveries that the storage may request.
+Two atomic transactions can still violate a global rule if each reads an incomplete view of the other's actions. For example, with a €1,000 limit and €800 already spent, two €150 expenses can each read €800, consider themselves authorized and bring the total to €1,100. Protect the invariant with constraints, locking or appropriate isolation, then handle conflicts and retries requested by the storage system.
 
 ---
 
 Why is a distributed lock with expiration not always enough to protect a write? <!--anki:6330663731363636653062313462373339353161646266346433313333343064-->
 ?
-A worker can be **suspended long enough to lose his lease**, then resume without knowing it. A second worker then has the lock, but the first can still send a late write.
+A worker can be **paused long enough to lose its lease**, then resume without realizing it. A second worker now holds the lock, but the first can still send a late write.
 
-An increasing token window, verified by the protected resource, makes it possible to refuse operations from a former holder. Example: A gets the 33 token, then a break of 40 s exceeds its lease of 30 s; B gets 34 and writes. Upon waking up to A, the storage refuses its writing bearing 33.
+A monotonically increasing **fencing token**, checked by the protected resource, allows it to reject operations from a former holder. For example, A receives token 33, then pauses for 40 s, exceeding its 30 s lease. B receives token 34 and writes. When A resumes, storage rejects its write carrying token 33. A conditional version check may also fit the requirement. Test pauses, network partitions and expiration, not just concurrency during normal operation.
 
 ---
 
-Calculation: with 10,000 unique operations and 200 redeliverys, how many business effects must produce an idempotent consumer? <!--anki:6639366265346662346162353466626461326365326139646264356530373339-->
+Calculation: with 10,000 unique operations and 200 redeliveries, how many business effects should an idempotent consumer produce? <!--anki:6639366265346662346162353466626461326365326139646264356530373339-->
 ?
-Under the assumption that each operation is legitimate, ends up succeeding and that the deliveries keep the same identity, it must produce **10,000 effects**, despite 10,200 deliveries.
+Assuming each operation is legitimate, eventually succeeds and retains the same identity on redelivery, it should produce **10,000 effects** despite 10,200 deliveries.
 
-The number of attempts is therefore not the number of business successes. Measure unique operations, attempts, detected duplicates, unknown results and permanent failures separately. If some keys have expired or a retry recreates an identity, this property can break. The calculation defines an invariant to be checked in a failure test, not a guarantee offered by the queue alone.
+The attempt count therefore differs from the business-success count. Measure unique operations, attempts, detected duplicates, unknown outcomes and permanent failures separately. If some keys expire or a retry creates a new identity, this property can fail. The calculation defines an invariant to verify in a failure test, not a guarantee provided by the queue alone.
 
 ---
 
 Why should deduplication share the transaction with the effect it protects? <!--anki:3665613635623338613763623466643061636337343935323739356535333435-->
 ?
-If the **marking as processed** and the business effect are two separate writes, a failure can produce an unmarked effect, or an unmarked mark, and the recovery will create a duplicate or lose the job.
+If the **processed marker** and business effect are separate writes, a failure can leave an effect without a marker or a marker without an effect. Recovery then creates a duplicate or loses the work.
 
-When the data is in the same database, record operation identifier and business change in a transaction with uniqueness constraint. For an external service, use its identity contract and reconcile unknown statuses. Test the breaks between each step. A simple cache of identifiers already seen does not provide this atomicity.
+When the data is in the same database, record the operation identifier and business change in one transaction with a uniqueness constraint. For an external service, use its idempotency contract and reconcile unknown outcomes. Test failures between each step. A simple cache of previously seen identifiers does not provide this atomicity.
 
 ---
 
-What should a API do if the same idempotency key is reused with different parameters? <!--anki:6230353163353364626131383436303838353939363261363636343632666335-->
+What should an API do if the same idempotency key is reused with different parameters? <!--anki:6230353163353364626131383436303838353939363261363636343632666335-->
 ?
-**Reject the conflict**, according to the intended contract, rather than silently executing a new action or returning an old misleading result. The key identifies a specific intent.
+**Reject the conflict** according to the documented contract, rather than silently executing a new action or returning a misleading old result. The key identifies a specific intent.
 
-Associate the key with a canonical fingerprint of the relevant parameters and the identity perimeter. Atomically verify the reservation. Document the ignored fields and the shelf life to avoid logical collisions between separate operations.
+Bind the key to a canonical fingerprint of relevant parameters and its identity scope. Verify the reservation atomically. Document ignored fields and the retention period to avoid logical collisions between distinct operations.
 
 ---
 
 ## Scenarios
 
-Scenario: two workers consume the same event and each debit a customer credit. How do you make this treatment safe? <!--anki:6333323763313939336238633437323939313639663864663431656265343862-->
+Scenario: two workers consume the same event and each debit a customer credit. How do you make processing safe? <!--anki:6333323763313939336238633437323939313639663864663431656265343862-->
 ?
-1. **Give a stable identity** to the operation, separate from the attempt number.
-2. **Impose the uniqueness** of this identity in the storage of the processing.
-3. **Group deduplication and debit** in the same transaction if both are local.
-4. **In case of remote effect**, use the destination idempotency and keep the result recoverable.
-5. **Test race and crashes** before commit, after commit and before ack.
+1. **Give the operation a stable identity**, separate from the attempt number.
+2. **Enforce uniqueness** of that identity in persistent storage.
+3. **Combine deduplication and the debit** in the same transaction if both are local.
+4. **For a remote effect**, use the destination's idempotency support and keep the result retrievable.
+5. **Test races and crashes** before commit, after commit and before acknowledgment.
 
-**Trap**: Place only one `if not exists` in the code of each worker.
+**Trap**: merely adding `if not exists` to each worker's code.
 
 ---
 
-Scenario: a booking tool responds by timeout; the agent offers to start again with a new key. What should the application do? <!--anki:3963616237306536633261633431313239383533356137653631643030643066-->
+Scenario: a booking tool times out, and the agent proposes retrying with a new key. What should the application do? <!--anki:3963616237306536633261633431313239383533356137653631643030643066-->
 ?
-1. **Keep the original identity** and mark the result as unknown.
-2. **Check the status** of the reservation at the supplier if his API allows it.
-3. **Try again with the same key** only under the conditions guaranteed by this provider.
-4. **Block additional action** as long as the uncertainty cannot be resolved without risk.
-5. **Reconciliate or involve a human** if there is no technical guarantee to decide.
+1. **Keep the original identity** and mark the outcome as unknown.
+2. **Look up the booking status** at the provider if its API supports it.
+3. **Retry with the same key** only under the conditions guaranteed by the provider.
+4. **Block an additional action** while uncertainty cannot be resolved safely.
+5. **Reconcile or involve a human** if technical guarantees cannot establish the outcome.
 
-**Trap**: Ask the LLM to guess if the first call was successful.
+**Trap**: asking the LLM to guess whether the first call succeeded.
 
 ---
 
-Scenario: two agents modify the same commercial proposal and one overwrites the reduction of the other. What protection do you add? <!--anki:3864656164616134346438373437343562316433333263363937303766366237-->
+Scenario: two agents edit the same sales proposal, and one overwrites the other's discount. What protection do you add? <!--anki:3864656164616134346438373437343562316433333263363937303766366237-->
 ?
-1. **Version the shared object** and save the version on which each decision is based.
-2. **Make the update conditional** to this version, rather than replacing the object without control.
-3. **Detect the conflict** and review the current state before recalculating or requesting arbitration.
-4. **Review approvals** if allowed settings have changed.
-5. **Trac the decision chosen** and test two simultaneous entries.
+1. **Version the shared object** and record the version on which each decision is based.
+2. **Make the update conditional** on that version instead of replacing the object unconditionally.
+3. **Detect the conflict** and reread the current state before recomputing or requesting a decision.
+4. **Revalidate approvals** if authorized parameters changed.
+5. **Record the chosen decision** and test simultaneous writes.
 
-**Trap**: Automatically restart the same write after the conflict and recreate the update loss.
+**Trap**: automatically retrying the same write after a conflict and recreating the lost update.
 
 ---
 

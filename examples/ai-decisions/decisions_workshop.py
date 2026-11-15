@@ -4,15 +4,15 @@
 python3 examples/ai-decisions/decisions_workshop.py --questions
 python3 examples/ai-decisions/decisions_workshop.py
 
-The audits focus on the educational results announced. No models
-is not driven and no production measurements are made.
+The assertions check the stated educational results. No model is trained
+and no production measurements are made.
 """
 
 import argparse
 import math
 
-QUESTIONS = """1. Prevalence: on 10,000 cases, TPR = 90% and FPR = 5%, assumed
-Calculate VP, FP and accuracy with 50% then 1% of positives.
+QUESTIONS = """1. Prevalence: on 10,000 cases, TPR = 90% and FPR = 5%, assumed constant.
+Calculate true positives (TP), false positives (FP) and precision with 50% then 1% of positives.
 
 2. Decision: calibrated probabilities p = 0.02; 0.10; 0.60; 0.99.
 A false positive costs 4 units, a false negative 36, the correct decisions
@@ -24,11 +24,11 @@ A: success 94%, 0.010 €/request, p95 0.8 s.
 B: success 95%, 0.008 €/request, p95 0.7 s.
 C: success 97%, 0.012 €/request, p95 1.4 s.
 Requirements: success >= 94% and p95 <= 1 s.
-among eligible candidates, and then calculate its cost per success.
+Choose among eligible candidates, then calculate the cost per success.
 
-4. Documents: 100 documents from 20 fields, with exactly 20 errors.
-Dispersed lot: one mistake in each of the first twenty documents.
-Concentrated lot: twenty errors in the first document only.
+4. Documents: 100 documents with 20 fields each, with exactly 20 errors.
+Dispersed batch: one mistake in each of the first twenty documents.
+Concentrated batch: twenty errors in the first document only.
 Calculate field accuracy and document success in each batch.
 Compare to the hypothesis of twenty independent fields, each correct to 99%.
 """
@@ -40,8 +40,11 @@ def precision_by_prevalence():
         false_positive = 10_000 * (1 - prevalence) * 0.05
         assert (true_positive, false_positive) == expected
         precision = true_positive / (true_positive + false_positive)
-        print(f"  Prevalence {prevalence:.0%} : VP={true_positive:.0f}, FP={false_positive:.0f}={precision:.2%}")
-    print("  The recall remains 90% in the hypothesis; the accuracy changes.")
+        print(
+            f"  Prevalence {prevalence:.0%}: TP={true_positive:.0f}, "
+            f"FP={false_positive:.0f}, precision={precision:.2%}"
+        )
+    print("  Recall remains 90% under these assumptions; precision changes.")
 
 
 def decisions_with_review():
@@ -75,7 +78,7 @@ def constrained_selection():
     cost_per_success = winner[2] / winner[1]
     assert math.isclose(cost_per_success, 0.008421052631578947)
     print(f"  eligible: A, B; Pareto front: {winner[0]}")
-    print(f"  B : {cost_per_success:.5f} € by success, against {candidates[0][2] / candidates[0][1]:.5f} € for A")
+    print(f"  B : {cost_per_success:.5f} € per success, against {candidates[0][2] / candidates[0][1]:.5f} € for A")
     print("  The report divides the total cost between successes; it does not simulate retries.")
 
 
@@ -97,7 +100,7 @@ def document_quality():
     independent_success = 0.99**20
     assert math.isclose(independent_success, 0.8179069375972308)
     print(f"  Independent hypothesis: {independent_success:.1%} Complete Documents")
-    print("  The same accuracy per field can hide different documentary successes.")
+    print("  The same accuracy per field can hide different complete-document success rates.")
 
 
 def main():
@@ -108,7 +111,7 @@ def main():
     if args.questions:
         return
     for title, exercise in (
-        ("1. Accuracy and prevalence", precision_by_prevalence),
+        ("1. Precision and prevalence", precision_by_prevalence),
         ("2. Decision with review", decisions_with_review),
         ("3. Choice under constraints", constrained_selection),
         ("4. Quality of the complete document", document_quality),
@@ -116,7 +119,7 @@ def main():
         print(title)
         exercise()
         print()
-    print("Four verified exercises. Modify a draft hypothesis to test the transfer.")
+    print("Four verified exercises. Change an assumption to check your understanding.")
 
 
 if __name__ == "__main__":

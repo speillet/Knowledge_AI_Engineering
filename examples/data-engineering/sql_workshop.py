@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Atelier local : python3 examples/data-engineering/sql_workshop.py.
+"""Local workshop: python3 examples/data-engineering/sql_workshop.py.
 
 SQLite in memory, standard library only, synthetic data.
 Read each hypothesis and then predict the results before starting the workshop.
@@ -12,7 +12,7 @@ import sqlite3
 def verify(db, title, query, expected):
     actual = db.execute(query).fetchall()
     if actual != expected:
-        raise AssertionError(f"{title}\nattendu : {expected}\nobtenu : {actual}")
+        raise AssertionError(f"{title}\nexpected: {expected}\nactual: {actual}")
     print(f"OK — {title} : {actual}")
 
 
