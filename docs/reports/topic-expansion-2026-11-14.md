@@ -41,24 +41,24 @@ The calculation rectos indicate data, units and assumptions. The rates are assum
 
 The SQL examples specify the ex-æquo of ROWS/RANGE and show why `WHERE ... OR id IS NULL` does not always replace a filter in `ON`. Numerical evaluation explains a possible combination of absolute and relative tolerances. The other answers gain an example, a limit or a targeted check.
 
-- [12-automatic-prompt-optimization](../10-prompt-engineering/12-automatic-prompt-optimization.md) — Why can optimizing a quick on average degrade a critical business case?
-- [123-aggressive-caching](../120-costs-finops/123-aggressive-caching.md) — What is aggressive caching for a LLM application?
-- [123-aggressive-caching](../120-costs-finops/123-aggressive-caching.md) — Why do agents benefit so much from prompt caching?
-- [123-aggressive-caching](../120-costs-finops/123-aggressive-caching.md) — What silently invalidates the prefix cache of a LLM?
-- [132-tokenization](../130-llm-fundamentals/132-tokenization.md) — What is a token?
-- [138-reasoning-models](../130-llm-fundamentals/138-reasoning-models.md) — Why does not increasing the reasoning budget guarantee an improvement on each task?
-- [150-011-analytical-sql-transformations](../150-data-compliance/150-011-analytical-sql-transformations.md) — Why can a WHERE filter on the right table change the direction of a LEFT JOIN?
-- [150-011-analytical-sql-transformations](../150-data-compliance/150-011-analytical-sql-transformations.md) — Not to be confused: ROWS frame and RANGE frame in an SQL window?
-- [153-data-flywheel-versioning](../150-data-compliance/153-data-flywheel-versioning.md) — How to prioritize improvements from flywheel?
-- [163-real-time-voice](../160-multimodal-edge/163-real-time-voice.md) — Why is WER not enough to evaluate the transcription of a voice agent?
-- [172-ml-validation-metrics](../170-classical-ml/172-ml-validation-metrics.md) — Why learn imputation and variable selection inside each fold?
-- [22-advanced-rag](../20-rag/22-advanced-rag.md) — What is reranking?
-- [39-agent-memory](../30-agents/39-agent-memory.md) — Why shouldn't a user's silence become a permanent fact in an agent's memory?
-- [60-013-prefill-decode-step-by-step](../60-llm-inference/60-013-prefill-decode-step-by-step.md) — Where does the very first token output come from after the prefill?
-- [90-010-llm-response-evaluation](../90-observability-evals/90-010-llm-response-evaluation.md) — What to check in a digital response of a LLM?
-- [90-010-llm-response-evaluation](../90-observability-evals/90-010-llm-response-evaluation.md) — Why can an average score hide an unacceptable response?
-- [90-012-langfuse-prompts-experiments](../90-observability-evals/90-012-langfuse-prompts-experiments.md) — Why distinguish zero score, absent score and reviewer error in Langfuse?
-- [96-evals-rag-agents](../90-observability-evals/96-evals-rag-agents.md) — How to test that a RAG actually uses the provided context?
+- [12-automatic-prompt-optimization](../../10-prompt-engineering/12-automatic-prompt-optimization.md) — Why can optimizing a quick on average degrade a critical business case?
+- [123-aggressive-caching](../../120-costs-finops/123-aggressive-caching.md) — What is aggressive caching for a LLM application?
+- [123-aggressive-caching](../../120-costs-finops/123-aggressive-caching.md) — Why do agents benefit so much from prompt caching?
+- [123-aggressive-caching](../../120-costs-finops/123-aggressive-caching.md) — What silently invalidates the prefix cache of a LLM?
+- [132-tokenization](../../130-llm-fundamentals/132-tokenization.md) — What is a token?
+- [138-reasoning-models](../../130-llm-fundamentals/138-reasoning-models.md) — Why does not increasing the reasoning budget guarantee an improvement on each task?
+- [150-011-analytical-sql-transformations](../../150-data-compliance/150-011-analytical-sql-transformations.md) — Why can a WHERE filter on the right table change the direction of a LEFT JOIN?
+- [150-011-analytical-sql-transformations](../../150-data-compliance/150-011-analytical-sql-transformations.md) — Not to be confused: ROWS frame and RANGE frame in an SQL window?
+- [153-data-flywheel-versioning](../../150-data-compliance/153-data-flywheel-versioning.md) — How to prioritize improvements from flywheel?
+- [163-real-time-voice](../../160-multimodal-edge/163-real-time-voice.md) — Why is WER not enough to evaluate the transcription of a voice agent?
+- [172-ml-validation-metrics](../../170-classical-ml/172-ml-validation-metrics.md) — Why learn imputation and variable selection inside each fold?
+- [22-advanced-rag](../../20-rag/22-advanced-rag.md) — What is reranking?
+- [39-agent-memory](../../30-agents/39-agent-memory.md) — Why shouldn't a user's silence become a permanent fact in an agent's memory?
+- [60-013-prefill-decode-step-by-step](../../60-llm-inference/60-013-prefill-decode-step-by-step.md) — Where does the very first token output come from after the prefill?
+- [90-010-llm-response-evaluation](../../90-observability-evals/90-010-llm-response-evaluation.md) — What to check in a digital response of a LLM?
+- [90-010-llm-response-evaluation](../../90-observability-evals/90-010-llm-response-evaluation.md) — Why can an average score hide an unacceptable response?
+- [90-012-langfuse-prompts-experiments](../../90-observability-evals/90-012-langfuse-prompts-experiments.md) — Why distinguish zero score, absent score and reviewer error in Langfuse?
+- [96-evals-rag-agents](../../90-observability-evals/96-evals-rag-agents.md) — How to test that a RAG actually uses the provided context?
 
 ## Primary sources consulted
 

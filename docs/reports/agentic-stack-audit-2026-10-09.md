@@ -8,13 +8,13 @@ This enrichment adds **124 cards in seven new cards**, of which **21 put in a si
 
 | Theme | Sheet added | Cards | Proof of expected understanding |
 |---|---|---:|---|
-| Contrats LangChain | [Tools & middleware](../40-automation/40-010-langchain-tools-middleware-production.md) | 17 | Explain injected identity, exit contract, middleware order and retry budget |
-| LangGraph State | [Recovery & competition](../40-automation/40-011-langgraph-recovery-concurrency.md) | 19 | Resume after failure without duplicating an effect; treat concurrency and old states |
-| Execution CrewAI | [Reliable execution](../40-automation/40-012-crewai-reliable-execution.md) | 17 | Define dependencies, bounded guardrails, budgets and granularity of recovery |
-| Traces Langfuse | [Instrumentation in production](../90-observability-evals/90-011-langfuse-instrumentation-production.md) | 18 | Find calls, tools, pick-ups and costs without lost parent or double counting |
-| Experiences Langfuse | [Prompts, datasets & experiences](../90-observability-evals/90-012-langfuse-prompts-experiments.md) | 17 | Promote a version with a comparable game, interpretable scores and observable rollback |
-| Full application | [Architecture & life cycle](../140-system-design-product/140-011-agentic-application-architecture.md) | 19 | Define API contracts, human decisions, rights, events and status transitions |
-| Validation | [Tests of contracts, breakdowns & recoveries](../90-observability-evals/90-013-agent-testing-recovery.md) | 17 | Distinguishing technical tests, business invariants and quality evaluation of a real model |
+| Contrats LangChain | [Tools & middleware](../../40-automation/40-010-langchain-tools-middleware-production.md) | 17 | Explain injected identity, exit contract, middleware order and retry budget |
+| LangGraph State | [Recovery & competition](../../40-automation/40-011-langgraph-recovery-concurrency.md) | 19 | Resume after failure without duplicating an effect; treat concurrency and old states |
+| Execution CrewAI | [Reliable execution](../../40-automation/40-012-crewai-reliable-execution.md) | 17 | Define dependencies, bounded guardrails, budgets and granularity of recovery |
+| Traces Langfuse | [Instrumentation in production](../../90-observability-evals/90-011-langfuse-instrumentation-production.md) | 18 | Find calls, tools, pick-ups and costs without lost parent or double counting |
+| Experiences Langfuse | [Prompts, datasets & experiences](../../90-observability-evals/90-012-langfuse-prompts-experiments.md) | 17 | Promote a version with a comparable game, interpretable scores and observable rollback |
+| Full application | [Architecture & life cycle](../../140-system-design-product/140-011-agentic-application-architecture.md) | 19 | Define API contracts, human decisions, rights, events and status transitions |
+| Validation | [Tests of contracts, breakdowns & recoveries](../../90-observability-evals/90-013-agent-testing-recovery.md) | 17 | Distinguishing technical tests, business invariants and quality evaluation of a real model |
 
 After the basic topics, start with the application architecture, choose the right runtime as needed, then work instrumentation and tests together. LangChain and LangGraph can combine; CrewAI offers another organization of tasks; Langfuse observes and evaluates. Knowing the four does not require stacking them in each application.
 
@@ -34,18 +34,18 @@ After the basic topics, start with the application architecture, choose the righ
 
 | Topic | Correction |
 |---|---|
-| [LangGraph — Fundamentals](../40-automation/44-langgraph-fundamentals.md) | Super-steps do not automatically make the state durable: checkpointer, mode and backend must be configured. |
-| [LangGraph — Production](../40-automation/45-langgraph-production.md) | Isolating an effect in a task does not guarantee its unique execution; a crash after remote acceptance may lead to a request for it again. |
-| [Langfuse — Fundamentals](../90-observability-evals/91-langfuse-observability.md) | The OpenTelemetry export must be configured; the traces of a gateway do not cover the entire workflow alone. |
-| [CrewAI — Crews](../40-automation/46-crewai-crews.md) | An accessible URL does not prove that an assertion is supported by the source. Corrections are limited. |
-| [CrewAI — Flows](../40-automation/47-crewai-flows.md) | Finding the persistent variables and taking back the execution control are two guarantees to check separately. |
-| [Streaming applicatif](../80-api-layer-routing/84-streaming-application-integration.md) | The first content does not always arrive in a few hundred milliseconds; the cost also depends on the work consumed and the actual cancellation. |
+| [LangGraph — Fundamentals](../../40-automation/44-langgraph-fundamentals.md) | Super-steps do not automatically make the state durable: checkpointer, mode and backend must be configured. |
+| [LangGraph — Production](../../40-automation/45-langgraph-production.md) | Isolating an effect in a task does not guarantee its unique execution; a crash after remote acceptance may lead to a request for it again. |
+| [Langfuse — Fundamentals](../../90-observability-evals/91-langfuse-observability.md) | The OpenTelemetry export must be configured; the traces of a gateway do not cover the entire workflow alone. |
+| [CrewAI — Crews](../../40-automation/46-crewai-crews.md) | An accessible URL does not prove that an assertion is supported by the source. Corrections are limited. |
+| [CrewAI — Flows](../../40-automation/47-crewai-flows.md) | Finding the persistent variables and taking back the execution control are two guarantees to check separately. |
+| [Streaming applicatif](../../80-api-layer-routing/84-streaming-application-integration.md) | The first content does not always arrive in a few hundred milliseconds; the cost also depends on the work consumed and the actual cancellation. |
 
 The general dates of the old cards are not artificially renewed: this review targets these answers, it does not claim to revalidate all the API mentioned on all their cards.
 
 ## Executable workshop and complementary exercises
 
-The [atelier support](../examples/agentic-support/README.md) provides a true LangGraph graph, LangChain components, Langfuse SDK with local exporter, and a API FastAPI. Its model is simulated; its data and business policy are synthetic. It does not require any remote model or service keys.
+The [atelier support](../../examples/agentic-support/README.md) provides a true LangGraph graph, LangChain components, Langfuse SDK with local exporter, and a API FastAPI. Its model is simulated; its data and business policy are synthetic. It does not require any remote model or service keys.
 
 Three scenarios run with `demo.py`: approval, denial and failure after business effect. The tests also check for persistence after reconstruction, the death of a process between business COMMIT and checkpoint, client isolation, double submissions/decisions, obsolete preconditions, expiration and SSE events. The business registry and checkpoints are two separate bases for making the failure window visible.
 

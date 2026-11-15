@@ -14,20 +14,20 @@ The extension brings **8 cards, 142 cards and an executable SQL workshop**. The 
 
 | Competence | Before this review | Coverage and entry point |
 | --- | --- | --- |
-| Grain, identities, facts/dimensions, cardinalities, SCD | Little developed | [Analytical modelling](../150-data-compliance/150-010-analytical-data-modeling.md): avoid duplicate accounts, bad labels and entity mixing |
-| SQL Transformation | Text-to-SQL covered; insufficient SQL foundations | [SQL for AI datasets](../150-data-compliance/150-011-analytical-sql-transformations.md): joins, NULL, windows, anti-joins, plans and tests |
-| Files, columns, partitions, transactional tables | Versioning evoked, storage little explained | [Storage and Lakehouse](../150-data-compliance/150-012-columnar-storage-lakehouse.md): Parquet/Arrow/Avro, pluming, small files, snapshots and maintenance |
-| ETL/ELT and orchestration | Appointed tools, poorly developed operation | [Orchestration data](../150-data-compliance/150-013-data-pipeline-orchestration.md): intervals, partition dependencies, publishing, CI, and resources |
-| Ingestion, API, CDC, recoveries and deletions | Already developed for CDC and backfills | [Ingestion](../150-data-compliance/158-ingestion-cdc-backfills.md) preserved and completed on pagination of scalable API |
-| Business time, availability, delayed labels and features | Already developed | [Variables temporelles](../150-data-compliance/159-temporal-data-features.md) completed on offline/online paths and secure materialization |
-| Event Treatments with Status | Watermarks present, incomplete distributed treatment | [Streaming](../150-data-compliance/150-014-streaming-event-processing.md): Windows, triggers, order, joins, corrections, status and backpressure |
-| Scale and cost of calculation | Mentioned for lots LLM | [Performance data](../150-data-compliance/150-015-distributed-computing-data-performance.md): shuffle, skew, broadcast, memory, UDF, cache and costs |
-| Contracts and data quality | Already developed | [Contrats](../150-data-compliance/157-data-contracts-quality.md): consistent structure, business sense, migration, quarantine and publication |
-| Observability, catalog, lineage and incidents | Lineage and quality present, dispersed operation | [Observability data](../150-data-compliance/150-016-data-observability-lineage.md): SLO, coverage, reconciliation, impact and cost of controls |
-| Corpus construction RAG, SFT and evaluation | Curation, parsing and versioning already present | [Datasets and corpus AI](../150-data-compliance/150-017-ai-datasets-corpora.md): manifestos, families, shards, readers, mixing, packaging and cover |
-| Leak validation and prevention | Already developed | [Validation ML](../170-classical-ml/172-ml-validation-metrics.md), [curation](../150-data-compliance/151-data-curation-annotation.md) and new SQL/corpus cases |
-| Confidentiality and governance | Already developed | [Privacy](../150-data-compliance/152-pii-privacy.md), [RGPD](../150-data-compliance/154-gdpr-llm.md), [IA responsable](../150-data-compliance/156-responsible-ai.md); rights and derivative copies recalled in new files |
-| Distributed effects and transactions | Already developed | [Idempotence](../140-system-design-product/149-delivery-idempotency-concurrency.md), [Outbox and Sagas](../140-system-design-product/140-010-transactions-outbox-sagas.md), linked to pipeline takeovers |
+| Grain, identities, facts/dimensions, cardinalities, SCD | Little developed | [Analytical modelling](../../150-data-compliance/150-010-analytical-data-modeling.md): avoid duplicate accounts, bad labels and entity mixing |
+| SQL Transformation | Text-to-SQL covered; insufficient SQL foundations | [SQL for AI datasets](../../150-data-compliance/150-011-analytical-sql-transformations.md): joins, NULL, windows, anti-joins, plans and tests |
+| Files, columns, partitions, transactional tables | Versioning evoked, storage little explained | [Storage and Lakehouse](../../150-data-compliance/150-012-columnar-storage-lakehouse.md): Parquet/Arrow/Avro, pluming, small files, snapshots and maintenance |
+| ETL/ELT and orchestration | Appointed tools, poorly developed operation | [Orchestration data](../../150-data-compliance/150-013-data-pipeline-orchestration.md): intervals, partition dependencies, publishing, CI, and resources |
+| Ingestion, API, CDC, recoveries and deletions | Already developed for CDC and backfills | [Ingestion](../../150-data-compliance/158-ingestion-cdc-backfills.md) preserved and completed on pagination of scalable API |
+| Business time, availability, delayed labels and features | Already developed | [Variables temporelles](../../150-data-compliance/159-temporal-data-features.md) completed on offline/online paths and secure materialization |
+| Event Treatments with Status | Watermarks present, incomplete distributed treatment | [Streaming](../../150-data-compliance/150-014-streaming-event-processing.md): Windows, triggers, order, joins, corrections, status and backpressure |
+| Scale and cost of calculation | Mentioned for lots LLM | [Performance data](../../150-data-compliance/150-015-distributed-computing-data-performance.md): shuffle, skew, broadcast, memory, UDF, cache and costs |
+| Contracts and data quality | Already developed | [Contrats](../../150-data-compliance/157-data-contracts-quality.md): consistent structure, business sense, migration, quarantine and publication |
+| Observability, catalog, lineage and incidents | Lineage and quality present, dispersed operation | [Observability data](../../150-data-compliance/150-016-data-observability-lineage.md): SLO, coverage, reconciliation, impact and cost of controls |
+| Corpus construction RAG, SFT and evaluation | Curation, parsing and versioning already present | [Datasets and corpus AI](../../150-data-compliance/150-017-ai-datasets-corpora.md): manifestos, families, shards, readers, mixing, packaging and cover |
+| Leak validation and prevention | Already developed | [Validation ML](../../170-classical-ml/172-ml-validation-metrics.md), [curation](../../150-data-compliance/151-data-curation-annotation.md) and new SQL/corpus cases |
+| Confidentiality and governance | Already developed | [Privacy](../../150-data-compliance/152-pii-privacy.md), [RGPD](../../150-data-compliance/154-gdpr-llm.md), [IA responsable](../../150-data-compliance/156-responsible-ai.md); rights and derivative copies recalled in new files |
+| Distributed effects and transactions | Already developed | [Idempotence](../../140-system-design-product/149-delivery-idempotency-concurrency.md), [Outbox and Sagas](../../140-system-design-product/140-010-transactions-outbox-sagas.md), linked to pipeline takeovers |
 
 The content focuses on transferable decisions between engines. For example, the exact-once guarantee requires checking for sources and destinations covered; it does not automatically extend to external HTTP calls. This boundary is explained in the [documentation Flink](https://nightlies.apache.org/flink/flink-docs-stable/docs/learn-flink/fault_tolerance/). Similarly, keeping a snapshot reference does not preserve data after expiration: see the [maintenance Iceberg](https://iceberg.apache.org/docs/latest/maintenance/).
 
@@ -72,7 +72,7 @@ The following specializations are still to be explored depending on the context:
 
 ## Workshop 1 — SQL, grain and time availability
 
-The [Executable Workshop](../examples/data-engineering/sql_workshop.py) uses only the standard Python and SQLite library in memory, with synthetic data. Window functions require SQLite 3.25 or newer.
+The [Executable Workshop](../../examples/data-engineering/sql_workshop.py) uses only the standard Python and SQLite library in memory, with synthetic data. Window functions require SQLite 3.25 or newer.
 
 From the root of the repository:
 

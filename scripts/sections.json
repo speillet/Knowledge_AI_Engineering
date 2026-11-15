@@ -1,70 +1,254 @@
 {
   "10-prompt-engineering": {
     "title": "Prompt engineering",
-    "intro": ""
+    "intro": "Communicate tasks, examples and constraints to models, then evaluate prompt changes.",
+    "prerequisites": [
+      "130-llm-fundamentals/131-transformer-architecture.md",
+      "170-classical-ml/172-ml-validation-metrics.md"
+    ],
+    "core": [
+      "11-advanced-prompt-engineering.md",
+      "13-production-prompts.md"
+    ],
+    "practice": "Compare two prompts on the same cases, stating a success criterion and a failure case."
   },
   "20-rag": {
     "title": "RAG",
-    "intro": ""
+    "intro": "Build retrieval pipelines whose answers can be traced to relevant, permitted evidence.",
+    "prerequisites": [
+      "130-llm-fundamentals/133-embeddings-representations.md",
+      "130-llm-fundamentals/134-vector-search-ann.md"
+    ],
+    "core": [
+      "21-rag-fundamentals.md",
+      "25-chunking-contextual-retrieval.md",
+      "22-advanced-rag.md",
+      "20-010-rag-permissions-versions.md"
+    ],
+    "practice": "Produce a claim-to-evidence table and explain one justified abstention."
   },
   "30-agents": {
     "title": "Agents",
-    "intro": ""
+    "intro": "Build tool-using systems with explicit state, context and execution controls.",
+    "prerequisites": [
+      "130-llm-fundamentals/131-transformer-architecture.md",
+      "10-prompt-engineering/13-production-prompts.md"
+    ],
+    "core": [
+      "31-agent-fundamentals.md",
+      "32-tool-calling.md",
+      "35-context-engineering.md",
+      "34-harness-plugins.md",
+      "33-mcp.md"
+    ],
+    "practice": "Draw one tool-call loop and identify validation, permissions and stopping conditions."
   },
   "40-automation": {
     "title": "Automation & agent frameworks",
-    "intro": "Build workflows and agents with LangChain, LangGraph and CrewAI: fundamentals, tool contracts, takeover, competition, budgets and integration in production."
+    "intro": "Implement workflows and agents with clear contracts, persistence and recovery.",
+    "prerequisites": [
+      "30-agents/31-agent-fundamentals.md",
+      "30-agents/32-tool-calling.md"
+    ],
+    "core": [
+      "41-code-nocode-automation.md",
+      "48-agentic-workflow-patterns.md",
+      "42-langchain-fundamentals.md",
+      "43-langchain-agents.md",
+      "44-langgraph-fundamentals.md"
+    ],
+    "practice": "Specify what must survive a crash and test recovery after one side effect."
   },
   "50-fine-tuning": {
     "title": "Fine-tuning",
-    "intro": ""
+    "intro": "Decide when to adapt a model, then diagnose training and evaluate the result.",
+    "prerequisites": [
+      "130-llm-fundamentals/131-transformer-architecture.md",
+      "170-classical-ml/172-ml-validation-metrics.md"
+    ],
+    "core": [
+      "51-fine-tuning-adaptation.md",
+      "56-training-optimization-diagnostics.md",
+      "53-synthetic-data-distillation.md"
+    ],
+    "practice": "Compare adaptation with a simpler baseline and define a held-out evaluation."
   },
   "60-llm-inference": {
     "title": "LLM inference",
-    "intro": "Understand the mechanisms of the serving, measure quality and SLO, test capacity under load and optimize payload, memory and cost."
+    "intro": "Understand serving mechanics, measure quality and latency, and plan capacity under load.",
+    "prerequisites": [
+      "130-llm-fundamentals/131-transformer-architecture.md",
+      "130-llm-fundamentals/132-tokenization.md"
+    ],
+    "core": [
+      "60-013-prefill-decode-step-by-step.md",
+      "61-kv-cache-attention.md",
+      "65-probabilities-sampling.md",
+      "63-guided-generation.md",
+      "64-inference-metrics-slo.md",
+      "60-010-inference-load-benchmarks.md"
+    ],
+    "practice": "Define a representative workload and a quality, latency and cost acceptance criterion."
   },
   "70-containers-infra": {
     "title": "Containers & infrastructure",
-    "intro": ""
+    "intro": "Package and run model workloads using containers, GPUs and deployment runtimes.",
+    "prerequisites": [],
+    "core": [
+      "07-containers-overview.md",
+      "08-linux-primitives-docker-fundamentals.md",
+      "01-oci.md",
+      "02-docker-images-registries.md",
+      "09-gpu-containers.md",
+      "11-llm-inference-servers.md"
+    ],
+    "practice": "Explain the image, runtime, driver and model-weight responsibilities in a deployment."
   },
   "80-api-layer-routing": {
     "title": "API layer & routing",
-    "intro": ""
+    "intro": "Route model requests through reliable gateways and application interfaces.",
+    "prerequisites": [
+      "30-agents/32-tool-calling.md",
+      "60-llm-inference/64-inference-metrics-slo.md"
+    ],
+    "core": [
+      "81-litellm-api-layer.md",
+      "83-gateway-ingress.md",
+      "82-routing-llm.md",
+      "84-streaming-application-integration.md"
+    ],
+    "practice": "Trace one request through authentication, routing, streaming and an error path."
   },
   "90-observability-evals": {
     "title": "Observability & evaluations",
-    "intro": "Instrument applications, link tracks and metrics, manage prompts and experiences, assess quality and test contracts, breakdowns and reps of agents."
+    "intro": "Observe application behavior and evaluate quality with reproducible evidence.",
+    "prerequisites": [
+      "170-classical-ml/172-ml-validation-metrics.md",
+      "30-agents/31-agent-fundamentals.md"
+    ],
+    "core": [
+      "94-evals-methodology.md",
+      "90-010-llm-response-evaluation.md",
+      "91-langfuse-observability.md",
+      "96-evals-rag-agents.md",
+      "93-monitoring-inference.md",
+      "99-statistics-experimental-decisions.md"
+    ],
+    "practice": "Define a rubric and compare two versions on paired cases, including failure analysis."
   },
   "100-security-guardrails": {
     "title": "Security & guardrails",
-    "intro": "From the security of the LLM to that of the agents: the real threats and incidents, the defensive architecture, the supply chain of tools and skills, the DevSecOps, and the case of code agents."
+    "intro": "Protect LLM applications and agents through runtime controls and tested defenses.",
+    "prerequisites": [
+      "30-agents/31-agent-fundamentals.md",
+      "30-agents/32-tool-calling.md"
+    ],
+    "core": [
+      "101-llm-security-guardrails.md",
+      "102-agent-threats.md",
+      "103-agent-defenses.md",
+      "104-mcp-skills-security.md"
+    ],
+    "practice": "Trace an untrusted input to a protected resource and test the boundary that blocks it."
   },
   "110-mlops-cicd": {
     "title": "MLOps & CI/CD",
-    "intro": "Industrialize the life cycle of LLM models and applications: data, drive, artifacts, registry, releases, prediction contracts, CI/CD, monitoring, governance and disaster recovery."
+    "intro": "Deliver models and AI applications through reproducible training, releases and operations.",
+    "prerequisites": [
+      "170-classical-ml/172-ml-validation-metrics.md",
+      "150-data-compliance/157-data-contracts-quality.md"
+    ],
+    "core": [
+      "111-mlops-llmops-fundamentals.md",
+      "114-reproducibility-variance.md",
+      "117-continuous-training-pipelines.md",
+      "118-ml-artifacts-registry-releases.md",
+      "119-prediction-contracts-features-batch.md",
+      "112-model-cicd.md",
+      "113-monitoring-drift-feedback.md"
+    ],
+    "practice": "Describe a versioned release, its promotion gate and a tested rollback procedure."
   },
   "120-costs-finops": {
     "title": "Costs & FinOps",
-    "intro": ""
+    "intro": "Measure and control AI costs while preserving task quality and service requirements.",
+    "prerequisites": [
+      "60-llm-inference/64-inference-metrics-slo.md",
+      "140-system-design-product/146-model-selection.md"
+    ],
+    "core": [
+      "121-inference-costs.md",
+      "122-finops-llm.md"
+    ],
+    "practice": "Calculate cost per successful task, including retries and fixed capacity assumptions."
   },
   "130-llm-fundamentals": {
     "title": "LLM fundamentals",
-    "intro": "What you need to understand about the model itself in order to reason about quality, cost and the serving."
+    "intro": "Understand model representations and computation before choosing application techniques.",
+    "prerequisites": [],
+    "core": [
+      "132-tokenization.md",
+      "131-transformer-architecture.md",
+      "133-embeddings-representations.md",
+      "134-vector-search-ann.md"
+    ],
+    "practice": "Explain how text becomes tokens, representations and generated output; identify the cost of context."
   },
   "140-system-design-product": {
     "title": "System design & product",
-    "intro": "The part that assembles everything else: design, reliability and control an application LLM, senior level."
+    "intro": "Design AI applications around product requirements, failure modes and operational ownership.",
+    "prerequisites": [
+      "170-classical-ml/172-ml-validation-metrics.md",
+      "30-agents/31-agent-fundamentals.md"
+    ],
+    "core": [
+      "146-model-selection.md",
+      "141-system-design-llm.md",
+      "143-hallucinations-grounding.md",
+      "144-ai-ux-human-in-the-loop.md",
+      "142-llm-reliability-resilience.md",
+      "149-delivery-idempotency-concurrency.md"
+    ],
+    "practice": "Write an architecture decision with a baseline, constraints, failure handling and acceptance criteria."
   },
   "150-data-compliance": {
     "title": "Data & compliance",
-    "intro": "Building AI systems data: modeling and SQL, contracts and ingestion, temporality and features, storage, orchestration, streaming, distributed computing, corpus, lineage and compliance."
+    "intro": "Build reliable data flows with explicit schemas, time semantics, quality and governance.",
+    "prerequisites": [],
+    "core": [
+      "150-010-analytical-data-modeling.md",
+      "150-011-analytical-sql-transformations.md",
+      "157-data-contracts-quality.md",
+      "158-ingestion-cdc-backfills.md",
+      "159-temporal-data-features.md",
+      "151-data-curation-annotation.md",
+      "152-pii-privacy.md"
+    ],
+    "practice": "Define a data contract and reconstruct only the information available at prediction time."
   },
   "160-multimodal-edge": {
     "title": "Multimodal & edge",
-    "intro": ""
+    "intro": "Work with images, documents, voice and local models using task-specific evaluations.",
+    "prerequisites": [
+      "130-llm-fundamentals/131-transformer-architecture.md",
+      "140-system-design-product/146-model-selection.md"
+    ],
+    "core": [
+      "161-vision-language-models.md",
+      "162-document-parsing.md",
+      "164-local-edge-llm.md"
+    ],
+    "practice": "Choose an evaluation unit and explain a failure that aggregate accuracy would hide."
   },
   "170-classical-ml": {
     "title": "Classical ML & validation",
-    "intro": "Select and validate predictive models, calibrate their outputs, recommend, predict and detect anomalies; distinguish model explanation and causal effect of an action."
+    "intro": "Select and validate predictive models, then reason about uncertainty and decisions.",
+    "prerequisites": [],
+    "core": [
+      "171-ml-model-selection.md",
+      "172-ml-validation-metrics.md",
+      "173-calibration-uncertainty-abstention.md"
+    ],
+    "practice": "Choose a baseline, leakage-safe split and decision metric for one prediction task."
   }
 }

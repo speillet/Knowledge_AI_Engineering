@@ -2,7 +2,7 @@
 
 This course connects the topics on the API, the agents, the serving and the operation to build a platform whose result can be **checked, explain the performance and test the covers**. Follow the eight steps on the same project; each produces a deliverable and a criterion of passage.
 
-The links give the cards to work before the exercise. Read a sheet, answer without the back, then produce the deliverable. Further details are added when the project justifies them. The [Learning Guide](learning-with-flashcards.md) explains how to rate.
+The links give the cards to work before the exercise. Read a sheet, answer without the back, then produce the deliverable. Further details are added when the project justifies them. The [Learning Guide](../guides/learning-with-flashcards.md) explains how to rate.
 
 ## Project monitoring and prerequisites
 
@@ -10,13 +10,13 @@ Build a **multi-tenant support agent**: it consults a ticket, finds a support po
 
 Start with a model and two tools, `lire_ticket` and `modifier_ticket`. Access to the policy can be a document read; introduce the RAG when the volume or search requires it. The main model can be called by API or self-hosted. A backup backend is added after qualification.
 
-**Prerequisites**: Know how to explain [The loop of an agent](../30-agents/31-agent-fundamentals.md), [Requests for tools](../30-agents/32-tool-calling.md) and [Tokens and Context Limits](../130-llm-fundamentals/132-tokenization.md). If these concepts are new, work on them before implementing.
+**Prerequisites**: Know how to explain [The loop of an agent](../../30-agents/31-agent-fundamentals.md), [Requests for tools](../../30-agents/32-tool-calling.md) and [Tokens and Context Limits](../../130-llm-fundamentals/132-tokenization.md). If these concepts are new, work on them before implementing.
 
 The endpoints, statuses, budgets and thresholds below are **conventions and pedagogical hypotheses**, to be adapted to the service built. The document describes exercises; it does not provide a platform already deployed or measured performance.
 
 ## 1. Define the service and its success contract
 
-**Files to work**: [System Design Method](../140-system-design-product/141-system-design-llm.md), [choice of model](../140-system-design-product/146-model-selection.md) and [Evaluation methodology](../90-observability-evals/94-evals-methodology.md).
+**Files to work**: [System Design Method](../../140-system-design-product/141-system-design-llm.md), [choice of model](../../140-system-design-product/146-model-selection.md) and [Evaluation methodology](../../90-observability-evals/94-evals-methodology.md).
 
 Comparing a deterministic baseline or workflow to the agent: if the sequence is known, a stand-alone loop is not automatically useful.
 
@@ -36,7 +36,7 @@ These thresholds exemplify a decision; they are not universal goals. Publishing 
 
 ## 2. Draw architecture and assign responsibilities
 
-**Files to work**: [Platforms of Agents](../30-agents/38-agent-platforms.md), [Architecture and Governance](../110-mlops-cicd/115-agent-platforms-governance.md) and [API gateway and ingress](../80-api-layer-routing/83-gateway-ingress.md).
+**Files to work**: [Platforms of Agents](../../30-agents/38-agent-platforms.md), [Architecture and Governance](../../110-mlops-cicd/115-agent-platforms-governance.md) and [API gateway and ingress](../../80-api-layer-routing/83-gateway-ingress.md).
 
 ```mermaid
 flowchart TD
@@ -68,7 +68,7 @@ In a small service, these responsibilities can share a process. For long tasks, 
 
 ## 3. Define the API and qualify each model route
 
-**Files to work**: [gateway LLM](../80-api-layer-routing/81-litellm-api-layer.md), [Routing and Fallback](../80-api-layer-routing/82-routing-llm.md), [Streaming and integration](../80-api-layer-routing/84-streaming-application-integration.md) and [Structured Outputs](../60-llm-inference/63-guided-generation.md).
+**Files to work**: [gateway LLM](../../80-api-layer-routing/81-litellm-api-layer.md), [Routing and Fallback](../../80-api-layer-routing/82-routing-llm.md), [Streaming and integration](../../80-api-layer-routing/84-streaming-application-integration.md) and [Structured Outputs](../../60-llm-inference/63-guided-generation.md).
 
 Separate three contracts: that of the application for users, that of model calls and that of business tools. For the workshop, propose this API application:
 
@@ -100,7 +100,7 @@ First use test duplicates for errors and formats, then a small set of actual cal
 
 ## 4. Block the loop and make business actions more reliable
 
-**Files to work**: [harness](../30-agents/34-harness-plugins.md), [tool calling](../30-agents/32-tool-calling.md), [Defensive Architecture](../100-security-guardrails/103-agent-defenses.md) and [Idempotence and concurrency](../140-system-design-product/149-delivery-idempotency-concurrency.md).
+**Files to work**: [harness](../../30-agents/34-harness-plugins.md), [tool calling](../../30-agents/32-tool-calling.md), [Defensive Architecture](../../100-security-guardrails/103-agent-defenses.md) and [Idempotence and concurrency](../../140-system-design-product/149-delivery-idempotency-concurrency.md).
 
 Implement a loop that checks the remaining budget before each call, explicitly handles errors, and saves its status. Share the maximum number of attempts between runtime, gateway, and SDK to avoid repeated delays on each layer. Each step receives a delay that is compatible with the global deadline; stop new calls when it is exceeded.
 
@@ -114,7 +114,7 @@ Stopping a run blocks new steps and propagates the cancellation to calls in prog
 
 ## 5. Verify that the agent is completing the right task
 
-**Files to work**: [Evaluation of responses](../90-observability-evals/90-010-llm-response-evaluation.md), [Evaluation of Agents](../90-observability-evals/96-evals-rag-agents.md), [LLM-as-a-judge](../90-observability-evals/95-llm-as-judge.md), [grounding](../140-system-design-product/143-hallucinations-grounding.md) and [Reproducibility](../110-mlops-cicd/114-reproducibility-variance.md).
+**Files to work**: [Evaluation of responses](../../90-observability-evals/90-010-llm-response-evaluation.md), [Evaluation of Agents](../../90-observability-evals/96-evals-rag-agents.md), [LLM-as-a-judge](../../90-observability-evals/95-llm-as-judge.md), [grounding](../../140-system-design-product/143-hallucinations-grounding.md) and [Reproducibility](../../110-mlops-cicd/114-reproducibility-variance.md).
 
 Build a versioned set with initial state, user and permissions, request, possible disruption, expected result and checker. Reset data and isolate memory and application caches between attempts; declare cache states when they are part of the scenario. Separate the cases used to adjust prompts and tools from qualifying cases.
 
@@ -161,11 +161,11 @@ Request: "Gives in French the status of the ticket T-42, its confirmed cause and
 
 On this case, status error or invented cause blocks compliance; the style does not compensate for this failure. Allow paraphrases and publish dimensions separately. For an action, also check the business status and the consistency of the response with this state: evaluating the text alone does not prove that the ticket has been modified.
 
-To exercise documentary control before connecting a model, make the [Verifiable RAG Workshop](../examples/verifiable-rag/README.md). Its ten fictitious cases test rights, dates of effect, priorities of sources, citations and partial answers. Keep the report and the affirmation/proof table among the deliverables of this step; then complete with the free answers of the real backend.
+To exercise documentary control before connecting a model, make the [Verifiable RAG Workshop](../../examples/verifiable-rag/README.md). Its ten fictitious cases test rights, dates of effect, priorities of sources, citations and partial answers. Keep the report and the affirmation/proof table among the deliverables of this step; then complete with the free answers of the real backend.
 
 ## 6. Observe an end-to-end task
 
-**Files to work**: [traces LLM](../90-observability-evals/91-langfuse-observability.md), [Inference monitoring](../90-observability-evals/93-monitoring-inference.md), [Metric and SLO](../60-llm-inference/64-inference-metrics-slo.md) and [Debugging Agents](../90-observability-evals/98-agent-debugging.md).
+**Files to work**: [traces LLM](../../90-observability-evals/91-langfuse-observability.md), [Inference monitoring](../../90-observability-evals/93-monitoring-inference.md), [Metric and SLO](../../60-llm-inference/64-inference-metrics-slo.md) and [Debugging Agents](../../90-observability-evals/98-agent-debugging.md).
 
 Connect `trace_id`, `run_id`, step, attempt and operation ID. For each model call, keep effective route and backend, model reference, prompt and configuration versions, available usage, lead times and end pattern. For each tool, trace authorization, approval, status and verified effect, with minimization of sensitive data.
 
@@ -181,7 +181,7 @@ Provide a dashboard with offered request, accepted work, business success, joint
 
 ## 7. Measure capacity and choose optimizations
 
-**Files to work**: [load benchmarks](../60-llm-inference/60-010-inference-load-benchmarks.md), [Capacity and scheduling](../60-llm-inference/60-011-inference-capacity-scheduling.md), [Optimization process](../60-llm-inference/60-012-inference-optimization-method.md) and [Costs of Inference](../120-costs-finops/121-inference-costs.md).
+**Files to work**: [load benchmarks](../../60-llm-inference/60-010-inference-load-benchmarks.md), [Capacity and scheduling](../../60-llm-inference/60-011-inference-capacity-scheduling.md), [Optimization process](../../60-llm-inference/60-012-inference-optimization-method.md) and [Costs of Inference](../../120-costs-finops/121-inference-costs.md).
 
 First estimate the work generated by the tasks. A fictitious example, in a steady state and without any losses:
 
@@ -197,13 +197,13 @@ Test the complete service with realistic task arrivals and their dependencies be
 
 Compare low load, target load and overload, then introduce burst, long context, cold cache and loss of capacity. Track refusal, evolution and queue age, latencies, compliant task throughput and cost. Include requests still in flight and errors; verify that the generator actually emits the expected traffic. Repeat around the saturation border and justify the reserve by start-up times and failure scenarios.
 
-Then choose a lever depending on the bottleneck: reduce unnecessary calls or the context, control the concurrency, adjust the batching, distribute the load or change the model. For self-hosting, deepen [KV cache](../60-llm-inference/61-kv-cache-attention.md) and [Inference Servers](../70-containers-infra/11-llm-inference-servers.md). The [prefix caching](../60-llm-inference/66-prefix-caching-radix-attention.md) and [quantification](../60-llm-inference/68-quantization.md) compare with their memory, quality and isolation constraints.
+Then choose a lever depending on the bottleneck: reduce unnecessary calls or the context, control the concurrency, adjust the batching, distribute the load or change the model. For self-hosting, deepen [KV cache](../../60-llm-inference/61-kv-cache-attention.md) and [Inference Servers](../../70-containers-infra/11-llm-inference-servers.md). The [prefix caching](../../60-llm-inference/66-prefix-caching-radix-attention.md) and [quantification](../../60-llm-inference/68-quantization.md) compare with their memory, quality and isolation constraints.
 
 **Deliverable**: repeatable manifest, load/conformity/time/cost curves and capacity decision. **Passage**: supported target load with stable queue and met criteria, processed loss scenario, optimization gain confirmed by repetition and business qualification. The mocks prepare the protocol; a GPU capacity or a supplier quota is valid on the actual backend.
 
 ## 8. Test outages and prepare for production
 
-**Files to work**: [Reliability and resilience](../140-system-design-product/142-llm-reliability-resilience.md), [CI/CD models](../110-mlops-cicd/112-model-cicd.md), [SRE and incidents](../110-mlops-cicd/116-ai-sre-incidents-capacity.md) and [FinOps](../120-costs-finops/122-finops-llm.md).
+**Files to work**: [Reliability and resilience](../../140-system-design-product/142-llm-reliability-resilience.md), [CI/CD models](../../110-mlops-cicd/112-model-cicd.md), [SRE and incidents](../../110-mlops-cicd/116-ai-sre-incidents-capacity.md) and [FinOps](../../120-costs-finops/122-finops-llm.md).
 
 | Disturbance to be injected into the test environment | Behaviour to be demonstrated |
 | --- | --- |
@@ -226,6 +226,6 @@ Keep the eight deliverables together: framing, architecture, API contracts, exec
 
 This file answers three concrete questions: **Does the platform perform the right task; how much does it comply with its constraints; how does it behave when something fails?** An answer requires observations at all three levels.
 
-The sources cited support the mechanisms; the architecture and thresholds of the project are pedagogical choices. Adapt the commands, options, metric names and formats to the chosen version. The [Inference Workshops](llm-inference-audit-2026-10-08.md) deepen the measurements; the [AI Decision Workshop](../examples/ai-decisions/README.md) prepares the arbitrations of quality and cost.
+The sources cited support the mechanisms; the architecture and thresholds of the project are pedagogical choices. Adapt the commands, options, metric names and formats to the chosen version. The [Inference Workshops](../reports/llm-inference-audit-2026-10-08.md) deepen the measurements; the [AI Decision Workshop](../../examples/ai-decisions/README.md) prepares the arbitrations of quality and cost.
 
-Back to the [MOC AI Engineering](../00-moc-ai-engineering.md).
+Back to the [MOC AI Engineering](../../00-moc-ai-engineering.md).

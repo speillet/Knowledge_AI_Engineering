@@ -2,7 +2,7 @@
 
 These three mechanisms occur in different locations of the same request. **prefill** calculates the state of the known prompt. **RadixAttention** avoids recalculating already available prefix states. **speculative decoding** tries to confirm multiple output tokens by checking the target. Understanding this timeline helps to choose an optimization and interpret its limits.
 
-The flashcard path follows this order: [prefill and decode step by step](../60-llm-inference/60-013-prefill-decode-step-by-step.md), [prefix caching and RadixAttention](../60-llm-inference/66-prefix-caching-radix-attention.md), then [Special Decoding](../60-llm-inference/67-speculative-decoding.md). The examples below use a classic Causal Transformer; a hybrid architecture may require other states.
+The flashcard path follows this order: [prefill and decode step by step](../../60-llm-inference/60-013-prefill-decode-step-by-step.md), [prefix caching and RadixAttention](../../60-llm-inference/66-prefix-caching-radix-attention.md), then [Special Decoding](../../60-llm-inference/67-speculative-decoding.md). The examples below use a classic Causal Transformer; a hybrid architecture may require other states.
 
 ## 1. The prefill calculates already known positions
 

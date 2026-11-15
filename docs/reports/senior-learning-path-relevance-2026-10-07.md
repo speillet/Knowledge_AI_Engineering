@@ -28,11 +28,11 @@ No existing cards are removed: the specialized cards remain contextually useful 
 
 | Contenu | Ajout | Competence worked |
 | --- | ---: | --- |
-| [Training Optimization and Diagnostics](../50-fine-tuning/56-training-optimization-diagnostics.md) | 14 cards | Distinguish loss and value, diagnose gradients, accumulation and numerical accuracy |
-| [Calibration, uncertainty and abstention](../170-classical-ml/173-calibration-uncertainty-abstention.md) | 14 cards | Validate a trust, choose a cover and encrypt the human review |
-| [Statistics to decide](../90-observability-evals/99-statistics-experimental-decisions.md) | 14 cards | Interpret a gain, control the selection and respect the independent unit |
-| [SRE, Incidents and Capacity](../110-mlops-cicd/116-ai-sre-incidents-capacity.md) | 14 cards | Exploit the SLO, master the queues and check the replays |
-| [Technical Leadership](../140-system-design-product/147-ai-technical-leadership.md) | 4 cards | Mentoring, design review, debt and transfer of operations |
+| [Training Optimization and Diagnostics](../../50-fine-tuning/56-training-optimization-diagnostics.md) | 14 cards | Distinguish loss and value, diagnose gradients, accumulation and numerical accuracy |
+| [Calibration, uncertainty and abstention](../../170-classical-ml/173-calibration-uncertainty-abstention.md) | 14 cards | Validate a trust, choose a cover and encrypt the human review |
+| [Statistics to decide](../../90-observability-evals/99-statistics-experimental-decisions.md) | 14 cards | Interpret a gain, control the selection and respect the independent unit |
+| [SRE, Incidents and Capacity](../../110-mlops-cicd/116-ai-sre-incidents-capacity.md) | 14 cards | Exploit the SLO, master the queues and check the replays |
+| [Technical Leadership](../../140-system-design-product/147-ai-technical-leadership.md) | 4 cards | Mentoring, design review, debt and transfer of operations |
 | **Total** | **60 cards** | **13 scenarios and 9 distinctions included** |
 
 Primary sources are listed in the topics: PyTorch documentation, scikit-learn, SciPy, calibration work and compliant prediction, NIST, ASA, Microsoft Research, Google SRE and AWS. The examples and steps are educational applications to AI systems, not experimental results obtained on a particular deployment.

@@ -31,18 +31,18 @@ The scenarios of the topics concerned are adjusted to remain consistent with the
 
 | Topic | Ajouts | Apport |
 | --- | ---: | --- |
-| [Transformer](../130-llm-fundamentals/131-transformer-architecture.md) | 3 | Weighted sum of attention, memory factor of GQA, parallelism in training and generation |
-| [Probability and sampling](../60-llm-inference/65-probabilities-sampling.md) | 2 | Top-p with renormalization; probability of sequence and perplexity |
-| [RAG Evals and Agents](../90-observability-evals/96-evals-rag-agents.md) | 4 | Accuracy/reminder, MRR, fidelity vs. accuracy, diagnostics by oracle context |
-| [LLM-as-a-judge](../90-observability-evals/95-llm-as-judge.md) | 1 | Numerical correction of a proportion under explicit assumptions |
-| [Reproducibility](../110-mlops-cicd/114-reproducibility-variance.md) | 1 | Average ^2 passes per task different from the average success square |
-| [Prompting](../10-prompt-engineering/11-advanced-prompt-engineering.md) | 1 | Nine identical answers do not prove 90% accuracy |
+| [Transformer](../../130-llm-fundamentals/131-transformer-architecture.md) | 3 | Weighted sum of attention, memory factor of GQA, parallelism in training and generation |
+| [Probability and sampling](../../60-llm-inference/65-probabilities-sampling.md) | 2 | Top-p with renormalization; probability of sequence and perplexity |
+| [RAG Evals and Agents](../../90-observability-evals/96-evals-rag-agents.md) | 4 | Accuracy/reminder, MRR, fidelity vs. accuracy, diagnostics by oracle context |
+| [LLM-as-a-judge](../../90-observability-evals/95-llm-as-judge.md) | 1 | Numerical correction of a proportion under explicit assumptions |
+| [Reproducibility](../../110-mlops-cicd/114-reproducibility-variance.md) | 1 | Average ^2 passes per task different from the average success square |
+| [Prompting](../../10-prompt-engineering/11-advanced-prompt-engineering.md) | 1 | Nine identical answers do not prove 90% accuracy |
 
 These additions include **8 calculations, 2 distinctions and 2 diagnostic or interpretation cards**. They complete the definitions with an observable task. The Vault now contains **1,868 Cards**, of which **76 Calculations**, **293 put into situation** and **141 “Not to be confused” cards**.
 
 ## Method of review
 
-The [Learning Guide](learning-with-flashcards.md) offers an initial route, a response criterion by card type, honest scoring in Anki and variants of draft exercises. It then connects this knowledge to existing workshops with deliverables. The README clarifies conventions to keep future questions autonomous and evaluable.
+The [Learning Guide](../guides/learning-with-flashcards.md) offers an initial route, a response criterion by card type, honest scoring in Anki and variants of draft exercises. It then connects this knowledge to existing workshops with deliverables. The README clarifies conventions to keep future questions autonomous and evaluable.
 
 The distinction between recall and proofreading is supported by the [Study by Roediger and Karpicke](https://psychnet.wustl.edu/memory/wp-content/uploads/2018/04/Roediger-Karpicke-2006_PsychSci.pdf); the meaning of the notation buttons follows the [manuel Anki](https://docs.ankiweb.net/manual/studying). Primary technical sources are added to the relevant files: articles on Transformer, GQA, RoPE, reasoning, judges and RAG; Hugging Face and scikit-learn documentation; Stanford information search manual.
 

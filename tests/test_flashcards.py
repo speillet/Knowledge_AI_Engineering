@@ -145,8 +145,13 @@ class VaultTests(unittest.TestCase):
         self.addCleanup(self.tmp.cleanup)
         self.root = Path(self.tmp.name)
         sources = (
-            lint.topic_files()
-            + list((ROOT / "docs").glob("*.md"))
+            list(ROOT.glob("[0-9]*/*.md"))
+            + list((ROOT / "docs").rglob("*.md"))
+            + list(ROOT.glob("*.md"))
+            + list((ROOT / "tests").glob("*.py"))
+            + list((ROOT / "scripts").glob("*.py"))
+            + list(ROOT.glob("*.txt"))
+            + list(ROOT.glob("*.yml"))
             + [
                 ROOT / "README.md",
                 ROOT / f"{lint.MOC}.md",
@@ -158,7 +163,7 @@ class VaultTests(unittest.TestCase):
             p
             for p in (ROOT / "examples").rglob("*")
             if p.is_file()
-            and p.suffix in {".py", ".md", ".txt"}
+            and p.suffix in {".py", ".md", ".txt", ".json"}
             and not any(part in {".venv", "__pycache__", ".lab-data"} for part in p.parts)
         ]
         for source in sources:
@@ -200,6 +205,17 @@ class VaultTests(unittest.TestCase):
         readme = self.root / "README.md"
         write(readme, read(readme) + "\n[A record](missing-topic.md)\n")
         self.assertIn("broken Markdown link", self.errors())
+
+    def test_dead_markdown_link_in_nested_guide_fails_lint(self):
+        guide = self.root / "docs/guides/example.md"
+        guide.parent.mkdir(parents=True, exist_ok=True)
+        write(guide, "[Missing topic](../../missing.md)\n")
+        self.assertIn("broken Markdown link", self.errors())
+
+    def test_catalog_links_resolve_from_documentation_directory(self):
+        text = read(self.root / lint.CATALOG)
+        self.assertIn("(../20-rag/21-rag-fundamentals.md)", text)
+        self.assertFalse(lint.lint(0)[0])
 
     def test_invalid_date_fails_without_exception(self):
         self.edit(self.rag, "\n<!-- summary:", "\nVerified on: 31 February 2026\n<!-- summary:")
@@ -298,9 +314,30 @@ class VaultTests(unittest.TestCase):
         directory = self.root / "30-agents"
         new = directory / "30-010-new-file.md"
         write(new, "# New form — Flashcards\nTags: #flashcards\n<!-- summary: A tenth record. -->\n")
-        names = [p.name for p in sorted(directory.glob("*.md"), key=catalog.topic_order)]
+        names = [p.name for p in catalog.section_files(self.root, directory.name)]
         self.assertEqual(names[-1], new.name)
         self.assertIn(new.stem, catalog.render(self.root, moc=True))
+
+    def test_domain_readmes_are_not_cards(self):
+        before = lint.topic_files()
+        write(self.root / "20-rag/README.md", "# RAG\n\nNavigation is not a flashcard.\n")
+        self.assertEqual(lint.topic_files(), before)
+        self.assertNotIn("README.md", [p.name for p in before])
+        self.assertIn(self.root / lint.CONTAINERS_INDEX, before)
+
+    def test_domain_index_detects_drift_and_invalid_prerequisite(self):
+        path = self.root / "20-rag/README.md"
+        write(path, "# Outdated index\n")
+        with contextlib.redirect_stdout(io.StringIO()):
+            self.assertFalse(catalog.sync(self.root, check=True))
+            catalog.sync(self.root)
+            self.assertTrue(catalog.sync(self.root, check=True))
+        config = self.root / "scripts/sections.json"
+        data = json.loads(read(config))
+        data["20-rag"]["prerequisites"] = ["missing.md"]
+        write(config, json.dumps(data))
+        with self.assertRaisesRegex(ValueError, "prerequisites"):
+            catalog.sync(self.root)
 
     def test_export_rejects_invalid_cards(self):
         self.edit(self.rag, "\n?\n", "\n")
