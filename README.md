@@ -6,6 +6,8 @@ A collection of connected flashcards, learning paths and practical workshops for
 
 ## Learn
 
+[Browse the website](https://speillet.github.io/Knowledge_AI_Engineering/) for navigation, search and expandable answers.
+
 Start with [your first learning session](START_HERE.md), then follow a [reading path](docs/paths/README.md) or browse the [topic catalog](docs/catalog.md).
 
 Each topic combines explanations, examples, scenarios and links to related concepts. Read it in any Markdown viewer, or [open the vault in Obsidian](docs/guides/obsidian.md) for linked navigation and spaced repetition.

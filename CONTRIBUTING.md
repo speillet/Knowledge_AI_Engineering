@@ -115,3 +115,5 @@ Topics citing products, versions or regulations carry a `Verified on` date. The 
 Targeted reviews state their dates and checked claims under Sources without artificially refreshing the overall date. Adding a source does not validate every historical claim.
 
 `tests/fixtures/legacy_guids.json` and `tests/fixtures/english_migration_guids.json` protect historical note identities. A deliberate retirement belongs in `scripts/retired_cards.json`, which the identity checks recognize.
+
+For the searchable website, see the [build and publication guide](docs/reference/documentation-site.md).

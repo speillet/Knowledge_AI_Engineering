@@ -5,7 +5,7 @@ STRICT_ENCODING = -X warn_default_encoding -W error::EncodingWarning
 
 .DEFAULT_GOAL := help
 .PHONY: help install check lint catalog-check ruff typecheck test workshops pre-commit \
-	ids catalog stats readme export
+	ids catalog stats readme export site site-serve
 
 help: ## List of targets
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "} {printf "  %-14s %s\n", $$1, $$2}'
@@ -54,3 +54,11 @@ readme: ## Update the README As of statistics line
 
 export: ## Anki package in dist/ai-engineering.apkg
 	$(PYTHON) scripts/export_anki.py
+
+site: ## Build the searchable documentation site (install requirements-docs.txt first)
+	$(PYTHON) scripts/prepare_site.py
+	$(PYTHON) -m mkdocs build --strict
+
+site-serve: ## Preview the site locally; rerun after changing source files
+	$(PYTHON) scripts/prepare_site.py
+	$(PYTHON) -m mkdocs serve --dev-addr 127.0.0.1:8000

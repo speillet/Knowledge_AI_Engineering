@@ -1,0 +1,64 @@
+site_name: AI Engineering
+site_description: Connected flashcards, learning paths and practical workshops for AI engineering.
+site_url: https://speillet.github.io/Knowledge_AI_Engineering/
+repo_url: https://github.com/speillet/Knowledge_AI_Engineering
+edit_uri: ''
+docs_dir: build/docs
+site_dir: site
+theme:
+  name: readthedocs
+  collapse_navigation: true
+  navigation_depth: 3
+plugins:
+  - search
+markdown_extensions:
+  - tables
+  - fenced_code
+  - md_in_html
+  - toc:
+      permalink: true
+extra_css:
+  - assets/site.css
+nav:
+  - Home: index.md
+  - Start here: START_HERE.md
+  - Learning paths: docs/paths/index.md
+  - Domains:
+      - "Prompt engineering": 10-prompt-engineering/index.md
+      - "RAG": 20-rag/index.md
+      - "Agents": 30-agents/index.md
+      - "Automation & agent frameworks": 40-automation/index.md
+      - "Fine-tuning": 50-fine-tuning/index.md
+      - "LLM inference": 60-llm-inference/index.md
+      - "Containers & infrastructure": 70-containers-infra/index.md
+      - "API layer & routing": 80-api-layer-routing/index.md
+      - "Observability & evaluations": 90-observability-evals/index.md
+      - "Security & guardrails": 100-security-guardrails/index.md
+      - "MLOps & CI/CD": 110-mlops-cicd/index.md
+      - "Costs & FinOps": 120-costs-finops/index.md
+      - "LLM fundamentals": 130-llm-fundamentals/index.md
+      - "System design & product": 140-system-design-product/index.md
+      - "Data & compliance": 150-data-compliance/index.md
+      - "Multimodal & edge": 160-multimodal-edge/index.md
+      - "Classical ML & validation": 170-classical-ml/index.md
+  - Practice: examples/index.md
+  - Review with Anki: docs/guides/anki.md
+  - Guides: docs/guides/index.md
+  - Topic catalog: docs/catalog.md
+  - Reference: docs/reference/index.md
+  - Review reports: docs/reports/index.md
+  - Contributing: CONTRIBUTING.md
+not_in_nav: |
+  /docs/index.md
+  /00-moc-ai-engineering.md
+  /[0-9]*/*.md
+  /docs/guides/*.md
+  /docs/paths/*.md
+  /docs/reference/*.md
+  /docs/reports/*.md
+  /examples/*/*.md
+validation:
+  links:
+    not_found: warn
+    anchors: warn
+    unrecognized_links: warn
