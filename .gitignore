@@ -24,3 +24,7 @@ __pycache__/
 
 # Isolated support-agent workshop dependencies
 .venv-agentic/
+
+# Generated documentation
+build/
+site/

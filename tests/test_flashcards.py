@@ -149,6 +149,9 @@ class VaultTests(unittest.TestCase):
             + list((ROOT / "docs").rglob("*.md"))
             + list(ROOT.glob("*.md"))
             + list((ROOT / "tests").glob("*.py"))
+            + list((ROOT / "scripts").glob("*.py"))
+            + list(ROOT.glob("*.txt"))
+            + list(ROOT.glob("*.yml"))
             + [
                 ROOT / "README.md",
                 ROOT / f"{lint.MOC}.md",
