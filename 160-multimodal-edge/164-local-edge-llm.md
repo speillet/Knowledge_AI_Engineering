@@ -174,4 +174,5 @@ Scenario: an industrial customer wants an assistant that works without the Inter
 - [[53-synthetic-data-distillation|Distillation]] — small specialized models
 - [[101-llm-security-guardrails|LLM Security]] — injection, exfiltration and guardrails
 - [[61-kv-cache-attention|KV cache]] — memory that limits concurrency
+- [[60-014-inference-parity-validation|Inference parity]] — checking the pre-tokenizer during GGUF conversion
 - [[00-moc-ai-engineering|MOC AI Engineering]]

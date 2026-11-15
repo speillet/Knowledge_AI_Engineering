@@ -1,6 +1,6 @@
 # Evaluating LLM outputs & responses — Flashcards
 Tags: #flashcards #ai-engineering #evals #responses #quality #llm
-<!-- summary: grid by dimension, accuracy and completeness, relevance and guidance, multiple references, standardization, BLUE and RED, BERTScore, summaries, numerical responses, blocking criteria and aggregation by affirmation, validation of affirmations and style, numerical tolerance, weighted coverage. -->
+<!-- summary: grid by dimension, accuracy and completeness, relevance and guidance, multiple references, standardization, BLUE and RED, BERTScore, summaries, numerical responses, blocking criteria and aggregation by affirmation, validation of affirmations and style, numerical tolerance, weighted coverage, empty fields, extracted list, unparsable outputs. -->
 
 
 How to define a grid for evaluating a LLM response? <!--anki:6631303738646665313965663463613262386165393030353031373061313738-->
@@ -125,6 +125,40 @@ Why evaluate the assertions of a response separately from its style? <!--anki:35
 A fluid **response** may contain a single false statement that is sufficient to make the decision dangerous. An overall style or utility score may mask this error.
 
 Break down verifiable claims, associate each with proof, and distinguish between accuracy, coverage, and presentation. Weighting errors according to their consequence without hiding their number. For example, the date and amount of a refund require specific control. Keeping a full answer score: counting only the correct sentences can reward a very short answer that avoids all difficult parts.
+
+---
+
+How do you score an extracted field when the reference or the prediction is empty? <!--anki:3738393832353037623336323465613061303638356133373535343639613331-->
+?
+Distinguish **four cases**, which have neither the same meaning nor the same cost:
+- empty reference, empty prediction: **correct abstention**;
+- empty reference, predicted value: **invention**, often the most dangerous;
+- reference value, empty prediction: **omission**, which sends the document to review;
+- two different values: **value error**.
+
+Count them separately, field by field. A single accuracy score that treats empty as an ordinary value rewards a model that abstains everywhere on often-empty fields. Document-level accuracy completes this tracking ([[161-vision-language-models|extraction by a VLM]]).
+
+---
+
+Calculation: an invoice has five reference lines. The model extracts four, three of which match a reference line. What are the precision, recall and F1 of the extracted list? <!--anki:6435326463366233373933653461326661333232386139643632383735336361-->
+?
+```text
+precision = 3 / 4 = 75%
+recall    = 3 / 5 = 60%
+F1        = 2 × 0.75 × 0.60 / (0.75 + 0.60) ≈ 66.7%
+```
+Precision measures the share of extracted lines that are correct; recall, the share of invoice lines retrieved. The result depends on the **matching rule**: exact amount, normalized label, rounding tolerance. Set it before the eval, and match each reference line at most once; otherwise a line duplicated by the model counts twice as correct.
+
+---
+
+Calculation: out of 1,000 eval cases, 50 outputs fail to parse and 855 of the other 950 are correct. What score do you report? <!--anki:3133383766363664613432623463643561306365376632663835656136326634-->
+?
+```text
+accuracy over all cases        = 855 / 1,000 = 85.5%
+format validity                = 950 / 1,000 = 95%
+accuracy among parsed outputs  = 855 / 950   = 90%
+```
+Report **85.5%** as the main score: an unreadable output is a system failure. The other two figures explain where the loss comes from. Removing the 50 cases from the denominator inflates the score and hides a format regression. Only an error unrelated to the model, such as a provider outage, justifies rerunning a case rather than counting it as wrong.
 
 ---
 

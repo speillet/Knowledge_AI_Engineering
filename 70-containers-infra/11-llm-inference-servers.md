@@ -175,4 +175,5 @@ Scenario: your company has 15 fine-tuned variants of the same model 8B, one per 
 - [[69-roofline-prefill-decode|Roofline & Disaggregation]] — which limits each phase of the inference
 - [[83-gateway-ingress|Ingress & API gateway]] — network input stack
 - [[85-agentic-protocols-map|Map of protocols]] — which protocol to which agent boundary
+- [[60-014-inference-parity-validation|Inference parity]] — checking that a new server computes the same model
 - [[00-moc-ai-engineering|MOC AI Engineering]]

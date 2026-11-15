@@ -226,4 +226,5 @@ Scenario: your fine-tuned model is excellent on the intended extraction, but use
 - [[55-agentic-rl|Agentic RL]] — train a model on agent tasks
 - [[66-prefix-caching-radix-attention|Prefix caching]] — Reuse the calculation of common prefixes
 - [[56-training-optimization-diagnostics|Training Optimization & Diagnosis]] — diagnose an adaptation before making it more complex
+- [[60-014-inference-parity-validation|Inference parity]] — teacher forcing to compare two inference stacks
 - [[00-moc-ai-engineering|MOC AI Engineering]]
