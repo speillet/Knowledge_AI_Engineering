@@ -1,266 +1,266 @@
-# Monitoring, drift & boucle de feedback — Flashcards
+# Monitoring, drift & feedback loop — Flashcards
 Tags: #flashcards #ai-engineering #mlops #monitoring #drift #llm
-<!-- summary: data drift et concept drift, PSI et calcul, test KS sur gros volumes, dérive multivariée, distribution des scores, drift d'une app LLM et d'un RAG, qualité en production, boucle de feedback, quand ré-entraîner, annotation régulière, mises à jour des modèles API, alertes sur tendance et par segment, biais des labels tardifs, références fixe et glissante, définition versionnée du label, calcul de couverture, panne de la mesure, boucle de décision, saisonnalité. -->
+<!-- summary: data drift and concept drift, PSI and calculation, KS test on large volumes, multivariate drift, score distribution, drift of a LLM app and a RAG, quality in production, feedback loop, when to re-train, regular annotation, updates of the API models, trend and segment alerts, through the late labels, fixed and sliding version references, definition. -->
 
 
-À ne pas confondre : data drift et concept drift ? <!--anki:693a4558422d7246257a-->
+Do not confuse: data drift and concept drift? <!--anki:693a4558422d7246257a-->
 ?
-- **Data drift** : la distribution des **entrées** change (nouveaux sujets, jargon)
-- **Concept drift** : la **relation entrée → sortie attendue** change (le « bon » comportement évolue)
+- **Data drift**: the distribution of **inputs** changes (new topics, jargon)
+- **Concept drift**: the **relationship input → expected output** changes (the "good" behavior evolves)
 
-Exemple de data drift : davantage de demandes dans une nouvelle langue. Exemple de concept drift : une règle commerciale change et une ancienne réponse correcte devient fausse. Une distribution d'entrée stable n'exclut donc pas une baisse de qualité. Mesurer les deux séparément et rechercher la cause avant de modifier ou réentraîner le modèle.
+Example of data drift: more requests in a new language. Example of a drift concept: a trade rule changes and an old correct response becomes false. A stable input distribution does not exclude a drop in quality. Measure the two separately and look for the cause before modifying or retraining the model.
 
 ---
 
-Comment le Population Stability Index (PSI) mesure-t-il la dérive d'une variable ? <!--anki:3839353839393939643139353462396362656138386437353365636534333832-->
+How does the Population Stability Index (PSI) measure the drift of a variable? <!--anki:3839353839393939643139353462396362656138386437353365636534333832-->
 ?
-Le **PSI** compare les proportions de référence `e_i` et courantes `a_i` dans des classes définies :
+The **PSI** compares the `e_i` and current `a_i` reference proportions in defined classes:
 ```text
 PSI = Σ (a_i − e_i) × ln(a_i/e_i)
 ```
-Fixer bornes et traitement des valeurs manquantes pour rendre les périodes comparables. Les repères 0,1 et 0,25 sont des conventions de certains usages, pas des seuils statistiques universels ni des preuves de qualité.
+The 0.1 and 0.25 marks are conventions of certain uses, not universal statistical thresholds or proofs of quality.
 
-Une proportion nulle exige une règle explicite : regroupement ou lissage documenté, avec normalisation cohérente. L'indice dépend de ce choix et du découpage. Inspecter quelles classes changent et leur impact ; le PSI univarié ne détecte pas toute dérive de corrélation ni de relation entre entrée et label.
+A zero proportion requires an explicit rule: documented grouping or smoothing, with consistent normalization. The index depends on this choice and the breakdown. Inspect which classes change and their impact; the univariate PSI does not detect any drift of correlation or relationship between input and label.
 
 ---
 
-Calcul : avec PSI = Σ (a − e) × ln(a / e), quel indice pour une variable dont les trois classes passent de 50 / 30 / 20 % à 40 / 30 / 30 % ? La population est-elle stable ? <!--anki:3938656564616631313236303437343839646338666166616664333161326363-->
+Calculation: with PSI = Σ (a − e) × ln(a / e), which index for a variable whose three classes change from 50 / 30 / 20% to 40 / 30 / 30%? Is the population stable? <!--anki:3938656564616631313236303437343839646338666166616664333161326363-->
 ?
 ```text
 (0,40 − 0,50) × ln(0,40 / 0,50) = −0,10 × −0,223 ≈ 0,022
 (0,30 − 0,30) × ln(1)            = 0
 (0,30 − 0,20) × ln(0,30 / 0,20) =  0,10 ×  0,405 ≈ 0,041
-PSI ≈ 0,063
+PSI ≈ 0.063
 ```
-Sous le repère de 0,1, on parlerait de population **stable**. Pourtant la dernière classe a gagné la moitié de son poids, de 20 à 30 %. Si elle regroupe les gros montants, où le modèle se trompe le plus, l'effet métier peut être important.
+Under the mark of 0.1, we would speak of population **stable**. Yet the last class has gained half its weight, from 20 to 30%. If it groups the large amounts, where the model is the most mistaken, the business effect can be important.
 
-Un indice global se complète donc par l'examen des classes qui bougent et de leur part dans les erreurs du modèle.
+A global index is thus completed by examining the classes that move and their share in the errors of the model.
 
 ---
 
-Calcul : avec 100 000 observations dans chaque fenêtre, quel écart de Kolmogorov-Smirnov devient significatif à 5 %, si D_crit ≈ 1,36 × √((n + m) / (n × m)) ? Qu'en conclure ? <!--anki:3761623161306136393831653465323938323161346461613065613732366361-->
+Calculation: with 100,000 observations in each window, what deviation from Kolmogorov-Smirnov becomes significant at 5%, if D_write ≈ 1.36 × √((n + m) / (n × m))? What to conclude? <!--anki:3761623161306136393831653465323938323161346461613065613732366361-->
 ?
 ```text
 D_crit ≈ 1,36 × √(200 000 / 10¹⁰) = 1,36 × 0,0045 ≈ 0,006
 ```
-Un écart maximal de **0,6 point** entre les deux fonctions de répartition suffit à rejeter l'égalité. Sur de gros volumes, presque chaque variable « dérive » au sens du test, même quand l'écart n'a aucun effet.
+A maximum deviation of **0.6 point** between the two distribution functions is enough to reject the equality. On large volumes, almost each variable "drifts" in the sense of the test, even when the deviation has no effect.
 
-À l'inverse, avec 50 observations par fenêtre, le seuil monte à 1,36 × √(100 / 2 500) ≈ 0,27 : une dérive importante passe inaperçue. La p-valeur dit si les distributions diffèrent, pas si l'écart compte. Suivre plutôt une taille d'effet, comme D, le PSI ou la distance de Wasserstein, avec un seuil métier.
+Conversely, with 50 observations per window, the threshold goes up to 1.36 × √(100 / 2,500) ≈ 0.27: a significant drift goes unnoticed. The p-value tells if the distributions differ, not if the gap counts. Instead, follow an effect size, such as D, the PSI or the Wasser distance.
 
 ---
 
-Comment détecter une dérive multivariée que les contrôles variable par variable ne voient pas ? <!--anki:3963393735306536386535613433613239383466366437643030343639303937-->
+How to detect a multivariate drift that variable-by-variable controls do not see? <!--anki:3963393735306536386535613433613239383466366437643030343639303937-->
 ?
-Un **classifieur de domaine** apprend à distinguer période de référence et période récente. Une bonne séparation hors entraînement indique un changement détectable avec les variables et le modèle choisis.
+A **domain classifier** learns to distinguish between the reference period and the recent period. A good separation out of training indicates a detectable change with the chosen variables and model.
 
-Une AUC proche de 0,5 ne prouve pas l'identité des populations : faible puissance ou modèle inadapté peuvent masquer une différence. Retirer identifiants et dates qui rendent le problème trivial ; respecter groupes et dépendances temporelles dans la validation. Examiner les interactions et des exemples responsables de la séparation. L'AUC mesure la détectabilité de la différence, pas son coût métier ni une baisse certaine de précision ; la qualité demande une mesure complémentaire.
+An AUC close to 0.5 does not prove the identity of the populations: low power or unsuitable model can hide a difference. Remove identifiers and dates that make the problem trivial; respect groups and temporal dependencies in the validation. Examine interactions and examples responsible for separation. The AUC measures the detectability of the difference, not its business cost or a certain decrease in accuracy; quality requires a complementary measure.
 
 ---
 
-Pourquoi surveiller la distribution des scores d'un modèle en plus de ses variables d'entrée ? <!--anki:3731316566643535353330663439373962336264626566383836366234356634-->
+Why monitor the distribution of a model's scores in addition to its input variables? <!--anki:3731316566643535353330663439373962336264626566383836366234356634-->
 ?
-La **distribution des scores** résume les dérives qui comptent pour ce modèle : une variable peu utilisée peut bouger sans effet, alors qu'un déplacement des scores touche directement les décisions. Elle est disponible tout de suite, sans attendre les labels.
+The **score distribution** summarizes the drifts that count for this model: a little used variable can move without effect, while a shift of the scores directly affects the decisions. It is available immediately, without waiting for labels.
 
-Suivre en particulier la **part au-dessus du seuil de décision** : si elle passe de 2 à 5 %, la file de revue humaine est multipliée par 2,5, même si la qualité reste correcte. Limite : des scores stables n'excluent pas une dérive de concept, où les mêmes scores correspondent à d'autres issues. Seuls les labels, même tardifs, la révèlent.
+Follow in particular the **part above the decision threshold**: if it goes from 2 to 5%, the human review queue is multiplied by 2.5, even if the quality remains correct. Limit: stable scores do not exclude a drift of concept, where the same scores correspond to other issues. Only labels, even late, reveal it.
 
 ---
 
-Comment le drift se manifeste-t-il sur une app LLM ? <!--anki:4477547a5d582b2a403a-->
+How does the drift manifest on a LLM app? <!--anki:4477547a5d582b2a403a-->
 ?
-Une application LLM peut changer de **population de demandes, de contexte ou de comportement** sans erreur technique : nouveaux sujets, documents modifiés, droits retirés, outil différent ou révision fournisseur.
+A LLM application can change **population of requests, context, or behavior** without technical errors: new topics, modified documents, removed rights, different tool, or vendor review.
 
-Décomposer la chaîne avant de conclure à une dégradation du modèle. Comparer entrées, passages récupérés, versions, décisions d'outils et résultats, par segment. Un déplacement d'embeddings ou un taux de refus nouveau est un signal d'investigation ; il ne mesure pas directement l'exactitude. Des sondes connues et une annotation représentative complètent les indicateurs automatiques. Ni scores stables ni disponibilité intacte ne prouvent que les réponses restent utiles et autorisées.
+Decompose the string before concluding that the model is degraded. Compare entries, passages retrieved, versions, tool decisions and results, by segment. A embeddings shift or a new refusal rate is a signal of investigation; it does not directly measure accuracy. Known probes and a representative annotation complete the automatic indicators. Neither stable scores nor intact availability prove that the answers remain useful and authorized.
 
 ---
 
-Comment monitorer la qualité d'une application LLM en production ? <!--anki:786d2e5876493b586624-->
+How to monitor the quality of a LLM application in production? <!--anki:786d2e5876493b586624-->
 ?
-Combiner **contrôles complets peu coûteux** et **échantillons annotés** : formats, erreurs d'outils, citations et effets vérifiables d'un côté ; exactitude et satisfaction utile de l'autre. Relier les résultats à la version réellement exécutée.
+Combine **Inexpensive Complete Controls** and **Annotated Samples**: Formats, Tool Errors, Citations, and Verifiable Effects on one side; Accuracy and Useful Satisfaction on the other; Link results to the version actually executed.
 
-Annoncer population, mode d'échantillonnage, couverture et incertitude par segment. Un juge peut manquer de références ou tomber en panne ; son absence de score n'est pas une réussite. Séparer taux observé sur traces jugées et estimation du trafic. Les cas ciblés sur incidents servent au diagnostic, sans devenir automatiquement représentatifs. Compléter avec sondes et retours humains, dont les biais et délais restent à mesurer.
+Announce population, sampling mode, coverage and uncertainty by segment. A judge may run out of references or fail; his or her lack of score is not a success. Separate rate observed on judged tracks and estimate of traffic. Cases targeted on incidents are used for diagnosis, without becoming automatically representative. Complete with probes and human returns, whose biases and delays remain to be measured.
 
 ---
 
-Qu'est-ce que la boucle de feedback d'une application LLM ? <!--anki:7568493c4c666036326e-->
+What is the feedback loop of a LLM application? <!--anki:7568493c4c666036326e-->
 ?
 ```text
-traces prod → curation → golden datasets enrichis
-→ evals plus fidèles → prompts/fine-tuning améliorés
+Traces Prod → curation → Golden Datasets
+→ evals more loyal → prompts/fine-tuning improved
 ```
-Les données de production **nourrissent** l'amélioration continue.
+Production data **feeds** continuous improvement.
 
-La **curation** transforme un signal brut en exemple exploitable : vérifier l'erreur, enlever les données inutiles, produire une référence et choisir le bon jeu. Garder un test indépendant évite d'optimiser uniquement les incidents déjà vus. Mesurer après déploiement si la correction améliore réellement l'usage sans dégrader d'autres segments.
+**curation** turns a raw signal into an actionable example: check for error, remove unnecessary data, produce a reference, and choose the right game. Keeping an independent test avoids optimizing only incidents that have already been seen. Measuring after deployment whether the correction actually improves usage without degrading other segments.
 
-Un pouce négatif ne fournit pas la bonne réponse. Faire annoter la cause avant entraînement : erreur factuelle, délai excessif et désaccord utilisateur demandent des corrections différentes.
-
----
-
-Quand réentraîner ou fine-tuner à nouveau un modèle en production ? <!--anki:69216450773565735339-->
-?
-**Sur signal**, ou à un rythme justifié par l'arrivée régulière de labels ([[117-pipelines-entrainement-continu|planifié ou déclenché]]) :
-- Chute des scores sur un segment
-- Drift des entrées détecté
-- Nouveaux cas d'usage ou nouvelles catégories
-- Nouveau modèle de base plus performant
-
-Avant de ré-entraîner, vérifier que le problème ne se règle pas plus simplement : prompt, retrieval ou fraîcheur de l'index ([[51-fine-tuning-adaptation|fine-tuning]]).
-
-Vérifier aussi que le signal ne vient pas d'un incident de données : réentraîner sur une source cassée fait apprendre l'erreur au modèle. Le réentraînement produit un **candidat** ; sa mise en production reste soumise à la comparaison avec la version en place.
+A negative thumb does not provide the right answer. Annotating the cause before training: factual error, excessive delay and user disagreement require different corrections.
 
 ---
 
-Quel est l'équivalent du drift pour un système RAG ? <!--anki:623f3a36415d4739725d-->
+When to retrain or tune a model again in production? <!--anki:69216450773565735339-->
 ?
-Un RAG peut dériver à plusieurs niveaux : **sources obsolètes**, index mal synchronisé, changement des questions, permissions modifiées ou perte de rappel après changement d'embeddings. La fraîcheur est donc une cause de dérive, pas son unique équivalent.
+**On signal**, or at a rate justified by the regular arrival of labels ([[117-continuous-training-pipelines|planned or triggered]]):
+- Fall of scores on a segment
+- Drift of entries detected
+- New use cases or new categories
+- New, more efficient base model
 
-Suivre dates d'ingestion, suppressions, couverture des questions et qualité des passages récupérés. Si la bonne source existe mais n'est plus retrouvée, ré-ingérer davantage ne suffit pas : vérifier index, filtres, découpage et modèle de recherche ([[22-rag-avance|RAG en production]]).
+Before retraining, check that the problem is not solved more simply: prompt, retrieval or freshness of the index ([[51-fine-tuning-adaptation|fine-tuning]]).
+
+Also check that the signal does not come from a data incident: retraining on a broken source causes the model to learn the error. Retraining produces a **candidate**; its commissioning remains subject to comparison with the version in place.
 
 ---
 
-Pourquoi les mises à jour des modèles API sont-elles un risque ? <!--anki:4a50656f363156493461-->
+What is the drift equivalent for a RAG system? <!--anki:623f3a36415d4739725d-->
 ?
-Le provider **met à jour ou déprécie** les modèles : le comportement change sans commit chez vous → **épingler les versions** et re-jouer les evals à chaque changement.
+A RAG can be derived at several levels: **obsolete sources**, missynchronized index, question change, modified permissions, or loss of recall after changing embeddings.
 
-Un alias stable peut pointer vers une version différente, et un identifiant daté peut finir par être retiré. Maintenir une procédure de migration : comparer sur le même jeu d'evals, vérifier formats et outils, déployer progressivement et prévoir une solution de repli. L'épinglage réduit les changements implicites sans supprimer les dépréciations.
+Follow ingestion dates, deletions, question coverage, and quality of retrieved passages. If the right source exists but is no longer found, re-ingesting more is not enough: check index, filters, trimming and search pattern ([[22-advanced-rag|RAG in production]]).
 
 ---
 
-Quel rôle pour l'humain dans la boucle de production ? <!--anki:695e2a5b4b652e41353c-->
+Why are API model updates a risk? <!--anki:4a50656f363156493461-->
 ?
-L'humain **annote, arbitre et révise les critères**, mais ses labels peuvent aussi être erronés ou ambigus. Utiliser une grille, des sources vérifiables et une procédure de désaccord ([[151-donnees-curation-annotation|annotation]]).
+The provider **updates or depreciates** the models: the behavior changes without commit in you → **pin the versions** and re-play the evals with each change.
 
-Exemple : réserver une partie des 50 traces hebdomadaires à un échantillon représentatif et une autre aux incidents rares. Les cas ciblés révèlent des défauts, mais leur taux d'erreur ne représente pas directement tout le trafic.
-
-Conserver le mode de sélection et les effectifs, puis pondérer si nécessaire. Les annotations servent à estimer la qualité et calibrer les juges ; garder un jeu indépendant au lieu d'entraîner et d'évaluer sur les mêmes corrections.
+A stable alias can point to a different version, and a dated identifier can eventually be removed. Maintain a migration procedure: compare on the same set of evals, check formats and tools, deploy gradually and plan a fallback solution. Pinning reduces implicit changes without removing depreciations.
 
 ---
 
-Comment alerter sur une baisse de qualité d'une application LLM en production ? <!--anki:724b5141763b4c37746b-->
+What role for humans in the production loop? <!--anki:695e2a5b4b652e41353c-->
 ?
-Comme sur la disponibilité : des **seuils** sur les scores de qualité, les taux de refus et d'erreurs, les latences, **par segment**, reliés aux [[64-metriques-slo-inference|SLO]].
+Humans **note, referee, and review criteria**, but their labels may also be erroneous or ambiguous. Use a grid, verifiable sources, and a disagreement procedure ([[151-data-curation-annotation|annotation]]).
 
-Précautions : alerter sur une **tendance** (moyenne glissante sur plusieurs heures) plutôt que sur un point isolé, car les scores d'échantillons sont bruités, et joindre à l'alerte des **exemples de traces** pour diagnostiquer vite.
+Example: Reserve part of the weekly 50 traces to a representative sample and another to rare incidents. The targeted cases reveal defects, but their error rate does not directly represent all the traffic.
 
-Inclure effectif évalué et couverture : une moyenne stable calculée sur la moitié des requêtes peut masquer une panne du juge. Les incidents critiques, comme une fuite de données confirmée, exigent une réaction sans attendre une tendance.
+Annotations are used to estimate the quality and calibrate the judges; keep an independent game instead of training and evaluating on the same corrections.
 
 ---
 
-Pourquoi la qualité d'un modèle peut-elle sembler monter quand ses labels arrivent en retard ? <!--anki:3239653832366562656333633434616662636365653761303833633064313739-->
+How to alert about a drop in the quality of a LLM application in production? <!--anki:724b5141763b4c37746b-->
 ?
-Les **labels disponibles tôt** peuvent concerner les cas faciles, tandis que fraudes contestées ou résiliations tardives restent sans résultat. Évaluer seulement les labels déjà arrivés sélectionne alors une population favorable.
+As on availability: **thresholds** on quality scores, refusal and error rates, latencies, **by segment**, related to the [[64-inference-metrics-slo|SLO]].
 
-Former des cohortes selon la date de décision et attendre une maturité définie pour la métrique finale. Suivre séparément délai d'arrivée et proportion de labels manquants par segment. Des indicateurs précoces restent utiles, mais doivent être identifiés comme tels. Une amélioration apparente peut refléter le changement de disponibilité des labels plutôt qu'un meilleur modèle.
+Precautions: alert on a **trend** (slippery average over several hours) rather than on an isolated point, because the sample scores are noisy, and attach to the alert the **examples of traces** to diagnose quickly.
+
+Include actual evaluated and coverage: A stable average calculated over half of the queries can mask a judge outage. Critical incidents, such as a confirmed data leak, require a reaction without waiting for a trend.
 
 ---
 
-Pourquoi comparer à la fois une référence fixe et une référence glissante pour surveiller le drift ? <!--anki:3635343665373535313233633435373362376662623331643838346536646130-->
+Why can the quality of a model seem to rise when its labels arrive late? <!--anki:3239653832366562656333633434616662636365653761303833633064313739-->
 ?
-Une **référence fixe** conserve un point de comparaison historique ; une **référence glissante** décrit davantage le régime récent. Chacune peut masquer un problème si elle est utilisée seule.
+**early available labels** may be for easy cases, while disputed frauds or late terminations remain unsuccessful. Evaluating only already arrived labels then selects a favorable population.
 
-La référence fixe peut alerter sur une saisonnalité attendue ; une fenêtre glissante peut absorber progressivement une dégradation et la rendre invisible. Définir populations, saisons et règles de renouvellement, puis versionner les références. Conserver aussi métriques métier et contrôles de données : la proximité avec hier n'établit pas que le modèle reste utile. Modifier la référence doit être une décision explicite, pas un moyen automatique de faire disparaître les alertes.
+Form cohorts according to the decision date and wait for a defined maturity for the final metric. Separately track arrival time and proportion of missing labels per segment. Early indicators remain useful, but need to be identified as such. An apparent improvement may reflect the change in label availability rather than a better model.
 
 ---
 
-Pourquoi versionner la définition du label dans le monitoring ML ? <!--anki:3861343533633232386536363433666538366139313866616231663766336262-->
+Why compare both a fixed reference and a sliding reference to monitor the drift? <!--anki:3635343665373535313233633435373362376662623331643838346536646130-->
 ?
-Un **label** dépend d'une règle : horizon de résiliation, définition d'un incident ou procédure d'arbitrage. Si cette règle change, les métriques peuvent changer même avec les mêmes prédictions et sans nouveau défaut du modèle.
+A fixed **reference** retains a historical comparison point; a sliding **reference** further describes the recent regime. Each can hide a problem if used alone.
 
-Associer définition, version et délai de consolidation aux résultats. Par exemple, comparer churn à trente jours et churn à soixante jours mélange deux cibles ; un dossier non encore mûr ne devient pas un négatif. Recalculer une série historique sous une nouvelle définition exige une nouvelle version de mesure. Garder les anciens rapports pour comprendre quelle décision de promotion reposait sur quelle cible.
+The fixed reference can alert to an expected seasonality; a sliding window can gradually absorb a degradation and make it invisible. Define populations, seasons and renewal rules, and then version the references. Keep also business metrics and data controls: the proximity to yesterday does not establish that the model remains useful. Modify the reference must be an explicit decision, not an automatic way to make alerts disappear.
 
 ---
 
-Calcul : sur 1 000 prédictions, 600 labels sont disponibles et 480 de ces prédictions sont correctes. Quelle exactitude et quelle couverture peut-on annoncer ? <!--anki:3839653031333039646534393465306138653939383964656161363736653766-->
+Why version the label definition in ML monitoring? <!--anki:3861343533633232386536363433666538366139313866616231663766336262-->
 ?
-L'**exactitude observée sur les cas labellisés** vaut `480/600 = 80 %`. La **couverture de labels** vaut `600/1 000 = 60 %`.
+A **label** depends on a rule: horizon of termination, definition of an incident or arbitration procedure. If this rule changes, the metrics can change even with the same predictions and without new default of the model.
 
-On ne peut pas annoncer directement 80 % sur tout le trafic : les 400 cas sans label peuvent être plus difficiles, plus récents ou sélectionnés par la décision du modèle. Rapporter les deux dénominateurs et la maturité des cohortes. Examiner la règle d'observation et l'incertitude, puis attendre ou collecter des informations adaptées. Traiter les absences comme des succès, des échecs ou des négatifs fabrique une vérité terrain qui n'a pas été observée.
+For example, comparing churn to thirty days and churn to sixty days mixes two targets; an unripe file does not become a negative. Recalculating a historical series under a new definition requires a new measurement version. Keeping old reports to understand which promotion decision was based on which target.
 
 ---
 
-Comment surveiller un modèle lorsque l'évaluateur ou la collecte de labels tombe en panne ? <!--anki:6231626434613731653764313430353038373839363464643631313564663063-->
+Calculation: on 1,000 predictions, 600 labels are available and 480 of these predictions are correct. How accurate and what coverage can be announced? <!--anki:3839653031333039646534393465306138653939383964656161363736653766-->
 ?
-Surveiller aussi la **chaîne de mesure** : nombre de prédictions, labels attendus et reçus, évaluations tentées et terminées, âge des dernières observations et erreurs de rapprochement.
+The **accuracy observed on labeled cases** is `480/600 = 80 %`. The **label cover** is `600/1 000 = 60 %`.
 
-Distinguer état sain, non conforme et inconnu. Une métrique figée peut refléter l'arrêt du calcul plutôt qu'une stabilité de qualité. Prévoir une alerte et une politique d'exploitation pour cette perte de visibilité, selon la criticité. Continuer les contrôles disponibles, comme formats et latence, sans les présenter comme une preuve de performance prédictive. Tester panne du juge ou retard de labels avec des sondes dont le résultat attendu est connu.
+80% cannot be reported directly on all traffic: 400 cases without a label can be more difficult, more recent or selected by the decision of the model. Reporting the two denominators and the maturity of the cohorts. Examining the rule of observation and uncertainty, then waiting or collecting appropriate information. Treating absences as successes, failures or negatives makes a field truth that has not been observed.
 
 ---
 
-Pourquoi une dérive apparente peut-elle venir de l'action du modèle lui-même ? <!--anki:3233303166356337336639323461326639393362393065343539386162653032-->
+How to monitor a model when the evaluator or label collection fails? <!--anki:6231626434613731653764313430353038373839363464643631313564663063-->
 ?
-Le modèle modifie **les décisions et donc les données futures**. Une offre de rétention peut réduire les résiliations observées précisément chez les clients estimés à risque.
+Also monitor the **measurement chain**: number of predictions, expected and received labels, attempted and completed evaluations, age of latest observations and reconciliation errors.
 
-Relier prédiction, action et résultat, puis distinguer changement de population et effet de la politique. Une baisse du taux de résiliation n'est pas automatiquement une amélioration de calibration. Des groupes de comparaison ou une collecte conçue pour l'identification sont nécessaires pour certaines conclusions.
+Distinguish between healthy, non-compliant and unknown state. A fixed metric may reflect the stop of the calculation rather than a stability of quality. Provide an alert and an operating policy for this loss of visibility, depending on the criticality. Continue the available controls, such as formats and latency, without presenting them as proof of predictive performance. Test judge failure or label delay with probes whose expected result is known.
 
 ---
 
-Comment distinguer une saisonnalité attendue d'une dérive préoccupante ? <!--anki:3433653833363331333432623466613361366266626130363635386534326231-->
+Why can an apparent drift come from the action of the model itself? <!--anki:3233303166356337336639323461326639393362393065343539386162653032-->
 ?
-Comparer à **des périodes et segments comparables**, par exemple même jour de semaine ou saison, puis examiner l'effet sur la qualité et les décisions.
+The model changes **decisions and therefore future data**. A retention offer can reduce terminations observed precisely among customers estimated to be at risk.
 
-Conserver une référence fixe pour voir les changements de fond et une référence saisonnière pour éviter les alertes répétitives. Ne pas normaliser toute variation au point de masquer un incident. Les seuils doivent refléter les volumes, l'incertitude et le coût métier.
+Linking prediction, action, and outcome, then distinguishing population change from policy effect. A decrease in termination rate is not automatically an improvement in calibration. Comparison groups or a collection designed for identification are required for some conclusions.
 
 ---
 
-## Mises en situation
-
-Mise en situation : ton assistant RH fonctionnait bien depuis six mois. Depuis trois semaines, les utilisateurs le trouvent « à côté de la plaque », sans qu'aucun déploiement n'ait eu lieu. Quelles causes explores-tu ? <!--anki:433d3b33593952674f29-->
+How to distinguish an expected seasonality from a worrying drift? <!--anki:3433653833363331333432623466613361366266626130363635386534326231-->
 ?
-1. **Drift des entrées** : de nouveaux sujets arrivent (réforme, nouvelle politique interne) et sortent du périmètre couvert
-2. **Fraîcheur de l'index** : les documents ont changé, mais la ré-ingestion n'a pas suivi ([[22-rag-avance|RAG en prod]])
-3. **Mise à jour côté fournisseur** : le modèle derrière l'alias a changé, sans commit chez toi
-4. **Mesurer** : scores sur échantillon, taux de refus, feedback, segmentés par sujet
-5. **Corriger puis prévenir** : épingler les versions, automatiser la ré-ingestion, alerter sur les scores par segment
+Compare to **comparable periods and segments**, for example same weekday or season, and then examine the effect on quality and decisions.
 
-**Piège** : conclure à une régression du modèle sans avoir regardé la fraîcheur des données.
+Keep a fixed reference to see background changes and a seasonal reference to avoid repetitive alerts. Do not normalize any variation to the point of hiding an incident. Thresholds should reflect volumes, uncertainty and business cost.
 
 ---
 
-Mise en situation : tu veux transformer les échecs de production en amélioration continue, sans y passer tes semaines. Comment organises-tu la boucle ? <!--anki:7732497b69286a71417d-->
-?
-1. **Capter** : feedback négatif, échecs de validation, faible confiance, escalades ([[93-monitoring-inference|signaux]])
-2. **Échantillonner** plutôt que tout traiter, en priorisant les segments à fort volume ou à fort risque
-3. **Annoter** un lot régulier avec un expert métier, ce qui calibre aussi les juges automatiques
-4. **Verser** ces cas au golden dataset, en distinguant non-régression et cas durs ([[94-evals-methodologie|evals]])
-5. **Déclencher les corrections sur signal**, pas au calendrier : prompt, retrieval, ou fine-tuning selon la cause
+## Scenarios
 
-**Piège** : collecter du feedback sans jamais rien en faire, ce qui décourage les utilisateurs de le donner.
+Scenario: your HR assistant has been working well for six months. For three weeks, users have found it "next to the plate", without any deployment having taken place. What causes do you explore? <!--anki:433d3b33593952674f29-->
+?
+1. **Entries drift**: new subjects arrive (reform, new internal policy) and leave the covered area
+2. **Fresh index**: documents have changed, but re-ingestion did not follow ([[22-advanced-rag|RAG in prod]])
+3. **Update on the supplier side**: the model behind the alias has changed, without committing at home
+4. **Measure**: sample scores, refusal rate, feedback, segmented by subject
+5. **Correct and prevent**: pin versions, automate re-ingestion, alert on scores by segment
+
+**Trap**: conclude a regression of the model without having looked at the freshness of the data.
 
 ---
 
-Mise en situation : ton tableau de bord de dérive affiche quarante variables en rouge chaque lundi, et l'équipe a cessé de le regarder. Comment le rends-tu utile ? <!--anki:3732316464366435656539343430386639376433366131613165306561653466-->
+Scenario: you want to turn production failures into continuous improvement, without spending your weeks there. How do you organize the loop? <!--anki:7732497b69286a71417d-->
 ?
-1. **Remplacer les p-valeurs** par des tailles d'effet, avec des seuils fixés selon l'impact métier.
-2. **Prioriser selon le modèle** : variables importantes, distribution des scores, part au-dessus du seuil de décision.
-3. **Choisir une référence comparable** : même jour de la semaine ou même saison, pour ne pas alerter sur un rythme normal.
-4. **Vérifier d'abord le pipeline** : schéma, volume, unités, avant de conclure à une évolution réelle ([[157-contrats-qualite-donnees|dérive ou incident]]).
-5. **Relier chaque alerte** à un propriétaire, à une estimation d'impact et à une action prévue.
+1. **Capture**: negative feedback, validation failures, low confidence, escalations ([[93-monitoring-inference|Signals]])
+2. **Sample** rather than process everything, prioritizing high-volume or high-risk segments
+3. **Annotate** a regular batch with a business expert, which also calibrates automatic judges
+4. **Verify** these cases to golden dataset, distinguishing non-regression and hard cases ([[94-evals-methodology|evals]])
+5. **Trigger corrections on signal**, not on calendar: prompt, retrieve, or fine-tuning depending on the cause
 
-**Piège** : relever tous les seuils jusqu'au silence, et manquer la vraie dérive.
+**Trap** : collect feedback without ever doing anything, which discourages users from giving it away.
+
+---
+
+Scenario: your drift dashboard displays forty variables in red every Monday, and the team has stopped looking at it. How do you make it useful? <!--anki:3732316464366435656539343430386639376433366131613165306561653466-->
+?
+1. **Replace p-values** with effect sizes, with thresholds set according to business impact.
+2. **Priority according to model**: important variables, distribution of scores, share above the decision threshold.
+3. **Choose a comparable reference**: same day of the week or season, so as not to alert to a normal rhythm.
+4. **Check the pipeline first**: diagram, volume, units, before concluding a real evolution ([[157-data-contracts-quality|drift or incident]]).
+5. **Link each alert** to an owner, an impact estimate, and a planned action.
+
+**Trap**: raise all the thresholds to silence, and miss the real drift.
 
 ---
 
 ## Sources
 
-- [Rabanser et al. — Failing Loudly, NeurIPS 2019](https://papers.neurips.cc/paper_files/paper/2019/hash/846c260d715e5b854ffad5f70a516c88-Abstract.html) — détection de changements de distribution et limites.
-- [Taplin et Hunt — limites du Population Stability Index, 2019](https://www.econstor.eu/bitstream/10419/257891/1/risks-07-00053.pdf) — sensibilité aux fréquences proches de zéro.
-- [Google SRE — concevoir la mesure et les alertes](https://sre.google/workbook/monitoring/)
+- [Rabanser et al. — Failing Loudly, NeurIPS 2019](https://papers.neurips.cc/paper_files/paper/2019/hash/846c260d715e5b854ffad5f70a516c88-Abstract.html) — detection of distribution changes and limits.
+- [Taplin and Hunt — Population Stability Index Limits, 2019](https://www.econstor.eu/bitstream/10419/257891/1/risks-07-00053.pdf) — sensitivity to near-zero frequencies.
+- [Google SRE — design measurement and alerts](https://sre.google/workbook/monitoring/)
 
-## Connexions
-- [[91-langfuse-observabilite|Langfuse]] — traces, scores et datasets de prod
-- [[92-chainforge-evals-prompts|Evals]] — les instruments de mesure
-- [[112-cicd-modeles|CI/CD des modèles]] — redéployer après correction
-- [[51-fine-tuning-adaptation|Fine-tuning]] — la réponse au drift comportemental
-- [[22-rag-avance|RAG avancé]] — fraîcheur de l'index
-- [[93-monitoring-inference|Monitoring de l'inférence]] — validations et signaux de qualité en production
-- [[115-plateformes-agents-gouvernance|Plateformes d'agents — Architecture & gouvernance]] — SLO et métriques d'un agent
-- [[153-data-flywheel-versioning|Data flywheel]] — boucler sur les échecs
-- [[97-evals-online-ab-testing|Evals online]] — signaux de production
-- [[111-mlops-llmops-fondamentaux|MLOps & LLMOps]] — cycle de vie et versioning des systèmes LLM
-- [[114-reproductibilite-variance|Reproductibilité & variance]] — non-déterminisme et statistiques d'evals
-- [[157-contrats-qualite-donnees|Qualité opérationnelle]] — distinguer incident de données et dérive réelle
-- [[159-donnees-temporelles-features|Données temporelles]] — interpréter les retards et labels incomplets
-- [[173-calibration-incertitude-abstention|Calibration, incertitude & abstention]] — surveiller la validité des probabilités
-- [[176-detection-anomalies|Détection d'anomalies]] — distinguer incident et évolution de la référence
-- [[117-pipelines-entrainement-continu|Pipelines d'entraînement & entraînement continu]] — du signal de dérive au réentraînement contrôlé
-- [[119-contrats-prediction-features-batch|Contrats de prédiction, features et batch]] — contrats et vérifications de production
+## Connections
+- [[91-langfuse-observability|Langfuse]] — traces, scores and datasets of prod
+- [[92-chainforge-evals-prompts|Evals]] — Measuring Instruments
+- [[112-model-cicd|CI/CD models]] — redeploy after fix
+- [[51-fine-tuning-adaptation|Fine-tuning]] — response to behavioral drift
+- [[22-advanced-rag|Advanced RAG]] — index freshness
+- [[93-monitoring-inference|Monitoring of inference]] — validations and quality signals in production
+- [[115-agent-platforms-governance|— Agent Platforms Architecture & Governance]] — SLO and agent metrics
+- [[153-data-flywheel-versioning|Data flywheel]] — loop on failures
+- [[97-evals-online-ab-testing|Evals online]] — production signals
+- [[111-mlops-llmops-fundamentals|MLOps & LLMOps]] — life cycle and versioning of LLM systems
+- [[114-reproducibility-variance|Reproducibility & variance]] — non-determinism and eval statistics
+- [[157-data-contracts-quality|Operational quality]] — distinguish data incident and real drift
+- [[159-temporal-data-features|Temporal data]] — interpret delays and incomplete labels
+- [[173-calibration-uncertainty-abstention|Calibration, uncertainty & abstention]] — monitor the validity of probabilities
+- [[176-anomaly-detection|Detection of anomalies]] — distinguish incident and reference evolution
+- [[117-continuous-training-pipelines|Training Pipelines & Continuous Training]] — from drift signal to controlled redrive
+- [[119-prediction-contracts-features-batch|Prediction contracts, features and batch]] — production contracts and verifications
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -1,73 +1,73 @@
 # Harness & plugins — Flashcards
 Tags: #flashcards #ai-engineering #agents #harness #llm
-Vérifié le : 17 octobre 2026 — comportement des hooks de Claude Code confronté à la documentation officielle.
-<!-- summary: rôle du harness, plugins, skills, hooks, permissions, sandbox, fichiers mémoire, tests négatifs des politiques, répertoire de travail, tests des capacités. -->
+Verified on: 17 October 2026 — behavior of Claude Code hooks confronted with official documentation.
+<!-- summary: Harness role, plugins, skills, hooks, permissions, sandbox, memory files, negative policy tests, working directory, ability tests. -->
 
 
-Qu'est-ce que le harness (harnais) d'un agent ? <!--anki:7976774a57665d6f6958-->
+What is the Harness of an Agent? <!--anki:7976774a57665d6f6958-->
 ?
-Le **programme qui entoure le modèle** : il fait tourner la boucle, **exécute les outils**, gère le contexte, applique les permissions et affiche le résultat. Le modèle propose, **le harness dispose**.
+The **program that surrounds the model**: it rotates the loop, **runs the tools**, manages the context, applies the permissions and displays the result. The model proposes, **harness has**.
 
-Il transforme une prédiction du modèle en exécution contrôlée : un appel d'outil devient une opération autorisée, tracée et limitée dans le temps. Si l'outil échoue, il transmet une observation exploitable ou arrête le run. Deux applications utilisant le même modèle peuvent donc avoir des comportements très différents selon leur harness.
+It turns a prediction of the model into a controlled execution: a tool call becomes an authorized operation, traced and limited in time. If the tool fails, it transmits an actionable observation or stops the run. Two applications using the same model can therefore have very different behaviors depending on their harness.
 
 ---
 
-Quelles sont les responsabilités d'un harness ? <!--anki:73483b4938322d2e4366-->
+What are the responsibilities of a harness? <!--anki:73483b4938322d2e4366-->
 ?
-- **Boucle** d'agent et conditions d'arrêt
-- **Exécution** des [[32-tool-calling|appels d'outils]] et renvoi des résultats
-- **Gestion du contexte** : system prompt, historique, compaction
+- **Agent loop** and stop conditions
+- **Execution** of [[32-tool-calling|Calling tools]] and return of results
+- **Context Management**: system prompt, history, compaction
 - **Permissions**, sandboxing, approbations
-- **Intégrations** : [[33-mcp|MCP]], plugins, hooks
+- **Integrations**: [[33-mcp|MCP]], plugins, hooks
 
-Ces responsabilités constituent le **contrôle effectif de l'exécution**. Par exemple, un outil de paiement doit être bloqué par le programme tant que l'autorisation requise manque, même si le modèle demande son lancement. Les traces relient décision, arguments, résultat et erreur pour permettre l'audit et la reprise.
-
----
-
-Pourquoi dit-on que le harness compte autant que le modèle ? <!--anki:4976284543642a78436b-->
-?
-À modèle égal, la **qualité des outils, du contexte fourni et de la boucle** change radicalement les résultats : un agent de code dépend autant de ses outils de recherche et d'édition que du LLM.
-
-Un modèle peut savoir corriger un bug et échouer si la recherche ne retrouve pas le bon fichier, si l'outil tronque l'erreur ou si l'édition casse le format. Le harness décide aussi du contexte conservé, des reprises et des limites. Pour comparer deux modèles, fixer ces éléments ; sinon, on mesure plusieurs changements à la fois.
+These responsibilities are the **effective control of execution**. For example, a payment tool must be blocked by the program as long as the required authorization is missing, even if the model requests its launch. Traces link decision, arguments, result and error to allow audit and recovery.
 
 ---
 
-Harness prêt à l'emploi ou harness construit avec un SDK : quand choisir chacun ? <!--anki:6363323232356361663464393438333438616337616636336438343536663533-->
+Why is it said that harness counts as much as the model? <!--anki:4976284543642a78436b-->
 ?
-- **Prêt à l'emploi** (Claude Code, Cursor, Codex CLI, Aider) : pour **coder** avec un agent ; on l'adapte par fichiers mémoire, skills, hooks et permissions
-- **Construit avec un SDK** (Claude Agent SDK, OpenAI Agents SDK) : pour **intégrer** la boucle d'agent dans son produit, avec ses propres outils et ses propres règles
+As an equal model, the **quality of the tools, the context provided and the loop** radically changes the results: a code agent depends as much on its search and editing tools as on the LLM.
 
-Le SDK fournit des briques, pas le contrat métier. Pour un support client, vérifier qu'il permet identité par requête, arrêt budgétaire et reprise après panne. Un outil de code prêt à l'emploi peut suffire pour une tâche interne, sans devenir le runtime du produit.
+A model may know how to fix a bug and fail if the search fails to find the correct file, if the tool truncates the error, or if the edit breaks the format. Harness also decides on the context, times, and limits. To compare two models, fix these items; otherwise, multiple changes are measured at once.
 
 ---
 
-Qu'est-ce qu'un plugin dans un harness ? <!--anki:21632f592e76504753-->
+Ready-to-use Harness or Harness built with an SDK: when to choose each? <!--anki:6363323232356361663464393438333438616337616636336438343536663533-->
 ?
-Un **paquet d'extensions** installé dans le host : commandes, skills, sous-agents, hooks ou serveurs MCP selon le produit. Tous ces composants ne sont pas obligatoires.
+- **Ready to use** (Claude Code, Cursor, Codex CLI, Help): to **code** with an agent; we adapt it by memory files, skills, hooks and permissions
+- **Built with an SDK** (Claude Agent SDK, OpenAI Agents SDK): for **Integrate** the agent loop in its product, with its own tools and rules
 
-Exemple : un plugin de revue de tickets peut réunir une commande d'entrée, une procédure de diagnostic et un connecteur au gestionnaire de tickets. La procédure décrit quoi faire ; le connecteur fournit l'accès réel.
-
-Avant activation, examiner provenance, version et permissions de chaque composant, puis tester sur un périmètre limité. **Installer n'autorise pas tout** : une mise à jour qui ajoute un hook ou un serveur peut changer les actions possibles, même si la commande visible reste identique.
+The SDK provides bricks, not the business contract. For customer support, verify that it allows identity by request, budget stop and recovery after failure. A ready-to-use code tool can be enough for an internal task, without becoming the runtime of the product.
 
 ---
 
-Qu'est-ce qu'une skill pour un agent ? <!--anki:6f3f3e3a684076505951-->
+What is a plugin in a harness? <!--anki:21632f592e76504753-->
 ?
-Un **dossier d'instructions et de ressources** (ex. `SKILL.md` + scripts) que l'agent **charge à la demande** quand la tâche s'y prête : seule une courte description reste en permanence dans le contexte (**progressive disclosure**).
+A **package of extensions** installed in the host: commands, skills, subagents, hooks or MCP servers depending on the product. Not all of these components are required.
 
-Par exemple, une procédure d'export de document peut regrouper règles de mise en page, script de rendu et exemples. Elle guide le travail sans constituer un nouvel entraînement du modèle. Sa bonne exécution dépend toujours des outils disponibles et de ses prérequis ; les instructions chargées doivent rester compatibles avec les permissions du host.
+Example: A ticket review plugin can combine an input command, a diagnostic procedure, and a connector to the ticket manager. The procedure describes what to do; the connector provides actual access.
+
+Before activation, examine the source, version, and permissions of each component, and then test on a limited scope. **Install does not allow everything**: An update that adds a hook or server can change the possible actions, even if the visible command remains the same.
 
 ---
 
-Qu'est-ce qu'un hook dans un harness d'agent ? <!--anki:4c427a57297048423e58-->
+What is a skill for an agent? <!--anki:6f3f3e3a684076505951-->
 ?
-Un **script exécuté par le harness** à un moment précis du cycle (avant ou après un appel d'outil, fin de tour…) : **déterministe**, il peut bloquer une action, formater du code ou journaliser, sans dépendre du bon vouloir du modèle.
+An **instruction and resource folder** (e.g. `SKILL.md` + scripts) that the agent **loads on demand** when the task is suitable: only a short description remains permanently in the context (**progressive disclosure**).
+
+For example, a document export procedure can include layout rules, rendering scripts, and examples. It guides the work without constituting a new training of the model. Its good execution always depends on the available tools and its prerequisites; the loaded instructions must remain compatible with the permissions of the host.
+
+---
+
+What is a hook in an agent harness? <!--anki:4c427a57297048423e58-->
+?
+A **script executed by the harness** at a specific time in the cycle (before or after a tool call, end of turn...): **deterministic**, it can block an action, format code or log, without depending on the goodwill of the model.
 ```json
 {
   "hooks": {
     "PreToolUse": [
       { "matcher": "Bash",
-        "hooks": [{ "type": "command", "command": "./scripts/verifie-commande.sh" }] }
+        "hooks": [{ "type": "command", "command": "./scripts/check-command.sh" }] }
     ],
     "PostToolUse": [
       { "matcher": "Edit|Write",
@@ -76,114 +76,114 @@ Un **script exécuté par le harness** à un moment précis du cycle (avant ou a
   }
 }
 ```
-Dans Claude Code, seul le **code de sortie 2** **bloque** l'appel d'outil ; un autre code non nul signale une erreur **non bloquante**, sauf configuration contraire. Un script de politique sort donc en 2 ou renvoie une décision JSON de refus : c'est la différence entre une consigne et un contrôle ([[106-securite-agents-code|agents de code]]).
+In Claude Code, only the **exit code 2** **Block** the tool call; another non-zero code indicates an error **Non-blocking**, Unless otherwise configured. A political script comes out. 2 or returns a JSON decision of refusal: this is the difference between a directive and a control ([[106-coding-agent-security|Code Agents]]).
 
 ---
 
-Comment un harness gère-t-il les permissions ? <!--anki:723e704a553f6c796757-->
+How does a harness handle permissions? <!--anki:723e704a553f6c796757-->
 ?
-Par des **modes et des règles** : lecture seule, approbation à chaque action, allowlist de commandes, ou autonomie complète — avec **demande de confirmation humaine** pour les actions sensibles.
+By **modes and rules**: read-only, approve every action, allowlist commands, or full autonomy — with **human confirmation request** for sensitive actions.
 
-La décision est appliquée **au moment de l'exécution**, avec l'identité de l'utilisateur, la cible et les arguments réels. Une approbation pour lire un fichier ne vaut pas autorisation de le publier. Préférer des droits limités et temporaires ; une simple consigne « ne fais rien de dangereux » ne remplace pas ce contrôle.
+The decision is applied **at runtime**, with the user's identity, the target and the actual arguments. An approval to read a file is not worth permission to publish it. Prefer limited and temporary rights; a simple "do nothing dangerous" instruction does not replace this control.
 
 ---
 
-Pourquoi exécuter un agent dans une sandbox ? <!--anki:497a51314634782d6450-->
+Why run an agent in a sandbox? <!--anki:497a51314634782d6450-->
 ?
-Pour **limiter le rayon d'impact** d'une erreur ou d'une [[101-securite-llm-guardrails|prompt injection]] : système de fichiers restreint, réseau filtré, conteneur ou VM jetable.
+For **Limiting the radius of impact** of an error or an [[101-llm-security-guardrails|prompt injection]] Restricted file system, filtered network, disposable container or VM.
 
-Par exemple, autoriser seulement un répertoire temporaire, deux minutes de calcul et les domaines nécessaires. Tester qu'une écriture hors périmètre et une connexion non autorisée échouent réellement. La sandbox doit aussi borner mémoire et CPU. Elle ne suffit pas si un secret reste accessible ou si un service externe autorise une action excessive : isolation et permissions se complètent.
+For example, allow only a temporary directory, two minutes of calculation and the necessary domains. Test that an out-of-scope write and an unauthorized connection actually fail. The sandbox must also limit memory and CPU. It is not enough if a secret remains accessible or if an external service allows an excessive action: isolation and permissions complement each other.
 
 ---
 
-À ne pas confondre : fichier mémoire (ex. `CLAUDE.md`) et skill ? <!--anki:77702e78736c33755528-->
+Do not confuse: memory file (e.g. `CLAUDE.md`) and skill? <!--anki:77702e78736c33755528-->
 ?
-Le **fichier mémoire** est chargé **à chaque session** (conventions du projet) ; la **skill** n'est chargée **que quand elle est utile** — on y met les procédures longues et spécialisées.
+The **memory file** is loaded **at each session** (project agreements); the **skill** is loaded **only when it is useful** — is put in the long and specialized procedures.
 
-Mettre les conventions générales, comme la commande de test, dans les instructions du projet ; placer une procédure de migration détaillée dans une skill spécialisée. Le chargement précis dépend du host et du périmètre des fichiers. Aucun de ces mécanismes n'est une mémoire des poids du modèle : ce sont des instructions ajoutées au contexte.
+Put the general conventions, such as the test command, in the project instructions; place a detailed migration procedure in a specialized skill. The precise loading depends on the host and the perimeter of the files. None of these mechanisms is a memory of the weights of the model: these are instructions added to the context.
 
 ---
 
-À ne pas confondre : harness, framework et plateforme d'agents ? <!--anki:785e4a4b2b72266e5651-->
+Do not confuse: harness, framework and agent platform? <!--anki:785e4a4b2b72266e5651-->
 ?
-- **Harness** : le **programme qui exécute** la boucle chez vous (Claude Code, Cursor, ou le vôtre). Il tient les outils, le contexte et les permissions
-- **Framework** : la **bibliothèque** avec laquelle vous écrivez cette boucle (LangGraph, CrewAI) ([[37-frameworks-agents|frameworks]])
-- **Plateforme** : le **service managé** qui l'héberge et la gouverne en production ([[38-plateformes-agents|plateformes]])
+- **Harness**: the **program that runs** the loop at home (Claude Code, Cursor, or your own). It holds the tools, context and permissions
+- **Framework**: the **library** with which you write this loop (LangGraph, CrewAI) ([[37-agent-frameworks|frameworks]])
+- **Platform**: the **managed service** that hosts and governs it in production ([[38-agent-platforms|Platforms]])
 
-Un harness peut être écrit sans framework, et déployé sans plateforme. Les trois répondent à des questions différentes : **qui exécute**, **avec quoi on l'écrit**, **où ça tourne**.
+Harness can be written without a framework, and deployed without a platform. The three answer different questions: **who runs**, **what you write**, **where it runs**.
 
 ---
 
-Comment tester qu'une politique de harness bloque réellement une action interdite ? <!--anki:3837633964313464636161303430343462333166643163356663636164646463-->
+How to test that a harness policy actually blocks a prohibited action? <!--anki:3837633964313464636161303430343462333166643163356663636164646463-->
 ?
-Écrire un **test négatif d'exécution** : demander une action interdite et vérifier qu'aucun effet n'a atteint le système cible. Un message « refusé » affiché après l'appel ne suffit pas.
+Write a negative **run test**: request a prohibited action and verify that no effect has reached the target system. A "declined" message displayed after the call is not enough.
 
-Essayer les chemins équivalents pertinents : outil direct, script, sous-processus et délégation. Enregistrer décision de politique, arguments normalisés et preuve d'absence d'effet. Répéter après une mise à jour du harness ou d'un plugin. Le test vérifie un périmètre précis ; il ne transforme pas une liste de commandes bloquées en isolation générale.
+Try the relevant equivalent paths: direct tool, script, subprocess, and delegation. Record policy decision, normalized arguments, and proof of no effect. Repeat after a harness or plugin update. The test checks for a specific perimeter; it does not turn a list of blocked commands into general isolation.
 
 ---
 
-Pourquoi le répertoire de travail fait-il partie du périmètre de sécurité d'un harness ? <!--anki:3364383238343635386333363435623862303662313166633063393730373839-->
+Why is the work directory part of the security perimeter of a harness? <!--anki:3364383238343635386333363435623862303662313166633063393730373839-->
 ?
-Il détermine **les fichiers lus, les configurations découvertes et les chemins relatifs** des commandes. Lancer un test depuis le mauvais dépôt peut charger une configuration différente ou écrire au mauvais endroit.
+It determines **read files, discovered configurations, and relative paths** of commands. Running a test from the wrong repository can load a different configuration or write in the wrong place.
 
-Fixer le projet explicitement, résoudre les chemins sensibles et vérifier les accès réels de la sandbox. Un chemin apparent peut traverser un lien symbolique. Les consignes textuelles sur le périmètre aident l'agent, mais les restrictions nécessaires doivent être appliquées par l'environnement d'exécution.
+Set the project explicitly, resolve sensitive paths, and check for actual sandbox access. An apparent path can cross a symbolic link. Text instructions on the perimeter help the agent, but the necessary restrictions must be applied by the runtime environment.
 
 ---
 
-Comment vérifier qu'un plugin désactivé n'a plus de capacités utilisables par un agent ? <!--anki:6262313565396236353736343438316262363038636230636338343133643936-->
+How do I check if a deactivated plugin no longer has agent-usable capabilities? <!--anki:6262313565396236353736343438316262363038636230636338343133643936-->
 ?
-Tester **l'inventaire visible et l'exécution effective** : disparition des outils, invalidation des sessions ou autorisations concernées et absence de route alternative via un proxy.
+Test **visible inventory and effective execution**: disappearance of tools, invalidation of sessions or concerned permissions and absence of alternative route via a proxy.
 
-Inclure un agent déjà en cours, car il peut conserver un ancien schéma dans son contexte. Le runtime doit refuser l'appel devenu interdit même si le modèle le propose encore. Une interface qui masque le plugin sans retirer ses droits ne constitue pas une révocation complète.
+Include an agent that is already running, because it can keep an old schema in context. The runtime must refuse the call that has become prohibited even if the model still offers it. An interface that hides the plugin without removing its rights does not constitute a complete revocation.
 
 ---
 
-## Mises en situation
+## Scenarios
 
-Mise en situation : deux équipes utilisent le même modèle pour le même agent de code, mais l'une obtient de bien meilleurs résultats. Où cherches-tu la différence ? <!--anki:7142566f2e2663332b4c-->
+Scenario: Two teams use the same model for the same code agent, but one gets much better results. Where do you look for the difference? <!--anki:7142566f2e2663332b4c-->
 ?
-1. **Dans le harness, pas dans le modèle** : à modèle égal, ce sont les outils, le contexte et la boucle qui font la différence
-2. **Outils** : qualité de la recherche dans le code, de l'édition, de l'exécution des tests ; descriptions et retours d'erreur
-3. **Contexte** : fichier de conventions du projet, skills disponibles, compaction bien réglée ([[35-context-engineering|context engineering]])
-4. **Boucle** : conditions d'arrêt, vérification automatique (tests, lint) après chaque modification
-5. **Comparer** en faisant tourner les deux configurations sur les mêmes tâches ([[96-evals-rag-agents|evals d'agents]])
+1. **In the harness, not in the model**: with equal model, it is the tools, the context and the loop that make the difference
+2. **Tools**: quality of code search, editing, test execution; descriptions and error feedback
+3. **Context**: project convention file, skills available, compaction well set ([[35-context-engineering|context engineering]])
+4. **Boutcle**: stop conditions, automatic check (tests, lint) after each modification
+5. **Compare** by running both configurations on the same tasks ([[96-evals-rag-agents|evals d'agents]])
 
-**Piège** : conclure trop vite que « l'autre équipe a un meilleur modèle ».
+**Trap** To conclude too quickly that "the other team has a better model".
 
 ---
 
-Mise en situation : tu veux garantir qu'aucun agent de ton équipe ne puisse lancer `terraform apply` sans relecture, quelle que soit la consigne donnée au modèle. Comment t'y prends-tu ? <!--anki:4c7879576f32706a6e53-->
+Scenario: you want to ensure that no agent on your team can launch `terraform apply` without proofreading, regardless of the instructions given to the model. How do you do it? <!--anki:4c7879576f32706a6e53-->
 ?
-1. **Ne pas compter sur le prompt** : une consigne se contourne, un contrôle non
-2. **Hook** exécuté par le harness avant chaque appel d'outil : il inspecte la commande et **bloque** celles qui correspondent à un motif interdit
-3. **Permissions** : liste blanche de commandes, mode approbation pour tout le reste
-4. **Paramétrage géré centralement**, non modifiable par l'utilisateur ([[106-securite-agents-code|agents de code]])
-5. **Journaliser** chaque blocage, pour ajuster les règles et détecter les contournements
+1. **Do not count on the prompt**: a prompt is bypassed, a check is not
+2. **Hook** executed by the harness before each tool call: it inspects the command and **blocks** those that match a forbidden pattern
+3. **Permissions**: white list of commands, approval mode for everything else
+4. **Centrally managed setting**, not modifiable by the user ([[106-coding-agent-security|Code Agents]])
+5. **Log** every block, to adjust rules and detect workarounds
 
-**Piège** : mettre la règle dans le fichier de conventions du projet, que le modèle peut ignorer.
+**Trap**: Put the rule in the project convention file, which the model can ignore.
 
 ---
 
 ## Sources
 
-- [Claude Code — hooks et codes de sortie](https://code.claude.com/docs/en/hooks)
+- [Claude Code — hooks and exit codes](https://code.claude.com/docs/en/hooks)
 
-## Connexions
-- [[31-agents-fondamentaux|Agents]] — la boucle que le harness exécute
-- [[32-tool-calling|Tool calling]] — le harness exécute les appels
-- [[33-mcp|MCP]] — le harness est le host MCP
-- [[35-context-engineering|Context engineering]] — ce que le harness met dans le contexte
-- [[101-securite-llm-guardrails|Sécurité LLM]] — permissions et sandbox
-- [[38-plateformes-agents|Plateformes d'agents]] — harness à l'échelle d'une organisation
-- [[106-securite-agents-code|Sécurité des agents de code]] — modes de permission et isolation des agents de code
-- [[49-agents-de-code|Agents de code]] — l'usage quotidien d'un harness de code
-- [[103-defenses-agents|Défenses des agents]] — isolation, politiques et moindre privilège
-- [[104-securite-mcp-skills|Sécurité de MCP & des skills]] — outils et skills comme chaîne d'approvisionnement
-- [[24-cognee|Cognee]] — une mémoire d'agent en knowledge graph
-- [[36-orchestration-agents|Orchestration multi-agents]] — sous-agents, handoffs et A2A
-- [[39-memoire-agents|Mémoire des agents]] — ce que l'agent retient d'une session à l'autre
-- [[43-langchain-agents|LangChain — Agents]] — agents et middleware LangChain
-- [[44-langgraph-fondamentaux|LangGraph]] — graphes d'états pour agents et workflows
-- [[90-014-evaluation-skills-agents|Évaluer des skills d'agent]] — mesurer le déclenchement et l'utilité d'une skill
-- [[90-015-agent-skills-format-skills-ref|Agent Skills & skills-ref]] — le format ouvert des skills et sa validation
+## Connections
+- [[31-agent-fundamentals|Agents]] — the loop that the harness executes
+- [[32-tool-calling|Tool calling]] — Harness executes calls
+- [[33-mcp|MCP]] — the harness is the host MCP
+- [[35-context-engineering|Context engineering]] — What Harness Puts in Context
+- [[101-llm-security-guardrails|LLM Security]] — permissions and sandbox
+- [[38-agent-platforms|Platforms of agents]] — harness across an organization
+- [[106-coding-agent-security|Security of Code Agents]] — Code Agent Permission and Isolation Modes
+- [[49-coding-agents|Code Agents]] — Daily Use of a Code Harness
+- [[103-agent-defenses|Defenses of agents]] — insulation, policies and least privilege
+- [[104-mcp-skills-security|Security of MCP & Skills]] — tools and skills as supply chain
+- [[24-cognee|Cognee]] — an agent memory in knowledge graph
+- [[36-agent-orchestration|Orchestration multi-agents]] — subagents, handoffs and A2A
+- [[39-agent-memory|Memorandum of agents]] — what the agent remembers from one session to the next
+- [[43-langchain-agents|LangChain — Agents]] — agents and middleware LangChain
+- [[44-langgraph-fundamentals|LangGraph]] — state graphs for agents and workflows
+- [[90-014-agent-skill-evaluation|Evaluating Agent Skills]] — measure the triggering and utility of a skill
+- [[90-015-agent-skills-format-skills-ref|Agent Skills & skills-ref]] — Open Skills Format and Validation
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -1,179 +1,179 @@
-# Docker, images et registries — Flashcards
-Tags: #flashcards #conteneurs #docker
-<!-- summary: rôle de Docker et différence avec OCI, image ou conteneur (instance, état, volumes), compatibilité « Docker/OCI », registries et workflow push/pull, secrets dans les couches d'image, cache de build, dépendances reproductibles. -->
+# Docker, images and registers — Flashcards
+Tags: #flashcards #containers #docker
+<!-- summary: Docker role and difference with OCI, image or container (instance, state, volumes), Docker/OCI compatibility, records and push/pull workflow, secrets in image layers, build cache, reproducible dependencies. -->
 
 
-Docker et OCI sont-ils la même chose ? <!--anki:473c39416b3845714e37-->
+Are Docker and OCI the same? <!--anki:473c39416b3845714e37-->
 ?
-**Non.** Docker est un écosystème/outillage de conteneurisation, l'outil de référence en développement : il **construit** les images (`Dockerfile`, `docker build`), les **distribue** (push/pull vers un registry) et les **exécute** (via [[03-containerd-runc|containerd et runc]]). [[01-oci|OCI]] définit des standards ouverts.
+**No.** Docker is a containerization ecosystem/tooling, the reference tool in development: it **builds** images (`Dockerfile`, `docker build`), **distributes** (push/pull to a registry) and **executes** (via [[03-containerd-runc|containerd and runc]]). [[01-oci|OCI]] sets open standards.
 
-Côté format, deux types de manifest coexistent : `application/vnd.docker.distribution.manifest.v2+json` et `application/vnd.oci.image.manifest.v1+json`. Ils sont presque équivalents, et les registries et runtimes courants acceptent les deux. Docker est donc **une implémentation**, dont le format historique a servi de base à la spécification ; OCI est **le contrat**.
+On the format side, two types of manifest coexist: `application/vnd.docker.distribution.manifest.v2+json` and `application/vnd.oci.image.manifest.v1+json`. They are almost equivalent, and the current registries and runtimes accept both. Docker is therefore **an implementation**, whose historical format served as the basis for the specification; OCI is **the contract**.
 
 ---
 
-Une image construite avec Docker peut-elle être utilisée sans Docker Engine ? <!--anki:4c543262645e38635a65-->
+Can an image built with Docker be used without Docker Engine? <!--anki:4c543262645e38635a65-->
 ?
-**Oui.** Une image compatible OCI peut être utilisée par d'autres technologies compatibles.
+**Yes.** An OCI compatible image may be used by other compatible technologies.
 
-Docker est un outil de construction et d'exécution, pas une dépendance incorporée à toute image qu'il produit. Par exemple, Kubernetes peut confier l'image à containerd. Vérifier néanmoins architecture, système d'exploitation et dépendances externes ; une image x86_64 avec des besoins GPU précis ne tourne pas sur n'importe quel hôte.
+Docker is a build and run tool, not a built-in dependency on any image it produces. For example, Kubernetes can entrust the image to containerd. Check architecture, operating system, and external dependencies, however; an x86_64 image with precise GPU needs does not run on any host.
 
 ---
 
-Que signifie « Docker/OCI compatible » ? <!--anki:494f576456637d502555-->
+What does “Docker/OIC compatible” mean? <!--anki:494f576456637d502555-->
 ?
-Qu'elle respecte les **formats ou protocoles OCI pertinents pour son rôle** : image, distribution ou runtime ([[01-oci|OCI]]). Un registry n'a pas besoin d'exécuter un conteneur pour être compatible avec la distribution OCI.
+Whether it complies with the **OCI formats or protocols relevant to its role**: image, distribution, or runtime ([[01-oci|OCI]]). A registry does not need to run a container to be compatible with the OCI distribution.
 
-Cette interopérabilité permet de remplacer des composants, pas de supprimer les contraintes de plateforme. Une image Linux ARM64 ne devient pas native sur un hôte AMD64 ; vérifier architecture, système et fonctionnalités requises. « Compatible OCI » doit donc préciser quelle spécification et quel périmètre ont été testés.
+This interoperability makes it possible to replace components, not to remove platform constraints. An ARM64 Linux image does not become native on an AMD64 host; check architecture, system and functionality required. “Compatible OCI” must therefore specify which specification and perimeter have been tested.
 
 ---
 
-Quels ordres de grandeur pour la taille des images ? <!--anki:482a30374c4f77287a3f-->
+What orders of magnitude for the size of the images? <!--anki:482a30374c4f77287a3f-->
 ?
 ```text
-alpine                  ~  8 Mo
-debian-slim             ~ 75 Mo
-python:3.x-slim         ~130 Mo
-image CUDA runtime      ~2 à 3 Go
-serveur d'inférence LLM ~8 à 12 Go
-poids d'un modèle 8B    ~16 Go   ← à garder hors de l'image
+alpine                  ~  8 MB
+debian-slim             ~ 75 MB
+python:3.x-slim         ~130 MB
+image CUDA runtime ~2 to 3 GB
+LLM ~8 to 12 GB Inference Server
+weight of a model 8B ~16 GB ← to keep out of the picture
 ```
-Retenir l'ordre de grandeur : une image applicative se compte en **centaines de Mo**, une image GPU en **Go**, et les **poids** ne doivent pas y entrer ([[10-images-modeles-poids|poids de modèles]]).
+Hold the order of magnitude: an application image is counted in **hundreds of MB**, a GPU image in **GB**, and **weights** must not enter it ([[10-images-models-weights|Weight of models]]).
 
-Ces tailles varient avec la version, les dépendances et la compression ; distinguer taille téléchargée et espace décompressé sur le nœud. Séparer les poids est souvent pratique, mais les intégrer peut être un choix explicite pour un artefact autonome. Mesurer surtout temps de pull, espace disque et fréquence de mise à jour.
+These sizes vary with version, dependencies, and compression; distinguishing between downloaded size and uncompressed space on the node. Separating weights is often convenient, but integrating them can be an explicit choice for a stand-alone artifact. Measuring especially pull time, disk space, and update frequency.
 
 ---
 
-À ne pas confondre : image et conteneur ? <!--anki:676649472e342573532b-->
+Do not confuse: image and container? <!--anki:676649472e342573532b-->
 ?
-- **Image** : un **modèle immuable**, en couches, qui contient l'application et son environnement. Elle se stocke et se partage dans un registry
-- **Conteneur** : une **instance en cours d'exécution** d'une image, avec son propre état modifiable, ses processus et son réseau
+- **Image** A: **immutable model**, in layers, which contains the application and its environment. It is stored and shared in a registry
+- **Container**: a **running instance** of an image, with its own editable state, processes, and network
 
-Une image donne autant de conteneurs qu'on veut, comme une classe donne des objets. Ce qu'un conteneur écrit disparaît avec lui, sauf dans un **volume**.
+An image gives as many containers as you want, like a class gives objects. What a written container disappears with it, except in a **volume**.
 
 ---
 
-Une même image peut-elle créer plusieurs conteneurs ? <!--anki:654344583059492e3349-->
+Can a single image create multiple containers? <!--anki:654344583059492e3349-->
 ?
-**Oui**, autant qu'on veut. Les couches de l'image sont en **lecture seule et partagées** ; chaque conteneur n'ajoute qu'une **couche inscriptible** par-dessus. Dix conteneurs de la même image ne dupliquent donc **pas** ses couches sur le disque, et démarrent en quelques centaines de millisecondes.
+**Yeah.**, As much as we want. The layers of the image are in **Read Only and Shared** ; Each container adds only one **Inscriptible Layer** on top. Ten containers of the same image do not duplicate physically its layers on the disc, and start in a few hundred milliseconds.
 
-Le partage repose sur le **copy-on-write** d'overlayfs : modifier un fichier venu de l'image le copie d'abord entièrement dans la couche du conteneur. Ouvrir en écriture un fichier de 10 Go embarqué dans l'image en recopie 10 Go, pour chaque conteneur. Les données qui changent vont donc dans un volume, pas dans l'image.
+Sharing is based on overlayfs **copy-on-write**: editing a file from the image first copies it entirely into the container layer. Opening a 10GB file embedded in the 10GB mirror image for each container, so the data that changes goes into a volume, not into the image.
 
 ---
 
-Qu'est-ce qu'un container registry ? <!--anki:4b706936536a6b482f4e-->
+What is a registry container? <!--anki:4b706936536a6b482f4e-->
 ?
-Un service qui **stocke et distribue des images**, selon l'API de l'[[01-oci|OCI Distribution Specification]] : il conserve les **manifests** et les **couches**, adressées par digest, et les sert sur pull. Exemples : Docker Hub, GitHub Container Registry, Harbor, Amazon ECR, Google Artifact Registry.
+A service that **stores and distributes images**, according to the API of the [[01-oci|OCI Distribution Specification]]: it keeps the **manifests** and the **layers**, addressed by digest, and serves them on pull. Examples: Docker Hub, GitHub Container Registry, Harbor, Amazon ECR, Google Artifact Registry.
 
-Un `pull` télécharge d'abord le manifest, puis seulement les couches absentes du nœud : deux images bâties sur la même base CUDA ne la transfèrent qu'une fois. Le `push` fonctionne de même, en n'envoyant que les couches inconnues du registry. Partager des couches de base lourdes et stables réduit donc à la fois le stockage et le temps de déploiement.
+A `pull` first downloads the manifest, then only the missing layers of the node: two images built on the same CUDA base transfer it only once. The `push` works the same, sending only the unknown layers of the registry. Sharing heavy and stable base layers therefore reduces both storage and deployment time.
 
 ---
 
-Quel rôle le registry joue-t-il en entreprise, et que se passe-t-il s'il tombe ? <!--anki:3334393664346233353761633438343761346139383366633838393265663966-->
+What role does the registry play in business, and what happens if it falls? <!--anki:3334393664346233353761633438343761346139383366633838393265663966-->
 ?
-Il porte le **contrôle d'accès**, l'**analyse de vulnérabilités**, la **signature** et la rétention des images.
+It supports **access control**,**vulnerability analysis**,**signature** and image retention.
 
-C'est un composant critique : s'il est indisponible, plus aucun Pod ne démarre sur une image qui n'est pas déjà présente sur le node.
+This is a critical component: if it is unavailable, no Pod will start on an image that is not already present on the node.
 
-Parades : un registry répliqué ou un **cache pull-through** proche du cluster, des images épinglées par digest avec `imagePullPolicy: IfNotPresent`, et un pré-chargement des images critiques sur les nœuds. Tester le scénario en drainant un nœud pendant une panne simulée du registry : on voit quels services ne repartent pas.
+Parades: a replicated registry or a pull-through **cache** near the cluster, digest pinned images with `imagePullPolicy: IfNotPresent`, and pre-loading critical images on nodes. Test the scenario by draining a node during a simulated registry failure: we see which services are not leaving.
 
 ---
 
-Quel workflow utilise typiquement un registry ? <!--anki:42337a5b48555930447d-->
+Which workflow typically uses a registry? <!--anki:42337a5b48555930447d-->
 ?
 `build → image → push → registry → pull → runtime`
 ```bash
 docker build -t registry.interne/app:1.2.0 .
 docker push registry.interne/app:1.2.0
-docker pull registry.interne/app@sha256:9f2c…   # par digest : immuable
+docker pull registry.interne/app@sha256:9f2c…   # by digest: immutable
 ```
-En production, on déploie par **digest** et non par tag ([[112-cicd-modeles|CI/CD]]).
+In production, we deploy by **digest** and not by tag ([[112-model-cicd|CI/CD]]).
 
-Le build fabrique l'artefact, le push le publie et le pull le récupère avant exécution. Le digest désigne le contenu précis, tandis qu'un tag peut être déplacé. Le digest abrégé ci-dessus est illustratif : utiliser sa valeur complète. Ajouter provenance et signature si la chaîne de livraison doit vérifier l'origine de l'image.
-
----
-
-Docker Hub est-il un runtime ? <!--anki:715d2f71583467563355-->
-?
-**Non**, c'est un **registry** : il stocke et distribue des images, il n'en exécute aucune. L'exécution revient à [[03-containerd-runc|containerd et runc]].
-
-En pratique, deux conséquences : Docker Hub applique des **limites de pull** aux comptes anonymes, et ses images publiques ne sont pas auditées. D'où l'usage d'un **registry interne** ou d'un miroir en CI et sur les nodes.
-
-Un `ImagePullBackOff` peut venir d'identifiants, de quota ou d'un tag absent, avant tout lancement de processus. Consulter l'événement de pull plutôt que chercher les logs d'une application qui n'a jamais démarré.
+The build makes the artifact, the push publishes it and the pull picks it up before execution. The digest designates the precise content, while a tag can be moved. The digest abbreviated above is illustrative: use its full value. Add provenance and signature if the delivery chain must verify the origin of the image.
 
 ---
 
-À ne pas confondre : tag et digest ? <!--anki:72692e4142293e5a457b-->
+Is Docker Hub a runtime? <!--anki:715d2f71583467563355-->
 ?
-Un **tag** est un nom déplaçable, sauf politique d'immuabilité du registre ; un **digest** identifie un contenu précis.
+**No**, this is a **registry**: it stores and distributes images, it does not execute any. Execution goes back to [[03-containerd-runc|containerd and runc]].
 
-Exemple : `app:1.2.0` peut être republié après un correctif. Deux machines tirant ce tag à des dates différentes peuvent exécuter des contenus différents ; un digest évite cette ambiguïté.
+In practice, two consequences: Docker Hub applies **pull limits** to anonymous accounts, and its public images are not audited. Hence the use of an internal **registry** or a mirror in CI and on nodes.
 
-Un digest peut identifier un manifeste mono-plateforme ou un index multi-plateforme : consigner aussi la plateforme et l'image effectivement résolue. **Intégrité n'est pas confiance** : le hash ne certifie ni auteur ni absence de vulnérabilité. Épingler aussi configuration et poids externes pour reproduire le service, pas seulement l'image.
+A `ImagePullBackOff` can come from identifiers, quota or an absent tag, before any process starts. Consult the pull event rather than look for logs of an application that has never started.
 
 ---
 
-Pourquoi supprimer un secret dans une instruction Dockerfile ultérieure ne suffit-il pas à l'effacer de l'image ? <!--anki:6165643235633165666534333464373161616533643535326134616162353564-->
+Do not confuse: Tag and digest? <!--anki:72692e4142293e5a457b-->
 ?
-Les **couches précédentes** peuvent encore contenir le fichier ou la valeur sensible. Une suppression dans une nouvelle couche masque le chemin dans la vue finale sans réécrire l'historique de l'image.
+A **tag** is a moveable name, except for the registry's immutability policy; a **digest** identifies specific content.
 
-Fournir les secrets de build par les mécanismes dédiés, éviter leur copie et vérifier aussi journaux et artefacts produits. Si un secret a été publié, le révoquer et reconstruire sans lui ; supprimer seulement le dernier tag ne répare pas les copies déjà distribuées. Un montage de secret protège son passage au build, mais le programme exécuté peut encore le recopier.
+Example: `app:1.2.0` can be republished after a patch. Two machines pulling this tag at different dates can run different contents; a digest avoids this ambiguity.
+
+A digest can identify a single-platform manifest or a cross-platform index: also record the platform and the image actually resolved. **Integrity is not trusted**: the hash does not certify neither author nor absence of vulnerability. Also pin configuration and external weights to reproduce the service, not just the image.
 
 ---
 
-Pourquoi un build Docker réussi avec cache ne prouve-t-il pas que l'image est reconstructible ? <!--anki:3732663139326236383830383431316338613639636332623234326166626438-->
+Why is it not enough to delete a secret in a subsequent Dockerfile statement? <!--anki:6165643235633165666534333464373161616533643535326134616162353564-->
 ?
-Le cache peut masquer **une dépendance supprimée ou une étape désormais défectueuse**. Une reconstruction sur une machine neuve exécutera réellement cette étape.
+The previous **layers** may still contain the file or the sensitive value. A deletion in a new layer hides the path in the final view without rewriting the image history.
 
-Tester périodiquement un build propre avec dépendances verrouillées et sources disponibles. Un tag de base mutable peut produire une autre image même avec le même Dockerfile. Comparer les artefacts et conserver leur provenance ; reproductibilité du contenu et réussite fonctionnelle sont deux contrôles distincts.
+Provide build secrets by dedicated mechanisms, avoid copying them and also check logs and artifacts produced. If a secret has been published, revoke it and rebuild without it; delete only the last tag does not repair copies already distributed. A secret montage protects its passage to the build, but the executed program can still copy it.
 
 ---
 
-Pourquoi distinguer image téléchargée et image approuvée dans un registry ? <!--anki:3835656663643731313731613464333862353939656363333462626634303563-->
+Why doesn't a successful Docker build with cache prove that the image is rebuildable? <!--anki:3732663139326236383830383431316338613639636332623234326166626438-->
 ?
-La présence dans le registre prouve seulement **la disponibilité de l'artefact**. Elle ne prouve pas revue, tests ni conformité à la politique de déploiement.
+The cache can hide **a removed dependency or a now defective step**. A rebuild on a new machine will actually perform this step.
 
-Promouvoir un digest après validation et faire appliquer cette sélection au déploiement. Si un tag est déplacé, vérifier quel digest chaque instance a réellement chargé. Les permissions de publication doivent être séparées des permissions de promotion lorsqu'elles portent des responsabilités différentes.
+Periodically test a clean build with locked dependencies and available sources. A mutable base tag can produce another image even with the same Dockerfile. Comparing artifacts and retaining their provenance; content reproducibility and functional success are two separate controls.
 
 ---
 
-## Mises en situation
-
-Mise en situation : le déploiement de ton serveur d'inférence prend 20 minutes, dont 18 de pull d'image, parce que les poids du modèle sont dans l'image. Que changes-tu ? <!--anki:794e496a3e5e64635b5a-->
+Why distinguish downloaded image from approved image in a registry? <!--anki:3835656663643731313731613464333862353939656363333462626634303563-->
 ?
-1. **Sortir les poids de l'image** : image légère avec le runtime, poids montés depuis un volume ou un stockage objet ([[10-images-modeles-poids|images & poids]])
-2. **Pré-puller** l'image sur les nodes GPU, avec un DaemonSet
-3. **Optimiser les couches** : dépendances stables en bas, code applicatif en haut, pour maximiser le cache
-4. **Registry proche** : miroir interne ou cache régional, plutôt qu'un pull depuis l'extérieur
-5. **Épingler par digest** plutôt que par tag mouvant
+The presence in the registry only proves **the availability of the artifact**. It does not prove review, testing or compliance with the deployment policy.
 
-**Piège** : reconstruire l'image entière à chaque changement de version de modèle.
+Promote a digest after validation and apply this selection to the deployment. If a tag is moved, check which digest each instance has actually loaded. Publish permissions should be separated from promotion permissions when they carry different responsibilities.
 
 ---
 
-Mise en situation : une équipe pousse ses images sur Docker Hub avec le tag `latest`, et la production redémarre parfois avec une version inattendue. Que mets-tu en place ? <!--anki:76772d7e25723a7b5829-->
-?
-1. **Interdire `latest`** en production : chaque déploiement référence un **digest** ou une version immuable
-2. **Registry interne** : contrôle d'accès, rétention, analyse de vulnérabilités
-3. **Traçabilité** : quelle image tourne, construite depuis quel commit
-4. **Signature** des images et vérification à l'admission
-5. **Nettoyage** : politique de rétention, sinon le registry devient ingérable
+## Scenarios
 
-**Piège** : croire qu'un tag est immuable. Il peut être réécrit à tout moment.
+Scenario: Deploying your inference server takes 20 minutes, including 18 image pull, because the model weights are in the image. What do you change? <!--anki:794e496a3e5e64635b5a-->
+?
+1. **Output image weights**: light image with runtime, weight mounted from volume or object storage ([[10-images-models-weights|images & poids]])
+2. **Pre-pull** image on GPU nodes, with a DaemonSet
+3. **Optimize layers**: stable dependencies at the bottom, application code at the top, to maximize cache
+4. **Register close**: internal mirror or regional cache, rather than a pullover from the outside
+5. **Pinch by digest** rather than moving tag
+
+**Trap**: Rebuild the entire image with each model version change.
+
+---
+
+Scenario: a team pushes its images on Docker Hub with the tag `latest`, and the production sometimes restarts with an unexpected version. What do you put in place? <!--anki:76772d7e25723a7b5829-->
+?
+1. **Prohibit `latest`** in production: each deployment references a **digest** or an immutable version
+2. **Internal registry**: access control, retention, vulnerability analysis
+3. **Traceability**: Which image rotates, built from which commit
+4. **Signature** of images and verification at admission
+5. **Cleaning**: retention policy, otherwise the registry becomes unmanageable
+
+**Trap** I believe a tag is immutable. It can be rewritten at any time.
 
 ---
 
 ## Sources
 
-- [Docker — secrets de build et limites de ARG/ENV](https://docs.docker.com/build/building/secrets/) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
+- [Docker — build secrets and ARG/ENV limits](https://docs.docker.com/build/building/secrets/) — targeted deepening of the 12 November 2026; educational examples are built for this review.
 
-- Complément du 14 novembre 2026 — Invalidation du cache de build : [Docker — Build cache invalidation](https://docs.docker.com/build/cache/invalidation/).
+- 14 November 2026 — Build cache invalidation: [Docker — Build cache invalidation](https://docs.docker.com/build/cache/invalidation/).
 
-## Connexions
-- [[01-oci|OCI]] — les standards derrière Docker
-- [[03-containerd-runc|containerd & runc]] — ce qui exécute les images
-- [[08-linux-primitives-docker-fondamentaux|Primitives & fondamentaux]] — layers, volumes, Dockerfile
-- [[10-images-modeles-poids|Images & poids de modèles]] — cas des gros modèles LLM
-- [[05-docker-kubernetes|Docker & Kubernetes]] — pourquoi Kubernetes n'a plus besoin de Docker Engine
-- [[06-apptainer-singularity|Apptainer & Singularity]] — les conteneurs du monde HPC
-- [[00-index|Index Conteneurs]]
+## Connections
+- [[01-oci|OCI]] — standards behind Docker
+- [[03-containerd-runc|containerd & runc]] — which executes the images
+- [[08-linux-primitives-docker-fundamentals|Primitive & fundamental]] — layers, volumes, Dockerfile
+- [[10-images-models-weights|Images & weights of models]] — case of large models LLM
+- [[05-docker-kubernetes|Docker & Kubernetes]] — Why Kubernetes No Longer Needs Docker Engine
+- [[06-apptainer-singularity|Apptainer & Singularity]] — the world's HPC containers
+- [[00-index|Index Containers]]
 - [[00-moc-ai-engineering|MOC AI Engineering]]

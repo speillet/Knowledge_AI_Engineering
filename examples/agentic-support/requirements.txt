@@ -1,4 +1,4 @@
-# Versions vérifiées avec Python 3.10 le 9 octobre 2026.
+# Versions verified with Python 3.10 on 9 October 2026.
 langchain==1.4.4
 langgraph==1.2.14
 langgraph-checkpoint-sqlite==3.1.1

@@ -1,6 +1,6 @@
-# Mises à jour groupées et mensuelles, pour limiter le bruit des PR.
-# examples/agentic-support est exclu : ses versions sont verrouillées et vérifiées à la main
-# (voir son requirements.txt).
+# Group and monthly updates, to limit the noise of PR.
+# examples/agentic-support is excluded: its versions are locked and checked by hand
+# (see its requirements.txt).
 version: 2
 updates:
   - package-ecosystem: github-actions

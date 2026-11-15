@@ -1,165 +1,165 @@
 # Cognee — Flashcards
-Tags: #flashcards #ai-engineering #rag #knowledge-graph #memoire #cognee #llm
-Vérifié le : 25 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: mémoire d'agent en knowledge graph, opérations remember, recall, improve et forget, mémoire permanente ou de session, stratégies de recherche, ontologie OWL, intégrations (plugin, MCP), limites, test de réversibilité d'une mémoire, test d'utilité mémoire, reconstruction contrôlée. -->
+Tags: #flashcards #ai-engineering #rag #knowledge-graph #memory #cognee #llm
+Verified on: 25 September 2026 — This factsheet lists products, versions or regulatory texts that are evolving quickly.
+<!-- summary: Agent memory in knowledge graph, operations remember, recall, improve and forget, permanent or session memory, search policies, OWL ontology, integrations (plugin, MCP), limits, memory reversibility test, memory utility test, controlled reconstruction. -->
 
 
-Qu'est-ce que Cognee ? <!--anki:7924302d43443778695b-->
+What is Cognee? <!--anki:7924302d43443778695b-->
 ?
-Une plateforme **open source** (Apache 2.0) de **mémoire pour agents** : elle transforme documents, code et conversations en **knowledge graph** doublé d'un **index vectoriel**, auto-hébergeable, que les agents interrogent d'une session à l'autre. L'ingestion peut même tourner **sans LLM**, avec des modèles d'extraction et d'embedding locaux.
+A **open source** platform (Apache 2.0) with **agent memory**: it transforms documents, code and conversations into **knowledge graph** doubled by a **vector index**, which agents query from one session to the next. Ingestion can even turn **without LLM**, with local extraction models and embedding.
 
-L'intérêt est de retrouver à la fois un passage similaire et des **relations entre entités**, par exemple relier un client à un incident déjà analysé. Cette mémoire reste un système de données : prévoir provenance, séparation des utilisateurs et suppression. Une extraction incorrecte peut persister et être réutilisée ; le stockage ne transforme pas une hypothèse en fait.
+The advantage is to find both a similar passage and **relationships between entities**, for example linking a client to an incident already analyzed. This memory remains a data system: predicting origin, separation of users and deletion. An incorrect extraction can persist and be reused; the storage does not turn a hypothesis into a fact.
 
 ---
 
-Quelles sont les quatre opérations de Cognee 1.0 ? <!--anki:6568383b553a542a5065-->
+What are the four operations of Cognee 1.0? <!--anki:6568383b553a542a5065-->
 ?
-- **`remember`** : stocker du contenu en mémoire (permanente ou de session)
-- **`recall`** : retrouver du contexte ou une réponse
-- **`improve`** : enrichir la mémoire, appliquer du feedback
-- **`forget`** : supprimer un élément ou un dataset
+- **`remember`**: store content in memory (permanent or session)
+- **`recall`**: find context or a response
+- **`improve`**: enrich the memory, apply feedback
+- **`forget`**: delete an element or a dataset
 ```python
-await cognee.remember("Marie Curie est née à Varsovie.", dataset_name="demo")
-results = await cognee.recall("Où est née Marie Curie ?", datasets=["demo"])
+await cognee.remember("Marie Curie was born in Warsaw.", dataset_name="demo")
+results = await cognee.recall("Where was Marie Curie born?", datasets=["demo"])
 ```
 
-Ces opérations décrivent un **cycle de vie**, pas quatre garanties de qualité. Dans l'exemple, contrôler que le dataset interrogé est bien celui alimenté et examiner les sources retournées. Après une modification ou une suppression, vérifier les représentations dérivées et les futurs rappels ; une réponse déjà copiée dans un historique peut subsister ailleurs.
+These operations describe a **lifecycle**, not four guarantees of quality. In the example, check that the dataset being queried is indeed the one being fed and examine the returned sources. After a modification or deletion, check the derived representations and future reminders; a response already copied in a history may remain elsewhere.
 
 ---
 
-Que fait l'opération remember de Cognee en mémoire permanente ? <!--anki:4a3726612a4444423334-->
+What does Cognee's operation remember in permanent memory? <!--anki:4a3726612a4444423334-->
 ?
-Le pipeline complet, en trois phases :
-1. **Ingestion** et normalisation dans un dataset
-2. **Construction du graphe** : chunking, extraction des entités et relations, embeddings
-3. **Enrichissement** automatique (une passe `improve`)
+The complete pipeline, in three phases:
+1. **Ingestion** and normalization in a dataset
+2. **Graph construction**: chunking, entity extraction and relationships, embeddings
+3. **Automatic enrichment** (one pass `improve`)
 
-Il remplace l'ancienne séquence `add` → `cognify`, toujours disponible pour contrôler chaque étape.
+It replaces the old `add` → `cognify` sequence, always available to control each step.
 
-Une ingestion transforme donc plusieurs représentations du même document ; son succès ne se résume pas à la présence du fichier. Sur un petit exemple, vérifier les entités extraites, les relations et un rappel attendu. Conserver un identifiant de source pour suivre les mises à jour et diagnostiquer une extraction qui déforme le contenu.
+An ingestion therefore transforms several representations of the same document; its success is not limited to the presence of the file. On a small example, check the extracted entities, relationships and an expected reminder. Keep a source identifier to track updates and diagnose an extraction that distorts the content.
 
 ---
 
-Mémoire permanente ou mémoire de session ? <!--anki:6b6b4778485f7935575a-->
+Permanent memory or session memory? <!--anki:6b6b4778485f7935575a-->
 ?
-- **Permanente** (sans `session_id`) : le pipeline complet, plus lent et plus coûteux, qui produit graphe et embeddings
-- **Session** (avec `session_id`) : le **chemin rapide**, écrit dans un cache et disponible aussitôt pour la session. Elle ne rejoint la mémoire permanente que par un **transfert** explicite ou automatique (`improve`)
+- **Permanent** (without `session_id`): the full, slower and more expensive pipeline, which produces graph and embeddings
+- **Session** (with `session_id`): the **quick path**, written in a cache and available immediately for the session. It joins the permanent memory only by an explicit or automatic **transfer** (`improve`)
 
-Par exemple, une hypothèse provisoire de réunion doit rester en session tant qu'elle n'est pas validée. Tester expiration, redémarrage et transfert : « disponible maintenant » ne signifie pas « durable », et le transfert ne doit pas élargir les droits d'accès.
+For example, a provisional meeting assumption must remain in session until it is validated. Testing expiration, restart, and transfer: "available now" does not mean "durable", and the transfer must not expand access rights.
 
 ---
 
-Comment l'opération recall de Cognee choisit-elle sa stratégie de recherche ? <!--anki:636d76242e427a3c316e-->
+How does Cognee's call operation choose its search strategy? <!--anki:636d76242e427a3c316e-->
 ?
-Par un **routeur à règles**, pas par un choix LLM systématique : sans stratégie explicite, la mémoire permanente utilise généralement **`HYBRID_COMPLETION`**. Le paramètre `query_type` permet de forcer un mode.
+By an **Router Rules**, Not by a choice LLM systematic: without explicit strategy, Permanent memory usually uses **`HYBRID_COMPLETION`**. The parameter `query_type` Allows you to force a mode.
 
-Le périmètre compte aussi : avec `session_id` seul, Cognee peut d'abord chercher dans le cache de session ; préciser `datasets` ou `query_type` oriente vers la mémoire permanente. Examiner le champ **`source`** du résultat pour distinguer ces chemins.
+The perimeter also counts: with `session_id` alone, Cognee can first search the session cache; specify `datasets` or `query_type` orients to the permanent memory. Examine the field **`source`** of the result to distinguish these paths.
 
-Exemple : une réponse issue de `source="session"` ne démontre pas que le graphe contient le fait. Pour diagnostiquer un oubli, vérifier périmètre, provenance et état d'indexation avant de changer de stratégie.
+Example: A response from `source="session"` does not show that the graph contains the fact. To diagnose an oversight, check scope, provenance, and index status before changing policy.
 
 ---
 
-Que fait l'opération improve de Cognee ? <!--anki:6e43464e492d4e46546f-->
+What does Cognee's operation improve? <!--anki:6e43464e492d4e46546f-->
 ?
-- **Enrichit** un graphe existant sans ré-ingérer les sources (structures dérivées, triplets indexés)
-- Applique le **feedback** : les éléments utilisés dans une bonne réponse gagnent du poids, ceux d'une mauvaise en perdent
-- **Transfère les apprentissages de session** (questions-réponses, traces d'agent, leçons) dans la mémoire permanente
+- **Enriches** an existing graph without re-ingesting sources (derived structures, indexed triplets)
+- Applies **feedback**: items used in a good answer gain weight, those of a bad one lose weight
+- **Transfers session learning** (questions-answers, agent traces, lessons) into permanent memory
 
-Un retour positif sur une réponse ne valide pas nécessairement **tous les faits qui l'ont alimentée**. Séparer feedback utilisateur, vérification factuelle et règle de promotion en mémoire permanente. Comparer les rappels avant et après enrichissement sur des questions connues, afin de repérer une préférence amplifiée à tort ou une information utile devenue moins accessible.
+Positive feedback on a response does not necessarily validate **All the facts that fueled it**. Separate user feedback, factual verification and promotion rule in permanent memory. Compare reminders before and after enrichment on known issues, to identify a wrongly amplified preference or useful information that has become less accessible.
 
 ---
 
-Comment Cognee utilise-t-il une ontologie ? <!--anki:753478483f5845616f62-->
+How does Cognee use an ontology? <!--anki:753478483f5845616f62-->
 ?
-On fournit un fichier **OWL** (RDF/XML). Les entités extraites par le LLM sont **rapprochées** des classes et individus de l'[[23-knowledge-graphs-ontologies|ontologie]] et **renommées au terme canonique**. Deux modes :
-- **annotate** (par défaut) : les entités hors ontologie sont conservées
-- **strict** : elles sont supprimées
+A **OWL** file (RDF/XML) is provided. The entities extracted by the LLM are **close** to the classes and individuals of the [[23-knowledge-graphs-ontologies|ontology]] and **renamed to the canonical term**.
+- **annotate** (default): Non-ontology entities are retained
+- **Strict**: they are removed
 
-Le mode strict convient seulement si l'ontologie couvre réellement le domaine : une entité nouvelle mais valide pourrait sinon disparaître. Par exemple, un nouveau type de contrat absent du schéma mérite une revue plutôt qu'un rejet silencieux. Mesurer les éléments non rapprochés et conserver leur provenance pour faire évoluer le vocabulaire contrôlé.
+Strict mode is only appropriate if the ontology actually covers the domain: a new but valid entity might otherwise disappear. For example, a new type of contract that is missing from the schema deserves a review rather than a silent rejection. Measure the non-close items and keep their provenance to evolve the controlled vocabulary.
 
 ---
 
-Comment brancher Cognee à un agent ? <!--anki:4e43293673732c445132-->
+How to connect Cognee to an agent? <!--anki:4e43293673732c445132-->
 ?
-- **Plugin** pour Claude Code ou Codex (mémoire capturée par des hooks)
-- **Serveur [[33-mcp|MCP]]** pour Cursor, Cline et les autres clients MCP
-- **SDK** Python et TypeScript, **API REST**
+- **Plugin** for Claude Code or Codex (memory captured by hooks)
+- **[[33-mcp|MCP]] server** for Cursor, Cline and other MCP clients
+- **SDK** Python and TypeScript, **API REST**
 
-Il sait aussi importer une mémoire existante depuis Mem0, Letta, Zep ou Graphiti.
+It can also import an existing memory from Mem0, Letta, Zep or Graphiti.
 
-Choisir l'intégration selon l'endroit où l'on contrôle **identité, permissions et cycle de vie**. Une mémoire accessible à plusieurs clients doit rester cloisonnée par utilisateur ou projet. Vérifier quelles données les hooks capturent, comment elles sont rappelées et comment supprimer un souvenir, avant d'activer la collecte automatique sur des conversations réelles.
+Choose integration based on where you control **identity, permissions, and lifecycle**. A memory that is accessible to multiple clients must be partitioned by user or project. Check what data hooks capture, how they are remembered, and how to delete a memory, before enabling automatic collection on real conversations.
 
 ---
 
-Quelles limites de Cognee garder en tête ? <!--anki:4a404e6c463832774659-->
+What Cognee limits to keep in mind? <!--anki:4a404e6c463832774659-->
 ?
-- L'extraction par LLM a un **coût** et produit du **bruit** : la qualité dépend du modèle et de l'ontologie
-- Une stack à opérer : base graphe, index vectoriel, cache de session
-- Une API **jeune** qui évolue vite : la 1.0 a renommé les opérations, à revérifier avant chaque mise à jour
+- The extraction by LLM has a **cost** and produces **noise**: the quality depends on the model and ontology
+- A stack to operate: base graph, vector index, session cache
+- A API **Young** Who is rapidly evolving: The 1.0 renamed the operations, Re-check before each update
 
-Sur un corpus témoin, mesurer faits correctement extraits, relations inventées et réponses effectivement soutenues. Un graphe plus dense n'est pas automatiquement meilleur. Inclure une modification de fait et une suppression dans le test de mise à niveau.
+On a sample corpus, measure correctly extracted facts, invented relationships, and actually supported responses. A denser graph is not automatically better. Include a de facto change and deletion in the upgrade test.
 
 ---
 
-Comment tester la réversibilité d'une mémoire Cognee avant d'y confier un corpus ? <!--anki:6530643134333066346436643433666561356237373835333963633362323662-->
+How to test the reversibility of a Cognee memory before entrusting it with a corpus? <!--anki:6530643134333066346436643433666561356237373835333963633362323662-->
 ?
-Faire un **essai de sortie** sur un petit corpus synthétique : ingérer des faits avec leur provenance, exporter les données accessibles et reconstruire les réponses utiles dans un environnement vierge.
+Make a **Exit Test** on a small synthetic corpus: ingesting facts with their provenance, export accessible data and reconstruct useful responses in a blank environment.
 
-Vérifier séparément documents, relations, métadonnées, droits et versions des transformations. Un export de textes seuls peut perdre les liens ou les règles d'accès. Tester aussi suppression et réingestion d'un document. Ce protocole évalue les garanties de la version déployée ; il ne suppose pas qu'une commande d'export universelle préserve automatiquement toute la mémoire.
+Check separately documents, relationships, metadata, rights, and versions of transformations. An export of single texts can lose links or access rules. Also test deletion and re-ingestion of a document. This protocol evaluates the guarantees of the deployed version; it does not assume that a universal export command automatically preserves all memory.
 
 ---
 
-Comment mesurer si une mémoire Cognee améliore réellement les réponses d'un agent ? <!--anki:6237333361666564626165633462306361353864366338336364343032313430-->
+How to measure whether a Cognee memory actually improves an agent's responses? <!--anki:6237333361666564626165633462306361353864366338336364343032313430-->
 ?
-Comparer **sans mémoire, avec mémoire pertinente et avec mémoire obsolète** sur les mêmes tâches. Mesurer faits utiles rappelés, corrections respectées, latence et erreurs introduites.
+Compare **without memory, with relevant memory and with obsolete memory** on the same tasks. Measure recalled useful facts, respected corrections, latency and introduced errors.
 
-Séparer conversations d'écriture et de test pour éviter de mesurer une simple répétition immédiate. Inclure des demandes où aucun souvenir ne doit intervenir. Le nombre de nœuds ou de souvenirs stockés ne mesure pas l'utilité : une mémoire plus volumineuse peut augmenter les contradictions et les rappels hors sujet.
+Separate writing and testing conversations to avoid measuring a simple immediate repetition. Include requests where no memory should intervene. The number of nodes or memories stored does not measure usefulness: a larger memory can increase contradictions and reminders off topic.
 
 ---
 
-Que faut-il préserver pour reconstruire une mémoire Cognee après un changement de modèle d'embedding ? <!--anki:3633643439363365346138353438356338306230386265373534326539666334-->
+What should be preserved to rebuild a Cognee memory after a embedding model change? <!--anki:3633643439363365346138353438356338306230386265373534326539666334-->
 ?
-Préserver **sources autorisées, identifiants, provenance et versions des transformations**, plutôt que les seuls vecteurs. Une reconstruction peut modifier les entités extraites et les relations : elle n'est pas nécessairement une copie sémantiquement identique.
+Preserving **authorized sources, identifiers, source, and versions of transformations**, rather than just vectors. A reconstruction can change extracted entities and relationships: it is not necessarily a semantically identical copy.
 
-Construire la nouvelle mémoire à côté de l'ancienne, rejouer des questions de référence et vérifier suppressions et droits avant bascule. Documenter les données réellement exportables dans la version déployée ; les fonctions de reconstruction doivent être testées, pas déduites du nom des opérations.
+Build the new memory next to the old one, replay reference questions, and check for deletions and rights before toggling. Document data that is actually exportable in the deployed version; rebuild functions must be tested, not deduced from the name of the operations.
 
 ---
 
-## Mises en situation
+## Scenarios
 
-Mise en situation : ton assistant interne doit se souvenir des décisions prises dans les réunions et répondre à des questions qui les relient entre elles. Tu envisages Cognee. Comment procèdes-tu ? <!--anki:6751377b623156407d3d-->
+Scenario: Your internal assistant must remember the decisions made in the meetings and answer questions that connect them. You are considering Cognee. How do you proceed? <!--anki:6751377b623156407d3d-->
 ?
-1. **Vérifier le besoin** : des questions **relationnelles** (qui a décidé quoi, quel précédent) justifient un graphe ; sinon un RAG vectoriel suffit ([[21-rag-fondamentaux|RAG]])
-2. **Ontologie restreinte** en OWL : réunion, décision, personne, projet, en mode `annotate` pour ne pas perdre ce qui sort du schéma
-3. **Mémoire de session** pendant la réunion (chemin rapide), puis transfert vers la mémoire permanente par `improve`
-4. **Brancher l'agent** par le serveur MCP ou le SDK ([[33-mcp|MCP]])
-5. **Cadrer les coûts** : l'extraction par LLM sur tout l'historique se chiffre vite. Commencer par un périmètre réduit et mesurer
+1. **Check the need**: **Relational questions** (who decided what, what precedent) justify a graph; otherwise a vector RAG is enough ([[21-rag-fundamentals|RAG]])
+2. **Restricted ontology** in OWL: meeting, decision, person, project, in `annotate` mode so as not to lose what comes out of the schema
+3. **Memory session** during the meeting (quick path), then transfer to permanent memory by `improve`
+4. **Skip agent** by MCP server or SDK ([[33-mcp|MCP]])
+5. **Frame costs**: LLM extraction over the entire history is fast. Start with a reduced perimeter and measure
 
-**Piège** : ingérer tout l'historique de l'entreprise avant d'avoir validé la qualité des réponses sur un corpus témoin.
+**Trap**: Ingest the entire history of the company before validating the quality of the answers on a control corpus.
 
 ---
 
-Mise en situation : un utilisateur demande la suppression de toutes ses données, qui ont été ingérées dans la mémoire de l'agent. Que vérifies-tu ? <!--anki:6776213679257c40792e-->
+Scenario: a user requests the deletion of all his data, which has been ingested in the agent's memory. What do you check? <!--anki:6776213679257c40792e-->
 ?
-1. **Effacement réel** : `forget` sur les éléments et datasets concernés, et non un simple masquage
-2. **Propagation** : le graphe, l'index vectoriel, le cache de session et les sauvegardes doivent tous être traités ([[154-rgpd-llm|RGPD]])
-3. **Dérivés** : les résumés, enrichissements et souvenirs consolidés qui contiennent encore ces données
-4. **Traçabilité** : conserver la preuve de la suppression, sans conserver les données
-5. **Prévenir** : cloisonner par utilisateur dès l'ingestion et attacher la provenance à chaque élément
+1. **Real Clearance**: `forget` on affected elements and datasets, not a simple masking
+2. **Propagation**: The graph, vector index, session cache, and backups must all be processed ([[154-gdpr-llm|RGPD]])
+3. **Derivatives**: Consolidated summaries, enrichments and memories that still contain these data
+4. **Traceability**: retain proof of deletion, without retaining data
+5. **Prevent**: partition by user upon ingestion and attach the provenance to each element
 
-**Piège** : oublier les structures dérivées produites par `improve`, qui survivent à la suppression de la source.
+**Trap**: Forget the derived structures produced by `improve`, which survive the removal of the source.
 
 ---
 
 ## Sources
 
-- [Cognee — documentation du projet](https://docs.cognee.ai/)
-- [Cognee — routage de recall et portée de session](https://docs.cognee.ai/core-concepts/main-operations/recall.md) — consultation ciblée du 6 novembre 2026 ; ne constitue pas une revérification de toute la fiche.
+- [Cognee — project documentation](https://docs.cognee.ai/)
+- [Cognee — call routing and session scope](https://docs.cognee.ai/core-concepts/main-operations/recall.md) — targeted consultation of the 6 November 2026; does not constitute a recheck of the entire topic.
 
-## Connexions
-- [[23-knowledge-graphs-ontologies|Knowledge graphs & ontologies]] — les concepts sous-jacents
-- [[39-memoire-agents|Mémoire des agents]] — le problème que Cognee résout
-- [[22-rag-avance|RAG avancé]] — la recherche hybride
-- [[33-mcp|MCP]] — l'intégration aux clients agents
-- [[34-harness-plugins|Harness & plugins]] — plugin et hooks de capture
+## Connections
+- [[23-knowledge-graphs-ontologies|Knowledge graphs & ontologies]] — the underlying concepts
+- [[39-agent-memory|Memorandum of agents]] — the problem that Cognee solves
+- [[22-advanced-rag|Advanced RAG]] — Hybrid
+- [[33-mcp|MCP]] — Integration with Agent Customers
+- [[34-harness-plugins|Harness & plugins]] — plugin and capture hooks
 - [[00-moc-ai-engineering|MOC AI Engineering]]

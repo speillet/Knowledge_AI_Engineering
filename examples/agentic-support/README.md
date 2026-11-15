@@ -1,70 +1,70 @@
-# Atelier : un dossier support avec approbation et reprise
+# Workshop: a support file with approval and resumption
 
-Cet atelier relie un outil LangChain, un modèle LangChain simulé, un graphe LangGraph persistant, l'instrumentation Langfuse et une API FastAPI. Il permet de constater les effets d'une interruption, d'un refus et d'une panne après écriture métier. Toutes les commandes de démonstration utilisent des données synthétiques ; aucun modèle payant ni service Langfuse distant n'est appelé.
+This workshop connects a LangChain tool, a simulated LangChain model, a persistent LangGraph graph, Langfuse instrumentation, and a API FastAPI to see the effects of an interruption, denial, and outage after business writing. All demo commands use synthetic data; no paid models or remote Langfuse services are called.
 
-Le parcours associé est décrit dans l'[audit agentique](../../docs/audit-stack-agentique-2026-10-09.md). Les **18 tests** de l’[atelier](test_atelier.py) font partie de l'atelier : lire leurs invariants, prédire le résultat, puis les exécuter.
+The associated path is described in the [Agential Audit](../../docs/agentic-stack-audit-2026-10-09.md). The **18 tests** of the [atelier](test_workshop.py) are part of the workshop: read their invariants, predict the result, and then run them.
 
 ## Installation
 
-Python 3.10 ou plus récent ; ensemble vérifié sous Python 3.10 et Linux. Depuis ce dossier :
+Python 3.10 or newer; set checked under Python 3.10 and Linux. From this folder:
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements-lock.txt
 python demo.py
-python -m unittest -v test_atelier
+python -m unittest -v test_workshop
 ```
 
-Le téléchargement initial des paquets nécessite Internet. La démonstration et les tests fonctionnent ensuite localement. Le [fichier des dépendances directes](requirements.txt) explique les briques retenues ; le [fichier verrouillé](requirements-lock.txt) contient les 61 versions utilisées lors de la validation. Les dépendances de cet atelier sont indépendantes de celles de l'export Anki.
+The initial download of the packages requires the Internet. The demonstration and the tests then work locally. The [File of direct dependencies](requirements.txt) explains the bricks retained; the [Locked File](requirements-lock.txt) contains the 61 versions used during the validation. The dependencies of this workshop are independent of those of the Anki export.
 
-`demo.py` construit trois environnements temporaires indépendants : approbation, refus et panne injectée après effet. Il vérifie respectivement un avoir, zéro avoir et un seul avoir après reprise. Sa sortie indique explicitement `real_model_quality: not_evaluated`.
+`demo.py` builds three independent temporary environments: approval, refusal and failure injected after effect. It checks a credit, zero credit and a single credit respectively after recovery. Its output explicitly indicates `real_model_quality: not_evaluated`.
 
-## Chemin d'exécution
+## Path of execution
 
 ```text
-API : identité de démonstration + clé de soumission
+API: demonstration identity + submission key
     ↓
-registre du dossier dans business.sqlite
+File registry in business.sqlite
     ↓
 LangGraph : propose
-    ├── outil LangChain : lecture de commande avec tenant injecté
-    ├── récupération exacte d'une politique synthétique versionnée
-    └── modèle simulé → validation Pydantic + contrôles métier
+    ├── LangChain tool: command reading with injected holder
+    ├── exact recovery of a versioned synthetic policy
+    └── Simulated Model → Pydantic validation + business controls
     ↓
 LangGraph : approve → interrupt → checkpoint SQLite
-    ↓ décision liée à l'empreinte de la proposition
+    ↓ decision related to the proposal footprint
 LangGraph : execute
-    └── transaction métier : préconditions + avoir + déduplication
+    └── business transaction: preconditions + have + deduplication
     ↓
-checkpoint du résultat et état public completed
+result checkpoint and public statement completed
 ```
 
-La version de commande, l'expiration et la version de politique sont fixées par le serveur. Une proposition ne change pas pendant l'approbation. Le service métier revérifie la décision, le solde et la version avant de créer l'avoir.
+The order version, expiration and policy version are set by the server. A proposal does not change during approval. The business service rechecks the decision, balance and version before creating the credit.
 
-Deux fichiers matérialisent deux frontières transactionnelles : `business.sqlite` porte les dossiers, décisions, avoirs et événements ; `checkpoints.sqlite` porte l'état LangGraph. Ils ne sont pas validés atomiquement ensemble. La clé de l'effet est l'identifiant stable du dossier, et le service métier enregistre effet et déduplication dans la même transaction. Ce contrat permet de rejouer après une panne entre les deux bases. Pour un remboursement distant réel, cette garantie doit être assurée par le service distant ou par un protocole de réconciliation adapté.
+Two files materialize two transactional borders: `business.sqlite` carries the files, decisions, assets and events; `checkpoints.sqlite` carries the LangGraph state. They are not validated atomically together. The key to the effect is the stable identifier of the file, and the business service records effect and deduplication in the same transaction. This contract allows to replay after a failure between the two bases.
 
-## Manipuler l'API
+## Handling the API
 
-Lancer un seul processus, sur l'interface locale :
+Run a single process, on the local interface:
 
 ```bash
 uvicorn api:create_app --factory --host 127.0.0.1 --port 8000 --workers 1
 ```
 
-Ouvrir `http://127.0.0.1:8000/docs` pour explorer le contrat. Deux identités fictives existent : en-tête `Authorization: Bearer alice-demo` ou `Authorization: Bearer bob-demo`. Elles sont publiques et servent uniquement à démontrer l'isolation ; ne pas exposer cette application sur Internet.
+Open `http://127.0.0.1:8000/docs` to explore the contract. Two fictitious identities exist: header `Authorization: Bearer alice-demo` or `Authorization: Bearer bob-demo`. They are public and serve only to demonstrate isolation; do not expose this application on the Internet.
 
-Créer un dossier :
+Create a folder:
 
 ```bash
 curl -sS http://127.0.0.1:8000/runs \
   -H 'Authorization: Bearer alice-demo' \
-  -H 'Idempotency-Key: exemple-1' \
+  -H 'Idempotency-Key: example-1' \
   -H 'Content-Type: application/json' \
-  -d '{"order_id":"commande-1","amount_cents":2000}'
+  -d '{"order_id":"order-1","amount_cents":2000}'
 ```
 
-La réponse contient `id`, `status: waiting`, `proposal` et `proposal_hash`. Copier les valeurs dans la commande suivante ; le hash lie la décision à la proposition précise :
+The response contains `id`, `status: waiting`, `proposal` and `proposal_hash`. Copy the values into the following command; the hash binds the decision to the specified proposal:
 
 ```bash
 curl -sS http://127.0.0.1:8000/runs/REMPLACER_ID/decision \
@@ -73,17 +73,17 @@ curl -sS http://127.0.0.1:8000/runs/REMPLACER_ID/decision \
   -d '{"proposal_hash":"REMPLACER_HASH","approved":true}'
 ```
 
-Essayer aussi `approved: false` sur un autre dossier. Un refus enregistré est terminal. La répétition de la même décision est sans effet supplémentaire ; une décision contradictoire est refusée. La même clé de soumission retrouve le même dossier pour le même tenant et le même contenu ; un contenu différent renvoie HTTP 409.
+Also try `approved: false` on another folder. A registered refusal is terminal. The repetition of the same decision is without additional effect; a contradictory decision is refused. The same submission key finds the same folder for the same holder and the same content; a different content returns HTTP 409.
 
-| Opération | Route | Ce qu'elle démontre |
+| Operation | Route | What she demonstrates |
 |---|---|---|
-| Consulter | `GET /runs/{id}` | Propriété du dossier et projection publique de l'état |
-| Décider | `POST /runs/{id}/decision` | Décision persistée liée à l'empreinte |
-| Reprendre | `POST /runs/{id}/retry` | Reprise du même thread, sans nouvelle soumission |
-| Annuler | `POST /runs/{id}/cancel` | Annulation avant décision ; refus si l'effet est ambigu ou déjà exécuté |
-| Lire les événements | `GET /runs/{id}/events` | Rejeu SSE fini, filtré par dossier |
+| Consulter | `GET /runs/{id}` | Ownership of the file and public projection of the state |
+| Decide | `POST /runs/{id}/decision` | Persistence decision related to the footprint |
+| Reuse | `POST /runs/{id}/retry` | Resume of the same thread, without new submission |
+| Annuler | `POST /runs/{id}/cancel` | Cancellation before decision; refusal if effect is ambiguous or already executed |
+| Read the events | `GET /runs/{id}/events` | Finished SSE replay, filtered by folder |
 
-Pour relire seulement les événements suivant le numéro 3 :
+To reread only the events following the number 3:
 
 ```bash
 curl -N http://127.0.0.1:8000/runs/REMPLACER_ID/events \
@@ -91,41 +91,41 @@ curl -N http://127.0.0.1:8000/runs/REMPLACER_ID/events \
   -H 'Last-Event-ID: 3'
 ```
 
-Le journal est persistant et la réponse SSE se ferme après les événements disponibles. Ce n'est pas un abonnement en direct ni du streaming de tokens. Les numéros sont globaux à la base : des trous entre deux événements d'un même dossier sont normaux. La déconnexion de ce canal ne relance ni n'annule le dossier.
+The log is persistent and the SSE response closes after the available events. It is not a live subscription or tokens streaming. The numbers are global at the base: holes between two events in the same folder are normal. Disconnecting from this channel does not restart or cancel the folder.
 
-Le répertoire par défaut est `.lab-data`, ignoré par Git. Définir `AGENTIC_LAB_DIR` pour utiliser un autre emplacement. Arrêter le serveur avant de changer d'environnement de données. Les commandes sont recréées uniquement si elles n'existent pas déjà : un redémarrage ne réinitialise pas les soldes.
+The default directory is `.lab-data`, ignored by Git. Set `AGENTIC_LAB_DIR` to use another location. Stop the server before changing data environment. Commands are recreated only if they do not already exist: a restart does not reset balances.
 
-## Observer les traces
+## Observe the traces
 
-Le vrai SDK Langfuse exporte vers `InMemorySpanExporter`, fourni par OpenTelemetry. Les observations sont nommées `support-run`, `read-order`, `retrieve-policy`, `propose-refund` et `commit-refund`. Le test dédié vérifie leurs relations parent-enfant. Chaque reprise produit une nouvelle trace liée au même `run_id`.
+The real Langfuse SDK exports to `InMemorySpanExporter`, provided by OpenTelemetry. The observations are named `support-run`, `read-order`, `retrieve-policy`, `propose-refund` and `commit-refund`. The dedicated test checks their parent-child relationships. Each recovery produces a new trace related to the same `run_id`.
 
-Ces observations ne sont pas envoyées vers un projet Langfuse. Elles disparaissent avec le processus ; le journal des événements métier, lui, reste dans SQLite. Aucun token ni coût fictif n'est présenté comme une mesure de modèle réel. Le SDK utilise des identifiants factices explicites et LangSmith est désactivé dans le contexte d'exécution du graphe.
+These observations are not sent to a Langfuse project. They disappear with the process; the business event log remains in SQLite. No token or fictitious cost is presented as an actual model measure. The SDK uses explicit dummy identifiers and LangSmith is disabled in the context of the graph execution.
 
-Pour un exercice d'intégration sur une instance Langfuse autorisée, remplacer l'exporteur local par la configuration de cette instance, garder les données synthétiques et vérifier ingestion, masquage, prompts, coûts et scores. Cette étape n'a pas été exécutée dans la validation locale.
+For an integration exercise on an authorized Langfuse instance, replace the local exporter with the configuration of that instance, keep the synthetic data, and verify ingestion, masking, prompts, costs, and scores.
 
-## Expériences à réaliser
+## Experiments to be carried out
 
-1. **Persistance** : soumettre un dossier, arrêter le serveur en attente d'approbation, le relancer avec les mêmes fichiers puis décider. Il doit conserver la même proposition.
-2. **Fenêtre de panne** : lire `test_process_exit_after_effect_is_recovered`. Le processus fils s'arrête avec `os._exit(73)` après le COMMIT métier, avant le checkpoint suivant. La reprise doit rendre un seul avoir.
-3. **Course métier** : préparer deux dossiers sur la même commande, approuver le premier, puis le second. La version de commande du second est périmée : il doit être bloqué. Le test de version métier reproduit ce contrôle.
-4. **Observabilité** : retirer une observation ou altérer son parent dans une copie de travail et constater la régression du test de traces.
-5. **Isolation** : essayer les routes de consultation et de décision avec l'identité de l'autre client ; aucune donnée du dossier ne doit être renvoyée.
+1. **Persistence**: Submit a folder, stop the server pending approval, restart it with the same files and then decide. It must keep the same proposal.
+2. **Fault window**: read `test_process_exit_after_effect_is_recovered`. The child process stops with `os._exit(73)` after the business COMMIT, before the next checkpoint. The recovery must return a single credit.
+3. **Business course**: Prepare two folders on the same command, approve the first, then the second. The command version of the second is out of date: it must be blocked. The business version test reproduces this control.
+4. **Observability**: Remove an observation or alter its parent in a working copy and see the regression of the trace test.
+5. **Insulation**: Try the consultation and decision routes with the identity of the other client; no data from the file should be returned.
 
-## Variante CrewAI à construire
+## Variant CrewAI to build
 
-La fiche [CrewAI — Exécution fiable](../../40-automatisation/40-012-crewai-execution-fiable.md) décrit le contrat attendu. Cette variante est un exercice guidé, elle n'est pas implémentée dans l'atelier :
+The form [CrewAI — Reliable Execution](../../40-automation/40-012-crewai-reliable-execution.md) describes the expected contract. This variant is a guided exercise, it is not implemented in the workshop:
 
-- Un Flow porte le dossier et appelle une crew uniquement pour produire la proposition ; une tâche définit son schéma de sortie et ses dépendances.
-- Un guardrail vérifie la proposition sans effectuer le remboursement. Les corrections et les délégations ont un budget borné.
-- La décision humaine reste associée au contenu exact ; l'exécution appelle le même service métier `Store.refund`, avec une identité d'opération stable.
-- Choisir explicitement réhydratation d'état ou checkpointing selon la version CrewAI retenue, puis réexécuter les scénarios de refus, de panne et d'isolation.
+- A Flow carries the folder and calls a crew only to produce the proposal; a task defines its output schema and dependencies.
+- A guardrail checks the proposal without making the refund. Corrections and delegations have a limited budget.
+- The human decision remains associated with the exact content; execution calls the same `Store.refund` business service, with a stable operation identity.
+- Explicitly choose state rehydration or checkpointing according to the chosen CrewAI version, and then rerun the rejection, failure and isolation scenarios.
 
-Comparer les garanties observées et le coût de maintenance des deux versions. Aucun avantage de qualité ou de performance d'un framework n'est déduit de cet atelier simulé.
+Compare the guarantees observed and the maintenance cost of the two versions. No advantage of quality or performance of a framework is deduced from this simulated workshop.
 
-## Limites à traiter avant une application réelle
+## Limits to be addressed before a real application
 
-L'API exécute le petit workflow local de façon synchrone jusqu'à la pause ; elle n'annonce pas une file de workers distribués. Un verrou de processus sérialise toutes les commandes et limite volontairement la concurrence. Les tests concurrents démontrent ce périmètre uniquement. Les jetons de démonstration ne gèrent ni expiration, ni rôles, ni révocation.
+The API runs the small local workflow synchronously until the break; it does not announce a distributed workers queue. A process lock serializes all commands and voluntarily limits concurrency. Competitor tests demonstrate this perimeter only. Demo tokens do not handle expiration, roles, or revocation.
 
-Le scénario ne valide pas de fournisseur LLM réel, de recherche vectorielle, d'instance Langfuse distante, de PostgreSQL, de panne réseau ou d'authentification de production. Le modèle est contrôlé et le retrieval consiste en une politique synthétique sélectionnée directement. Les tests techniques ne mesurent donc pas la qualité d'un agent autonome.
+The scenario does not validate an actual LLM provider, vector search, remote Langfuse instance, PostgreSQL, network outage, or production authentication. The model is controlled and the retrieval consists of a synthetic policy selected directly, so the technical tests do not measure the quality of a standalone agent.
 
-Pour industrialiser : authentification réelle, autorisations réévaluées, file et workers durables, admission distribuée, rétention des checkpoints/événements, gestion des curseurs expirés, migrations, annulation en cours d'effet et observabilité persistante. Définir ces garanties avant de remplacer les composants locaux : changer SQLite pour PostgreSQL ne les fournit pas automatiquement.
+To industrialize: real authentication, revalued permissions, durable queues and workers, distributed admission, checkpoint/event retention, management of expired cursors, migrations, cancellation in effect and persistent observability. Define these guarantees before replacing local components: changing SQLite to PostgreSQL does not provide them automatically.

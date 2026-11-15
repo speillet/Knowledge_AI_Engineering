@@ -1,142 +1,142 @@
 # Docker & Kubernetes — Flashcards
 Tags: #flashcards #docker #kubernetes
-Vérifié le : 29 septembre 2026 — cette fiche cite des produits, versions ou textes réglementaires qui évoluent vite.
-<!-- summary: dockershim et sa suppression, architecture actuelle, images Docker exécutées sans Docker Engine, cri-dockerd, vérifications avant de retirer Docker Engine, construction d'images sans démon (BuildKit rootless, Buildah), validation des conditions d'exécution Kubernetes, UID et permissions, dérive des configurations. -->
+Verified on: 29 September 2026 — This factsheet lists products, versions or regulatory texts that are evolving quickly.
+<!-- summary: Dockershim and its removal, current architecture, Docker images executed without Docker Engine, scream-dockerd, checks before removing Docker Engine, build of images without daemon (BuildKit rootless, Buildah), validation of Kubernetes execution conditions, UID and permissions, derives configurations. -->
 
 
-Historiquement, comment Kubernetes communiquait-il avec Docker Engine ? <!--anki:41645a73796a5a6f502a-->
+Historically, how did Kubernetes communicate with Docker Engine? <!--anki:41645a73796a5a6f502a-->
 ?
-Par **dockershim**, un adaptateur intégré au kubelet qui traduisait la [[04-kubernetes-kubelet-cri|CRI]] vers l'API Docker Engine : `kubelet → dockershim → Docker Engine → containerd → runc`.
+By **dockershim**, an adapter built into the kubelet that translated the [[04-kubernetes-kubelet-cri|CRI]] to the API Docker Engine: `kubelet → dockershim → Docker Engine → containerd → runc`.
 
-Cette adaptation était nécessaire parce que Docker Engine n'implémentait pas directement la CRI. Retirer ce maillon intégré ne signifie pas retirer la compatibilité des images construites avec Docker : un runtime CRI compatible peut les utiliser.
+This adaptation was necessary because Docker Engine did not directly implement the CRI. Removing this built-in link does not mean removing the compatibility of images built with Docker: a compatible CRI runtime can use them.
 
-Exemple : migrer un node vers containerd change la couche d'exécution et ses outils de diagnostic, pas nécessairement les Dockerfiles des applications. Vérifier toutefois les dépendances au socket Docker, aux chemins de logs et à la configuration runtime.
+Example: Migrating a node to containerd changes the run layer and its diagnostic tools, not necessarily the Dockerfiles of applications, but check for dependencies on the Docker socket, log paths, and runtime configuration.
 
 ---
 
-Pourquoi dockershim existait-il ? <!--anki:746b7c73773064733f75-->
+Why did dockershim exist? <!--anki:746b7c73773064733f75-->
 ?
-Parce que Docker Engine, antérieur à Kubernetes, n'expose pas l'interface **CRI**. Quand la CRI est apparue (pour ouvrir Kubernetes à plusieurs runtimes), il fallait bien continuer à faire fonctionner les clusters existants, tous basés sur Docker.
+Because Docker Engine, prior to Kubernetes, does not expose the **CRI** interface. When the CRI appeared (to open Kubernetes to multiple runtimes), it was necessary to continue to run the existing clusters, all based on Docker.
 
-Dockershim traduisait les demandes du kubelet vers Docker Engine. Cet adaptateur concernait le **pilotage de l'exécution**, pas le format des images. Sa présence ajoutait une couche à maintenir entre Kubernetes et le runtime sous-jacent.
+Dockershim translated kubelet requests to Docker Engine. This adapter was about **runtime**, not image format. Its presence added a layer to maintain between Kubernetes and the underlying runtime.
 
 ---
 
-Kubernetes utilise-t-il encore dockershim nativement ? <!--anki:4d476c304a577c7d336d-->
+Does Kubernetes still use dockershim natively? <!--anki:4d476c304a577c7d336d-->
 ?
-**Non**, il a été retiré dans la **version 1.24** (2022). Les clusters parlent désormais directement à un runtime compatible CRI. Ce qui a disparu, c'est **le raccourci vers Docker Engine**, pas la compatibilité avec les images Docker.
+**No**, it has been removed in the **1.24 version** (2022). Clusters now speak directly to a CRI-compatible runtime. What has disappeared is **shortcut to Docker Engine**, not compatibility with Docker images.
 
-Lors d'une migration, rechercher surtout les dépendances au socket Docker, aux chemins de logs et aux outils d'exploitation. Une image applicative standard peut rester identique, tandis qu'un agent qui monte `/var/run/docker.sock` nécessite une adaptation.
+During a migration, look for dependencies on the Docker socket, log paths, and operating tools. A standard application image may remain the same, while an agent that mounts `/var/run/docker.sock` requires an adaptation.
 
 ---
 
-Sans dockershim, quelle chaîne d'exécution est aujourd'hui courante sur un node Kubernetes ? <!--anki:464d5d4f407e2a234050-->
+Without dockershim, which execution string is common today on a Kubernetes node? <!--anki:464d5d4f407e2a234050-->
 ?
-`kubelet → CRI → containerd (ou CRI-O) → runc → noyau Linux`
+`kubelet → CRI → containerd (or CRI-O) → runc → Linux kernel`
 
-Conséquence pratique : sur un node, on débogue avec **`crictl`** et non `docker ps`, et il n'y a **pas de démon Docker** à interroger.
+Practical consequence: on a node, we debug with **`crictl`** and not `docker ps`, and there is **no Docker** daemon to query.
 
-Pour savoir ce qui tourne réellement, `kubectl get nodes -o wide` affiche dans la colonne `CONTAINER-RUNTIME` le runtime de chaque nœud et sa version, comme `containerd://…` ou `cri-o://…`. Les journaux se lisent avec `crictl logs` ou dans `/var/log/pods/`, et non plus avec `docker logs`.
+To find out what is actually running, `kubectl get nodes -o wide` displays in the `CONTAINER-RUNTIME` column the runtime of each node and its version, such as `containerd://…` or `cri-o://…`. Logs read with `crictl logs` or in `/var/log/pods/`, not with `docker logs`.
 
 ---
 
-À ne pas confondre : « Kubernetes ne supporte plus Docker » et « les images Docker ne marchent plus » ? <!--anki:6b3f563246555e212c79-->
+Do not confuse: “Kubernetes no longer supports Docker” and “Docker images no longer work”? <!--anki:6b3f563246555e212c79-->
 ?
-- Ce qui a été retiré : **dockershim**, donc le support de **Docker Engine comme runtime** de node
-- Ce qui n'a jamais changé : les **images**, conformes à l'[[01-oci|OCI]], s'exécutent parfaitement via containerd
+- What has been removed: **dockershim**, so support for **Docker Engine as node runtime**
+- What has never changed: the **images**, compliant with the [[01-oci|OCI]], run perfectly via containerd
 
-C'est la confusion la plus fréquente sur le sujet : elle porte sur le **runtime**, pas sur le **format d'image**.
+This is the most common confusion on the subject: it is about the **runtime**, not the **image format**.
 
-Docker Engine reste utilisable avec un adaptateur CRI externe approprié. Vérifier architecture, système et accès GPU avant de promettre qu'une image fonctionne : compatibilité du format ne signifie pas compatibilité avec toute machine ou configuration.
+Check architecture, system and GPU access before promising that an image will work: format compatibility does not mean compatibility with any machine or configuration.
 
 ---
 
-Qu'est-ce que cri-dockerd ? <!--anki:45314f337346634d2a34-->
+What is cri-dockerd? <!--anki:45314f337346634d2a34-->
 ?
-**cri-dockerd** est un adaptateur externe qui traduit les demandes CRI de Kubernetes vers Docker Engine. Il permet de continuer à utiliser ce moteur après le retrait du dockershim intégré à Kubernetes.
+**cri-dockerd** is an external adapter that translates CRI requests from Kubernetes to Docker Engine. It allows you to continue using this engine after removing the dockershim integrated in Kubernetes.
 
-Cette option peut répondre à une dépendance existante ; elle ajoute un composant à configurer et maintenir. Comparer avec containerd ou une autre implémentation CRI selon support, exploitation et besoin réel. Un outil qui utilise le socket Docker ne fonctionne pas automatiquement dans tous les environnements Kubernetes. Le choix du runtime n'impose pas de reconstruire une image compatible OCI, mais les contraintes de plateforme et dépendances externes restent à tester.
+This option can respond to an existing dependency; it adds a component to configure and maintain. Compare with containerd or another CRI implementation based on support, exploitation and actual need. A tool that uses the Docker socket does not work automatically in all Kubernetes environments. The choice of runtime does not require reconstructing an OCI-compatible image, but platform constraints and external dependencies remain to be tested.
 
 ---
 
-Que vérifier avant de retirer Docker Engine des nodes d'un cluster ? <!--anki:4c7424507a3764573976-->
+What to check before removing Docker Engine from cluster nodes? <!--anki:4c7424507a3764573976-->
 ?
-Tout ce qui dépend **du démon Docker** plutôt que de Kubernetes :
-- **Montages de `/var/run/docker.sock`** : agents de monitoring, collecteurs de logs, jobs de CI qui construisent des images
-- **Outils qui lisent les logs** au format `json-file` de Docker, alors que la CRI écrit dans son propre format
-- **Scripts d'exploitation** qui appellent `docker ps` sur les nodes, à remplacer par `crictl`
+Everything that depends **the Docker Demon** rather than Kubernetes:
+- **`/var/run/docker.sock`** mounts: monitoring agents, log collectors, CI jobs that build images
+- **Tools that read logs** in Docker's `json-file` format, while the CRI writes in its own format
+- **Operating scripts** that call `docker ps` on nodes, to be replaced by `crictl`
 
-Les **images**, elles, ne changent pas ([[03-containerd-runc|outils containerd]]).
+The **images** do not change ([[03-containerd-runc|Containerd Tools]]).
 
 ---
 
-Comment construire des images dans un cluster sans Docker Engine ? <!--anki:4a432a255d78575b7b42-->
+How to build images in a cluster without Docker Engine? <!--anki:4a432a255d78575b7b42-->
 ?
-Avec un constructeur qui **n'a pas besoin du démon Docker** ni du socket du node :
-- **BuildKit** en mode **rootless**, en Pod ou en service partagé
-- **Buildah**, sans démon, courant dans l'écosystème Red Hat
+With a manufacturer that **does not need the Docker daemon** nor the socket of the node:
+- **BuildKit** in **rootless** mode, Pod mode or shared service
+- **Buildah**, no demon, running in the Red Hat ecosystem
 
-Tous produisent des **images OCI** standard, poussées dans le registry comme avant ([[02-docker-images-registries|registries]]). On évite ainsi de monter `docker.sock`, qui donne en pratique un accès root au node.
+All of them produce standard **OCI** images, pushed into the registry as before ([[02-docker-images-registries|registries]]), thus avoiding mounting `docker.sock`, which in practice gives root access to the node.
 
 ---
 
-Pourquoi un test Docker local ne suffit-il pas à valider un déploiement Kubernetes ? <!--anki:3361376364343835653661643437306539636330343432366538643933663831-->
+Why is a local Docker test not enough to validate a Kubernetes deployment? <!--anki:3361376364343835653661643437306539636330343432366538643933663831-->
 ?
-Le **contexte d'exécution** change : identité, système de fichiers, réseau, ressources et cycle de vie. Un conteneur local lancé avec tous les privilèges peut échouer dans un Pod restreint.
+The **execution context** changes: identity, file system, network, resources, and life cycle. A local container launched with all privileges may fail in a restricted Pod.
 
-Rejouer les conditions prévues : utilisateur non privilégié, volumes et droits réels, limites mémoire, secrets injectés et arrêt gracieux. Tester téléchargement des poids et accès GPU sur le cluster cible. Vérifier enfin Service et probes. Une image commune facilite le transfert, mais ne reproduit pas automatiquement les contrats que Kubernetes impose autour du processus.
+Replay the expected conditions: non-privileged user, real volumes and rights, memory limits, injected secrets and graceful shutdown. Test download weights and access GPU on the target cluster. Finally check Service and progress. A common image facilitates the transfer, but does not automatically reproduce the contracts that Kubernetes imposes around the process.
 
 ---
 
-Pourquoi un conteneur qui fonctionne en root localement peut-il échouer sous Kubernetes avec un utilisateur non privilégié ? <!--anki:3761323631653039303330313437393762356238336235616636373339643761-->
+Why can a container that runs as root locally fail under Kubernetes with an unprivileged user? <!--anki:3761323631653039303330313437393762356238336235616636373339643761-->
 ?
-L'application peut essayer d'écrire dans **un répertoire appartenant à root**, d'accéder à un périphérique ou d'utiliser une capacité non accordée.
+The application can try to write in **a directory belonging to root**, to access a device or use an unallocated ability.
 
-Tester le même UID, les mêmes montages et restrictions avant déploiement. Préparer explicitement les répertoires inscriptibles nécessaires. Rétablir root pour « réparer » le démarrage peut dissimuler une dépendance évitable ; corriger les permissions au périmètre utile.
+Test the same UID, mounts, and restrictions before deployment. Explicitly prepare the necessary writable directories. Restoring root to “fix” startup may hide an avoidable dependency; correcting permissions at the useful perimeter.
 
 ---
 
-Pourquoi conserver les manifests Kubernetes en plus du Dockerfile pour reproduire un service ? <!--anki:3430373035333938303961353436376662353338623261323364346531336638-->
+Why keep Kubernetes manifests in addition to the Dockerfile to reproduce a service? <!--anki:3430373035333938303961353436376662353338623261323364346531336638-->
 ?
-Le Dockerfile ne décrit pas **les secrets injectés, ressources, montages, probes et règles réseau** du déploiement. Ces paramètres peuvent changer le comportement sans modifier l'image.
+The Dockerfile does not describe **injected secrets, resources, mounts, probes, and network rules** of the deployment. These settings can change the behavior without changing the image.
 
-Versionner les manifests et références de configuration, puis vérifier l'état effectif du cluster. Conserver les valeurs sensibles dans un mécanisme adapté plutôt que dans Git. Une différence entre configuration déclarée et configuration appliquée doit être détectable.
+Version configuration manifests and references, then check the actual state of the cluster. Keep sensitive values in a suitable mechanism rather than in Git. A difference between declared configuration and applied configuration must be detectable.
 
 ---
 
-## Mises en situation
+## Scenarios
 
-Mise en situation : un développeur affirme qu'il faut réécrire les images en « format Kubernetes », puisque Docker n'est plus supporté. Que réponds-tu ? <!--anki:7454446b3b373b56544b-->
+Scenario: a developer says that you have to rewrite the images in "Kubernetes format", since Docker is no longer supported. What do you say? <!--anki:7454446b3b373b56544b-->
 ?
-1. **Distinguer** : ce qui a été retiré, c'est **dockershim**, la couche qui permettait au kubelet de piloter Docker Engine
-2. **Rappeler l'architecture actuelle** : `kubelet → CRI → containerd → runc`
-3. **Conclure** : les images restent des **images OCI**, construites avec Docker ou autre chose, et tournent sans Docker Engine
-4. **Ce qui change réellement** : les commandes de débogage sur les nodes, et les outils qui parlaient au démon Docker
-5. **Ce qu'il faut vérifier** : pas d'usage du socket Docker dans les Pods, pratique à bannir de toute façon
+1. **Distinguish**: What was removed was **dockershim**, the layer that allowed the kubelet to drive Docker Engine
+2. **Recall current architecture**: `kubelet → CRI → containerd → runc`
+3. **Conclusion** The images remain **OCI Images**, built with Docker or something else, and run without Docker Engine
+4. **What really changes**: Debug commands on nodes, and tools that spoke to the Docker daemon
+5. **What to check**: no use of the Docker socket in Pods, convenient to ban anyway
 
-**Piège** : confondre le format d'image et le runtime qui l'exécute.
+**Trap**: confuse the image format and the runtime that runs it.
 
 ---
 
-Mise en situation : un job de CI construit des images en montant le socket Docker du node dans un Pod. Quels risques et quelles alternatives ? <!--anki:456a383b786342397943-->
+Scenario: a CI job builds images by mounting the node's Docker socket into a Pod. What risks and alternatives? <!--anki:456a383b786342397943-->
 ?
-1. **Risque majeur** : accéder au socket du node revient à un accès root sur ce node, pour tous les conteneurs qui y tournent
-2. **Dépendance obsolète** : les nodes modernes n'ont souvent plus de démon Docker
-3. **Alternatives** : constructeurs sans démon, en espace utilisateur (Kaniko, Buildah, BuildKit en mode rootless)
-4. **Isoler** : construire sur des nodes dédiés, avec des jetons de registry limités
-5. **Signer** les images produites et épingler les digests ([[105-devsecops-ia-agentique|chaîne d'approvisionnement]])
+1. **Major risk**: access to the node socket returns root access to this node, for all containers that run on it
+2. **Deprecated dependency**: Modern nodes often no longer have a Docker daemon
+3. **Alternatives**: constructors without a daemon, in user space (Kaniko, Buildah, BuildKit in rootless mode)
+4. **Isolate**: Build on dedicated nodes, with limited registry tokens
+5. **Sign** the images produced and pin the digests ([[105-agentic-ai-devsecops|Supply Chain]])
 
-**Piège** : considérer ce montage comme un simple détail d'implémentation de la CI.
+**Trap**: Consider this edit as a simple implementation detail of the CI.
 
 ---
 
 ## Sources
 
-- [Kubernetes — FAQ officielle de suppression de dockershim](https://kubernetes.io/blog/2022/02/17/dockershim-faq/)
+- [Kubernetes — Official Dockershim Removal FAQ](https://kubernetes.io/blog/2022/02/17/dockershim-faq/)
 
-## Connexions
-- [[04-kubernetes-kubelet-cri|Kubernetes, kubelet & CRI]] — le contexte CRI
-- [[03-containerd-runc|containerd & runc]] — le remplaçant de dockershim
+## Connections
+- [[04-kubernetes-kubelet-cri|Kubernetes, kubelet & CRI]] — CRI context
+- [[03-containerd-runc|containerd & runc]] — the replacement of dockershim
 - [[02-docker-images-registries|Docker & images]] — images OCI portables
-- [[00-index|Index Conteneurs]]
+- [[00-index|Index Containers]]
 - [[00-moc-ai-engineering|MOC AI Engineering]]

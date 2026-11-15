@@ -1,203 +1,203 @@
 # Context engineering — Flashcards
 Tags: #flashcards #ai-engineering #agents #context-engineering #llm
-<!-- summary: le contexte comme budget, context rot, compaction, sous-agents, prompt caching, contexte chargé au besoin (just-in-time), invariants de compaction, sélection de contexte, budget de réserve. -->
+<!-- summary: context as budget, context rot, compaction, sub-agents, prompt caching, context loaded as needed (just-in-time), compaction invariants, context selection, reserve budget. -->
 
 
-Qu'est-ce que le context engineering ? <!--anki:6d7964697b53773a6a7e-->
+What is context engineering? <!--anki:6d7964697b53773a6a7e-->
 ?
-L'art de **choisir, à chaque appel, l'ensemble minimal de tokens le plus utile** dans la fenêtre de contexte : instructions, outils, historique, mémoire, documents récupérés.
+The art of **choose, at each call, the minimum set of tokens most useful** in the context window: instructions, tools, history, memory, recovered documents.
 
-Il faut conserver ce qui permet la prochaine décision : objectif, contraintes, preuves et état d'avancement. Par exemple, remplacer un long journal d'exécution par un résumé des résultats avec des liens vers les détails. Le but n'est pas de réduire aveuglément les tokens : retirer une exception importante peut coûter plus qu'un contexte légèrement plus long.
+It is important to keep what allows the next decision: objective, constraints, evidence and progress. For example, replace a long execution log with a summary of results with links to details. The goal is not to blindly reduce the tokens: removing an important exception can cost more than a slightly longer context.
 
 ---
 
-À ne pas confondre : context engineering et prompt engineering ? <!--anki:267e45776566756838-->
+Do not confuse: context engineering and prompt engineering? <!--anki:267e45776566756838-->
 ?
-Le **[[11-prompt-engineering-avance|prompt engineering]]** optimise la **formulation** d'une instruction ; le **context engineering** gère **tout ce qui entre dans le contexte**, sur la durée d'une session ou d'un agent.
+The **[[11-advanced-prompt-engineering|prompt engineering]]** optimizes the **formulation** of an instruction; the **context engineering** handles **everything that enters the context**, over the duration of a session or agent.
 
-Réécrire « résume ce contrat » en consignes précises relève du prompt engineering. Sélectionner la bonne version du contrat, charger ses annexes, conserver les contraintes utilisateur et résumer les tours précédents relève du context engineering. Une instruction excellente ne compense pas une source manquante ou périmée : il faut travailler sur les deux niveaux.
+Rewriting “summarize this contract” in precise instructions is a matter of prompt engineering. Selecting the right version of the contract, loading its annexes, keeping the user constraints and summarizing the previous rounds is a matter of context engineering. An excellent instruction does not compensate for a missing or outdated source: it is necessary to work on both levels.
 
 ---
 
-Pourquoi traiter la fenêtre de contexte comme un budget ? <!--anki:6565374d7c3f655b753c-->
+Why treat the context window as a budget? <!--anki:6565374d7c3f655b753c-->
 ?
-Chaque token **coûte** (prix, latence, VRAM du [[61-kv-cache-attention|KV cache]]) et **dilue l'attention** : plus le contexte grossit, moins le modèle exploite bien chaque information.
+Each token **costs** (price, latency, VRAM of the [[61-kv-cache-attention|KV cache]]) and **dilutes the attention**: the bigger the context, the less the model exploits each information.
 ```text
-Budget d'un tour d'agent (exemple) :
-  system prompt              600 tokens   stable → mis en cache
-  définitions de 12 outils  2 400 tokens  stable → mis en cache
-  mémoire et préférences      300 tokens
-  documents récupérés       3 000 tokens  variable
-  historique (8 tours)      4 500 tokens  croît sans cesse ← à compacter
+Budget of an agent round (example):
+  system prompt              600 tokens   stable → cached
+  12 definitions 2,400 tokens stable → cached tools
+  Memory and Preferences 300 tokens
+  Recovered documents 3,000 tokens variable
+  historical (8 turns) 4,500 tokens continuously grows ← to compact
   question                    120 tokens
                            ──────────────
-                          ~10 900 tokens par appel, dont 70 % réutilisables
+                          ~10,900 tokens per call, including reusable 70%
 ```
-Le poste qui grossit tout seul est l'**historique** : c'est lui qu'on compacte en premier.
+The position that grows on its own is the **Historical** He is the one who is compacted first.
 
-Réserver aussi de la place pour la **réponse et les prochains résultats d'outils**. La part effectivement cachée dépend d'un préfixe compatible avec le mécanisme du fournisseur : « réutilisable » n'implique pas « cache hit ». Compacter l'historique en conservant décisions, contraintes et références ; perdre une autorisation ou un résultat critique peut coûter plus qu'économiser quelques tokens.
+Also reserve space for **response and future tool results**. The part actually hidden depends on a prefix compatible with the mechanism of the provider: "reusable" does not imply "cache hit". Compacting the history by keeping decisions, constraints and references; losing an authorization or a critical result can cost more than saving a few tokens.
 
 ---
 
-Qu'est-ce que le context rot ? <!--anki:493a7c686b5f307c324d-->
+What is context rot? <!--anki:493a7c686b5f307c324d-->
 ?
-La **dégradation des performances quand le contexte s'allonge** : informations anciennes contradictoires, bruit accumulé, effet [[22-rag-avance|« lost in the middle »]]. Une grande fenêtre n'est pas un contexte bien utilisé.
+**Performance degradation when the context is extended**: conflicting old information, accumulated noise, [[22-advanced-rag|« lost in the middle »]] effect. A large window is not a well-used context.
 
-Repérer les symptômes : oubli d'une contrainte, répétition d'une recherche ou utilisation d'une ancienne valeur. Réduire les résultats d'outils redondants, garder un état explicite et recharger la source si nécessaire. Comparer la réussite avant et après compaction, car un résumé trop agressif peut lui aussi supprimer une information décisive.
+Identifying symptoms: forgetting a constraint, repeating a search, or using an old value. Reducing the results of redundant tools, keeping an explicit state, and reloading the source if necessary. Comparing success before and after compaction, because too aggressive a summary can also remove decisive information.
 
 ---
 
-Quelles sont les composantes du contexte d'un agent ? <!--anki:6b38662a4c5f6b385871-->
+What are the components of an agent's context? <!--anki:6b38662a4c5f6b385871-->
 ?
 - **Instructions** (system prompt)
-- **Définitions d'outils**
-- **Historique** de la conversation et des résultats d'outils
-- **Mémoire** (faits persistés)
-- **Connaissances récupérées** ([[21-rag-fondamentaux|RAG]])
+- **Definitions of tools**
+- **History** of conversation and tool results
+- **Memory** (continued facts)
+- **Knowledge Retrieved** ([[21-rag-fundamentals|RAG]])
 
-Chaque composante a une fonction : définir la tâche, rendre les actions possibles, conserver l'avancement ou apporter des faits. Les documents et résultats d'outils restent des **données à examiner**, pas des instructions de confiance. Réserver aussi assez de place pour la sortie du modèle et pour les observations du prochain tour.
-
----
-
-Qu'est-ce que la compaction du contexte d'un agent ? <!--anki:6e5f505d713a4b7b5677-->
-?
-**Résumer l'historique** quand on approche de la limite, pour repartir avec un contexte plus court qui garde décisions, état et tâches en cours. Variante légère : **effacer les vieux résultats d'outils**.
-
-Deux effets de bord : elle **invalide le cache à partir du premier token modifié** et **perd des détails**. Le préfixe antérieur inchangé peut rester réutilisable. Conserver les faits critiques hors contexte ([[39-memoire-agents|mémoire]]).
-
-Exemple de résumé utile : objectif, décisions validées, références des preuves, travail restant et erreurs non résolues. Vérifier qu'une hypothèse n'est pas devenue un fait au passage.
+Each component has a function: define the task, make the actions possible, keep the progress or bring facts. The documents and results of tools remain **data to examine**, not confidence instructions. Also reserve enough space for the model output and for observations of the next round.
 
 ---
 
-À ne pas confondre : compaction, troncature et mémoire ? <!--anki:7229785e5a41372d3b28-->
+What is the context compaction of an agent? <!--anki:6e5f505d713a4b7b5677-->
 ?
-- **Troncature** : on **coupe** les messages les plus anciens. Gratuit, mais on perd tout ce qui est coupé, y compris les décisions prises
-- **Compaction** : on **résume** l'historique. Coûte un appel LLM, conserve l'essentiel, mais perd les détails et invalide le cache
-- **Mémoire** : on **écrit hors du contexte** les faits durables, et on les relit à la demande. Seule solution qui survit à la session
+**Summarize the history** As we approach the limit, to leave with a shorter context that keeps decisions, status and ongoing tasks. Light variant: **Clear old tool results**.
 
-Les trois se combinent : mémoire pour ce qui doit durer, compaction pour tenir la session, troncature en dernier recours.
+Two side effects: it **invalidates the cache from the first modified token** and **loses details**. The previously unchanged prefix can remain reusable. Keep critical facts out of context ([[39-agent-memory|Memory]]).
+
+Example of a useful summary: objective, validated decisions, references to evidence, remaining work and unresolved errors. Verify that a hypothesis has not become a fact in passing.
 
 ---
 
-Comment les sous-agents aident-ils à gérer le contexte ? <!--anki:4f7d3b7869655a2c734e-->
+Do not confuse: compaction, truncation and memory? <!--anki:7229785e5a41372d3b28-->
 ?
-Un [[36-orchestration-agents|sous-agent]] explore dans **son propre contexte** et renvoie un résultat ciblé : le principal n'ingère pas toutes ses recherches.
+- **Troncature**: we **cut** the oldest messages. Free, but we lose everything that is cut, including decisions made
+- **Compaction**: we **summarize** the history. Costs a LLM call, keeps the essentials, but loses the details and invalidates the cache
+- **Memory** A: On **Writing out of context** Durable facts, and we reread them on demand. The only solution that survives the session
 
-Exemple : déléguer l'identification des limites d'une API avec un retour « limite, condition, référence, incertitude », plutôt qu'un résumé général du fournisseur. Le principal conserve les éléments nécessaires à la décision et peut rouvrir la source d'une affirmation critique.
-
-La séparation réduit l'encombrement du contexte principal, **pas nécessairement les tokens totaux ni le délai**. Éviter les missions redondantes et les délégations qui exigent de retransmettre tout l'historique ; borner question, outils et format de retour.
+The three combine: memory for what must last, compaction to hold the session, truncation as a last resort.
 
 ---
 
-Pourquoi garder un préfixe de prompt stable ? <!--anki:4e48317c44305d665b56-->
+How do sub-agents help manage context? <!--anki:4f7d3b7869655a2c734e-->
 ?
-Pour profiter du **prompt caching** : le fournisseur réutilise le calcul (KV cache) d'un **préfixe identique**. On met le contenu stable (instructions, outils) **au début** et le contenu variable **à la fin**.
+A [[36-agent-orchestration|Sub-agent]] explores in **its own context** and returns a targeted result: the principal does not ingest all its searches.
 
-Un horodatage ou identifiant variable placé avant les instructions peut empêcher leur réutilisation. Mesurer les tokens réellement lus en cache, car les seuils, durées de conservation et tarifs dépendent du fournisseur. Le cache accélère une partie du calcul d'entrée ; il ne dispense pas de générer la nouvelle réponse ni de vérifier sa qualité.
+For example, delegating the boundary identification of a API to a "limit, condition, reference, uncertainty" return, rather than a general summary of the provider.
+
+Separation reduces the bulk of the main context, **not necessarily the total tokens or the delay**. Avoid redundant missions and delegations that require to retransmit all the history; limit question, tools and return format.
 
 ---
 
-Qu'est-ce que le just-in-time context ? <!--anki:6a6c3e4a7c636c713068-->
+Why keep a stable prompt prefix? <!--anki:4e48317c44305d665b56-->
 ?
-Ne pas tout charger d'avance : donner à l'agent des **références légères** (chemins de fichiers, requêtes, outils de recherche) et le laisser **récupérer l'information au moment où il en a besoin**.
+To take advantage of the **prompt caching**: the provider reuses the calculation (KV cache) of an identical **prefix**. We put the stable content (instructions, tools) **at the beginning** and the variable content **at the end**.
 
-Par exemple, fournir l'index d'un dépôt puis lire seulement les fichiers concernés. Cela économise du contexte et évite de travailler sur des copies anciennes, à condition que les outils permettent une recherche fiable. Garder les références exactes et les versions consultées ; sinon l'agent peut chercher longtemps ou relire une source qui a changé.
+A timestamp or variable identifier placed before the instructions can prevent their reuse. Measure the tokens actually read in cache, because the thresholds, retention periods and rates depend on the provider. The cache speeds up a part of the input calculation; it does not dispense with generating the new response or checking its quality.
 
 ---
 
-Que se passe-t-il si le contexte d'un agent dépasse la fenêtre du modèle ? <!--anki:6435353066396565386132663436363262613562303131313639303632356336-->
+What is the just-in-time context? <!--anki:6a6c3e4a7c636c713068-->
 ?
-Selon l'API et sa configuration, la requête est **rejetée ou tronquée**. Ne pas dépendre d'une suppression implicite qui pourrait retirer consignes ou preuves.
+Do not load everything in advance: give the agent light **references** (file paths, queries, search tools) and let him **recover information when he needs it**.
 
-Le harness doit **réserver la sortie et compacter avant la limite**. Exemple fictif : une fenêtre totale de 32 000 tokens, avec 4 000 réservés à la génération, laisse au plus 28 000 pour toutes les entrées, outils compris. Ajouter une marge et mesurer le comptage réel. La qualité peut se dégrader avant la saturation : conserver objectif, décisions et sources utiles, pas seulement faire tenir le texte ([[137-long-contexte|long contexte]]).
+For example, provide the index of a repository and then read only the files concerned. This saves context and avoids working on old copies, provided that the tools allow a reliable search. Keep the exact references and versions consulted; otherwise the agent can search for a long time or re-read a source that has changed.
 
 ---
 
-Comment vérifier qu'une compaction conserve les informations indispensables à un agent ? <!--anki:6666353138343263643833373438366638616236346465316337373135373131-->
+What happens if the context of an agent exceeds the model window? <!--anki:6435353066396565386132663436363262613562303131313639303632356336-->
 ?
-Définir des **invariants à préserver** : objectif courant, contraintes, décisions validées, références de preuves et opérations encore incertaines. Comparer ces éléments avant et après compaction sur des sessions longues.
+Depending on the API and its configuration, the request is **rejected or truncated**. Not dependent on an implicit deletion that could remove instructions or evidence.
 
-Tester une reprise qui exige un fait ancien, un refus utilisateur et l'identifiant d'une opération déjà exécutée. Garder les règles d'autorisation dans le contrôle applicatif et les faits durables dans un stockage adapté. Une bonne reformulation du résumé ne suffit pas : mesurer réussite et absence de répétition d'effets après reprise.
+The Harness must **book the exit and compact before the limit**. Example: A total window of 32,000 tokens, with 4,000 reserved for the generation, Leave at most 28,000 for all entrances, Tools included. Add a margin and measure the actual count. Quality can deteriorate before saturation: keep objective, decisions and useful sources, not only to keep the text ([[137-long-context|long context]]).
 
 ---
 
-Pourquoi charger tous les résultats d'outils dans le contexte peut-il réduire la fiabilité d'un agent ? <!--anki:3561363434313836306434663432613262653062303131313334386239633239-->
+How do I verify that a compaction keeps the necessary information for an agent? <!--anki:6666353138343263643833373438366638616236346465316337373135373131-->
 ?
-Chaque résultat consomme du budget et peut **diluer les preuves utiles** ou introduire des instructions non fiables. La présence d'une information dans la fenêtre ne garantit pas son utilisation correcte.
+Define **invariants to preserve**: common objective, constraints, validated decisions, proof references and operations still uncertain. Compare these elements before and after compaction over long sessions.
 
-Conserver un résumé fidèle avec références, puis charger les détails à la demande. Ne pas résumer les nombres ou contraintes dont l'exactitude est nécessaire sans accès à l'original. Évaluer les réponses après cette sélection, notamment les cas où une exception rare change la décision.
+Test a recovery that requires an old fact, a user refusal and the identifier of an operation already executed. Keep the authorization rules in the application control and the durable facts in a suitable storage. A good reformulation of the summary is not enough: measure success and absence of repetition of effects after recovery.
 
 ---
 
-Calcul : un agent dispose d'une fenêtre de 32 000 tokens, de 6 000 tokens fixes, de 14 000 d'historique et réserve 4 000 pour la sortie. Quelle place reste-t-il pour les résultats d'outils ? <!--anki:6365636234373061643263313435613062356436623936653764386635363161-->
+Why can loading all tool results in context reduce the reliability of an agent? <!--anki:3561363434313836306434663432613262653062303131313334386239633239-->
 ?
-Il reste **32 000 − 6 000 − 14 000 − 4 000 = 8 000 tokens** dans cette convention de comptage.
+Each result consumes budget and can **dilute useful evidence** or introduce unreliable instructions. The presence of information in the window does not guarantee its correct use.
 
-Un résultat de 12 000 tokens exige donc pagination, sélection ou compaction avant le prochain appel. Prévoir une marge pour les nouveaux messages et les schémas éventuels. Le calcul suppose que la sortie partage ce plafond ; les limites d'entrée et de sortie peuvent être distinctes selon le modèle et l'API.
+Keep a faithful summary with references, then load the details on demand. Do not summarize the numbers or constraints whose accuracy is required without access to the original. Evaluate the answers after this selection, including cases where a rare exception changes the decision.
 
 ---
 
-## Mises en situation
-
-Mise en situation : ton agent de support donne de bonnes réponses au début des conversations, puis se dégrade et se contredit au bout d'une heure. Que fais-tu ? <!--anki:463a55674e31642c4634-->
+Calculation: an agent has a window of 32,000 tokens, 6,000 tokens fixed, 14,000 history and reserve 4,000 for output. What place is left for tool results? <!--anki:6365636234373061643263313435613062356436623936653764386635363161-->
 ?
-1. **Reconnaître le context rot** : le contexte a gonflé, les informations anciennes et contradictoires s'accumulent
-2. **Compacter** : résumer l'historique en gardant décisions, état et tâches en cours ; supprimer les vieux résultats d'outils
-3. **Sortir les faits durables** vers une mémoire relue à la demande ([[39-memoire-agents|mémoire]])
-4. **Just-in-time** : donner des références et laisser l'agent récupérer ce dont il a besoin, plutôt que tout précharger
-5. **Mesurer** : longueur de contexte, qualité et coût par tour au fil de la conversation ([[93-monitoring-inference|monitoring]])
+There remains **32,000 − 6,000 − 14,000 − 4,000 = 8,000 tokens** in this counting convention.
 
-**Piège** : passer à un modèle à très grande fenêtre sans rien changer. Le problème est la **qualité** du contexte, pas sa taille.
+A result of 12,000 tokens therefore requires pagination, selection or compaction before the next call. Provide a margin for new messages and possible schemas. The calculation assumes that the output shares this ceiling; the input and output limits can be distinct depending on the model and the API.
 
 ---
 
-Mise en situation : ton assistant coûte deux fois plus cher que prévu, alors que le system prompt et les définitions d'outils sont identiques à chaque appel. Quelle piste ? <!--anki:6a563d5e6c7b32533143-->
-?
-1. **Vérifier le prompt caching** : le préfixe est-il réellement stable, ou y insères-tu la date, l'ID de session ou des outils réordonnés ?
-2. **Réorganiser** : contenu stable (instructions, outils) au début, contenu variable à la fin ([[123-caching-agressif|caching]])
-3. **Mesurer** le taux de tokens lus en cache dans les traces, avant et après
-4. **Réduire** ce qui est envoyé à chaque tour : outils inutiles, documents récupérés trop nombreux
-5. **Surveiller** le coût par conversation, pas seulement par appel ([[122-finops-llm|FinOps]])
+## Scenarios
 
-**Piège** : ajouter l'historique complet en tête de prompt, ce qui invalide le cache à chaque tour.
+Scenario: your support agent gives good answers at the beginning of conversations, then degrades and contradicts itself after an hour. What do you do? <!--anki:463a55674e31642c4634-->
+?
+1. **Recognize context rot**: the context has inflated, old and contradictory information accumulates
+2. **Compact**: summarize history by keeping decisions, status, and tasks in progress; remove old tool results
+3. **Getting the facts out of the way** to a read-on-demand memory ([[39-agent-memory|Memory]])
+4. **Just-in-time**: Give references and let the agent get what he needs, rather than preload everything
+5. **Measure**: Context length, quality and cost per turn over the course of the conversation ([[93-monitoring-inference|monitoring]])
+
+**Trap**: switch to a very large window model without changing anything. The problem is the **quality** of the context, not its size.
 
 ---
 
-Mise en situation : ton agent doit analyser 300 pages de documentation technique pour répondre à une question précise. Comment organises-tu son contexte ? <!--anki:6b6b564f527c422b5958-->
+Scenario: your assistant costs twice as much as expected, while the system prompt and tool definitions are the same for each call. Which track? <!--anki:6a563d5e6c7b32533143-->
 ?
-1. **Ne pas tout charger** : 300 pages saturent le contexte, coûtent cher et diluent l'attention
-2. **Recherche d'abord** : RAG ou outil de recherche pour ne récupérer que les passages utiles ([[21-rag-fondamentaux|RAG]])
-3. **Sous-agents** : si plusieurs sections doivent être explorées, chacun travaille dans son contexte et ne remonte qu'un résumé ([[36-orchestration-agents|sous-agents]])
-4. **Références plutôt que contenu** : donner la table des matières et des outils de lecture ciblée
-5. **Citer** les passages utilisés, pour vérifier la réponse
+1. **Check for prompt caching**: Is the prefix really stable, or do you insert the date, session ID, or reordered tools?
+2. **Reorganize**: stable content (instructions, tools) at the beginning, variable content at the end ([[123-aggressive-caching|caching]])
+3. **Measure** the rate of tokens read cached in traces, before and after
+4. **Reduce** what is sent in each turn: unnecessary tools, documents recovered too many
+5. **Monitor** cost per conversation, not just per call ([[122-finops-llm|FinOps]])
 
-**Piège** : découper mécaniquement en 10 appels sans mémoire entre eux, et perdre le fil du raisonnement.
+**Trap**: Add the full history to the prompt header, which invalidates the cache on each turn.
+
+---
+
+Scenario: your agent needs to analyze 300 pages of technical documentation to answer a specific question. How do you organize its context? <!--anki:6b6b564f527c422b5958-->
+?
+1. **Don't load everything**: 300 pages saturate the context, are expensive and dilute attention
+2. **Search first**: RAG or search tool to retrieve only useful passages ([[21-rag-fundamentals|RAG]])
+3. **Sub-agents**: if several sections need to be explored, each one works in its own context and only goes back to a summary ([[36-agent-orchestration|Subagents]])
+4. **References rather than content**: give the table of contents and targeted reading tools
+5. **Quote** the passages used, to check the answer
+
+**Strap**: cut mechanically into 10 calls without memory between them, and lose the thread of reasoning.
 
 ---
 
 ## Sources
 
-- [Anthropic — gestion du contexte et compaction des agents](https://www.anthropic.com/research/effective-context-engineering-for-ai-agents) — approfondissement ciblé du 12 novembre 2026 ; les exemples pédagogiques sont construits pour cette revue.
+- [Anthropic — Context Management and Agent Compaction](https://www.anthropic.com/research/effective-context-engineering-for-ai-agents) — targeted deepening of the 12 November 2026; educational examples are built for this review.
 
-- Complément du 14 novembre 2026 — Position et sélection du contexte : [Liu et al. — Lost in the Middle](https://arxiv.org/abs/2307.03172).
+- 14 November 2026 — Position and context selection: [Liu et al. — Lost in the Middle](https://arxiv.org/abs/2307.03172).
 
-## Connexions
-- [[11-prompt-engineering-avance|Prompt engineering]] — le prompt dans son budget global
-- [[22-rag-avance|RAG avancé]] — placement des chunks
-- [[31-agents-fondamentaux|Agents]] — la mémoire de travail de l'agent
-- [[61-kv-cache-attention|KV cache]] — le coût mémoire du contexte
-- [[36-orchestration-agents|Orchestration multi-agents]] — isoler les contextes
-- [[34-harness-plugins|Harness]] — qui assemble le contexte
-- [[39-memoire-agents|Mémoire des agents]] — la mémoire long terme en détail
-- [[123-caching-agressif|Caching agressif]] — concevoir le contexte pour le cache
-- [[137-long-contexte|Long contexte]] — lost in the middle, longueur effective
-- [[121-couts-inference|Coûts d'inférence]] — structure du coût et unit economics
-- [[13-prompts-production|Prompts en production]] — structure, versioning et portabilité des prompts
-- [[132-tokenisation|Tokenisation]] — ce qu'est un token et ce qu'il coûte
-- [[43-langchain-agents|LangChain — Agents]] — agents et middleware LangChain
-- [[45-langgraph-production|LangGraph — Production]] — persistance, reprise et supervision humaine
-- [[49-agents-de-code|Agents de code]] — utiliser et intégrer les agents de code
-- [[115-plateformes-agents-gouvernance|Plateformes d'agents — gouvernance]] — identité, politiques, audit et coûts d'une flotte d'agents
-- [[90-014-evaluation-skills-agents|Évaluer des skills d'agent]] — vérifier qu'une skill chargée au besoin sert vraiment
-- [[90-015-agent-skills-format-skills-ref|Agent Skills & skills-ref]] — le coût du catalogue de skills dans le contexte
+## Connections
+- [[11-advanced-prompt-engineering|Prompt engineering]] — the prompt in its global budget
+- [[22-advanced-rag|Advanced RAG]] — placement of chunks
+- [[31-agent-fundamentals|Agents]] — agent working memory
+- [[61-kv-cache-attention|KV cache]] — the memory cost of context
+- [[36-agent-orchestration|Orchestration multi-agents]] — isolates contexts
+- [[34-harness-plugins|Harness]] — that assembles the context
+- [[39-agent-memory|Memorandum of agents]] — long-term memory in detail
+- [[123-aggressive-caching|Caching agressif]] — design context for cache
+- [[137-long-context|Long context]] — lost in the middle, longueur effective
+- [[121-inference-costs|Inference costs]] — cost structure and unit economics
+- [[13-production-prompts|Prompt in production]] — structure, versioning and portability of prompts
+- [[132-tokenization|Tokenisation]] — what a token is and what it costs
+- [[43-langchain-agents|LangChain — Agents]] — agents and middleware LangChain
+- [[45-langgraph-production|LangGraph — Production]] — persistence, recovery and human supervision
+- [[49-coding-agents|Code Agents]] — Use and Integrate Code Agents
+- [[115-agent-platforms-governance|Agent Platforms — Governance]] — identity, policies, audit and costs of a fleet of agents
+- [[90-014-agent-skill-evaluation|Evaluating Agent Skills]] — check that a skill loaded as needed really serves
+- [[90-015-agent-skills-format-skills-ref|Agent Skills & skills-ref]] — the cost of the skills catalog in context
 - [[00-moc-ai-engineering|MOC AI Engineering]]

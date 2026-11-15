@@ -1,365 +1,365 @@
 # AI Engineering — MOC
 Tags: #moc #ai-engineering
 
-Carte racine du vault : les connaissances clés de l'**AI Engineering**, de l'usage des modèles à leur industrialisation.
-Chaque domaine a ses notes de flashcards reliées entre elles via `## Connexions`.
-Chaque fiche se termine par des **mises en situation** : pour ne réviser qu'elles, chercher `Mise en situation :` dans le vault.
+Root Map of the Vault: Key Knowledge **AI Engineering**, from the use of models to their industrialization.
+Each domain has its flashcard notes linked together via `## Connections`.
+Each topic ends with **situation**: to review only them, look for `Scenario:` in the vault.
 
-Pour démarrer, consulter le [guide d'apprentissage](docs/apprendre-avec-les-cartes.md) : huit étapes avec prérequis, critères de réponse, notation Anki et passage aux exercices pratiques. Le [bilan du 9 octobre](docs/revue-apprentissage-2026-10-09.md) explique les corrections de fond et les ajouts pédagogiques.
+To get started, consult the [Learning Guide](docs/learning-with-flashcards.md): eight steps with prerequisites, response criteria, Anki notation and transition to practical exercises. The [Review of 9 October](docs/learning-review-2026-10-09.md) explains the background corrections and pedagogical additions.
 
-Pour appliquer les métriques, l’[atelier local de décision IA](examples/decisions-ia/README.md) relie validation ML, calibration, choix de modèle et qualité documentaire ; le [bilan du 11 octobre](docs/revue-pertinence-2026-10-11.md) précise les enrichissements et leur périmètre.
+To apply the metrics, the [Local AI Decision Workshop](examples/ai-decisions/README.md) links ML validation, calibration, model selection and document quality; the [Review of 11 October](docs/relevance-review-2026-10-11.md) specifies the enrichments and their perimeter.
 
-Pour construire des preuves vérifiables, l’[atelier RAG local](examples/rag-verifiable/README.md) compare deux politiques sur dix cas fictifs : droits, dates d'effet, conflits, retrait et abstention. Étudier [[22-rag-avance|la recherche avancée]], [[20-010-rag-droits-versions|les droits et versions]], puis [[96-evals-rag-agents|l'évaluation RAG]] ; produire un tableau affirmation/preuve et un rapport reproductible.
+To build verifiable evidence, the [atelier RAG local](examples/verifiable-rag/README.md) compares two policies out of ten fictitious cases: rights, effective dates, conflicts, withdrawal and abstention. Study [[22-advanced-rag|Advanced Search]], [[20-010-rag-permissions-versions|Rights and Versions]], then [[96-evals-rag-agents|the RAG Assessment]]; produce a statement/proof table and a reproducible report.
 
-Pour comprendre l’exécution d’une requête LLM, le [parcours prefill → RadixAttention → speculative decoding](docs/comprendre-prefill-radix-speculation-2026-11-12.md) suit les états calculés, les branches partagées et les tokens vérifiés. Il complète les fiches avec un exemple continu et des calculs détaillés.
+To understand how to execute a LLM query, the [prefill, RadixAttention and speculative decoding](docs/understanding-prefill-radix-speculation-2026-11-12.md) tracks the calculated states, shared branches, and verified tokens. It completes the topics with a continuous example and detailed calculations.
 
-La [revue transversale du 12 novembre 2026](docs/revue-transversale-2026-11-12.md) présente les 147 approfondissements, les corrections et les limites de la vérification des sources.
+The [Transversal Review of November 12, 2026](docs/cross-topic-review-2026-11-12.md) presents the 147 in-depths, corrections, and limitations of source verification.
 
-Pour industrialiser un modèle prédictif, le [parcours MLOps de bout en bout](docs/parcours-mlops-production-2026-11-12.md) relie données, entraînement, paquet d’inférence, promotion, scoring et reprise. Il complète [[117-pipelines-entrainement-continu|les pipelines]] avec [[118-artefacts-registre-releases-ml|les releases]] et [[119-contrats-prediction-features-batch|les contrats de prédiction]].
+To industrialize a predictive model, the [MLOps route from end to end](docs/production-mlops-learning-path-2026-11-12.md) links data, training, inference package, promotion, scoring and recovery. It completes [[117-continuous-training-pipelines|The Pipelines]] with [[118-ml-artifacts-registry-releases|The releases]] and [[119-prediction-contracts-features-batch|the Prediction Contracts]].
 
-L’[audit d’actualité du 13 novembre 2026](docs/verification-actualite-2026-11-13.md) distingue références confirmées et corrections sur les services managés, MCP, OWASP et AI Act ; il ne constitue pas une certification de toutes les informations du vault.
+The [Current affairs audit of 13 November 2026](docs/reference-currency-check-2026-11-13.md) distinguishes between confirmed references and corrections on managed services, MCP, OWASP and AI Act; it does not constitute a certification of all information of the vault.
 
-L’[enrichissement du 14 novembre 2026](docs/enrichissement-fiches-2026-11-14.md) approfondit les 150 fiches existantes : 271 nouvelles cartes, 18 réponses révisées, exemples chiffrés et diagnostics, avec conservation des identifiants de révision.
+The [Enrichment of November 14, 2026](docs/topic-expansion-2026-11-14.md) deepens the existing 150 cards: 271 new cards, 18 revised answers, encrypted examples and diagnostics, with retention of review IDs.
 
-## Parcours de lecture
-Progression recommandée : **comprendre les modèles → les utiliser → construire des architectures → adapter → servir & déployer → industrialiser → gouverner → concevoir des systèmes.**
-- **Socle prédictif** : [[171-choisir-modele-ml|ML classique]] puis [[172-validation-metriques-ml|validation et métriques]] — choisir une approche avant de construire une chaîne LLM
+## Reading route
+Recommended progression: **understand → models use → build → architectures adapt → serve & deploy → industrialize → govern → design systems.**
+- **Predictive base**: [[171-ml-model-selection|ML Classic]] then [[172-ml-validation-metrics|validation and metrics]] — choose an approach before building a LLM chain
 
-0. [[131-transformer-architecture|Fondamentaux LLM]] — comprendre ce qu'on utilise (prérequis)
-1. [[11-prompt-engineering-avance|Prompt engineering]] — parler aux modèles
-2. [[21-rag-fondamentaux|RAG]] — les augmenter avec des connaissances
-3. [[31-agents-fondamentaux|Agents]] — leur donner des mains
-4. [[41-automatisation-code-nocode|Automatisation & frameworks d'agents]] — workflows, LangChain, LangGraph, CrewAI
-5. [[51-fine-tuning-adaptation|Fine-tuning]] — adapter le modèle lui-même
-6. [[61-kv-cache-attention|Inférence]] — comprendre le serving
-7. [[00-index|Conteneurs & infra]] — déployer sur GPU
-8. [[81-litellm-api-layer|API layer & routing]] — industrialiser l'accès
-9. [[91-langfuse-observabilite|Observabilité & evals]] — tout mesurer
-10. [[101-securite-llm-guardrails|Sécurité]] — tout protéger
-11. [[111-mlops-llmops-fondamentaux|MLOps & CI/CD]] — livrer en continu
-12. [[121-couts-inference|Coûts & FinOps]] — maîtriser l'économie
-13. [[151-donnees-curation-annotation|Données & conformité]] — données, RGPD, AI Act ; puis [[157-contrats-qualite-donnees|contrats]], [[158-ingestion-cdc-backfills|ingestion]] et [[159-donnees-temporelles-features|variables temporelles]]
-14. [[161-modeles-vision-langage|Multimodal & edge]] — images, documents, voix, local
-15. [[141-system-design-llm|System design & produit]] — tout assembler (niveau senior)
+0. [[131-transformer-architecture|Fundamentals LLM]] — understand what we use (prerequisites)
+1. [[11-advanced-prompt-engineering|Prompt engineering]] — talk to models
+2. [[21-rag-fundamentals|RAG]] — increase them with knowledge
+3. [[31-agent-fundamentals|Agents]] — give them hands
+4. [[41-code-nocode-automation|Automation & frameworks d'agents]] — workflows, LangChain, LangGraph, CrewAI
+5. [[51-fine-tuning-adaptation|Fine-tuning]] — adapt the model itself
+6. [[61-kv-cache-attention|Inference]] — understand the serving
+7. [[00-index|Containers & infra]] — deploy to GPU
+8. [[81-litellm-api-layer|API layer & routing]] — industrialize access
+9. [[91-langfuse-observability|Observability & evals]] — tout mesurer
+10. [[101-llm-security-guardrails|Security]] — all protect
+11. [[111-mlops-llmops-fundamentals|MLOps & CI/CD]] — continuous delivery
+12. [[121-inference-costs|Costs & FinOps]] — master the economy
+13. [[151-data-curation-annotation|Data & Compliance]] — data, GDPR, AI Act; then [[157-data-contracts-quality|contrats]], [[158-ingestion-cdc-backfills|ingestion]] and [[159-temporal-data-features|variables temporelles]]
+14. [[161-vision-language-models|Multimodal & edge]] — images, documents, voice, local
+15. [[141-system-design-llm|System design & product]] — all assemble (senior level)
 
-### Parcours AI Engineer agentique
-Pour se concentrer sur les agents, à travers les sections :
-1. [[31-agents-fondamentaux|Agents]] puis [[48-patterns-workflows-agentiques|patterns de workflows]] — workflow ou agent
-2. [[32-tool-calling|Tool calling]], [[33-mcp|MCP]] et [[85-carte-protocoles-agentiques|carte des protocoles]] — relier l'agent au monde
-3. [[35-context-engineering|Context engineering]] et [[39-memoire-agents|mémoire]] — ce que l'agent sait à chaque tour
-4. [[36-orchestration-agents|Multi-agents]], [[27-agents-recherche-deep-research|agents de recherche]] et [[49-agents-de-code|agents de code]] — les grands cas d'usage
-5. [[96-evals-rag-agents|Évaluer]] puis [[98-debogage-agents|déboguer]] un agent ; mesurer ses [[90-014-evaluation-skills-agents|skills]] et l'exécuter sur des tâches [[90-016-harbor-evaluation-agents|Harbor]]
-6. [[102-menaces-agents|Menaces]] et [[103-defenses-agents|défenses]] — sécuriser
-7. [[84-streaming-integration-applicative|Intégration applicative]] et [[38-plateformes-agents|plateformes]] — mettre en production
-8. [[115-plateformes-agents-gouvernance|Gouvernance]] et [[55-rl-agentique|RL agentique]] — niveau senior
+### Course AI Agent Engineer
+To focus on agents, through the sections:
+1. [[31-agent-fundamentals|Agents]] then [[48-agentic-workflow-patterns|Patterns of workflows]] — workflow or agent
+2. [[32-tool-calling|Tool calling]], [[33-mcp|MCP]] and [[85-agentic-protocols-map|Map of Protocols]] — connect agent to world
+3. [[35-context-engineering|Context engineering]] and [[39-agent-memory|Memory]] — what the agent knows about each turn
+4. [[36-agent-orchestration|Multi-agents]], [[27-search-agents-deep-research|Research Officers]] and [[49-coding-agents|Code Agents]] — large use cases
+5. [[96-evals-rag-agents|Evaluate]] then [[98-agent-debugging|Debug]] an agent; measure its [[90-014-agent-skill-evaluation|skills]] and run it on [[90-016-harbor-agent-evaluation|Harbor]] tasks
+6. [[102-agent-threats|Menaces]] and [[103-agent-defenses|Defenses]] — secure
+7. [[84-streaming-application-integration|Application Integration]] and [[38-agent-platforms|Platforms]] — put into production
+8. [[115-agent-platforms-governance|Governance]] and [[55-agentic-rl|Agentic RL]] — Senior
 
-### Parcours implémenter et valider une plateforme d’agents
+### Implement and validate an agent platform
 
-Suivre le [guide pratique complet](docs/parcours-plateforme-agents-inference.md) sur un même agent de support. Les étapes se valident par des livrables et des résultats observables :
+Follow the [Complete practical guide](docs/platform-agents-inference-learning-path.md) on the same support agent. The steps are validated by deliverables and observable results:
 
-1. **Définir la réussite** avec [[141-system-design-llm|System design]] et [[94-evals-methodologie|Méthodologie d’évaluation]] : tâche, baseline, contraintes et critères d’acceptation.
-2. **Attribuer les responsabilités** avec [[38-plateformes-agents|Plateformes]] et [[115-plateformes-agents-gouvernance|Architecture et gouvernance]] : API, runtime, état, gateway LLM et outils.
-3. **Qualifier les contrats API et modèle** avec [[81-litellm-api-layer|Gateway LLM]], [[84-streaming-integration-applicative|Streaming]] et [[63-guided-generation|Sorties structurées]] : capacités réelles, erreurs et secours.
-4. **Fiabiliser l’exécution** avec [[32-tool-calling|Tool calling]], [[103-defenses-agents|Architecture défensive]] et [[149-livraison-idempotence-concurrence|Idempotence]] : permissions, budgets, concurrence et reprises.
-5. **Vérifier les réponses et le résultat métier** avec [[90-010-evaluation-reponses-llm|Évaluation des réponses]], [[96-evals-rag-agents|Évaluation des agents]] et [[114-reproductibilite-variance|Reproductibilité]] : grille, complétude, état final et variance.
-6. **Observer de bout en bout** avec [[93-monitoring-inference|Monitoring]] et [[64-metriques-slo-inference|Métriques et SLO]] : traces, populations, délais et coût par tâche conforme.
-7. **Mesurer et dimensionner** avec [[60-010-benchmarks-charge-inference|Benchmarks]], [[60-011-capacite-ordonnancement-inference|Capacité]] et [[60-012-demarche-optimisation-inference|Optimisation]] : appels par tâche, charge réelle, files et réserve.
-8. **Déployer et reprendre** avec [[142-fiabilite-resilience-llm|Résilience]], [[112-cicd-modeles|CI/CD]] et [[116-sre-incidents-capacite-ia|SRE]] : essais de panne, canary, rollback et runbook.
+1. **Set success** with [[141-system-design-llm|System design]] and [[94-evals-methodology|Evaluation methodology]]: task, baseline, constraints and acceptance criteria.
+2. **Assign responsibilities** with [[38-agent-platforms|Platforms]] and [[115-agent-platforms-governance|Architecture and governance]]: API, runtime, status, LLM gateway and tools.
+3. **Qualify API and Model** contracts with [[81-litellm-api-layer|Gateway LLM]], [[84-streaming-application-integration|Streaming]], and [[63-guided-generation|Structured Outputs]]: Real-world capabilities, errors, and backup.
+4. **Make execution reliable** with [[32-tool-calling|Tool calling]], [[103-agent-defenses|Defensive Architecture]] and [[149-delivery-idempotency-concurrency|Idempotence]]: permissions, budgets, concurrency and trade-ins.
+5. **Check answers and business result** with [[90-010-llm-response-evaluation|Evaluation of responses]], [[96-evals-rag-agents|Evaluation of Agents]] and [[114-reproducibility-variance|Reproducibility]]: grid, completeness, final state and variance.
+6. **Observe end-to-end** with [[93-monitoring-inference|Monitoring]] and [[64-inference-metrics-slo|Metrics and SLO]]: traces, populations, deadlines and cost per compliant task.
+7. **Measure and size** with [[60-010-inference-load-benchmarks|Benchmarks]], [[60-011-inference-capacity-scheduling|Capacity]] and [[60-012-inference-optimization-method|Optimisation]]: calls per task, actual load, queues and reserve.
+8. **Deploy and resume** with [[142-llm-reliability-resilience|Resilience]], [[112-model-cicd|CI/CD]] and [[116-ai-sre-incidents-capacity|SRE]]: crash tests, canary, rollback and runbook.
 
-### Construire et exploiter une application agentique
+### Build and operate an agentic application
 
-Après les bases du parcours agentique :
-1. [[140-011-architecture-applications-agentiques|Définir le cycle de vie]] — API, identité, statuts, approbations et annulation.
-2. [[40-010-langchain-outils-middleware-production|Fiabiliser les contrats LangChain]] — outils, middleware, erreurs et budgets.
-3. [[40-011-langgraph-reprise-concurrence|Approfondir LangGraph]] ou [[40-012-crewai-execution-fiable|CrewAI]] — reprise, dépendances, concurrence et évolution.
-4. [[90-011-langfuse-instrumentation-production|Instrumenter avec Langfuse]] — événements métier, modèles, outils et propagation.
-5. [[90-012-langfuse-prompts-experiences|Comparer les prompts et expériences]] — versions, jeux, scores et promotion.
-6. [[90-013-tests-agents-reprises|Démontrer les invariants]] — tests d'outils, crash, décisions obsolètes et migrations.
+After the basics of the agentic path:
+1. [[140-011-agentic-application-architecture|Defining the life cycle]] — API, identity, status, approvals and cancellation.
+2. [[40-010-langchain-tools-middleware-production|Making contracts more reliable LangChain]] — tools, middleware, errors and budgets.
+3. [[40-011-langgraph-recovery-concurrency|Approfondir LangGraph]] or [[40-012-crewai-reliable-execution|CrewAI]] — recovery, dependencies, concurrency and evolution.
+4. [[90-011-langfuse-instrumentation-production|Instrumenting with Langfuse]] — business events, models, tools and propagation.
+5. [[90-012-langfuse-prompts-experiments|Compare prompts and experiences]] — versions, games, scores and promotion.
+6. [[90-013-agent-testing-recovery|Demonstrate Invariants]] — tool tests, crash, obsolete decisions and migrations.
 
-L’[audit de couverture](docs/audit-stack-agentique-2026-10-09.md) précise les apports et les limites. L’[atelier support](examples/agentic-support/README.md) fournit un projet local avec tests de reprise ; la variante CrewAI et les intégrations distantes constituent des exercices complémentaires.
+The [Audit of Coverage](docs/agentic-stack-audit-2026-10-09.md) specifies inputs and limits. The [atelier support](examples/agentic-support/README.md) provides a local project with recovery tests; the CrewAI variant and remote integrations are complementary exercises.
 
-### Parcours fondations senior
-Pour relier les trois priorités transversales aux applications IA :
-1. [[171-choisir-modele-ml|Choisir une approche]] puis [[172-validation-metriques-ml|valider sans fuite]] — règles, ML classique ou LLM
-2. [[157-contrats-qualite-donnees|Définir les contrats]], [[158-ingestion-cdc-backfills|fiabiliser l’ingestion]] puis [[159-donnees-temporelles-features|reconstruire les données disponibles]] — qualité et temporalité
-3. [[149-livraison-idempotence-concurrence|Maîtriser livraison et concurrence]] puis [[140-010-transactions-outbox-sagas|orchestrer les transactions]] — effets métier sûrs malgré les pannes
+### Senior Foundations Course
+To link the three cross-cutting priorities to AI applications:
+1. [[171-ml-model-selection|Choose an approach]] then [[172-ml-validation-metrics|Validate without leakage]] — rules, classic ML or LLM
+2. [[157-data-contracts-quality|Defining contracts]], [[158-ingestion-cdc-backfills|reliability of ingestion]] then [[159-temporal-data-features|Rebuild the available data]] — quality and temporality
+3. [[149-delivery-idempotency-concurrency|Controlling delivery and concurrency]] then [[140-010-transactions-outbox-sagas|orchestrate transactions]] — safe business effects despite outages
 
-### Liens transversaux
-- [[38-plateformes-agents|Plateformes]] → [[115-plateformes-agents-gouvernance|architecture et gouvernance]]
-- [[165-computer-use-agents-navigateur|Agents d’interface]] : complément multimodal du parcours agentique.
+### Cross-links
+- [[38-agent-platforms|Platforms]] → [[115-agent-platforms-governance|Architecture and Governance]]
+- [[165-computer-use-browser-agents|Agents d’interface]]: multimodal supplement of the agentic journey.
 
-### Parcours data engineering pour l’IA
+### Data engineering journey for AI
 
-1. **Définir les données** avec [[150-010-modelisation-donnees-analytiques|Modélisation analytique]], [[150-011-sql-transformations-analytiques|SQL]] et [[157-contrats-qualite-donnees|Contrats]] : grain, clés, jointures, nulls et invariants.
-2. **Collecter et reconstruire** avec [[158-ingestion-cdc-backfills|Ingestion, CDC & backfills]] et [[159-donnees-temporelles-features|Variables temporelles]] : pagination, versions, suppressions et disponibilité réelle.
-3. **Stocker et publier** avec [[150-012-stockage-colonnaire-lakehouse|Stockage & lakehouse]] et [[150-013-orchestration-pipelines-donnees|Orchestration data]] : fichiers, snapshots, partitions, dépendances et reprise.
-4. **Construire les corpus** avec [[150-017-datasets-corpus-ia|Datasets & corpus IA]], [[151-donnees-curation-annotation|Curation]] et [[172-validation-metriques-ml|Validation ML]] : manifestes, familles, splits, shards et lecteurs.
-5. **Exploiter et gouverner** avec [[150-016-observabilite-lignage-donnees|Observabilité & lignage]], [[152-pii-confidentialite|Confidentialité]] et [[116-sre-incidents-capacite-ia|SRE]] : qualité, SLO, impact et réparation.
-6. **Approfondir selon le besoin** avec [[150-014-streaming-traitements-evenements|Streaming]] et [[150-015-calcul-distribue-performance-donnees|Calcul distribué]] : faible latence, état, shuffle, skew et coût.
+1. **Define data** with [[150-010-analytical-data-modeling|Analytical modelling]], [[150-011-analytical-sql-transformations|SQL]] and [[157-data-contracts-quality|Contrats]]: grain, keys, joins, nulls and invariants.
+2. **Collect and rebuild** with [[158-ingestion-cdc-backfills|Ingestion, CDC & backfills]] and [[159-temporal-data-features|Variables temporelles]]: pagination, versions, deletions and actual availability.
+3. **Stocker and publish** with [[150-012-columnar-storage-lakehouse|Stockage & lakehouse]] and [[150-013-data-pipeline-orchestration|Orchestration data]]: files, snapshots, partitions, dependencies and recovery.
+4. **Build corpus** with [[150-017-ai-datasets-corpora|Datasets & corpus IA]], [[151-data-curation-annotation|Curation]] and [[172-ml-validation-metrics|Validation ML]]: manifestos, families, splits, shards and readers.
+5. **Operate and govern** with [[150-016-data-observability-lineage|Observability & lineage]], [[152-pii-privacy|Privacy]] and [[116-ai-sre-incidents-capacity|SRE]]: quality, SLO, impact and repair.
+6. **Deepen as needed** with [[150-014-streaming-event-processing|Streaming]] and [[150-015-distributed-computing-data-performance|Distributed calculation]]: low latency, state, shuffle, skew and cost.
 
-L’[audit de couverture et ses cinq ateliers](docs/audit-data-engineering-2026-10-09.md) précise le niveau attendu selon le rôle. Commencer par l’[atelier SQL local](examples/data-engineering/atelier_sql.py), puis démontrer la reprise d’un pipeline et la reconstruction d’un dataset. Les fiches avancées se travaillent lorsque les contraintes du projet les justifient.
+The [Cover audit and its five workshops](docs/data-engineering-audit-2026-10-09.md) specifies the expected level according to the role. Start with the [atelier SQL local](examples/data-engineering/sql_workshop.py), then demonstrate the resumption of a pipeline and the reconstruction of a dataset. The advanced topics are worked when the constraints of the project justify them.
 
-### Parcours de mise en pratique senior
-Après les fondations, travailler ces sujets sur un même projet et produire une preuve pour chaque étape :
-1. [[99-statistiques-decisions-experimentales|Décider avec des statistiques]] — protocole, comparaison appariée, intervalle et seuil de gain utile
-2. [[173-calibration-incertitude-abstention|Calibrer et savoir s'abstenir]] — courbe de fiabilité, risque-couverture et charge humaine
-3. [[56-optimisation-diagnostic-entrainement|Diagnostiquer l'entraînement]] — micro-lot, courbes train/validation, gradients et normalisation ; approfondir si le rôle inclut l'adaptation des modèles
-4. [[116-sre-incidents-capacite-ia|Exploiter et reprendre après panne]] — SLO, file bornée, exercice de bascule et postmortem
-5. [[147-leadership-technique-ia|Rendre les décisions et l'équipe autonomes]] — ADR, transfert d'exploitation et correction vérifiée
+### Senior practice path
+After the foundations, work on these topics on the same project and produce proof for each step:
+1. [[99-statistics-experimental-decisions|Deciding with statistics]] — protocol, matched comparison, useful gain interval and threshold
+2. [[173-calibration-uncertainty-abstention|Calibrate and know how to abstain]] — reliability curve, cover risk and human load
+3. [[56-training-optimization-diagnostics|Diagnosing training]] — micro-lot, train/validation curves, gradients and normalization; further if role includes model adaptation
+4. [[116-ai-sre-incidents-capacity|Operate and resume after failure]] — SLO, bounded file, rocking exercise and postmortem
+5. [[147-ai-technical-leadership|Make decisions and the team autonomous]] — ADR, Operation Transfer and Verified Correction
 
-Le [bilan de pertinence et les ateliers](docs/pertinence-parcours-senior-2026-10-07.md) précisent priorités, livrables et critères de réussite. Les cartes préparent le raisonnement ; la maîtrise se démontre aussi en construisant, mesurant et expliquant les limites d'un système.
+The [Relevance assessment and workshops](docs/senior-learning-path-relevance-2026-10-07.md) specifies priorities, deliverables and success criteria. The maps prepare the reasoning; mastery is also demonstrated by building, measuring and explaining the limits of a system.
 
-### Parcours prédire, recommander et décider
-Après [[171-choisir-modele-ml|le choix des modèles]], [[172-validation-metriques-ml|la validation]] et [[173-calibration-incertitude-abstention|la calibration]], choisir le sujet selon le problème :
-- [[174-recommandation-ranking|Recommandation & ranking]] — proposer et ordonner des éléments, avec biais d'exposition et cold start
-- [[175-series-temporelles-prevision|Prévision temporelle]] — prévoir aux horizons utiles avec les informations réellement disponibles
-- [[176-detection-anomalies|Détection d'anomalies]] — transformer un score atypique en alerte exploitable
-- [[177-explicabilite-modeles|Explicabilité]] — diagnostiquer une prédiction et vérifier ce que son explication signifie
-- [[178-inference-causale-decisions|Inférence causale]] — estimer ce qu'une action change, avec hypothèses et limites
+### Predict, recommend and decide
+After [[171-ml-model-selection|The choice of models]], [[172-ml-validation-metrics|Validation]] and [[173-calibration-uncertainty-abstention|Calibration]], choose the topic according to the problem:
+- [[174-recommendation-ranking|Recommandation & ranking]] — propose and order elements, with exposure bias and cold start
+- [[175-time-series-forecasting|Temporal forecast]] — predict useful horizons with the information actually available
+- [[176-anomaly-detection|Detection of anomalies]] — turn atypical score into actionable alert
+- [[177-model-explainability|Explainability]] — diagnose a prediction and check what its explanation means
+- [[178-causal-inference-decisions|Causal inference]] — estimate what an action changes, with assumptions and limits
 
-Le [bilan des cinq nouveaux sujets](docs/nouvelles-competences-ia-2026-10-08.md) précise leurs apports et un exercice pour chacun. Ces branches complètent le parcours LLM et agents ; elles se travaillent selon les responsabilités du poste visé.
+The [review of the five new topics](docs/new-ai-skills-2026-10-08.md) specifies their contributions and an exercise for each. These branches complete the course LLM and agents; they work according to the responsibilities of the position concerned.
 
-### Parcours MLOps : entraîner, livrer et surveiller un modèle
+### MLOps Journey: Train, Deliver and Monitor a Model
 
-Le [cas filé de résiliation](docs/parcours-mlops-production-2026-11-12.md) propose un livrable et un critère de passage à chaque étape.
+The [Threaded Case of Termination](docs/production-mlops-learning-path-2026-11-12.md) offers a deliverable and a passing criterion at each stage.
 
-1. [[111-mlops-llmops-fondamentaux|Versionner et tracer]] — artefacts, registre, lineage et environnements
-2. [[117-pipelines-entrainement-continu|Automatiser l'entraînement]] — pipeline, validation des données et du modèle, alias champion et labels sélectifs
-3. [[114-reproductibilite-variance|Comparer sans se tromper]] — variance, sélection des runs, environnement et preuve historique
-4. [[118-artefacts-registre-releases-ml|Publier un paquet chargeable]] — transformations, URI, contrat des sorties, intégrité et restauration
-5. [[119-contrats-prediction-features-batch|Produire des prédictions exploitables]] — features, disponibilité temporelle, fraîcheur, batch idempotent et publication
-6. [[112-cicd-modeles|Livrer progressivement]] — eval gates, shadow, canary, GitOps et rollback
-7. [[113-monitoring-drift-feedback|Surveiller la dérive et la mesure]] — PSI, dérive multivariée, couverture des labels et boucle de feedback
-8. [[116-sre-incidents-capacite-ia|Exploiter et reprendre]] puis [[115-plateformes-agents-gouvernance|gouverner les systèmes agentiques]] — SLO, dépendances, incidents, responsabilités et retrait
+1. [[111-mlops-llmops-fundamentals|Version and trace]] — artifacts, registry, lineage and environments
+2. [[117-continuous-training-pipelines|Automate the training]] — pipeline, data and model validation, aka champion and selective labels
+3. [[114-reproducibility-variance|Compare without being wrong]] — variance, run selection, environment and historical evidence
+4. [[118-ml-artifacts-registry-releases|Publish a loadable package]] — transformations, URI, output contract, integrity and restore
+5. [[119-prediction-contracts-features-batch|Producing actionable predictions]] — features, time availability, freshness, batch idempotent and publication
+6. [[112-model-cicd|Deliver gradually]] — eval gates, shadow, canary, GitOps and rollback
+7. [[113-monitoring-drift-feedback|Monitor drift and measurement]] — PSI, multivariate drift, label cover and feedback loop
+8. [[116-ai-sre-incidents-capacity|Exploit and resume]] then [[115-agent-platforms-governance|Governing the Agentic Systems]] — SLO, dependencies, incidents, liabilities and withdrawal
 
-### Parcours mesurer et optimiser l’inférence LLM
+### Measuring and optimizing the LLM inference
 
-1. **Définir les critères** avec [[64-metriques-slo-inference|Métriques & SLO]] puis [[93-monitoring-inference|Monitoring]] : expérience visible, conformité conjointe, erreurs et histogrammes.
-2. **Mesurer la capacité** avec [[60-010-benchmarks-charge-inference|Benchmarks de charge]] : arrivées, caches, saturation et incertitude.
-3. **Dimensionner** avec [[61-kv-cache-attention|KV cache]] et [[60-011-capacite-ordonnancement-inference|Capacité & ordonnancement]] : mémoire, budgets, équité et réserve.
-4. **Choisir les leviers** avec [[60-012-demarche-optimisation-inference|Démarche d’optimisation]], [[62-optimisations-inference|Optimisations]], [[67-speculative-decoding|Spéculation]] et [[68-quantization|Quantification]].
-5. **Valider la décision** avec [[121-couts-inference|Coûts]], [[112-cicd-modeles|CI/CD]] et [[116-sre-incidents-capacite-ia|SRE]] : qualité, coût par réussite, canary et incidents.
+1. **Set criteria** with [[64-inference-metrics-slo|Metrics & SLO]] and then [[93-monitoring-inference|Monitoring]]: Visible experience, joint compliance, errors and histograms.
+2. **Measure capacity** with [[60-010-inference-load-benchmarks|Load benchmarks]]: arrivals, caches, saturation and uncertainty.
+3. **Dimension** with [[61-kv-cache-attention|KV cache]] and [[60-011-inference-capacity-scheduling|Capacity & scheduling]]: memory, budgets, equity and reserve.
+4. **Choose levers** with [[60-012-inference-optimization-method|Optimization process]], [[62-inference-optimizations|Optimizations]], [[67-speculative-decoding|Speculation]] and [[68-quantization|Quantification]].
+5. **Validate the decision** with [[121-inference-costs|Costs]], [[112-model-cicd|CI/CD]] and [[116-ai-sre-incidents-capacity|SRE]]: quality, cost-per-success, canary and incidents.
 
-L’[audit d’inférence du 8 octobre](docs/audit-inference-llm-2026-10-08.md) cartographie les notions couvertes et propose quatre ateliers avec livrables. Les gains se démontrent sur une charge représentative ; les calculs des cartes restent des exemples pédagogiques.
+The [Inference Audit of October 8](docs/llm-inference-audit-2026-10-08.md) maps the concepts covered and offers four workshops with deliverables. The gains are demonstrated on a representative load; the calculations of the maps remain pedagogical examples.
 
 <!-- catalog:begin -->
 
 ## 10 — Prompt engineering
 
-- [[11-prompt-engineering-avance|Prompt engineering avancé]]
-- [[12-optimisation-automatique-prompts|Optimisation automatique de prompts (DSPy)]]
-- [[13-prompts-production|Prompts en production]]
+- [[11-advanced-prompt-engineering|Advanced prompt engineering]]
+- [[12-automatic-prompt-optimization|Automatic Prompt Optimization (DSPy)]]
+- [[13-production-prompts|Prompts in production]]
 
 ## 20 — RAG
 
-- [[21-rag-fondamentaux|RAG — Fondamentaux]]
-- [[22-rag-avance|RAG — Avancé]]
+- [[21-rag-fundamentals|RAG — Fundamentals]]
+- [[22-advanced-rag|RAG Advanced]]
 - [[23-knowledge-graphs-ontologies|Knowledge graphs & ontologies]]
 - [[24-cognee|Cognee]]
-- [[25-chunking-contextual-retrieval|Chunking avancé & contextual retrieval]]
-- [[26-text-to-sql|Text-to-SQL & données structurées]]
-- [[27-agents-recherche-deep-research|Agents de recherche (deep research)]]
-- [[20-010-rag-droits-versions|RAG en production : droits, versions & abstention]]
+- [[25-chunking-contextual-retrieval|Advanced Chunking & Contextual Retrieval]]
+- [[26-text-to-sql|Text-to-SQL & structured data]]
+- [[27-search-agents-deep-research|Search agents (deep research)]]
+- [[20-010-rag-permissions-versions|RAG in production: rights, versions & abstention]]
 
 ## 30 — Agents
 
-- [[31-agents-fondamentaux|Fondamentaux des agents]]
+- [[31-agent-fundamentals|Basics of]]
 - [[32-tool-calling|Tool calling]]
 - [[33-mcp|MCP — Model Context Protocol]]
 - [[34-harness-plugins|Harness & plugins]]
 - [[35-context-engineering|Context engineering]]
-- [[36-orchestration-agents|Orchestration multi-agents]]
-- [[37-frameworks-agents|Frameworks d'agents]]
-- [[38-plateformes-agents|Plateformes d'agents]]
-- [[39-memoire-agents|Mémoire des agents]]
+- [[36-agent-orchestration|Orchestration multi-agents]]
+- [[37-agent-frameworks|Frameworks d'agents]]
+- [[38-agent-platforms|Agent Platforms]]
+- [[39-agent-memory|Agent Memory]]
 
-## 40 — Automatisation & frameworks d'agents
+## 40 — Automation & agent frameworks
 
-- [[41-automatisation-code-nocode|Automatisation code & no-code]]
-- [[42-langchain-fondamentaux|LangChain — Fondamentaux]]
+- [[41-code-nocode-automation|Automation code & no-code]]
+- [[42-langchain-fundamentals|LangChain — Fundamentals]]
 - [[43-langchain-agents|LangChain — Agents & middleware]]
-- [[44-langgraph-fondamentaux|LangGraph — Fondamentaux]]
+- [[44-langgraph-fundamentals|LangGraph — Fundamentals]]
 - [[45-langgraph-production|LangGraph — Production (persistance, HITL, multi-agents)]]
 - [[46-crewai-crews|CrewAI — Crews]]
 - [[47-crewai-flows|CrewAI — Flows]]
-- [[48-patterns-workflows-agentiques|Patterns de workflows agentiques]]
-- [[49-agents-de-code|Agents de code : usage & intégration]]
-- [[40-010-langchain-outils-middleware-production|LangChain — Contrats, outils & middleware en production]]
-- [[40-011-langgraph-reprise-concurrence|LangGraph — Reprise, concurrence & évolution]]
-- [[40-012-crewai-execution-fiable|CrewAI — Exécution fiable & intégration]]
+- [[48-agentic-workflow-patterns|Agentic Workflow Patterns]]
+- [[49-coding-agents|Code Agents: Usage & Integration]]
+- [[40-010-langchain-tools-middleware-production|LangChain — Contracts, tools & middleware in production]]
+- [[40-011-langgraph-recovery-concurrency|LangGraph — Recovery, Concurrency & Evolution]]
+- [[40-012-crewai-reliable-execution|CrewAI — Reliable Execution & Integration]]
 
 ## 50 — Fine-tuning
 
-- [[51-fine-tuning-adaptation|Fine-tuning & adaptation de modèles]]
-- [[52-post-training-alignement|Post-training & alignement]]
-- [[53-donnees-synthetiques-distillation|Données synthétiques & distillation]]
-- [[54-entrainement-distribue|Entraînement distribué]]
-- [[55-rl-agentique|RL agentique & environnements d'entraînement]]
-- [[56-optimisation-diagnostic-entrainement|Optimisation & diagnostic d'entraînement]]
+- [[51-fine-tuning-adaptation|Fine-tuning & adaptation of models]]
+- [[52-post-training-alignment|Post-training & alignment]]
+- [[53-synthetic-data-distillation|Synthetic data & distillation]]
+- [[54-distributed-training|Distributed Training]]
+- [[55-agentic-rl|Agentic RL & Training Environments]]
+- [[56-training-optimization-diagnostics|Drive Optimization & Diagnostics]]
 
-## 60 — Inférence LLM
+## 60 — LLM inference
 
 - [[61-kv-cache-attention|KV cache & attention]]
-- [[62-optimisations-inference|Optimisations d'inférence]]
-- [[63-guided-generation|Guided generation (sorties structurées)]]
-- [[64-metriques-slo-inference|Métriques d'inférence & SLO]]
-- [[65-probabilites-sampling|Probabilités & sampling]]
+- [[62-inference-optimizations|Inference optimizations]]
+- [[63-guided-generation|Guided generation (structured outputs)]]
+- [[64-inference-metrics-slo|Inference Metrics & SLO]]
+- [[65-probabilities-sampling|Probability & sampling]]
 - [[66-prefix-caching-radix-attention|Prefix caching & RadixAttention]]
 - [[67-speculative-decoding|Speculative decoding]]
 - [[68-quantization|Quantization]]
-- [[69-roofline-prefill-decode|Roofline, prefill/decode & désagrégation]]
-- [[60-010-benchmarks-charge-inference|Benchmarks de charge pour l’inférence LLM]]
-- [[60-011-capacite-ordonnancement-inference|Capacité & ordonnancement de l’inférence LLM]]
-- [[60-012-demarche-optimisation-inference|Démarche d’optimisation de l’inférence LLM]]
-- [[60-013-prefill-decode-pas-a-pas|Prefill & decode — Exécution pas à pas]]
+- [[69-roofline-prefill-decode|Roofline, prefill/decode & disaggregation]]
+- [[60-010-inference-load-benchmarks|Charging benchmarks for inference LLM]]
+- [[60-011-inference-capacity-scheduling|Inference Capacity & Scheduling LLM]]
+- [[60-012-inference-optimization-method|Inference Optimization Approach LLM]]
+- [[60-013-prefill-decode-step-by-step|Prefill & decode — Step by Step Execution]]
 
-## 70 — Conteneurs & Infra
+## 70 — Containers & infrastructure
 
-- [[00-index|Conteneurs & infra — Index]]
+- [[00-index|Containers & infra — Index]]
 - [[01-oci|OCI]]
-- [[02-docker-images-registries|Docker, images et registries]]
+- [[02-docker-images-registries|Docker, images and registers]]
 - [[03-containerd-runc|containerd & runc]]
 - [[04-kubernetes-kubelet-cri|Kubernetes, kubelet & CRI]]
 - [[05-docker-kubernetes|Docker & Kubernetes]]
 - [[06-apptainer-singularity|Apptainer & Singularity]]
-- [[07-synthese-containers|Conteneurs — Synthèse]]
-- [[08-linux-primitives-docker-fondamentaux|Primitives Linux & fondamentaux Docker]]
-- [[09-gpu-conteneurs|GPU en conteneur]]
-- [[10-images-modeles-poids|Images & poids de modèles]]
-- [[11-serveurs-inference-llm|Serveurs d'inférence LLM]]
-- [[12-kubernetes-gpu-inference|Kubernetes GPU & inférence]]
-- [[13-apptainer-inference-hpc|Apptainer & inférence HPC]]
+- [[07-containers-overview|Containers — Synthesis]]
+- [[08-linux-primitives-docker-fundamentals|Primitive Linux & Docker fundamentals]]
+- [[09-gpu-containers|GPU in container]]
+- [[10-images-models-weights|Images & weights of]]
+- [[11-llm-inference-servers|Inference Servers LLM]]
+- [[12-kubernetes-gpu-inference|Kubernetes GPU & inference]]
+- [[13-apptainer-inference-hpc|Apptainer & Inference HPC]]
 
-## 80 — API Layer & Routing
+## 80 — API layer & routing
 
 - [[81-litellm-api-layer|LiteLLM (API layer)]]
 - [[82-routing-llm|Routing LLM]]
 - [[83-gateway-ingress|Ingress & API gateway]]
-- [[84-streaming-integration-applicative|Streaming & intégration applicative]]
-- [[85-carte-protocoles-agentiques|Carte des protocoles agentiques]]
+- [[84-streaming-application-integration|Streaming & application integration]]
+- [[85-agentic-protocols-map|Map of]]
 
-## 90 — Observabilité & Evals
+## 90 — Observability & evaluations
 
-- [[91-langfuse-observabilite|Langfuse & observabilité LLM]]
-- [[92-chainforge-evals-prompts|ChainForge & évaluation de prompts]]
-- [[93-monitoring-inference|Monitoring de l'inférence & de l'usage]]
-- [[94-evals-methodologie|Évaluation des systèmes LLM — Méthodologie]]
+- [[91-langfuse-observability|Langfuse & observability LLM]]
+- [[92-chainforge-evals-prompts|ChainForge & Prompt Review]]
+- [[93-monitoring-inference|Inference & Usage Monitoring]]
+- [[94-evals-methodology|System evaluation LLM — Methodology]]
 - [[95-llm-as-judge|LLM-as-a-judge]]
-- [[96-evals-rag-agents|Évaluation des RAG & des agents]]
+- [[96-evals-rag-agents|Evaluation of RAG & agents]]
 - [[97-evals-online-ab-testing|Evals online & A/B testing]]
-- [[98-debogage-agents|Débogage & analyse d'échecs des agents]]
-- [[99-statistiques-decisions-experimentales|Statistiques pour décider en IA]]
-- [[90-010-evaluation-reponses-llm|Évaluation des outputs & des réponses LLM]]
-- [[90-011-langfuse-instrumentation-production|Langfuse — Instrumentation en production]]
-- [[90-012-langfuse-prompts-experiences|Langfuse — Prompts, datasets & expériences]]
-- [[90-013-tests-agents-reprises|Agents — Tests de contrats, pannes & reprises]]
-- [[90-014-evaluation-skills-agents|Évaluer des skills d'agent]]
-- [[90-015-agent-skills-format-skills-ref|Agent Skills : format & validation avec skills-ref]]
-- [[90-016-harbor-evaluation-agents|Harbor : évaluer des agents en conteneurs]]
+- [[98-agent-debugging|Debugging & Failure Analysis of — Flashcards Agents]]
+- [[99-statistics-experimental-decisions|Statistics for deciding in IA]]
+- [[90-010-llm-response-evaluation|Output & Response Rating LLM]]
+- [[90-011-langfuse-instrumentation-production|Langfuse — Instrumentation in production]]
+- [[90-012-langfuse-prompts-experiments|Langfuse — Prompts, datasets & experiences]]
+- [[90-013-agent-testing-recovery|Agents — Contracts, Faults & Repeats Testing]]
+- [[90-014-agent-skill-evaluation|Evaluate agent skills]]
+- [[90-015-agent-skills-format-skills-ref|Agent Skills: format & validation with skills-ref]]
+- [[90-016-harbor-agent-evaluation|Harbor: Evaluate Container Agents]]
 
-## 100 — Sécurité & guardrails
+## 100 — Security & guardrails
 
-- [[101-securite-llm-guardrails|Sécurité LLM & guardrails]]
-- [[102-menaces-agents|Sécurité des agents — Menaces & incidents]]
-- [[103-defenses-agents|Sécurité des agents — Architecture défensive]]
-- [[104-securite-mcp-skills|Sécurité de MCP, des outils & des skills]]
-- [[105-devsecops-ia-agentique|DevSecOps pour l'IA agentique]]
-- [[106-securite-agents-code|Sécurité des agents de code]]
+- [[101-llm-security-guardrails|Security LLM & guardrails]]
+- [[102-agent-threats|Security of agents — Threats & incidents]]
+- [[103-agent-defenses|Security of agents — Defensive architecture]]
+- [[104-mcp-skills-security|MCP Security, Tools & Skills]]
+- [[105-agentic-ai-devsecops|DevSecOps for Agentic AI]]
+- [[106-coding-agent-security|Security of code agents]]
 
 ## 110 — MLOps & CI/CD
 
-- [[111-mlops-llmops-fondamentaux|MLOps & LLMOps — Fondamentaux]]
-- [[112-cicd-modeles|CI/CD des modèles]]
-- [[113-monitoring-drift-feedback|Monitoring, drift & boucle de feedback]]
-- [[114-reproductibilite-variance|Reproductibilité & variance]]
-- [[115-plateformes-agents-gouvernance|Plateformes d'agents — Architecture & gouvernance]]
-- [[116-sre-incidents-capacite-ia|SRE : incidents & capacité des services IA]]
-- [[117-pipelines-entrainement-continu|Pipelines d'entraînement, registre & entraînement continu]]
-- [[118-artefacts-registre-releases-ml|Artefacts, registre & releases ML]]
-- [[119-contrats-prediction-features-batch|Contrats de prédiction, features & scoring batch]]
+- [[111-mlops-llmops-fundamentals|MLOps & LLMOps — Fundamentals]]
+- [[112-model-cicd|CI/CD Models]]
+- [[113-monitoring-drift-feedback|Monitoring, drift & feedback loop]]
+- [[114-reproducibility-variance|Reproducibility & variance]]
+- [[115-agent-platforms-governance|— Agent Platforms Architecture & Governance]]
+- [[116-ai-sre-incidents-capacity|SRE: incidents & capacity of IA services]]
+- [[117-continuous-training-pipelines|— Training Pipelines, Register & Continuous Training]]
+- [[118-ml-artifacts-registry-releases|Artefacts, registry & releases ML]]
+- [[119-prediction-contracts-features-batch|Prediction contracts, features & scoring batch]]
 
-## 120 — Coûts & FinOps
+## 120 — Costs & FinOps
 
-- [[121-couts-inference|Coûts d'inférence]]
+- [[121-inference-costs|Inference costs]]
 - [[122-finops-llm|FinOps LLM]]
-- [[123-caching-agressif|Caching agressif]]
+- [[123-aggressive-caching|Caching agressif]]
 
-## 130 — Fondamentaux LLM
+## 130 — LLM fundamentals
 
 - [[131-transformer-architecture|Architecture Transformer]]
-- [[132-tokenisation|Tokenisation]]
-- [[133-embeddings-representations|Embeddings & représentations]]
-- [[134-recherche-vectorielle-ann|Recherche vectorielle & index ANN]]
-- [[135-pretraining-scaling-laws|Pré-entraînement & scaling laws]]
+- [[132-tokenization|Tokenisation]]
+- [[133-embeddings-representations|Embeddings & representations]]
+- [[134-vector-search-ann|Vector Search & Index ANN]]
+- [[135-pretraining-scaling-laws|Pre-workout & scaling laws]]
 - [[136-mixture-of-experts|Mixture of Experts (MoE)]]
-- [[137-long-contexte|Long contexte]]
-- [[138-modeles-raisonnement|Modèles de raisonnement & test-time compute]]
+- [[137-long-context|Long context]]
+- [[138-reasoning-models|Reasoning Models & Test-Time Compute]]
 
-## 140 — System design & produit
+## 140 — System design & product
 
-- [[141-system-design-llm|System design d'applications LLM — Méthode]]
-- [[142-fiabilite-resilience-llm|Fiabilité & résilience des applications LLM]]
+- [[141-system-design-llm|LLM application system design]]
+- [[142-llm-reliability-resilience|Reliability & resilience of LLM — Flashcards applications]]
 - [[143-hallucinations-grounding|Hallucinations, grounding & abstention]]
-- [[144-ux-ia-human-in-the-loop|UX de l'IA & human-in-the-loop]]
-- [[145-cas-system-design|Cas de system design LLM]]
-- [[146-choix-modeles|Choisir un modèle]]
-- [[147-leadership-technique-ia|Leadership technique en AI Engineering]]
-- [[148-pipelines-batch-llm|Pipelines batch à grande échelle]]
-- [[149-livraison-idempotence-concurrence|Livraison, idempotence & concurrence]]
-- [[140-010-transactions-outbox-sagas|Transactions, outbox & sagas pour les agents]]
-- [[140-011-architecture-applications-agentiques|Applications agentiques — Architecture & cycle de vie]]
+- [[144-ai-ux-human-in-the-loop|AI UX & human-in-the-loop]]
+- [[145-system-design-cases|LLM system design cases]]
+- [[146-model-selection|Choose model]]
+- [[147-ai-technical-leadership|Technical Leadership in AI Engineering]]
+- [[148-llm-batch-pipelines|Large Scale Batch Pipelines]]
+- [[149-delivery-idempotency-concurrency|Delivery, idempotency & competition]]
+- [[140-010-transactions-outbox-sagas|Transactions, outbox & sagas for agents]]
+- [[140-011-agentic-application-architecture|Applications — Architecture & Life Cycle]]
 
-## 150 — Données & conformité
+## 150 — Data & compliance
 
-- [[151-donnees-curation-annotation|Données : curation & annotation]]
-- [[152-pii-confidentialite|PII & confidentialité des données]]
-- [[153-data-flywheel-versioning|Data flywheel & versioning des données]]
-- [[154-rgpd-llm|RGPD appliqué aux LLM]]
-- [[155-ai-act|AI Act (règlement européen sur l'IA)]]
-- [[156-ia-responsable|IA responsable : biais, équité & transparence]]
-- [[157-contrats-qualite-donnees|Contrats, schémas & qualité des données]]
-- [[158-ingestion-cdc-backfills|Ingestion incrémentale, CDC & backfills]]
-- [[159-donnees-temporelles-features|Données temporelles & variables de production]]
-- [[150-010-modelisation-donnees-analytiques|Modélisation des données analytiques]]
-- [[150-011-sql-transformations-analytiques|SQL pour les pipelines et datasets IA]]
-- [[150-012-stockage-colonnaire-lakehouse|Stockage colonnaire, partitions & lakehouse]]
-- [[150-013-orchestration-pipelines-donnees|Transformations & orchestration des pipelines data]]
-- [[150-014-streaming-traitements-evenements|Streaming & traitements d’événements]]
-- [[150-015-calcul-distribue-performance-donnees|Calcul distribué & performance des pipelines data]]
-- [[150-016-observabilite-lignage-donnees|Observabilité, lignage & exploitation des données]]
-- [[150-017-datasets-corpus-ia|Construction de datasets & corpus IA]]
+- [[151-data-curation-annotation|Data: curation & annotation]]
+- [[152-pii-privacy|PII & Data Privacy]]
+- [[153-data-flywheel-versioning|Data flywheel & data versioning]]
+- [[154-gdpr-llm|GDPR applied to LLM]]
+- [[155-ai-act|AI Act (European AI Regulation)]]
+- [[156-responsible-ai|Responsible AI: bias, fairness & transparency]]
+- [[157-data-contracts-quality|Contracts, Schematics & Data Quality]]
+- [[158-ingestion-cdc-backfills|Incremental Ingestion, CDC & backfills]]
+- [[159-temporal-data-features|Temporal data & production features]]
+- [[150-010-analytical-data-modeling|Analytic Data Modeling]]
+- [[150-011-analytical-sql-transformations|SQL for IA pipelines and datasets]]
+- [[150-012-columnar-storage-lakehouse|Columnar storage, partitions & lakehouse]]
+- [[150-013-data-pipeline-orchestration|Transforming & orchestrating data pipelines]]
+- [[150-014-streaming-event-processing|Streaming & event processing]]
+- [[150-015-distributed-computing-data-performance|Distributed Computing & Data Pipeline Performance]]
+- [[150-016-data-observability-lineage|Observability, lineage & data exploitation]]
+- [[150-017-ai-datasets-corpora|Dataset building & corpus IA]]
 
 ## 160 — Multimodal & edge
 
-- [[161-modeles-vision-langage|Modèles vision-langage (VLM)]]
-- [[162-document-parsing|Parsing de documents (PDF, OCR, layout)]]
-- [[163-voix-temps-reel|Voix & agents temps réel]]
-- [[164-llm-local-edge|LLM locaux, on-prem & edge]]
-- [[165-computer-use-agents-navigateur|Computer use & agents navigateur]]
+- [[161-vision-language-models|Vision-Language Models (VLM)]]
+- [[162-document-parsing|Parsing documents (PDF, OCR, layout)]]
+- [[163-real-time-voice|Voice & real-time agents]]
+- [[164-local-edge-llm|LLM local, on-prem & edge]]
+- [[165-computer-use-browser-agents|Computer use & browser agents]]
 
-## 170 — ML classique & validation
+## 170 — Classical ML & validation
 
-- [[171-choisir-modele-ml|ML classique : choisir et comprendre les modèles]]
-- [[172-validation-metriques-ml|ML classique : validation, fuites & métriques]]
-- [[173-calibration-incertitude-abstention|Calibration, incertitude & abstention]]
-- [[174-recommandation-ranking|Recommandation & learning to rank]]
-- [[175-series-temporelles-prevision|Prévision de séries temporelles]]
-- [[176-detection-anomalies|Détection d'anomalies]]
-- [[177-explicabilite-modeles|Explicabilité & diagnostic des modèles]]
-- [[178-inference-causale-decisions|Inférence causale & décisions produit]]
+- [[171-ml-model-selection|Classic ML: choose and understand the]]
+- [[172-ml-validation-metrics|Classic ML: Validation, Leaks & Metrics]]
+- [[173-calibration-uncertainty-abstention|Calibration, uncertainty & abstention]]
+- [[174-recommendation-ranking|Recommandation & learning to rank]]
+- [[175-time-series-forecasting|Time Series Forecast]]
+- [[176-anomaly-detection|Detection of anomalies]]
+- [[177-model-explainability|Explainability & diagnostics of]]
+- [[178-causal-inference-decisions|Causal Inference & Product Decisions]]
 
 <!-- catalog:end -->
 
-## La stack en une chaîne
+## The stack in one chain
 ```text
 App / Agent
     ↓
-Plateforme d'agents (runtime, sandbox, gateway d'outils MCP, identité, politiques)
+Agent platform (runtime, sandbox, MCP tool gateway, identity, policies)
     ↓
 Gateway LLM (Ingress → LiteLLM : auth, routing, budgets)
     ↓
-Serveur d'inférence (vLLM/SGLang/TensorRT-LLM, KV cache, batching, quantization)
+Inference server (vLLM/SGLang/TensorRT-LLM, KV cache, batching, quantization)
     ↓
-Conteneur + GPU (Docker/K8s/Apptainer)
+Container + GPU (Docker/K8s/Apptainer)
 ```
-Transverses : **observabilité** (traces, métriques, evals), **sécurité** (injection, moindre privilège, sandbox, DevSecOps), **coûts** (FinOps) et **données & conformité** (PII, RGPD, AI Act).
+Transverses: **observability** (traces, metrics, evals), **security** (injection, lesser privilege, sandbox, DevSecOps), **costs** (FinOps) and **data & compliance** (PII, GDPR, AI Act).

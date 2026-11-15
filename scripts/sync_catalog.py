@@ -1,22 +1,23 @@
 #!/usr/bin/env python3
-"""Génère les sommaires du README et du MOC depuis les fiches et sections.json.
+"""Generates the README and MOC summaries from the sheets and sections.json.
 
-python3 scripts/sync_catalog.py          # met à jour les deux blocs
-python3 scripts/sync_catalog.py --check  # échoue si une mise à jour est nécessaire
+python3 scripts/sync_catalog.py # updates both blocks
+python3 scripts/sync_catalog.py --check # fails if an update is required
 """
+
 import argparse
 import json
 from pathlib import Path
 import re
 
-from lint_flashcards import MOC, ROOT, fiche_title
+from lint_flashcards import MOC, ROOT, topic_title
 
 BEGIN = "<!-- catalog:begin -->"
 END = "<!-- catalog:end -->"
 
 
-def fiche_order(path: Path) -> tuple[int, str]:
-    """Compatibilité avec 31-… et extension 30-010-… sans renommer l'existant."""
+def topic_order(path: Path) -> tuple[int, str]:
+    """Compatibility with 31-... and extension 30-010-... without renaming the existing one."""
     section = int(path.parent.name.split("-", 1)[0])
     parts = path.stem.split("-")
     if len(parts) > 2 and int(parts[0]) == section and parts[1].isdigit():
@@ -27,22 +28,22 @@ def fiche_order(path: Path) -> tuple[int, str]:
 
 
 def render(root: Path, moc: bool = False) -> str:
-    """Sommaire des sections : wikiliens pour le MOC, liens Markdown et résumés pour le README."""
+    """Summary of sections: wikilinks for the MOC, Markdown links and abstracts for the README."""
     sections = json.loads((root / "scripts/sections.json").read_text(encoding="utf-8"))
     unknown = {p.name for p in root.glob("[0-9]*") if p.is_dir()} - sections.keys()
     if unknown:
-        raise ValueError(f"sections absentes de scripts/sections.json : {sorted(unknown)}")
+        raise ValueError(f"missing sections of scripts/sections.json: {sorted(unknown)}")
     output = []
     for directory, info in sorted(sections.items(), key=lambda item: int(item[0].split("-")[0])):
-        files = sorted((root / directory).glob("*.md"), key=fiche_order)
+        files = sorted((root / directory).glob("*.md"), key=topic_order)
         if not files:
-            raise ValueError(f"section vide ou inexistante : {directory}")
+            raise ValueError(f"Empty or non-existent section: {directory}")
         output += [f"{'##' if moc else '###'} {directory.split('-')[0]} — {info['title']}", ""]
         if not moc and info.get("intro"):
             output += [info["intro"], ""]
         for path in files:
             text = path.read_text(encoding="utf-8")
-            title = fiche_title(text)
+            title = topic_title(text)
             match = re.search(r"^<!-- summary: (.+) -->$", text, re.M)
             if not match:
                 raise ValueError(f"{path.name} : commentaire summary manquant")
@@ -55,16 +56,16 @@ def render(root: Path, moc: bool = False) -> str:
 
 
 def replace_block(text: str, body: str) -> str:
-    """Remplace le contenu entre les délimiteurs catalog."""
+    """Replaces content between catalog delimiters."""
     if text.count(BEGIN) != 1 or text.count(END) != 1 or text.index(BEGIN) > text.index(END):
-        raise ValueError("délimiteurs catalog absents, dupliqués ou inversés")
+        raise ValueError("catalog delimiters absent, duplicated or reversed")
     before, rest = text.split(BEGIN)
     _, after = rest.split(END)
     return before + BEGIN + "\n\n" + body + "\n\n" + END + after
 
 
 def sync(root: Path = ROOT, check: bool = False) -> bool:
-    """Met à jour les deux sommaires ; avec check, renvoie False s'ils sont à régénérer, sans écrire."""
+    """Updates the two summaries; with check, returns False if they are to be regenerated, without writing."""
     updates: list[tuple[Path, str]] = []
     for name, moc in (("README.md", False), (f"{MOC}.md", True)):
         path = root / name
@@ -75,7 +76,7 @@ def sync(root: Path = ROOT, check: bool = False) -> bool:
     for path, updated in updates:
         if not check:
             path.write_text(updated, encoding="utf-8", newline="\n")
-        print(f"{path.name} : {'à régénérer' if check else 'mis à jour'}")
+        print(f"{path.name} : {('needs regeneration' if check else 'updated')}")
     return not updates if check else True
 
 
@@ -86,7 +87,7 @@ def main() -> int:
     try:
         return 0 if sync(check=args.check) else 1
     except (ValueError, OSError) as exc:
-        parser.exit(1, f"ERREUR : {exc}\n")
+        parser.exit(1, f"ERROR: {exc}\n")
 
 
 if __name__ == "__main__":

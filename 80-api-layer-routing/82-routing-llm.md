@@ -1,175 +1,175 @@
 # Routing LLM — Flashcards
 Tags: #flashcards #ai-engineering #routing #api-layer #llm
-<!-- summary: routage statique, par règles ou sémantique, RouteLLM, cascade, routage selon la charge, cache sémantique, calcul du coût moyen d'une cascade, biais du routeur, décision contrefactuelle. -->
+<!-- summary: static, rule-based or semantic routing, RouteLLM, cascade, load-based routing, semantic cache, calculation of the average cost of a cascade, router bias, counterfactual decision. -->
 
 
-Pourquoi router les requêtes entre plusieurs modèles ? <!--anki:6a5b33407a5a3140415e-->
+Why route queries between multiple models? <!--anki:6a5b33407a5a3140415e-->
 ?
-Parce qu'**aucun modèle n'est optimal partout** : la majorité des requêtes sont simples et peuvent aller vers un **modèle petit, rapide et bon marché**, en réservant le **modèle puissant** aux cas difficiles. On optimise le triangle **coût / qualité / latence**.
+Because **no model is optimal everywhere**: the majority of queries are simple and can go towards a **small, fast and cheap model**, reserving the **powerful model** for difficult cases. We optimize the triangle **cost / quality / latency**.
 
-Ordre de grandeur : si 70 % des requêtes vont vers un modèle dix fois moins cher, le coût moyen devient 0,7 × 0,1 + 0,3 × 1 = 0,37 du coût initial, soit −63 %, à condition que la qualité tienne sur ces 70 %. Le routeur coûte aussi : quelques millisecondes pour des règles ou un embedding, un appel complet s'il utilise un LLM.
+Order of magnitude: if 70% requests go to a model ten times cheaper, the average cost becomes 0.7 × 0.1 + 0.3 × 1 = 0.37 the initial cost, either −63%, As long as the quality is on these 70%. The router also costs: a few milliseconds for rules or a embedding, a full call if it uses a LLM.
 
 ---
 
-Qu'est-ce que le routage statique ? <!--anki:44773775513569557677-->
+What is Static Routing? <!--anki:44773775513569557677-->
 ?
-Un **modèle fixé par cas d'usage** (classification → petit modèle, rédaction juridique → gros modèle). Simple et prévisible, c'est le **point de départ** recommandé.
+A **model set by use case** (→ classification small model, legal writing → large model). Simple and predictable, this is the recommended **starting point**.
 
-Le choix découle d'evals sur le cas d'usage, pas uniquement de l'étiquette « simple » ou « complexe ». Un petit modèle peut être excellent pour un format spécialisé, et un grand modèle peut encore échouer. Cette baseline stable sert à mesurer si un routage plus dynamique apporte assez de gain pour justifier sa complexité.
+The choice comes from reviews of the use case, not just the "simple" or "complex" label. A small model can be excellent for a specialized format, and a large model can still fail. This stable baseline is used to measure whether a more dynamic routing brings enough gain to justify its complexity.
 
 ---
 
-Qu'est-ce que le routage par règles ? <!--anki:5162254473514a51595d-->
+What is rule-based routing? <!--anki:5162254473514a51595d-->
 ?
-Des **heuristiques** sur la requête : longueur du prompt, langue, présence de code, client ou tenant, niveau d'abonnement. Déterministe et facile à auditer.
+**heuristics** on the request: prompt length, language, code presence, client or tenant, subscription level. Deterministic and easy to audit.
 
-Exemple : envoyer une entrée trop longue vers un modèle disposant d'un contexte suffisant. Définir les priorités si plusieurs règles s'appliquent et une route par défaut explicite. Les exigences de confidentialité ou de région sont des contraintes dures ; elles ne doivent pas être contournées par une règle de coût.
+Example: Send too long an entry to a model with sufficient context. Set priorities if multiple rules apply and an explicit default route. Confidentiality or region requirements are hard constraints; they should not be bypassed by a cost rule.
 
-Tester les frontières : une requête juste au-dessus du seuil doit garder assez de place pour la sortie et les outils. Journaliser la règle gagnante permet d'expliquer une route inattendue.
+Test Boundaries: A query just above the threshold should keep enough room for output and tools. Journaling the winning rule helps explain an unexpected route.
 
 ---
 
-Qu'est-ce que le routage sémantique ? <!--anki:416e31782d254b435577-->
+What is Semantic Routing? <!--anki:416e31782d254b435577-->
 ?
-On compare l'**embedding de la requête** à des exemples de référence pour chaque route (ex. « support », « code », « hors sujet ») et on choisit la route la plus proche. Rapide et sans appel LLM.
+The **embedding of the query** is compared to reference examples for each route (e.g. "support", "code", "off topic") and the closest route is chosen. Fast and no-call LLM.
 
-En pratique : quelques dizaines de phrases d'exemple par route, et un **seuil de similarité** sous lequel la requête part vers une route par défaut. Le seuil se règle sur un jeu étiqueté : trop haut, tout tombe dans la route par défaut ; trop bas, des requêtes hors sujet sont captées. Limite : la proximité capte le sujet, pas la difficulté.
+In practice: a few dozen example sentences per route, and a **similarity threshold** under which the request goes to a default route. The threshold is set on a game labeled: too high, everything falls into the default route; too low, off-topic requests are captured. Limit: proximity captures the subject, not the difficulty.
 
 ---
 
-Qu'est-ce qu'un routeur appris (ex. RouteLLM) ? <!--anki:733a60734a2a716f745b-->
+What is a learned router (e.g. RouteLLM)? <!--anki:733a60734a2a716f745b-->
 ?
-Un modèle apprend, à partir de comparaisons ou résultats, **quand un backend plus coûteux apporte un gain utile**. Un seuil règle le compromis coût/qualité pour les modèles et le trafic évalués.
+A model learns, from comparisons or results, **when a more expensive backend brings a useful gain**. A threshold sets the cost/quality trade-off for the models and the traffic evaluated.
 
-Exemple : une phrase courte contenant une exception juridique peut être difficile ; la longueur seule ne suffit pas à router. Évaluer les erreurs d'orientation par type de tâche et gravité, avec possibilité d'escalade.
+Example: A short sentence containing a legal exception can be difficult; length alone is not enough to route. Evaluate orientation errors by task type and severity, with climbing capability.
 
-Comparer à une règle statique en incluant coût et latence du routeur. Après changement des modèles candidats, revérifier les labels, la calibration et le seuil : un routeur entraîné pour une paire ne prédit pas automatiquement le comportement d'une autre.
+Compare to a static rule by including router cost and latency. After changing candidate models, recheck labels, calibration and threshold: a router trained for one pair does not automatically predict the behavior of another.
 
 ---
 
-Qu'est-ce qu'une cascade de modèles ? <!--anki:704a444b343c593f2c61-->
+What is a model cascade? <!--anki:704a444b343c593f2c61-->
 ?
-Envoyer d'abord la requête au **modèle bon marché**, **vérifier** la réponse (validation de format, score de confiance, juge) et **escalader** vers un modèle plus puissant seulement en cas d'échec.
+First send the request to the **cheap model**, **check** the response (format validation, trust score, judge) and **climb** to a more powerful model only in case of failure.
 ```text
-80 % des requêtes : petit modèle           → 1 × le coût
-20 % escaladées   : petit + grand modèle   → 1 × + 12 × = 13 ×
+80% queries: small model → 1 × the cost
+20% scaled: small + large model → 1 × + 12 × = 13 ×
 
-coût moyen ≈ 0,8 × 1 + 0,2 × 13 ≈ 3,4   contre 12 en tout-grand-modèle
+Average cost ≈ 0.8 × 1 + 0.2 × 13 ≈ 3.4 vs 12 in all-size
 ```
-Le calcul ne tient que si la **vérification est fiable et bon marché** : sinon on paie deux fois pour un résultat incertain.
+The calculation only holds if the **verification is reliable and cheap**: otherwise we pay twice for an uncertain result.
 
-Ajouter son coût à chaque requête, puis mesurer faux accords et faux rejets. Un faux accord laisse passer une réponse erronée ; un faux rejet réduit l'économie. Les cas escaladés subissent aussi les deux latences séquentielles.
+Add its cost to each request, then measure false chords and false rejections. A false chord lets pass an erroneous response; a false rejection reduces the economy. The scaled cases also undergo the two sequential latencies.
 
 ---
 
-À ne pas confondre : routing et fallback ? <!--anki:66313d487a55554a5a34-->
+Do not confuse: routing and fallback? <!--anki:66313d487a55554a5a34-->
 ?
-Le **routing** choisit le modèle **avant** l'appel (optimisation) ; le **fallback** bascule vers un autre modèle **après une erreur** (panne, rate limit, timeout) — c'est de la **fiabilité**, gérée par l'[[81-litellm-api-layer|API layer]].
+The **Routing** choose the model **before** the call (optimization); on the **Fallback** Switching to another model **After an error** (blows, rate limit, timeout) — it's the **Reliability**, Run by the[[81-litellm-api-layer|API layer]].
 
-Un fallback doit être admissible pour le même contrat : accès aux données, longueur de contexte, outils et format de sortie. Une réponse de mauvaise qualité peut déclencher une cascade, ce qui est un autre mécanisme. Tracer la raison du choix ou de la bascule permet de distinguer problème de qualité et incident technique.
+A fallback must be admissible for the same contract: access to data, context length, tools and output format. A poor quality response can trigger a cascade, which is another mechanism. Trace the reason for the choice or the toggle makes it possible to distinguish quality problem and technical incident.
 
 ---
 
-Qu'est-ce que le routage selon la charge ? <!--anki:47573371746971216e2e-->
+What is load-based routing? <!--anki:47573371746971216e2e-->
 ?
-Répartir entre **réplicas d'un même modèle** selon leur état : file d'attente, latence, occupation du [[61-kv-cache-attention|KV cache]], voire **affinité de préfixe** (envoyer la requête là où son préfixe est déjà en cache).
+Split between **replicas of the same model** according to their state: queue, latency, [[61-kv-cache-attention|KV cache]] occupancy, or even **prefix affinity** (send the request where its prefix is already cached).
 
-Une affinité de cache économise du prefill mais peut surcharger un réplica populaire ; la décision doit équilibrer réutilisation et attente en file. Utiliser des signaux récents et limiter les oscillations. Tester avec des séquences de prompts réalistes, car des requêtes aléatoires sans préfixes partagés ne révèlent pas ce compromis.
+A cache affinity saves prefill but can overload a popular replica; the decision must balance reuse and queue wait. Use recent signals and limit oscillations. Test with realistic prompt sequences, because random queries without shared prefixes do not reveal this compromise.
 
 ---
 
-Sur quoi fonder une décision de routage ? <!--anki:673d62522f6f49603563-->
+On what to base a routing decision? <!--anki:673d62522f6f49603563-->
 ?
-Sur des **[[92-chainforge-evals-prompts|evals]] par segment de requêtes** (qualité de chaque modèle par type de tâche) et sur les **données de production** ([[91-langfuse-observabilite|Langfuse]] : coût, latence, feedback). Sans mesure, le routeur économise en dégradant la qualité sans le savoir.
+On **[[92-chainforge-evals-prompts|evals]] per request segment** (quality of each model by type of task) and on **production data** ([[91-langfuse-observability|Langfuse]]: cost, latency, feedback). Without measurement, the router saves by degrading quality without knowing it.
 
-Exemple : l'eval montre que le petit modèle égale le grand sur les questions de statut, 98 % contre 99 %, mais chute sur les litiges, 61 % contre 88 %. On route par catégorie, puis on vérifie en production que la répartition réelle ressemble à celle de l'eval : un glissement vers les litiges dégrade la qualité sans aucune alerte.
+Example: the eval shows that the small model equals the big one on status issues, 98% against 99%, but falls on litigation, 61% against 88%. We drive by category, then we check in production that the actual distribution resembles that of the eval: a slide towards litigation degrades the quality without any alert.
 
 ---
 
-Qu'est-ce qu'un cache sémantique ? <!--anki:702925434b335a303e56-->
+What is a semantic cache? <!--anki:702925434b335a303e56-->
 ?
-Renvoyer une **réponse déjà générée** pour une question **sémantiquement proche** d'une question passée. Gros gain de coût et de latence, mais risque de **mauvaise réponse** si le seuil de similarité est trop permissif.
+Return an already generated **answer** for a question **semantically close** to a past question. Big gain in cost and latency, but risk of **bad answer** if the similarity threshold is too permissive.
 
-Deux questions proches peuvent différer par une négation, une date ou un utilisateur. Inclure tenant, permissions et versions des sources dans les conditions d'accès au cache, puis prévoir invalidation et contrôle des hits. Réserver cette technique aux tâches où une réponse réutilisée est acceptable et mesurable, pas aux données changeant à chaque requête.
+Two related questions may differ by negation, date, or user. Include holding, permissions, and source versions in cache access conditions, and then provide invalidation and control of hits. Reserve this technique for tasks where a re-used response is acceptable and measurable, not for data changing with each request.
 
 ---
 
-À ne pas confondre : les quatre décisions autour du modèle ? <!--anki:7265624f26605e34686c-->
+Do not confuse: the four decisions around the model? <!--anki:7265624f26605e34686c-->
 ?
 ```text
-Routage   → AVANT l'appel, choisir le bon modèle          (optimisation)
-Cascade   → APRÈS un échec de qualité, escalader          (optimisation)
-Fallback  → APRÈS une erreur technique, basculer          (fiabilité)
-Retry     → APRÈS une erreur transitoire, réessayer       (fiabilité)
+Routing → BEFORE the call, choose the right model (optimization)
+Cascade → AFTER a quality failure, climb (optimization)
+Fallback → AFTER technical error, toggle (reliability)
+Retry → AFTER transient error, try again (reliability)
 ```
-Les deux premiers visent le **coût et la qualité**, les deux derniers la **disponibilité**. Ils vivent souvent dans le même composant, la [[81-litellm-api-layer|gateway]], mais répondent à des questions différentes ([[142-fiabilite-resilience-llm|fiabilité]]).
+The first two are aimed at **cost and quality**, The last two la **Availability**. They often live in the same component, the [[81-litellm-api-layer|gateway]], but answer different questions ([[142-llm-reliability-resilience|Reliability]]).
 
-Par exemple, router une extraction vers un petit modèle, escalader si le contrôle qualité échoue, basculer si le fournisseur est indisponible et réessayer brièvement sur une erreur transitoire. Partager un budget global entre ces mécanismes : leur composition peut sinon multiplier les appels et dépasser le délai utilisateur.
+For example, route an extraction to a small model, scale if quality control fails, switch if the provider is unavailable, and try again briefly on a transient error. Share an overall budget between these mechanisms: their composition can otherwise multiply calls and exceed the user delay.
 
 ---
 
-Calcul : une cascade utilise A à 0,002 € puis B à 0,020 € pour 25 % des demandes. Quel coût moyen avant autres reprises ? <!--anki:3866303963663363386636343466323261316261666166396462353135303736-->
+Calculation: a waterfall uses A to 0.002 € then B to 0.020 € for 25% requests. What average cost before other times? <!--anki:3866303963663363386636343466323261316261666166396462353135303736-->
 ?
-A est appelé pour toutes les demandes et B pour un quart : `0,002 + 0,25 × 0,020 = 0,007 €`, soit **7 € pour 1 000 demandes**.
+A is called for all requests and B for a quarter: `0,002 + 0,25 × 0,020 = 0,007 €`, or **7 € for 1,000 requests**.
 
-Le calcul suppose coûts constants et une seule escalade. Ajouter le coût du routeur, des vérifications et des retries s'ils existent. Mesurer aussi la qualité des demandes qui restent sur A : une cascade bon marché peut sous-détecter les cas difficiles. Le taux d'escalade seul ne démontre ni qualité préservée ni économie nette.
+The calculation assumes constant costs and a single escalation. Add the cost of the router, checks and retrievals if they exist. Also measure the quality of the requests that remain on A: a cheap cascade can under-detect difficult cases. The escalation rate alone shows neither preserved quality nor net economy.
 
 ---
 
-Pourquoi évaluer seulement les requêtes envoyées au grand modèle biaise-t-il la comparaison avec le petit ? <!--anki:3263313832643862306231643463323239323936326437353831666638656334-->
+Why evaluate only queries sent to the large model biases the comparison with the small one? <!--anki:3263313832643862306231643463323239323936326437353831666638656334-->
 ?
-Le routeur peut lui réserver **les cas les plus difficiles**. Une qualité moyenne inférieure du grand modèle sur ce sous-ensemble ne signifie pas qu'il est moins capable.
+The router can reserve **the most difficult cases**. A lower average quality of the large model on this subset does not mean that it is less capable.
 
-Comparer les deux sur un échantillon commun représentatif ou organiser une exploration contrôlée, avec coûts et règles de données respectés. Conserver la décision de routage et ses critères. Les résultats observés après sélection ne suffisent pas à estimer ce qu'aurait fait l'autre modèle.
+Compare the two on a common representative sample or organize a controlled exploration, with costs and data rules respected. Keep the routing decision and its criteria. The results observed after selection are not enough to estimate what the other model would have done.
 
 ---
 
-Quand une cascade doit-elle s'abstenir au lieu d'escalader vers un modèle plus puissant ? <!--anki:3762313434376663653134363435636561306137643237353333663638333038-->
+When should a waterfall abstain instead of climbing to a more powerful model? <!--anki:3762313434376663653134363435636561306137643237353333663638333038-->
 ?
-Lorsque le problème vient **d'une preuve absente, d'une permission refusée ou d'une ambiguïté utilisateur**, et non d'un manque de capacité du premier modèle.
+When the problem comes from **absent evidence, denied permission, or user ambiguity**, not a lack of capacity of the first model.
 
-L'escalade peut augmenter le coût sans résoudre la cause. Classer les motifs d'échec et prévoir recherche complémentaire, clarification ou revue humaine. Mesurer le taux de résolution par motif : une cascade utile améliore le résultat final, pas seulement le nombre de réponses produites.
+Climbing can increase the cost without solving the cause. Classify the reasons for failure and provide additional research, clarification or human review. Measure the resolution rate by reason: a useful cascade improves the end result, not just the number of responses produced.
 
 ---
 
-## Mises en situation
+## Scenarios
 
-Mise en situation : ta direction demande de diviser par deux le coût de l'assistant, sans dégrader la qualité perçue. Comment procèdes-tu ? <!--anki:702a4c60414f3b6c6136-->
+Scenario: your management asks to halve the cost of the assistant, without degrading the perceived quality. How do you proceed? <!--anki:702a4c60414f3b6c6136-->
 ?
-1. **Segmenter le trafic** : quelles requêtes sont simples, lesquelles sont difficiles, dans quelles proportions
-2. **Mesurer par segment** : qualité du petit modèle contre le gros, sur chaque segment ([[94-evals-methodologie|evals]])
-3. **Commencer par du routage statique ou par règles**, prévisible et auditable, avant tout routeur appris
-4. **Cascade** sur les segments incertains : petit modèle, vérification, escalade si échec
-5. **Vérifier ensuite** : coût par requête, qualité par segment, taux d'escalade, feedback utilisateur
+1. **Segment traffic**: which queries are simple, which are difficult, in what proportions
+2. **Measure by segment**: quality of the small model against the big one, on each segment ([[94-evals-methodology|evals]])
+3. **Start with static routing or rules**, predictable and auditable, before any router learned
+4. **Cascade** on uncertain segments: small model, check, escalation if failure
+5. **Check next**: cost per request, quality per segment, escalation rate, user feedback
 
-**Piège** : router sur la seule longueur du prompt, qui ne dit rien de la difficulté réelle.
+**Trap** : route on the only length of the prompt, who says nothing about the real difficulty.
 
 ---
 
-Mise en situation : un collègue propose un cache sémantique pour les questions « proches » des précédentes, sur un assistant bancaire. Quelles réserves poses-tu ? <!--anki:457145645a3a603e465f-->
+Scenario: a colleague offers a semantic cache for questions “close” to the previous ones, about a banking assistant. What reservations do you pose? <!--anki:457145645a3a603e465f-->
 ?
-1. **Le risque principal** : deux questions proches en apparence peuvent appeler des réponses opposées (« puis-je clôturer mon compte ? » selon le type de compte)
-2. **Le seuil de similarité** devient un paramètre critique, à calibrer sur des cas réels
-3. **Cloisonner** : jamais de cache partagé entre utilisateurs quand la réponse dépend de leurs données
-4. **Limiter le périmètre** : réserver le cache aux questions **génériques**, factuelles et sans personnalisation
-5. **Mesurer** : taux de hit, mais surtout taux de réponses inadaptées servies depuis le cache ([[123-caching-agressif|caching]])
+1. **The main risk**: Two seemingly close questions can be answered oppositely (“can I close my account?” depending on the type of account)
+2. **The similarity threshold** becomes a critical parameter, to be calibrated on real cases
+3. **Closure**: never cache shared between users when the answer depends on their data
+4. **Limit the perimeter**: reserve the cache to questions **generic**, factual and without customization
+5. **Measure**: hit rate, but especially inappropriate response rate served from cache ([[123-aggressive-caching|caching]])
 
-**Piège** : mesurer le succès du cache à son taux de hit, sans contrôler la justesse des réponses servies.
+**Trap**: Measure the success of the cache at its hit rate, without checking the correctness of the answers served.
 
 ---
 
-## Connexions
-- [[81-litellm-api-layer|LiteLLM]] — où le routage est implémenté
-- [[91-langfuse-observabilite|Langfuse]] — décider grâce aux données observées
-- [[92-chainforge-evals-prompts|Evals]] — mesurer la qualité par modèle
-- [[64-metriques-slo-inference|Métriques & SLO]] — la contrainte de latence
-- [[121-couts-inference|Coûts d'inférence]] — le levier de coût n°1
-- [[66-prefix-caching-radix-attention|Prefix caching & RadixAttention]] — routage par affinité de préfixe
-- [[123-caching-agressif|Caching agressif]] — tous les niveaux de cache
-- [[146-choix-modeles|Choix de modèle]] — critères et benchmarks
-- [[138-modeles-raisonnement|Modèles de raisonnement]] — router par difficulté
-- [[122-finops-llm|FinOps LLM]] — attribuer et piloter les dépenses IA
-- [[141-system-design-llm|System design LLM]] — la méthode de conception
-- [[48-patterns-workflows-agentiques|Patterns de workflows]] — chaining, routing, evaluator-optimizer
-- [[53-donnees-synthetiques-distillation|Données synthétiques & distillation]] — générer des données et transférer vers un petit modèle
+## Connections
+- [[81-litellm-api-layer|LiteLLM]] — where routing is implemented
+- [[91-langfuse-observability|Langfuse]] — decide based on observed data
+- [[92-chainforge-evals-prompts|Evals]] — measure quality by model
+- [[64-inference-metrics-slo|Metrics & SLO]] — latency constraint
+- [[121-inference-costs|Inference costs]] — cost lever n°1
+- [[66-prefix-caching-radix-attention|Prefix caching & RadixAttention]] — Prefix affinity routing
+- [[123-aggressive-caching|Caching agressif]] — all cache levels
+- [[146-model-selection|Choice of model]] — criteria and benchmarks
+- [[138-reasoning-models|Models of Reasoning]] — router by difficulty
+- [[122-finops-llm|FinOps LLM]] — allocate and drive AI spend
+- [[141-system-design-llm|System Design LLM]] — design method
+- [[48-agentic-workflow-patterns|Patterns of workflows]] — chaining, routing, evaluator-optimizer
+- [[53-synthetic-data-distillation|Synthetic Data & Distillation]] — generate data and transfer to a small model
 - [[00-moc-ai-engineering|MOC AI Engineering]]

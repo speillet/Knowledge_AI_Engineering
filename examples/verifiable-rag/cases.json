@@ -1,0 +1,158 @@
+[
+  {
+    "id": "current",
+    "principal": "alice",
+    "as_of": "2026-10-13",
+    "question": "Acme: what is the refund period and procedure?",
+    "fields": [
+      "refund_days",
+      "refund_method"
+    ],
+    "relevant_chunks": [
+      "c-refund-v2"
+    ],
+    "expected_status": "complete",
+    "expected": {
+      "refund_days": "30 days",
+      "refund_method": "customer form"
+    }
+  },
+  {
+    "id": "historical",
+    "principal": "alice",
+    "as_of": "2026-09-15",
+    "question": "Acme: what is the refund period and procedure on this date?",
+    "fields": [
+      "refund_days",
+      "refund_method"
+    ],
+    "relevant_chunks": [
+      "a-refund-v1"
+    ],
+    "expected_status": "complete",
+    "expected": {
+      "refund_days": "14 days",
+      "refund_method": "email to support"
+    }
+  },
+  {
+    "id": "date-boundary",
+    "principal": "alice",
+    "as_of": "2026-11-01",
+    "question": "Acme: what is the refund period and procedure on this date?",
+    "fields": [
+      "refund_days",
+      "refund_method"
+    ],
+    "relevant_chunks": [
+      "d-refund-v3"
+    ],
+    "expected_status": "complete",
+    "expected": {
+      "refund_days": "45 days",
+      "refund_method": "customer form"
+    }
+  },
+  {
+    "id": "authorized-finance",
+    "principal": "bruno",
+    "as_of": "2026-10-13",
+    "question": "Acme: what is the confidential finance discount?",
+    "fields": [
+      "private_discount"
+    ],
+    "relevant_chunks": [
+      "e-discount-finance"
+    ],
+    "expected_status": "complete",
+    "expected": {
+      "private_discount": "45%"
+    }
+  },
+  {
+    "id": "unauthorized-finance",
+    "principal": "alice",
+    "as_of": "2026-10-13",
+    "question": "Acme: what is the confidential finance discount?",
+    "fields": [
+      "private_discount"
+    ],
+    "relevant_chunks": [],
+    "expected_status": "abstain",
+    "expected": {}
+  },
+  {
+    "id": "other-tenant",
+    "principal": "camille",
+    "as_of": "2026-10-13",
+    "question": "What is the refund period for my company?",
+    "fields": [
+      "refund_days"
+    ],
+    "relevant_chunks": [
+      "f-orion-refund"
+    ],
+    "expected_status": "complete",
+    "expected": {
+      "refund_days": "90 days"
+    }
+  },
+  {
+    "id": "conflict",
+    "principal": "alice",
+    "as_of": "2026-10-13",
+    "question": "Acme: what is the support response time for an incident?",
+    "fields": [
+      "support_delay"
+    ],
+    "relevant_chunks": [
+      "g-delay-support-a",
+      "h-delay-support-b"
+    ],
+    "expected_status": "abstain",
+    "expected": {}
+  },
+  {
+    "id": "no-evidence",
+    "principal": "alice",
+    "as_of": "2026-10-13",
+    "question": "Acme: what breakage warranty is offered?",
+    "fields": [
+      "breakage_warranty"
+    ],
+    "relevant_chunks": [],
+    "expected_status": "abstain",
+    "expected": {}
+  },
+  {
+    "id": "partial",
+    "principal": "alice",
+    "as_of": "2026-10-13",
+    "question": "Acme: refund period, procedure and cancellation period?",
+    "fields": [
+      "refund_days",
+      "refund_method",
+      "cancellation_hours"
+    ],
+    "relevant_chunks": [
+      "c-refund-v2"
+    ],
+    "expected_status": "partial",
+    "expected": {
+      "refund_days": "30 days",
+      "refund_method": "customer form"
+    }
+  },
+  {
+    "id": "withdrawn-source",
+    "principal": "alice",
+    "as_of": "2026-10-13",
+    "question": "Acme: what is the rate for the special promotion?",
+    "fields": [
+      "promotion_rate"
+    ],
+    "relevant_chunks": [],
+    "expected_status": "abstain",
+    "expected": {}
+  }
+]

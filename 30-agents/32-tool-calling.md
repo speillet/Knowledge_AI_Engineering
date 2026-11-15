@@ -1,222 +1,222 @@
 # Tool calling — Flashcards
 Tags: #flashcards #ai-engineering #agents #tool-calling #llm
-<!-- summary: définition des outils, appels parallèles contrôlés, tool calling ou MCP, validation des arguments, erreurs et timeouts, statuts d’opération, pagination et coût des schémas, séparation proposition et exécution, résultats volumineux, préconditions d'écriture. -->
+<!-- summary: tool definition, controlled parallel calls, tool calling or MCP, validation of arguments, errors and timeouts, operation statuses, pagination and cost of schemas, separation proposal and execution, voluminous results, writing preconditions. -->
 
 
-Qu'est-ce que le tool calling (function calling) ? <!--anki:4c434c62492628352f4a-->
+What is tool calling (function calling)? <!--anki:4c434c62492628352f4a-->
 ?
-Le LLM **propose un appel structuré** : nom d'outil et arguments. L'application valide puis exécute l'opération autorisée et renvoie son résultat au modèle, associé à l'identifiant d'appel.
+The LLM **proposes a structured call**: tool name and arguments. The application validates and then executes the authorized operation and returns its result to the model, associated with the call ID.
 
-Exemple : `statut_commande(id="C42")` demande une lecture, pas une preuve que C42 appartient à l'utilisateur. Le backend contrôle cette appartenance et distingue commande absente, accès refusé et indisponibilité technique. Le modèle peut ensuite répondre ou demander un autre outil.
+Example: `order_status(id="C42")` requests a read, not a proof that C42 belongs to the user. The backend controls this membership and distinguishes command absent, access denied and technical unavailability. The model can then respond or request another tool.
 
-Le schéma garantit au mieux la **forme** des arguments ; ni leur véracité, ni l'autorisation, ni la réussite de l'exécution ne découlent du JSON. Un appel proposé n'est pas une action accomplie.
+The schema best guarantees the **form** of the arguments; neither their veracity, nor the authorization, nor the success of the execution derive from the JSON. A proposed call is not an action accomplished.
 
 ---
 
-Le modèle exécute-t-il lui-même les outils ? <!--anki:672f7363513542412f2f-->
+Does the model run the tools itself? <!--anki:672f7363513542412f2f-->
 ?
-**Non.** Le modèle ne fait que **générer l'intention d'appel** (nom et arguments) ; c'est l'application, le harnais, qui exécute et renvoie le résultat.
+**No.** The model only **generates the call intent** (name and arguments); it is the application, the harness, that executes and returns the result.
 
-Conséquence essentielle : c'est **dans l'application** qu'on contrôle ce qui s'exécute vraiment. Validation des arguments, permissions, approbation humaine et journalisation se placent entre l'intention du modèle et l'exécution ([[34-harness-plugins|harness]]).
+Essential consequence: it is **in the application** that we control what is really running. Validation of arguments, permissions, human approval and logging are placed between the intent of the model and the execution ([[34-harness-plugins|harness]]).
 
-Par exemple, `rembourser(commande="C7", montant=50)` peut être bien formé mais dépasser le solde remboursable. L'application doit refuser avant l'effet métier, puis transmettre ce refus au modèle sans le transformer en succès.
+For example, `refund(order="C7", amount=50)` can be well-formed but exceed the refundable balance. The application must refuse before the business effect, and then transmit this refusal to the model without turning it into success.
 
 ---
 
-Comment déclare-t-on un outil au modèle ? <!--anki:745d3a6878654160442b-->
+How do I declare a tool to the model? <!--anki:745d3a6878654160442b-->
 ?
-Par une définition comprenant **nom, description et schéma des paramètres**, selon le format du fournisseur. Exemple au format Anthropic :
+By a definition including **name, description and schema of parameters**, depending on the format of the provider.
 ```json
 {
-  "name": "statut_commande",
-  "description": "Donne le statut d'une commande du client connecté.",
+  "name": "order_status",
+  "description": "Return the order status for the authenticated customer.",
   "input_schema": {
     "type": "object",
     "properties": {
-      "commande_id": { "type": "string", "pattern": "^CMD-[0-9]{6}$" }
+      "order_id": { "type": "string", "pattern": "^CMD-[0-9]{6}$" }
     },
-    "required": ["commande_id"]
+    "required": ["order_id"]
   }
 }
 ```
-Les contraintes supportées (types, motifs, énumérations) décrivent les arguments attendus ; leur application dépend du mode utilisé ([[63-guided-generation|guided generation]]). Ces définitions occupent du contexte à chaque appel : 40 outils, c'est des milliers de tokens à chaque tour ([[123-caching-agressif|caching]]).
+The supported constraints (types, patterns, enumerations) describe the expected arguments; their application depends on the mode used ([[63-guided-generation|guided generation]]). These definitions occupy context with each call: 40 tools, that is thousands of tokens each turn ([[123-aggressive-caching|caching]]).
 
-Le schéma décrit les **arguments acceptables**, pas les droits du demandeur. Même avec un identifiant bien formé, l'application doit vérifier que la commande appartient au client connecté. L'identité vient de la session authentifiée, jamais d'un argument libre fourni par le modèle. Tester aussi valeurs manquantes, champs inattendus et erreurs de validation.
+The schema describes the **acceptable arguments**, not the rights of the requester. Even with a well-formed identifier, the application must verify that the command belongs to the connected client. The identity comes from the authenticated session, never from a free argument provided by the model. Also test missing values, unexpected fields and validation errors.
 
 ---
 
-À quoi ressemble la boucle de tool calling ? <!--anki:474750306946343634-->
+What does the tool calling loop look like? <!--anki:474750306946343634-->
 ?
 ```text
-prompt → le modèle émet tool_call(name, args)
-→ l'app exécute → résultat renvoyé au modèle
-→ nouveau tool_call ou réponse finale
+prompt → model emits tool_call(name, args)
+→ app runs → result returned to model
+→ new tool_call or final answer
 ```
 
-À chaque tour, l'application **valide le nom et les arguments**, contrôle les permissions, exécute avec un timeout et renvoie un résultat ou une erreur structurée. Le modèle peut alors corriger sa demande ou répondre. Conserver les identifiants d'appels et limiter les itérations. Pour une action avec effet externe, prévoir l'idempotence afin qu'une reprise ne crée pas de doublon.
+On each turn, the application **validates the name and arguments**, controls permissions, executes with a timeout, and returns a structured result or error. The model can then correct its request or respond. Keep call identifiers and limit iterations. For an action with external effect, provide idempotency so that a resume does not create duplicates.
 
-Avec deux appels simultanés, rattacher chaque observation à son identifiant, pas à son ordre d'arrivée. Sinon le modèle peut attribuer le résultat d'une commande à une autre.
-
----
-
-Que sont les parallel tool calls ? <!--anki:482f5a41654854453b58-->
-?
-Plusieurs demandes d'outils émises lors d'une même réponse du modèle. L'application peut les exécuter simultanément **après avoir vérifié leur indépendance** : deux recherches sans dépendance peuvent se paralléliser ; une écriture suivie d'une lecture de son résultat doit attendre.
-
-Le modèle peut proposer des appels incompatibles ou concurrents sur la même ressource. Respecter le protocole des résultats, les permissions et les limites de concurrence, puis transmettre les succès et échecs partiels avec leurs identifiants. Le gain de latence dépend des dépendances et de la capacité des services appelés.
+With two simultaneous calls, attach each observation to its identifier, not to its order of arrival. Otherwise the model can assign the result of one command to another.
 
 ---
 
-À ne pas confondre : tool calling et MCP ? <!--anki:7154542972474730592e-->
+What are parallel tool calls? <!--anki:482f5a41654854453b58-->
 ?
-Le **tool calling** est le mécanisme par lequel un modèle propose un nom d'outil et ses arguments ; l'application contrôle puis exécute la demande. **MCP** organise les échanges entre clients et serveurs pour exposer outils, ressources et prompts.
+Multiple tool requests issued during the same model response. The application can run them simultaneously **after verifying their independence**: two non-dependency searches can be paralleled; a write followed by a reading of its result must wait.
 
-On peut utiliser des outils codés directement sans MCP. Inversement, un client peut lire une ressource ou invoquer un outil MCP depuis du code ou une interface, sans décision d'un LLM. MCP ne dépend donc pas du tool calling natif d'un modèle ; les deux se combinent dans un agent.
+The model can offer incompatible or competing calls on the same resource. Comply with the protocol of results, permissions and limits of concurrency, and then transmit partial successes and failures with their identifiers. The gain in latency depends on the dependencies and capacity of the services called.
 
 ---
 
-Que faire quand un outil échoue ? <!--anki:4d4a3b542c376265564f-->
+Do not confuse: tool calling and MCP? <!--anki:7154542972474730592e-->
 ?
-Distinguer **arguments invalides, refus d'autorisation, panne temporaire et résultat inconnu**. Fournir une erreur structurée et actionnable lorsque le modèle peut corriger sa demande.
+The **tool calling** is the mechanism by which a model proposes a tool name and its arguments; the application controls and then executes the request. **MCP** organizes the exchanges between clients and servers to expose tools, resources and prompts.
+
+You can use coded tools directly without MCP. Conversely, a client can read a resource or invoke a tool MCP from code or an interface, without a decision of one LLM. MCP does not depend on the native tool calling of a model; The two combine in an agent.
+
+---
+
+What to do when a tool fails? <!--anki:4d4a3b542c376265564f-->
+?
+Distinguish between **invalid arguments, denial of permission, temporary failure, and unknown result**. Provide a structured and actionable error when the model can correct its request.
 ```text
-INVALID_ARGUMENT : commande_id doit suivre CMD-000000.
-Utiliser rechercher_commandes si l'identifiant est inconnu.
+INVALID_ARGUMENT: command_id must follow CMD-000000.
+Use search_commands if the identifier is unknown.
 ```
-Borner les relances ; ne pas exposer secrets ni traces internes. Un timeout après une écriture peut cacher un succès : vérifier l'état ou le statut de l'opération avant de la répéter. Un refus de permission ne se contourne pas par un autre outil. Le harness doit pouvoir arrêter ou escalader les échecs non récupérables.
+Bound raises; do not expose secrets or internal traces. A timeout after a write can hide a success: check the state or status of the operation before repeating it. A refusal of permission is not bypassed by another tool. The harness must be able to stop or escalate unrecoverable failures.
 
 ---
 
-Pourquoi la description des outils est-elle critique ? <!--anki:457254495d344e7c3357-->
+Why is the description of tools critical? <!--anki:457254495d344e7c3357-->
 ?
-Le **nom, la description et le schéma** orientent le choix de l'outil et de ses arguments, avec la consigne, l'historique et les observations déjà disponibles.
+The **name, description and schema** guide the choice of the tool and its arguments, with the setpoint, history and observations already available.
 - Vague : `search(q)` — « Recherche. »
-- Explicite : `rechercher_commandes(email_client)` — « Liste les commandes, les plus récentes d'abord ; ne fournit pas le suivi du colis. »
+- Explicit: `rechercher_commandes(email_client)` — "List orders, most recent first; does not provide package tracking."
 
-Préciser cas d'usage, limites et structure du résultat aide le modèle à choisir. Mesurer les erreurs sur des tâches représentatives ; une bonne description n'accorde aucun droit et ne dispense pas de valider l'appel.
-
----
-
-Sur quoi repose la fiabilité syntaxique des arguments ? <!--anki:446e47724d4a2d696c7b-->
-?
-Un **décodage contraint** peut imposer un schéma supporté lors de la génération. Cette propriété dépend du modèle, du mode et des contraintes réellement prises en charge ; déclarer un JSON Schema ne suffit pas à l'activer.
-
-Vérifier que l'appel est complet et exploitable : refus, erreur ou troncature exigent un traitement distinct. Puis valider les arguments côté serveur. Leur **validité sémantique** reste indépendante du format : un identifiant bien formé peut viser un autre client, un montant dépasser un plafond. Voir la [[63-guided-generation|guided generation]].
+Specifying use cases, limits and result structure helps the model to choose. Measuring errors on representative tasks; a good description does not grant any rights and does not exempt from validating the call.
 
 ---
 
-Calcul : 40 schémas d’outils de 300 tokens sont renvoyés à chacun des 25 appels d’un agent. Quel volume et coût à 3 €/M en entrée, puis quel coût si tous ces tokens sont lus à 10 % du tarif depuis un cache déjà chaud ? <!--anki:3232623534646231383763363464303539666437323536306133333231383237-->
+What is the syntactic reliability of arguments based on? <!--anki:446e47724d4a2d696c7b-->
 ?
-Hypothèses : 300 tokens par schéma d'outil, renvoyés à chaque appel, 3 €/M en entrée.
+A constrained **decoding** can impose a supported schema during generation. This property depends on the model, mode, and constraints actually supported; declaring a JSON Schema is not enough to enable it.
+
+Verify that the call is complete and actionable: refusal, error or truncation require separate processing. Then validate server-side arguments. Their **semantic validity** remains independent of the format: a well-formed identifier can target another client, an amount exceeding a ceiling. See [[63-guided-generation|guided generation]].
+
+---
+
+Calculation: 40 tool schemas of 300 tokens each are sent with each of an agent’s 25 calls. What volume and cost to 3 €/M as input, and then what cost if all those tokens are read to 10% from the tariff from an already hot cache? <!--anki:3232623534646231383763363464303539666437323536306133333231383237-->
+?
+Assumptions: 300 tokens by tool scheme, returned on each call, 3 €/M as input.
 ```text
-schémas   : 40 × 300          = 12 000 tokens à chaque appel
-par tâche : 12 000 × 25 tours = 300 000 tokens ≈ 0,90 €
-avec prompt caching (≈ 0,1×)  ≈ 0,09 €, mais le contexte reste occupé
+Diagrams: 40 × 300 = 12,000 tokens for every call
+per task: 12,000 × 25 towers = 300,000 tokens ≈ 0.90 €
+with prompt caching (≈ 0.1×) ≈ 0.09 €, but the context remains busy
 ```
-Au-delà du coût, 12 000 tokens de schémas occupent du contexte et peuvent compliquer le choix d'outil : on n'expose que les outils utiles à la tâche, ou on les charge à la demande ([[35-context-engineering|context engineering]]).
+Beyond the cost, 12,000 tokens diagrams occupy context and can complicate the choice of tool: we expose only the tools useful to the task, or we load them on demand ([[35-context-engineering|context engineering]]).
 
-Le scénario chaud exclut le coût d'amorçage et suppose tous les tokens concernés éligibles à chaque lecture. Un schéma changé ou réordonné peut casser le préfixe ; comparer les compteurs réels d'usage au coût estimé.
+The hot scenario excludes the boot cost and assumes all affected tokens eligible for each read. A changed or reordered schema can break the prefix; compare the actual usage counters to the estimated cost.
 
 ---
 
-Que doit exposer le résultat d'un outil pour éviter un faux succès d'agent ? <!--anki:6464383461663535363034323436316639313236656439633664643934316637-->
+What should the result of a tool expose to avoid a false agent success? <!--anki:6464383461663535363034323436316639313236656439633664643934316637-->
 ?
-Un **statut exploitable**, les données nécessaires et leurs limites : erreur, résultat partiel, version consultée ou opération encore en cours.
+A **exploitable status**, the necessary data and their limits: error, partial result, version consulted or operation still in progress.
 ```json
 {"status": "pending", "operation_id": "op-42", "completed": false}
 ```
-Un accusé de réception ne prouve pas que l'action est terminée. Prévoir une consultation de statut ou un vérificateur métier, et associer chaque résultat au bon appel. Le contrat doit permettre de distinguer « aucune donnée », « recherche incomplète » et « service indisponible », sinon le modèle peut inventer une conclusion.
+An acknowledgement of receipt does not prove that the action is complete. Provide for a status consultation or a business auditor, and associate each result with the correct call. The contract must distinguish "no data", "incomplete search" and "service unavailable", otherwise the model can invent a conclusion.
 
 ---
 
-Pourquoi la pagination d'un outil peut-elle fausser la conclusion d'un agent ? <!--anki:3330393863376537633037333466303339633164323932626139346537333561-->
+Why does pagination of a tool distort an agent's conclusion? <!--anki:3330393863376537633037333466303339633164323932626139346537333561-->
 ?
-Un résultat **limité à une page** ne représente pas nécessairement toute la collection. L'agent peut conclure « aucune commande récente » après avoir lu seulement les premiers éléments d'un autre tri.
+A **page-limited** result does not necessarily represent the entire collection; the agent can conclude "no recent orders" after reading only the first elements of another sort.
 
-Indiquer filtres, ordre, limite, présence d'une suite et curseur de continuation. Préférer un filtre ou une agrégation côté service pour une question globale. Si le budget ne permet pas de parcourir toutes les pages, annoncer le périmètre réellement consulté. Évaluer les tâches dont la preuve se trouve après la première page.
+Indicate filters, order, limit, presence of a continuation and continuation cursor. Prefer a service-side filter or aggregation for a global question. If the budget does not allow to browse all the pages, announce the perimeter actually consulted. Evaluate the tasks whose proof is after the first page.
 
 ---
 
-Pourquoi un outil de proposition doit-il être séparé d'un outil d'exécution ? <!--anki:3337613762613866656336363461633538633337313562636234633634396666-->
+Why should a proposal tool be separated from a runtime tool? <!--anki:3337613762613866656336363461633538633337313562636234633634396666-->
 ?
-La **proposition** calcule et décrit une action ; l'**exécution** applique un effet autorisé. Cette séparation permet de valider destinataire, montant et conséquences avant l'écriture.
+The **proposal** calculates and describes an action; the **execution** applies an authorized effect. This separation allows to validate recipient, amount and consequences before writing.
 
-Par exemple, préparer un remboursement renvoie une proposition versionnée ; l'exécution exige son identifiant, une autorisation encore valide et une clé d'idempotence. Si les paramètres changent, refaire la validation au lieu de réutiliser un accord ancien. La séparation des outils aide l'interface ; le serveur doit malgré tout vérifier les droits et l'état métier au moment d'agir.
+For example, preparing a refund returns a versioned proposal; execution requires its identifier, a still valid authorization, and an idempotency key. If the settings change, revalidate instead of reusing an old agreement. Separation of tools helps the interface; the server still needs to check the rights and business status when acting.
 
 ---
 
-Comment un outil doit-il renvoyer un résultat trop volumineux pour le contexte du modèle ? <!--anki:3963323033653962613033633439663062383330633566363862356238616530-->
+How should a tool return a result that is too large for the context of the model? <!--anki:3963323033653962613033633439663062383330633566363862356238616530-->
 ?
-Renvoyer **un résumé borné, un identifiant stable et un moyen de consulter les détails** par page, filtre ou plage. Signaler explicitement toute troncature et le volume total lorsqu'il est connu.
+Return **a bounded summary, a stable identifier, and a way to view details** by page, filter, or range. Explicitly report any truncation and total volume when known.
 
-Le modèle peut alors demander les parties nécessaires sans conclure à tort qu'il a tout vu. Conserver les preuves originales hors du prompt. Une chaîne coupée silencieusement peut supprimer une erreur, une exception ou les dernières lignes d'un tableau et inverser la conclusion.
+The model can then request the necessary parts without erroneously concluding that it has seen everything. Keep the original proofs out of the prompt. A silently cut string can remove an error, an exception, or the last lines of an array and reverse the conclusion.
 
 ---
 
-Pourquoi inclure une version attendue dans un outil qui modifie un objet métier ? <!--anki:6432393932303366323035303434336639353639306363343762326134333566-->
+Why include an expected version in a tool that modifies a business object? <!--anki:6432393932303366323035303434336639353639306363343762326134333566-->
 ?
-La version permet une **écriture conditionnelle** : appliquer la modification seulement si l'objet n'a pas changé depuis sa lecture. Par exemple, mettre à jour le dossier en version 7 doit échouer si sa version courante est 8.
+The version allows a **conditional write**: apply the change only if the object has not changed since it was read. For example, updating the folder to version 7 must fail if its current version is 8.
 
-Le service doit vérifier cette condition atomiquement. L'agent relit ensuite le dossier et réévalue la proposition. L'idempotence évite de répéter la même opération ; elle ne protège pas à elle seule contre une décision fondée sur un état ancien.
+The service must verify this condition atomically. The agent then rereads the file and re-evaluates the proposal. Idempotence avoids repeating the same operation; it does not alone protect against a decision based on an old state.
 
 ---
 
-## Mises en situation
+## Scenarios
 
-Mise en situation : ton agent dispose de 40 outils et se trompe souvent d'outil ou invente des paramètres. Comment améliores-tu la situation ? <!--anki:45503a33472d5921333f-->
+Scenario: your agent has 40 tools and often gets the wrong tool or invents parameters. How do you improve the situation? <!--anki:45503a33472d5921333f-->
 ?
-1. **Réduire le choix** : n'exposer que les outils utiles à la tâche en cours, quitte à les filtrer dynamiquement
-2. **Soigner les descriptions** : nom explicite, cas d'usage, ce que l'outil ne fait pas. C'est du prompt engineering
-3. **Fusionner ou séparer** : regrouper des outils redondants, séparer ceux qui font trop de choses
-4. **Contraindre les arguments** par le JSON Schema, avec des énumérations plutôt que du texte libre ([[63-guided-generation|guided generation]])
-5. **Mesurer** : taux d'appels valides et de bons outils choisis, par outil, avant et après ([[96-evals-rag-agents|evals d'agents]])
+1. **Reduce choice**: expose only useful tools to the current task, even if it means filtering them dynamically
+2. **Care for descriptions**: Explicit name, use case, which the tool does not. This is prompt engineering
+3. **Merge or Separate** : grouping redundant tools, Separate those who do too much
+4. **Constrict arguments** by the JSON Schema, with enumerations rather than free text ([[63-guided-generation|guided generation]])
+5. **Measure**: valid call rates and good tools chosen, by tool, before and after ([[96-evals-rag-agents|evals d'agents]])
 
-**Piège** : ajouter un outil supplémentaire pour corriger les erreurs des précédents.
+**Trap**: Add an additional tool to fix previous errors.
 
 ---
 
-Mise en situation : un appel d'outil échoue en production avec un timeout, et ton agent réessaie en boucle avec les mêmes arguments. Que corriges-tu ? <!--anki:423c3d21382d71634132-->
+Scenario: a tool call fails in production with a timeout, and your agent tries again in a loop with the same arguments. What do you fix? <!--anki:423c3d21382d71634132-->
 ?
-1. **Qualifier l'opération** : lecture sans effet ou écriture dont le résultat est inconnu.
-2. **Réconcilier l'état** après une écriture : consulter le statut avant de répéter.
-3. **Borner les relances** réessayables, avec échéance, backoff et clé d'idempotence si le service la gère.
-4. **Transmettre un statut clair** au modèle ; les refus et paramètres invalides ne se traitent pas comme une panne réseau.
-5. **Vérifier le résultat métier**, puis arrêter ou escalader si l'incertitude persiste.
+1. **Qualify operation**: read without effect or write whose result is unknown.
+2. **Reconcile status** after writing: check status before repeating.
+3. **Borne restarts** retryable, with deadline, backoff and idempotency key if the service manages it.
+4. **Transmit a clear** status to the model; invalid denials and settings are not treated as a network outage.
+5. **Check the business result**, then stop or escalate if uncertainty persists.
 
-**Piège** : supposer qu'un timeout signifie que l'action n'a pas eu lieu.
+**Tip**: Assume that a timeout means the action did not take place.
 
 ---
 
-Mise en situation : un agent affirme qu'un client n'a aucune facture impayée après avoir lu 20 factures, mais l'outil renvoie aussi un curseur de continuation. Comment corriges-tu ? <!--anki:3339626162663531323736303465376139363334636464656665643732633261-->
+Scenario: an agent claims that a customer has no outstanding invoices after reading 20 invoices, but the tool also returns a continuation slider. How do you fix it? <!--anki:3339626162663531323736303465376139363334636464656665643732633261-->
 ?
-1. **Vérifier le contrat** : filtre, tri et signification du curseur.
-2. **Chercher côté service** les impayés, ou parcourir les pages si aucune requête ciblée n'existe.
-3. **Distinguer complet et partiel**, avec un budget et un statut explicites.
-4. **Vérifier la conclusion** sur des clients dont l'impayé se trouve sur une page ultérieure.
-5. **Restituer l'incertitude** si la vérification reste incomplète.
+1. **Check the contract**: filter, sort and meaning of the cursor.
+2. **Search service side** for unpaid bills, or browse pages if no targeted query exists.
+3. **Distinguish full and partial**, with explicit budget and status.
+4. **Check the conclusion** on customers whose unpaid is on a later page.
+5. **Restore uncertainty** if verification remains incomplete.
 
-**Piège** : transformer l'absence d'un élément dans la page lue en preuve de son absence globale.
+**Trap**: Turn the absence of an element in the page being read into evidence of its overall absence.
 
 ---
 
 ## Sources
 
-- [MCP 2025-11-25 — outils et invocation par le client](https://modelcontextprotocol.io/specification/2025-11-25/server/tools)
-- [MCP 2025-11-25 — ressources pilotées par l’application](https://modelcontextprotocol.io/specification/2025-11-25/server/resources)
-- [Anthropic — définir des outils](https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools)
-- [Anthropic — concevoir les résultats et évaluer les outils](https://www.anthropic.com/engineering/writing-tools-for-agents)
+- [MCP 2025-11-25 — tools and invocation by customer](https://modelcontextprotocol.io/specification/2025-11-25/server/tools)
+- [MCP 2025-11-25 — application-driven resources](https://modelcontextprotocol.io/specification/2025-11-25/server/resources)
+- [Anthropic — define tools](https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools)
+- [Anthropic — design results and evaluate tools](https://www.anthropic.com/engineering/writing-tools-for-agents)
 
-## Connexions
-- [[31-agents-fondamentaux|Agents]] — la boucle qui consomme les outils
-- [[63-guided-generation|Guided generation]] — la garantie syntaxique
-- [[33-mcp|MCP]] — standardiser l'accès aux outils
-- [[34-harness-plugins|Harness]] — qui exécute réellement
-- [[101-securite-llm-guardrails|Sécurité LLM]] — valider avant d'exécuter
-- [[103-defenses-agents|Sécurité des agents — Architecture défensive]] — valider les appels d'outils
-- [[165-computer-use-agents-navigateur|Computer use & agents navigateur]] — agents qui utilisent des interfaces
-- [[22-rag-avance|RAG — Avancé]] — recherche hybride, reranking et filtres
-- [[26-text-to-sql|Text-to-SQL]] — répondre aux questions chiffrées sur des tables
-- [[37-frameworks-agents|Frameworks d'agents]] — panorama des frameworks
-- [[41-automatisation-code-nocode|Automatisation code & no-code]] — workflows et outils no-code
-- [[42-langchain-fondamentaux|LangChain]] — les briques de base du framework
-- [[40-010-langchain-outils-middleware-production|LangChain — Contrats, outils & middleware en production]] — valider demandes et résultats
+## Connections
+- [[31-agent-fundamentals|Agents]] — the loop that consumes the tools
+- [[63-guided-generation|Guided generation]] — the syntactic guarantee
+- [[33-mcp|MCP]] — standardize access to tools
+- [[34-harness-plugins|Harness]] — that actually runs
+- [[101-llm-security-guardrails|LLM Security]] — validate before running
+- [[103-agent-defenses|Security agents — Defensive architecture]] — validate tool calls
+- [[165-computer-use-browser-agents|Computer use & browser agents]] — agents that use interfaces
+- [[22-advanced-rag|RAG — Advanced]] — hybrid search, reranking and filters
+- [[26-text-to-sql|Text-to-SQL]] — answer numerical questions on tables
+- [[37-agent-frameworks|Frameworks d'agents]] — framework panorama
+- [[41-code-nocode-automation|Automation code & no-code]] — workflows and no-code tools
+- [[42-langchain-fundamentals|LangChain]] — the basic building blocks of the framework
+- [[40-010-langchain-tools-middleware-production|LangChain — Contracts, tools & middleware in production]] — validate requests and results
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -1,79 +1,79 @@
-# Conteneurs & infra — Index — Flashcards
-Tags: #flashcards #moc #conteneurs #docker #kubernetes #gpu
-<!-- summary: sommaire des 13 fiches de la section, chaînes à retenir, et des cartes sur l'intérêt des conteneurs pour servir des modèles, test de démarrage sur la cible réelle, responsabilités de déploiement, contrôle de configuration. -->
+# Containers & infra — Index — Flashcards
+Tags: #flashcards #moc #containers #docker #kubernetes #gpu
+<!-- summary: Summary of 13 section cards, chains to remember, and maps on container interest to serve models, start test on the actual target, deployment responsibilities, configuration control. -->
 
 
-Sous-carte de la section **70 — Conteneurs & Infra** : du conteneur au GPU, pour déployer des modèles.
+Sub-map of the section **70 — Containers & Infra**: from container to GPU, to deploy models.
 
-## Fiches de la série
+## List of series
 
-### Fondamentaux
-- [[01-oci|01 — OCI]] — le standard des images et des runtimes
-- [[02-docker-images-registries|02 — Docker, images & registries]] — construire et distribuer
-- [[08-linux-primitives-docker-fondamentaux|08 — Primitives Linux & fondamentaux Docker]] — namespaces, cgroups, volumes
+### Fundamentals
+- [[01-oci|01 — OCI]] — the standard for images and runtimes
+- [[02-docker-images-registries|02 — Docker, images & registries]] — build and distribute
+- [[08-linux-primitives-docker-fundamentals|08 — Linux primitives & Docker fundamentals]] — namespaces, cgroups, volumes
 
 ### Runtimes & orchestration
-- [[03-containerd-runc|03 — containerd & runc]] — la chaîne d'exécution
+- [[03-containerd-runc|03 — containerd & runc]] — the execution chain
 - [[04-kubernetes-kubelet-cri|04 — Kubernetes, kubelet & CRI]] — l'orchestration
-- [[05-docker-kubernetes|05 — Docker & Kubernetes]] — l'histoire de dockershim
+- [[05-docker-kubernetes|05 — Docker & Kubernetes]] — history of dockershim
 
-### Inférence LLM
-- [[09-gpu-conteneurs|09 — GPU en conteneur]] — donner accès au GPU
-- [[10-images-modeles-poids|10 — Images & poids de modèles]] — packager des modèles de plusieurs Go
-- [[11-serveurs-inference-llm|11 — Serveurs d'inférence LLM]] — ce qu'on fait tourner (vLLM, TGI…)
-- [[12-kubernetes-gpu-inference|12 — Kubernetes GPU & inférence]] — allouer et partager les GPU
+### Inference LLM
+- [[09-gpu-containers|09 — GPU in container]] — give access to the GPU
+- [[10-images-models-weights|10 — Model Images & Weights]] — packager models of several GB
+- [[11-llm-inference-servers|11 — LLM Inference Servers]] — what we run (vLLM, TGI...)
+- [[12-kubernetes-gpu-inference|12 — Kubernetes GPU & inference]] — allocate and share GPU
 
 ### HPC
-- [[06-apptainer-singularity|06 — Apptainer & Singularity]] — les conteneurs du HPC
-- [[13-apptainer-inference-hpc|13 — Apptainer & inférence HPC]] — servir des modèles sur cluster
+- [[06-apptainer-singularity|06 — Apptainer & Singularity]] — HPC Containers
+- [[13-apptainer-inference-hpc|13 — Apptainer & HPC Inference]] — serve models on a cluster
 
-### Révision
-- [[07-synthese-containers|07 — Synthèse]]
+### Revision
+- [[07-containers-overview|07 — Synthesis]]
 
-## Chaînes à retenir
+## Chains to remember
 ```text
 Kubernetes → kubelet → CRI → containerd → runc → Linux kernel
-Dockerfile → build → image OCI → registry → pull → runtime → conteneur
+Dockerfile → build → image OCI → registry → pull → runtime → Container
 ```
 
-Accès GPU : Docker `--gpus` · Apptainer `--nv` · Kubernetes `nvidia.com/gpu`
+GPU access: Docker `--gpus` · Apptainer `--nv` · Kubernetes `nvidia.com/gpu`
 
 ---
 
-## Cartes
+## Cards
 
-Pourquoi les conteneurs sont-ils devenus le standard pour servir des modèles ? <!--anki:45514a373c635d6d4a50-->
+Why have containers become the standard for serving models? <!--anki:45514a373c635d6d4a50-->
 ?
-Ils regroupent **serveur et dépendances applicatives** dans un artefact versionné, transportable entre environnements compatibles et orchestrable, notamment sur Kubernetes. Ils **ne figent pas toute la machine** : noyau, driver GPU, matériel et volumes restent externes.
+They bundle **server and application dependencies** into a versioned artifact, transportable between compatible and orchestral environments, especially on Kubernetes. They **do not freeze the whole machine**: kernel, driver GPU, hardware and volumes remain external.
 
-Exemple : remettre l'ancienne image ne restaure pas l'ancien modèle si les poids montés ont changé. Un rollback fiable doit identifier **image par digest, révision des poids, tokenizer et configuration**, puis vérifier leur compatibilité avec l'hôte.
+Example: Returning the old image does not restore the old model if the mounted weights have changed. A reliable rollback must identify **image by digest, weight review, tokenizer and configuration**, and then verify their compatibility with the host.
 
-Tester un démarrage et une inférence représentative sur la cible ; un build réussi ne valide ni l'accès au GPU ni la mémoire nécessaire ([[09-gpu-conteneurs|GPU en conteneur]]).
+Test a representative start and inference on the target; a successful build does not validate either access to the GPU or the required memory ([[09-gpu-containers|GPU in container]]).
 
 ---
 
-Quel test de démarrage distingue une image de conteneur valide d'un service d'inférence utilisable ? <!--anki:6239363366343864343265383437316639613834316334373436653763656665-->
+What boot test distinguishes a valid container image from a usable inference service? <!--anki:6239363366343864343265383437316639613834316334373436653763656665-->
 ?
-Faire un **démarrage sur la cible réelle**, puis une inférence représentative. Vérifier chargement des poids, accès GPU, tokenizer, sortie attendue et marge mémoire ; un processus vivant ne prouve pas que le modèle est prêt.
+Make a **start on the actual target**, Then there is a representative inference. Check loading weights, Access GPU, tokenizer, Expected output and memory margin; A living process does not prove that the model is ready.
 
-Mesurer séparément téléchargement, initialisation et première requête, puis tester le redémarrage avec un cache froid. Conserver les versions de l'image, du modèle et du driver. Ce test de bout en bout complète la conformité du conteneur : une image correcte peut rester inutilisable faute de poids, de capacité ou de compatibilité matérielle.
+Measure separately download, initialize and first request, then test restart with cold cache. Keep versions of image, model and driver. This end-to-end test completes container compliance: a correct image may remain unusable due to lack of weight, capacity or hardware compatibility.
 
 ---
 
-## Mises en situation
+## Scenarios
 
-Mise en situation : la même image d’inférence donne deux comportements différents en recette et en production. Comment organises-tu le diagnostic entre équipes ? <!--anki:6165623633333832373235303465666639636633613166303333613962623238-->
+Scenario: the same inference image gives two different behaviors in recipe and in production. How do you organize the diagnosis between teams? <!--anki:6165623633333832373235303465666639636633613166303333613962623238-->
 ?
-1. **Comparer les manifestes effectifs** : digest, poids, tokenizer, configuration et montages, pas seulement le tag annoncé.
-2. **Rejouer une requête identique** et localiser la première divergence : entrée sérialisée, chargement, calcul ou sortie réseau.
-3. **Attribuer la vérification au bon propriétaire** : packaging, infrastructure ou application, en partageant les identifiants de l’exécution.
-4. **Confirmer la correction** sur la cible et ajouter le cas au contrôle de release.
+1. **Compare actual manifests**: digest, weight, tokenizer, configuration and edits, not just the advertised tag.
+2. **Replay an identical request** and locate the first divergence: serialized input, loading, calculation or network output.
+3. **Assign verification to the right owner**: packaging, infrastructure or application, by sharing the identifiers of the execution.
+4. **Confirm the fix** on the target and add the case to release control.
 
-Un statut « running » ne prouve ni que les bons artefacts sont chargés ni que leur comportement est identique.
+A running status does not prove that good artifacts are loaded or that their behavior is identical.
 
 ---
 
-## Connexions
-- [[12-kubernetes-gpu-inference|Kubernetes GPU & inférence]] — la fiche d'application
-- [[83-gateway-ingress|Ingress & API gateway]] — l'entrée réseau du cluster
+## Connections
+- [[12-kubernetes-gpu-inference|Kubernetes GPU & inference]] — application topic
+- [[83-gateway-ingress|Ingress & API gateway]] — Cluster Network Input
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -11,60 +11,60 @@
     "title": "Agents",
     "intro": ""
   },
-  "40-automatisation": {
-    "title": "Automatisation & frameworks d'agents",
-    "intro": "Construire des workflows et agents avec LangChain, LangGraph et CrewAI : fondamentaux, contrats d’outils, reprise, concurrence, budgets et intégration en production."
+  "40-automation": {
+    "title": "Automation & agent frameworks",
+    "intro": "Build workflows and agents with LangChain, LangGraph and CrewAI: fundamentals, tool contracts, takeover, competition, budgets and integration in production."
   },
   "50-fine-tuning": {
     "title": "Fine-tuning",
     "intro": ""
   },
-  "60-inference-llm": {
-    "title": "Inférence LLM",
-    "intro": "Comprendre les mécanismes du serving, mesurer qualité et SLO, tester la capacité sous charge et optimiser le débit utile, la mémoire et le coût."
+  "60-llm-inference": {
+    "title": "LLM inference",
+    "intro": "Understand the mechanisms of the serving, measure quality and SLO, test capacity under load and optimize payload, memory and cost."
   },
   "70-containers-infra": {
-    "title": "Conteneurs & Infra",
+    "title": "Containers & infrastructure",
     "intro": ""
   },
   "80-api-layer-routing": {
-    "title": "API Layer & Routing",
+    "title": "API layer & routing",
     "intro": ""
   },
-  "90-observabilite-evals": {
-    "title": "Observabilité & Evals",
-    "intro": "Instrumenter les applications, relier traces et métriques, gérer prompts et expériences, évaluer la qualité et tester les contrats, pannes et reprises des agents."
+  "90-observability-evals": {
+    "title": "Observability & evaluations",
+    "intro": "Instrument applications, link tracks and metrics, manage prompts and experiences, assess quality and test contracts, breakdowns and reps of agents."
   },
-  "100-securite-guardrails": {
-    "title": "Sécurité & guardrails",
-    "intro": "De la sécurité des LLM à celle des agents : les menaces et les incidents réels, l'architecture défensive, la chaîne d'approvisionnement des outils et des skills, le DevSecOps, et le cas des agents de code."
+  "100-security-guardrails": {
+    "title": "Security & guardrails",
+    "intro": "From the security of the LLM to that of the agents: the real threats and incidents, the defensive architecture, the supply chain of tools and skills, the DevSecOps, and the case of code agents."
   },
   "110-mlops-cicd": {
     "title": "MLOps & CI/CD",
-    "intro": "Industrialiser le cycle de vie des modèles et des applications LLM : données, entraînement, artefacts, registre, releases, contrats de prédiction, CI/CD, monitoring, gouvernance et reprise après incident."
+    "intro": "Industrialize the life cycle of LLM models and applications: data, drive, artifacts, registry, releases, prediction contracts, CI/CD, monitoring, governance and disaster recovery."
   },
-  "120-couts-finops": {
-    "title": "Coûts & FinOps",
+  "120-costs-finops": {
+    "title": "Costs & FinOps",
     "intro": ""
   },
-  "130-fondamentaux-llm": {
-    "title": "Fondamentaux LLM",
-    "intro": "Ce qu'il faut comprendre du modèle lui-même pour raisonner sur la qualité, le coût et le serving. À lire en prérequis."
+  "130-llm-fundamentals": {
+    "title": "LLM fundamentals",
+    "intro": "What you need to understand about the model itself in order to reason about quality, cost and the serving."
   },
-  "140-system-design-produit": {
-    "title": "System design & produit",
-    "intro": "La partie qui assemble tout le reste : concevoir, fiabiliser et piloter une application LLM, niveau senior."
+  "140-system-design-product": {
+    "title": "System design & product",
+    "intro": "The part that assembles everything else: design, reliability and control an application LLM, senior level."
   },
-  "150-donnees-conformite": {
-    "title": "Données & conformité",
-    "intro": "Construire les données des systèmes IA : modélisation et SQL, contrats et ingestion, temporalité et features, stockage, orchestration, streaming, calcul distribué, corpus, lignage et conformité."
+  "150-data-compliance": {
+    "title": "Data & compliance",
+    "intro": "Building AI systems data: modeling and SQL, contracts and ingestion, temporality and features, storage, orchestration, streaming, distributed computing, corpus, lineage and compliance."
   },
   "160-multimodal-edge": {
     "title": "Multimodal & edge",
     "intro": ""
   },
-  "170-ml-classique": {
-    "title": "ML classique & validation",
-    "intro": "Choisir et valider les modèles prédictifs, calibrer leurs sorties, recommander, prévoir et détecter les anomalies ; distinguer explication du modèle et effet causal d’une action."
+  "170-classical-ml": {
+    "title": "Classical ML & validation",
+    "intro": "Select and validate predictive models, calibrate their outputs, recommend, predict and detect anomalies; distinguish model explanation and causal effect of an action."
   }
 }

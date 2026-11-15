@@ -11,7 +11,7 @@ indent_size = 4
 [*.{yml,yaml,json}]
 indent_size = 2
 
-# Deux espaces en fin de ligne forcent un retour à la ligne en Markdown.
+# Two spaces at the end of the line force a return to the line in Markdown.
 [*.md]
 trim_trailing_whitespace = false
 

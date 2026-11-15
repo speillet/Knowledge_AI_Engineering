@@ -1,4 +1,5 @@
-"""Registre métier pédagogique. Toutes les écritures critiques sont locales à SQLite."""
+"""All critical writes are local to SQLite."""
+
 import hashlib
 import json
 import sqlite3
@@ -38,10 +39,10 @@ class Store:
                 seq INTEGER PRIMARY KEY AUTOINCREMENT, run_id TEXT NOT NULL,
                 kind TEXT NOT NULL, payload TEXT NOT NULL);
         """)
-        # Données fictives ; pas de réinitialisation d'une commande déjà traitée.
+        # Fictive data; no reset of a previously processed command.
         with self.db:
             for tenant in ("alice", "bob"):
-                self.db.execute("INSERT OR IGNORE INTO orders VALUES (?, 'commande-1', 10000, 1)", (tenant,))
+                self.db.execute("INSERT OR IGNORE INTO orders VALUES (?, 'order-1', 10000, 1)", (tenant,))
 
     def close(self):
         self.db.close()
@@ -62,11 +63,13 @@ class Store:
             previous = self.db.execute("SELECT * FROM runs WHERE tenant=? AND request_key=?", (tenant, key)).fetchone()
             if previous:
                 if previous["request"] != encoded:
-                    raise Conflict("Même clé avec un contenu différent")
+                    raise Conflict("Same key with different content")
                 return previous["id"]
             run_id = str(uuid.uuid4())
-            self.db.execute("INSERT INTO runs(id,tenant,request_key,request,status) VALUES (?,?,?,?,?)",
-                            (run_id, tenant, key, encoded, "queued"))
+            self.db.execute(
+                "INSERT INTO runs(id,tenant,request_key,request,status) VALUES (?,?,?,?,?)",
+                (run_id, tenant, key, encoded, "queued"),
+            )
             self.event(run_id, "accepted", {"status": "queued"})
             return run_id
 
@@ -84,25 +87,26 @@ class Store:
             row = self.db.execute("SELECT * FROM runs WHERE id=?", (run_id,)).fetchone()
             if row["decision"] is not None:
                 if row["decision"] != int(approved) or row["proposal_hash"] != digest:
-                    raise Conflict("Une décision différente est déjà enregistrée")
+                    raise Conflict("A different decision is already recorded")
                 return
             if row["status"] != "waiting":
-                raise Conflict("Le dossier n'attend pas de décision")
+                raise Conflict("The file does not wait for a decision")
             self.db.execute("UPDATE runs SET decision=?,proposal_hash=? WHERE id=?", (int(approved), digest, run_id))
             self.event(run_id, "decision", {"approved": approved, "proposal_hash": digest})
 
     def order(self, tenant, order_id):
-        row = self.db.execute("SELECT remaining,version FROM orders WHERE tenant=? AND id=?",
-                              (tenant, order_id)).fetchone()
+        row = self.db.execute(
+            "SELECT remaining,version FROM orders WHERE tenant=? AND id=?", (tenant, order_id)
+        ).fetchone()
         if row is None:
             raise ValueError("Commande introuvable")
         return dict(row)
 
     def refund(self, run_id, tenant, proposal):
-        """Effet ET déduplication dans une transaction du même service métier.
+        """Effect AND deduplication in a transaction of the same business service.
 
-        Ce contrat serait à implémenter côté fournisseur si l'effet était distant.
-        La transaction ne couvre pas les checkpoints LangGraph.
+        This contract would be implemented on the vendor side if the effect was remote.
+        The transaction does not cover LangGraph checkpoints.
         """
         encoded = canonical(proposal)
         with self.db:
@@ -110,28 +114,31 @@ class Store:
             previous = self.db.execute("SELECT * FROM refunds WHERE operation_id=?", (run_id,)).fetchone()
             if previous:
                 if previous["tenant"] != tenant or previous["proposal"] != encoded:
-                    raise Conflict("Identité d'opération réutilisée avec un autre contenu")
+                    raise Conflict("Operation identity reused with other content")
                 return previous["receipt"]
             run = self.owned(run_id, tenant)
             if run["decision"] != 1 or run["proposal_hash"] != fingerprint(proposal):
-                raise Conflict("Action non approuvée")
+                raise Conflict("Action not approved")
             if run["status"] == "cancelled" or proposal["expires_at"] <= time.time():
-                raise Conflict("Proposition annulée ou expirée")
+                raise Conflict("Cancelled or expired proposal")
             order = self.order(tenant, proposal["order_id"])
             amount = proposal["amount_cents"]
             if type(amount) is not int or not 0 < amount <= order["remaining"]:
                 raise Conflict("Montant invalide")
             if order["version"] != proposal["order_version"]:
-                raise Conflict("Commande modifiée depuis la proposition")
+                raise Conflict("Order modified since proposal")
             receipt = "avoir-" + run_id
-            self.db.execute("UPDATE orders SET remaining=remaining-?,version=version+1 WHERE tenant=? AND id=?",
-                            (amount, tenant, proposal["order_id"]))
+            self.db.execute(
+                "UPDATE orders SET remaining=remaining-?,version=version+1 WHERE tenant=? AND id=?",
+                (amount, tenant, proposal["order_id"]),
+            )
             self.db.execute("INSERT INTO refunds VALUES (?,?,?,?)", (run_id, tenant, encoded, receipt))
             self.event(run_id, "effect_committed", {"receipt": receipt, "amount_cents": amount})
             return receipt
 
     def events(self, run_id, tenant, after=0):
         self.owned(run_id, tenant)
-        rows = self.db.execute("SELECT seq,kind,payload FROM events WHERE run_id=? AND seq>? ORDER BY seq",
-                               (run_id, after))
+        rows = self.db.execute(
+            "SELECT seq,kind,payload FROM events WHERE run_id=? AND seq>? ORDER BY seq", (run_id, after)
+        )
         return [dict(row) for row in rows]
