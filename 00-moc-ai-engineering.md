@@ -5,7 +5,9 @@ The vault's main map of content covers the core knowledge of **AI engineering**,
 Each domain contains flashcard topics linked through their `## Connections` sections.
 Each topic also includes **scenarios**. Search for `Scenario:` in the vault to focus on those cards.
 
-Start with the [learning guide](docs/learning-with-flashcards.md): eight steps covering prerequisites, answer criteria, Anki ratings and practical exercises. The [9 October review](docs/learning-review-2026-10-09.md) explains the content corrections and teaching improvements.
+New to the vault? Start with [your first learning session](START_HERE.md).
+
+Use the [learning guide](docs/learning-with-flashcards.md): eight steps covering prerequisites, answer criteria, Anki ratings and practical exercises. The [9 October review](docs/learning-review-2026-10-09.md) explains the content corrections and teaching improvements.
 
 To apply evaluation metrics, use the [local AI decision workshop](examples/ai-decisions/README.md), which connects ML validation, calibration, model selection and document quality. The [11 October review](docs/relevance-review-2026-10-11.md) describes the additions and their scope.
 
