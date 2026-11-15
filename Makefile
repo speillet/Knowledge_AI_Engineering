@@ -1,5 +1,6 @@
 # Vault commands: `make check` reproduces the CI, `make help` lists the targets.
 PYTHON ?= python3
+HUGO ?= hugo
 # Dependency-free scripts fail on any read or write without explicit encoding.
 STRICT_ENCODING = -X warn_default_encoding -W error::EncodingWarning
 
@@ -55,10 +56,16 @@ readme: ## Update the README As of statistics line
 export: ## Anki package in dist/ai-engineering.apkg
 	$(PYTHON) scripts/export_anki.py
 
-site: ## Build the searchable documentation site (install requirements-docs.txt first)
-	$(PYTHON) scripts/prepare_site.py
-	$(PYTHON) -m mkdocs build --strict
+THEME = website/themes/blowfish/theme.toml
 
-site-serve: ## Preview the site locally; rerun after changing source files
-	$(PYTHON) scripts/prepare_site.py
-	$(PYTHON) -m mkdocs serve --dev-addr 127.0.0.1:8000
+$(THEME):
+	git submodule update --init --depth 1 website/themes/blowfish
+
+site: $(THEME) ## Build the site with Hugo extended into site/; fails on any warning or broken link
+	$(PYTHON) $(STRICT_ENCODING) scripts/prepare_site.py
+	$(HUGO) --source website --minify --cleanDestinationDir --panicOnWarning
+	$(PYTHON) $(STRICT_ENCODING) scripts/check_site.py
+
+site-serve: $(THEME) ## Preview the site at http://127.0.0.1:1313/; rerun after changing source files
+	$(PYTHON) $(STRICT_ENCODING) scripts/prepare_site.py
+	$(HUGO) server --source website --bind 127.0.0.1 --baseURL http://127.0.0.1:1313/

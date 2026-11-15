@@ -1,0 +1,25 @@
+# Hugo site of the vault. scripts/prepare_site.py stages the content; the theme is
+# Blowfish, pinned as a git submodule in themes/blowfish. Run `make site`.
+baseURL = "https://speillet.github.io/Knowledge_AI_Engineering/"
+theme = "blowfish"
+defaultContentLanguage = "en"
+publishDir = "../site"
+# Keep the case of source names in URLs, as the previous site did (/START_HERE/).
+disablePathToLower = true
+enableRobotsTXT = true
+enableEmoji = false
+summaryLength = 0
+# The vault has no tags or categories pages.
+disableKinds = ["taxonomy", "term", "rss"]
+
+[pagination]
+  pagerSize = 200
+
+[outputs]
+  home = ["HTML", "JSON"]
+  section = ["HTML"]
+
+[sitemap]
+  changefreq = "weekly"
+  filename = "sitemap.xml"
+  priority = 0.5

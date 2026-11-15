@@ -1,0 +1,64 @@
+{{- /* Home page: Blowfish landing hero, vault figures, entry points and domain grid. */ -}}
+{{- $domains := sort (where site.Sections "Params.domain" true) "Weight" -}}
+{{- $topics := 0 }}{{ $cards := 0 }}{{ $scenarios := 0 -}}
+{{- range $domains }}{{ range .RegularPages -}}
+  {{- $topics = add $topics 1 }}{{ $cards = add $cards (int .Params.cards) }}{{ $scenarios = add $scenarios (int .Params.counts.scenario) -}}
+{{- end }}{{ end -}}
+<article class="kv-home relative isolate">
+  <div class="kv-hero-bg" aria-hidden="true"></div>
+  <section class="kv-hero">
+    <div class="mx-auto max-w-4xl text-center">
+      <p class="landing-rise mb-5 text-sm font-semibold uppercase tracking-[0.25em] text-primary-600 dark:text-primary-400">Knowledge vault</p>
+      <h1 class="landing-rise landing-rise-1 text-balance text-5xl font-black leading-[1.05] tracking-tighter text-neutral-900 dark:text-white sm:text-7xl">{{ site.Title }}</h1>
+      <p class="landing-rise landing-rise-2 mx-auto mt-6 max-w-3xl text-balance text-xl leading-8 text-neutral-600 dark:text-neutral-300 sm:text-2xl sm:leading-9">{{ .Description }}</p>
+      <div class="landing-rise landing-rise-3 mt-9 flex flex-wrap items-center justify-center gap-4">
+        <a class="kv-cta kv-cta-primary not-prose inline-flex items-center gap-2 rounded-xl px-5 py-3 font-semibold transition bg-primary-600 text-white shadow-lg shadow-primary-500/20 hover:-translate-y-0.5 hover:bg-primary-500" href="{{ relref . "/START_HERE.md" }}">Start here <span aria-hidden="true">→</span></a>
+        <a class="kv-cta not-prose inline-flex items-center gap-2 rounded-xl px-5 py-3 font-semibold transition border border-neutral-300 bg-white text-neutral-800 hover:border-primary-400 hover:text-primary-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:text-primary-400" href="#domains">Explore the domains</a>
+        <a class="kv-cta not-prose inline-flex items-center gap-2 rounded-xl px-5 py-3 font-semibold transition border border-neutral-300 bg-white text-neutral-800 hover:border-primary-400 hover:text-primary-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:text-primary-400" href="{{ site.Params.anki }}">Download the Anki package</a>
+      </div>
+    </div>
+    <div class="kv-home-stats landing-rise landing-rise-4">
+      {{- range slice (dict "value" $topics "label" "Topics" "text" "One concept per topic") (dict "value" (lang.FormatNumber 0 $cards) "label" "Cards" "text" "Questions with folded answers") (dict "value" $scenarios "label" "Scenarios" "text" "Practical cases to reason through") (dict "value" (len $domains) "label" "Domains" "text" "From prompts to production") }}
+      <div class="rounded-2xl border border-neutral-200/80 bg-white/60 p-6 text-center shadow-sm backdrop-blur-xl dark:border-neutral-800 dark:bg-neutral-900/50">
+        <p class="text-4xl font-black tracking-tight text-primary-600 dark:text-primary-400">{{ .value }}</p>
+        <p class="mt-2 font-bold text-neutral-900 dark:text-white">{{ .label }}</p>
+        <p class="mt-2 text-sm leading-6 text-neutral-600 dark:text-neutral-400">{{ .text }}</p>
+      </div>
+      {{- end }}
+    </div>
+  </section>
+
+  <section class="kv-home-section">
+    <div class="kv-home-features">
+      {{- range slice (dict "id" "learn" "icon" "graduation-cap" "title" "Learn" "text" "Follow a reading path through the domains, from LLM fundamentals to system design." "url" (relref . "/docs/paths/_index.md") "label" "Learning paths") (dict "id" "practice" "icon" "code" "title" "Practice" "text" "Run local workshops on decisions, verifiable RAG, data engineering and a support agent." "url" (relref . "/examples/_index.md") "label" "Workshops") (dict "id" "review-with-anki" "icon" "lightbulb" "title" "Review" "text" "Import the Anki package; reimporting updates the cards and keeps your review history." "url" (relref . "/docs/guides/anki.md") "label" "Review with Anki") }}
+      <article id="{{ .id }}" class="group rounded-2xl border border-neutral-200/80 bg-white/60 p-6 shadow-sm backdrop-blur-xl transition duration-200 hover:-translate-y-1 hover:border-primary-300 hover:shadow-xl hover:shadow-primary-500/10 dark:border-neutral-800 dark:bg-neutral-900/50 dark:hover:border-primary-700">
+        <span class="mb-5 inline-flex rounded-xl bg-primary-100 p-3 text-primary-600 dark:bg-primary-950 dark:text-primary-400">{{ partial "icon.html" .icon }}</span>
+        <h2 class="text-lg font-bold text-neutral-900 dark:text-white">{{ .title }}</h2>
+        <div class="mt-2 text-sm leading-6 text-neutral-600 dark:text-neutral-400">{{ .text }}</div>
+        <a class="mt-5 inline-flex items-center gap-2 text-sm font-bold text-primary-600 hover:text-primary-500 dark:text-primary-400" href="{{ .url }}">{{ .label }} <span aria-hidden="true">→</span></a>
+      </article>
+      {{- end }}
+    </div>
+  </section>
+
+  <section class="kv-home-section" id="domains">
+    <div class="kv-home-head">
+      <div>
+        <p class="text-sm font-semibold uppercase tracking-[0.25em] text-primary-600 dark:text-primary-400">{{ len $domains }} domains</p>
+        <h2 class="mt-2 text-3xl font-black tracking-tight text-neutral-900 dark:text-white">Explore the domains</h2>
+      </div>
+      <a class="inline-flex items-center gap-2 text-sm font-bold text-primary-600 hover:text-primary-500 dark:text-primary-400" href="{{ relref . "/docs/catalog.md" }}">Full topic catalog <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="kv-domain-grid">
+      {{- range $domains }}
+      {{- $count := 0 }}{{ range .RegularPages }}{{ $count = add $count (int .Params.cards) }}{{ end }}
+      <a class="kv-domain-card" href="{{ .RelPermalink }}">
+        <span class="kv-num">{{ .Params.number }}</span>
+        <span class="kv-domain-title">{{ .Title }}</span>
+        <span class="kv-domain-text">{{ .Description }}</span>
+        <span class="kv-domain-meta">{{ len .RegularPages }} topics · {{ $count }} cards</span>
+      </a>
+      {{- end }}
+    </div>
+  </section>
+</article>

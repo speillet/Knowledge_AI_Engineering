@@ -1,0 +1,23 @@
+{{- /* Search index for Blowfish: card questions instead of the full text keep it light. */ -}}
+{{- $index := slice -}}
+{{- range .Site.Pages -}}
+  {{- if and (not .Params.excludeFromSearch) (in (slice "page" "section") .Kind) -}}
+    {{- $section := .Site.GetPage "section" .Section -}}
+    {{- $content := "" -}}
+    {{- with .Params.questions -}}
+      {{- $questions := slice }}{{ range . }}{{ $questions = $questions | append .q }}{{ end -}}
+      {{- $content = delimit $questions " · " -}}
+    {{- else -}}
+      {{- $content = .Plain | truncate 1500 -}}
+    {{- end -}}
+    {{- $index = $index | append (dict
+      "title" (.Title | safeJS)
+      "section" ($section.Title | safeJS)
+      "summary" (.Summary | plainify | htmlUnescape | truncate 300 | safeJS)
+      "content" ($content | safeJS)
+      "permalink" .RelPermalink
+      "type" .Type
+    ) -}}
+  {{- end -}}
+{{- end -}}
+{{- $index | jsonify -}}

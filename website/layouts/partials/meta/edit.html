@@ -1,0 +1,13 @@
+{{- /* Edit link to the vault source file, since the content is staged by scripts/prepare_site.py. */ -}}
+{{- with .Params.source -}}
+<span class="mb-[2px]">
+  <a
+    href="{{ site.Params.repository }}/blob/main/{{ . }}"
+    class="text-lg hover:text-primary-500"
+    rel="noopener noreferrer"
+    target="_blank"
+    title="{{ i18n "article.edit_title" }}"
+    ><span class="inline-block align-text-bottom">{{ partial "icon.html" "edit" }}</span></a
+  >
+</span>
+{{- end -}}

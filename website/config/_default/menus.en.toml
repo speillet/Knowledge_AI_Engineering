@@ -1,0 +1,53 @@
+[[main]]
+  name = "Start here"
+  pageRef = "/START_HERE"
+  weight = 10
+
+[[main]]
+  name = "Paths"
+  pageRef = "/docs/paths"
+  weight = 20
+
+[[main]]
+  name = "Catalog"
+  pageRef = "/docs/catalog"
+  weight = 30
+
+[[main]]
+  name = "Practice"
+  pageRef = "/examples"
+  weight = 40
+
+[[main]]
+  name = "Anki"
+  pageRef = "/docs/guides/anki"
+  weight = 50
+
+[[main]]
+  identifier = "github"
+  weight = 60
+  url = "https://github.com/speillet/Knowledge_AI_Engineering"
+  [main.params]
+    icon = "github"
+    showName = false
+    target = "_blank"
+
+[[footer]]
+  name = "Map of content"
+  pageRef = "/00-moc-ai-engineering"
+  weight = 10
+
+[[footer]]
+  name = "Guides"
+  pageRef = "/docs/guides"
+  weight = 20
+
+[[footer]]
+  name = "Reference"
+  pageRef = "/docs/reference"
+  weight = 30
+
+[[footer]]
+  name = "Contributing"
+  pageRef = "/CONTRIBUTING"
+  weight = 40
