@@ -1,6 +1,6 @@
 # Documentation
 
-Start with the [learning guide](learning-with-flashcards.md), then choose a path or browse the [topic catalog](catalog.md).
+Start with [your first session](../START_HERE.md) and the [learning guide](learning-with-flashcards.md), then choose a path or browse the [topic catalog](catalog.md).
 
 ## Guides and paths
 
