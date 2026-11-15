@@ -1,6 +1,6 @@
 # Knowledge Vault — AI Engineering
 
-An [Obsidian](https://obsidian.md) vault of **English flashcards** covering the core skills of **AI engineering**. The learning paths run from choosing between rules, classical ML and LLMs to deploying and securing them, with the data and distributed systems foundations needed for reliable applications.
+An [Obsidian](https://obsidian.md) vault of **flashcards** covering the core skills of **AI engineering**. The learning paths run from choosing between rules, classical ML and LLMs to deploying and securing them, with the data and distributed systems foundations needed for reliable applications.
 
 Each topic covers **one concept** in 11–38 question-and-answer cards, about eighteen on average, and ends with **scenarios**: practical cases to diagnose, design or make tradeoffs about. Links connect related topics, and the cards support **spaced repetition**.
 
@@ -124,7 +124,7 @@ Every push to `main` generates an Anki package and publishes it at a stable addr
    - Retired cards are re-exported suspended with the `retired` tag. Search for `tag:retired` in Anki to delete them.
 4. Anki and Obsidian maintain separate review schedules; their progress is not synchronized.
 
-The English migration preserves note GUIDs, the model ID and the existing deck IDs. See the [migration report](docs/english-migration-2026-11-15.md) for the compatibility checks.
+The migration preserves note GUIDs, the model ID and the existing deck IDs. See the [migration report](docs/english-migration-2026-11-15.md) for the compatibility checks.
 
 To generate the package locally:
 
