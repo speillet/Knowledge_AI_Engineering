@@ -38,7 +38,7 @@ Build (prompt, reference continuation) pairs and have each stack **score the con
 SamplingParams(max_tokens=1, prompt_logprobs=5)
 ```
 
-Compare position by position: log-probability gap of the forced token, top-1 agreement, KL divergence over the top-k ([[68-quantization|comparison metrics]]). Continuations must cover the lengths, languages and formats actually served.
+Compare position by position: log-probability gap of the forced token, top-1 agreement, and a KL divergence estimated on the top-k, renormalized or with a bucket for the remaining mass ([[68-quantization|comparison metrics]]). Continuations must cover the lengths, languages and formats actually served.
 
 ---
 
@@ -131,7 +131,7 @@ Test both without and with streaming: `tool_calls` filled, arguments as valid JS
 
 Why test structured outputs after changing the engine or the constrained decoding backend? <!--anki:3132323337613961616632383464623262373762653536376562646462313165-->
 ?
-Because each backend implements its own subset of JSON Schema, regex and grammars. In vLLM, the `auto` mode picks the backend per request; LM Format Enforcer follows Python's regex syntax, XGrammar and Guidance follow Rust's. Changing the backend changes the allowed tokens, and therefore the outputs.
+Because each backend implements its own subset of JSON Schema, regex and grammars. In vLLM, the `auto` mode picks the backend per request. LM Format Enforcer, deprecated since v0.33.0 and due to be removed in v0.35.0, follows Python's regex syntax; XGrammar and Guidance follow Rust's. Migrating away from it changes the allowed tokens, and therefore the outputs.
 
 Replay each production schema with cases that **must** be constrained: maximum length, enumerations, patterns, required fields. Check that the outputs actually respect these constraints, not just that they parse ([[63-guided-generation|guided generation]]).
 

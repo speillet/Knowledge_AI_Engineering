@@ -286,18 +286,18 @@ How do you automatically detect an LLM output stuck in a repetition loop? <!--an
 ?
 Repetitive text **compresses much better** than normal text. Whisper uses this: it computes `len(bytes) / len(zlib.compress(bytes))` and, above 2.4, deems the segment "too repetitive" and decodes it again at a higher temperature.
 
-For an LLM, compute this ratio on every response, along with the rate of repeated n-grams and the `finish_reason`. The ratio of healthy text grows with its length: calibrate a threshold per length bucket on healthy outputs rather than reusing 2.4. Then look for the cause: greedy decoding, missing stop condition, badly tuned penalties ([[65-probabilities-sampling|sampling]]).
+For an LLM, compute this ratio on every response, along with the rate of repeated n-grams and the `finish_reason`. The ratio of healthy text grows with its length and depends on its type: JSON, code, tables and lists compress much better than prose. Calibrate a threshold per length bucket and content type on healthy outputs rather than reusing 2.4. Then look for the cause: greedy decoding, missing stop condition, badly tuned penalties ([[65-probabilities-sampling|sampling]]).
 
 ---
 
-Calculation: a 6,000-byte response compresses to 1,550 bytes with zlib. On your traffic, healthy responses of this length have a ratio between 2.1 and 2.3. What do you conclude? <!--anki:3864343865356138393137343435376338363330626361323034646434636136-->
+Calculation: a 6,000-byte response compresses to 1,550 bytes with zlib. On your traffic, healthy prose responses of this length have a ratio between 2.1 and 2.3. What do you conclude? <!--anki:3864343865356138393137343435376338363330626361323034646434636136-->
 ?
 ```text
 ratio = 6,000 / 1,550 ≈ 3.87
 ```
 The ratio clearly exceeds the healthy range: the response probably contains a **repetition loop** over a good part of the text. Flag the response, check its `finish_reason`, then retry with other parameters or switch to the fallback.
 
-A single threshold would be fragile: the ratio of a healthy 500-byte response is much lower than that of a 6,000-byte one. Track the detection rate per model and per version: a rise after a deployment signals a regression.
+A single threshold would be fragile: a healthy 500-byte response has a much lower ratio than a 6,000-byte one, and a JSON or code response a much higher one than prose. Track the detection rate per model and per version: a rise after a deployment signals a regression.
 
 ---
 
@@ -309,7 +309,7 @@ Because its **real rejection rate** remains unknown before production traffic. I
 - match known incidents to estimate false negatives;
 - set the threshold and the failure policy before enabling blocking.
 
-Keep a switch to return to observation. A validator that wrongly blocks 5% of responses can cost more than the defect it targets ([[101-llm-security-guardrails|guardrails]]).
+It is a [[112-model-cicd|shadow deployment]] applied to a validator. Keep a switch to return to observation. A validator that wrongly blocks 5% of responses can cost more than the defect it targets ([[101-llm-security-guardrails|guardrails]]).
 
 ---
 
