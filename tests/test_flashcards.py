@@ -160,7 +160,7 @@ class VaultTests(unittest.TestCase):
             p
             for p in (ROOT / "examples").rglob("*")
             if p.is_file()
-            and p.suffix in {".py", ".md", ".txt"}
+            and p.suffix in {".py", ".md", ".txt", ".json"}
             and not any(part in {".venv", "__pycache__", ".lab-data"} for part in p.parts)
         ]
         for source in sources:

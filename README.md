@@ -12,11 +12,11 @@ Each topic combines explanations, examples, scenarios and links to related conce
 
 ## Practice
 
-Apply what you learn with a local workshop:
+Choose a [local workshop](examples/README.md) with documented prerequisites, commands and expected results:
 
 - [AI decisions](examples/ai-decisions/README.md) — metrics, model selection and human review.
 - [Verifiable RAG](examples/verifiable-rag/README.md) — evidence, permissions, versions and abstention.
-- [Data engineering](examples/data-engineering/sql_workshop.py) — SQL, joins and time-aware features.
+- [Data engineering](examples/data-engineering/README.md) — SQL, joins and time-aware features.
 - [Support agent](examples/agentic-support/README.md) — tool contracts, approval and recovery tests.
 
 For a longer project, follow the [agent platform path](docs/paths/platform-agents-inference-learning-path.md) or the [production MLOps path](docs/paths/production-mlops-learning-path.md).
