@@ -483,6 +483,8 @@ def lint(stale_months: int) -> tuple[list[str], list[str], list[TopicStats]]:
     """Errors, warnings and statistics per record; stale_months = 0 ignores the age of the dates."""
     files = topic_files()
     pages = [*ROOT.glob("[0-9]*/*.md"), *ROOT.glob("*.md"), *(ROOT / "docs").rglob("*.md")]
+    pages += [ROOT / "examples/README.md", *ROOT.glob("examples/*/README.md")]
+    pages = [p for p in pages if p.exists()]
     vault = Vault(files, {p: p.read_text(encoding="utf-8") for p in pages}, stale_months)
     report = Report()
     for name, count in vault.names.items():
