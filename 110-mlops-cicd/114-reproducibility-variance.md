@@ -258,4 +258,5 @@ Scenario: your team is testing a bug-fixing agent. It passes 4 times on 5 in dem
 - [[55-agentic-rl|Agentic RL]] — train a model on agent tasks
 - [[118-ml-artifacts-registry-releases|Artifacts, registry and releases ML]] — production contracts and verifications
 - [[90-016-harbor-agent-evaluation|Harbor]] — pass@k and repeated tests calculated by an eval harness
+- [[60-014-inference-parity-validation|Inference parity]] — noise floor and parity between inference stacks
 - [[00-moc-ai-engineering|MOC AI Engineering]]

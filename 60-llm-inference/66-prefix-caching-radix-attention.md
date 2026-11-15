@@ -301,4 +301,5 @@ Scenario: your multi-client service shares the same model, and a client is worri
 - [[69-roofline-prefill-decode|Roofline & Disaggregation]] — which limits each phase of the inference
 - [[60-011-inference-capacity-scheduling|Capacity & scheduling]] — connect memory, budgets and payload under load
 - [[60-013-prefill-decode-step-by-step|Prefill & decode step by step]] — track calculated positions, cache and delays
+- [[60-014-inference-parity-validation|Inference parity]] — a path that prompt_logprobs does not exercise
 - [[00-moc-ai-engineering|MOC AI Engineering]]

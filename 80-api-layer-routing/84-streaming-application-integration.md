@@ -1,7 +1,7 @@
 # Streaming & application integration — Flashcards
 Tags: #flashcards #ai-engineering #api #streaming #agents #llm
 Verified on: 30 September 2026 — This factsheet lists products, versions or regulatory texts that are evolving quickly.
-<!-- summary: streaming interest, SSE or WebSocket, proxy buffers, server-side cancellation, streaming JSON, agent events (AG-UI), long asynchronous tasks, resuming a stream, idempotency key, calculation of open connections, deduplication to SSE reconnection, backpressure, end of stream. -->
+<!-- summary: streaming interest, SSE or WebSocket, proxy buffers, server-side cancellation, streaming JSON, agent events (AG-UI), long asynchronous tasks, resuming a stream, idempotency key, calculation of open connections, deduplication to SSE reconnection, backpressure, end of stream, guardrail on a stream. -->
 
 
 Why stream the answers of a LLM? <!--anki:6536416a5043402c2f28-->
@@ -130,6 +130,17 @@ Why distinguish between connection closure and success event in an agent stream?
 A connection can close after **a failure, a timeout or a success**. Closing alone does not give the business status.
 
 Provide an explicit end event with task and result ID, as well as a status endpoint if the connection is lost. The client should not display "completed" on a simple end of transport. Test a break just before and right after the success record.
+
+---
+
+How do you apply an output guardrail to a streamed response? <!--anki:3261326362663331373339323464393762393765643738373933333936373135-->
+?
+Three options, depending on the risk:
+- **validate everything before displaying**: safe, but you lose the benefit of streaming;
+- **validate by window**: hold back a few sentences and check each segment before releasing it;
+- **stream then retract**: replace the message if the final check fails, only for a low risk.
+
+In every case, trigger **no action** or write before the full validation, and emit a structured field only once verified. A chunk-by-chunk filter misses what only shows in context, such as personal data split across two chunks ([[101-llm-security-guardrails|guardrails]]).
 
 ---
 

@@ -162,4 +162,5 @@ Scenario: an auditor wants to use the thought chain displayed by the model as ju
 - [[55-agentic-rl|Agentic RL]] — from reasoning to tools
 - [[13-production-prompts|Prompt in production]] — structure, versioning and portability of prompts
 - [[60-012-inference-optimization-method|Optimization process]] — prioritize and verify gains under service constraints
+- [[63-guided-generation|Guided generation]] — constraint applied after reasoning, truncation to detect
 - [[00-moc-ai-engineering|MOC AI Engineering]]

@@ -1,7 +1,7 @@
 # Inference & Usage Monitoring — Flashcards
 Tags: #flashcards #ai-engineering #observability #monitoring #inference #llm
 Verified on: 8 October 2026 — This page lists products, versions or regulatory texts that are evolving quickly.
-<!-- summary: monitoring or observability, layers to monitor, vLLM and GPU (DCGM), Use by team, finish_reason, validation of each response, quality signals without field truth, errors and availability, OpenTelemetry GenAI traces, Dashboard, Alerts, Controls before production, detection of regression, Logging of the prompts, aggregation of histograms, Buckets SLO, perimeters of measurement, global throughput and segmentation, missing measurements and telemetry failure, Metrics of queue, Actionable Alerts. -->
+<!-- summary: monitoring or observability, layers to monitor, vLLM and GPU (DCGM), Use by team, finish_reason, validation of each response, quality signals without field truth, errors and availability, OpenTelemetry GenAI traces, Dashboard, Alerts, Controls before production, detection of regression, Logging of the prompts, aggregation of histograms, Buckets SLO, perimeters of measurement, global throughput and segmentation, missing measurements and telemetry failure, Metrics of queue, Actionable Alerts, validator order, repetition loops and compression ratio, validator in observation mode. -->
 
 
 What layers should be monitored for an inference service? <!--anki:4f41512c3177716b6679-->
@@ -271,6 +271,48 @@ Keep other signals in dashboards for diagnosis. Test the alert, its routing and 
 
 ---
 
+In what order should the validators of an LLM response run in production? <!--anki:6136633135356233376162313462623439356562333364616538313430306166-->
+?
+From **cheapest to most expensive**, stopping at the first blocking failure:
+1. deterministic checks: parsing, schema, bounds, language;
+2. business rules and lookup checks: totals, existing IDs, permissions;
+3. models: content classifier, then an LLM judge if needed.
+
+Define for each validator its failure policy: **block** before any action or sensitive data, **let through with a flag** for a convenience check. Log each result with the validator version: otherwise a rise in the rejection rate cannot be told apart from a validator change.
+
+---
+
+How do you automatically detect an LLM output stuck in a repetition loop? <!--anki:3337646662313063666539653462313639326263303435353136373836313333-->
+?
+Repetitive text **compresses much better** than normal text. Whisper uses this: it computes `len(bytes) / len(zlib.compress(bytes))` and, above 2.4, deems the segment "too repetitive" and decodes it again at a higher temperature.
+
+For an LLM, compute this ratio on every response, along with the rate of repeated n-grams and the `finish_reason`. The ratio of healthy text grows with its length: calibrate a threshold per length bucket on healthy outputs rather than reusing 2.4. Then look for the cause: greedy decoding, missing stop condition, badly tuned penalties ([[65-probabilities-sampling|sampling]]).
+
+---
+
+Calculation: a 6,000-byte response compresses to 1,550 bytes with zlib. On your traffic, healthy responses of this length have a ratio between 2.1 and 2.3. What do you conclude? <!--anki:3864343865356138393137343435376338363330626361323034646434636136-->
+?
+```text
+ratio = 6,000 / 1,550 ≈ 3.87
+```
+The ratio clearly exceeds the healthy range: the response probably contains a **repetition loop** over a good part of the text. Flag the response, check its `finish_reason`, then retry with other parameters or switch to the fallback.
+
+A single threshold would be fragile: the ratio of a healthy 500-byte response is much lower than that of a 6,000-byte one. Track the detection rate per model and per version: a rise after a deployment signals a regression.
+
+---
+
+Why first enable a new output validator without blocking? <!--anki:6462386537623437363232393439306661373065326432303663396434313231-->
+?
+Because its **real rejection rate** remains unknown before production traffic. In observation mode, the validator runs and logs its decision without blocking the response. During this period:
+- measure the rejection rate per segment and its stability;
+- annotate a sample of rejections to estimate false positives;
+- match known incidents to estimate false negatives;
+- set the threshold and the failure policy before enabling blocking.
+
+Keep a switch to return to observation. A validator that wrongly blocks 5% of responses can cost more than the defect it targets ([[101-llm-security-guardrails|guardrails]]).
+
+---
+
 ## Scenarios
 
 Scenario: "The assistant is slow this morning." You only have this sentence. In what order do you look? <!--anki:7a24417a6c476d607978-->
@@ -319,6 +361,7 @@ Scenario: the compliance manager asks if you are logging user conversations. Wha
 - [OpenTelemetry — semantic conventions GenAI](https://github.com/open-telemetry/semantic-conventions-genai)
 
 - 14 November supplement 2026 — Alerts and user impact: [Google SRE — Monitoring Distributed Systems](https://sre.google/sre-book/monitoring-distributed-systems/).
+- Supplement of 15 November 2026 — Repetition loops: [Whisper — compression threshold and temperature fallback](https://github.com/openai/whisper/blob/86098128c0b4f24f0e2aa2994de830614b474227/whisper/transcribe.py), [ratio computation](https://github.com/openai/whisper/blob/86098128c0b4f24f0e2aa2994de830614b474227/whisper/utils.py); [Holtzman et al. — The Curious Case of Neural Text Degeneration](https://arxiv.org/abs/1904.09751).
 
 ## Connections
 - [[64-inference-metrics-slo|Inference Metrics & SLO]] — TTFT, TPOT, goodput, percentiles
@@ -341,4 +384,6 @@ Scenario: the compliance manager asks if you are logging user conversations. Wha
 - [[95-llm-as-judge|LLM-as-a-judge]] — note automatically, and validate the judge
 - [[60-010-inference-load-benchmarks|LLM Load Benchmarks]] — measure capacity without hiding files and failures
 - [[90-011-langfuse-instrumentation-production|Langfuse — Production instrumentation]] — connect traces and aggregate measurements
+- [[60-014-inference-parity-validation|Inference parity]] — parity before sending traffic
+- [[101-llm-security-guardrails|LLM security]] — putting a guardrail in observation before blocking
 - [[00-moc-ai-engineering|MOC AI Engineering]]
