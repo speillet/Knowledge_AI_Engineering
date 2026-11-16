@@ -118,10 +118,11 @@ def plain_block(markdown: str) -> str:
             if not FENCE.match(line):
                 words.append(line)
             continue
-        line = re.sub(r"<[^>]+>", " ", line)
         line = re.sub(r"^\s*(?:[-*+]|\d+\.|>|#{1,6})\s+", "", line).replace("|", " ")
+        # Links first: their relref shortcodes contain "<" and ">" that look like tags
+        line = re.sub(r"<[^>]+>", " ", plain(line))
         if not re.fullmatch(r"[\s:-]*", line):
-            words.append(plain(line))
+            words.append(line)
     return " ".join(" ".join(words).split())
 
 
