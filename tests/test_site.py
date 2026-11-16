@@ -58,6 +58,10 @@ class SiteTests(unittest.TestCase):
         self.assertNotIn("<!--anki:", body)
         self.assertIn('relref "/30-agents/31-agent-fundamentals.md"', body)
         self.assertNotIn("MOC AI Engineering", body)
+        search = front["params"]["search"]
+        self.assertIn("What is RAG? Answer.", search)
+        self.assertIn("Source", search)
+        self.assertNotIn("Expand all", search)
 
     def test_every_active_card_has_one_panel(self):
         pages = {p.relative_to(lint.ROOT) for p in site.source_pages(lint.ROOT)}
@@ -72,12 +76,13 @@ class SiteTests(unittest.TestCase):
                 self.assertEqual(body.count('<details class="kv-card '), len(cards))
 
     def test_subsections_fold_inside_their_sections(self):
-        markdown = "Intro.\n\n## First\nA.\n### Inner\nB.\n## Second\nC.\n```text\n### not a heading\n```\n"
+        markdown = "Intro.\n\n## First\nA.\n### Inner\nB.\n## 20 — RAG\nC.\n```text\n### not a heading\n```\n"
         body = site.fold_subsections(markdown, site.Ids())
         self.assertTrue(body.startswith("Intro."))
-        self.assertIn("## First\nA.", body)
+        self.assertIn("## First {#first}\nA.", body)
+        self.assertIn("## 20 — RAG {#20-rag}\nC.", body)
         self.assertIn('<details class="kv-fold" id="inner">', body)
-        self.assertLess(body.index('id="inner"'), body.index("## Second"))
+        self.assertLess(body.index('id="inner"'), body.index("## 20 — RAG"))
         self.assertIn("```text\n### not a heading\n```", body)
 
     def test_link_lists_become_card_grids(self):
@@ -111,6 +116,21 @@ class SiteTests(unittest.TestCase):
         catalog = site.catalog_body("Intro.", {"20-rag": info}, {"20-rag": [first, second]})
         self.assertIn('<details class="kv-fold kv-domain" id="20-rag" open>', catalog)
         self.assertEqual(catalog.count('<li class="kv-tile">'), 2)
+        _, alone = site.domain_page(Path("20-rag/README.md"), info | {"prerequisites": []}, [first], meta)
+        self.assertIn("## Before you start {#before-you-start}\n\nNo other vault topic is required.", alone)
+
+    def test_covered_points_render_inline_code(self):
+        topic = site.Topic(Path("40-automation/42-a.md"), "A", "", ["`init_chat_model` packets"], {"concept": 1}, 1)
+        self.assertIn("<li><code>init_chat_model</code> packets</li>", site.topic_tile(topic))
+
+    def test_pages_get_a_summary_cut_at_a_word(self):
+        text = "# Guides\n\n- [A](a.md) — first.\n- [B](b.md) — second.\n"
+        front, _ = site.generic_page(Path("docs/guides/README.md"), text, str)
+        self.assertEqual((front["summary"], front["description"]), ("A — first. B — second.",) * 2)
+        self.assertEqual(site.excerpt("one two three", 9), "one two…")
+        self.assertEqual(site.excerpt("short", 9), "short")
+        block = "Text with `code`.\n\n```python\nx = 1\n```\n\n| a | b |\n|---|---|\n| c | d |\n- <b>item</b>"
+        self.assertEqual(site.plain_block(block), "Text with code. x = 1 a b c d item")
 
     def test_link_check_reports_missing_pages_and_anchors(self):
         with tempfile.TemporaryDirectory() as tmp:

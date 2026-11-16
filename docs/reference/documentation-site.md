@@ -1,6 +1,6 @@
 # Documentation website
 
-The [website](https://speillet.github.io/Knowledge_AI_Engineering/) offers domain navigation, search over topics and card questions, and collapsible answers. Markdown files in the repository remain the source for the website, Obsidian and Anki.
+The [website](https://speillet.github.io/Knowledge_AI_Engineering/) offers domain navigation, full-text search and collapsible answers. Markdown files in the repository remain the source for the website, Obsidian and Anki.
 
 ## Build or preview
 
@@ -20,7 +20,7 @@ Both targets first fetch the theme submodule if it is missing (`git submodule up
 - **Topics** keep one section per card kind: key concepts, do-not-confuse, calculations and scenarios. Each answer folds under its question; card counts, the "What this topic covers" list, sources and connections frame the cards. The theme adds the table of contents, breadcrumbs and previous/next topics.
 - **Other pages** keep their `##` sections and fold each `###` subsection. Lists made only of links become card grids; numbered lists keep their step numbers.
 - **Domain pages** show the prerequisites, the ordered fundamentals and the practice task from `scripts/sections.json`, then every topic of the domain as theme cards. The **topic catalog** folds one block per domain.
-- **Links**: wikilinks and relative links become Hugo `relref` references, so a broken link fails the build. Links to scripts and data point to their GitHub source. Card anchors derive from Anki identifiers, so a link to a card survives a rewording.
+- **Links**: wikilinks and relative links become Hugo `relref` references, so a broken link fails the build. Links to scripts and data point to their GitHub source. Card anchors derive from Anki identifiers, so a link to a card survives a rewording. Heading anchors use the same slugs as wikilinks to headings and as the previous site, so old links keep working.
 
 Neither `website/content/` nor `site/` is committed.
 
@@ -28,7 +28,7 @@ Neither `website/content/` nor `site/` is committed.
 
 [Blowfish](https://github.com/nunocoracao/blowfish) is a git submodule in `website/themes/blowfish`, pinned to a release. The site configuration is in `website/config/_default/`: the `ocean` colour scheme, a fixed header with blur, light and dark appearance following the system, search, breadcrumbs and tables of contents.
 
-The site overrides only what the vault needs, in `website/layouts/` and `website/assets/`: the home page (`partials/home/custom.html`), a lighter search index built from card questions (`_default/index.json`), the edit link to the vault source, the favicon, and the styles and script of the collapsible cards (`css/custom.css`, `js/kv.js`). These styles use the colour variables of the scheme, so they follow the palette and the dark mode.
+The site overrides only what the vault needs, in `website/layouts/` and `website/assets/`: the home page (`partials/home/custom.html`), a search index of the full text of each page (`_default/index.json`), where topics give their summary, questions, answers and sources without the labels of the page controls, the edit link to the vault source, the favicon, and the styles and script of the collapsible cards (`css/custom.css`, `js/kv.js`). These styles use the colour variables of the scheme, so they follow the palette and the dark mode.
 
 To upgrade the theme, check the Hugo versions it supports (`[module.hugoVersion]` in its `config.toml`), then:
 
