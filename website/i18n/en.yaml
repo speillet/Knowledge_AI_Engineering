@@ -1,0 +1,6 @@
+# Site wording on top of the Blowfish translations: a plain 404 page.
+error:
+  404_title: "Page not found"
+  404_error: "Error 404"
+  404_description: "This page does not exist or has moved. Search the vault with Ctrl K, or start again from the home page."
+  404_home: "Back to the home page"

@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="{{ site.Language.Locale }}">
+  <head>
+    <meta charset="utf-8">
+    <title>{{ .Permalink }}</title>
+    <link rel="canonical" href="{{ .Permalink }}">
+    <meta name="robots" content="noindex">
+    {{- /* Keep the query and fragment, so search.html?q=term still opens the search. */}}
+    <script>location.replace({{ .Permalink }} + location.search + location.hash);</script>
+    <meta http-equiv="refresh" content="0; url={{ .Permalink }}">
+  </head>
+</html>

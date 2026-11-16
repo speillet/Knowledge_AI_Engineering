@@ -1,0 +1,22 @@
+{{- /* Blowfish 404 page without its random movie quotes: a plain message and a way back. */ -}}
+{{ define "main" }}
+  <section class="relative isolate flex grow flex-col items-center justify-center overflow-hidden py-24 text-center">
+    <div
+      aria-hidden="true"
+      class="pointer-events-none absolute inset-0 -z-10 flex select-none items-center justify-center">
+      <span class="text-[16rem] font-black leading-none tracking-tighter text-neutral-900/5 dark:text-white/5 sm:text-[26rem]">404</span>
+    </div>
+    <p class="landing-rise mb-5 text-sm font-semibold uppercase tracking-[0.25em] text-primary-600 dark:text-primary-400">
+      {{ i18n "error.404_error" }}
+    </p>
+    <h1 class="landing-rise landing-rise-1 text-balance text-5xl font-black leading-[1.05] tracking-tighter text-neutral-900 dark:text-white sm:text-7xl">
+      {{ i18n "error.404_title" }}
+    </h1>
+    <p class="landing-rise landing-rise-2 mx-auto mt-8 max-w-2xl px-6 text-balance text-xl leading-8 text-neutral-600 dark:text-neutral-300">
+      {{ i18n "error.404_description" }}
+    </p>
+    <div class="landing-rise landing-rise-3 mt-10">
+      <a class="kv-cta kv-cta-primary not-prose" href="{{ site.Home.RelPermalink }}">{{ i18n "error.404_home" }} <span aria-hidden="true">→</span></a>
+    </div>
+  </section>
+{{ end }}

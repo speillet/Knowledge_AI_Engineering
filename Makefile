@@ -68,4 +68,4 @@ site: $(THEME) ## Build the site with Hugo extended into site/; fails on any war
 
 site-serve: $(THEME) ## Preview the site at http://127.0.0.1:1313/; rerun after changing source files
 	$(PYTHON) $(STRICT_ENCODING) scripts/prepare_site.py
-	$(HUGO) server --source website --bind 127.0.0.1 --baseURL http://127.0.0.1:1313/
+	$(HUGO) server --source website --bind 127.0.0.1 --baseURL http://127.0.0.1:1313/ --renderToMemory

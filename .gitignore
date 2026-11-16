@@ -26,7 +26,6 @@ __pycache__/
 .venv-agentic/
 
 # Generated documentation (make site)
-build/
 site/
 website/content/
 website/.hugo_build.lock

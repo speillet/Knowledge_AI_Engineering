@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """Check the links of the built site: every internal page, file and anchor must exist.
 
-python3 scripts/check_site.py                  # site/, served under the path of the Hugo baseURL
-python3 scripts/check_site.py --site DIR --base /
+python3 scripts/check_site.py                  # site/, served at the Hugo baseURL
+python3 scripts/check_site.py --site DIR --base http://127.0.0.1:1313/
 
 Hugo already stops on a broken relref. This check also covers anchors, links written in
-raw HTML or by the theme, and the URLs of the search index. It uses the standard library.
+raw HTML or by the theme, absolute links to the site itself, and the URLs of the search
+index. It uses the standard library.
 """
 
 import argparse
@@ -42,11 +43,10 @@ class Page(HTMLParser):
             self.links.append(values[attribute])
 
 
-def base_path(config: Path = CONFIG) -> str:
-    """URL path the site is served under, read from the Hugo baseURL."""
+def site_url(config: Path = CONFIG) -> str:
+    """Hugo baseURL: the address the site is served at."""
     match = re.search(r'^baseURL\s*=\s*"([^"]+)"', config.read_text(encoding="utf-8"), re.M)
-    path = urlsplit(match[1]).path if match else "/"
-    return path if path.endswith("/") else path + "/"
+    return match[1] if match else "/"
 
 
 def served_file(site: Path, base: str, path: str) -> Path | None:
@@ -67,13 +67,19 @@ def parse(path: Path) -> Page:
     return page
 
 
-def check(site: Path, base: str) -> tuple[list[str], int]:
-    """Broken references of every page, and the number of pages checked."""
+def check(site: Path, base: str, origin: str = "") -> tuple[list[str], int]:
+    """Broken references of every page, and the number of pages checked.
+
+    base is the URL path the site is served under; links starting with origin + base, such
+    as https://host/base/page/, are checked like the internal links they are.
+    """
     pages = {path: parse(path) for path in sorted(site.rglob("*.html"))}
     errors: list[str] = []
     for path, page in pages.items():
         url = base + path.relative_to(site).as_posix()
         for link in page.links:
+            if origin and link.startswith(origin + base):
+                link = link[len(origin) :]
             if EXTERNAL.match(link):
                 continue
             parts = urlsplit(urljoin(url, link))
@@ -98,11 +104,12 @@ def check(site: Path, base: str) -> tuple[list[str], int]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--site", type=Path, default=ROOT / "site", help="built site directory (default: site/)")
-    parser.add_argument("--base", help="URL path the site is served under (default: from the Hugo baseURL)")
+    parser.add_argument("--base", help="URL or path the site is served at (default: the Hugo baseURL)")
     args = parser.parse_args()
-    base = args.base or base_path()
-    base = base if base.endswith("/") else base + "/"
-    errors, count = check(args.site, base)
+    url = urlsplit(args.base or site_url())
+    base = url.path if url.path.endswith("/") else url.path + "/"
+    origin = f"{url.scheme}://{url.netloc}" if url.netloc else ""
+    errors, count = check(args.site, base, origin)
     for error in errors[:200]:
         print(error)
     if len(errors) > 200:
