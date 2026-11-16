@@ -6,7 +6,7 @@ STRICT_ENCODING = -X warn_default_encoding -W error::EncodingWarning
 
 .DEFAULT_GOAL := help
 .PHONY: help install check lint catalog-check ruff typecheck test workshops pre-commit \
-	ids catalog stats readme export site site-serve
+	ids catalog stats readme export site site-serve icons
 
 help: ## List of targets
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "} {printf "  %-14s %s\n", $$1, $$2}'
@@ -69,3 +69,6 @@ site: $(THEME) ## Build the site with Hugo extended into site/; fails on any war
 site-serve: $(THEME) ## Preview the site at http://127.0.0.1:1313/; rerun after changing source files
 	$(PYTHON) $(STRICT_ENCODING) scripts/prepare_site.py
 	$(HUGO) server --source website --bind 127.0.0.1 --baseURL http://127.0.0.1:1313/ --renderToMemory
+
+icons: ## Render the website icons from their SVG (needs cairosvg and Pillow)
+	$(PYTHON) scripts/build_icons.py

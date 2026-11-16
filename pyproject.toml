@@ -15,7 +15,8 @@ ignore = ["SIM905"]
 [tool.ruff.lint.isort]
 force-sort-within-sections = true
 known-first-party = [
-    "assign_card_ids", "check_site", "export_anki", "lint_flashcards", "prepare_site", "sr_plugin", "sync_catalog",
+    "assign_card_ids", "build_icons", "check_site", "export_anki", "lint_flashcards", "prepare_site", "sr_plugin",
+    "sync_catalog",
     "api", "demo", "engine", "storage",
 ]
 
@@ -33,5 +34,6 @@ warn_redundant_casts = true
 warn_return_any = true
 
 [[tool.mypy.overrides]]
-module = ["genanki"]
+# Optional dependencies: genanki for the Anki export, cairosvg and Pillow for the site icons.
+module = ["genanki", "cairosvg", "PIL", "PIL.*"]
 ignore_missing_imports = true
