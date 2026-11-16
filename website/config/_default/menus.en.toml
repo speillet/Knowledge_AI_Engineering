@@ -25,12 +25,9 @@
 
 [[main]]
   identifier = "github"
+  name = "GitHub"
   weight = 60
   url = "https://github.com/speillet/Knowledge_AI_Engineering"
-  [main.params]
-    icon = "github"
-    showName = false
-    target = "_blank"
 
 [[footer]]
   name = "Map of content"

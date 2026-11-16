@@ -18,15 +18,15 @@ Both targets first fetch the theme submodule if it is missing (`git submodule up
 [scripts/prepare_site.py](../../scripts/prepare_site.py) stages the public pages in `website/content/` without modifying the sources:
 
 - **Topics** keep one section per card kind: key concepts, do-not-confuse, calculations and scenarios. Each answer folds under its question; card counts, the "What this topic covers" list, sources and connections frame the cards. The theme adds the table of contents, breadcrumbs and previous/next topics.
-- **Other pages** keep their `##` sections and fold each `###` subsection. Lists made only of links become card grids; numbered lists keep their step numbers.
-- **Domain pages** show the prerequisites, the ordered fundamentals and the practice task from `scripts/sections.json`, then every topic of the domain as theme cards. The **topic catalog** folds one block per domain.
+- **Other pages** keep their `##` sections and fold each `###` subsection. Lists made only of links become lists of titles with their notes; numbered lists keep their step numbers.
+- **Domain pages** show the prerequisites, the ordered fundamentals and the practice task from `scripts/sections.json`, then every topic of the domain as a plain list. Other section pages list only the pages their content does not link (`layouts/_default/list.html`). The **topic catalog** folds one block per domain.
 - **Links**: wikilinks and relative links become Hugo `relref` references, so a broken link fails the build. Links to scripts and data point to their GitHub source. Card anchors derive from Anki identifiers, so a link to a card survives a rewording. Heading anchors use the same slugs as wikilinks to headings and as the previous site, so old links keep working.
 
 Neither `website/content/` nor `site/` is committed.
 
 ## Theme
 
-[Blowfish](https://github.com/nunocoracao/blowfish) is a git submodule in `website/themes/blowfish`, pinned to a release. The site configuration is in `website/config/_default/`. It sets the colour scheme, the appearance (light or dark as the system prefers, with the footer switch), a plain header, search, breadcrumbs and tables of contents. The `obsidian` colour scheme is specific to the site, in `website/assets/css/schemes/obsidian.css`: neutral greys, with the `#1e1e1e` background of Obsidian's dark mode, and a single violet accent, with WCAG AA text contrast in both appearances. The design stays deliberately plain: the system font, hairline borders, and no gradients, shadows, decorative backgrounds or animations.
+[Blowfish](https://github.com/nunocoracao/blowfish) is a git submodule in `website/themes/blowfish`, pinned to a release. The site configuration is in `website/config/_default/`. It sets the colour scheme, the appearance (light or dark as the system prefers, with the switch in the header), a plain header, search, breadcrumbs and tables of contents. The `obsidian` colour scheme is specific to the site, in `website/assets/css/schemes/obsidian.css`: neutral greys, with the `#1e1e1e` background of Obsidian's dark mode, and a single violet accent, with WCAG AA text contrast in both appearances. The design stays deliberately plain: the system font, hairline borders, and no gradients, shadows, decorative backgrounds or animations.
 
 The site overrides only what the vault needs, in `website/layouts/` and `website/assets/`:
 

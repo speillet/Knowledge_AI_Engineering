@@ -23,7 +23,7 @@ releases = "https://github.com/speillet/Knowledge_AI_Engineering/releases"
   showCopyright = true
   showThemeAttribution = true
   showAppearanceSwitcher = true
-  showScrollToTop = true
+  showScrollToTop = false
 
 [homepage]
   layout = "custom"

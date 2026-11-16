@@ -1,0 +1,10 @@
+{{- /* Child pages as a plain list of titles with their card counts or description. */ -}}
+<ul class="kv-tiles kv-pages not-prose">
+  {{- range . }}
+  <li class="kv-tile">
+    <a class="kv-tile-title" href="{{ .RelPermalink }}">{{ .Title }}</a>
+    {{- with .Params.count_text }}<span class="kv-tile-meta">{{ . }}</span>{{ end }}
+    {{- with .Description }}<span class="kv-tile-desc">{{ . }}</span>{{ end }}
+  </li>
+  {{- end }}
+</ul>

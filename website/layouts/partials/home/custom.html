@@ -13,7 +13,7 @@
     <a href="{{ relref . "/docs/catalog.md" }}">Topic catalog</a>
     <a href="{{ site.Params.anki }}">Anki package</a>
   </p>
-  <p class="kv-home-figures">{{ $topics }} topics · {{ lang.FormatNumber 0 $cards }} cards · {{ $scenarios }} scenarios · {{ len $domains }} domains</p>
+  <p class="kv-home-figures">{{ $topics }}&nbsp;topics · {{ lang.FormatNumber 0 $cards }}&nbsp;cards · {{ $scenarios }}&nbsp;scenarios · {{ len $domains }}&nbsp;domains</p>
 
   <h2>How to use it</h2>
   <ul class="kv-uses">
@@ -27,7 +27,7 @@
     {{- range $domains }}
     {{- $count := 0 }}{{ range .RegularPages }}{{ $count = add $count (int .Params.cards) }}{{ end }}
     <li>
-      <a class="kv-domain-link" href="{{ .RelPermalink }}"><span class="kv-num">{{ .Params.number }}</span>{{ .Title }}</a><span class="kv-domain-meta">{{ len .RegularPages }} topics · {{ $count }} cards</span>
+      <a class="kv-domain-link" href="{{ .RelPermalink }}"><span class="kv-num">{{ .Params.number }}</span>{{ .Title }}</a><span class="kv-domain-meta">{{ len .RegularPages }}&nbsp;topics · {{ $count }}&nbsp;cards</span>
       <p>{{ .Description }}</p>
     </li>
     {{- end }}
