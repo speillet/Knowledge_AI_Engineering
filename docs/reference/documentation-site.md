@@ -8,10 +8,10 @@ The site uses [Hugo](https://gohugo.io/installation/) **extended** edition, vers
 
 ```bash
 make site          # writes the static site to site/
-make site-serve    # preview at http://127.0.0.1:1313/
+make site-serve    # preview at http://127.0.0.1:1313/, rendered in memory
 ```
 
-Both targets first fetch the theme submodule if it is missing (`git submodule update --init --depth 1 website/themes/blowfish`). `make site` stages the content, builds with Hugo, then runs [scripts/check_site.py](../../scripts/check_site.py). It checks every internal link and anchor of the built pages, including absolute links to the site itself, and the URLs of the search index. It fails on any Hugo warning, broken page reference, link or anchor. After editing source Markdown, rerun `make site-serve` to regenerate the staged pages. Staging needs only Python 3.10+ and its standard library.
+Both targets first fetch the theme submodule if it is missing (`git submodule update --init --depth 1 website/themes/blowfish`). `make site` stages the content, builds with Hugo, then runs [scripts/check_site.py](../../scripts/check_site.py). It checks every internal link and anchor of the built pages, including absolute links to the site itself, and the URLs of the search index. It fails on any Hugo warning, broken page reference, link or anchor. The preview leaves `site/` untouched. After editing source Markdown, rerun `make site-serve` to regenerate the staged pages. Staging needs only Python 3.10+ and its standard library.
 
 ## How pages are built
 
@@ -38,7 +38,7 @@ git -C website/themes/blowfish checkout <tag>
 git add website/themes/blowfish
 ```
 
-Update `HUGO_VERSION` and `HUGO_SHA256` in the workflow if the supported range changes. In Obsidian, `.obsidian/app.json` excludes `website/themes/` so the theme's own Markdown stays out of the vault.
+Update `HUGO_VERSION` and `HUGO_SHA256` in the workflow if the supported range changes. In Obsidian, `.obsidian/app.json` excludes `website/`, so the theme's own Markdown and the pages staged by `make site` stay out of the vault.
 
 ## Publication
 
