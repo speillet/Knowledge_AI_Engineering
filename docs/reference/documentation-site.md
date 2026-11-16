@@ -11,7 +11,7 @@ make site          # writes the static site to site/
 make site-serve    # preview at http://127.0.0.1:1313/
 ```
 
-Both targets first fetch the theme submodule if it is missing (`git submodule update --init --depth 1 website/themes/blowfish`). `make site` stages the content, builds with Hugo, then checks every internal link and anchor of the built pages and the URLs of the search index with [scripts/check_site.py](../../scripts/check_site.py). It fails on any Hugo warning, broken page reference, link or anchor. After editing source Markdown, rerun `make site-serve` to regenerate the staged pages. Staging needs only Python 3.10+ and its standard library.
+Both targets first fetch the theme submodule if it is missing (`git submodule update --init --depth 1 website/themes/blowfish`). `make site` stages the content, builds with Hugo, then runs [scripts/check_site.py](../../scripts/check_site.py). It checks every internal link and anchor of the built pages, including absolute links to the site itself, and the URLs of the search index. It fails on any Hugo warning, broken page reference, link or anchor. After editing source Markdown, rerun `make site-serve` to regenerate the staged pages. Staging needs only Python 3.10+ and its standard library.
 
 ## How pages are built
 

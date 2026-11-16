@@ -140,8 +140,11 @@ class SiteTests(unittest.TestCase):
             page = '<a href="/a/#x">ok</a><a href="/a/#y">anchor</a><a href="/b/">page</a><a href="https://e.org/">ext</a>'
             (root / "index.html").write_text(page, encoding="utf-8")
             errors, count = check_site.check(root, "/")
+            (root / "self.html").write_text('<a href="https://site.example/a/#z">absolute</a>', encoding="utf-8")
+            absolute, _ = check_site.check(root, "/", "https://site.example")
         self.assertEqual(count, 2)
         self.assertEqual(errors, ["index.html: missing anchor /a/#y", "index.html: missing target /b/"])
+        self.assertEqual(absolute[-1], "self.html: missing anchor /a/#z")
 
     def test_directory_readmes_map_to_section_indexes(self):
         self.assertEqual(site.content_path(Path("docs/guides/README.md")), Path("docs/guides/_index.md"))
