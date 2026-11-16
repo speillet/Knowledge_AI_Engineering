@@ -119,6 +119,18 @@ class SiteTests(unittest.TestCase):
         _, alone = site.domain_page(Path("20-rag/README.md"), info | {"prerequisites": []}, [first], meta)
         self.assertIn("## Before you start {#before-you-start}\n\nNo other vault topic is required.", alone)
 
+    def test_home_deck_takes_the_first_card_of_core_topics(self):
+        source = Path("20-rag/21-rag-fundamentals.md")
+        topic = site.Topic(source, "RAG — Fundamentals", "", [], {"concept": 2}, 2)
+        texts = {source: TOPIC}
+        sections = {"20-rag": {"core": ["21-rag-fundamentals.md"]}, "30-agents": {"core": ["31-missing.md"]}}
+        deck = site.deck(sections, texts, {source: topic}, {source, self.target})
+        self.assertEqual(len(deck), 1)
+        first = (deck[0]["q"], deck[0]["kind"], deck[0]["page"])
+        self.assertEqual(first, ("What is RAG?", "concept", "/20-rag/21-rag-fundamentals.md"))
+        self.assertEqual(deck[0]["id"], site.card_id(lint.parse_cards(TOPIC)[0][0], site.Ids()))
+        self.assertTrue(deck[0]["a"].startswith("Answer."))
+
     def test_covered_points_render_inline_code(self):
         topic = site.Topic(Path("40-automation/42-a.md"), "A", "", ["`init_chat_model` packets"], {"concept": 1}, 1)
         self.assertIn("<li><code>init_chat_model</code> packets</li>", site.topic_tile(topic))

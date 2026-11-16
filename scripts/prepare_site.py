@@ -50,6 +50,8 @@ KINDS = (
     ("calculation", "Calculations", "Calculation:"),
     ("scenario", "Scenarios", "Scenario:"),
 )
+# Domains whose first core topic lends its first card to the deck of the home page
+HOME_DECK = ("20-rag", "30-agents", "130-llm-fundamentals")
 NOUNS = {
     "concept": ("key concept", "key concepts"),
     "confuse": ("do-not-confuse", "do-not-confuse"),
@@ -580,6 +582,35 @@ def domain_page(
     return front, "\n\n".join(blocks)
 
 
+def deck(
+    sections: dict[str, Any], texts: dict[Path, str], meta: dict[Path, Topic], pages: set[Path]
+) -> list[dict[str, str]]:
+    """Sample flashcards for the home page: the first card of the first core topic of HOME_DECK."""
+    wikilinks = {p.stem: p for p in pages if p.name != "README.md"}
+    cards = []
+    for directory in HOME_DECK:
+        core = sections.get(directory, {}).get("core", [])
+        source = Path(directory) / core[0] if core else None
+        if source not in meta:
+            continue
+        found, _ = parse_cards(texts[source])
+        if not found:
+            continue
+        card = found[0]
+        kind, _, prefix = kind_of(card.question)
+        question = plain(card.question.removeprefix(prefix).strip()) if prefix else plain(card.question)
+        answer = plain_block(convert_block(card.answer, link_converter(source, pages, wikilinks)))
+        cards.append({
+            "q": question[:1].upper() + question[1:],
+            "a": excerpt(answer, 170),
+            "topic": meta[source].title,
+            "page": "/" + content_path(source).as_posix(),
+            "id": card_id(card, Ids()),
+            "kind": kind,
+        })
+    return cards
+
+
 def catalog_body(intro: str, sections: dict[str, Any], topics_by_dir: dict[str, list[Topic]]) -> str:
     """The topic catalog: one collapsible block per domain, holding its topic cards."""
     blocks = [intro.strip()]
@@ -633,7 +664,9 @@ def prepare(root: Path = ROOT) -> Path:
         convert = link_converter(source, pages, wikilinks)
         if source == Path("README.md"):
             description = first_paragraph(text.split("\n", 1)[1])
-            staged[source] = ({"title": "AI Engineering", "description": description, "aliases": ["/search.html"]}, "")
+            front = {"title": "AI Engineering", "description": description, "aliases": ["/search.html"]}
+            front["params"] = {"deck": deck(sections, texts, meta, pages)}
+            staged[source] = (front, "")
         elif re.match(r"^\d", top) and source.name == "README.md":
             staged[source] = domain_page(source, sections[top], topics_by_dir.get(top, []), meta)
         elif source == Path("docs/catalog.md"):
