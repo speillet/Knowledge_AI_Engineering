@@ -1,8 +1,9 @@
 # Blowfish options: https://blowfish.page/docs/configuration/#theme-parameters
-colorScheme = "ocean"
+# Custom neon scheme in website/assets/css/schemes/synapse.css; dark by default, light on request.
+colorScheme = "synapse"
 logo = "img/logo.svg"
-defaultAppearance = "light"
-autoSwitchAppearance = true
+defaultAppearance = "dark"
+autoSwitchAppearance = false
 enableSearch = true
 enableCodeCopy = true
 enableStructuredBreadcrumbs = true

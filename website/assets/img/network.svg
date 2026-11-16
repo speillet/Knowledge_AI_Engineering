@@ -1,0 +1,149 @@
+<svg class="kv-network" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 640" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+<g class="kv-net-edges">
+<line x1="75" y1="63" x2="257" y2="64"/>
+<line x1="75" y1="63" x2="262" y2="180"/>
+<line x1="62" y1="244" x2="262" y2="180"/>
+<line x1="62" y1="244" x2="290" y2="280"/>
+<line x1="95" y1="389" x2="290" y2="280"/>
+<line x1="95" y1="389" x2="246" y2="352"/>
+<line x1="95" y1="389" x2="267" y2="478"/>
+<line x1="94" y1="587" x2="262" y2="180"/>
+<line x1="94" y1="587" x2="267" y2="478"/>
+<line x1="94" y1="587" x2="274" y2="560"/>
+<line x1="257" y1="64" x2="455" y2="72"/>
+<line x1="257" y1="64" x2="463" y2="168"/>
+<line x1="262" y1="180" x2="463" y2="168"/>
+<line x1="262" y1="180" x2="483" y2="235"/>
+<line x1="290" y1="280" x2="483" y2="235"/>
+<line x1="290" y1="280" x2="503" y2="322"/>
+<line x1="246" y1="352" x2="503" y2="322"/>
+<line x1="246" y1="352" x2="495" y2="402"/>
+<line x1="246" y1="352" x2="476" y2="483"/>
+<line x1="267" y1="478" x2="495" y2="402"/>
+<line x1="267" y1="478" x2="476" y2="483"/>
+<line x1="274" y1="560" x2="476" y2="483"/>
+<line x1="274" y1="560" x2="496" y2="557"/>
+<line x1="455" y1="72" x2="737" y2="78"/>
+<line x1="455" y1="72" x2="727" y2="181"/>
+<line x1="455" y1="72" x2="710" y2="335"/>
+<line x1="463" y1="168" x2="737" y2="78"/>
+<line x1="463" y1="168" x2="727" y2="181"/>
+<line x1="463" y1="168" x2="710" y2="335"/>
+<line x1="483" y1="235" x2="727" y2="181"/>
+<line x1="483" y1="235" x2="710" y2="335"/>
+<line x1="503" y1="322" x2="710" y2="335"/>
+<line x1="503" y1="322" x2="726" y2="442"/>
+<line x1="495" y1="402" x2="727" y2="181"/>
+<line x1="495" y1="402" x2="710" y2="335"/>
+<line x1="495" y1="402" x2="726" y2="442"/>
+<line x1="476" y1="483" x2="726" y2="442"/>
+<line x1="476" y1="483" x2="696" y2="584"/>
+<line x1="496" y1="557" x2="710" y2="335"/>
+<line x1="496" y1="557" x2="726" y2="442"/>
+<line x1="496" y1="557" x2="696" y2="584"/>
+<line x1="737" y1="78" x2="942" y2="69"/>
+<line x1="737" y1="78" x2="955" y2="143"/>
+<line x1="727" y1="181" x2="955" y2="143"/>
+<line x1="727" y1="181" x2="943" y2="222"/>
+<line x1="727" y1="181" x2="947" y2="406"/>
+<line x1="710" y1="335" x2="949" y2="331"/>
+<line x1="710" y1="335" x2="947" y2="406"/>
+<line x1="726" y1="442" x2="947" y2="406"/>
+<line x1="726" y1="442" x2="965" y2="500"/>
+<line x1="696" y1="584" x2="947" y2="406"/>
+<line x1="696" y1="584" x2="965" y2="500"/>
+<line x1="696" y1="584" x2="967" y2="564"/>
+<line x1="942" y1="69" x2="1146" y2="71"/>
+<line x1="942" y1="69" x2="1159" y2="187"/>
+<line x1="942" y1="69" x2="1172" y2="466"/>
+<line x1="955" y1="143" x2="1146" y2="71"/>
+<line x1="955" y1="143" x2="1159" y2="187"/>
+<line x1="955" y1="143" x2="1170" y2="275"/>
+<line x1="943" y1="222" x2="1159" y2="187"/>
+<line x1="943" y1="222" x2="1170" y2="275"/>
+<line x1="949" y1="331" x2="1170" y2="275"/>
+<line x1="949" y1="331" x2="1175" y2="369"/>
+<line x1="949" y1="331" x2="1182" y2="556"/>
+<line x1="947" y1="406" x2="1175" y2="369"/>
+<line x1="947" y1="406" x2="1172" y2="466"/>
+<line x1="965" y1="500" x2="1146" y2="71"/>
+<line x1="965" y1="500" x2="1172" y2="466"/>
+<line x1="965" y1="500" x2="1182" y2="556"/>
+<line x1="967" y1="564" x2="1172" y2="466"/>
+<line x1="967" y1="564" x2="1182" y2="556"/>
+<line x1="1146" y1="71" x2="1358" y2="78"/>
+<line x1="1146" y1="71" x2="1384" y2="219"/>
+<line x1="1146" y1="71" x2="1358" y2="579"/>
+<line x1="1159" y1="187" x2="1358" y2="78"/>
+<line x1="1159" y1="187" x2="1384" y2="219"/>
+<line x1="1159" y1="187" x2="1373" y2="404"/>
+<line x1="1170" y1="275" x2="1384" y2="219"/>
+<line x1="1170" y1="275" x2="1373" y2="404"/>
+<line x1="1170" y1="275" x2="1358" y2="579"/>
+<line x1="1175" y1="369" x2="1358" y2="78"/>
+<line x1="1175" y1="369" x2="1384" y2="219"/>
+<line x1="1175" y1="369" x2="1373" y2="404"/>
+<line x1="1172" y1="466" x2="1384" y2="219"/>
+<line x1="1172" y1="466" x2="1373" y2="404"/>
+<line x1="1172" y1="466" x2="1358" y2="579"/>
+<line x1="1182" y1="556" x2="1358" y2="78"/>
+<line x1="1182" y1="556" x2="1373" y2="404"/>
+<line x1="1182" y1="556" x2="1358" y2="579"/>
+</g><g class="kv-net-pulses">
+<line x1="62" y1="244" x2="290" y2="280" pathLength="100" style="animation-delay:-0.0s;animation-duration:3.2s"/>
+<line class="m" x1="94" y1="587" x2="262" y2="180" pathLength="100" style="animation-delay:-0.73s;animation-duration:3.57s"/>
+<line x1="257" y1="64" x2="463" y2="168" pathLength="100" style="animation-delay:-1.46s;animation-duration:3.94s"/>
+<line x1="290" y1="280" x2="503" y2="322" pathLength="100" style="animation-delay:-2.19s;animation-duration:4.31s"/>
+<line class="m" x1="267" y1="478" x2="495" y2="402" pathLength="100" style="animation-delay:-2.92s;animation-duration:4.68s"/>
+<line x1="455" y1="72" x2="737" y2="78" pathLength="100" style="animation-delay:-3.65s;animation-duration:5.05s"/>
+<line x1="463" y1="168" x2="727" y2="181" pathLength="100" style="animation-delay:-4.38s;animation-duration:5.42s"/>
+<line class="m" x1="503" y1="322" x2="710" y2="335" pathLength="100" style="animation-delay:-5.11s;animation-duration:3.39s"/>
+<line x1="495" y1="402" x2="726" y2="442" pathLength="100" style="animation-delay:-0.34s;animation-duration:3.76s"/>
+<line x1="496" y1="557" x2="726" y2="442" pathLength="100" style="animation-delay:-1.07s;animation-duration:4.13s"/>
+<line class="m" x1="727" y1="181" x2="955" y2="143" pathLength="100" style="animation-delay:-1.8s;animation-duration:4.5s"/>
+<line x1="710" y1="335" x2="947" y2="406" pathLength="100" style="animation-delay:-2.53s;animation-duration:4.87s"/>
+<line x1="696" y1="584" x2="965" y2="500" pathLength="100" style="animation-delay:-3.26s;animation-duration:5.24s"/>
+<line class="m" x1="942" y1="69" x2="1172" y2="466" pathLength="100" style="animation-delay:-3.99s;animation-duration:3.21s"/>
+<line x1="943" y1="222" x2="1159" y2="187" pathLength="100" style="animation-delay:-4.72s;animation-duration:3.58s"/>
+<line x1="949" y1="331" x2="1182" y2="556" pathLength="100" style="animation-delay:-5.45s;animation-duration:3.95s"/>
+</g><g class="kv-net-nodes">
+<circle cx="75" cy="63" r="3.4"/>
+<circle cx="62" cy="244" r="3.4"/>
+<circle class="h" style="animation-delay:-1.83s" cx="95" cy="389" r="5"/>
+<circle class="m" cx="94" cy="587" r="3.4"/>
+<circle cx="257" cy="64" r="3.4"/>
+<circle cx="262" cy="180" r="3.4"/>
+<circle cx="290" cy="280" r="3.4"/>
+<circle class="m" cx="246" cy="352" r="3.4"/>
+<circle cx="267" cy="478" r="3.4"/>
+<circle class="h" style="animation-delay:-2.1s" cx="274" cy="560" r="5"/>
+<circle cx="455" cy="72" r="3.4"/>
+<circle class="m" cx="463" cy="168" r="3.4"/>
+<circle cx="483" cy="235" r="3.4"/>
+<circle cx="503" cy="322" r="3.4"/>
+<circle cx="495" cy="402" r="3.4"/>
+<circle class="m" cx="476" cy="483" r="3.4"/>
+<circle class="h" style="animation-delay:-2.37s" cx="496" cy="557" r="5"/>
+<circle cx="737" cy="78" r="3.4"/>
+<circle cx="727" cy="181" r="3.4"/>
+<circle class="m" cx="710" cy="335" r="3.4"/>
+<circle cx="726" cy="442" r="3.4"/>
+<circle cx="696" cy="584" r="3.4"/>
+<circle cx="942" cy="69" r="3.4"/>
+<circle class="h" style="animation-delay:-2.64s" cx="955" cy="143" r="5"/>
+<circle cx="943" cy="222" r="3.4"/>
+<circle cx="949" cy="331" r="3.4"/>
+<circle cx="947" cy="406" r="3.4"/>
+<circle class="m" cx="965" cy="500" r="3.4"/>
+<circle cx="967" cy="564" r="3.4"/>
+<circle cx="1146" cy="71" r="3.4"/>
+<circle class="h" style="animation-delay:-2.91s" cx="1159" cy="187" r="5"/>
+<circle class="m" cx="1170" cy="275" r="3.4"/>
+<circle cx="1175" cy="369" r="3.4"/>
+<circle cx="1172" cy="466" r="3.4"/>
+<circle cx="1182" cy="556" r="3.4"/>
+<circle class="m" cx="1358" cy="78" r="3.4"/>
+<circle cx="1384" cy="219" r="3.4"/>
+<circle class="h" style="animation-delay:-3.18s" cx="1373" cy="404" r="5"/>
+<circle cx="1358" cy="579" r="3.4"/>
+</g></svg>

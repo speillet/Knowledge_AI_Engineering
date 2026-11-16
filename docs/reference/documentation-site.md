@@ -26,9 +26,16 @@ Neither `website/content/` nor `site/` is committed.
 
 ## Theme
 
-[Blowfish](https://github.com/nunocoracao/blowfish) is a git submodule in `website/themes/blowfish`, pinned to a release. The site configuration is in `website/config/_default/`: the `ocean` colour scheme, a fixed header with blur, light and dark appearance following the system, search, breadcrumbs and tables of contents.
+[Blowfish](https://github.com/nunocoracao/blowfish) is a git submodule in `website/themes/blowfish`, pinned to a release. The site configuration is in `website/config/_default/`. It sets the colour scheme, the appearance (dark by default, light with the footer switch), a fixed header with blur, search, breadcrumbs and tables of contents. The `synapse` colour scheme is specific to the site, in `website/assets/css/schemes/synapse.css`: night-blue neutrals, neon cyan and neon magenta, with shades chosen for WCAG AA text contrast in both appearances.
 
-The site overrides only what the vault needs, in `website/layouts/` and `website/assets/`: the home page (`partials/home/custom.html`), a search index of the full text of each page (`_default/index.json`), where topics give their summary, questions, answers and sources without the labels of the page controls, the edit link to the vault source, the favicon, the alias template, which keeps the query of old `search.html?q=` links so that the search opens with their term, and the styles and script of the collapsible cards (`css/custom.css`, `js/kv.js`). These styles use the colour variables of the scheme, so they follow the palette and the dark mode.
+The site overrides only what the vault needs, in `website/layouts/` and `website/assets/`:
+
+- the home page (`partials/home/custom.html`) over an animated neural network (`img/network.svg`), which stops when the reader prefers reduced motion;
+- the search index (`_default/index.json`): the full text of each page, where topics give their summary, questions, answers and sources without the labels of the page controls;
+- the edit link to the vault source, the logo and the favicon;
+- the 404 page (`404.html`, wording in `i18n/en.yaml`), without the random film quotes of the theme;
+- the alias template, which keeps the query of old `search.html?q=` links so that the search opens with their term;
+- the styles and script of the collapsible cards (`css/custom.css`, `js/kv.js`). These styles use the colour variables of the scheme, so they follow the palette and the appearance.
 
 To upgrade the theme, check the Hugo versions it supports (`[module.hugoVersion]` in its `config.toml`), then:
 
