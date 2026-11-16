@@ -1,6 +1,6 @@
 # Blowfish options: https://blowfish.page/docs/configuration/#theme-parameters
-# Custom neon scheme in website/assets/css/schemes/synapse.css; dark by default, light on request.
-colorScheme = "synapse"
+# Bioluminescent scheme in website/assets/css/schemes/abyss.css; dark by default, light on request.
+colorScheme = "abyss"
 logo = "img/logo.svg"
 defaultAppearance = "dark"
 autoSwitchAppearance = false

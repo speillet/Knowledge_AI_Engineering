@@ -1,0 +1,39 @@
+/* Abyss scheme: deep-sea neutrals, bioluminescent teal primary and amber secondary.
+   Shades are chosen for WCAG AA text contrast on white (light mode) and on neutral-800,
+   the page background of the dark mode. */
+:root {
+  --color-neutral: 255, 255, 255;
+  /* Abyss */
+  --color-neutral-50: 243, 248, 248;
+  --color-neutral-100: 230, 239, 240;
+  --color-neutral-200: 207, 222, 225;
+  --color-neutral-300: 172, 193, 199;
+  --color-neutral-400: 125, 149, 158;
+  --color-neutral-500: 84, 106, 117;
+  --color-neutral-600: 56, 74, 86;
+  --color-neutral-700: 24, 36, 48;
+  --color-neutral-800: 6, 12, 20;
+  --color-neutral-900: 3, 6, 12;
+  /* Bioluminescent teal */
+  --color-primary-50: 232, 255, 250;
+  --color-primary-100: 200, 255, 243;
+  --color-primary-200: 150, 252, 230;
+  --color-primary-300: 98, 246, 218;
+  --color-primary-400: 62, 242, 208;
+  --color-primary-500: 18, 206, 174;
+  --color-primary-600: 0, 124, 104;
+  --color-primary-700: 0, 100, 84;
+  --color-primary-800: 4, 76, 66;
+  --color-primary-900: 6, 48, 44;
+  /* Amber spark */
+  --color-secondary-50: 255, 249, 235;
+  --color-secondary-100: 255, 240, 205;
+  --color-secondary-200: 255, 225, 155;
+  --color-secondary-300: 255, 205, 110;
+  --color-secondary-400: 255, 181, 71;
+  --color-secondary-500: 240, 146, 24;
+  --color-secondary-600: 168, 92, 0;
+  --color-secondary-700: 136, 72, 0;
+  --color-secondary-800: 102, 54, 6;
+  --color-secondary-900: 66, 36, 8;
+}
