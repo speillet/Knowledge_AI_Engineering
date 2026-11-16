@@ -1,0 +1,43 @@
+{{- /* Blowfish list layout without its grid of cards. Domain pages list every topic after
+  their "All topics" heading; other sections list only the pages their content does not
+  already link, so no page loses its way in. */ -}}
+{{ define "main" }}
+  {{ .Scratch.Set "scope" "list" }}
+  {{ $enableToc := .Params.showTableOfContents | default (site.Params.list.showTableOfContents | default false) }}
+  {{ $showToc := and $enableToc (in .TableOfContents "<ul") }}
+
+  <header>
+    {{ if .Params.showBreadcrumbs | default (site.Params.list.showBreadcrumbs | default false) }}
+      {{ partial "breadcrumbs.html" . }}
+    {{ end }}
+    <h1 class="mt-5 text-4xl font-extrabold text-neutral-900 dark:text-neutral">{{ .Title }}</h1>
+    <div class="mt-1 mb-2 text-base text-neutral-500 dark:text-neutral-400 print:hidden">
+      {{ partial "article-meta/list.html" (dict "context" . "scope" "single") }}
+    </div>
+  </header>
+
+  {{ $tocMargin := cond $showToc "mt-12" "mt-0" }}
+  <section class="{{ $tocMargin }} prose flex max-w-full flex-col dark:prose-invert lg:flex-row mb-10">
+    {{ if $showToc }}
+      <div class="order-first lg:ms-auto px-0 lg:order-last lg:ps-8 lg:max-w-2xs">
+        <div class="toc ps-5 print:hidden lg:sticky lg:top-10">
+          {{ partial "toc.html" . }}
+        </div>
+      </div>
+    {{ end }}
+    <div class="min-w-0 min-h-0 max-w-prose w-full">
+      {{ .Content }}
+      {{- $pages := .Pages.ByWeight }}
+      {{- if .Params.domain }}
+        {{ partial "kv-page-list.html" $pages }}
+      {{- else }}
+        {{- $unlinked := slice }}
+        {{- range $pages }}{{ if not (in $.Content .RelPermalink) }}{{ $unlinked = $unlinked | append . }}{{ end }}{{ end }}
+        {{- with $unlinked }}
+        <h2 id="other-pages">Other pages</h2>
+        {{ partial "kv-page-list.html" . }}
+        {{- end }}
+      {{- end }}
+    </div>
+  </section>
+{{ end }}

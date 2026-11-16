@@ -6,6 +6,8 @@ title = "AI Engineering"
 copyright = "AI Engineering knowledge vault — flashcards, learning paths and workshops."
 
 [params]
+  # Printed in the footer, where { year } becomes the build year.
+  copyright = "© { year } AI Engineering knowledge vault: flashcards, learning paths and workshops."
   displayName = "EN"
   isoCode = "en"
   rtl = false

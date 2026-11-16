@@ -1,67 +1,35 @@
-{{- /* Home page: hero over a bioluminescent neural tissue, vault figures, entry points and domain grid. */ -}}
+{{- /* Home page: a short introduction, the ways to use the vault and the list of domains. */ -}}
 {{- $domains := sort (where site.Sections "Params.domain" true) "Weight" -}}
 {{- $topics := 0 }}{{ $cards := 0 }}{{ $scenarios := 0 -}}
 {{- range $domains }}{{ range .RegularPages -}}
   {{- $topics = add $topics 1 }}{{ $cards = add $cards (int .Params.cards) }}{{ $scenarios = add $scenarios (int .Params.counts.scenario) -}}
 {{- end }}{{ end -}}
 <article class="kv-home not-prose">
-  <div class="kv-hero-bg" aria-hidden="true">
-    {{- /* Two layers: the still tissue keeps its glow filters out of the animated frames. */ -}}
-    {{- with resources.Get "img/neurons.svg" }}{{ .Content | safeHTML }}{{ end -}}
-    {{- with resources.Get "img/neurons-live.svg" }}{{ .Content | safeHTML }}{{ end -}}
-  </div>
-  <button type="button" class="kv-motion" data-kv-motion aria-pressed="false" aria-label="Pause the background animation" title="Pause the background animation"></button>
-  <section class="kv-hero">
-    <p class="kv-eyebrow landing-rise"><span class="kv-pulse-dot" aria-hidden="true"></span>Knowledge vault · AI engineering</p>
-    <h1 class="kv-hero-title landing-rise landing-rise-1">{{ site.Title }}</h1>
-    <p class="kv-hero-lead landing-rise landing-rise-2">{{ .Description }}</p>
-    <div class="kv-hero-actions landing-rise landing-rise-3">
-      <a class="kv-cta kv-cta-primary" href="{{ relref . "/START_HERE.md" }}">Start here <span aria-hidden="true">→</span></a>
-      <a class="kv-cta" href="#domains">Explore the domains</a>
-      <a class="kv-cta" href="{{ site.Params.anki }}">Download the Anki package</a>
-    </div>
-    <div class="kv-home-stats landing-rise landing-rise-4">
-      {{- range slice (dict "value" $topics "label" "Topics" "text" "One concept per topic") (dict "value" (lang.FormatNumber 0 $cards) "label" "Cards" "text" "Questions with folded answers") (dict "value" $scenarios "label" "Scenarios" "text" "Practical cases to reason through") (dict "value" (len $domains) "label" "Domains" "text" "From prompts to production") }}
-      <div class="kv-panel kv-home-stat">
-        <p class="kv-home-stat-value">{{ .value }}</p>
-        <p class="kv-home-stat-label">{{ .label }}</p>
-        <p class="kv-home-stat-text">{{ .text }}</p>
-      </div>
-      {{- end }}
-    </div>
-  </section>
+  <h1>{{ site.Title }}</h1>
+  <p class="kv-home-lead">{{ .Description }}</p>
+  <p class="kv-home-links">
+    <a href="{{ relref . "/START_HERE.md" }}">Start here</a>
+    <a href="#domains">Domains</a>
+    <a href="{{ relref . "/docs/catalog.md" }}">Topic catalog</a>
+    <a href="{{ site.Params.anki }}">Anki package</a>
+  </p>
+  <p class="kv-home-figures">{{ $topics }}&nbsp;topics · {{ lang.FormatNumber 0 $cards }}&nbsp;cards · {{ $scenarios }}&nbsp;scenarios · {{ len $domains }}&nbsp;domains</p>
 
-  <section class="kv-home-section">
-    <div class="kv-home-features">
-      {{- range slice (dict "id" "learn" "icon" "graduation-cap" "title" "Learn" "text" "Follow a reading path through the domains, from LLM fundamentals to system design." "url" (relref . "/docs/paths/_index.md") "label" "Learning paths") (dict "id" "practice" "icon" "code" "title" "Practice" "text" "Run local workshops on decisions, verifiable RAG, data engineering and a support agent." "url" (relref . "/examples/_index.md") "label" "Workshops") (dict "id" "review-with-anki" "icon" "lightbulb" "title" "Review" "text" "Import the Anki package; reimporting updates the cards and keeps your review history." "url" (relref . "/docs/guides/anki.md") "label" "Review with Anki") }}
-      <article id="{{ .id }}" class="kv-panel kv-feature">
-        <span class="kv-feature-icon">{{ partial "icon.html" .icon }}</span>
-        <h2 class="kv-feature-title">{{ .title }}</h2>
-        <p class="kv-feature-text">{{ .text }}</p>
-        <a class="kv-arrow-link" href="{{ .url }}">{{ .label }} <span aria-hidden="true">→</span></a>
-      </article>
-      {{- end }}
-    </div>
-  </section>
+  <h2>How to use it</h2>
+  <ul class="kv-uses">
+    <li id="learn"><strong>Learn.</strong> Follow a reading path through the domains, from LLM fundamentals to system design: <a href="{{ relref . "/docs/paths/_index.md" }}">learning paths</a>.</li>
+    <li id="practice"><strong>Practice.</strong> Run local workshops on decisions, verifiable RAG, data engineering and a support agent: <a href="{{ relref . "/examples/_index.md" }}">workshops</a>.</li>
+    <li id="review-with-anki"><strong>Review.</strong> Import the Anki package; reimporting updates the cards and keeps your review history: <a href="{{ relref . "/docs/guides/anki.md" }}">review with Anki</a>.</li>
+  </ul>
 
-  <section class="kv-home-section" id="domains">
-    <div class="kv-home-head">
-      <div>
-        <p class="kv-eyebrow">{{ len $domains }} domains</p>
-        <h2 class="kv-home-h2">Explore the domains</h2>
-      </div>
-      <a class="kv-arrow-link" href="{{ relref . "/docs/catalog.md" }}">Full topic catalog <span aria-hidden="true">→</span></a>
-    </div>
-    <div class="kv-domain-grid">
-      {{- range $domains }}
-      {{- $count := 0 }}{{ range .RegularPages }}{{ $count = add $count (int .Params.cards) }}{{ end }}
-      <a class="kv-domain-card" href="{{ .RelPermalink }}">
-        <span class="kv-num">{{ .Params.number }}</span>
-        <span class="kv-domain-title">{{ .Title }}</span>
-        <span class="kv-domain-text">{{ .Description }}</span>
-        <span class="kv-domain-meta">{{ len .RegularPages }} topics · {{ $count }} cards</span>
-      </a>
-      {{- end }}
-    </div>
-  </section>
+  <h2 id="domains">Domains</h2>
+  <ol class="kv-domain-list">
+    {{- range $domains }}
+    {{- $count := 0 }}{{ range .RegularPages }}{{ $count = add $count (int .Params.cards) }}{{ end }}
+    <li>
+      <a class="kv-domain-link" href="{{ .RelPermalink }}"><span class="kv-num">{{ .Params.number }}</span>{{ .Title }}</a><span class="kv-domain-meta">{{ len .RegularPages }}&nbsp;topics · {{ $count }}&nbsp;cards</span>
+      <p>{{ .Description }}</p>
+    </li>
+    {{- end }}
+  </ol>
 </article>

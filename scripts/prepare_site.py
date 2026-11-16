@@ -205,11 +205,14 @@ def split_points(summary: str) -> list[str]:
 
 
 def count_text(counts: dict[str, int]) -> str:
-    """Card counts in words, for example "12 key concepts · 2 scenarios"."""
+    """Card counts in words, for example "12 key concepts · 2 scenarios".
+
+    A no-break space keeps each number with its noun when the line wraps.
+    """
     parts = []
     for kind, (one, many) in NOUNS.items():
         if counts.get(kind):
-            parts.append(f"{counts[kind]} {one if counts[kind] == 1 else many}")
+            parts.append(f"{counts[kind]}\u00a0{one if counts[kind] == 1 else many}")
     return " · ".join(parts)
 
 
@@ -487,6 +490,7 @@ def topic_page(
             "covers": covers,
             "counts": counts,
             "cards": len(cards),
+            "count_text": count_text(counts),
             "search": " ".join(part for part in search if part),
         },
     }
@@ -521,7 +525,7 @@ def topic_tile(topic: Topic, number: str = "") -> str:
     more = f'<li class="kv-more">+ {len(topic.covers) - 8} more</li>' if len(topic.covers) > 8 else ""
     noun = "point" if len(topic.covers) == 1 else "points"
     covers = (
-        f'<details class="kv-tile-more"><summary>{len(topic.covers)} {noun} covered</summary>'
+        f'<details class="kv-tile-more"><summary>{len(topic.covers)}\u00a0{noun} covered</summary>'
         f'<ul class="kv-points kv-small">{points}{more}</ul></details>'
         if topic.covers
         else ""
