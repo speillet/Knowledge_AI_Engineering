@@ -315,7 +315,9 @@ html:has(.kv-home) { overflow-x: clip; }
   fill: none; stroke: rgb(var(--color-secondary-500)); stroke-width: 2.6; stroke-linecap: round; stroke-dasharray: 3 100;
   animation: kv-fire 4.5s linear infinite;
 }
-.dark .kv-sparks path { stroke: rgb(var(--color-secondary-300)); filter: drop-shadow(0 0 5px rgb(var(--color-secondary-400))); }
+.kv-sparks path.g { stroke-width: 8; stroke-opacity: 0.22; }
+.dark .kv-sparks path { stroke: rgb(var(--color-secondary-300)); }
+.dark .kv-sparks path.g { stroke: rgb(var(--color-secondary-400)); stroke-opacity: 0.32; }
 .kv-halos circle { fill: rgba(var(--color-primary-400), 0.16); transform-box: fill-box; transform-origin: center; animation: kv-breathe 5s ease-in-out infinite alternate; }
 .dark .kv-halos circle { fill: rgba(var(--color-primary-400), 0.22); }
 .kv-somas circle { fill: rgb(var(--color-primary-600)); }
@@ -324,8 +326,11 @@ html:has(.kv-home) { overflow-x: clip; }
 .dark .kv-cores circle { fill: #f2fffc; }
 .kv-tips circle { fill: rgba(var(--color-primary-600), 0.5); }
 .dark .kv-tips circle { fill: rgba(var(--color-primary-200), 0.75); }
-.kv-syn circle { fill: rgb(var(--color-secondary-500)); animation: kv-flicker 3s ease-in-out infinite alternate; }
-.dark .kv-syn circle { fill: rgb(var(--color-secondary-300)); filter: drop-shadow(0 0 6px rgb(var(--color-secondary-400))); }
+.kv-syn g { animation: kv-flicker 3s ease-in-out infinite alternate; }
+.kv-syn circle { fill: rgb(var(--color-secondary-500)); }
+.kv-syn circle.g { fill: rgba(var(--color-secondary-400), 0.25); }
+.dark .kv-syn circle { fill: rgb(var(--color-secondary-300)); }
+.dark .kv-syn circle.g { fill: rgba(var(--color-secondary-400), 0.35); }
 .kv-plankton circle { fill: rgba(var(--color-primary-600), 0.4); animation: kv-drift 15s linear infinite; }
 .dark .kv-plankton circle { fill: rgba(var(--color-primary-200), 0.7); }
 @keyframes kv-fire { from { stroke-dashoffset: 103; } to { stroke-dashoffset: 0; } }
@@ -453,7 +458,7 @@ html:has(.kv-home) { overflow-x: clip; }
   .kv-home-h2 { font-size: 1.8rem; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .kv-sparks path, .kv-halos circle, .kv-syn circle, .kv-plankton circle, .kv-pulse-dot { animation: none; }
+  .kv-sparks path, .kv-halos circle, .kv-syn g, .kv-plankton circle, .kv-pulse-dot { animation: none; }
   .kv-sparks path { stroke-dasharray: none; opacity: 0.3; }
   .kv-link:hover, .kv-tile:hover, .kv-feature:hover, .kv-domain-card:hover, .kv-cta:hover { transform: none; }
 }

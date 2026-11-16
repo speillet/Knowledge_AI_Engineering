@@ -30,7 +30,7 @@ Neither `website/content/` nor `site/` is committed.
 
 The site overrides only what the vault needs, in `website/layouts/` and `website/assets/`:
 
-- the home page (`partials/home/custom.html`) over a bioluminescent neural tissue (`img/neurons.svg`), whose animations stop when the reader prefers reduced motion;
+- the home page (`partials/home/custom.html`) over a bioluminescent neural tissue in two layers: `img/neurons.svg` is still and keeps the glow filters, `img/neurons-live.svg` carries the animation, which stops when the reader prefers reduced motion;
 - the search index (`_default/index.json`): the full text of each page, where topics give their summary, questions, answers and sources without the labels of the page controls;
 - the edit link to the vault source and the logo;
 - the tab and home-screen icons (`partials/favicons.html`): the SVG in `assets/icons/` gets a fingerprinted URL and the other icons a version derived from it, so browsers replace a cached icon when it changes. The PNG and ICO files in `website/static/` replace the Blowfish defaults of the same names; after changing the SVG, regenerate them at the sizes their names give;

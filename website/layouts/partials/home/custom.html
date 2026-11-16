@@ -6,7 +6,9 @@
 {{- end }}{{ end -}}
 <article class="kv-home not-prose">
   <div class="kv-hero-bg" aria-hidden="true">
+    {{- /* Two layers: the still tissue keeps its glow filters out of the animated frames. */ -}}
     {{- with resources.Get "img/neurons.svg" }}{{ .Content | safeHTML }}{{ end -}}
+    {{- with resources.Get "img/neurons-live.svg" }}{{ .Content | safeHTML }}{{ end -}}
   </div>
   <section class="kv-hero">
     <p class="kv-eyebrow landing-rise"><span class="kv-pulse-dot" aria-hidden="true"></span>Knowledge vault · AI engineering</p>
