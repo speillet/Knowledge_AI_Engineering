@@ -1,1 +1,15 @@
-<link rel="icon" type="image/svg+xml" href="{{ "favicon.svg" | relURL }}">
+{{- /* Tab and home-screen icons, replacing the Blowfish defaults of the same names in static/
+  (rendered from the SVG by `make icons`). The SVG URL carries the fingerprint of its content
+  and the other icons a version derived from every icon file, so browsers fetch the new icons
+  instead of the cached ones whenever one changes. The ICO comes first with its size, so
+  Chrome still prefers the SVG. */ -}}
+{{- $svg := resources.Get "icons/favicon.svg" | fingerprint "sha256" -}}
+{{- $all := $svg.Content -}}
+{{- range slice "favicon.ico" "apple-touch-icon.png" "android-chrome-192x192.png" "android-chrome-512x512.png" "site.webmanifest" -}}
+  {{- $all = print $all (readFile (print "static/" .)) -}}
+{{- end -}}
+{{- $v := substr (md5 $all) 0 10 -}}
+<link rel="icon" href="{{ "favicon.ico" | relURL }}?v={{ $v }}" sizes="32x32">
+<link rel="icon" type="image/svg+xml" href="{{ $svg.RelPermalink }}">
+<link rel="apple-touch-icon" href="{{ "apple-touch-icon.png" | relURL }}?v={{ $v }}">
+<link rel="manifest" href="{{ "site.webmanifest" | relURL }}?v={{ $v }}">

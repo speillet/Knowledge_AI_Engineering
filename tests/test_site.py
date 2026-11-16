@@ -131,6 +131,8 @@ class SiteTests(unittest.TestCase):
         self.assertEqual(site.excerpt("short", 9), "short")
         block = "Text with `code`.\n\n```python\nx = 1\n```\n\n| a | b |\n|---|---|\n| c | d |\n- <b>item</b>"
         self.assertEqual(site.plain_block(block), "Text with code. x = 1 a b c d item")
+        linked = '- [Topic catalog]({{< relref "/docs/catalog.md" >}}) — every topic.'
+        self.assertEqual(site.plain_block(linked), "Topic catalog — every topic.")
 
     def test_link_check_reports_missing_pages_and_anchors(self):
         with tempfile.TemporaryDirectory() as tmp:

@@ -1,4 +1,4 @@
-{{- /* Home page: hero over an animated neural network, vault figures, entry points and domain grid. */ -}}
+{{- /* Home page: hero over a bioluminescent neural tissue, vault figures, entry points and domain grid. */ -}}
 {{- $domains := sort (where site.Sections "Params.domain" true) "Weight" -}}
 {{- $topics := 0 }}{{ $cards := 0 }}{{ $scenarios := 0 -}}
 {{- range $domains }}{{ range .RegularPages -}}
@@ -6,10 +6,13 @@
 {{- end }}{{ end -}}
 <article class="kv-home not-prose">
   <div class="kv-hero-bg" aria-hidden="true">
-    {{- with resources.Get "img/network.svg" }}{{ .Content | safeHTML }}{{ end -}}
+    {{- /* Two layers: the still tissue keeps its glow filters out of the animated frames. */ -}}
+    {{- with resources.Get "img/neurons.svg" }}{{ .Content | safeHTML }}{{ end -}}
+    {{- with resources.Get "img/neurons-live.svg" }}{{ .Content | safeHTML }}{{ end -}}
   </div>
+  <button type="button" class="kv-motion" data-kv-motion aria-pressed="false" aria-label="Pause the background animation" title="Pause the background animation"></button>
   <section class="kv-hero">
-    <p class="kv-eyebrow landing-rise"><span class="kv-pulse-dot" aria-hidden="true"></span>Knowledge graph · AI engineering</p>
+    <p class="kv-eyebrow landing-rise"><span class="kv-pulse-dot" aria-hidden="true"></span>Knowledge vault · AI engineering</p>
     <h1 class="kv-hero-title landing-rise landing-rise-1">{{ site.Title }}</h1>
     <p class="kv-hero-lead landing-rise landing-rise-2">{{ .Description }}</p>
     <div class="kv-hero-actions landing-rise landing-rise-3">

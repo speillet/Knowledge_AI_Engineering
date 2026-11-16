@@ -26,13 +26,14 @@ Neither `website/content/` nor `site/` is committed.
 
 ## Theme
 
-[Blowfish](https://github.com/nunocoracao/blowfish) is a git submodule in `website/themes/blowfish`, pinned to a release. The site configuration is in `website/config/_default/`. It sets the colour scheme, the appearance (dark by default, light with the footer switch), a fixed header with blur, search, breadcrumbs and tables of contents. The `synapse` colour scheme is specific to the site, in `website/assets/css/schemes/synapse.css`: night-blue neutrals, neon cyan and neon magenta, with shades chosen for WCAG AA text contrast in both appearances.
+[Blowfish](https://github.com/nunocoracao/blowfish) is a git submodule in `website/themes/blowfish`, pinned to a release. The site configuration is in `website/config/_default/`. It sets the colour scheme, the appearance (dark by default, light with the footer switch), a fixed header with blur, search, breadcrumbs and tables of contents. The `abyss` colour scheme is specific to the site, in `website/assets/css/schemes/abyss.css`: deep-sea neutrals, a bioluminescent teal and an amber accent, with shades chosen for WCAG AA text contrast in both appearances. Titles use [Fraunces](https://github.com/undercasetype/Fraunces), served from `website/static/fonts/` with its SIL Open Font License; the file keeps only the Latin letters, the soft style and the two weights the site uses (30 KB).
 
 The site overrides only what the vault needs, in `website/layouts/` and `website/assets/`:
 
-- the home page (`partials/home/custom.html`) over an animated neural network (`img/network.svg`), which stops when the reader prefers reduced motion;
+- the home page (`partials/home/custom.html`) over a bioluminescent neural tissue in two layers: `img/neurons.svg` is still and keeps the glow filters, `img/neurons-live.svg` carries the animation. The animation pauses while off screen or with the button of the hero, and stops when the reader prefers reduced motion;
 - the search index (`_default/index.json`): the full text of each page, where topics give their summary, questions, answers and sources without the labels of the page controls;
-- the edit link to the vault source, the logo and the favicon;
+- the edit link to the vault source and the logo;
+- the tab and home-screen icons (`partials/favicons.html`): the SVG in `assets/icons/` gets a fingerprinted URL and the other icons a version derived from every icon file, so browsers replace a cached icon when one changes. The ICO, PNG and manifest files in `website/static/` replace the Blowfish defaults of the same names. After changing the SVG, `make icons` renders them again; it needs cairosvg and Pillow, which the other scripts do not;
 - the 404 page (`404.html`, wording in `i18n/en.yaml`), without the random film quotes of the theme;
 - the alias template, which keeps the query of old `search.html?q=` links so that the search opens with their term;
 - the styles and script of the collapsible cards (`css/custom.css`, `js/kv.js`). These styles use the colour variables of the scheme, so they follow the palette and the appearance.
