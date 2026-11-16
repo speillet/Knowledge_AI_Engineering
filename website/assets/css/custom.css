@@ -1,12 +1,13 @@
 /* Vault components and the bioluminescent "abyss" look on top of the Blowfish theme. Colours
    come from the abyss scheme (rgb(var(--color-…))), so they follow the palette and the dark
    mode, the default appearance; only the accents of the card kinds are added. Titles use
-   Fraunces (SIL Open Font License, static/fonts/), with its soft axis for rounded serifs. */
+   Fraunces (SIL Open Font License, static/fonts/), instanced with its soft axis at 100 and
+   the 600 to 650 weights the site uses. */
 
 @font-face {
   font-family: "Fraunces";
-  src: url("../fonts/fraunces-latin-soft-normal.woff2") format("woff2");
-  font-weight: 100 900;
+  src: url("../fonts/fraunces-latin-soft-600-650.woff2") format("woff2");
+  font-weight: 600 650;
   font-style: normal;
   font-display: swap;
 }
@@ -70,11 +71,11 @@ body::before {
 #menu-blur::after { content: ""; position: absolute; inset: auto 0 0; height: 1px; background: var(--kv-axon); opacity: 0.55; }
 .logo svg { width: 2.15rem; height: 2.15rem; }
 .dark .logo svg { filter: drop-shadow(0 0 7px rgba(var(--color-primary-400), 0.5)); }
-header a.truncate.min-w-0 { font-family: var(--kv-display); font-variation-settings: "SOFT" 100; font-weight: 600; font-size: 1.1rem; letter-spacing: -0.01em; }
+header a.truncate.min-w-0 { font-family: var(--kv-display); font-weight: 600; font-size: 1.1rem; letter-spacing: -0.01em; }
 
 /* Titles: Fraunces with its soft serifs; section titles carry a synapse trace */
 main h1, .prose h2, .kv-hero-title, .kv-home-h2, .kv-feature-title, .kv-domain-title {
-  font-family: var(--kv-display); font-variation-settings: "SOFT" 100;
+  font-family: var(--kv-display);
 }
 main h1 { font-weight: 650 !important; letter-spacing: -0.02em; }
 .prose h2 { font-weight: 600; letter-spacing: -0.01em; }
@@ -254,7 +255,7 @@ details[open] > summary > .kv-chevron { transform: translateY(2px) rotate(-135de
 /* Domain pages */
 .kv-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.75rem; margin: 0 0 2.25rem; }
 .kv-stat { padding: 1rem; border-radius: var(--kv-radius); border: 1px solid var(--kv-line); background: var(--kv-panel); text-align: center; }
-.kv-stat b { display: block; font-family: var(--kv-display); font-variation-settings: "SOFT" 100; font-size: 2.1rem; font-weight: 600; line-height: 1.15; color: rgb(var(--color-primary-700)); }
+.kv-stat b { display: block; font-family: var(--kv-display); font-size: 2.1rem; font-weight: 600; line-height: 1.15; color: rgb(var(--color-primary-700)); }
 .dark .kv-stat b { color: rgb(var(--color-primary-300)); text-shadow: 0 0 20px rgba(var(--color-primary-400), 0.55); }
 .kv-stat span { font-family: var(--kv-mono); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: rgb(var(--color-neutral-500)); }
 .dark .kv-stat span { color: rgb(var(--color-neutral-400)); }
@@ -396,7 +397,7 @@ html:has(.kv-home) { overflow-x: clip; }
 .kv-home-stat { padding: 1.4rem 1.2rem; text-align: center; }
 .kv-home-stat p { margin: 0; }
 .kv-home-stat-value {
-  font-family: var(--kv-display); font-variation-settings: "SOFT" 100; font-size: 2.6rem; font-weight: 600; line-height: 1.05;
+  font-family: var(--kv-display); font-size: 2.6rem; font-weight: 600; line-height: 1.05;
   letter-spacing: -0.02em; color: rgb(var(--color-primary-700));
 }
 .dark .kv-home-stat-value { color: rgb(var(--color-primary-300)); text-shadow: 0 0 24px rgba(var(--color-primary-400), 0.6); }

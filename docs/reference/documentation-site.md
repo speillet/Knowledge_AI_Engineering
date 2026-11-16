@@ -26,7 +26,7 @@ Neither `website/content/` nor `site/` is committed.
 
 ## Theme
 
-[Blowfish](https://github.com/nunocoracao/blowfish) is a git submodule in `website/themes/blowfish`, pinned to a release. The site configuration is in `website/config/_default/`. It sets the colour scheme, the appearance (dark by default, light with the footer switch), a fixed header with blur, search, breadcrumbs and tables of contents. The `abyss` colour scheme is specific to the site, in `website/assets/css/schemes/abyss.css`: deep-sea neutrals, a bioluminescent teal and an amber accent, with shades chosen for WCAG AA text contrast in both appearances. Titles use [Fraunces](https://github.com/undercasetype/Fraunces), served from `website/static/fonts/` with its SIL Open Font License.
+[Blowfish](https://github.com/nunocoracao/blowfish) is a git submodule in `website/themes/blowfish`, pinned to a release. The site configuration is in `website/config/_default/`. It sets the colour scheme, the appearance (dark by default, light with the footer switch), a fixed header with blur, search, breadcrumbs and tables of contents. The `abyss` colour scheme is specific to the site, in `website/assets/css/schemes/abyss.css`: deep-sea neutrals, a bioluminescent teal and an amber accent, with shades chosen for WCAG AA text contrast in both appearances. Titles use [Fraunces](https://github.com/undercasetype/Fraunces), served from `website/static/fonts/` with its SIL Open Font License; the file keeps only the Latin letters, the soft style and the two weights the site uses (30 KB).
 
 The site overrides only what the vault needs, in `website/layouts/` and `website/assets/`:
 
