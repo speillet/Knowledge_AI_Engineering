@@ -273,6 +273,7 @@ details[open] > summary > .kv-chevron { transform: translateY(2px) rotate(-135de
 .kv-related { margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid var(--kv-line); font-size: 0.9rem; }
 
 /* Home page: a bioluminescent neural tissue behind the title */
+html:has(.kv-home) { overflow-x: clip; }
 .kv-home { position: relative; isolation: isolate; padding-bottom: 2rem; }
 .kv-hero-bg {
   position: absolute; top: -10rem; left: 50%; width: 100vw; height: 48rem; transform: translateX(-50%);
@@ -336,7 +337,7 @@ details[open] > summary > .kv-chevron { transform: translateY(2px) rotate(-135de
 }
 @keyframes kv-ping { 70%, 100% { box-shadow: 0 0 0 0.6rem rgba(var(--color-secondary-400), 0); } }
 .kv-hero-title {
-  margin: 0 auto; max-width: 56rem; font-size: clamp(3rem, 7.5vw, 5.6rem); font-weight: 600; line-height: 1.02; letter-spacing: -0.03em;
+  margin: 0 auto -0.12em; max-width: 56rem; padding-bottom: 0.12em; font-size: clamp(3rem, 7.5vw, 5.6rem); font-weight: 600; line-height: 1.02; letter-spacing: -0.03em;
   background: linear-gradient(100deg, rgb(var(--color-neutral-900)) 30%, rgb(var(--color-primary-700)) 62%, rgb(var(--color-secondary-700)) 95%);
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
@@ -365,7 +366,7 @@ details[open] > summary > .kv-chevron { transform: translateY(2px) rotate(-135de
 
 .kv-panel { border: 1px solid var(--kv-line); border-radius: 1.4rem; background: rgba(255, 255, 255, 0.78); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
 .dark .kv-panel { background: rgba(var(--color-neutral-700), 0.35); }
-.kv-home-stats { max-width: 64rem; margin: 3.5rem auto 0; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); }
+.kv-home-stats { max-width: 64rem; margin: 3.5rem auto 0; display: grid; gap: 1rem; grid-template-columns: 1fr; }
 .kv-home-stat { padding: 1.4rem 1.2rem; text-align: center; }
 .kv-home-stat p { margin: 0; }
 .kv-home-stat-value {
@@ -378,8 +379,13 @@ details[open] > summary > .kv-chevron { transform: translateY(2px) rotate(-135de
 .kv-home-stat-text { margin-top: 0.35rem !important; font-size: 0.88rem; line-height: 1.5; color: rgb(var(--color-neutral-500)); }
 .dark .kv-home-stat-text { color: rgb(var(--color-neutral-400)); }
 
-.kv-home-section { margin-top: 4.5rem; }
-.kv-home-features { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); }
+.kv-home-section { margin-top: 4.5rem; scroll-margin-top: 6rem; }
+.kv-home-features { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+@media (min-width: 640px) { .kv-home-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1024px) {
+  .kv-home-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .kv-home-features { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
 .kv-feature { display: flex; flex-direction: column; padding: 1.5rem; transition: transform 0.2s, box-shadow 0.25s, border-color 0.25s; }
 .kv-feature:hover { transform: translateY(-3px); border-color: rgb(var(--color-primary-500)); box-shadow: 0 18px 40px -26px rgba(var(--color-primary-600), 0.7); }
 .dark .kv-feature:hover { border-color: rgba(var(--color-primary-400), 0.65); box-shadow: 0 0 38px -14px rgba(var(--color-primary-400), 0.7); }
@@ -433,6 +439,7 @@ details[open] > summary > .kv-chevron { transform: translateY(2px) rotate(-135de
   .kv-a { padding: 0 1rem 1rem; }
   .kv-stats { grid-template-columns: 1fr; }
   .kv-hero { padding-top: 1.5rem; }
+  .kv-hero-title { font-size: clamp(2.25rem, 14vw, 3rem); }
   .kv-hero-bg { height: 40rem; }
   .kv-eyebrow { font-size: 0.7rem; letter-spacing: 0.12em; line-height: 1.5; }
   .kv-home-h2 { font-size: 1.8rem; }
