@@ -28,7 +28,7 @@ Neither `website/content/` nor `site/` is committed.
 
 [Blowfish](https://github.com/nunocoracao/blowfish) is a git submodule in `website/themes/blowfish`, pinned to a release. The site configuration is in `website/config/_default/`: the `ocean` colour scheme, a fixed header with blur, light and dark appearance following the system, search, breadcrumbs and tables of contents.
 
-The site overrides only what the vault needs, in `website/layouts/` and `website/assets/`: the home page (`partials/home/custom.html`), a search index of the full text of each page (`_default/index.json`), where topics give their summary, questions, answers and sources without the labels of the page controls, the edit link to the vault source, the favicon, and the styles and script of the collapsible cards (`css/custom.css`, `js/kv.js`). These styles use the colour variables of the scheme, so they follow the palette and the dark mode.
+The site overrides only what the vault needs, in `website/layouts/` and `website/assets/`: the home page (`partials/home/custom.html`), a search index of the full text of each page (`_default/index.json`), where topics give their summary, questions, answers and sources without the labels of the page controls, the edit link to the vault source, the favicon, the alias template, which keeps the query of old `search.html?q=` links so that the search opens with their term, and the styles and script of the collapsible cards (`css/custom.css`, `js/kv.js`). These styles use the colour variables of the scheme, so they follow the palette and the dark mode.
 
 To upgrade the theme, check the Hugo versions it supports (`[module.hugoVersion]` in its `config.toml`), then:
 

@@ -1,5 +1,5 @@
-// Vault interactions on top of Blowfish: expand or collapse every answer, and open the
-// card or block a link points to.
+// Vault interactions on top of Blowfish: expand or collapse every answer, open the card or
+// block a link points to, and run the search of an old search link (?q=term).
 (() => {
   "use strict";
   const folds = () => document.querySelectorAll("details.kv-card, details.kv-fold");
@@ -22,4 +22,22 @@
   window.addEventListener("hashchange", reveal);
   reveal();
   window.addEventListener("beforeprint", () => document.querySelectorAll("details").forEach((d) => { d.open = true; }));
+
+  // The previous site searched at search.html?q=term, which now redirects here.
+  const query = new URLSearchParams(location.search).get("q");
+  const button = document.getElementById("search-button");
+  const field = document.getElementById("search-query");
+  if (query && button && field) {
+    button.click();
+    let tries = 0;
+    const run = () => {
+      if (window.fuse) {
+        field.value = query;
+        field.dispatchEvent(new KeyboardEvent("keyup"));
+      } else if (++tries < 100) {
+        setTimeout(run, 100);
+      }
+    };
+    run();
+  }
 })();
