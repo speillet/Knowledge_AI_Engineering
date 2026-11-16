@@ -1,6 +1,6 @@
 # Blowfish options: https://blowfish.page/docs/configuration/#theme-parameters
-# Bioluminescent scheme in website/assets/css/schemes/abyss.css; dark by default, light on request.
-colorScheme = "abyss"
+# Violet scheme in website/assets/css/schemes/obsidian.css; dark by default, light on request.
+colorScheme = "obsidian"
 logo = "img/logo.svg"
 defaultAppearance = "dark"
 autoSwitchAppearance = false
