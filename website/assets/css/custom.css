@@ -90,6 +90,13 @@ main h1 { font-weight: 650 !important; letter-spacing: -0.02em; }
     linear-gradient(90deg, rgb(var(--color-primary-400)), rgba(var(--color-primary-400), 0.08)) left center / calc(100% - 8px) 2px no-repeat;
   filter: drop-shadow(0 0 5px rgba(var(--color-primary-400), 0.55));
 }
+.article-content :is(p, li, td) a:not([class]), section.prose > div.max-w-prose :is(p, li, td) a:not([class]) {
+  text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.2em; text-decoration-color: rgba(var(--color-primary-600), 0.55);
+}
+.dark .article-content :is(p, li, td) a:not([class]), .dark section.prose > div.max-w-prose :is(p, li, td) a:not([class]) { text-decoration-color: rgba(var(--color-primary-400), 0.55); }
+/* Theme details: readable separators in light mode, heading anchors shown when focused */
+html:not(.dark) .text-primary-500, html:not(.dark) .hover\:text-primary-500:hover { color: rgb(var(--color-primary-600)); }
+.group-hover\:opacity-100:focus-within { opacity: 1; }
 .dark .highlight-wrapper { box-shadow: 0 0 0 1px rgba(var(--color-neutral-600), 0.55); }
 .dark #search-modal { box-shadow: 0 0 0 1px rgba(var(--color-primary-400), 0.25), 0 0 60px -16px rgba(var(--color-primary-400), 0.45); }
 
@@ -172,7 +179,8 @@ a.kv-chip:hover { border-color: rgb(var(--kv-kind)); color: rgb(var(--color-neut
 .dark .kv-card > summary::before { box-shadow: 0 0 10px 1px rgba(var(--kv-kind), 0.9), 0 0 0 3px rgba(var(--kv-kind), 0.14); }
 .dark .kv-card[open] > summary::before { box-shadow: 0 0 16px 3px rgba(var(--kv-kind), 0.95), 0 0 0 4px rgba(var(--kv-kind), 0.18); }
 .kv-card > summary::-webkit-details-marker, .kv-fold > summary::-webkit-details-marker, .kv-tile-more > summary::-webkit-details-marker { display: none; }
-.kv-card > summary:focus-visible, .kv-fold > summary:focus-visible { outline: 2px solid rgb(var(--color-primary-500)); outline-offset: 2px; border-radius: var(--kv-radius); }
+.kv-card > summary:focus-visible, .kv-fold > summary:focus-visible { outline: 2px solid rgb(var(--color-primary-700)); outline-offset: 2px; border-radius: var(--kv-radius); }
+.dark .kv-card > summary:focus-visible, .dark .kv-fold > summary:focus-visible { outline-color: rgb(var(--color-primary-400)); }
 .kv-q { flex: 1; font-weight: 600; color: rgb(var(--color-neutral-800)); line-height: 1.5; }
 .dark .kv-q { color: rgb(var(--color-neutral-50)); }
 .kv-chevron {
