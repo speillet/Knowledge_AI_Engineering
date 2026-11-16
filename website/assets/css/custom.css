@@ -455,6 +455,7 @@ html:has(.kv-home) { overflow-x: clip; }
 .kv-domain-card:hover::before { opacity: 1; }
 .dark .kv-domain-card:hover { border-color: rgba(var(--color-primary-400), 0.65); box-shadow: 0 0 38px -14px rgba(var(--color-primary-400), 0.7); }
 .kv-domain-card .kv-num { align-self: flex-start; }
+.kv-ghost { font-family: var(--kv-display); font-weight: 600; }
 .kv-domain-title { font-size: 1.2rem; font-weight: 600; line-height: 1.25; color: rgb(var(--color-neutral-900)); }
 .kv-domain-text { flex: 1; font-size: 0.9rem; line-height: 1.55; color: rgb(var(--color-neutral-600)); }
 .kv-domain-meta { font-family: var(--kv-mono); font-size: 0.74rem; font-weight: 600; color: rgb(var(--color-primary-700)); }
