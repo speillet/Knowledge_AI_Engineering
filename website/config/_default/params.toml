@@ -1,9 +1,9 @@
 # Blowfish options: https://blowfish.page/docs/configuration/#theme-parameters
-# Bioluminescent scheme in website/assets/css/schemes/abyss.css; dark by default, light on request.
-colorScheme = "abyss"
+# Plain scheme in website/assets/css/schemes/obsidian.css; the appearance follows the system.
+colorScheme = "obsidian"
 logo = "img/logo.svg"
-defaultAppearance = "dark"
-autoSwitchAppearance = false
+defaultAppearance = "light"
+autoSwitchAppearance = true
 enableSearch = true
 enableCodeCopy = true
 enableStructuredBreadcrumbs = true
@@ -16,7 +16,7 @@ anki = "https://github.com/speillet/Knowledge_AI_Engineering/releases/download/a
 releases = "https://github.com/speillet/Knowledge_AI_Engineering/releases"
 
 [header]
-  layout = "fixed-fill-blur"
+  layout = "basic"
 
 [footer]
   showMenu = true
@@ -43,7 +43,7 @@ releases = "https://github.com/speillet/Knowledge_AI_Engineering/releases"
   showPagination = true
   invertPagination = false
   showReadingTime = false
-  showReadingProgress = true
+  showReadingProgress = false
   showTableOfContents = true
   showRelatedContent = false
   showTaxonomies = false
