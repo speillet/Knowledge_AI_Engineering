@@ -32,7 +32,8 @@ The site overrides only what the vault needs, in `website/layouts/` and `website
 
 - the home page (`partials/home/custom.html`) over a bioluminescent neural tissue (`img/neurons.svg`), whose animations stop when the reader prefers reduced motion;
 - the search index (`_default/index.json`): the full text of each page, where topics give their summary, questions, answers and sources without the labels of the page controls;
-- the edit link to the vault source, the logo and the favicon;
+- the edit link to the vault source and the logo;
+- the tab and home-screen icons (`partials/favicons.html`): the SVG in `assets/icons/` gets a fingerprinted URL and the other icons a version derived from it, so browsers replace a cached icon when it changes. The PNG and ICO files in `website/static/` replace the Blowfish defaults of the same names; after changing the SVG, regenerate them at the sizes their names give;
 - the 404 page (`404.html`, wording in `i18n/en.yaml`), without the random film quotes of the theme;
 - the alias template, which keeps the query of old `search.html?q=` links so that the search opens with their term;
 - the styles and script of the collapsible cards (`css/custom.css`, `js/kv.js`). These styles use the colour variables of the scheme, so they follow the palette and the appearance.
