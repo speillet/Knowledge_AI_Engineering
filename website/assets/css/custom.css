@@ -333,6 +333,19 @@ html:has(.kv-home) { overflow-x: clip; }
 .dark .kv-syn circle.g { fill: rgba(var(--color-secondary-400), 0.35); }
 .kv-plankton circle { fill: rgba(var(--color-primary-600), 0.4); animation: kv-drift 15s linear infinite; }
 .dark .kv-plankton circle { fill: rgba(var(--color-primary-200), 0.7); }
+.kv-paused .kv-live *, .kv-paused .kv-pulse-dot { animation-play-state: paused; }
+.kv-motion {
+  position: absolute; top: 0.25rem; right: 0; z-index: 1; display: grid; place-items: center; width: 2.25rem; height: 2.25rem;
+  border-radius: 999px; border: 1px solid var(--kv-line); background: var(--kv-panel); color: rgb(var(--color-neutral-600));
+  cursor: pointer; transition: border-color 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.kv-motion::before { content: ""; box-sizing: border-box; width: 0.62rem; height: 0.72rem; border-left: 3px solid currentColor; border-right: 3px solid currentColor; }
+.kv-motion[aria-pressed="true"]::before { width: 0; height: 0; margin-left: 0.18rem; border: 0.4rem solid transparent; border-left: 0.62rem solid currentColor; border-right: 0; }
+.kv-motion:hover { border-color: rgb(var(--color-primary-500)); color: rgb(var(--color-primary-700)); }
+.kv-motion:focus-visible { outline: 2px solid rgb(var(--color-primary-700)); outline-offset: 2px; }
+.dark .kv-motion { color: rgb(var(--color-neutral-300)); }
+.dark .kv-motion:hover { border-color: rgb(var(--color-primary-400)); color: rgb(var(--color-primary-200)); box-shadow: 0 0 16px -4px rgba(var(--color-primary-400), 0.7); }
+.dark .kv-motion:focus-visible { outline-color: rgb(var(--color-primary-400)); }
 @keyframes kv-fire { from { stroke-dashoffset: 103; } to { stroke-dashoffset: 0; } }
 @keyframes kv-breathe { from { opacity: 0.35; transform: scale(0.8); } to { opacity: 1; transform: scale(1.15); } }
 @keyframes kv-flicker { from { opacity: 0.45; } to { opacity: 1; } }
@@ -451,7 +464,7 @@ html:has(.kv-home) { overflow-x: clip; }
 @media (max-width: 640px) {
   .kv-a { padding: 0 1rem 1rem; }
   .kv-stats { grid-template-columns: 1fr; }
-  .kv-hero { padding-top: 1.5rem; }
+  .kv-hero { padding-top: 3.25rem; }
   .kv-hero-title { font-size: clamp(2.25rem, 14vw, 3rem); }
   .kv-hero-bg { height: 40rem; }
   .kv-eyebrow { font-size: 0.7rem; letter-spacing: 0.12em; line-height: 1.5; }
@@ -460,6 +473,7 @@ html:has(.kv-home) { overflow-x: clip; }
 @media (prefers-reduced-motion: reduce) {
   .kv-sparks path, .kv-halos circle, .kv-syn g, .kv-plankton circle, .kv-pulse-dot { animation: none; }
   .kv-sparks path { stroke-dasharray: none; opacity: 0.3; }
+  .kv-motion { display: none; }
   .kv-link:hover, .kv-tile:hover, .kv-feature:hover, .kv-domain-card:hover, .kv-cta:hover { transform: none; }
 }
 @media print {

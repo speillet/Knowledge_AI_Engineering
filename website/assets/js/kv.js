@@ -1,5 +1,6 @@
 // Vault interactions on top of Blowfish: expand or collapse every answer, open the card or
-// block a link points to, and run the search of an old search link (?q=term).
+// block a link points to, run the search of an old search link (?q=term), and pause the
+// home animation off screen or on request.
 (() => {
   "use strict";
   const folds = () => document.querySelectorAll("details.kv-card, details.kv-fold");
@@ -39,5 +40,28 @@
       }
     };
     run();
+  }
+
+  // Home hero: the animation pauses while the hero is off screen, and on request (remembered).
+  const home = document.querySelector(".kv-home");
+  const motion = document.querySelector("[data-kv-motion]");
+  if (home) {
+    let paused = false;
+    let hidden = false;
+    try { paused = localStorage.getItem("kv-motion") === "paused"; } catch (e) { /* storage unavailable */ }
+    const apply = () => {
+      home.classList.toggle("kv-paused", paused || hidden);
+      if (motion) motion.setAttribute("aria-pressed", String(paused));
+    };
+    if (motion) motion.addEventListener("click", () => {
+      paused = !paused;
+      try { localStorage.setItem("kv-motion", paused ? "paused" : "running"); } catch (e) { /* storage unavailable */ }
+      apply();
+    });
+    const layer = home.querySelector(".kv-hero-bg");
+    if (layer && "IntersectionObserver" in window) {
+      new IntersectionObserver(([entry]) => { hidden = !entry.isIntersecting; apply(); }).observe(layer);
+    }
+    apply();
   }
 })();

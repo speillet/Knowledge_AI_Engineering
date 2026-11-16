@@ -10,6 +10,7 @@
     {{- with resources.Get "img/neurons.svg" }}{{ .Content | safeHTML }}{{ end -}}
     {{- with resources.Get "img/neurons-live.svg" }}{{ .Content | safeHTML }}{{ end -}}
   </div>
+  <button type="button" class="kv-motion" data-kv-motion aria-pressed="false" aria-label="Pause the background animation" title="Pause the background animation"></button>
   <section class="kv-hero">
     <p class="kv-eyebrow landing-rise"><span class="kv-pulse-dot" aria-hidden="true"></span>Knowledge vault · AI engineering</p>
     <h1 class="kv-hero-title landing-rise landing-rise-1">{{ site.Title }}</h1>
