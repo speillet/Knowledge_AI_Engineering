@@ -16,7 +16,7 @@ from lint_flashcards import ROOT
 
 SVG = ROOT / "website/assets/icons/favicon.svg"
 STATIC = ROOT / "website/static"
-BACKGROUND = "#060c14"
+BACKGROUND = "#7c3aed"
 # Home-screen icons are cropped by the system: Android keeps a circle of 40 % of the size.
 TOUCH_SCALE = 0.76
 MASKABLE_SCALE = 0.72
