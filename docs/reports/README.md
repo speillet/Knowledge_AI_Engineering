@@ -2,6 +2,7 @@
 
 These dated reports record the scope, additions and validation of individual reviews. Counts and verification dates describe the repository at the time of each report. For current learning instructions, use the [guides](../guides/README.md) and [paths](../paths/README.md).
 
+- **2026-11-17** — [Agent loops, tool calling and routing](agent-loop-tool-calling-routing-2026-11-17.md)
 - **2026-11-17** — [Retrieval metrics and RL alignment](retrieval-metrics-rl-alignment-2026-11-17.md)
 - **2026-11-15** — [Repository migration](english-migration-2026-11-15.md)
 - **2026-11-14** — [Topic expansion](topic-expansion-2026-11-14.md)

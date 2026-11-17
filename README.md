@@ -2,7 +2,7 @@
 
 A collection of connected flashcards, learning paths and practical workshops for AI engineering: choose models, build applications, deploy them and keep them reliable.
 
-**As of 17 November 2026**: 155 topics and 2,870 cards across 17 sections, including 382 scenarios and 215 do-not-confuse cards.
+**As of 17 November 2026**: 155 topics and 2,903 cards across 17 sections, including 387 scenarios and 222 do-not-confuse cards.
 
 ## Learn
 

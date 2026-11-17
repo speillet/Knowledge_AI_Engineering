@@ -1,162 +1,257 @@
 # LLM routing — Flashcards
 Tags: #flashcards #ai-engineering #routing #api-layer #llm
-<!-- summary: static, rule-based or semantic routing, RouteLLM, cascade, load-based routing, semantic cache, calculation of the average cost of a cascade, router bias, counterfactual decision. -->
+<!-- summary: model routing versus workflow branches, static and rule-based routing, semantic and learned routers, eligibility before optimization, calibrated scores, cascades, fallback and retries, shared budgets, agent-state routing, selection bias and end-to-end evaluation. -->
 
 
-Why route queries between multiple models? <!--anki:6a5b33407a5a3140415e-->
+## What the router chooses
+
+Why route requests between multiple models? <!--anki:6a5b33407a5a3140415e-->
 ?
-Because **no model is optimal everywhere**: the majority of queries are simple and can go towards a **small, fast and cheap model**, reserving the **powerful model** for difficult cases. We optimize the triangle **cost / quality / latency**.
+Routing chooses a model that meets the request's **quality and capability requirements** at an acceptable cost and latency. It is useful when candidates perform differently across the actual workload.
 
-Order of magnitude: if 70% requests go to a model ten times cheaper, the average cost becomes 0.7 × 0.1 + 0.3 × 1 = 0.37 the initial cost, either −63%, As long as the quality is on these 70%. The router also costs: a few milliseconds for rules or a embedding, a full call if it uses a LLM.
+If 70% of requests can use a model costing one-tenth as much, model cost becomes `0.7 × 0.1 + 0.3 × 1 = 0.37` of an all-expensive baseline, before routing and verification costs.
+
+That saving is only useful if quality remains acceptable on the diverted requests. Do not assume most traffic is easy or that the largest model always gives the best answer.
 
 ---
 
-What is Static Routing? <!--anki:44773775513569557677-->
+What is static model routing? <!--anki:44773775513569557677-->
 ?
-A **model set by use case** (→ classification small model, legal writing → large model). Simple and predictable, this is the recommended **starting point**.
+A **fixed model assignment per use case**: for example, one tested model for structured extraction and another for document analysis.
 
-The choice comes from reviews of the use case, not just the "simple" or "complex" label. A small model can be excellent for a specialized format, and a large model can still fail. This stable baseline is used to measure whether a more dynamic routing brings enough gain to justify its complexity.
+The mapping comes from evaluation, not from labels such as “simple” or “advanced.” It is predictable and provides a useful baseline before adopting per-request routing.
+
+Revisit the mapping when prompts, traffic, model versions or requirements change. Static routing simplifies the decision process; it does not eliminate the need to monitor quality and capability compatibility.
 
 ---
 
-What is rule-based routing? <!--anki:5162254473514a51595d-->
+What is rule-based model routing? <!--anki:5162254473514a51595d-->
 ?
-**heuristics** on the request: prompt length, language, code presence, client or tenant, subscription level. Deterministic and easy to audit.
+It chooses an eligible model using **explicit rules** about request properties or context, such as input size, language, required modality or service tier.
 
-Example: Send too long an entry to a model with sufficient context. Set priorities if multiple rules apply and an explicit default route. Confidentiality or region requirements are hard constraints; they should not be bypassed by a cost rule.
+Define rule precedence and what happens when no eligible route remains. A context-length check must allow room for instructions, tool schemas and output, not just the user's message.
 
-Test Boundaries: A query just above the threshold should keep enough room for output and tools. Journaling the winning rule helps explain an unexpected route.
+Hard requirements such as data location and tool support constrain the candidate set. A cheaper route must not override them. Log the rule that selected the route so boundary cases can be reproduced.
 
 ---
 
-What is Semantic Routing? <!--anki:416e31782d254b435577-->
+What is semantic routing, and what does similarity fail to establish? <!--anki:416e31782d254b435577-->
 ?
-The **embedding of the query** is compared to reference examples for each route (e.g. "support", "code", "off topic") and the closest route is chosen. Fast and no-call LLM.
+A semantic router compares a request's **meaning representation**, often an embedding, with route examples or descriptions. Similarity can help choose a topic-specific handler without a generative classification call.
 
-In practice: a few dozen example sentences per route, and a **similarity threshold** under which the request goes to a default route. The threshold is set on a game labeled: too high, everything falls into the default route; too low, off-topic requests are captured. Limit: proximity captures the subject, not the difficulty.
+Set thresholds and an ambiguous or out-of-scope route using labeled evaluation cases. A nearest neighbor always exists in a nonempty example set, even when none is appropriate.
+
+Similarity is not proof of task difficulty, authorization or answerability. An embedding still has computation or API cost, and route examples must cover realistic phrasing and confusing neighboring categories.
 
 ---
 
-What is a learned router (e.g. RouteLLM)? <!--anki:733a60734a2a716f745b-->
+What does a learned model router such as RouteLLM predict? <!--anki:733a60734a2a716f745b-->
 ?
-A model learns, from comparisons or results, **when a more expensive backend brings a useful gain**. A threshold sets the cost/quality trade-off for the models and the traffic evaluated.
+A learned router estimates **when one candidate model offers useful quality over another**, using preferences or observed outcomes. A decision threshold controls the evaluated cost-quality tradeoff.
 
-Example: A short sentence containing a legal exception can be difficult; length alone is not enough to route. Evaluate orientation errors by task type and severity, with climbing capability.
+A short request can be difficult, while a long repetitive extraction can be easy for a specialized model. Learned routing can capture patterns that length rules miss, but it depends on its training distribution.
 
-Compare to a static rule by including router cost and latency. After changing candidate models, recheck labels, calibration and threshold: a router trained for one pair does not automatically predict the behavior of another.
+Validate on held-out traffic and compare with static and rule-based baselines. Changing the candidate models or their prompts may invalidate old scores and thresholds.
 
 ---
+
+Why must a model router filter eligibility before optimizing cost or quality? <!--anki:6264333264666435353536613438343138313465616539636237653038363666-->
+?
+Some requirements are **hard constraints**, not preferences: required modalities, context capacity, tool protocol, data permissions or deployment location.
+
+First remove candidates that cannot satisfy the request contract. Then optimize among the remaining candidates. If none qualify, return a defined unavailable or escalation outcome.
+
+For example, a low-cost text-only backend cannot process an image merely because a router assigns it a high score. Apply the same checks to fallback paths; otherwise an outage can silently change the application's data or capability guarantees.
+
+---
+
+Can a router score of 0.9 be interpreted as a 90% chance of successful task completion? <!--anki:6363386563363934663334353434623061656562623361656138306464616263-->
+?
+Only if the score was **defined and calibrated for that specific event and population**. Cosine similarity, a route-class probability and a model's self-reported confidence are different quantities.
+
+A classifier can be confident that a request concerns billing without knowing whether the billing handler will resolve it. Likewise, a preference score between two models does not directly measure absolute correctness.
+
+Choose thresholds on held-out outcomes, inspect reliability by segment and revalidate after changes. An uncalibrated score should not become an automatic permission or completion criterion.
+
+---
+
+## Cascades, fallback and bounded recovery
 
 What is a model cascade? <!--anki:704a444b343c593f2c61-->
 ?
-First send the request to the **cheap model**, **check** the response (format validation, trust score, judge) and **climb** to a more powerful model only in case of failure.
-```text
-80% queries: small model → 1 × the cost
-20% scaled: small + large model → 1 × + 12 × = 13 ×
+A cascade tries one candidate, **checks its result**, and uses another candidate if the acceptance check fails and escalation can help.
 
-Average cost ≈ 0.8 × 1 + 0.2 × 13 ≈ 3.4 vs 12 in all-size
-```
-The calculation only holds if the **verification is reliable and cheap**: otherwise we pay twice for an uncertain result.
+With fictional costs of 1 unit for A and 12 for B, escalating 20% of requests costs `1 + 0.2 × 12 = 3.4` units on average, before verification. An all-B baseline costs 12 units.
 
-Add its cost to each request, then measure false chords and false rejections. A false chord lets pass an erroneous response; a false rejection reduces the economy. The scaled cases also undergo the two sequential latencies.
+Measure false acceptance, unnecessary escalation and sequential latency. A format-valid answer can still be wrong, so JSON validation alone is insufficient when the task also requires factual or business correctness.
 
 ---
 
-Do not confuse: routing and fallback? <!--anki:66313d487a55554a5a34-->
+Do not confuse: model routing and fallback? <!--anki:66313d487a55554a5a34-->
 ?
-The **Routing** choose the model **before** the call (optimization); on the **Fallback** Switching to another model **After an error** (blows, rate limit, timeout) — it's the **Reliability**, Run by the[[81-litellm-api-layer|API layer]].
+**Routing** selects a backend before a call. **Fallback** switches to another eligible backend after a technical failure, such as unavailability or a rate limit.
 
-A fallback must be admissible for the same contract: access to data, context length, tools and output format. A poor quality response can trigger a cascade, which is another mechanism. Trace the reason for the choice or the toggle makes it possible to distinguish quality problem and technical incident.
+Escalating after an unacceptable answer is a quality-driven cascade, not the same failure mode. A retry repeats an attempt under a defined recovery policy.
 
----
-
-What is load-based routing? <!--anki:47573371746971216e2e-->
-?
-Split between **replicas of the same model** according to their state: queue, latency, [[61-kv-cache-attention|KV cache]] occupancy, or even **prefix affinity** (send the request where its prefix is already cached).
-
-A cache affinity saves prefill but can overload a popular replica; the decision must balance reuse and queue wait. Use recent signals and limit oscillations. Test with realistic prompt sequences, because random queries without shared prefixes do not reveal this compromise.
+Record the trigger and preserve the request contract across every switch. A fallback that lacks required tools or receives data it is not allowed to process is invalid, even if it returns an answer quickly.
 
 ---
 
-On what to base a routing decision? <!--anki:673d62522f6f49603563-->
-?
-On **[[92-chainforge-evals-prompts|evals]] per request segment** (quality of each model by type of task) and on **production data** ([[91-langfuse-observability|Langfuse]]: cost, latency, feedback). Without measurement, the router saves by degrading quality without knowing it.
-
-Example: the eval shows that the small model equals the big one on status issues, 98% against 99%, but falls on litigation, 61% against 88%. We drive by category, then we check in production that the actual distribution resembles that of the eval: a slide towards litigation degrades the quality without any alert.
-
----
-
-What is a semantic cache? <!--anki:702925434b335a303e56-->
-?
-Return an already generated **answer** for a question **semantically close** to a past question. Big gain in cost and latency, but risk of **bad answer** if the similarity threshold is too permissive.
-
-Two related questions may differ by negation, date, or user. Include holding, permissions, and source versions in cache access conditions, and then provide invalidation and control of hits. Reserve this technique for tasks where a re-used response is acceptable and measurable, not for data changing with each request.
-
----
-
-Do not confuse: the four decisions around the model? <!--anki:7265624f26605e34686c-->
+Do not confuse: routing, cascade, fallback and retry? <!--anki:7265624f26605e34686c-->
 ?
 ```text
-Routing → BEFORE the call, choose the right model (optimization)
-Cascade → AFTER a quality failure, climb (optimization)
-Fallback → AFTER technical error, toggle (reliability)
-Retry → AFTER transient error, try again (reliability)
+Routing  → select a backend before the attempt
+Cascade  → try another candidate after a quality check fails
+Fallback → switch eligible backends after a technical failure
+Retry    → repeat a recoverable attempt within limits
 ```
-The first two are aimed at **cost and quality**, The last two la **Availability**. They often live in the same component, the [[81-litellm-api-layer|gateway]], but answer different questions ([[142-llm-reliability-resilience|Reliability]]).
 
-For example, route an extraction to a small model, scale if quality control fails, switch if the provider is unavailable, and try again briefly on a transient error. Share an overall budget between these mechanisms: their composition can otherwise multiply calls and exceed the user delay.
+These mechanisms can coexist, but each needs an explicit trigger and stopping rule. A failed quality check does not always mean a more capable model can solve the problem.
 
----
-
-Calculation: a waterfall uses A to 0.002 € then B to 0.020 € for 25% requests. What average cost before other times? <!--anki:3866303963663363386636343466323261316261666166396462353135303736-->
-?
-A is called for all requests and B for a quarter: `0,002 + 0,25 × 0,020 = 0,007 €`, or **7 € for 1,000 requests**.
-
-The calculation assumes constant costs and a single escalation. Add the cost of the router, checks and retrievals if they exist. Also measure the quality of the requests that remain on A: a cheap cascade can under-detect difficult cases. The escalation rate alone shows neither preserved quality nor net economy.
+Track the entire attempt chain under one deadline and budget. Independent retry loops in the client, gateway and provider can otherwise multiply calls and delay the final outcome.
 
 ---
 
-Why evaluate only queries sent to the large model biases the comparison with the small one? <!--anki:3263313832643862306231643463323239323936326437353831666638656334-->
+How should nested retries and model escalation share a stopping budget? <!--anki:3062653261333431353566353430366661366434303530376164656239343736-->
 ?
-The router can reserve **the most difficult cases**. A lower average quality of the large model on this subset does not mean that it is less capable.
+Use a **single task-level budget** alongside local limits. Count actual attempts, including retries, verification calls and fallbacks, rather than resetting the counter at each layer.
 
-Compare the two on a common representative sample or organize a controlled exploration, with costs and data rules respected. Keep the routing decision and its criteria. The results observed after selection are not enough to estimate what the other model would have done.
+For example, a gateway allowing three attempts per call inside an agent allowing ten turns may permit thirty model attempts before tool retries are counted. Define whether the intended cap is ten turns or ten attempts.
+
+Before admitting work, check remaining time and cost and retain a verification/reporting reserve. A new backend should not reset the clock or make an exhausted request eligible again.
 
 ---
 
-When should a waterfall abstain instead of climbing to a more powerful model? <!--anki:3762313434376663653134363435636561306137643237353333663638333038-->
+When should a model cascade stop instead of escalating to another model? <!--anki:3762313434376663653134363435636561306137643237353333663638333038-->
 ?
-When the problem comes from **absent evidence, denied permission, or user ambiguity**, not a lack of capacity of the first model.
+Stop when the cause is **missing evidence, unresolved user intent, denied permission, incompatible capabilities or an exhausted budget**, rather than a model capability gap that another eligible candidate can plausibly close.
 
-Climbing can increase the cost without solving the cause. Classify the reasons for failure and provide additional research, clarification or human review. Measure the resolution rate by reason: a useful cascade improves the end result, not just the number of responses produced.
+An inaccessible invoice does not become accessible by choosing a larger model. Resolve the missing evidence or authorization through an allowed path, or report the limitation.
+
+Define a finite set of admissible attempts and preserve the best valid result where useful. “Try a stronger model” is not a substitute for classifying why the current attempt failed.
+
+---
+
+What is load-based routing between model replicas? <!--anki:47573371746971216e2e-->
+?
+It distributes requests among **compatible serving replicas** using recent signals such as queue length, expected latency, available capacity and prefix-cache affinity.
+
+Sending a request to a replica that already holds its prompt prefix can save prefill work, but a busy cache-friendly replica may still be slower than an idle one.
+
+Balance reuse against queueing and test with realistic traffic. This is a placement decision, distinct from choosing a different model for better task quality. Limit oscillation and handle stale load measurements.
+
+---
+
+When may an agent choose different models for different steps? <!--anki:3038343738306235333538323435333838313061376130383730353161323762-->
+?
+When the steps have **different capability requirements** and the system can preserve compatible state and tool contracts. A small model may classify a request while another handles a complex synthesis.
+
+Route on the current step's purpose and constraints, not just the initial user message. Preserve accepted evidence, pending operations and output requirements when switching.
+
+Validate the whole trajectory: a cheaper intermediate decision can send later work down the wrong path. Model switches must not lose operation IDs, change permissions or reset the global budget.
+
+---
+
+What is a semantic response cache? <!--anki:702925434b335a303e56-->
+?
+It reuses a stored answer for a **sufficiently similar request**, subject to compatibility rules. This can avoid generation, but semantic resemblance alone does not prove that the answer is reusable.
+
+Two questions may differ by negation, date, account or document version. Include relevant identity, permissions and source freshness in cache eligibility, with invalidation when those facts change.
+
+Use it where reuse can be evaluated and accepted. High cache-hit rate is not a quality measure if the system serves stale or inappropriate responses.
+
+---
+
+## Evaluation and accounting
+
+What evidence should guide a model-routing policy? <!--anki:673d62522f6f49603563-->
+?
+Use **quality, latency and cost by request segment**, measured on representative tasks under comparable prompts, tools and inference budgets.
+
+For example, synthetic results of 98% versus 99% success on order-status questions differ from 61% versus 88% on disputed refunds. Routing by segment may be useful, but these averages need uncertainty estimates and checks on important failure types.
+
+Monitor whether production traffic still resembles the evaluation population. A shift toward difficult cases can erase expected savings or quality without changing the routing code.
+
+---
+
+How should a router with an abstention path be evaluated? <!--anki:6465396235666339623264363438373561643266356230326439316436373033-->
+?
+Report **coverage**—the share routed automatically—and quality on that subset, together with the outcomes and costs of abstained cases.
+
+A router that handles only easy requests may have excellent conditional accuracy but poor overall completion. Measure end-to-end success, wrong-route severity, clarification or escalation rate, total cost and latency.
+
+Evaluate ambiguous, multi-intent and out-of-scope requests explicitly. Choose thresholds using development data, then report results on a held-out set. Do not optimize a routing label metric while ignoring whether the selected handler actually solves the task.
+
+---
+
+Why is comparing models only on their routed traffic biased? <!--anki:3263313832643862306231643463323239323936326437353831666638656334-->
+?
+The router may send **harder cases to one model** and easier cases to another. Their observed success rates therefore reflect different populations as well as different capabilities.
+
+Compare candidates on a common representative sample, or use a justified controlled evaluation that respects data and cost constraints. Preserve route scores and decision reasons.
+
+A larger model's lower success rate on escalated requests does not prove it is worse. Those logs alone do not reveal how the smaller model would have performed on the same requests.
+
+---
+
+Calculation: every request uses model A at a fictional €0.002, and 25% also use B at €0.020. What is the mean model cost? <!--anki:3866303963663363386636343466323261316261666166396462353135303736-->
+?
+```text
+mean cost = €0.002 + 0.25 × €0.020 = €0.007
+cost for 1,000 requests = €7
+```
+
+The calculation assumes fixed per-attempt costs and at most one escalation. Add routing, verification, retries and tools to estimate the total.
+
+Also measure the quality of requests accepted after A: a cascade can look inexpensive because its checker misses errors. Escalation rate alone establishes neither preserved quality nor net savings.
 
 ---
 
 ## Scenarios
 
-Scenario: your management asks to halve the cost of the assistant, without degrading the perceived quality. How do you proceed? <!--anki:702a4c60414f3b6c6136-->
+Scenario: management asks to halve assistant costs while preserving quality. How do you evaluate model routing? <!--anki:702a4c60414f3b6c6136-->
 ?
-1. **Segment traffic**: which queries are simple, which are difficult, in what proportions
-2. **Measure by segment**: quality of the small model against the big one, on each segment ([[94-evals-methodology|evals]])
-3. **Start with static routing or rules**, predictable and auditable, before any router learned
-4. **Cascade** on uncertain segments: small model, check, escalation if failure
-5. **Check next**: cost per request, quality per segment, escalation rate, user feedback
+1. **Define acceptable quality by segment**, including important error types.
+2. **Compare candidate models on the same requests**, with all relevant capabilities enabled.
+3. **Establish a static or rule-based baseline** before adding a learned router.
+4. **Evaluate verification and escalation**, including false acceptance and extra latency.
+5. **Measure total cost per acceptable outcome** and monitor distribution shifts after rollout.
 
-**Trap** : route on the only length of the prompt, who says nothing about the real difficulty.
+**Trap**: selecting a router solely from its cheap-model usage rate.
 
 ---
 
-Scenario: a colleague offers a semantic cache for questions “close” to the previous ones, about a banking assistant. What reservations do you pose? <!--anki:457145645a3a603e465f-->
+Scenario: a banking assistant proposes reusing answers to semantically similar questions. What must be checked? <!--anki:457145645a3a603e465f-->
 ?
-1. **The main risk**: Two seemingly close questions can be answered oppositely (“can I close my account?” depending on the type of account)
-2. **The similarity threshold** becomes a critical parameter, to be calibrated on real cases
-3. **Closure**: never cache shared between users when the answer depends on their data
-4. **Limit the perimeter**: reserve the cache to questions **generic**, factual and without customization
-5. **Measure**: hit rate, but especially inappropriate response rate served from cache ([[123-aggressive-caching|caching]])
+1. **Identify personalization and freshness dependencies**, including account, product and effective date.
+2. **Enforce cache eligibility** before considering similarity.
+3. **Test confusing pairs**, such as questions differing by negation or account type.
+4. **Limit reuse to an evaluated scope** and invalidate entries when relevant facts change.
+5. **Measure incorrect reuse**, not just hit rate and saved tokens.
 
-**Trap**: Measure the success of the cache at its hit rate, without checking the correctness of the answers served.
+**Trap**: sharing an answer between customers because their questions sound alike.
 
 ---
+
+Scenario: the primary model times out, but the only available fallback lacks the required tool protocol. Should routing continue? <!--anki:3233313861353564633233633462633662353234646663643232323936376131-->
+?
+1. **Reject the incompatible fallback** under the capability contract.
+2. **Check for another eligible backend** within the remaining deadline.
+3. **Preserve pending tool operations and their IDs**; do not replay writes blindly.
+4. **Return a recoverable unavailable or partial outcome** if no valid route remains.
+5. **Test this path explicitly** so an outage does not silently degrade the contract.
+
+**Trap**: treating any generated text as a valid substitute for the required tool-enabled operation.
+
+---
+
+## Sources
+
+Review of 17 November 2026: routing decisions, compatibility gates, cascade stopping rules and evaluation. Costs and success rates in examples are synthetic, not provider prices or benchmark claims.
+
+- [Ong et al. — RouteLLM](https://arxiv.org/abs/2406.18665).
+- [Anthropic — workflow routing and composition](https://www.anthropic.com/research/building-effective-agents).
+- [AWS Builders' Library — timeouts, retries and backoff with jitter](https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/).
 
 ## Connections
 - [[81-litellm-api-layer|LiteLLM]] — where routing is implemented
@@ -165,11 +260,13 @@ Scenario: a colleague offers a semantic cache for questions “close” to the p
 - [[64-inference-metrics-slo|Metrics & SLO]] — latency constraint
 - [[121-inference-costs|Inference costs]] — cost lever n°1
 - [[66-prefix-caching-radix-attention|Prefix caching & RadixAttention]] — Prefix affinity routing
-- [[123-aggressive-caching|Caching agressif]] — all cache levels
+- [[123-aggressive-caching|Caching]] — reuse at different layers
 - [[146-model-selection|Choice of model]] — criteria and benchmarks
-- [[138-reasoning-models|Models of Reasoning]] — router by difficulty
+- [[138-reasoning-models|Reasoning models]] — task difficulty and inference budgets
 - [[122-finops-llm|FinOps LLM]] — allocate and drive AI spend
 - [[141-system-design-llm|System Design LLM]] — design method
-- [[48-agentic-workflow-patterns|Patterns of workflows]] — chaining, routing, evaluator-optimizer
+- [[48-agentic-workflow-patterns|Workflow patterns]] — choosing a branch rather than a model
 - [[53-synthetic-data-distillation|Synthetic Data & Distillation]] — generate data and transfer to a small model
+- [[31-agent-fundamentals|Agent fundamentals]] — stopping conditions and bounded execution
+- [[32-tool-calling|Tool calling]] — execution contracts that every backend must support
 - [[00-moc-ai-engineering|MOC AI Engineering]]
