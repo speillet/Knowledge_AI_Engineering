@@ -104,7 +104,7 @@ Lint checks structure, links and conventions; it does not establish factual accu
 
 Pull requests run `make check` on Python 3.10 and 3.12 and build an Anki package as a CI artifact. Pushes to `main`, or manual workflow runs on `main`, publish the package only after these checks pass.
 
-Each pull request merged into `main` also publishes a versioned release once these checks pass. CI tags the merge commit with the date, `anki-vYYYY.MM.DD`, then `.2`, `.3`… for later merges the same day, and publishes the package with notes generated from the merged pull requests. Rerunning that workflow only refreshes the package of the release. A commit pushed to `main` without a pull request updates only the stable package.
+Each pull request merged into `main` also publishes a versioned release once these checks pass. CI tags the merge commit with the UTC date of the merge, `anki-vYYYY.MM.DD`, then `.2`, `.3`… for later merges that day. It publishes the package with notes listing the pull requests merged since the previous release in the history. Rerunning the workflow of a merge refreshes the package of its release, or publishes the release if it failed; a release published late for an older merge is not marked as the latest. A commit pushed to `main` without a pull request updates only the stable package, which always comes from the latest commit of `main`.
 
 To publish a release by hand, tag a commit of `main` that has no release tag yet, and push the tag:
 

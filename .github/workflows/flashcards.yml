@@ -68,6 +68,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
         run: |
+          # A rerun of an older run must not replace the package of the newest commit.
+          head=$(gh api "repos/$GH_REPO/commits/main" --jq .sha)
+          if [ "$head" != "$GITHUB_SHA" ]; then
+            echo "::notice::main has moved to ${head::7}: the stable package is left as it is."
+            exit 0
+          fi
           if ! gh release view anki >/dev/null 2>&1; then
             gh release create anki --title "Anki package" --latest=false \
               --notes "Anki package for the vault, rebuilt after checks pass on main. See the Anki guide linked from the README."
@@ -114,15 +120,16 @@ jobs:
             echo "tag=$GITHUB_REF_NAME" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          # A commit of main that already carries a release tag keeps that release: a rerun
-          # refreshes its package, and a tag pushed by hand is published by its own run.
-          tagged=$(git tag --points-at "$GITHUB_SHA" --list 'anki-v*' | head -n 1)
-          if [ -n "$tagged" ]; then
-            if gh release view "$tagged" >/dev/null 2>&1; then
-              echo "tag=$tagged" >> "$GITHUB_OUTPUT"
-            else
-              echo "::notice::$tagged is published by the run of its tag."
-            fi
+          # A commit of main that already carries a release tag keeps it: a rerun refreshes
+          # its release, and a tag pushed by hand is published by whichever run comes first,
+          # since both runs share the concurrency group of the commit.
+          tag=
+          for t in $(git tag --points-at "$GITHUB_SHA" --list 'anki-v*'); do
+            if gh release view "$t" >/dev/null 2>&1; then tag=$t; break; fi
+            tag=${tag:-$t}
+          done
+          if [ -n "$tag" ]; then
+            echo "tag=$tag" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           pr=$(gh api "repos/$GH_REPO/commits/$GITHUB_SHA/pulls" \
@@ -144,14 +151,15 @@ jobs:
             exit 0
           fi
           stats=$(python3 scripts/lint_flashcards.py --quiet | tail -n 1 | sed 's/ —.*//')
-          previous=$(gh api "repos/$GH_REPO/releases?per_page=100" \
-            --jq '[.[] | select(.tag_name | startswith("anki-v"))] | sort_by(.created_at) | last | .tag_name // empty')
           for attempt in 1 2 3 4 5; do
+            # After a lost race, see the tag the other merge has just published.
+            if [ "$attempt" -gt 1 ]; then git fetch --quiet --force --tags origin; fi
             create=(--verify-tag)
             source="commit ${GITHUB_SHA::7}"
             if [ -n "$PR" ]; then
-              # Highest release number of the day among anki-vYYYY.MM.DD (1) and its .N tags.
-              day=$(date -u +%Y.%m.%d)
+              # The UTC day of the merge, kept by reruns, and its highest release number among
+              # anki-vYYYY.MM.DD (1) and its .N tags.
+              day=$(TZ=UTC git show -s --format=%cd --date=format-local:%Y.%m.%d "$GITHUB_SHA")
               last=$(gh api "repos/$GH_REPO/git/matching-refs/tags/anki-v$day" --jq "[.[].ref
                 | ltrimstr(\"refs/tags/anki-v$day\") | select(. == \"\" or test(\"^[.][0-9]+$\"))
                 | if . == \"\" then 1 else ltrimstr(\".\") | tonumber end] | max // 0")
@@ -160,6 +168,11 @@ jobs:
               create=(--target "$GITHUB_SHA")
               source="$source, pull request #$PR"
             fi
+            # Notes start at the closest released ancestor; a commit that a newer release
+            # already contains, such as a late rerun, does not become the latest release.
+            previous=$(git describe --tags --abbrev=0 --match 'anki-v*' "$GITHUB_SHA^" 2>/dev/null || true)
+            latest=true
+            if git tag --contains "$GITHUB_SHA" --list 'anki-v*' | grep -qvxF "$TAG"; then latest=false; fi
             args=(-f tag_name="$TAG" -f target_commitish="$GITHUB_SHA")
             if [ -n "$previous" ]; then args+=(-f previous_tag_name="$previous"); fi
             {
@@ -169,7 +182,7 @@ jobs:
               echo
               gh api "repos/$GH_REPO/releases/generate-notes" "${args[@]}" --jq .body
             } > notes.md
-            if gh release create "$TAG" dist/ai-engineering.apkg "${create[@]}" --latest \
+            if gh release create "$TAG" dist/ai-engineering.apkg "${create[@]}" --latest="$latest" \
               --title "Anki package ${TAG#anki-v}" --notes-file notes.md; then
               exit 0
             fi
