@@ -165,4 +165,5 @@ Scenario: a recommender offers ten almost identical variants of the same tutoria
 - [[97-evals-online-ab-testing|A/B testing]] — check the exposed list value
 - [[178-causal-inference-decisions|Causal inference]] — distinguish exposure and effect of recommendation
 - [[117-continuous-training-pipelines|Training pipelines]] — selective labels of a model that decides
+- [[20-011-retrieval-quality-metrics|Retrieval quality metrics]] — AP/MAP, RR/MRR, relevance judgments and evidence coverage
 - [[00-moc-ai-engineering|MOC AI Engineering]]

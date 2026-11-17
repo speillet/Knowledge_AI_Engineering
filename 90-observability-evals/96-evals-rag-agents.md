@@ -19,7 +19,7 @@ What do recall@k, MRR and nDCG measure? <!--anki:4a7e6f715833634b5574-->
 ?
 **Recall@k** measures the fraction of the annotated relevant items present in the top k; **MRR** averages the inverse rank of the first relevant item, counting zero when none is found within the cutoff. **nDCG** evaluates the order, with optionally graded relevance, normalized by an ideal ranking.
 
-Specify the unit — document, passage or piece of evidence —, the cutoff and the handling of queries without any relevant item. An incomplete reference may penalize another valid passage. These measures describe different aspects: finding a single piece of evidence is not always enough to answer a question that requires several.
+For AP@k, MAP@k and normalization conventions, see [[20-011-retrieval-quality-metrics|retrieval quality metrics]]. Specify the unit — document, passage or piece of evidence —, the cutoff and the handling of queries without any relevant item. An incomplete reference may penalize another valid passage. These measures describe different aspects: finding a single piece of evidence is not always enough to answer a question that requires several.
 
 ---
 
@@ -122,15 +122,15 @@ Denominators answer two different questions:
 precision@3 = relevant recovered / recovered = 2/3 ≈ 66.7%
 recall@3 = relevant retrieved / relevant annotated = 2/4 = 50%
 ```
-Accuracy measures the useful proportion in selection; recall, reference coverage. There are still two relevant passages missing, although the majority of the results are useful. These scores assume reliable judgments to the same — unit here the — passage and do not prove that the generator has exploited the evidence.
+Precision measures the useful proportion in selection; recall, reference coverage. There are still two relevant passages missing, although the majority of the results are useful. These scores assume reliable judgments to the same — unit here the — passage and do not prove that the generator has exploited the evidence.
 
 ---
 
-Calculation: for three queries, the first relevant pass appears in the ranks 1, 4, then remains absent from the five evaluated results. What is the MRR@5? <!--anki:6139653836306237353537633463613761323238653363363962613130336263-->
+Calculation: for three queries, the first relevant passage appears at ranks 1, 4, then remains absent from the five evaluated results. What is the MRR@5? <!--anki:6139653836306237353537633463613761323238653363363962613130336263-->
 ?
 Each request contributes the inverse of the rank of the relevant first, or zero if it is absent from the top 5:
 ```text
-MRR@5 = (1/1 + 1/4 + 0) / 3 = 5/12 ≈ 0,417
+MRR@5 = (1/1 + 1/4 + 0) / 3 = 5/12 ≈ 0.417
 ```
 The denominator includes the **three requests**, including failure. Dividing only by the two successful requests would inflate the score. The MRR rewards the quick arrival of a useful first result; it ignores other relevant evidence. For a question that requires multiple documents, complete with a coverage measure.
 
@@ -389,4 +389,5 @@ Scenario: your RAGAS dashboard shows a Context Precision of 0.94 and a Faithfuln
 - [[90-013-agent-testing-recovery|Agents — Contracts, failures & recoveries testing]] — measure business results
 - [[90-014-agent-skill-evaluation|Evaluating Agent Skills]] — evaluate an agent with and without a skill
 - [[90-016-harbor-agent-evaluation|Harbor]] — run container agent evals
+- [[20-011-retrieval-quality-metrics|Retrieval quality metrics]] — AP/MAP, RR/MRR, relevance judgments and evidence coverage
 - [[00-moc-ai-engineering|MOC AI Engineering]]

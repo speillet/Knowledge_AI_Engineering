@@ -17,6 +17,7 @@ Work through these topics in order:
 2. [Advanced Chunking & Contextual Retrieval](25-chunking-contextual-retrieval.md)
 3. [Advanced RAG](22-advanced-rag.md)
 4. [RAG in production: rights, versions & abstention](20-010-rag-permissions-versions.md)
+5. [Retrieval quality metrics](20-011-retrieval-quality-metrics.md)
 
 ## Go further
 

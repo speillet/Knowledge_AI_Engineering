@@ -206,4 +206,5 @@ Scenario: a RAG abstains from 40% questions and displays 100% valid citations. W
 - [[96-evals-rag-agents|Evals RAG]] — distinguish research, evidence and response quality
 - [[150-017-ai-datasets-corpora|Datasets & corpus IA]] — identify documents, versions and transformations
 - [[123-aggressive-caching|Caching]] — prevent caches from bypassing freshness and rights
+- [[20-011-retrieval-quality-metrics|Retrieval quality metrics]] — AP/MAP, RR/MRR, relevance judgments and evidence coverage
 - [[00-moc-ai-engineering|MOC AI Engineering]]
