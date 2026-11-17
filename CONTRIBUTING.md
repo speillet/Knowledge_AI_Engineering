@@ -104,7 +104,9 @@ Lint checks structure, links and conventions; it does not establish factual accu
 
 Pull requests run `make check` on Python 3.10 and 3.12 and build an Anki package as a CI artifact. Pushes to `main`, or manual workflow runs on `main`, publish the package only after these checks pass.
 
-To publish a versioned release, tag a commit of `main` with the release date and push the tag:
+Each pull request merged into `main` also publishes a versioned release once these checks pass. CI tags the merge commit with the date, `anki-vYYYY.MM.DD`, then `.2`, `.3`… for later merges the same day, and publishes the package with notes generated from the merged pull requests. Rerunning that workflow only refreshes the package of the release. A commit pushed to `main` without a pull request updates only the stable package.
+
+To publish a release by hand, tag a commit of `main` that has no release tag yet, and push the tag:
 
 ```bash
 git switch main && git pull --ff-only
@@ -112,7 +114,7 @@ git tag -a anki-v2026.11.15 -m "Anki package 2026.11.15"
 git push origin anki-v2026.11.15
 ```
 
-The tag runs the same checks, then publishes a release with the package and notes generated from the merged pull requests; CI refuses a tag outside `main`. Add `.2` for a second release on the same day. Never move a published tag: publish a new one instead.
+The tag runs the same checks, then publishes its release; CI refuses a tag outside `main`. Never move a published tag: publish a new one instead.
 
 Python in `scripts/`, `tests/` and `examples/` follows ruff, configured in `pyproject.toml`. `scripts/` is type-checked with mypy. File reads and writes explicitly use `encoding="utf-8"`; lint rejects implicit encodings. The [code tooling report](docs/reports/code-tooling-2026-10-31.md) explains these choices and checks.
 
