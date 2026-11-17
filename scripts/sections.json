@@ -23,7 +23,8 @@
       "21-rag-fundamentals.md",
       "25-chunking-contextual-retrieval.md",
       "22-advanced-rag.md",
-      "20-010-rag-permissions-versions.md"
+      "20-010-rag-permissions-versions.md",
+      "20-011-retrieval-quality-metrics.md"
     ],
     "practice": "Produce a claim-to-evidence table and explain one justified abstention."
   },
@@ -69,7 +70,8 @@
     "core": [
       "51-fine-tuning-adaptation.md",
       "56-training-optimization-diagnostics.md",
-      "53-synthetic-data-distillation.md"
+      "53-synthetic-data-distillation.md",
+      "52-post-training-alignment.md"
     ],
     "practice": "Compare adaptation with a simpler baseline and define a held-out evaluation."
   },

@@ -182,4 +182,5 @@ Scenario: your team hesitates between pgvector in the existing PostgreSQL databa
 - [[22-advanced-rag|Advanced RAG]] — hybride, filtres, ACL
 - [[96-evals-rag-agents|Evals of RAG]] — recall
 - [[68-quantization|Quantization]] — the same ideas applied to weights
+- [[20-011-retrieval-quality-metrics|Retrieval quality metrics]] — AP/MAP, RR/MRR, relevance judgments and evidence coverage
 - [[00-moc-ai-engineering|MOC AI Engineering]]

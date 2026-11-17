@@ -230,4 +230,5 @@ Scenario: the trade asks you for a RAG on 200,000 documents, including HR notes 
 - [[27-search-agents-deep-research|Research agents]] — multi-step search, with quotes
 - [[42-langchain-fundamentals|LangChain]] — the basic building blocks of the framework
 - [[137-long-context|Long context]] — compare search and complete context
+- [[20-011-retrieval-quality-metrics|Retrieval quality metrics]] — AP/MAP, RR/MRR, relevance judgments and evidence coverage
 - [[00-moc-ai-engineering|MOC AI Engineering]]

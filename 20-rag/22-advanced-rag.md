@@ -184,4 +184,5 @@ Scenario: After a embedding model change, the quality of the RAG collapses into 
 - [[131-transformer-architecture|Architecture Transformer]] — model internal operation
 - [[141-system-design-llm|System Design LLM]] — design method
 - [[69-roofline-prefill-decode|Roofline & Disaggregation]] — which limits each phase of the inference
+- [[20-011-retrieval-quality-metrics|Retrieval quality metrics]] — AP/MAP, RR/MRR, relevance judgments and evidence coverage
 - [[00-moc-ai-engineering|MOC AI Engineering]]

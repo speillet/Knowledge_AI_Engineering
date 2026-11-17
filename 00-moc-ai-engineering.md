@@ -29,6 +29,7 @@ Browse topics below, or open the [catalog with summaries](docs/catalog.md). Each
 - [[26-text-to-sql|Text-to-SQL & structured data]]
 - [[27-search-agents-deep-research|Search agents (deep research)]]
 - [[20-010-rag-permissions-versions|RAG in production: rights, versions & abstention]]
+- [[20-011-retrieval-quality-metrics|Retrieval quality metrics]]
 
 ## 30 — Agents
 
@@ -66,7 +67,7 @@ Browse topics below, or open the [catalog with summaries](docs/catalog.md). Each
 [Start this domain](./50-fine-tuning/README.md)
 
 - [[51-fine-tuning-adaptation|Fine-tuning & model adaptation]]
-- [[52-post-training-alignment|Post-training & alignment]]
+- [[52-post-training-alignment|Post-training & RL alignment]]
 - [[53-synthetic-data-distillation|Synthetic data & distillation]]
 - [[54-distributed-training|Distributed Training]]
 - [[55-agentic-rl|Agentic RL & Training Environments]]

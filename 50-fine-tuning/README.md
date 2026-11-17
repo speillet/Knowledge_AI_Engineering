@@ -16,12 +16,12 @@ Work through these topics in order:
 1. [Fine-tuning & model adaptation](51-fine-tuning-adaptation.md)
 2. [Training optimization & diagnostics](56-training-optimization-diagnostics.md)
 3. [Synthetic data & distillation](53-synthetic-data-distillation.md)
+4. [Post-training & RL alignment](52-post-training-alignment.md)
 
 ## Go further
 
 Choose these topics as your project requires; they are not prerequisites for getting started.
 
-- [Post-training & alignment](52-post-training-alignment.md)
 - [Distributed Training](54-distributed-training.md)
 - [Agentic RL & Training Environments](55-agentic-rl.md)
 
