@@ -29,6 +29,8 @@ Suggested progression: **understand models → use them → build architectures 
 
 Focus on agents through topics from several sections:
 
+For a concrete trace linking the concepts, start with [agent loops, tool calling and routing](agent-loop-tool-calling-routing.md): distinguish the decisions, follow an export task and explain every stopping outcome.
+
 1. [[31-agent-fundamentals|Agent fundamentals]], then [[48-agentic-workflow-patterns|workflow patterns]] — choose between a workflow and an agent.
 2. [[32-tool-calling|Tool calling]], [[33-mcp|MCP]] and the [[85-agentic-protocols-map|protocol map]] — connect agents to external systems.
 3. [[35-context-engineering|Context engineering]] and [[39-agent-memory|memory]] — manage what an agent knows at each turn.
