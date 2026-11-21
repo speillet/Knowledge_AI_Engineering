@@ -82,7 +82,7 @@ a.kv-chip:hover { color: var(--kv-link); }
 
 /* Cards: one plain card per question; the answer opens below a hairline */
 .kv-cards { display: grid; gap: 0.5rem; margin: 0.75rem 0 2.5rem; }
-.kv-card { border: 1px solid var(--kv-line); border-radius: var(--kv-radius); }
+.kv-card { min-width: 0; border: 1px solid var(--kv-line); border-radius: var(--kv-radius); }
 .kv-card[open] { border-color: var(--kv-line-strong); }
 .kv-card > summary { display: flex; align-items: baseline; gap: 1rem; padding: 0.7rem 1rem; }
 .kv-q { flex: 1; font-weight: 600; line-height: 1.5; color: var(--kv-text); }
@@ -96,6 +96,12 @@ a.kv-chip:hover { color: var(--kv-link); }
 .kv-fold-title { flex: 1; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 0.6rem; }
 .kv-fold-title h3 { margin: 0 !important; font-size: 1.05rem; }
 .kv-fold-body { padding: 0 1rem 1rem; }
+.kv-card img { display: block; width: 480px; max-width: 100%; height: auto; margin: 1rem auto; }
+/* Give illustrated answers enough width for their labels on small phones. */
+@media (max-width: 480px) {
+  .kv-card:has(img) { margin-inline: -0.75rem; }
+  .kv-card:has(img) > .kv-a { padding-inline: 0.25rem; }
+}
 .kv-fold-body > :first-child { margin-top: 0.25rem !important; }
 .kv-fold-body > :last-child { margin-bottom: 0 !important; }
 .kv-num { min-width: 2rem; font-weight: 400; color: var(--kv-muted); font-variant-numeric: tabular-nums; }

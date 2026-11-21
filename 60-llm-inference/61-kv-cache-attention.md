@@ -52,6 +52,10 @@ What is PagedAttention? <!--anki:6b4d433358527e784d24-->
 
 This organization **greatly reduces waste and fragmentation**; it can remain a partially filled block per sequence and metadata. It also facilitates some block shares. It does not reduce the amount of K/V needed for separate tokens ([[11-llm-inference-servers|vLLM]]).
 
+![Logical KV blocks map to physical GPU blocks through a block table.](../assets/diagrams/ai-engineering-paged-attention.png)
+
+[Diagram reference](https://vllm-project.github.io/2023/06/20/vllm.html).
+
 ---
 
 Can we quantify the KV cache? <!--anki:765860436e5b7274564e-->

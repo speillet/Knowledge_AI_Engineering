@@ -2,6 +2,7 @@ import contextlib
 import io
 import json
 from pathlib import Path
+import re
 import shutil
 import sqlite3
 import sys
@@ -150,6 +151,7 @@ class VaultTests(unittest.TestCase):
             + list(ROOT.glob("*.md"))
             + list((ROOT / "tests").glob("*.py"))
             + list((ROOT / "scripts").glob("*.py"))
+            + list((ROOT / "assets/diagrams").glob("*.png"))
             + list(ROOT.glob("*.txt"))
             + list(ROOT.glob("*.yml"))
             + [
@@ -356,6 +358,35 @@ class VaultTests(unittest.TestCase):
 
 
 class ExportTests(unittest.TestCase):
+    def test_local_images_use_basename_and_preserve_alt_text(self):
+        source = ROOT / "20-rag/22-advanced-rag.md"
+        image = ROOT / "assets/diagrams/ai-engineering-hybrid-retrieval.png"
+        media = {}
+        result = export.to_html('![BM25 & vectors](../assets/diagrams/ai-engineering-hybrid-retrieval.png)',
+                                {}, source, media)
+        self.assertIn('src="ai-engineering-hybrid-retrieval.png"', result)
+        self.assertIn('alt="BM25 &amp; vectors"', result)
+        self.assertEqual(media, {image.name: image.resolve()})
+        code = export.to_html('`![example](missing.png)`', {}, source, media)
+        self.assertNotIn('<img', code)
+
+    def test_export_rejects_missing_remote_and_ambiguous_images(self):
+        source = ROOT / "20-rag/22-advanced-rag.md"
+        for url in ('missing.png', 'https://example.org/image.png', '//example.org/image.png', '../../../outside.png'):
+            with self.subTest(url=url), self.assertRaises(ValueError):
+                export.to_html(f'![Diagram]({url})', {}, source, {})
+        with tempfile.TemporaryDirectory(dir=ROOT) as tmp:
+            folder = Path(tmp)
+            first = folder / 'one/image.png'
+            second = folder / 'two/image.png'
+            for image in (first, second):
+                image.parent.mkdir()
+                image.write_bytes(b'example')
+            media = {}
+            export.to_html('![First](one/image.png)', {}, folder / 'topic.md', media)
+            with self.assertRaisesRegex(ValueError, 'Duplicate Anki media filename'):
+                export.to_html('![Second](two/image.png)', {}, folder / 'topic.md', media)
+
     def test_legacy_guids_preserved(self):
         historical = set(json.loads(read(ROOT / "tests/fixtures/legacy_guids.json")))
         current = [c.guid for p in lint.topic_files() for c in lint.parse_cards(read(p))[0]]
@@ -381,19 +412,26 @@ class ExportTests(unittest.TestCase):
         self.assertIn("{{Topic}}", export.MODEL.templates[0]["qfmt"])
 
     def test_package_database(self):
-        decks, total, sections = export.build()
+        media = {}
+        decks, total, sections = export.build(media)
         total += len(lint.retired_cards())
         with tempfile.TemporaryDirectory() as tmp:
             package = Path(tmp) / "test.apkg"
-            export.genanki.Package(decks).write_to_file(package)
+            export.genanki.Package(decks, media_files=[str(p) for p in media.values()]).write_to_file(package)
             with zipfile.ZipFile(package) as archive:
                 database = Path(tmp) / "collection.anki2"
                 database.write_bytes(archive.read("collection.anki2"))
+                manifest = json.loads(archive.read("media"))
+                self.assertGreaterEqual(len(manifest), 10)
+                self.assertEqual(set(manifest.values()), set(media))
+                for entry, filename in manifest.items():
+                    self.assertEqual(archive.read(entry), media[filename].read_bytes())
             with sqlite3.connect(database) as db:
                 self.assertEqual(db.execute("PRAGMA integrity_check").fetchone()[0], "ok")
                 self.assertEqual(db.execute("SELECT count(*) FROM notes").fetchone()[0], total)
                 self.assertEqual(db.execute("SELECT count(*) FROM cards").fetchone()[0], total)
                 self.assertEqual(db.execute("SELECT count(DISTINCT guid) FROM notes").fetchone()[0], total)
+                referenced_images = set()
                 for (fields,) in db.execute("SELECT flds FROM notes"):
                     question, answer, _, _ = fields.split("\x1f")
                     self.assertTrue(question.strip())
@@ -402,6 +440,8 @@ class ExportTests(unittest.TestCase):
                     self.assertNotIn("<!--anki:", fields)
                     self.assertNotIn("&lt;!-- summary:", fields)
                     self.assertNotIn("<!-- summary:", fields)
+                    referenced_images.update(re.findall(r'<img src="([^"]+)"', fields))
+                self.assertEqual(referenced_images, set(manifest.values()))
             self.assertEqual(sections, len(json.loads(read(ROOT / "scripts/sections.json"))))
 
 

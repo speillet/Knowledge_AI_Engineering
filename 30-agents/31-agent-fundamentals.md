@@ -34,6 +34,10 @@ The [[32-tool-calling|tool calling]] provides a call format, but does not build 
 
 If the observation indicates "unknown command", the sequence must ask for precision or otherwise seek, not present the expected status as a fact.
 
+![Model, harness, tool and observation form a bounded feedback loop.](../assets/diagrams/ai-engineering-agent-loop.png)
+
+[Diagram reference](https://www.anthropic.com/research/building-effective-agents).
+
 ---
 
 What is a minimal agent made of? <!--anki:43784f552a2f34552f69-->

@@ -245,6 +245,10 @@ It still needs valid comparisons, a starting policy, computation and evaluation.
 
 For example, use DPO when curated responses to the same support requests have reliable preferences. Consider online reward-based optimization when exploring new responses and evaluating them is central to the task.
 
+![Classic RLHF fits a reward model; offline DPO directly uses preferences.](../assets/diagrams/ai-engineering-dpo-rlhf.png)
+
+[Diagram reference](https://arxiv.org/abs/2305.18290).
+
 ---
 
 What probability ratio does the standard DPO loss compare? <!--anki:3261333233323938623931643430313238333264383935343864333235333364-->

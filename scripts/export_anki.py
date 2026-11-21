@@ -19,6 +19,7 @@ import json
 from pathlib import Path
 import re
 import sys
+from urllib.parse import unquote, urlsplit
 
 import genanki
 from markdown_it import MarkdownIt
@@ -55,7 +56,9 @@ pre {
   background: #f1f2f4; padding: .6em .7em; border-radius: 6px;
 }
 pre code { background: none; padding: 0; font-size: 1em; }
+img { display: block; width: 480px; max-width: 100%; height: auto; margin: 1em auto; }
 .link { color: #1a5fb4; border-bottom: 1px dotted currentColor; }
+a { color: #1a5fb4; }
 .source { margin-top: 1.4em; font-size: .72em; color: #6b6b70; }
 hr#answer { border: 0; border-top: 1px solid #d0d0d5; margin: 1em 0; }
 
@@ -64,6 +67,7 @@ hr#answer { border: 0; border-top: 1px solid #d0d0d5; margin: 1em 0; }
 .nightMode code, .night_mode code, .nightMode pre, .night_mode pre { background: #2c2c30; }
 .nightMode pre code, .night_mode pre code { background: none; }
 .nightMode .link, .night_mode .link { color: #8ab4f8; }
+.nightMode a, .night_mode a { color: #8ab4f8; }
 .nightMode .source, .night_mode .source,
 .nightMode .context, .night_mode .context { color: #9a9aa0; }
 .nightMode hr#answer, .night_mode hr#answer { border-top-color: #44444a; }
@@ -91,9 +95,28 @@ def stable_id(text: str) -> int:
     return int(hashlib.sha1(text.encode()).hexdigest()[:8], 16) % (1 << 30) + (1 << 30)
 
 
-def to_html(markdown: str, titles: dict[str, str]) -> str:
-    """Markdown → HTML Anki; wikilinks become the title of the cited file."""
-    html = md.render(SR_RE.sub("", markdown).strip())
+def to_html(
+    markdown: str, titles: dict[str, str], source: Path | None = None, media: dict[str, Path] | None = None
+) -> str:
+    """Render Markdown, collecting local images and referencing their Anki basenames."""
+    media = media if media is not None else {}
+    tokens = md.parse(SR_RE.sub("", markdown).strip())
+    for token in tokens:
+        for child in token.children or []:
+            if child.type != "image":
+                continue
+            url = str(child.attrGet("src") or "")
+            parts = urlsplit(url)
+            if source is None or parts.scheme or parts.netloc or parts.query or parts.fragment:
+                raise ValueError(f"Image requires a local repository path: {url}")
+            image = (source.parent / unquote(parts.path)).resolve()
+            if not image.is_relative_to(ROOT.resolve()) or not image.is_file():
+                raise ValueError(f"Missing image or image outside the repository: {source}: {url}")
+            if image.name in media and media[image.name] != image:
+                raise ValueError(f"Duplicate Anki media filename: {image.name}")
+            media[image.name] = image
+            child.attrSet("src", image.name)
+    html = md.renderer.render(tokens, md.options, {})
 
     def link(m: re.Match[str]) -> str:
         target, alias = m.group(1).strip(), m.group(2)
@@ -110,8 +133,9 @@ def type_tag(question: str) -> str:
     return "type::question"
 
 
-def build() -> tuple[list[genanki.Deck], int, int]:
+def build(media: dict[str, Path] | None = None) -> tuple[list[genanki.Deck], int, int]:
     """Decks per card, number of vault cards and number of sections."""
+    media = media if media is not None else {}
     moc = (ROOT / f"{MOC}.md").read_text(encoding="utf-8")
     sections = {num: name.strip() for num, name in SECTION_RE.findall(moc)}
     files = topic_files()
@@ -152,7 +176,7 @@ def build() -> tuple[list[genanki.Deck], int, int]:
             deck.add_note(
                 genanki.Note(
                     model=MODEL,
-                    fields=[to_html(c.question, titles), to_html(c.answer, titles), topic, section],
+                    fields=[to_html(c.question, titles, p, media), to_html(c.answer, titles, p, media), topic, section],
                     tags=[*tags, type_tag(c.question)],
                     guid=guid,
                 )
@@ -195,12 +219,14 @@ def main() -> None:
     errors, _, _ = lint(stale_months=0)
     if errors:
         sys.exit("Export cancelled:\n" + "\n".join(errors))
-    decks, total, n_sections = build()
+    media: dict[str, Path] = {}
+    decks, total, n_sections = build(media)
     out = Path(args.output)
     out.parent.mkdir(parents=True, exist_ok=True)
-    genanki.Package(decks).write_to_file(out)
+    genanki.Package(decks, media_files=[str(p) for p in media.values()]).write_to_file(out)
     topics = sum(not d.name.endswith(RETIRED_DECK) for d in decks)
     print(f"{total} cards, {topics} topics, {n_sections} sections, {len(retired_cards())} retired card(s) → {out}")
+    print(f"{len(media)} local image(s) included for offline review")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="700" viewBox="0 0 480 700" role="img" aria-labelledby="title desc">
+<title id="title">DPO and classic RLHF</title>
+<desc id="desc">Both routes use preferences for responses to the same prompt. Classic RLHF fits a reward model then samples responses and applies RL. Offline DPO directly fits a preference loss relative to a reference policy.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#215b98"/></marker></defs>
+<rect width="480" height="700" rx="16" fill="#ffffff"/>
+<g font-family="Arial, Helvetica, sans-serif" font-size="24" fill="#18324b">
+<text x="240" y="48" text-anchor="middle" font-size="28" font-weight="700" fill="#18324b">DPO and classic RLHF</text>
+<rect x="24" y="92" width="432" height="94" rx="10" fill="#edf4ff" stroke="#215b98" stroke-width="2"/>
+<text x="240.0" y="131.0" text-anchor="middle" font-size="24" font-weight="700" fill="#18324b">Same prompt</text>
+<text x="240.0" y="163.0" text-anchor="middle" font-size="24" font-weight="400" fill="#18324b">Chosen / rejected responses</text>
+<path d="M 240 186 V 210 H 124 V 268" fill="none" stroke="#215b98" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M 240 210 H 356 V 268" fill="none" stroke="#215b98" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="24" y="268" width="200" height="110" rx="10" fill="#edf4ff" stroke="#215b98" stroke-width="2"/>
+<text x="124.0" y="299.0" text-anchor="middle" font-size="24" font-weight="700" fill="#18324b">Classic RLHF</text>
+<text x="124.0" y="331.0" text-anchor="middle" font-size="24" font-weight="400" fill="#18324b">Fit reward</text>
+<text x="124.0" y="363.0" text-anchor="middle" font-size="24" font-weight="400" fill="#18324b">model</text>
+<path d="M 124 378 V 408" fill="none" stroke="#215b98" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="24" y="408" width="200" height="100" rx="10" fill="#edf4ff" stroke="#215b98" stroke-width="2"/>
+<text x="124.0" y="450.0" text-anchor="middle" font-size="24" font-weight="700" fill="#18324b">Sample + RL</text>
+<text x="124.0" y="482.0" text-anchor="middle" font-size="24" font-weight="400" fill="#18324b">with reference</text>
+<rect x="256" y="268" width="200" height="240" rx="10" fill="#e9f8f2" stroke="#096b57" stroke-width="2"/>
+<text x="356.0" y="364.0" text-anchor="middle" font-size="24" font-weight="700" fill="#18324b">Offline DPO</text>
+<text x="356.0" y="396.0" text-anchor="middle" font-size="24" font-weight="400" fill="#18324b">Preference loss</text>
+<text x="356.0" y="428.0" text-anchor="middle" font-size="24" font-weight="400" fill="#18324b">with reference</text>
+<path d="M 124 508 V 553" fill="none" stroke="#215b98" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M 356 508 V 553" fill="none" stroke="#215b98" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="24" y="553" width="200" height="80" rx="10" fill="#edf4ff" stroke="#215b98" stroke-width="2"/>
+<text x="124.0" y="585.0" text-anchor="middle" font-size="24" font-weight="700" fill="#18324b">Updated</text>
+<text x="124.0" y="617.0" text-anchor="middle" font-size="24" font-weight="400" fill="#18324b">policy</text>
+<rect x="256" y="553" width="200" height="80" rx="10" fill="#e9f8f2" stroke="#096b57" stroke-width="2"/>
+<text x="356.0" y="585.0" text-anchor="middle" font-size="24" font-weight="700" fill="#18324b">Updated</text>
+<text x="356.0" y="617.0" text-anchor="middle" font-size="24" font-weight="400" fill="#18324b">policy</text>
+<text x="240" y="679" text-anchor="middle" font-size="24" font-weight="400" fill="#18324b">DPO skips online rollouts.</text>
+</g>
+</svg>

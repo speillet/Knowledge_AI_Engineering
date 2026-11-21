@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="720" viewBox="0 0 480 720" role="img" aria-labelledby="title desc">
+<title id="title">MoE: route each token</title>
+<desc id="desc">For the current token and layer, a router scores experts and selects two. Only experts 1 and 3 run in this example. Their weighted outputs are added. Expert 2 is not selected.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#215b98"/></marker></defs>
+<rect width="480" height="720" rx="16" fill="#ffffff"/>
+<g font-family="Arial, Helvetica, sans-serif" font-size="24" fill="#18324b">
+<text x="240" y="48" text-anchor="middle" font-size="28" font-weight="700" fill="#18324b">MoE: route each token</text>
+<rect x="120" y="92" width="240" height="64" rx="10" fill="#edf4ff" stroke="#215b98" stroke-width="2"/>
+<text x="240.0" y="132.0" text-anchor="middle" font-size="24" font-weight="700" fill="#18324b">Token state</text>
+<path d="M 240 156 V 215" fill="none" stroke="#215b98" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="80" y="215" width="320" height="90" rx="10" fill="#edf4ff" stroke="#215b98" stroke-width="2"/>
+<text x="240.0" y="252.0" text-anchor="middle" font-size="24" font-weight="700" fill="#18324b">Router: select top-2</text>
+<text x="240.0" y="284.0" text-anchor="middle" font-size="24" font-weight="400" fill="#18324b">Scores for this layer</text>
+<path d="M 240 305 V 340 H 88 V 380" fill="none" stroke="#215b98" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M 240 340 H 392 V 380" fill="none" stroke="#215b98" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="24" y="380" width="128" height="90" rx="10" fill="#e9f8f2" stroke="#096b57" stroke-width="2"/>
+<text x="88.0" y="417.0" text-anchor="middle" font-size="24" font-weight="700" fill="#18324b">Expert 1</text>
+<text x="88.0" y="449.0" text-anchor="middle" font-size="24" font-weight="400" fill="#18324b">run</text>
+<rect x="176" y="380" width="128" height="90" rx="10" fill="#f0f2f5" stroke="#536170" stroke-width="2" stroke-dasharray="6 4"/>
+<text x="240.0" y="417.0" text-anchor="middle" font-size="24" font-weight="700" fill="#18324b">Expert 2</text>
+<text x="240.0" y="449.0" text-anchor="middle" font-size="24" font-weight="400" fill="#18324b">unused</text>
+<rect x="328" y="380" width="128" height="90" rx="10" fill="#e9f8f2" stroke="#096b57" stroke-width="2"/>
+<text x="392.0" y="417.0" text-anchor="middle" font-size="24" font-weight="700" fill="#18324b">Expert 3</text>
+<text x="392.0" y="449.0" text-anchor="middle" font-size="24" font-weight="400" fill="#18324b">run</text>
+<path d="M 88 470 V 510 H 240 V 548" fill="none" stroke="#215b98" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M 392 470 V 510 H 240" fill="none" stroke="#215b98" stroke-width="2.5" stroke-linejoin="round"/>
+<rect x="80" y="548" width="320" height="86" rx="10" fill="#edf4ff" stroke="#215b98" stroke-width="2"/>
+<text x="240.0" y="583.0" text-anchor="middle" font-size="24" font-weight="700" fill="#18324b">Weighted sum</text>
+<text x="240.0" y="615.0" text-anchor="middle" font-size="24" font-weight="400" fill="#18324b">of selected outputs</text>
+<text x="240" y="687" text-anchor="middle" font-size="24" font-weight="400" fill="#18324b">Example: 2 of 3 experts.</text>
+</g>
+</svg>

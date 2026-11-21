@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="618" viewBox="0 0 480 618" role="img" aria-labelledby="title desc">
+<title id="title">LoRA: a low-rank update</title>
+<desc id="desc">The input is sent through a frozen weight matrix W and trainable low-rank matrices A then B. Their outputs are added, with adapter scaling s.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#215b98"/></marker></defs>
+<rect width="480" height="618" rx="16" fill="#ffffff"/>
+<g font-family="Arial, Helvetica, sans-serif" font-size="24" fill="#18324b">
+<text x="240" y="48" text-anchor="middle" font-size="28" font-weight="700" fill="#18324b">LoRA: a low-rank update</text>
+<rect x="140" y="92" width="200" height="64" rx="10" fill="#edf4ff" stroke="#215b98" stroke-width="2"/>
+<text x="240.0" y="132.0" text-anchor="middle" font-size="24" font-weight="700" fill="#18324b">Input x</text>
+<path d="M 240 156 V 190 H 124 V 232" fill="none" stroke="#215b98" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M 240 190 H 356 V 218" fill="none" stroke="#215b98" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="24" y="232" width="200" height="120" rx="10" fill="#f0f2f5" stroke="#536170" stroke-width="2"/>
+<text x="124.0" y="284.0" text-anchor="middle" font-size="24" font-weight="700" fill="#18324b">W frozen</text>
+<text x="124.0" y="316.0" text-anchor="middle" font-size="24" font-weight="400" fill="#18324b">d × k weights</text>
+<rect x="256" y="218" width="200" height="148" rx="10" fill="#e9f8f2" stroke="#096b57" stroke-width="2"/>
+<text x="356.0" y="268.0" text-anchor="middle" font-size="24" font-weight="700" fill="#18324b">A → B</text>
+<text x="356.0" y="300.0" text-anchor="middle" font-size="24" font-weight="400" fill="#18324b">Trainable</text>
+<text x="356.0" y="332.0" text-anchor="middle" font-size="24" font-weight="400" fill="#18324b">Rank r</text>
+<path d="M 124 352 V 430 H 211" fill="none" stroke="#215b98" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M 356 366 V 430 H 269" fill="none" stroke="#215b98" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<circle cx="240" cy="430" r="28" fill="#edf4ff" stroke="#215b98" stroke-width="2"/>
+<text x="240" y="439" text-anchor="middle" font-size="32" font-weight="700" fill="#18324b">+</text>
+<path d="M 240 458 V 492" fill="none" stroke="#215b98" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="80" y="492" width="320" height="64" rx="10" fill="#edf4ff" stroke="#215b98" stroke-width="2"/>
+<text x="240.0" y="532.0" text-anchor="middle" font-size="24" font-weight="700" fill="#18324b">Wx + sBAx</text>
+<text x="240" y="594" text-anchor="middle" font-size="24" font-weight="400" fill="#18324b">s = adapter scaling</text>
+</g>
+</svg>

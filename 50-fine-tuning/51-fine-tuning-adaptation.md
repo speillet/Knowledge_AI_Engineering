@@ -51,6 +51,10 @@ What is LoRA? <!--anki:634632767854463b7c5a-->
 
 Adapting it reduces training memory and variant storage, but its size depends on the rank and targeted layers: it can exceed a few tens of MB. It takes the right version of the basic model to use.
 
+![Frozen W and trainable A then B contribute to the same output.](../assets/diagrams/ai-engineering-lora.png)
+
+[Diagram reference](https://arxiv.org/abs/2106.09685).
+
 ---
 
 What is QLoRA? <!--anki:435021656c75503d585b-->

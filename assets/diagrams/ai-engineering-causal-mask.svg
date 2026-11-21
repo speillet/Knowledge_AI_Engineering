@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="594" viewBox="0 0 480 594" role="img" aria-labelledby="title desc">
+<title id="title">Causal attention mask</title>
+<desc id="desc">Rows are queries and columns are keys. Query i can attend to keys 1 through i. Future positions are blocked before softmax. Query 3 sees keys 1, 2 and 3 only.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#215b98"/></marker></defs>
+<rect width="480" height="594" rx="16" fill="#ffffff"/>
+<g font-family="Arial, Helvetica, sans-serif" font-size="24" fill="#18324b">
+<text x="240" y="48" text-anchor="middle" font-size="28" font-weight="700" fill="#18324b">Causal attention mask</text>
+<text x="240" y="102" text-anchor="middle" font-size="24" font-weight="400" fill="#18324b">Rows: queries · Columns: keys</text>
+<text x="181" y="160" text-anchor="middle" font-size="24" font-weight="700" fill="#18324b">K1</text>
+<text x="253" y="160" text-anchor="middle" font-size="24" font-weight="700" fill="#18324b">K2</text>
+<text x="325" y="160" text-anchor="middle" font-size="24" font-weight="700" fill="#18324b">K3</text>
+<text x="397" y="160" text-anchor="middle" font-size="24" font-weight="700" fill="#18324b">K4</text>
+<text x="100" y="218" text-anchor="middle" font-size="24" font-weight="700" fill="#18324b">Q1</text>
+<rect x="154" y="182" width="54" height="54" rx="10" fill="#215b98" stroke="#215b98" stroke-width="2"/>
+<text x="181" y="218" text-anchor="middle" font-size="24" font-weight="700" fill="#ffffff">1</text>
+<rect x="226" y="182" width="54" height="54" rx="10" fill="#f0f2f5" stroke="#536170" stroke-width="2"/>
+<text x="253" y="218" text-anchor="middle" font-size="24" font-weight="700" fill="#536170">×</text>
+<rect x="298" y="182" width="54" height="54" rx="10" fill="#f0f2f5" stroke="#536170" stroke-width="2"/>
+<text x="325" y="218" text-anchor="middle" font-size="24" font-weight="700" fill="#536170">×</text>
+<rect x="370" y="182" width="54" height="54" rx="10" fill="#f0f2f5" stroke="#536170" stroke-width="2"/>
+<text x="397" y="218" text-anchor="middle" font-size="24" font-weight="700" fill="#536170">×</text>
+<text x="100" y="286" text-anchor="middle" font-size="24" font-weight="700" fill="#18324b">Q2</text>
+<rect x="154" y="250" width="54" height="54" rx="10" fill="#215b98" stroke="#215b98" stroke-width="2"/>
+<text x="181" y="286" text-anchor="middle" font-size="24" font-weight="700" fill="#ffffff">1</text>
+<rect x="226" y="250" width="54" height="54" rx="10" fill="#215b98" stroke="#215b98" stroke-width="2"/>
+<text x="253" y="286" text-anchor="middle" font-size="24" font-weight="700" fill="#ffffff">1</text>
+<rect x="298" y="250" width="54" height="54" rx="10" fill="#f0f2f5" stroke="#536170" stroke-width="2"/>
+<text x="325" y="286" text-anchor="middle" font-size="24" font-weight="700" fill="#536170">×</text>
+<rect x="370" y="250" width="54" height="54" rx="10" fill="#f0f2f5" stroke="#536170" stroke-width="2"/>
+<text x="397" y="286" text-anchor="middle" font-size="24" font-weight="700" fill="#536170">×</text>
+<text x="100" y="354" text-anchor="middle" font-size="24" font-weight="700" fill="#18324b">Q3</text>
+<rect x="154" y="318" width="54" height="54" rx="10" fill="#215b98" stroke="#215b98" stroke-width="2"/>
+<text x="181" y="354" text-anchor="middle" font-size="24" font-weight="700" fill="#ffffff">1</text>
+<rect x="226" y="318" width="54" height="54" rx="10" fill="#215b98" stroke="#215b98" stroke-width="2"/>
+<text x="253" y="354" text-anchor="middle" font-size="24" font-weight="700" fill="#ffffff">1</text>
+<rect x="298" y="318" width="54" height="54" rx="10" fill="#215b98" stroke="#215b98" stroke-width="2"/>
+<text x="325" y="354" text-anchor="middle" font-size="24" font-weight="700" fill="#ffffff">1</text>
+<rect x="370" y="318" width="54" height="54" rx="10" fill="#f0f2f5" stroke="#536170" stroke-width="2"/>
+<text x="397" y="354" text-anchor="middle" font-size="24" font-weight="700" fill="#536170">×</text>
+<text x="100" y="422" text-anchor="middle" font-size="24" font-weight="700" fill="#18324b">Q4</text>
+<rect x="154" y="386" width="54" height="54" rx="10" fill="#215b98" stroke="#215b98" stroke-width="2"/>
+<text x="181" y="422" text-anchor="middle" font-size="24" font-weight="700" fill="#ffffff">1</text>
+<rect x="226" y="386" width="54" height="54" rx="10" fill="#215b98" stroke="#215b98" stroke-width="2"/>
+<text x="253" y="422" text-anchor="middle" font-size="24" font-weight="700" fill="#ffffff">1</text>
+<rect x="298" y="386" width="54" height="54" rx="10" fill="#215b98" stroke="#215b98" stroke-width="2"/>
+<text x="325" y="422" text-anchor="middle" font-size="24" font-weight="700" fill="#ffffff">1</text>
+<rect x="370" y="386" width="54" height="54" rx="10" fill="#215b98" stroke="#215b98" stroke-width="2"/>
+<text x="397" y="422" text-anchor="middle" font-size="24" font-weight="700" fill="#ffffff">1</text>
+<text x="240" y="488" text-anchor="middle" font-size="24" font-weight="400" fill="#18324b">1 = attend · × = blocked</text>
+<text x="240" y="535" text-anchor="middle" font-size="24" font-weight="400" fill="#18324b">Q3 sees K1, K2 and K3.</text>
+<text x="240" y="572" text-anchor="middle" font-size="24" font-weight="400" fill="#18324b">Future keys stay masked.</text>
+</g>
+</svg>

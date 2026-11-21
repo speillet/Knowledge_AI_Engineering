@@ -57,9 +57,13 @@ Where does the first token come from after the prefill? <!--anki:366435613938303
 ?
 The state of the **last position of the prompt** is projected to the logits of the vocabulary. Sampling or greedy choice then selects the first output token.
 
-After `[A,B,C]`, the logits of C propose D; treat D then makes it possible to propose E. The KV of the token chosen is only calculated when it is treated as input. There is therefore not systematically an additional pass before selecting the first token.
+After `[A,B,C]`, the logits of C propose D; treat D then makes it possible to propose E. The KV of the token chosen is only calculated when it is treated as input. No extra pass is systematically required to select the first token.
 
-To distinguish quickly encoded, Calculated distribution and token selected. With a full cache prefix, K/V alone may not be enough to find the final logs without a little recalculation.
+Distinguish processed tokens, calculated distributions and selected tokens. With a fully cached prefix, K/V alone may not recover the final logits without some recalculation.
+
+![Prefill chooses D; processing D caches its KV and chooses E.](../assets/diagrams/ai-engineering-prefill-decode.png)
+
+[Diagram reference](https://arxiv.org/abs/1706.03762).
 
 ---
 
