@@ -30,6 +30,7 @@ REPOSITORY = "https://github.com/speillet/Knowledge_AI_Engineering"
 WEBSITE = Path("website")
 WIKI = re.compile(r"\[\[([^\]|#]+)(?:#([^\]|]+))?(?:\|([^\]]+))?\]\]")
 MARKDOWN_LINK = re.compile(r"(?<!!)\[([^\]\n]*)\]\(([^)\s]+)\)")
+MARKDOWN_IMAGE = re.compile(r"!\[([^\]\n]*)\]\(([^)\s]+)\)")
 RENDERED_LINK = re.compile(r"\[([^\]\n]+)\]\((\{\{<[^>]*>\}\}|[^)\s]+)\)")
 CODE_SPAN = re.compile(r"(`+[^`]*`+)")
 SHORTCODE = re.compile(r"\{\{[<%]")
@@ -174,11 +175,19 @@ def link_converter(source: Path, pages: set[Path], wikilinks: dict[str, Path]) -
         suffix = f"#{fragment}" if fragment else ""
         return f"[{label}]({REPOSITORY}/blob/main/{quote(target.as_posix())}{suffix})"
 
+    def image(match: re.Match[str]) -> str:
+        label, url = match.groups()
+        target = Path(os.path.normpath(source.parent / unquote(url)))
+        if target.parent == Path("assets/diagrams"):
+            return f'![{label}](' + '{{< diagram-url "' + target.name + '" >}})'
+        return match[0]
+
     def convert(text: str) -> str:
         parts = CODE_SPAN.split(text)
         for i, part in enumerate(parts):
             if not part.startswith("`"):
-                parts[i] = WIKI.sub(wiki, MARKDOWN_LINK.sub(markdown_link, METADATA.sub("", part)))
+                cleaned = METADATA.sub("", part)
+                parts[i] = WIKI.sub(wiki, MARKDOWN_IMAGE.sub(image, MARKDOWN_LINK.sub(markdown_link, cleaned)))
         return "".join(parts)
 
     return convert
@@ -611,6 +620,12 @@ def prepare(root: Path = ROOT) -> Path:
     content = root / WEBSITE / "content"
     if content.exists():
         shutil.rmtree(content)
+    diagrams = root / WEBSITE / "static/diagrams"
+    if diagrams.exists():
+        shutil.rmtree(diagrams)
+    for image in sorted((root / "assets/diagrams").glob("*.png")):
+        diagrams.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(image, diagrams / image.name)
     texts = {path.relative_to(root): path.read_text(encoding="utf-8") for path in sources}
     for source, text in texts.items():
         if SHORTCODE.search(text):

@@ -7,12 +7,12 @@ Verified on: 12 November 2026 — mechanisms and limits against cited articles a
 What is the principle of speculative decoding? <!--anki:735b235457367c524b6a-->
 ?
 An inexpensive **draft** offers multiple tokens; the **target** evaluates these positions together, and then a verification mechanism retains an allowable prefix and produces an additional correction or token.
-```text
-propositions : a b c d
-verification: accepted, b accepted, c rejected
-emission: a b x ; d is abandoned
-```
+Here, `a` and `b` are accepted; rejecting `c` emits correction `x` and discards `d`.
 The exact linear scheme normally produces at least one token per check, subject to shutdown. This gain does not abolish causality: the draft offers dependencies already known to the checker. The quality of the target remains the reference; the acceptance rule, not the mere presence of a second model, determines the guarantee.
+
+![Keep a and b, reject c, discard d, then emit correction x.](../assets/diagrams/ai-engineering-speculative-decoding.png)
+
+[Diagram reference](https://arxiv.org/abs/2211.17192).
 
 ---
 

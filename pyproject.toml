@@ -34,6 +34,6 @@ warn_redundant_casts = true
 warn_return_any = true
 
 [[tool.mypy.overrides]]
-# Optional dependencies: genanki for the Anki export, cairosvg and Pillow for the site icons.
-module = ["genanki", "cairosvg", "PIL", "PIL.*"]
+# Optional dependencies: Anki export, site icons and SVG diagram authoring.
+module = ["genanki", "cairosvg", "PIL", "PIL.*", "playwright", "playwright.*"]
 ignore_missing_imports = true

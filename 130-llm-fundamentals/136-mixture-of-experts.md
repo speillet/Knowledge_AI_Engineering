@@ -37,6 +37,10 @@ A small linear layer calculates a **score per expert** for the token; we keep th
 
 Variants can use other standardizations or shared experts. Monitor Load: If the majority of tokens choose the same experts, some GPUs become the bottleneck. A routing score is not an interpretable business label.
 
+![Top-2 routing runs two experts and combines their weighted outputs.](../assets/diagrams/ai-engineering-moe-routing.png)
+
+[Diagram reference](https://arxiv.org/abs/2401.04088).
+
 ---
 
 What is load balancing and why is it necessary? <!--anki:6b65265a7c4f75487231-->

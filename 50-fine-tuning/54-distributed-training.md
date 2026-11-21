@@ -48,6 +48,10 @@ Example: On four GPUs, a uniformly partitioned state occupies about a quarter by
 
 More sharding saves persistent memory but increases communications. Measuring the actual peak and throughput; too coarse cutting can cause an OOM during a rally despite low occupancy at rest.
 
+![ZeRO progressively shards optimizer states, gradients and weights across four GPUs.](../assets/diagrams/ai-engineering-zero-sharding.png)
+
+[Diagram reference](https://www.deepspeed.ai/tutorials/zero/).
+
 ---
 
 What is tensor parallelism? <!--anki:755a7e2d324d60357763-->

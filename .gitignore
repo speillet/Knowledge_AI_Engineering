@@ -28,4 +28,5 @@ __pycache__/
 # Generated documentation (make site)
 site/
 website/content/
+website/static/diagrams/
 website/.hugo_build.lock

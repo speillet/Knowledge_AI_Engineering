@@ -24,3 +24,20 @@ python3 -m venv .venv
 python3 -m pip install -r scripts/requirements.txt
 python3 scripts/export_anki.py      # writes dist/ai-engineering.apkg
 ```
+
+Complex mechanisms include diagrams on the answer side. The package embeds their PNGs, so
+they remain visible offline after import. Images fit the card width with their aspect ratio
+preserved; a light background keeps labels readable in both light and dark review modes.
+
+The editable sources live in `assets/diagrams/`. To regenerate the committed PNGs after
+editing an SVG, install the optional authoring tools:
+
+```bash
+python3 -m pip install playwright
+python3 -m playwright install chromium
+make diagrams
+```
+
+Normal exports and CI use the committed PNGs and do not require a browser. The
+[diagram review](../reports/flashcard-diagrams-2026-11-21.md) records the selected cards,
+primary references and readability checks.

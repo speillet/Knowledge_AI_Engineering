@@ -45,6 +45,13 @@ class SiteTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "unknown wikilink"):
             self.convert("[[missing]]")
 
+    def test_diagrams_use_static_site_urls_outside_code(self):
+        image = '![Hybrid retrieval](../assets/diagrams/ai-engineering-hybrid-retrieval.png)'
+        result = site.convert_block(image + '\n`' + image + '`\n```text\n' + image + '\n```', self.convert)
+        self.assertIn('![Hybrid retrieval]({{< diagram-url "ai-engineering-hybrid-retrieval.png" >}})', result)
+        self.assertIn('`' + image + '`', result)
+        self.assertIn('```text\n' + image + '\n```', result)
+
     def test_topic_cards_are_grouped_by_kind_under_headings(self):
         front, body, topic = site.topic_page(self.source, TOPIC, self.convert, self.wikis, 1)
         self.assertEqual(front["params"]["counts"], {"concept": 1, "confuse": 0, "calculation": 1, "scenario": 1})

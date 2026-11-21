@@ -16,6 +16,10 @@ The interest of the RRF: it only works on **ranges**, so no calibration of heter
 
 For example, a `AB-204` reference benefits from the lexical, while a reformulation of the problem can benefit from the embeddings. RRF does not prove that a document is relevant: it combines the available rankings. The parameter `k` of its formula is a smoothing constant, distinct from the number of results finally recovered.
 
+![BM25 and vectors feed rank fusion, then optional reranking.](../assets/diagrams/ai-engineering-hybrid-retrieval.png)
+
+[Diagram reference](https://www.elastic.co/docs/reference/elasticsearch/rest-apis/reciprocal-rank-fusion).
+
 ---
 
 What is reranking? <!--anki:72403c653b3e44335232-->

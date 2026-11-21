@@ -41,6 +41,10 @@ A **mask forbids viewing future positions**: the representation at position i us
 
 Example: To learn how to complete "The Cat Sleeps", the "cat" position should not see "sleep" before predicting it. This causality describes the order of information in the sequence; it does not mean that the model identifies the causes of events.
 
+![Query i attends only to keys up to i; future positions are masked.](../assets/diagrams/ai-engineering-causal-mask.png)
+
+[Diagram reference](https://arxiv.org/abs/1706.03762).
+
 ---
 
 Why multiple attention heads (multi-head)? <!--anki:70495d3d7d324e5e5848-->
